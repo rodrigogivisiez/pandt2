@@ -1,0 +1,67 @@
+backgrounds_pack.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+grass_autumn
+  rotate: false
+  xy: 2, 1116
+  size: 360, 164
+  orig: 360, 164
+  offset: 0, 0
+  index: -1
+logo
+  rotate: false
+  xy: 364, 1137
+  size: 260, 258
+  orig: 260, 258
+  offset: 0, 0
+  index: -1
+potato_weapon
+  rotate: false
+  xy: 863, 2
+  size: 52, 44
+  orig: 52, 44
+  offset: 0, 0
+  index: -1
+autumn_bg
+  rotate: false
+  xy: 404, 2
+  size: 400, 710
+  orig: 400, 710
+  offset: 0, 0
+  index: -1
+blue
+  rotate: false
+  xy: 2, 2
+  size: 400, 710
+  orig: 400, 710
+  offset: 0, 0
+  index: -1
+grass_green
+  rotate: false
+  xy: 404, 971
+  size: 360, 164
+  orig: 360, 164
+  offset: 0, 0
+  index: -1
+tomato_weapon
+  rotate: false
+  xy: 806, 2
+  size: 55, 73
+  orig: 55, 73
+  offset: 0, 0
+  index: -1
+sunray
+  rotate: false
+  xy: 2, 714
+  size: 400, 400
+  orig: 400, 400
+  offset: 0, 0
+  index: -1
+sunrise
+  rotate: false
+  xy: 404, 714
+  size: 384, 255
+  orig: 400, 263
+  offset: 1, 0
+  index: -1
