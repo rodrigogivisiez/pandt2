@@ -28,4 +28,8 @@ public class Textures {
     public TextureRegion getGreenGround() { return getBackgroundsPack().findRegion("grass_green"); };
     public TextureRegion getAutumnGround() { return getBackgroundsPack().findRegion("grass_autumn"); };
 
+
+    public TextureRegion getUprightEggButton() { return getBackgroundsPack().findRegion("upright_egg_button"); };
+    public TextureRegion getPlayIcon() { return getBackgroundsPack().findRegion("play_icon"); };
+    public TextureRegion getEmpty() { return getBackgroundsPack().findRegion("empty"); };
 }

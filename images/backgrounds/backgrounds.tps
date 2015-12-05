@@ -155,6 +155,9 @@
             <filename>tomato_weapon.png</filename>
             <filename>autumn_bg.png</filename>
             <filename>grass_autumn.png</filename>
+            <filename>upright_egg_button.png</filename>
+            <filename>play_icon.png</filename>
+            <filename>empty.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

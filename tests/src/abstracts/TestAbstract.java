@@ -1,8 +1,10 @@
 package abstracts;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.mygdx.potatoandtomato.PTGame;
+import com.sun.javaws.Globals;
 import org.junit.BeforeClass;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import org.mockito.invocation.InvocationOnMock;
@@ -15,12 +17,18 @@ import static org.mockito.Mockito.*;
  */
 public abstract class TestAbstract {
 
+    protected static PTGame _game;
+
     @BeforeClass
     public static void oneTimeSetUp() {
 
         Gdx.gl = mock(GL20.class);
         Gdx.gl20 = mock(GL20.class);
-        new HeadlessApplication(new PTGame());
+
+        final HeadlessApplicationConfiguration config = new HeadlessApplicationConfiguration();
+        new HeadlessApplication(mock(PTGame.class), config);
+
+
 
 //        doAnswer(new Answer<Void>() {
 //            @Override

@@ -16,9 +16,16 @@ logo
   orig: 260, 258
   offset: 0, 0
   index: -1
+upright_egg_button
+  rotate: false
+  xy: 806, 2
+  size: 120, 120
+  orig: 120, 120
+  offset: 0, 0
+  index: -1
 potato_weapon
   rotate: false
-  xy: 863, 2
+  xy: 806, 124
   size: 52, 44
   orig: 52, 44
   offset: 0, 0
@@ -44,11 +51,25 @@ grass_green
   orig: 360, 164
   offset: 0, 0
   index: -1
+play_icon
+  rotate: false
+  xy: 928, 2
+  size: 58, 68
+  orig: 58, 68
+  offset: 0, 0
+  index: -1
 tomato_weapon
   rotate: false
-  xy: 806, 2
+  xy: 928, 72
   size: 55, 73
   orig: 55, 73
+  offset: 0, 0
+  index: -1
+empty
+  rotate: false
+  xy: 988, 2
+  size: 1, 1
+  orig: 1, 1
   offset: 0, 0
   index: -1
 sunray

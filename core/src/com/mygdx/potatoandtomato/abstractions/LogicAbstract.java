@@ -2,6 +2,8 @@ package com.mygdx.potatoandtomato.abstractions;
 
 import com.badlogic.gdx.Screen;
 import com.mygdx.potatoandtomato.PTGame;
+import com.mygdx.potatoandtomato.PTScreen;
+import com.mygdx.potatoandtomato.helpers.assets.Fonts;
 import com.mygdx.potatoandtomato.helpers.assets.Textures;
 
 /**
@@ -9,19 +11,23 @@ import com.mygdx.potatoandtomato.helpers.assets.Textures;
  */
 public abstract class LogicAbstract {
 
-    PTGame _game;
+    protected PTScreen _screen;
     Textures _textures;
+    Fonts _fonts;
 
-    public LogicAbstract(PTGame game, Textures textures) {
-        this._game = game;
+    public LogicAbstract(PTScreen screen, Textures textures, Fonts fonts) {
+        this._screen = screen;
         this._textures = textures;
+        this._fonts = fonts;
     }
 
-    public abstract Screen getScreen();
+
+
+    public abstract SceneAbstract getScene();
 
     public Textures getTextures() {
         return _textures;
     }
 
-
+    public Fonts getFonts() { return _fonts; }
 }
