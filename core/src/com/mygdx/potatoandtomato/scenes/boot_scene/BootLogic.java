@@ -10,6 +10,7 @@ import com.mygdx.potatoandtomato.abstractions.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.assets.Fonts;
 import com.mygdx.potatoandtomato.helpers.assets.Textures;
+import com.mygdx.potatoandtomato.helpers.utils.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Logs;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
@@ -21,9 +22,9 @@ public class BootLogic extends LogicAbstract {
 
     BootScene _bootScene;
 
-    public BootLogic(PTScreen screen, Textures textures, Fonts fonts) {
-        super(screen, textures, fonts);
-        _bootScene = new BootScene(this);
+    public BootLogic(PTScreen screen, Assets assets) {
+        super(screen, assets);
+        _bootScene = new BootScene(assets);
         _bootScene.getPlayButton().addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {

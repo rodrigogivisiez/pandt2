@@ -8,7 +8,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         TestBoot.class,
-        TestSocialLogin.class
+        TestSocialLogin.class,
+        TestMascotPick.class
 })
 public class SceneSuites {
 }

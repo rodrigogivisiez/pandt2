@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.abstractions.LogicAbstract;
 import com.mygdx.potatoandtomato.abstractions.SceneAbstract;
+import com.mygdx.potatoandtomato.helpers.utils.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 import com.mygdx.potatoandtomato.scenes.shared_actors.*;
@@ -21,13 +22,19 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
  */
 public class BootScene extends SceneAbstract {
 
-    Image _logoImg, _tomatoWeaponImg, _potatoWeaponImg, _greenGroundImg,
-                _autumnGroundImg;
+    Image _logoImg, _tomatoWeaponImg, _potatoWeaponImg;
     BtnEggUpright _playButton;
 
-    public BootScene(LogicAbstract logic) {
-        super(logic);
+    public BootScene(Assets assets) {
+        super(assets);
+    }
 
+    public BtnEggUpright getPlayButton() {
+        return _playButton;
+    }
+
+    @Override
+    public void populateRoot() {
         //Logo Image START////////////////////////////////////////////////////
         _logoImg = new Image(_textures.getLogoNoWeapon());
         Vector2 logoSize = Sizes.resize(260, _textures.getLogoNoWeapon());
@@ -64,13 +71,14 @@ public class BootScene extends SceneAbstract {
                         ))
                 ));
 
-                _autumnGroundImg.addAction(sequence(fadeIn(0.5f), new Action() {
+                _playButton.addAction(sequence(delay(0.5f), new Action() {
                     @Override
                     public boolean act(float delta) {
                         _playButton.animate();
-                        return true;
+                        return false;
                     }
                 }));
+
 
                 return true;
             }
@@ -84,12 +92,6 @@ public class BootScene extends SceneAbstract {
         );
         //Logo Image END////////////////////////////////////////////////////
 
-        //Ground Texture START////////////////////////////////////////////
-        _greenGroundImg = new Image(_textures.getGreenGround());
-        _autumnGroundImg = new Image(_textures.getAutumnGround());
-        _autumnGroundImg.getColor().a = 0;
-        //Ground Texture END//////////////////////////////////////////////
-
         //Play Button START
         _playButton = new BtnEggUpright(_textures);
         _playButton.setPosition(Positions.centerX(_playButton.getWidth()), 160);
@@ -97,16 +99,9 @@ public class BootScene extends SceneAbstract {
         _playButton.setContent(_textures.getPlayIcon());
         //Play Button END
 
-
-        _root.addActor(_greenGroundImg);
-        _root.addActor(_autumnGroundImg);
         _root.addActor(_potatoWeaponImg);
         _root.addActor(_tomatoWeaponImg);
         _root.addActor(_logoImg);
         _root.addActor(_playButton);
-    }
-
-    public BtnEggUpright getPlayButton() {
-        return _playButton;
     }
 }

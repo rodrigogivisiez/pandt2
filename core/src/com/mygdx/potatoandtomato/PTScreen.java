@@ -13,10 +13,13 @@ import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.abstractions.LogicAbstract;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.assets.Fonts;
+import com.mygdx.potatoandtomato.helpers.assets.Texts;
 import com.mygdx.potatoandtomato.helpers.assets.Textures;
+import com.mygdx.potatoandtomato.helpers.utils.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 import com.mygdx.potatoandtomato.scenes.boot_scene.BootLogic;
+import com.mygdx.potatoandtomato.scenes.mascot_pick_scene.MascotPickLogic;
 import com.mygdx.potatoandtomato.scenes.shared_actors.BtnEggUpright;
 import com.mygdx.potatoandtomato.scenes.social_login_scene.SocialLoginLogic;
 import javafx.geometry.Pos;
@@ -30,16 +33,20 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
  */
 public class PTScreen implements Screen {
 
-    Image _bgBlueImg, _bgAutumnImg, _sunriseImg, _sunrayImg;
+    Image _bgBlueImg, _bgAutumnImg, _sunriseImg, _sunrayImg, _greenGroundImg, _autumnGroundImg;
     SceneEnum _currentScene;
     HashMap<SceneEnum, LogicAbstract> _sceneMap;
+    Assets _assets;
     Textures _textures;
     Fonts _fonts;
+    Texts _texts;
     Stage _stage;
 
-    public PTScreen(Textures textures, Fonts fonts) {
-        this._textures = textures;
-        this._fonts = fonts;
+    public PTScreen(Assets assets) {
+        this._assets = assets;
+        this._textures = _assets.getTextures();
+        this._fonts = _assets.getFonts();
+        this._texts = _assets.getTexts();
         _currentScene = SceneEnum.NOTHING;
         _sceneMap = new HashMap<SceneEnum, LogicAbstract>();
     }
@@ -76,10 +83,13 @@ public class PTScreen implements Screen {
             LogicAbstract logic = null;
             switch (sceneEnum){
                 case BOOT:
-                    logic = new BootLogic(this, _textures, _fonts);
+                    logic = new BootLogic(this, _assets);
                     break;
                 case SOCIAL_LOGIN:
-                    logic = new SocialLoginLogic(this, _textures, _fonts);
+                    logic = new SocialLoginLogic(this, _assets);
+                    break;
+                case MASCOT_PICK:
+                    logic = new MascotPickLogic(this, _assets);
                     break;
             }
             _sceneMap.put(sceneEnum, logic);
@@ -91,6 +101,13 @@ public class PTScreen implements Screen {
     @Override
     public void show() {
         _stage = new Stage();
+
+        //Ground Texture START////////////////////////////////////////////
+        _greenGroundImg = new Image(_textures.getGreenGround());
+        _autumnGroundImg = new Image(_textures.getAutumnGround());
+        _autumnGroundImg.getColor().a = 0;
+        _autumnGroundImg.addAction(sequence(delay(0.4f), fadeIn(0.5f)));
+        //Ground Texture END//////////////////////////////////////////////
 
         //Background Texture START
         _bgBlueImg = new Image(_textures.getBlueBg());
@@ -126,6 +143,8 @@ public class PTScreen implements Screen {
         _stage.addActor(_bgAutumnImg);
         _stage.addActor(_sunrayImg);
         _stage.addActor(_sunriseImg);
+        _stage.addActor(_greenGroundImg);
+        _stage.addActor(_autumnGroundImg);
         Gdx.input.setInputProcessor(_stage);
     }
 

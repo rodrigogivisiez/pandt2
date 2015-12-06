@@ -1,0 +1,67 @@
+potato_hi.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+pp
+  rotate: false
+  xy: 516, 2
+  size: 255, 271
+  orig: 255, 271
+  offset: 0, 0
+  index: 5
+pp
+  rotate: false
+  xy: 516, 275
+  size: 255, 271
+  orig: 255, 271
+  offset: 0, 0
+  index: 2
+pp
+  rotate: false
+  xy: 259, 548
+  size: 255, 271
+  orig: 255, 271
+  offset: 0, 0
+  index: 3
+pp
+  rotate: false
+  xy: 516, 548
+  size: 255, 271
+  orig: 255, 271
+  offset: 0, 0
+  index: 1
+pp
+  rotate: false
+  xy: 2, 275
+  size: 255, 271
+  orig: 255, 271
+  offset: 0, 0
+  index: 8
+pp
+  rotate: false
+  xy: 2, 2
+  size: 255, 271
+  orig: 255, 271
+  offset: 0, 0
+  index: 9
+pp
+  rotate: false
+  xy: 259, 2
+  size: 255, 271
+  orig: 255, 271
+  offset: 0, 0
+  index: 6
+pp
+  rotate: false
+  xy: 2, 548
+  size: 255, 271
+  orig: 255, 271
+  offset: 0, 0
+  index: 7
+pp
+  rotate: false
+  xy: 259, 275
+  size: 255, 271
+  orig: 255, 271
+  offset: 0, 0
+  index: 4
