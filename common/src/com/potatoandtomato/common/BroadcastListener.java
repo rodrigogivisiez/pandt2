@@ -7,6 +7,10 @@ import java.util.Random;
  */
 public abstract class BroadcastListener<T> {
 
+    public enum Status{
+        SUCCESS, FAILED
+    }
+
     private String id;
 
     public BroadcastListener() {
@@ -17,7 +21,7 @@ public abstract class BroadcastListener<T> {
         return id;
     }
 
-    public abstract void onCallback(T obj);
+    public abstract void onCallback(T obj, Status st);
 
     public String randomString(int len)
     {

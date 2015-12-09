@@ -158,6 +158,14 @@
             <filename>upright_egg_button.png</filename>
             <filename>play_icon.png</filename>
             <filename>empty.png</filename>
+            <filename>tomato_hi.png</filename>
+            <filename>potato_hi.png</filename>
+            <filename>wood_bg_tall.png</filename>
+            <filename>wood_bg_fat.png</filename>
+            <filename>social.png</filename>
+            <filename>cross.png</filename>
+            <filename>tick.png</filename>
+            <filename>login_icon.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

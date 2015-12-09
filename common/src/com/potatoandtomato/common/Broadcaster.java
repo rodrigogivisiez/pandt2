@@ -12,10 +12,6 @@ import java.util.Set;
 public class Broadcaster {
 
     private static Broadcaster instance;
-    public static final int USER_READY = 0;     //user profile retrieved
-    public static final int WARP_READY = 1;     //warp instance ready
-    public static final int WARP_CONNECTION_CHANGED = 2;   //successully connect with username / disconnect
-    public static final int WARP_ROOM_CREATED = 3;   //room created
 
     private Hashtable<Integer, ArrayList<BroadcastListener>> callbacks;
     private ArrayList<String> subScribeOnceArr;
@@ -33,6 +29,25 @@ public class Broadcaster {
     public String subscribeOnce(int event, BroadcastListener listener){
         String id = subscribe(event, listener);
         subScribeOnceArr.add(id);
+        return id;
+    }
+
+    public String subscribeOnceWithTimeout(final int event, final long timeOut, BroadcastListener listener){
+        final String id = subscribe(event, listener);
+        subScribeOnceArr.add(id);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(timeOut);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if(subScribeOnceArr.contains(id)){
+                    broadcast(event, null, BroadcastListener.Status.FAILED);
+                }
+            }
+        }).start();
         return id;
     }
 
@@ -66,7 +81,15 @@ public class Broadcaster {
         }
     }
 
-    public void broadcast(int event, @Nullable Object obj){
+    public void broadcast(int event){ //overload of null object, success broadcast
+        broadcast(event, null, BroadcastListener.Status.SUCCESS);
+    }
+
+    public void broadcast(int event, @Nullable Object obj){ //overload of success broadcast
+        broadcast(event, obj, BroadcastListener.Status.SUCCESS);
+    }
+
+    public void broadcast(int event, @Nullable Object obj, BroadcastListener.Status status){
         ArrayList<BroadcastListener> arr = callbacks.get(event);
         if(arr != null){
             for(int i = 0; i < arr.size(); i ++){
@@ -75,7 +98,7 @@ public class Broadcaster {
                     unsubscribe(r.getId());
                 }
                 subScribeOnceArr.remove(r.getId());
-                r.onCallback(obj);
+                r.onCallback(obj, status);
             }
         }
     }
@@ -87,6 +110,10 @@ public class Broadcaster {
 
     public int getEventCallbacksSize(int event){
         return getEventCallbacks(event).size();
+    }
+
+    public boolean hasEventCallback(int event){
+        return getEventCallbacks(event).size() > 0;
     }
 
     public ArrayList<String> getSubScribeOnceArr() {

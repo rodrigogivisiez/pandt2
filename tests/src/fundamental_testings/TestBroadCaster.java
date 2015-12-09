@@ -15,7 +15,7 @@ public class TestBroadCaster extends TestAbstract {
     public void testUnSubscribe(){
         String id = Broadcaster.getInstance().subscribe(-1, new BroadcastListener<MockResponse>() {
             @Override
-            public void onCallback(MockResponse obj) {
+            public void onCallback(MockResponse obj, Status status) {
 
             }
         });
@@ -32,7 +32,8 @@ public class TestBroadCaster extends TestAbstract {
     public void testBroadcast(){
         String id = Broadcaster.getInstance().subscribe(-2, new BroadcastListener<MockResponse>() {
             @Override
-            public void onCallback(MockResponse obj) {
+            public void onCallback(MockResponse obj, Status st) {
+                Assert.assertEquals(BroadcastListener.Status.SUCCESS, st);
                 Assert.assertEquals(20, obj.testField);
             }
         });
@@ -45,8 +46,9 @@ public class TestBroadCaster extends TestAbstract {
     public void testSubscribeOnce(){
         String id = Broadcaster.getInstance().subscribeOnce(-3, new BroadcastListener<MockResponse>() {
             @Override
-            public void onCallback(MockResponse obj) {
+            public void onCallback(MockResponse obj, Status st) {
                 Assert.assertEquals(10, obj.testField);
+                Assert.assertEquals(BroadcastListener.Status.SUCCESS, st);
                 Assert.assertEquals(0, Broadcaster.getInstance().getEventCallbacksSize(-3));
                 Assert.assertEquals(0, Broadcaster.getInstance().getSubScribeOnceArr().size());
             }
@@ -55,6 +57,33 @@ public class TestBroadCaster extends TestAbstract {
         Assert.assertEquals(1, Broadcaster.getInstance().getSubScribeOnceArr().size());
         Assert.assertEquals(id, Broadcaster.getInstance().getSubScribeOnceArr().get(0));
         Broadcaster.getInstance().broadcast(-3, new MockResponse(10));
+
+    }
+
+    @Test
+    public void testSubscribeOnceWithTimeout(){
+
+        final boolean[] waiting = {true};
+
+        String id = Broadcaster.getInstance().subscribeOnceWithTimeout(-3, 1000, new BroadcastListener<MockResponse>() {
+            @Override
+            public void onCallback(MockResponse obj, Status st) {
+                Assert.assertEquals(BroadcastListener.Status.FAILED, st);
+                Assert.assertEquals(0, Broadcaster.getInstance().getEventCallbacksSize(-3));
+                Assert.assertEquals(0, Broadcaster.getInstance().getSubScribeOnceArr().size());
+                waiting[0] = false;
+            }
+        });
+
+        Assert.assertEquals(1, Broadcaster.getInstance().getSubScribeOnceArr().size());
+        Assert.assertEquals(id, Broadcaster.getInstance().getSubScribeOnceArr().get(0));
+        while (waiting[0]){
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 

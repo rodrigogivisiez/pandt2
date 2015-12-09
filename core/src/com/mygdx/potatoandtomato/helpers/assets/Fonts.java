@@ -16,6 +16,12 @@ public class Fonts implements Disposable {
 
     HashMap<String, FreeTypeFontGenerator> fontGenerators = new HashMap();
 
+    private String getArialBoldPath() {
+        return "fonts/arial_bold.ttf";
+    }
+    public BitmapFont getArialBold(int size, Color color, int borderWidth, Color borderColor, int shadowOffset, Color shadowColor){
+        return getFont(getArialBoldPath(), size, color, borderWidth, borderColor, shadowOffset, shadowColor);
+    }
 
     private String getPizzaPath() {
         return "fonts/pizza.ttf";

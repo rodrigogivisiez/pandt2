@@ -35,7 +35,12 @@ public class Textures {
     public TextureRegion getEmpty() { return getBackgroundsPack().findRegion("empty"); };
     public TextureRegion getTomatoHi() { return getBackgroundsPack().findRegion("tomato_hi"); };
     public TextureRegion getPotatoHi() { return getBackgroundsPack().findRegion("potato_hi"); };
+    public TextureRegion getSocialIcon() { return getBackgroundsPack().findRegion("social"); };
+    public TextureRegion getLoginIcon() { return getBackgroundsPack().findRegion("login_icon"); };
+    public TextureRegion getTick() { return getBackgroundsPack().findRegion("tick"); };
+    public TextureRegion getCross() { return getBackgroundsPack().findRegion("cross"); };
     public TextureRegion getWoodBgTall() { return getBackgroundsPack().findRegion("wood_bg_tall"); };
+    public TextureRegion getWoodBgFat() { return getBackgroundsPack().findRegion("wood_bg_fat"); };
 
 
     public Array<? extends TextureRegion> getPotatoHiAnimation() {

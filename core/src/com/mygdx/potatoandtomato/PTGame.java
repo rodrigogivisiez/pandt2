@@ -1,11 +1,8 @@
 package com.mygdx.potatoandtomato;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.helpers.assets.Fonts;
-import com.mygdx.potatoandtomato.helpers.assets.Texts;
-import com.mygdx.potatoandtomato.helpers.assets.Textures;
+import com.mygdx.potatoandtomato.helpers.assets.*;
 import com.mygdx.potatoandtomato.helpers.utils.Assets;
 
 public class PTGame extends Game {
@@ -18,11 +15,11 @@ public class PTGame extends Game {
 
 	@Override
 	public void create () {
-		_assets = new Assets(new Textures(), new Fonts(), new Texts());
+		_assets = new Assets(new Textures(), new Fonts(), new Texts(), new Preferences(), new Profile(), new FirebaseDB());
 		_screen = new PTScreen(_assets);
 
 		setScreen(_screen);
-		_screen.toScene(SceneEnum.MASCOT_PICK);
+		_screen.toScene(SceneEnum.BOOT);
 
 	}
 

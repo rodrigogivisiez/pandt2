@@ -6,7 +6,7 @@ import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.enums.MascotEnum;
 import com.mygdx.potatoandtomato.scenes.mascot_pick_scene.MascotPickLogic;
 import com.mygdx.potatoandtomato.scenes.mascot_pick_scene.MascotPickScene;
-import com.mygdx.potatoandtomato.scenes.social_login_scene.SocialLoginLogic;
+import helpers.T_Assets;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -19,7 +19,7 @@ public class TestMascotPick extends TestAbstract {
 
     @Test
     public void testMascotPickLogicScene(){
-        MascotPickLogic logic = new MascotPickLogic(mock(PTScreen.class), Helpers.mockAssets());
+        MascotPickLogic logic = new MascotPickLogic(mock(PTScreen.class), T_Assets.mockAssets());
         MascotPickScene scene = (MascotPickScene) logic.getScene();
         scene.choosedMascot(MascotEnum.POTATO);
         scene.choosedMascot(MascotEnum.TOMATO);

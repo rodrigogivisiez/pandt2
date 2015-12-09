@@ -1,15 +1,14 @@
 package com.mygdx.potatoandtomato.scenes.boot_scene;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.mygdx.potatoandtomato.abstractions.LogicAbstract;
-import com.mygdx.potatoandtomato.abstractions.SceneAbstract;
+import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.helpers.utils.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
@@ -24,6 +23,9 @@ public class BootScene extends SceneAbstract {
 
     Image _logoImg, _tomatoWeaponImg, _potatoWeaponImg;
     BtnEggUpright _playButton;
+    Table _socialTable;
+    Label _socialLoginLabel;
+    Image _socialIcon, _tickIcon, _crossIcon;
 
     public BootScene(Assets assets) {
         super(assets);
@@ -32,6 +34,10 @@ public class BootScene extends SceneAbstract {
     public BtnEggUpright getPlayButton() {
         return _playButton;
     }
+
+    public Image getTickIcon() { return _tickIcon; }
+
+    public Image getCrossIcon() { return _crossIcon; }
 
     @Override
     public void populateRoot() {
@@ -75,7 +81,7 @@ public class BootScene extends SceneAbstract {
                     @Override
                     public boolean act(float delta) {
                         _playButton.animate();
-                        return false;
+                        return true;
                     }
                 }));
 
@@ -104,4 +110,84 @@ public class BootScene extends SceneAbstract {
         _root.addActor(_logoImg);
         _root.addActor(_playButton);
     }
+
+    public void showLoginBox(){
+
+        _playButton.addAction(sequence(fadeOut(0.3f), new Action() {
+            @Override
+            public boolean act(float delta) {
+                _socialTable.addAction(fadeIn(0.3f));
+                return true;
+            }
+        }));
+
+        _socialTable = new Table();
+        _socialTable.setBackground(new TextureRegionDrawable(_textures.getWoodBgFat()));
+        _socialTable.setSize(300, 230);
+        _socialTable.setPosition(Positions.centerX(300), 40);
+        _socialTable.getColor().a = 0;
+
+        _socialIcon = new Image(_textures.getSocialIcon());
+
+        _socialLoginLabel = new Label(_texts.socialLogin(), _texts.getH4Style(_fonts));
+        _socialLoginLabel.setWrap(true);
+
+        _tickIcon = new Image(_textures.getTick());
+        _crossIcon = new Image(_textures.getCross());
+        Vector2 tickSize = Sizes.resizeByH(40, _textures.getTick());
+        Vector2 crossSize = Sizes.resizeByH(40, _textures.getCross());
+
+        _socialTable.add(_socialIcon).padLeft(20).padRight(10);
+        _socialTable.add(_socialLoginLabel).expandX().fillX().padRight(20).height(150);
+        _socialTable.row();
+        _socialTable.add(_tickIcon).size(tickSize.x, tickSize.y).uniformX();
+        _socialTable.add(_crossIcon).size(crossSize.x, crossSize.y).uniformX();
+
+        _root.addActor(_socialTable);
+    }
+
+    public void showSocialLoginProcessing(){
+        _socialLoginLabel.addAction(forever(sequence(fadeOut(0.5f), fadeIn(0.5f))));
+        _socialLoginLabel.setText(_texts.socialLoginProcessing());
+        _socialLoginLabel.setAlignment(Align.center);
+        _tickIcon.setVisible(false);
+        _crossIcon.setVisible(false);
+    }
+
+    public void showSocialLoginFailed(){
+        _socialLoginLabel.clearActions();
+        _socialLoginLabel.getColor().a = 1;
+        _socialLoginLabel.setText(_texts.socialLoginFailed());
+        _socialLoginLabel.setAlignment(Align.left);
+        _tickIcon.setVisible(true);
+        _crossIcon.setVisible(true);
+    }
+
+    public void showLoggingIn(){
+        _socialIcon.setDrawable(new TextureRegionDrawable(_textures.getLoginIcon()));
+        _socialLoginLabel.addAction(forever(sequence(fadeOut(0.5f), fadeIn(0.5f))));
+        _socialLoginLabel.setText(_texts.loginProcessing());
+        _socialLoginLabel.setAlignment(Align.center);
+        _tickIcon.setVisible(false);
+        _crossIcon.setVisible(false);
+    }
+
+    public void showCreatingUser(){
+        _socialIcon.setDrawable(new TextureRegionDrawable(_textures.getLoginIcon()));
+        _socialLoginLabel.addAction(forever(sequence(fadeOut(0.5f), fadeIn(0.5f))));
+        _socialLoginLabel.setText(_texts.creatingUser());
+        _socialLoginLabel.setAlignment(Align.center);
+        _tickIcon.setVisible(false);
+        _crossIcon.setVisible(false);
+    }
+
+    public void showRetrieveUserFailed(){
+        _socialIcon.setDrawable(new TextureRegionDrawable(_textures.getLoginIcon()));
+        _socialLoginLabel.clearActions();
+        _socialLoginLabel.setText(_texts.failedRetrieveProfile());
+        _socialLoginLabel.setAlignment(Align.center);
+        _tickIcon.setVisible(true);
+        _crossIcon.setVisible(true);
+    }
+
 }

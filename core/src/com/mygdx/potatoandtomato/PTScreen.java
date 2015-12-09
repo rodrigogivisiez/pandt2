@@ -3,26 +3,20 @@ package com.mygdx.potatoandtomato;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.utils.Align;
-import com.mygdx.potatoandtomato.abstractions.LogicAbstract;
+import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.assets.Fonts;
 import com.mygdx.potatoandtomato.helpers.assets.Texts;
 import com.mygdx.potatoandtomato.helpers.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.utils.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
-import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 import com.mygdx.potatoandtomato.scenes.boot_scene.BootLogic;
+import com.mygdx.potatoandtomato.scenes.game_list_scene.GameListLogic;
 import com.mygdx.potatoandtomato.scenes.mascot_pick_scene.MascotPickLogic;
-import com.mygdx.potatoandtomato.scenes.shared_actors.BtnEggUpright;
-import com.mygdx.potatoandtomato.scenes.social_login_scene.SocialLoginLogic;
-import javafx.geometry.Pos;
 
 import java.util.HashMap;
 
@@ -85,11 +79,11 @@ public class PTScreen implements Screen {
                 case BOOT:
                     logic = new BootLogic(this, _assets);
                     break;
-                case SOCIAL_LOGIN:
-                    logic = new SocialLoginLogic(this, _assets);
-                    break;
                 case MASCOT_PICK:
                     logic = new MascotPickLogic(this, _assets);
+                    break;
+                case GAME_LIST:
+                    logic = new GameListLogic(this, _assets);
                     break;
             }
             _sceneMap.put(sceneEnum, logic);

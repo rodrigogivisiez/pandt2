@@ -2,5 +2,6 @@
 <resources>
 
     <string name="app_name">potatoandtomato</string>
-
+    <string name="facebook_app_id">500529570103453</string>
+    <string name="facebook_app_name">Potato and Tomato</string>
 </resources>

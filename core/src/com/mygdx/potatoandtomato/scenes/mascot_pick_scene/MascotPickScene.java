@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.mygdx.potatoandtomato.abstractions.SceneAbstract;
+import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.MascotEnum;
 import com.mygdx.potatoandtomato.helpers.controls.Animator;
 import com.mygdx.potatoandtomato.helpers.utils.Assets;
@@ -96,7 +96,7 @@ public class MascotPickScene extends SceneAbstract {
                 public boolean act(float delta) {
                     _nextSceneButton.setVisible(true);
                     _tomatoTable.getColor().a = 0;
-                    return false;
+                    return true;
                 }
             }));
             _potatoTable.addAction(moveBy(90, 0, 0.3f));
@@ -112,7 +112,7 @@ public class MascotPickScene extends SceneAbstract {
                 public boolean act(float delta) {
                     _nextSceneButton.setVisible(true);
                     _potatoTable.getColor().a = 0;
-                    return false;
+                    return true;
                 }
             }));
             _tomatoTable.addAction(moveBy(-90, 0, 0.3f));
