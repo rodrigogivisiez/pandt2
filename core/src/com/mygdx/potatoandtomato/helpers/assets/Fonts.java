@@ -23,6 +23,13 @@ public class Fonts implements Disposable {
         return getFont(getArialBoldPath(), size, color, borderWidth, borderColor, shadowOffset, shadowColor);
     }
 
+    private String getArialPath() {
+        return "fonts/arial.ttf";
+    }
+    public BitmapFont getArial(int size, Color color, int borderWidth, Color borderColor, int shadowOffset, Color shadowColor){
+        return getFont(getArialPath(), size, color, borderWidth, borderColor, shadowOffset, shadowColor);
+    }
+
     private String getPizzaPath() {
         return "fonts/pizza.ttf";
     }

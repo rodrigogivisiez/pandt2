@@ -160,13 +160,21 @@ public class BootLogic extends LogicAbstract {
         _bootScene.showRetrieveUserFailed();
     }
 
-    private void loginPTSuccess(){
+    public void loginPTSuccess(){
         String fbUserId = _assets.getPreferences().get(Terms.FACEBOOK_USERID);
         if(fbUserId != null){
             _assets.getProfile().setFacebookUserId(fbUserId);
             _assets.getDatabase().updateProfile(_assets.getProfile());
         }
-        _screen.toScene(SceneEnum.GAME_LIST);
+
+        if(_assets.getProfile().getMascotEnum() == null){
+            _screen.toScene(SceneEnum.MASCOT_PICK);
+        }
+        else{
+            _screen.toScene(SceneEnum.GAME_LIST);
+        }
+
+
 
     }
 

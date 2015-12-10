@@ -32,7 +32,6 @@ import android.util.Log;
 
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.internal.AppEventsLoggerUtility;
-import com.facebook.internal.LockOnGetVariable;
 import com.facebook.internal.BoltsMeasurementEventListener;
 import com.facebook.internal.AttributionIdentifiers;
 import com.facebook.internal.NativeProtocol;
@@ -43,12 +42,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -71,7 +70,7 @@ public final class FacebookSdk {
     private static AtomicLong onProgressThreshold = new AtomicLong(65536);
     private static volatile boolean isDebugEnabled = BuildConfig.DEBUG;
     private static boolean isLegacyTokenUpgradeSupported = false;
-    private static LockOnGetVariable<File> cacheDir;
+    private static File cacheDir;
     private static Context applicationContext;
     private static final int DEFAULT_CORE_POOL_SIZE = 5;
     private static final int DEFAULT_MAXIMUM_POOL_SIZE = 128;
@@ -208,13 +207,7 @@ public final class FacebookSdk {
 
         BoltsMeasurementEventListener.getInstance(FacebookSdk.applicationContext);
 
-        cacheDir = new LockOnGetVariable<File>(
-                new Callable<File>() {
-                    @Override
-                    public File call() throws Exception {
-                        return FacebookSdk.applicationContext.getCacheDir();
-                    }
-                });
+        cacheDir = FacebookSdk.applicationContext.getCacheDir();
 
         FutureTask<Void> accessTokenLoadFutureTask =
                 new FutureTask<Void>(new Callable<Void>() {
@@ -371,7 +364,13 @@ public final class FacebookSdk {
     public static Executor getExecutor() {
         synchronized (LOCK) {
             if (FacebookSdk.executor == null) {
-                FacebookSdk.executor = AsyncTask.THREAD_POOL_EXECUTOR;
+                Executor executor = getAsyncTaskExecutor();
+                if (executor == null) {
+                    executor = new ThreadPoolExecutor(
+                            DEFAULT_CORE_POOL_SIZE, DEFAULT_MAXIMUM_POOL_SIZE, DEFAULT_KEEP_ALIVE,
+                            TimeUnit.SECONDS, DEFAULT_WORK_QUEUE, DEFAULT_THREAD_FACTORY);
+                }
+                FacebookSdk.executor = executor;
             }
         }
         return FacebookSdk.executor;
@@ -422,6 +421,32 @@ public final class FacebookSdk {
     public static Context getApplicationContext() {
         Validate.sdkInitialized();
         return applicationContext;
+    }
+
+    private static Executor getAsyncTaskExecutor() {
+        Field executorField = null;
+        try {
+            executorField = AsyncTask.class.getField("THREAD_POOL_EXECUTOR");
+        } catch (NoSuchFieldException e) {
+            return null;
+        }
+
+        Object executorObject = null;
+        try {
+            executorObject = executorField.get(null);
+        } catch (IllegalAccessException e) {
+            return null;
+        }
+
+        if (executorObject == null) {
+            return null;
+        }
+
+        if (!(executorObject instanceof Executor)) {
+            return null;
+        }
+
+        return (Executor) executorObject;
     }
 
     /**
@@ -593,16 +618,9 @@ public final class FacebookSdk {
         if (applicationId == null) {
             Object appId = ai.metaData.get(APPLICATION_ID_PROPERTY);
             if (appId instanceof String) {
-                String appIdString = (String) appId;
-                if (appIdString.toLowerCase(Locale.ROOT).startsWith("fb")) {
-                    applicationId = appIdString.substring(2);
-                } else {
-                    applicationId = appIdString;
-                }
+                applicationId = (String) appId;
             } else if (appId instanceof Integer) {
-                throw new FacebookException(
-                        "App Ids cannot be directly placed in the manifest." +
-                        "They must be prefixed by 'fb' or be placed in the string resource file.");
+                applicationId = appId.toString();
             }
         }
 
@@ -739,7 +757,7 @@ public final class FacebookSdk {
      */
     public static File getCacheDir() {
         Validate.sdkInitialized();
-        return cacheDir.getValue();
+        return cacheDir;
     }
 
     /**
@@ -747,7 +765,7 @@ public final class FacebookSdk {
      * @param cacheDir the cache directory
      */
     public static void setCacheDir(File cacheDir) {
-        FacebookSdk.cacheDir = new LockOnGetVariable<File>(cacheDir);
+        FacebookSdk.cacheDir = cacheDir;
     }
 
     /**

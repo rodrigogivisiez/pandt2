@@ -1,11 +1,14 @@
 package com.mygdx.potatoandtomato.absintflis.scenes;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.potatoandtomato.helpers.assets.Fonts;
 import com.mygdx.potatoandtomato.helpers.assets.Texts;
 import com.mygdx.potatoandtomato.helpers.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.utils.Assets;
+import com.mygdx.potatoandtomato.helpers.utils.Positions;
 
 /**
  * Created by SiongLeng on 4/12/2015.
@@ -31,5 +34,7 @@ public abstract class SceneAbstract {
     public abstract void populateRoot();
 
     public Actor getRoot(){ return _root; };
+
+
 
 }

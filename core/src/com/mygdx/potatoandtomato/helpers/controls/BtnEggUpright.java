@@ -1,4 +1,4 @@
-package com.mygdx.potatoandtomato.scenes.shared_actors;
+package com.mygdx.potatoandtomato.helpers.controls;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;

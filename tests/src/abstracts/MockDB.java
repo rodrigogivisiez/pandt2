@@ -28,6 +28,18 @@ public class MockDB implements IDatabase {
     }
 
     @Override
+    public void getProfileByFacebookUserId(String facebookUserId, DatabaseListener<Profile> listener) {
+        Profile p = new Profile();
+        p.setFacebookUserId(facebookUserId);
+        listener.onCallback(p, DatabaseListener.Status.SUCCESS);
+    }
+
+    @Override
+    public void updateProfile(Profile profile) {
+
+    }
+
+    @Override
     public void createUserByUserId(String userId, DatabaseListener<Profile> listener) {
         Profile p = new Profile();
         p.setUserId(userId);

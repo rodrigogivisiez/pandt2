@@ -6,6 +6,7 @@ import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.MascotEnum;
+import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.utils.Assets;
 
 /**
@@ -27,6 +28,7 @@ public class MascotPickLogic extends LogicAbstract {
                 if(!mascotChosen){
                     mascotChosen = true;
                     _scene.choosedMascot(MascotEnum.POTATO);
+                    updateMascot(MascotEnum.POTATO);
                 }
             }
         });
@@ -38,6 +40,7 @@ public class MascotPickLogic extends LogicAbstract {
                 if(!mascotChosen) {
                     mascotChosen = true;
                     _scene.choosedMascot(MascotEnum.TOMATO);
+                    updateMascot(MascotEnum.TOMATO);
                 }
             }
         });
@@ -46,6 +49,7 @@ public class MascotPickLogic extends LogicAbstract {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
+                _screen.toScene(SceneEnum.GAME_LIST);
             }
         });
     }
@@ -54,4 +58,12 @@ public class MascotPickLogic extends LogicAbstract {
     public SceneAbstract getScene() {
         return _scene;
     }
+
+    public void updateMascot(MascotEnum mascotEnum){
+        _assets.getProfile().setMascotEnum(mascotEnum);
+        _assets.getDatabase().updateProfile(_assets.getProfile());
+    }
+
+
+
 }

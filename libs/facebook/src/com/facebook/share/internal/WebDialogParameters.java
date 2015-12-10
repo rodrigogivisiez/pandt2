@@ -61,14 +61,11 @@ public class WebDialogParameters {
                 ShareConstants.WEB_DIALOG_PARAM_DESCRIPTION,
                 appGroupCreationContent.getDescription());
 
-        AppGroupCreationContent.AppGroupPrivacy privacy =
-                appGroupCreationContent.getAppGroupPrivacy();
-        if (privacy != null) {
-            Utility.putNonEmptyString(
-                    webParams,
-                    ShareConstants.WEB_DIALOG_PARAM_PRIVACY,
-                    privacy.toString().toLowerCase(Locale.ENGLISH));
-        }
+        Utility.putNonEmptyString(
+                webParams,
+                ShareConstants.WEB_DIALOG_PARAM_PRIVACY,
+                appGroupCreationContent
+                        .getAppGroupPrivacy().toString().toLowerCase(Locale.ENGLISH));
 
         return webParams;
     }
@@ -80,10 +77,10 @@ public class WebDialogParameters {
                 webParams,
                 ShareConstants.WEB_DIALOG_PARAM_MESSAGE,
                 gameRequestContent.getMessage());
-        Utility.putCommaSeparatedStringList(
+        Utility.putNonEmptyString(
                 webParams,
                 ShareConstants.WEB_DIALOG_PARAM_TO,
-                gameRequestContent.getRecipients());
+                gameRequestContent.getTo());
         Utility.putNonEmptyString(
                 webParams,
                 ShareConstants.WEB_DIALOG_PARAM_TITLE,

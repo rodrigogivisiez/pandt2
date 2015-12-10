@@ -42,6 +42,20 @@ public class Textures {
     public TextureRegion getWoodBgTall() { return getBackgroundsPack().findRegion("wood_bg_tall"); };
     public TextureRegion getWoodBgFat() { return getBackgroundsPack().findRegion("wood_bg_fat"); };
 
+    public TextureRegion getDownwardEggButton() { return getBackgroundsPack().findRegion("downward_egg_btn"); };
+    public TextureRegion getTopBarBg() { return getBackgroundsPack().findRegion("topbar_bg"); };
+    public TextureRegion getQuitIcon() { return getBackgroundsPack().findRegion("quit_icon"); };
+    public TextureRegion getGameListHighlight() { return getBackgroundsPack().findRegion("gamelist_highlight"); };
+    public TextureRegion getGameListTitleSeparator() { return getBackgroundsPack().findRegion("gamelist_title_separator"); };
+    public TextureRegion getGameListBg() { return getBackgroundsPack().findRegion("gamelist_bg"); };
+    public TextureRegion getGameListTitleBg() { return getBackgroundsPack().findRegion("gamelist_titlebg"); };
+    public TextureRegion getBtnWhiteRound() { return getBackgroundsPack().findRegion("btn_white_round"); };
+    public TextureRegion getBlackRoundedBg() { return getBackgroundsPack().findRegion("black_rounded_bg"); };
+    public TextureRegion getRatingIcon() { return getBackgroundsPack().findRegion("rating_icon"); };
+    public TextureRegion getSettingsIcon() { return getBackgroundsPack().findRegion("settings_icon"); };
+    public TextureRegion getTomatoIcon() { return getBackgroundsPack().findRegion("tomato_icon"); };
+    public TextureRegion getPotatoIcon() { return getBackgroundsPack().findRegion("potato_icon"); };
+
 
     public Array<? extends TextureRegion> getPotatoHiAnimation() {
         if(_potatoHiAnimation == null){

@@ -34,7 +34,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.util.Log;
+
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.R;
@@ -45,7 +45,6 @@ import com.facebook.appevents.AppEventsLogger;
  */
 public abstract class FacebookButtonBase extends Button {
     private String analyticsButtonCreatedEventName;
-    private String analyticsButtonTappedEventName;
     private OnClickListener externalOnClickListener;
     private OnClickListener internalOnClickListener;
     private boolean overrideCompoundPadding;
@@ -58,14 +57,12 @@ public abstract class FacebookButtonBase extends Button {
             final AttributeSet attrs,
             int defStyleAttr,
             int defStyleRes,
-            final String analyticsButtonCreatedEventName,
-            final String analyticsButtonTappedEventName) {
+            final String analyticsButtonCreatedEventName) {
         super(context, attrs, 0);
         defStyleRes = (defStyleRes == 0 ? this.getDefaultStyleResource() : defStyleRes);
         defStyleRes = (defStyleRes == 0 ? R.style.com_facebook_button : defStyleRes);
         configureButton(context, attrs, defStyleAttr, defStyleRes);
         this.analyticsButtonCreatedEventName = analyticsButtonCreatedEventName;
-        this.analyticsButtonTappedEventName = analyticsButtonTappedEventName;
     }
 
     protected abstract int getDefaultRequestCode();
@@ -199,11 +196,6 @@ public abstract class FacebookButtonBase extends Button {
     private void logButtonCreated(final Context context) {
         AppEventsLogger logger = AppEventsLogger.newLogger(context);
         logger.logSdkEvent(analyticsButtonCreatedEventName, null, null);
-    }
-
-    private void logButtonTapped(final Context context) {
-        AppEventsLogger logger = AppEventsLogger.newLogger(context);
-        logger.logSdkEvent(analyticsButtonTappedEventName, null, null);
     }
 
     private void parseBackgroundAttributes(
@@ -354,7 +346,6 @@ public abstract class FacebookButtonBase extends Button {
         super.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(final View v) {
-                logButtonTapped(getContext());
                 if (FacebookButtonBase.this.internalOnClickListener != null) {
                     FacebookButtonBase.this.internalOnClickListener.onClick(v);
                 } else if (FacebookButtonBase.this.externalOnClickListener != null) {

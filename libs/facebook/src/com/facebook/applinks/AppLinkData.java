@@ -256,16 +256,7 @@ public class AppLinkData {
         return appLinkData;
     }
 
-    /**
-     * Parses out any app link data from the Intent passed in.
-     * @param intent Intent from the Activity that started because of an app link
-     * @return AppLinkData if found. null if not.
-     */
-    public static AppLinkData createFromAlApplinkData(Intent intent) {
-        if (intent == null) {
-            return null;
-        }
-
+    private static AppLinkData createFromAlApplinkData(Intent intent) {
         Bundle applinks = intent.getBundleExtra(BUNDLE_AL_APPLINK_DATA_KEY);
         if (applinks == null) {
             return null;

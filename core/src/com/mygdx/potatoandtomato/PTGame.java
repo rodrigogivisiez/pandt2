@@ -15,11 +15,12 @@ public class PTGame extends Game {
 
 	@Override
 	public void create () {
-		_assets = new Assets(new Textures(), new Fonts(), new Texts(), new Preferences(), new Profile(), new FirebaseDB());
+		_assets = new Assets(new Textures(), new Fonts(), new Texts(),
+									new Preferences(), new Profile(), new FirebaseDB(), new Shaders());
 		_screen = new PTScreen(_assets);
 
 		setScreen(_screen);
-		_screen.toScene(SceneEnum.BOOT);
+		_screen.toScene(SceneEnum.GAME_LIST);
 
 	}
 

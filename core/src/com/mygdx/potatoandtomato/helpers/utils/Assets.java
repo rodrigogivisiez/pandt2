@@ -14,15 +14,17 @@ public class Assets {
     Preferences _preferences;
     Profile _profile;
     IDatabase _database;
+    Shaders _shaders;
 
 
-    public Assets(Textures textures, Fonts fonts, Texts texts, Preferences preferences, Profile profile, IDatabase database) {
+    public Assets(Textures textures, Fonts fonts, Texts texts, Preferences preferences, Profile profile, IDatabase database, Shaders shaders) {
         _fonts = fonts;
         _texts = texts;
         _textures = textures;
         _preferences = preferences;
         _profile = profile;
         _database = database;
+        _shaders = shaders;
     }
 
     public Fonts getFonts() {
@@ -46,4 +48,12 @@ public class Assets {
     }
 
     public IDatabase getDatabase() { return _database; }
+
+    public void setDatabase(IDatabase _database) {
+        this._database = _database;
+    }
+
+    public Shaders getShaders() {
+        return _shaders;
+    }
 }

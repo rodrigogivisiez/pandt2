@@ -22,13 +22,11 @@ package com.facebook.share.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 
 import com.facebook.CallbackManager;
 import com.facebook.FacebookButtonBase;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookSdk;
-import com.facebook.internal.FacebookDialogBase;
 import com.facebook.share.Sharer;
 import com.facebook.share.internal.ShareInternalUtility;
 import com.facebook.share.model.ShareContent;
@@ -39,23 +37,19 @@ import com.facebook.share.model.ShareContent;
 public abstract class ShareButtonBase extends FacebookButtonBase {
     private ShareContent shareContent;
     private int requestCode = 0;
-    private boolean enabledExplicitlySet = false;
 
     protected ShareButtonBase(
             final Context context,
             final AttributeSet attrs,
             final int defStyleAttr,
-            final String analyticsButtonCreatedEventName,
-            final String analyticsButtonTappedEventName) {
+            final String analyticsButtonCreatedEventName) {
         super(
                 context,
                 attrs,
                 defStyleAttr,
                 0,
-                analyticsButtonCreatedEventName,
-                analyticsButtonTappedEventName);
+                analyticsButtonCreatedEventName);
         requestCode = isInEditMode() ? 0 : getDefaultRequestCode();
-        internalSetEnabled(false);
     }
 
     /**
@@ -72,15 +66,6 @@ public abstract class ShareButtonBase extends FacebookButtonBase {
      */
     public void setShareContent(final ShareContent shareContent) {
         this.shareContent = shareContent;
-        if (!enabledExplicitlySet) {
-            internalSetEnabled(canShare());
-        }
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);
-        enabledExplicitlySet = true;
     }
 
     /**
@@ -156,24 +141,5 @@ public abstract class ShareButtonBase extends FacebookButtonBase {
         setInternalOnClickListener(this.getShareOnClickListener());
     }
 
-    protected boolean canShare() {
-        return getDialog().canShow(getShareContent());
-    }
-
-    protected OnClickListener getShareOnClickListener()  {
-        return new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                callExternalOnClickListener(v);
-                getDialog().show(getShareContent());
-            }
-        };
-    }
-
-    abstract protected FacebookDialogBase<ShareContent, Sharer.Result> getDialog();
-
-    private void internalSetEnabled(boolean enabled) {
-        setEnabled(enabled);
-        enabledExplicitlySet = false;
-    }
+    abstract protected OnClickListener getShareOnClickListener();
 }

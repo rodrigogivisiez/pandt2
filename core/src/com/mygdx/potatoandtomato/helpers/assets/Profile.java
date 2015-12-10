@@ -7,13 +7,18 @@ import com.mygdx.potatoandtomato.enums.MascotEnum;
  */
 public class Profile {
 
-    MascotEnum mascot;
     String facebookUserId;
     String facebookName;
     String userId;
-    String displayName;
+    String gameName;
+    MascotEnum mascotEnum;
 
     public Profile() {
+    }
+
+    public String getDisplayName(){
+        if(gameName == null) return facebookName;
+        else return gameName;
     }
 
     public String getUserId() {
@@ -31,4 +36,13 @@ public class Profile {
     public void setFacebookUserId(String facebookUserId) {
         this.facebookUserId = facebookUserId;
     }
+
+    public MascotEnum getMascotEnum(){
+        return mascotEnum;
+    }
+
+    public void setMascotEnum(MascotEnum mascotEnum){
+        this.mascotEnum = mascotEnum;
+    }
+
 }

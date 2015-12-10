@@ -23,7 +23,6 @@ package com.facebook.internal;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -43,8 +42,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import com.facebook.*;
 import com.facebook.R;
-
-import java.util.Locale;
 
 /**
  * com.facebook.internal is solely for the use of other packages within the Facebook SDK for
@@ -149,10 +146,6 @@ public class WebDialog extends Dialog {
         parameters.putString(ServerProtocol.DIALOG_PARAM_REDIRECT_URI, REDIRECT_URI);
 
         parameters.putString(ServerProtocol.DIALOG_PARAM_DISPLAY, DISPLAY_TOUCH);
-
-        parameters.putString(
-                ServerProtocol.DIALOG_PARAM_SDK_VERSION,
-                String.format(Locale.ROOT, "android-%s", FacebookSdk.getSdkVersion()));
 
         Uri uri = Utility.buildUri(
                 ServerProtocol.getDialogAuthority(),
@@ -475,13 +468,9 @@ public class WebDialog extends Dialog {
                 return false;
             }
             // launch non-dialog URLs in a full browser
-            try {
-                getContext().startActivity(
-                        new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-                return true;
-            } catch (ActivityNotFoundException e) {
-                return false;
-            }
+            getContext().startActivity(
+                    new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+            return true;
         }
 
         @Override

@@ -27,9 +27,6 @@ import android.view.View;
 import com.facebook.R;
 import com.facebook.internal.AnalyticsEvents;
 import com.facebook.internal.CallbackManagerImpl;
-import com.facebook.internal.FacebookDialogBase;
-import com.facebook.share.Sharer;
-import com.facebook.share.model.ShareContent;
 
 /**
  * A button to share content on Facebook.
@@ -38,13 +35,11 @@ import com.facebook.share.model.ShareContent;
 public final class ShareButton extends ShareButtonBase {
 
     public ShareButton(final Context context) {
-        super(context, null, 0, AnalyticsEvents.EVENT_SHARE_BUTTON_CREATE,
-                                AnalyticsEvents.EVENT_SHARE_BUTTON_DID_TAP);
+        super(context, null, 0, AnalyticsEvents.EVENT_SHARE_BUTTON_CREATE);
     }
 
     public ShareButton(final Context context, final AttributeSet attrs) {
-        super(context, attrs, 0, AnalyticsEvents.EVENT_SHARE_BUTTON_CREATE,
-                                 AnalyticsEvents.EVENT_SHARE_BUTTON_DID_TAP);
+        super(context, attrs, 0, AnalyticsEvents.EVENT_SHARE_BUTTON_CREATE);
     }
 
     public ShareButton(final Context context, final AttributeSet attrs, final int defStyleAttr) {
@@ -52,8 +47,7 @@ public final class ShareButton extends ShareButtonBase {
                 context,
                 attrs,
                 defStyleAttr,
-                AnalyticsEvents.EVENT_SHARE_BUTTON_CREATE,
-                AnalyticsEvents.EVENT_SHARE_BUTTON_DID_TAP);
+                AnalyticsEvents.EVENT_SHARE_BUTTON_CREATE);
     }
 
     @Override
@@ -62,18 +56,24 @@ public final class ShareButton extends ShareButtonBase {
     }
 
     @Override
-    protected int getDefaultRequestCode() {
-        return CallbackManagerImpl.RequestCodeOffset.Share.toRequestCode();
+    protected OnClickListener getShareOnClickListener()  {
+        return new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callExternalOnClickListener(v);
+                final ShareDialog dialog;
+                if (ShareButton.this.getFragment() != null) {
+                    dialog = new ShareDialog(ShareButton.this.getFragment() , getRequestCode());
+                } else {
+                    dialog = new ShareDialog(getActivity(), getRequestCode());
+                }
+                dialog.show(ShareButton.this.getShareContent());
+            }
+        };
     }
 
     @Override
-    protected FacebookDialogBase<ShareContent, Sharer.Result> getDialog() {
-        final ShareDialog dialog;
-        if (ShareButton.this.getFragment() != null) {
-            dialog = new ShareDialog(ShareButton.this.getFragment() , getRequestCode());
-        } else {
-            dialog = new ShareDialog(getActivity(), getRequestCode());
-        }
-        return dialog;
+    protected int getDefaultRequestCode() {
+        return CallbackManagerImpl.RequestCodeOffset.Share.toRequestCode();
     }
 }

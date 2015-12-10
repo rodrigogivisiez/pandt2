@@ -30,9 +30,6 @@ import android.util.Log;
 import android.util.Pair;
 
 import com.facebook.internal.*;
-import com.facebook.share.internal.OpenGraphJSONUtility;
-import com.facebook.share.model.ShareOpenGraphObject;
-import com.facebook.share.model.SharePhoto;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -122,10 +119,7 @@ public class GraphRequest {
     private static final String PICTURE_PARAM = "picture";
     private static final String CAPTION_PARAM = "caption";
 
-    public static final String FIELDS_PARAM = "fields";
-
     private static final String MIME_BOUNDARY = "3i2ndDfv2rTHiSisAbouNdArYfORhtTPEefj3q2f";
-    private static final String GRAPH_PATH_FORMAT = "%s/%s";
 
     private static String defaultBatchApplicationId;
 
@@ -1036,8 +1030,6 @@ public class GraphRequest {
      */
     public static HttpURLConnection toHttpConnection(GraphRequestBatch requests) {
 
-        validateFieldsParamForGetRequests(requests);
-
         URL url;
         try {
             if (requests.size() == 1) {
@@ -1211,7 +1203,7 @@ public class GraphRequest {
         Validate.notEmptyAndContainsNoNulls(requests, "requests");
 
         GraphRequestAsyncTask asyncTask = new GraphRequestAsyncTask(requests);
-        asyncTask.executeOnExecutor(FacebookSdk.getExecutor(), null);
+        asyncTask.executeOnSettingsExecutor();
         return asyncTask;
     }
 
@@ -1320,7 +1312,7 @@ public class GraphRequest {
 
         GraphRequestAsyncTask asyncTask = new GraphRequestAsyncTask(connection, requests);
         requests.setCallbackHandler(callbackHandler);
-        asyncTask.executeOnExecutor(FacebookSdk.getExecutor(), null);
+        asyncTask.executeOnSettingsExecutor();
         return asyncTask;
     }
 
@@ -1620,44 +1612,6 @@ public class GraphRequest {
         return true;
     }
 
-    final static boolean shouldWarnOnMissingFieldsParam(GraphRequest request) {
-        String version = request.getVersion();
-        if (Utility.isNullOrEmpty(version)) {
-            // null implies latest version
-            return true;
-        }
-        if (version.startsWith("v")) {
-            version = version.substring(1);
-        }
-        String [] versionParts = version.split("\\.");
-        // We should warn on missing "fields" params for API 2.4 and above
-        return versionParts.length >= 2
-                && Integer.parseInt(versionParts[0]) > 2
-                || (Integer.parseInt(versionParts[0]) >= 2
-                    && Integer.parseInt(versionParts[1]) >= 4);
-    }
-
-    final static void validateFieldsParamForGetRequests(GraphRequestBatch requests) {
-        // validate that the GET requests all have a "fields" param
-        for (GraphRequest request : requests) {
-            if (HttpMethod.GET.equals(request.getHttpMethod())
-                    && shouldWarnOnMissingFieldsParam(request)) {
-                Bundle params = request.getParameters();
-                if (!params.containsKey(FIELDS_PARAM)
-                        || Utility.isNullOrEmpty(params.getString(FIELDS_PARAM))) {
-                    Logger.log(
-                            LoggingBehavior.DEVELOPER_ERRORS,
-                            Log.WARN,
-                            "Request",
-                            "starting with Graph API v2.4, GET requests for /%s should contain an" +
-                            " explicit \"fields\" parameter.",
-                            request.getGraphPath()
-                    );
-                }
-            }
-        }
-    }
-
     final static void serializeToUrlConnection(
             GraphRequestBatch requests,
             HttpURLConnection connection
@@ -1808,65 +1762,6 @@ public class GraphRequest {
             Object value = graphObject.opt(key);
             boolean passByValue = isOGAction && key.equalsIgnoreCase("image");
             processGraphObjectProperty(key, value, serializer, passByValue);
-        }
-    }
-
-    /**
-     * Create an User Owned Open Graph object
-     *
-     * Use this method to create an open graph object, which can then be posted utilizing the same
-     * GraphRequest methods as other GraphRequests.
-     *
-     * @param openGraphObject The open graph object to create. Only SharePhotos with the imageUrl
-     *                        set are accepted through this helper method.
-     * @return GraphRequest for creating the given openGraphObject
-     * @throws FacebookException thrown in the case of a JSONException or in the case of invalid
-     *                           format for SharePhoto (missing imageUrl)
-     */
-
-    public static GraphRequest createOpenGraphObject(final ShareOpenGraphObject openGraphObject)
-            throws FacebookException {
-        String type = openGraphObject.getString("type");
-        if (type == null) {
-            type = openGraphObject.getString("og:type");
-        }
-
-        if (type == null) {
-            throw new FacebookException("Open graph object type cannot be null");
-        }
-        try {
-            JSONObject stagedObject = (JSONObject) OpenGraphJSONUtility.toJSONValue(
-                    openGraphObject,
-                    new OpenGraphJSONUtility.PhotoJSONProcessor() {
-                        @Override
-                        public JSONObject toJSONObject(SharePhoto photo) {
-                            Uri photoUri = photo.getImageUrl();
-                            JSONObject photoJSONObject = new JSONObject();
-                            try {
-                                photoJSONObject.put(
-                                        NativeProtocol.IMAGE_URL_KEY, photoUri.toString());
-                            } catch (Exception e) {
-                                throw new FacebookException("Unable to attach images", e);
-                            }
-                            return photoJSONObject;
-                        }
-                    });
-            String ogType = type;
-            Bundle parameters = new Bundle();
-            parameters.putString("object", stagedObject.toString());
-
-            String graphPath = String.format(
-                    Locale.ROOT, GRAPH_PATH_FORMAT,
-                    ME,
-                    "objects/" + ogType);
-            return new GraphRequest(
-                    AccessToken.getCurrentAccessToken(),
-                    graphPath,
-                    parameters,
-                    HttpMethod.POST);
-        }
-        catch(JSONException e){
-            throw new FacebookException(e.getMessage());
         }
     }
 

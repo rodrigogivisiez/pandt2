@@ -67,6 +67,7 @@ public class FacebookConnector {
 
     }
 
-
-
+    public CallbackManager getCallbackManager() {
+        return _callbackManager;
+    }
 }

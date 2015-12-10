@@ -11,11 +11,13 @@ import com.mygdx.potatoandtomato.helpers.utils.Assets;
 public class T_Assets {
 
     public static Assets mockAssets(){
-        Preferences preferences = new Preferences("potatoandtomato_test");
-        IDatabase databases = new MockDB();
-        return new Assets(new Textures(), new Fonts(), new Texts(), preferences, new Profile(), databases);
+        return mockAssets(new MockDB());
     }
 
+    public static Assets mockAssets(IDatabase databases){
+        Preferences preferences = new Preferences("potatoandtomato_test");
+        return new Assets(new Textures(), new Fonts(), new Texts(), preferences, new Profile(), databases, new Shaders());
+    }
 
 
 }

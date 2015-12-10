@@ -46,30 +46,36 @@ public class PTScreen implements Screen {
     }
 
     //call this function to change scene
-    public void toScene(SceneEnum sceneEnum){
-        LogicAbstract logic = getSceneLogic(sceneEnum);
-        Actor transitionInRoot = logic.getScene().getRoot();
+    public void toScene(final SceneEnum sceneEnum){
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                LogicAbstract logic = getSceneLogic(sceneEnum);
+                Actor transitionInRoot = logic.getScene().getRoot();
 
-        if(_currentScene == SceneEnum.NOTHING){
-            _stage.addActor(transitionInRoot);
-        }
-        else{
-            final Actor originalRoot = getSceneLogic(_currentScene).getScene().getRoot(); //remove original root
-            transitionInRoot.setPosition(Positions.getWidth(), 0);
-            _stage.addActor(transitionInRoot);
-            float duration = 0.5f;
-            transitionInRoot.addAction(moveTo(0, 0, duration));
-            originalRoot.addAction(sequence(moveBy(-Positions.getWidth(), 0, duration), new Action() {
-                @Override
-                public boolean act(float delta) {
-                    originalRoot.remove();
-                    return false;
+                if(_currentScene == SceneEnum.NOTHING){
+                    _stage.addActor(transitionInRoot);
                 }
-            }));
+                else{
+                    final Actor originalRoot = getSceneLogic(_currentScene).getScene().getRoot(); //remove original root
+                    transitionInRoot.setPosition(Positions.getWidth(), 0);
+                    _stage.addActor(transitionInRoot);
+                    float duration = 0.5f;
+                    transitionInRoot.addAction(moveTo(0, 0, duration));
+                    originalRoot.addAction(sequence(moveBy(-Positions.getWidth(), 0, duration), new Action() {
+                        @Override
+                        public boolean act(float delta) {
+                            originalRoot.remove();
+                            return false;
+                        }
+                    }));
 
-        }
+                }
 
-        _currentScene = sceneEnum;
+                _currentScene = sceneEnum;
+            }
+        });
+
     }
 
     private LogicAbstract getSceneLogic(SceneEnum sceneEnum){

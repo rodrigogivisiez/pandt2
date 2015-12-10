@@ -166,6 +166,19 @@
             <filename>cross.png</filename>
             <filename>tick.png</filename>
             <filename>login_icon.png</filename>
+            <filename>gamelist_highlight.png</filename>
+            <filename>gamelist_titlebg.png</filename>
+            <filename>gamelist_title_separator.png</filename>
+            <filename>gamelist_bg.png</filename>
+            <filename>quit_icon.png</filename>
+            <filename>topbar_bg.png</filename>
+            <filename>downward_egg_btn.png</filename>
+            <filename>btn_white_round.png</filename>
+            <filename>black_rounded_bg.png</filename>
+            <filename>rating_icon.png</filename>
+            <filename>settings_icon.png</filename>
+            <filename>tomato_icon.png</filename>
+            <filename>potato_icon.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

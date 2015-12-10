@@ -127,7 +127,7 @@ import java.util.concurrent.TimeUnit;
  * Some things to note when logging events:
  * <ul>
  * <li>
- * There is a limit on the number of unique event names an app can use, on the order of 1000.
+ * There is a limit on the number of unique event names an app can use, on the order of 300.
  * </li>
  * <li>
  * There is a limit to the number of unique parameter names in the provided parameters that can
@@ -135,7 +135,7 @@ import java.util.concurrent.TimeUnit;
  * invocations for that eventName.
  * </li>
  * <li>
- * Event names and parameter names must be between 2 and 40
+ * Event names and parameter names (the keys in the NSDictionary) must be between 2 and 40
  * characters, and must consist of alphanumeric characters, _, -, or spaces.
  * </li>
  * <li>
@@ -190,7 +190,6 @@ public class AppEventsLogger {
     private static String anonymousAppDeviceGUID;
     private static String sourceApplication;
     private static boolean isOpenedByApplink;
-    private static boolean isActivateAppEventRequested;
 
     private static class AccessTokenAppIdPair implements Serializable {
         private static final long serialVersionUID = 1L;
@@ -462,7 +461,7 @@ public class AppEventsLogger {
      *                  if none of the EVENT_NAME_* constants are applicable. Event names should be
      *                  40 characters or less, alphanumeric, and can include spaces, underscores or
      *                  hyphens, but must not have a space or hyphen as the first character.  Any
-     *                  given app should have no more than 1000 distinct event names.
+     *                  given app should have no more than ~300 distinct event names.
      */
     public void logEvent(String eventName) {
         logEvent(eventName, null);
@@ -476,7 +475,7 @@ public class AppEventsLogger {
      *                   if none of the EVENT_NAME_* constants are applicable. Event names should be
      *                   40 characters or less, alphanumeric, and can include spaces, underscores or
      *                   hyphens, but must not have a space or hyphen as the first character.  Any
-     *                   given app should have no more than 1000 distinct event names. * @param
+     *                   given app should have no more than ~300 distinct event names. * @param
      *                   eventName
      * @param valueToSum a value to associate with the event which will be summed up in Insights for
      *                   across all instances of the event, so that average values can be
@@ -494,10 +493,10 @@ public class AppEventsLogger {
      *                   if none of the EVENT_NAME_* constants are applicable. Event names should be
      *                   40 characters or less, alphanumeric, and can include spaces, underscores or
      *                   hyphens, but must not have a space or hyphen as the first character.  Any
-     *                   given app should have no more than 1000 distinct event names.
+     *                   given app should have no more than ~300 distinct event names.
      * @param parameters A Bundle of parameters to log with the event.  Insights will allow looking
      *                   at the logs of these events via different parameter values.  You can log on
-     *                   the order of 25 parameters with each distinct eventName.  It's advisable to
+     *                   the order of 10 parameters with each distinct eventName.  It's advisable to
      *                   limit the number of unique values provided for each parameter in the
      *                   thousands.  As an example, don't attempt to provide a unique
      *                   parameter value for each unique user in your app.  You won't get meaningful
@@ -516,13 +515,13 @@ public class AppEventsLogger {
      *                   if none of the EVENT_NAME_* constants are applicable. Event names should be
      *                   40 characters or less, alphanumeric, and can include spaces, underscores or
      *                   hyphens, but must not have a space or hyphen as the first character.  Any
-     *                   given app should have no more than 1000 distinct event names.
+     *                   given app should have no more than ~300 distinct event names.
      * @param valueToSum a value to associate with the event which will be summed up in Insights for
      *                   across all instances of the event, so that average values can be
      *                   determined, etc.
      * @param parameters A Bundle of parameters to log with the event.  Insights will allow looking
      *                   at the logs of these events via different parameter values.  You can log on
-     *                   the order of 25 parameters with each distinct eventName.  It's advisable to
+     *                   the order of 10 parameters with each distinct eventName.  It's advisable to
      *                   limit the number of unique values provided for each parameter in the
      *                   thousands.  As an example, don't attempt to provide a unique
      *                   parameter value for each unique user in your app.  You won't get meaningful
@@ -555,7 +554,7 @@ public class AppEventsLogger {
      *                       12.34567 becomes 12.346).
      * @param currency       Currency used to specify the amount.
      * @param parameters     Arbitrary additional information for describing this event. This should
-     *                       have no more than 24 entries, and keys should be mostly consistent from
+     *                       have no more than 10 entries, and keys should be mostly consistent from
      *                       one purchase event to the next.
      */
     public void logPurchase(BigDecimal purchaseAmount, Currency currency, Bundle parameters) {
@@ -752,19 +751,6 @@ public class AppEventsLogger {
                 flushIfNecessary();
             }
         });
-
-        // Make sure Activated_App is always before other app events
-        if (!event.isImplicit && !isActivateAppEventRequested) {
-            if (event.getName() == AppEventsConstants.EVENT_NAME_ACTIVATED_APP) {
-                isActivateAppEventRequested = true;
-            } else {
-                Logger.log(LoggingBehavior.APP_EVENTS, "AppEvents",
-                        "Warning: Please call AppEventsLogger.activateApp(...)" +
-                                "from the long-lived activity's onResume() method" +
-                                "before logging other app events."
-                );
-            }
-        }
     }
 
     static void eagerFlush() {

@@ -26,4 +26,10 @@ public class Texts {
     public String failedRetrieveProfile() { return "Failed to retrieve user profile, try again?"; }
     public String loginProcessing() { return "Logging in..."; }
 
+    public String gamesList() { return "Games List"; }
+    public String game() { return "GAME"; }
+    public String players() { return "PLAYERS"; }
+    public String host() { return "HOST"; }
+    public String newGame() { return "Create"; }
+    public String joinGame() { return "Join"; }
 }
