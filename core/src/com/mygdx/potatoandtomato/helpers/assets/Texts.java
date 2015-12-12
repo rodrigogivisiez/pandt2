@@ -32,4 +32,6 @@ public class Texts {
     public String host() { return "HOST"; }
     public String newGame() { return "Create"; }
     public String joinGame() { return "Join"; }
+
+    public String createGameTitle() { return "Create Game"; }
 }

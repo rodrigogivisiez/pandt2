@@ -1,6 +1,7 @@
 package com.mygdx.potatoandtomato.helpers.assets;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
@@ -15,7 +16,7 @@ public class Textures {
 
     private TextureAtlas getBackgroundsPack() {
         if(_backgroundsPack == null){
-            _backgroundsPack = new TextureAtlas(Gdx.files.internal("backgrounds_pack.txt"));;
+            _backgroundsPack = new TextureAtlas(Gdx.files.internal("ui.atlas"));;
         }
         return _backgroundsPack;
     }
@@ -55,6 +56,10 @@ public class Textures {
     public TextureRegion getSettingsIcon() { return getBackgroundsPack().findRegion("settings_icon"); };
     public TextureRegion getTomatoIcon() { return getBackgroundsPack().findRegion("tomato_icon"); };
     public TextureRegion getPotatoIcon() { return getBackgroundsPack().findRegion("potato_icon"); };
+    public TextureRegion getBackIcon() { return getBackgroundsPack().findRegion("back_icon"); };
+    public NinePatch getIrregularBg() { return getBackgroundsPack().createPatch("irregular_bg"); }
+    public TextureRegion getComingSoon() { return getBackgroundsPack().findRegion("coming_soon"); };
+    public NinePatch getScrollVerticalHandle() { return getBackgroundsPack().createPatch("scrollbar_handle"); }
 
 
     public Array<? extends TextureRegion> getPotatoHiAnimation() {

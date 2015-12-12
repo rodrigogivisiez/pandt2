@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.utils.Assets;
 
 /**
@@ -20,17 +21,25 @@ public class GameListLogic extends LogicAbstract {
         super(screen, assets);
         _scene = new GameListScene(assets);
 
-        for(int i = 0; i<20; i++){
-            final Actor clicked = _scene.addNewGameRow();
-            clicked.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    super.clicked(event, x, y);
-                    _scene.gameRowHighlight(clicked.getName());
-                }
-            });
-        }
+        _scene.getNewGameButton().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                _screen.toScene(SceneEnum.CREATE_GAME);
+            }
+        });
 
+    }
+
+    public void onGameCreated(){
+        final Actor clicked = _scene.addNewGameRow();
+        clicked.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                _scene.gameRowHighlight(clicked.getName());
+            }
+        });
     }
 
     @Override

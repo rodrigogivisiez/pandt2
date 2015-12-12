@@ -50,7 +50,7 @@ public class TopBar {
         _topBarTable.setBackground(new TextureRegionDrawable(_textures.getTopBarBg()));
         _topBarTable.setPosition(0, Positions.getHeight() - _barHeight);
 
-        TextureRegion iconRegion = _textures.getQuitIcon();
+        TextureRegion iconRegion = _noPreviousScene ? _textures.getQuitIcon() : _textures.getBackIcon();
         Vector2 iconSize = Sizes.resize(45, iconRegion);
         _iconImg = new Image(iconRegion);
         _iconImg.setSize(iconSize.x, iconSize.y);

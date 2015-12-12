@@ -15,6 +15,7 @@ import com.mygdx.potatoandtomato.helpers.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.utils.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.scenes.boot_scene.BootLogic;
+import com.mygdx.potatoandtomato.scenes.create_game_scene.CreateGameLogic;
 import com.mygdx.potatoandtomato.scenes.game_list_scene.GameListLogic;
 import com.mygdx.potatoandtomato.scenes.mascot_pick_scene.MascotPickLogic;
 
@@ -90,6 +91,9 @@ public class PTScreen implements Screen {
                     break;
                 case GAME_LIST:
                     logic = new GameListLogic(this, _assets);
+                    break;
+                case CREATE_GAME:
+                    logic = new CreateGameLogic(this, _assets);
                     break;
             }
             _sceneMap.put(sceneEnum, logic);

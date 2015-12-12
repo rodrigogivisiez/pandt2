@@ -3,6 +3,7 @@ package com.mygdx.potatoandtomato.scenes.game_list_scene;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
@@ -42,6 +43,10 @@ public class GameListScene extends SceneAbstract {
         _gameRowsTableMap = new HashMap<>();
     }
 
+    public BtnEggDownward getNewGameButton() {
+        return _newGameButton;
+    }
+
     @Override
     public void populateRoot() {
         new TopBar(_root, _texts.gamesList(), true, _textures, _fonts);
@@ -70,7 +75,10 @@ public class GameListScene extends SceneAbstract {
         _gameTitleTable.add(_titlePlayersLabel).padLeft(8).padRight(10).expandX().left();
 
         _scrollTable = new Table();
-        _gameListScrollPane = new ScrollPane(_scrollTable);
+        ScrollPane.ScrollPaneStyle scrollPaneStyle = new ScrollPane.ScrollPaneStyle();
+        scrollPaneStyle.vScrollKnob = new NinePatchDrawable(_textures.getScrollVerticalHandle());
+        _gameListScrollPane = new ScrollPane(_scrollTable, scrollPaneStyle);
+        _gameListScrollPane.setFadeScrollBars(false);
         //Game list Table END
 
         //Buttons START

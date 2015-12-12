@@ -20,7 +20,7 @@ public class PTGame extends Game {
 		_screen = new PTScreen(_assets);
 
 		setScreen(_screen);
-		_screen.toScene(SceneEnum.GAME_LIST);
+		_screen.toScene(SceneEnum.BOOT);
 
 	}
 
