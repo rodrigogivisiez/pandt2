@@ -9,7 +9,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         TestBoot.class,
         TestMascotPick.class,
-        TestGameList.class
+        TestGameList.class,
+        TestCreateGame.class
 })
 public class SceneSuites {
 }

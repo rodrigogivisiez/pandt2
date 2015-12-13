@@ -1,7 +1,7 @@
 package com.mygdx.potatoandtomato.absintflis.scenes;
 
 import com.mygdx.potatoandtomato.PTScreen;
-import com.mygdx.potatoandtomato.helpers.utils.Assets;
+import com.mygdx.potatoandtomato.models.Assets;
 
 /**
  * Created by SiongLeng on 2/12/2015.

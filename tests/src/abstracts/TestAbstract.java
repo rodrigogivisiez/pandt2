@@ -4,12 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.mygdx.potatoandtomato.PTGame;
-import com.mygdx.potatoandtomato.helpers.utils.Assets;
-import com.sun.javaws.Globals;
 import org.junit.BeforeClass;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import static helpers.T_Assets.mockAssets;
 import static org.mockito.Mockito.*;

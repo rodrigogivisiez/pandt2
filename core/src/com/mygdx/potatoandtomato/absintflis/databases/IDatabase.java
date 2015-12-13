@@ -1,6 +1,9 @@
 package com.mygdx.potatoandtomato.absintflis.databases;
 
-import com.mygdx.potatoandtomato.helpers.assets.Profile;
+import com.mygdx.potatoandtomato.models.Profile;
+import com.mygdx.potatoandtomato.models.Game;
+
+import java.util.ArrayList;
 
 /**
  * Created by SiongLeng on 9/12/2015.
@@ -19,5 +22,6 @@ public interface IDatabase {
 
     void createUserByUserId(String userId, DatabaseListener<Profile> listener);
 
+    void getAllGames(DatabaseListener<ArrayList<Game>> listener);
 
 }

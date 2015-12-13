@@ -3,7 +3,8 @@ package com.mygdx.potatoandtomato;
 import com.badlogic.gdx.Game;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.assets.*;
-import com.mygdx.potatoandtomato.helpers.utils.Assets;
+import com.mygdx.potatoandtomato.models.Assets;
+import com.mygdx.potatoandtomato.models.Profile;
 
 public class PTGame extends Game {
 
@@ -20,7 +21,7 @@ public class PTGame extends Game {
 		_screen = new PTScreen(_assets);
 
 		setScreen(_screen);
-		_screen.toScene(SceneEnum.BOOT);
+		_screen.toScene(SceneEnum.CREATE_GAME);
 
 	}
 

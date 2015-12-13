@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.MascotEnum;
 import com.mygdx.potatoandtomato.helpers.controls.Animator;
-import com.mygdx.potatoandtomato.helpers.utils.Assets;
+import com.mygdx.potatoandtomato.models.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;

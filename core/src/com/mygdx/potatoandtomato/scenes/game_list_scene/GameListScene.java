@@ -6,13 +6,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
-import com.mygdx.potatoandtomato.helpers.assets.Profile;
+import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.helpers.controls.BtnEggDownward;
 import com.mygdx.potatoandtomato.helpers.controls.Mascot;
 import com.mygdx.potatoandtomato.helpers.controls.TopBar;
-import com.mygdx.potatoandtomato.helpers.utils.Assets;
+import com.mygdx.potatoandtomato.models.Assets;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -92,7 +91,7 @@ public class GameListScene extends SceneAbstract {
 
         //User profile START
         _userProfileTable = new Table();
-        _userProfileTable.setBackground(new TextureRegionDrawable(_textures.getBlackRoundedBg()));
+        _userProfileTable.setBackground(new NinePatchDrawable(_textures.getBlackRoundedBg()));
 
         Profile profile = _assets.getProfile();
         _userMascot = new Mascot(profile.getMascotEnum(), _textures);

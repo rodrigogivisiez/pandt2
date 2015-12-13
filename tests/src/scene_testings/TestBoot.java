@@ -6,9 +6,8 @@ import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.enums.MascotEnum;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.helpers.assets.FirebaseDB;
-import com.mygdx.potatoandtomato.helpers.assets.Profile;
-import com.mygdx.potatoandtomato.helpers.utils.Assets;
+import com.mygdx.potatoandtomato.models.Profile;
+import com.mygdx.potatoandtomato.models.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.mygdx.potatoandtomato.scenes.boot_scene.BootLogic;
 import org.junit.After;
@@ -20,10 +19,8 @@ import org.mockito.stubbing.Answer;
 
 import static helpers.T_Assets.mockAssets;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Created by SiongLeng on 1/12/2015.

@@ -1,4 +1,4 @@
-package com.mygdx.potatoandtomato.helpers.assets;
+package com.mygdx.potatoandtomato.models;
 
 import com.mygdx.potatoandtomato.enums.MascotEnum;
 

@@ -4,11 +4,13 @@ import abstracts.TestAbstract;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.helpers.assets.FirebaseDB;
-import com.mygdx.potatoandtomato.helpers.assets.Profile;
+import com.mygdx.potatoandtomato.models.Profile;
+import com.mygdx.potatoandtomato.models.Game;
 import helpers.T_Threadings;
 import org.junit.Assert;
 import org.junit.Test;
-import org.omg.PortableInterceptor.SUCCESSFUL;
+
+import java.util.ArrayList;
 
 /**
  * Created by SiongLeng on 9/12/2015.
@@ -66,6 +68,25 @@ public class TestFireBase extends TestAbstract {
             T_Threadings.sleep(100);
         }
     }
+
+    @Test
+    public void testGetAllGames(){
+        final boolean[] waiting = {true};
+        final IDatabase databases = new FirebaseDB();
+        databases.getAllGames(new DatabaseListener<ArrayList<Game>>(Game.class) {
+            @Override
+            public void onCallback(ArrayList<Game> obj, Status st) {
+                Assert.assertEquals(false, st == Status.FAILED);
+                Assert.assertEquals(false, obj == null);
+                waiting[0] = false;
+            }
+        });
+
+        while(waiting[0]){
+            T_Threadings.sleep(100);
+        }
+    }
+
 
 
 }

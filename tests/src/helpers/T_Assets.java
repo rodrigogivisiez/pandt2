@@ -3,7 +3,8 @@ package helpers;
 import abstracts.MockDB;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.helpers.assets.*;
-import com.mygdx.potatoandtomato.helpers.utils.Assets;
+import com.mygdx.potatoandtomato.models.Assets;
+import com.mygdx.potatoandtomato.models.Profile;
 
 /**
  * Created by SiongLeng on 6/12/2015.

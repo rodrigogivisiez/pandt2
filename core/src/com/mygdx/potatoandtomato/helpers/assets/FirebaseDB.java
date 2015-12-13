@@ -3,9 +3,12 @@ package com.mygdx.potatoandtomato.helpers.assets;
 import com.firebase.client.*;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
+import com.mygdx.potatoandtomato.models.Game;
+import com.mygdx.potatoandtomato.models.Profile;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 /**
  * Created by SiongLeng on 9/12/2015.
@@ -13,6 +16,9 @@ import java.util.Map;
 public class FirebaseDB implements IDatabase {
 
     Firebase _ref;
+    private String _tableTesting = "testing";
+    private String _tableUsers = "users";
+    private String _tableGames = "games";
 
     public FirebaseDB() {
         _ref = new Firebase("https://glaring-inferno-8572.firebaseIO.com");
@@ -36,18 +42,18 @@ public class FirebaseDB implements IDatabase {
 
     @Override
     public void getProfileByUserId(String userId, DatabaseListener<Profile> listener) {
-        getSingleData(getTable_Users().child(userId), listener);
+        getSingleData(getTable(_tableUsers).child(userId), listener);
     }
 
     @Override
     public void getProfileByFacebookUserId(String facebookUserId, DatabaseListener<Profile> listener) {
-        Query queryRef = getTable_Users().orderByChild("facebookUserId").equalTo(facebookUserId);
+        Query queryRef = getTable(_tableUsers).orderByChild("facebookUserId").equalTo(facebookUserId);
         getSingleData(queryRef, listener);
     }
 
     @Override
     public void updateProfile(Profile profile) {
-        getTable_Users().child(profile.getUserId()).setValue(profile);
+        getTable(_tableUsers).child(profile.getUserId()).setValue(profile);
     }
 
     @Override
@@ -55,7 +61,7 @@ public class FirebaseDB implements IDatabase {
 
         HashMap<String, String> userMap = new HashMap<>();
         userMap.put("userId", userId);
-        getTable_Users().child(userId).setValue(userMap, new Firebase.CompletionListener() {
+        getTable(_tableUsers).child(userId).setValue(userMap, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 if (firebaseError == null) {
@@ -70,21 +76,21 @@ public class FirebaseDB implements IDatabase {
     }
 
     @Override
+    public void getAllGames(DatabaseListener<ArrayList<Game>> listener) {
+        getData(getTable(_tableGames), listener);
+    }
+
+    @Override
     public void getTestTableCount(DatabaseListener<Integer> listener) {
-        getDataCount(getTable_Test(), listener);
+        getDataCount(getTable(_tableTesting), listener);
     }
 
-    private Firebase getTable_Test(){
-        Firebase r = _ref.child("testing");;
+    private Firebase getTable(String _tableName){
+        Firebase r = _ref.child(_tableName);;
         r.onDisconnect().cancel();
         return r;
     }
 
-    private Firebase getTable_Users(){
-        Firebase r = _ref.child("users");;
-        r.onDisconnect().cancel();
-        return r;
-    }
 
     private void getDataCount(Query ref, final DatabaseListener<Integer> listener){
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -104,7 +110,7 @@ public class FirebaseDB implements IDatabase {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if(snapshot.exists()){
-                    listener.onCallback(snapshot.getValue(listener.getMyType()), DatabaseListener.Status.SUCCESS);
+                    listener.onCallback(snapshot.getValue(listener.getType()), DatabaseListener.Status.SUCCESS);
                 }
                 else{
                     listener.onCallback(null, DatabaseListener.Status.SUCCESS);
@@ -118,5 +124,23 @@ public class FirebaseDB implements IDatabase {
         });
     }
 
+    private void getData(final Query ref, final DatabaseListener listener){
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                List<Object> results = new ArrayList<Object>();
+                for(DataSnapshot postSnapShot : snapshot.getChildren()){
+                    Object newPost = postSnapShot.getValue(listener.getType());
+                    results.add(newPost);
+                }
+                listener.onCallback(results, DatabaseListener.Status.SUCCESS);
+
+            }
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                listener.onCallback(0, DatabaseListener.Status.FAILED);
+            }
+        });
+    }
 
 }

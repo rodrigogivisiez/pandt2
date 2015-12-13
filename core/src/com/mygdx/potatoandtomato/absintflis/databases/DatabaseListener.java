@@ -9,7 +9,7 @@ public abstract class DatabaseListener<T> {
         SUCCESS, FAILED
     }
 
-    private Class<T> _type;
+    private Class _type;
 
     private String id;
 
@@ -17,11 +17,11 @@ public abstract class DatabaseListener<T> {
 
     }
 
-    public DatabaseListener(Class<T> type) {
+    public DatabaseListener(Class type) {
         this._type = type;
     }
 
-    public Class<T> getMyType() {
+    public Class getType() {
         return this._type;
     }
 

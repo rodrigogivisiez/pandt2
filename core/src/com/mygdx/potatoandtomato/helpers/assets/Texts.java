@@ -34,4 +34,9 @@ public class Texts {
     public String joinGame() { return "Join"; }
 
     public String createGameTitle() { return "Create Game"; }
+
+    public String details() { return "Details"; }
+    public String screenShots() { return "Screen Shots"; }
+    public String description() { return "Description"; }
+    public String create() { return "Create NOW!"; }
 }

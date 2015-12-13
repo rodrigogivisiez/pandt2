@@ -9,7 +9,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         TestBroadCaster.class,
-        TestPositions.class
+        TestPositions.class,
+        TestDownloader.class
 })
 public class FundamentalSuites {
 }

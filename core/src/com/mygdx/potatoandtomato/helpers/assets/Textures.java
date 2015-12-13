@@ -51,7 +51,7 @@ public class Textures {
     public TextureRegion getGameListBg() { return getBackgroundsPack().findRegion("gamelist_bg"); };
     public TextureRegion getGameListTitleBg() { return getBackgroundsPack().findRegion("gamelist_titlebg"); };
     public TextureRegion getBtnWhiteRound() { return getBackgroundsPack().findRegion("btn_white_round"); };
-    public TextureRegion getBlackRoundedBg() { return getBackgroundsPack().findRegion("black_rounded_bg"); };
+    public NinePatch getBlackRoundedBg() { return getBackgroundsPack().createPatch("black_rounded_bg"); };
     public TextureRegion getRatingIcon() { return getBackgroundsPack().findRegion("rating_icon"); };
     public TextureRegion getSettingsIcon() { return getBackgroundsPack().findRegion("settings_icon"); };
     public TextureRegion getTomatoIcon() { return getBackgroundsPack().findRegion("tomato_icon"); };
@@ -60,6 +60,7 @@ public class Textures {
     public NinePatch getIrregularBg() { return getBackgroundsPack().createPatch("irregular_bg"); }
     public TextureRegion getComingSoon() { return getBackgroundsPack().findRegion("coming_soon"); };
     public NinePatch getScrollVerticalHandle() { return getBackgroundsPack().createPatch("scrollbar_handle"); }
+    public TextureRegion getNoImage() { return getBackgroundsPack().findRegion("noimage"); };
 
 
     public Array<? extends TextureRegion> getPotatoHiAnimation() {
