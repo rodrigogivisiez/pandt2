@@ -9,12 +9,14 @@ import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.models.Profile;
-import com.mygdx.potatoandtomato.models.Assets;
+import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.helpers.utils.JsonObj;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Broadcaster;
+
+import java.util.Objects;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 
@@ -31,10 +33,10 @@ public class BootLogic extends LogicAbstract {
         return _bootScene;
     }
 
-    public BootLogic(PTScreen screen, Assets assets) {
-        super(screen, assets);
+    public BootLogic(PTScreen screen, Services services, Object... objs) {
+        super(screen, services, objs);
         _fbStepPast = false;
-        _bootScene = new BootScene(assets);
+        _bootScene = new BootScene(services);
         _bootScene.getPlayButton().addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -67,7 +69,7 @@ public class BootLogic extends LogicAbstract {
     public void showLoginBox(){
         _bootScene.showLoginBox();
         attachClickListenerToSocial();
-        if(_assets.getPreferences().get(Terms.FACEBOOK_USERID) != null){    //user already logged in facebook before, log in again now
+        if(_services.getPreferences().get(Terms.FACEBOOK_USERID) != null){    //user already logged in facebook before, log in again now
             loginFacebook();
         }
     }
@@ -82,7 +84,7 @@ public class BootLogic extends LogicAbstract {
                     if(obj != null){
                         String fbUserId = obj.getString(Terms.FACEBOOK_USERID);
                         if(fbUserId != null){
-                            _assets.getPreferences().put(Terms.FACEBOOK_USERID, fbUserId);
+                            _services.getPreferences().put(Terms.FACEBOOK_USERID, fbUserId);
                             loginPT();
                             return;
                         }
@@ -98,7 +100,7 @@ public class BootLogic extends LogicAbstract {
 
     public void loginPT(){
         _fbStepPast = true;
-        String userId = _assets.getPreferences().get(Terms.USERID);
+        String userId = _services.getPreferences().get(Terms.USERID);
         if(userId != null){
             loginPTWithExistingUser(userId);
         }
@@ -110,17 +112,17 @@ public class BootLogic extends LogicAbstract {
 
     public void loginPTWithExistingUser(String userId){
         _bootScene.showLoggingIn();
-        _assets.getDatabase().getProfileByUserId(userId, new DatabaseListener<Profile>(Profile.class) {
+        _services.getDatabase().getProfileByUserId(userId, new DatabaseListener<Profile>(Profile.class) {
             @Override
             public void onCallback(Profile obj, Status st) {
                 if(st == Status.FAILED) retrieveUserFailed();
                 else{
                     if(obj == null){        //user doesnt exist in database, create a new one
-                        _assets.getPreferences().delete(Terms.USERID);
+                        _services.getPreferences().delete(Terms.USERID);
                         createNewUser();
                     }
                     else{
-                        _assets.setProfile(obj);
+                        _services.setProfile(obj);
                         loginPTSuccess();
                     }
                 }
@@ -130,7 +132,7 @@ public class BootLogic extends LogicAbstract {
 
     public void createNewUser(){
         _bootScene.showCreatingUser();
-        _assets.getDatabase().loginAnonymous(new DatabaseListener<Profile>() {
+        _services.getDatabase().loginAnonymous(new DatabaseListener<Profile>() {
             @Override
             public void onCallback(Profile obj, Status st) {
                 if(st == Status.FAILED || obj == null) retrieveUserFailed();
@@ -142,13 +144,13 @@ public class BootLogic extends LogicAbstract {
     }
 
     public void createUserByUserId(String userId){
-        _assets.getDatabase().createUserByUserId(userId, new DatabaseListener<Profile>() {
+        _services.getDatabase().createUserByUserId(userId, new DatabaseListener<Profile>() {
             @Override
             public void onCallback(Profile obj, Status st) {
                 if(st == Status.FAILED || obj == null) retrieveUserFailed();
                 else{
-                    _assets.getPreferences().put(Terms.USERID, obj.getUserId());
-                    _assets.setProfile(obj);
+                    _services.getPreferences().put(Terms.USERID, obj.getUserId());
+                    _services.setProfile(obj);
                     loginPTSuccess();
                 }
             }
@@ -160,13 +162,13 @@ public class BootLogic extends LogicAbstract {
     }
 
     public void loginPTSuccess(){
-        String fbUserId = _assets.getPreferences().get(Terms.FACEBOOK_USERID);
+        String fbUserId = _services.getPreferences().get(Terms.FACEBOOK_USERID);
         if(fbUserId != null){
-            _assets.getProfile().setFacebookUserId(fbUserId);
-            _assets.getDatabase().updateProfile(_assets.getProfile());
+            _services.getProfile().setFacebookUserId(fbUserId);
+            _services.getDatabase().updateProfile(_services.getProfile());
         }
 
-        if(_assets.getProfile().getMascotEnum() == null){
+        if(_services.getProfile().getMascotEnum() == null){
             _screen.toScene(SceneEnum.MASCOT_PICK);
         }
         else{

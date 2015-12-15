@@ -10,7 +10,8 @@ import org.junit.runners.Suite;
         TestBoot.class,
         TestMascotPick.class,
         TestGameList.class,
-        TestCreateGame.class
+        TestCreateGame.class,
+        TestPrerequisite.class
 })
 public class SceneSuites {
 }

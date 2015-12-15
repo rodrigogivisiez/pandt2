@@ -2,11 +2,10 @@ package com.mygdx.potatoandtomato.helpers.controls;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.potatoandtomato.enums.MascotEnum;
-import com.mygdx.potatoandtomato.helpers.assets.Textures;
+import com.mygdx.potatoandtomato.helpers.services.Textures;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 
 /**

@@ -1,4 +1,4 @@
-package com.mygdx.potatoandtomato.helpers.assets;
+package com.mygdx.potatoandtomato.helpers.services;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -18,6 +18,9 @@ public class Fonts implements Disposable {
 
     private String getArialBoldPath() {
         return "fonts/arial_bold.ttf";
+    }
+    public BitmapFont getArialBold(int size, Color color){
+        return getFont(getArialBoldPath(), size, color, 0, Color.BLACK, 0, Color.BLACK);
     }
     public BitmapFont getArialBold(int size, Color color, int borderWidth, Color borderColor, int shadowOffset, Color shadowColor){
         return getFont(getArialBoldPath(), size, color, borderWidth, borderColor, shadowOffset, shadowColor);

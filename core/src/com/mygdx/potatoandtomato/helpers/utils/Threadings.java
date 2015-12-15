@@ -7,9 +7,13 @@ import com.badlogic.gdx.Gdx;
  */
 public class Threadings {
 
-    public static void runInBackground(Runnable toRun){
-        new Thread(toRun).start();
+    public static Thread runInBackground(Runnable toRun){
+        Thread t = new Thread(toRun);
+        t.start();
+        return t;
     }
+
+
 
     public static void delay(final long timeInMs, final Runnable toRun){
         runInBackground(new Runnable() {
@@ -30,4 +34,15 @@ public class Threadings {
         });
     }
 
-}
+    public static void sleep(long time){
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    }
+
+

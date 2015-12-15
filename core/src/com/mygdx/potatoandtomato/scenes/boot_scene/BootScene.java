@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.helpers.controls.BtnEggUpright;
-import com.mygdx.potatoandtomato.models.Assets;
+import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 
@@ -27,8 +27,8 @@ public class BootScene extends SceneAbstract {
     Label _socialLoginLabel;
     Image _socialIcon, _tickIcon, _crossIcon;
 
-    public BootScene(Assets assets) {
-        super(assets);
+    public BootScene(Services services) {
+        super(services);
     }
 
     public BtnEggUpright getPlayButton() {

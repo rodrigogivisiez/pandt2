@@ -1,4 +1,4 @@
-package com.mygdx.potatoandtomato.helpers.assets;
+package com.mygdx.potatoandtomato.helpers.services;
 
 import com.firebase.client.*;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;

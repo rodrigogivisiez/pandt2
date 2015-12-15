@@ -6,10 +6,10 @@ import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.enums.MascotEnum;
 import com.mygdx.potatoandtomato.models.Profile;
-import com.mygdx.potatoandtomato.models.Assets;
+import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.scenes.mascot_pick_scene.MascotPickLogic;
 import com.mygdx.potatoandtomato.scenes.mascot_pick_scene.MascotPickScene;
-import helpers.T_Assets;
+import helpers.T_Services;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -26,7 +26,7 @@ public class TestMascotPick extends TestAbstract {
 
     @Test
     public void testMascotPickLogicScene(){
-        MascotPickLogic logic = new MascotPickLogic(mock(PTScreen.class), T_Assets.mockAssets());
+        MascotPickLogic logic = new MascotPickLogic(mock(PTScreen.class), T_Services.mockServices());
         MascotPickScene scene = (MascotPickScene) logic.getScene();
         scene.choosedMascot(MascotEnum.POTATO);
         scene.choosedMascot(MascotEnum.TOMATO);
@@ -38,7 +38,7 @@ public class TestMascotPick extends TestAbstract {
     public void testUpdateMascot(){
 
         final boolean[] called = {false};
-        Assets mockAssets = T_Assets.mockAssets(mock(IDatabase.class));
+        Services mockServices = T_Services.mockServices(mock(IDatabase.class));
 
         doAnswer(new Answer<Void>() {
             @Override
@@ -47,12 +47,12 @@ public class TestMascotPick extends TestAbstract {
                 if(((Profile) arguments[0]).getMascotEnum() == MascotEnum.TOMATO) called[0] = true;
                 return null;
             }
-        }).when(mockAssets.getDatabase()).updateProfile(any(Profile.class));
+        }).when(mockServices.getDatabase()).updateProfile(any(Profile.class));
 
 
-        MascotPickLogic logic = new MascotPickLogic(mock(PTScreen.class), mockAssets);
+        MascotPickLogic logic = new MascotPickLogic(mock(PTScreen.class), mockServices);
         logic.updateMascot(MascotEnum.TOMATO);
-        Assert.assertEquals(MascotEnum.TOMATO, mockAssets.getProfile().getMascotEnum());
+        Assert.assertEquals(MascotEnum.TOMATO, mockServices.getProfile().getMascotEnum());
         Assert.assertEquals(true, called[0]);
     }
 

@@ -11,7 +11,7 @@ import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.helpers.controls.BtnEggDownward;
 import com.mygdx.potatoandtomato.helpers.controls.Mascot;
 import com.mygdx.potatoandtomato.helpers.controls.TopBar;
-import com.mygdx.potatoandtomato.models.Assets;
+import com.mygdx.potatoandtomato.models.Services;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,8 +36,8 @@ public class GameListScene extends SceneAbstract {
     Table _settingsTable, _ratingTable;
     Image _settingsIconImg, _ratingIconImg;
 
-    public GameListScene(Assets assets) {
-        super(assets);
+    public GameListScene(Services services) {
+        super(services);
         _gameRowIndex = 0;
         _gameRowsTableMap = new HashMap<>();
     }
@@ -84,7 +84,7 @@ public class GameListScene extends SceneAbstract {
         _newGameButton = new BtnEggDownward(_textures, _fonts);
         _newGameButton.setText(_texts.newGame());
 
-        _joinGameButton = new BtnEggDownward(_textures, _fonts, _assets.getShaders());
+        _joinGameButton = new BtnEggDownward(_textures, _fonts, _services.getShaders());
         _joinGameButton.setText(_texts.joinGame());
         _joinGameButton.setEnabled(false);
         //Buttons END
@@ -93,7 +93,7 @@ public class GameListScene extends SceneAbstract {
         _userProfileTable = new Table();
         _userProfileTable.setBackground(new NinePatchDrawable(_textures.getBlackRoundedBg()));
 
-        Profile profile = _assets.getProfile();
+        Profile profile = _services.getProfile();
         _userMascot = new Mascot(profile.getMascotEnum(), _textures);
         _userMascot.resizeTo(50, 45);
         _usernameLabel = new Label(profile.getDisplayName(), new Label.LabelStyle(_fonts.getArialBold(17, Color.WHITE,

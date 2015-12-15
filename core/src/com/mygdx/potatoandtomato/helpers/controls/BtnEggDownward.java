@@ -15,10 +15,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.mygdx.potatoandtomato.helpers.assets.Fonts;
-import com.mygdx.potatoandtomato.helpers.assets.Shaders;
-import com.mygdx.potatoandtomato.helpers.assets.Textures;
-import com.mygdx.potatoandtomato.helpers.utils.Logs;
+import com.mygdx.potatoandtomato.helpers.services.Fonts;
+import com.mygdx.potatoandtomato.helpers.services.Shaders;
+import com.mygdx.potatoandtomato.helpers.services.Textures;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 

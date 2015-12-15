@@ -2,6 +2,7 @@ package com.mygdx.potatoandtomato.scenes.create_game_scene;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -14,7 +15,8 @@ import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.helpers.controls.BtnEggDownward;
 import com.mygdx.potatoandtomato.helpers.controls.TopBar;
 import com.mygdx.potatoandtomato.helpers.controls.WebImage;
-import com.mygdx.potatoandtomato.models.Assets;
+import com.mygdx.potatoandtomato.helpers.utils.Sizes;
+import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.models.Game;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
@@ -28,10 +30,9 @@ public class CreateGameScene extends SceneAbstract {
     Table _gameDetailsParent, _gameDetails;
     ScrollPane _gameDetailsScroll;
     BtnEggDownward _createButton;
-    boolean _first = true;
 
-    public CreateGameScene(Assets assets) {
-        super(assets);
+    public CreateGameScene(Services services) {
+        super(services);
     }
 
     @Override
@@ -54,11 +55,19 @@ public class CreateGameScene extends SceneAbstract {
         _gameDetailsScroll = new ScrollPane(_gameDetails);
         _gameDetailsScroll.setScrollingDisabled(true, false);
         _gameDetailsParent.add(_gameDetailsScroll).expand().fill();
-        _gameDetailsParent.setVisible(false);
+
+        Image pointLeftImage = new Image(_textures.getPointLeftIcon());
+        Vector2 sizes = Sizes.resize(100, _textures.getPointLeftIcon());
+        Label pickAGameLabel = new Label("Pick a game!", new Label.LabelStyle(_fonts.getPizzaFont(30, Color.WHITE, 0, Color.BLACK, 3, Color.GRAY), Color.WHITE));
+        pointLeftImage.addAction(forever(sequence(moveBy(-10, 0, 1f), moveBy(10, 0, 1f))));
+        _gameDetails.add(pointLeftImage).size(sizes.x, sizes.y);
+        _gameDetails.row();
+        _gameDetails.add(pickAGameLabel);
 
         _createButton = new BtnEggDownward(_textures, _fonts);
         _createButton.setText(_texts.create());
         _createButton.setPosition(60, -80);
+        _createButton.setVisible(false);
         _gameDetailsParent.addActor(_createButton);
 
         //right side game details END
@@ -70,7 +79,7 @@ public class CreateGameScene extends SceneAbstract {
 
     public Actor populateGame(Game game){
 
-        Actor gameIcon = game != null ? new WebImage(game.getIconUrl(), _textures) : new Image(_textures.getComingSoon());
+        Actor gameIcon = game != null ? new WebImage(game.getIconUrl(), _textures, _services.getDownloader()) : new Image(_textures.getComingSoon());
         _gameList.add(gameIcon).size(90).right().expandX().fillX().padBottom(7);
         _gameList.row();
         return gameIcon;
@@ -79,11 +88,9 @@ public class CreateGameScene extends SceneAbstract {
 
     public void showGameDetails(final Game game){
 
-        if(_first) {
-            _gameDetailsParent.setVisible(true);
-        }
 
-        _gameDetailsParent.addAction(sequence(moveBy(_first ? 0 : 260, 0, _first ? 0 : 1f, Interpolation.bounceOut), new Action() {
+
+        _gameDetailsParent.addAction(sequence(moveBy( 260, 0, 1f, Interpolation.bounceOut), new Action() {
                     @Override
                     public boolean act(float delta) {
                         changeGameDetails(game);
@@ -92,7 +99,6 @@ public class CreateGameScene extends SceneAbstract {
                 }
         ));
 
-        _first = false;
     }
 
     public void changeGameDetails(Game game){
@@ -108,7 +114,7 @@ public class CreateGameScene extends SceneAbstract {
         Label.LabelStyle contentStyle2 = new Label.LabelStyle();
         contentStyle2.font = _fonts.getArial(11, Color.WHITE, 0, Color.BLACK, 0, Color.BLACK);
 
-        WebImage gameLogo = new WebImage(game.getIconUrl(), _textures);
+        WebImage gameLogo = new WebImage(game.getIconUrl(), _textures, _services.getDownloader());
         Label detailsTitleLabel = new Label(_texts.details(), titleStyle);
 
         Table detailsTable = new Table();
@@ -125,13 +131,14 @@ public class CreateGameScene extends SceneAbstract {
         screenShotsTableParent.align(Align.left);
         screenShotsTableParent.setBackground(new NinePatchDrawable(_textures.getBlackRoundedBg()));
         Table screenShotsTable = new Table();
+        screenShotsTable.align(Align.left);
         ScrollPane screenShotsScroll = new ScrollPane(screenShotsTable);
         screenShotsScroll.setScrollingDisabled(false, true);
         screenShotsTableParent.add(screenShotsScroll).expand().fill();
 
         if(game.getScreenShots() != null){
             for(String ssUrl : game.getScreenShots()){
-                WebImage screenShotImage = new WebImage(ssUrl, _textures);
+                WebImage screenShotImage = new WebImage(ssUrl, _textures, _services.getDownloader());
                 screenShotsTable.add(screenShotImage).size(100).padRight(10);
             }
         }
@@ -160,7 +167,7 @@ public class CreateGameScene extends SceneAbstract {
 
         _gameDetails.invalidate();
         _gameDetailsScroll.setScrollPercentY(0);
-
+        _createButton.setVisible(true);
     }
 
 }

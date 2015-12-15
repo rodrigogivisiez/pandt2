@@ -7,5 +7,4 @@ public class Terms {
 
     public static String USERID = "userId";
     public static String FACEBOOK_USERID = "facebookUserId";
-
 }

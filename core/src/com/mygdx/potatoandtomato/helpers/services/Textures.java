@@ -1,4 +1,4 @@
-package com.mygdx.potatoandtomato.helpers.assets;
+package com.mygdx.potatoandtomato.helpers.services;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
@@ -16,7 +16,7 @@ public class Textures {
 
     private TextureAtlas getBackgroundsPack() {
         if(_backgroundsPack == null){
-            _backgroundsPack = new TextureAtlas(Gdx.files.internal("ui.atlas"));;
+            _backgroundsPack = new TextureAtlas(Gdx.files.internal("ui_pack.atlas"));;
         }
         return _backgroundsPack;
     }
@@ -52,6 +52,7 @@ public class Textures {
     public TextureRegion getGameListTitleBg() { return getBackgroundsPack().findRegion("gamelist_titlebg"); };
     public TextureRegion getBtnWhiteRound() { return getBackgroundsPack().findRegion("btn_white_round"); };
     public NinePatch getBlackRoundedBg() { return getBackgroundsPack().createPatch("black_rounded_bg"); };
+    public TextureRegion getBlackBg() { return getBackgroundsPack().findRegion("black_bg"); };
     public TextureRegion getRatingIcon() { return getBackgroundsPack().findRegion("rating_icon"); };
     public TextureRegion getSettingsIcon() { return getBackgroundsPack().findRegion("settings_icon"); };
     public TextureRegion getTomatoIcon() { return getBackgroundsPack().findRegion("tomato_icon"); };
@@ -61,6 +62,17 @@ public class Textures {
     public TextureRegion getComingSoon() { return getBackgroundsPack().findRegion("coming_soon"); };
     public NinePatch getScrollVerticalHandle() { return getBackgroundsPack().createPatch("scrollbar_handle"); }
     public TextureRegion getNoImage() { return getBackgroundsPack().findRegion("noimage"); };
+
+    public TextureRegion getPointLeftIcon() { return getBackgroundsPack().findRegion("point_left_icon"); }
+    public TextureRegion getCloseButton() { return getBackgroundsPack().findRegion("close_button"); }
+
+
+    public NinePatch getPopupBg() { return getBackgroundsPack().createPatch("popup_bg"); }
+    public NinePatch getButtonRed() { return getBackgroundsPack().createPatch("btn_red"); }
+    public NinePatch getButtonGreen() { return getBackgroundsPack().createPatch("btn_green"); }
+    public NinePatch getProgressBarInner() { return getBackgroundsPack().createPatch("progress_bar_inner"); }
+    public NinePatch getProgressBarBg() { return getBackgroundsPack().createPatch("progress_bar_bg"); }
+
 
 
     public Array<? extends TextureRegion> getPotatoHiAnimation() {

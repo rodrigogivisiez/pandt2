@@ -9,15 +9,16 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.helpers.assets.Fonts;
-import com.mygdx.potatoandtomato.helpers.assets.Texts;
-import com.mygdx.potatoandtomato.helpers.assets.Textures;
-import com.mygdx.potatoandtomato.models.Assets;
+import com.mygdx.potatoandtomato.helpers.services.Fonts;
+import com.mygdx.potatoandtomato.helpers.services.Texts;
+import com.mygdx.potatoandtomato.helpers.services.Textures;
+import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.scenes.boot_scene.BootLogic;
 import com.mygdx.potatoandtomato.scenes.create_game_scene.CreateGameLogic;
 import com.mygdx.potatoandtomato.scenes.game_list_scene.GameListLogic;
 import com.mygdx.potatoandtomato.scenes.mascot_pick_scene.MascotPickLogic;
+import com.mygdx.potatoandtomato.scenes.prerequisite_scene.PrerequisiteLogic;
 
 import java.util.HashMap;
 
@@ -31,27 +32,28 @@ public class PTScreen implements Screen {
     Image _bgBlueImg, _bgAutumnImg, _sunriseImg, _sunrayImg, _greenGroundImg, _autumnGroundImg;
     SceneEnum _currentScene;
     HashMap<SceneEnum, LogicAbstract> _sceneMap;
-    Assets _assets;
+    Services _services;
     Textures _textures;
     Fonts _fonts;
     Texts _texts;
     Stage _stage;
 
-    public PTScreen(Assets assets) {
-        this._assets = assets;
-        this._textures = _assets.getTextures();
-        this._fonts = _assets.getFonts();
-        this._texts = _assets.getTexts();
+    public PTScreen(Services services) {
+        this._services = services;
+        this._textures = _services.getTextures();
+        this._fonts = _services.getFonts();
+        this._texts = _services.getTexts();
         _currentScene = SceneEnum.NOTHING;
         _sceneMap = new HashMap<SceneEnum, LogicAbstract>();
     }
 
     //call this function to change scene
-    public void toScene(final SceneEnum sceneEnum){
+    public void toScene(final SceneEnum sceneEnum, final Object... objs){
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                LogicAbstract logic = getSceneLogic(sceneEnum);
+                LogicAbstract logic = getSceneLogic(sceneEnum, objs);
+                logic.init();
                 Actor transitionInRoot = logic.getScene().getRoot();
 
                 if(_currentScene == SceneEnum.NOTHING){
@@ -79,21 +81,24 @@ public class PTScreen implements Screen {
 
     }
 
-    private LogicAbstract getSceneLogic(SceneEnum sceneEnum){
+    private LogicAbstract getSceneLogic(SceneEnum sceneEnum, Object... objs){
         if(!_sceneMap.containsKey(sceneEnum)){
             LogicAbstract logic = null;
             switch (sceneEnum){
                 case BOOT:
-                    logic = new BootLogic(this, _assets);
+                    logic = new BootLogic(this, _services, objs);
                     break;
                 case MASCOT_PICK:
-                    logic = new MascotPickLogic(this, _assets);
+                    logic = new MascotPickLogic(this, _services, objs);
                     break;
                 case GAME_LIST:
-                    logic = new GameListLogic(this, _assets);
+                    logic = new GameListLogic(this, _services, objs);
                     break;
                 case CREATE_GAME:
-                    logic = new CreateGameLogic(this, _assets);
+                    logic = new CreateGameLogic(this, _services, objs);
+                    break;
+                case PREREQUISITE:
+                    logic = new PrerequisiteLogic(this, _services, objs);
                     break;
             }
             _sceneMap.put(sceneEnum, logic);

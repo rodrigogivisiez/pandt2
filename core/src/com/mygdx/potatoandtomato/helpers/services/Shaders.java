@@ -1,10 +1,8 @@
-package com.mygdx.potatoandtomato.helpers.assets;
+package com.mygdx.potatoandtomato.helpers.services;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
-import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 
 import java.util.HashMap;
 import java.util.Map;

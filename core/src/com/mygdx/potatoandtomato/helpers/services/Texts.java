@@ -1,4 +1,4 @@
-package com.mygdx.potatoandtomato.helpers.assets;
+package com.mygdx.potatoandtomato.helpers.services;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -38,5 +38,19 @@ public class Texts {
     public String details() { return "Details"; }
     public String screenShots() { return "Screen Shots"; }
     public String description() { return "Description"; }
-    public String create() { return "Create NOW!"; }
+    public String create() { return "Create"; }
+
+    public String yes() { return "Yes"; }
+    public String no() { return "No"; }
+    public String retry() { return "Retry"; }
+
+    public String loading() { return "Loading..."; }
+
+
+    public String checkGameVersion() { return "Checking game version..."; }
+    public String downloadingGame() { return "Downloading game content..."; }
+    public String creatingRoom() { return "Hosting game now..."; }
+    public String joiningRoom() { return "Joining room..."; }
+    public String gameClientFailed() { return "Failed to retrieve game client, please try again later."; }
+    public String joinRoomFailed() { return "Failed to join room, please try again later."; }
 }

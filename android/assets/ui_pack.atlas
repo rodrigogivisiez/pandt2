@@ -1,0 +1,347 @@
+
+ui_pack.png
+size: 2048,1024
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+autumn_bg
+  rotate: false
+  xy: 2, 304
+  size: 400, 710
+  orig: 400, 710
+  offset: 0, 0
+  index: -1
+back_icon
+  rotate: false
+  xy: 1108, 523
+  size: 92, 89
+  orig: 92, 89
+  offset: 0, 0
+  index: -1
+black_bg
+  rotate: false
+  xy: 806, 40
+  size: 35, 31
+  orig: 35, 31
+  offset: 0, 0
+  index: -1
+black_rounded_bg
+  rotate: false
+  xy: 806, 292
+  size: 280, 64
+  split: 9, 8, 6, 9
+  orig: 280, 64
+  offset: 0, 0
+  index: -1
+blue
+  rotate: false
+  xy: 404, 304
+  size: 400, 710
+  orig: 400, 710
+  offset: 0, 0
+  index: -1
+btn_green
+  rotate: false
+  xy: 2, 2
+  size: 120, 35
+  split: 12, 11, 14, 16
+  orig: 120, 35
+  offset: 0, 0
+  index: -1
+btn_red
+  rotate: false
+  xy: 958, 93
+  size: 120, 35
+  split: 16, 12, 13, 12
+  orig: 120, 35
+  offset: 0, 0
+  index: -1
+btn_white_round
+  rotate: false
+  xy: 1952, 939
+  size: 73, 75
+  orig: 73, 75
+  offset: 0, 0
+  index: -1
+close_button
+  rotate: false
+  xy: 1278, 467
+  size: 50, 52
+  orig: 50, 52
+  offset: 0, 0
+  index: -1
+coming_soon
+  rotate: false
+  xy: 1108, 421
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+cross
+  rotate: false
+  xy: 1854, 666
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+downward_egg_btn
+  rotate: false
+  xy: 1946, 565
+  size: 100, 99
+  orig: 100, 99
+  offset: 0, 0
+  index: -1
+empty
+  rotate: false
+  xy: 1105, 355
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+gamelist_bg
+  rotate: false
+  xy: 1844, 564
+  size: 100, 100
+  orig: 100, 100
+  offset: 0, 0
+  index: -1
+gamelist_highlight
+  rotate: false
+  xy: 1560, 541
+  size: 40, 40
+  orig: 40, 40
+  offset: 0, 0
+  index: -1
+gamelist_title_separator
+  rotate: false
+  xy: 1956, 729
+  size: 9, 37
+  orig: 9, 37
+  offset: 0, 0
+  index: -1
+gamelist_titlebg
+  rotate: false
+  xy: 1952, 890
+  size: 40, 47
+  orig: 40, 47
+  offset: 0, 0
+  index: -1
+grass_autumn
+  rotate: false
+  xy: 1208, 850
+  size: 360, 164
+  orig: 360, 164
+  offset: 0, 0
+  index: -1
+grass_green
+  rotate: false
+  xy: 404, 138
+  size: 360, 164
+  orig: 360, 164
+  offset: 0, 0
+  index: -1
+green_rounded
+  rotate: false
+  xy: 124, 11
+  size: 30, 26
+  split: 13, 15, 11, 12
+  orig: 30, 26
+  offset: 0, 0
+  index: -1
+irregular_bg
+  rotate: false
+  xy: 958, 130
+  size: 120, 160
+  split: 11, 8, 9, 11
+  pad: -1, -1, 72, 83
+  orig: 120, 160
+  offset: 0, 0
+  index: -1
+login_icon
+  rotate: false
+  xy: 1946, 466
+  size: 100, 97
+  orig: 100, 97
+  offset: 0, 0
+  index: -1
+logo
+  rotate: false
+  xy: 1208, 590
+  size: 260, 258
+  orig: 260, 258
+  offset: 0, 0
+  index: -1
+noimage
+  rotate: false
+  xy: 1652, 688
+  size: 200, 200
+  orig: 200, 200
+  offset: 0, 0
+  index: -1
+play_icon
+  rotate: false
+  xy: 1342, 520
+  size: 58, 68
+  orig: 58, 68
+  offset: 0, 0
+  index: -1
+point_left_icon
+  rotate: false
+  xy: 806, 73
+  size: 150, 75
+  orig: 150, 75
+  offset: 0, 0
+  index: -1
+popup_bg
+  rotate: false
+  xy: 1570, 890
+  size: 380, 124
+  split: 0, 380, 38, 67
+  orig: 380, 124
+  offset: 0, 0
+  index: -1
+potato_hi
+  rotate: false
+  xy: 1652, 503
+  size: 190, 183
+  orig: 190, 183
+  offset: 0, 0
+  index: -1
+potato_icon
+  rotate: false
+  xy: 1210, 454
+  size: 66, 78
+  orig: 66, 78
+  offset: 0, 0
+  index: -1
+potato_weapon
+  rotate: false
+  xy: 1994, 893
+  size: 52, 44
+  orig: 52, 44
+  offset: 0, 0
+  index: -1
+progress_bar_bg
+  rotate: false
+  xy: 1570, 868
+  size: 47, 20
+  split: 7, 6, 8, 8
+  pad: 1, 0, 0, 0
+  orig: 47, 20
+  offset: 0, 0
+  index: -1
+progress_bar_inner
+  rotate: false
+  xy: 1088, 336
+  size: 15, 20
+  split: 7, 7, 9, 10
+  pad: 0, 0, 0, 0
+  orig: 15, 20
+  offset: 0, 0
+  index: -1
+quit_icon
+  rotate: false
+  xy: 1279, 521
+  size: 61, 67
+  orig: 61, 67
+  offset: 0, 0
+  index: -1
+rating_icon
+  rotate: false
+  xy: 1459, 533
+  size: 50, 48
+  orig: 50, 48
+  offset: 0, 0
+  index: -1
+scrollbar_handle
+  rotate: false
+  xy: 1080, 152
+  size: 11, 138
+  split: 4, 5, 57, 69
+  orig: 11, 138
+  offset: 0, 0
+  index: -1
+settings_icon
+  rotate: false
+  xy: 1511, 532
+  size: 47, 49
+  orig: 47, 49
+  offset: 0, 0
+  index: -1
+social
+  rotate: false
+  xy: 1844, 492
+  size: 100, 70
+  orig: 100, 70
+  offset: 0, 0
+  index: -1
+sunray
+  rotate: false
+  xy: 806, 614
+  size: 400, 400
+  orig: 400, 400
+  offset: 0, 0
+  index: -1
+sunrise
+  rotate: false
+  xy: 2, 39
+  size: 400, 263
+  orig: 400, 263
+  offset: 0, 0
+  index: -1
+tick
+  rotate: false
+  xy: 1108, 341
+  size: 95, 78
+  orig: 95, 78
+  offset: 0, 0
+  index: -1
+tomato_hi
+  rotate: false
+  xy: 766, 150
+  size: 190, 140
+  orig: 190, 140
+  offset: 0, 0
+  index: -1
+tomato_icon
+  rotate: false
+  xy: 1202, 534
+  size: 75, 54
+  orig: 75, 54
+  offset: 0, 0
+  index: -1
+tomato_weapon
+  rotate: false
+  xy: 1402, 515
+  size: 55, 73
+  orig: 55, 73
+  offset: 0, 0
+  index: -1
+topbar_bg
+  rotate: false
+  xy: 404, 38
+  size: 400, 98
+  orig: 400, 98
+  offset: 0, 0
+  index: -1
+upright_egg_button
+  rotate: false
+  xy: 1854, 768
+  size: 120, 120
+  orig: 120, 120
+  offset: 0, 0
+  index: -1
+wood_bg_fat
+  rotate: false
+  xy: 806, 358
+  size: 300, 254
+  orig: 300, 254
+  offset: 0, 0
+  index: -1
+wood_bg_tall
+  rotate: false
+  xy: 1470, 583
+  size: 180, 265
+  orig: 180, 265
+  offset: 0, 0
+  index: -1

@@ -1,22 +1,18 @@
 package com.mygdx.potatoandtomato.helpers.controls;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Net;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Disposable;
-import com.mygdx.potatoandtomato.absintflis.DownloaderListener;
-import com.mygdx.potatoandtomato.helpers.assets.Textures;
+import com.mygdx.potatoandtomato.absintflis.downloader.DownloaderListener;
+import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
+import com.mygdx.potatoandtomato.helpers.services.Textures;
 import com.mygdx.potatoandtomato.helpers.utils.Caches;
-import com.mygdx.potatoandtomato.helpers.utils.Downloader;
+import com.mygdx.potatoandtomato.helpers.services.Downloader;
 
 /**
  * Created by SiongLeng on 13/12/2015.
@@ -26,14 +22,14 @@ public class WebImage extends Table implements Disposable {
     private String _url;
     private Texture _tempTexture;
     private Caches _caches;
-    private Downloader _downloader;
+    private IDownloader _downloader;
     private Textures _textures;
 
-    public WebImage(String url, Textures textures) {
+    public WebImage(String url, Textures textures, IDownloader downloader) {
 
         _caches = Caches.getInstance();
         _textures = textures;
-        _downloader = Downloader.getInstance();
+        _downloader = downloader;
         this._url = url;
 
         new DummyButton(this, _textures);

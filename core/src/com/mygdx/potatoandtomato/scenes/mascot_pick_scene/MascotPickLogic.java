@@ -7,7 +7,9 @@ import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.MascotEnum;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.models.Assets;
+import com.mygdx.potatoandtomato.models.Services;
+
+import java.util.Objects;
 
 /**
  * Created by SiongLeng on 6/12/2015.
@@ -17,9 +19,9 @@ public class MascotPickLogic extends LogicAbstract {
     MascotPickScene _scene;
     boolean mascotChosen;
 
-    public MascotPickLogic(PTScreen screen, Assets assets) {
-        super(screen, assets);
-        _scene = new MascotPickScene(assets);
+    public MascotPickLogic(PTScreen screen, Services services, Object... objs) {
+        super(screen, services, objs);
+        _scene = new MascotPickScene(services);
 
         _scene.getPotatoButton().addListener(new ClickListener(){
             @Override
@@ -60,8 +62,8 @@ public class MascotPickLogic extends LogicAbstract {
     }
 
     public void updateMascot(MascotEnum mascotEnum){
-        _assets.getProfile().setMascotEnum(mascotEnum);
-        _assets.getDatabase().updateProfile(_assets.getProfile());
+        _services.getProfile().setMascotEnum(mascotEnum);
+        _services.getDatabase().updateProfile(_services.getProfile());
     }
 
 

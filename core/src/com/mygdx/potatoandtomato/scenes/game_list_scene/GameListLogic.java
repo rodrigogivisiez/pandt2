@@ -7,7 +7,9 @@ import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.models.Assets;
+import com.mygdx.potatoandtomato.models.Services;
+
+import java.util.Objects;
 
 /**
  * Created by SiongLeng on 9/12/2015.
@@ -16,9 +18,9 @@ public class GameListLogic extends LogicAbstract {
 
     GameListScene _scene;
 
-    public GameListLogic(PTScreen screen, Assets assets) {
-        super(screen, assets);
-        _scene = new GameListScene(assets);
+    public GameListLogic(PTScreen screen, Services services, Object... objs) {
+        super(screen, services, objs);
+        _scene = new GameListScene(services);
 
         _scene.getNewGameButton().addListener(new ClickListener(){
             @Override

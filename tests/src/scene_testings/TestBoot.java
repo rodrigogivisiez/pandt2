@@ -7,9 +7,10 @@ import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.enums.MascotEnum;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.models.Profile;
-import com.mygdx.potatoandtomato.models.Assets;
+import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.mygdx.potatoandtomato.scenes.boot_scene.BootLogic;
+import helpers.T_Services;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -17,7 +18,7 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import static helpers.T_Assets.mockAssets;
+import static helpers.T_Services.mockServices;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -27,49 +28,49 @@ import static org.mockito.Mockito.mock;
  */
 public class TestBoot extends TestAbstract {
 
-    private Assets _assets;
+    private Services _services;
 
     @Before
     public void setUp() throws Exception {
-        _assets = mockAssets();
-        _assets.getPreferences().deleteAll();
+        _services = T_Services.mockServices();
+        _services.getPreferences().deleteAll();
     }
 
     @After
     public void tearDown() throws Exception {
-        _assets = mockAssets();
-        _assets.getPreferences().deleteAll();
+        _services = T_Services.mockServices();
+        _services.getPreferences().deleteAll();
     }
 
     @Test
     public void testBootLogicScene(){
-        BootLogic logic = new BootLogic(mock(PTScreen.class), _assets);
+        BootLogic logic = new BootLogic(mock(PTScreen.class), _services);
         Assert.assertEquals(true, ((Table) logic.getScene().getRoot()).hasChildren());
     }
 
     @Test
     public void testCreateUser(){
-        Assert.assertEquals(true, _assets.getPreferences().get(Terms.USERID) == null);
-        Assert.assertEquals(true, _assets.getProfile().getUserId() == null);
-        BootLogic logic = new BootLogic(mock(PTScreen.class), _assets);
+        Assert.assertEquals(true, _services.getPreferences().get(Terms.USERID) == null);
+        Assert.assertEquals(true, _services.getProfile().getUserId() == null);
+        BootLogic logic = new BootLogic(mock(PTScreen.class), _services);
         logic.showLoginBox();
         logic.loginPT();
-        Assert.assertEquals(false, _assets.getPreferences().get(Terms.USERID) == null);
-        Assert.assertEquals(false, _assets.getProfile().getUserId() == null);
+        Assert.assertEquals(false, _services.getPreferences().get(Terms.USERID) == null);
+        Assert.assertEquals(false, _services.getProfile().getUserId() == null);
     }
 
     @Test
     public void testLoginWithExistingUser(){
-        _assets.getPreferences().put(Terms.USERID, "999");
-        BootLogic logic = new BootLogic(mock(PTScreen.class), _assets);
+        _services.getPreferences().put(Terms.USERID, "999");
+        BootLogic logic = new BootLogic(mock(PTScreen.class), _services);
         logic.showLoginBox();
         logic.loginPT();
-        Assert.assertEquals("999", _assets.getProfile().getUserId());
+        Assert.assertEquals("999", _services.getProfile().getUserId());
     }
 
     @Test
     public void testRetrieveUserFailed(){
-        BootLogic logic = new BootLogic(mock(PTScreen.class), _assets);
+        BootLogic logic = new BootLogic(mock(PTScreen.class), _services);
         logic.showLoginBox();
         logic.retrieveUserFailed();
     }
@@ -78,7 +79,7 @@ public class TestBoot extends TestAbstract {
     public void testLoginSuccessUpdateFbId(){
 
         IDatabase mockDatabase = mock(IDatabase.class);
-        _assets.setDatabase(mockDatabase);
+        _services.setDatabase(mockDatabase);
         final boolean[] called = {false};
         doAnswer(new Answer<Void>() {
             @Override
@@ -90,10 +91,10 @@ public class TestBoot extends TestAbstract {
                 return null;
             }
         }).when(mockDatabase).updateProfile(any(Profile.class));
-        _assets.getPreferences().put(Terms.FACEBOOK_USERID, "999");
-        BootLogic logic = new BootLogic(mock(PTScreen.class), _assets);
+        _services.getPreferences().put(Terms.FACEBOOK_USERID, "999");
+        BootLogic logic = new BootLogic(mock(PTScreen.class), _services);
         logic.loginPTSuccess();
-        Assert.assertEquals("999", _assets.getProfile().getFacebookUserId());
+        Assert.assertEquals("999", _services.getProfile().getFacebookUserId());
         Assert.assertEquals(true, called[0]);
     }
 
@@ -112,8 +113,8 @@ public class TestBoot extends TestAbstract {
             }
         }).when(mockPTScreen).toScene(SceneEnum.GAME_LIST);
 
-        BootLogic logic = new BootLogic(mockPTScreen, _assets);
-        _assets.getProfile().setMascotEnum(MascotEnum.TOMATO);
+        BootLogic logic = new BootLogic(mockPTScreen, _services);
+        _services.getProfile().setMascotEnum(MascotEnum.TOMATO);
         logic.loginPTSuccess();
         Assert.assertEquals(true, called[0]);
     }
@@ -133,7 +134,7 @@ public class TestBoot extends TestAbstract {
             }
         }).when(mockPTScreen).toScene(SceneEnum.MASCOT_PICK);
 
-        BootLogic logic = new BootLogic(mockPTScreen, _assets);
+        BootLogic logic = new BootLogic(mockPTScreen, _services);
         logic.loginPTSuccess();
         Assert.assertEquals(true, called[0]);
     }

@@ -7,7 +7,7 @@ import com.mygdx.potatoandtomato.PTGame;
 import org.junit.BeforeClass;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 
-import static helpers.T_Assets.mockAssets;
+import static helpers.T_Services.mockServices;
 import static org.mockito.Mockito.*;
 
 /**

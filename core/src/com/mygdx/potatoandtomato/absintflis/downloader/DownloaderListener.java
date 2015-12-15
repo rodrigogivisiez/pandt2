@@ -1,4 +1,4 @@
-package com.mygdx.potatoandtomato.absintflis;
+package com.mygdx.potatoandtomato.absintflis.downloader;
 
 import com.badlogic.gdx.Net;
 
@@ -13,5 +13,8 @@ public abstract class DownloaderListener {
 
     public abstract void onCallback(byte[] bytes, Status st);
 
+    public void onStep(double percentage){
+
+    }
 
 }

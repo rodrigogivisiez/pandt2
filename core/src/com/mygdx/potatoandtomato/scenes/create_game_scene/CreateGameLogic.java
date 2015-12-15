@@ -7,10 +7,11 @@ import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
-import com.mygdx.potatoandtomato.models.Assets;
+import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.models.Game;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Created by SiongLeng on 11/12/2015.
@@ -20,15 +21,15 @@ public class CreateGameLogic extends LogicAbstract {
     CreateGameScene _scene;
     ArrayList<Game> _games;
 
-    public CreateGameLogic(PTScreen screen, Assets assets) {
-        super(screen, assets);
-        _scene = new CreateGameScene(_assets);
+    public CreateGameLogic(PTScreen screen, Services services, Object... objs) {
+        super(screen, services, objs);
+        _scene = new CreateGameScene(_services);
 
         getAllGames();
     }
 
     public void getAllGames(){
-        _assets.getDatabase().getAllGames(new DatabaseListener<ArrayList<Game>>(Game.class) {
+        _services.getDatabase().getAllGames(new DatabaseListener<ArrayList<Game>>(Game.class) {
             @Override
             public void onCallback(ArrayList<Game> obj, Status st) {
                 if(st == Status.SUCCESS) {

@@ -1,5 +1,8 @@
 package com.mygdx.potatoandtomato.models;
 
+import com.badlogic.gdx.Gdx;
+import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 
 /**
@@ -10,6 +13,7 @@ public class Game {
     String name, minPlayers, maxPlayers,
             iconUrl, gameUrl, assetUrl, abbr, description, version;
     ArrayList<String> screenShots;
+
 
     public Game() {
     }
@@ -93,4 +97,26 @@ public class Game {
     public void setScreenShots(ArrayList<String> screenShots) {
         this.screenShots = screenShots;
     }
+
+    @JsonIgnore
+    public String getFullBasePath(){
+        return Gdx.files.local(getBasePath()).file().getAbsolutePath();
+    }
+
+    @JsonIgnore
+    public String getBasePath(){
+        return "pt_downloads/" + this.getAbbr();
+    }
+
+    @JsonIgnore
+    public String getLocalJarPath() {
+        return getBasePath() + "/game.jar";
+    }
+
+    @JsonIgnore
+    public String getLocalAssetsPath() {
+        return getBasePath() + "/assets.zip";
+    }
+
+
 }

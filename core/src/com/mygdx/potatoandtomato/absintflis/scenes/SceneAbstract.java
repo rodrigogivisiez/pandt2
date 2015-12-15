@@ -2,10 +2,10 @@ package com.mygdx.potatoandtomato.absintflis.scenes;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.mygdx.potatoandtomato.helpers.assets.Fonts;
-import com.mygdx.potatoandtomato.helpers.assets.Texts;
-import com.mygdx.potatoandtomato.helpers.assets.Textures;
-import com.mygdx.potatoandtomato.models.Assets;
+import com.mygdx.potatoandtomato.helpers.services.Fonts;
+import com.mygdx.potatoandtomato.helpers.services.Texts;
+import com.mygdx.potatoandtomato.helpers.services.Textures;
+import com.mygdx.potatoandtomato.models.Services;
 
 /**
  * Created by SiongLeng on 4/12/2015.
@@ -14,15 +14,15 @@ public abstract class SceneAbstract {
 
     protected Textures _textures;
     protected Fonts _fonts;
-    protected Assets _assets;
+    protected Services _services;
     protected Texts _texts;
     protected Table _root;
 
-    public SceneAbstract(Assets assets) {
-        _assets = assets;
-        _textures = _assets.getTextures();
-        _fonts = _assets.getFonts();
-        _texts = _assets.getTexts();
+    public SceneAbstract(Services services) {
+        _services = services;
+        _textures = _services.getTextures();
+        _fonts = _services.getFonts();
+        _texts = _services.getTexts();
         _root = new Table();
         _root.setFillParent(true);
         populateRoot();
