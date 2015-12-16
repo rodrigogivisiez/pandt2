@@ -5,13 +5,16 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
+import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.downloader.DownloaderListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.JoinRoomListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
 import com.mygdx.potatoandtomato.helpers.utils.*;
 import com.mygdx.potatoandtomato.models.Game;
+import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
 
 import java.io.File;
@@ -25,7 +28,7 @@ public class PrerequisiteLogic extends LogicAbstract {
     Game _game;
     double _currentPercent = 0;
     double _checkVersionWeight = 1,  _downloadGameWeight = 20,
-            _downloadAssetsWeight = 70, _unzipGameWeight = 1;        //total must be 100;
+            _downloadAssetsWeight = 70, _unzipGameWeight = 1, _gameKitWeight = 8;        //total must be 100;
     Texts _texts;
     Thread _downloadThread;
     boolean _isCreating;
@@ -158,7 +161,7 @@ public class PrerequisiteLogic extends LogicAbstract {
         _services.getGamingKit().addListener(new JoinRoomListener() {
             @Override
             public void onRoomJoined(String roomId) {
-                joinRoomSuccess();
+                joinRoomSuccess(roomId);
             }
 
             @Override
@@ -185,8 +188,16 @@ public class PrerequisiteLogic extends LogicAbstract {
         _scene.failedMessage(_texts.joinRoomFailed());
     }
 
-    public void joinRoomSuccess(){
-
+    public void joinRoomSuccess(String roomId){
+        updatePercent(_gameKitWeight);
+        final Room room = new Room();
+        room.setRoomId(roomId);
+        room.setGame(_game);
+        room.setOpen(true);
+        room.setHost(_services.getProfile());
+        room.setPlaying(false);
+        room.setRoundCounter(0);
+        _screen.toScene(SceneEnum.ROOM, room);
     }
 
     private void updatePercent(final double added){

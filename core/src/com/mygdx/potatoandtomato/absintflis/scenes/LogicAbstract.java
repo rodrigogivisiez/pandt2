@@ -22,6 +22,10 @@ public abstract class LogicAbstract {
 
     }
 
+    public void onQuit(Runnable toRun){
+        toRun.run();
+    }
+
     public abstract SceneAbstract getScene();
 
 }

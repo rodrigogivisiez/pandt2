@@ -45,4 +45,11 @@ public class Profile {
         this.mascotEnum = mascotEnum;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof Profile){
+            return ((Profile) o).getUserId().equals(this.getUserId());
+        }
+        return super.equals(o);
+    }
 }

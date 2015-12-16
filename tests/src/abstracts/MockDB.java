@@ -2,8 +2,10 @@ package abstracts;
 
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
+import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Game;
+import com.mygdx.potatoandtomato.models.Room;
 
 import java.util.ArrayList;
 
@@ -66,4 +68,52 @@ public class MockDB implements IDatabase {
         gameList.add(game);
         listener.onCallback(gameList, DatabaseListener.Status.SUCCESS);
     }
+
+    @Override
+    public void saveRoom(Room room, DatabaseListener<String> listener) {
+        listener.onCallback(null, DatabaseListener.Status.SUCCESS);
+    }
+
+    @Override
+    public void monitorRoomById(String id, DatabaseListener<Room> listener) {
+
+    }
+
+    @Override
+    public void getRoomById(String id, DatabaseListener<Room> listener) {
+
+    }
+
+    @Override
+    public void changeSlotIndex(Room room, Profile user, Integer newIndex, DatabaseListener<String> listener) {
+
+    }
+
+    @Override
+    public void monitorAllRooms(ArrayList<Room> rooms, SpecialDatabaseListener<ArrayList<Room>, Room> listener) {
+
+    }
+
+    @Override
+    public void notifyRoomChanged(Room room) {
+
+    }
+
+    @Override
+    public void removeUserFromRoomOnDisconnect(Room room, Profile user, DatabaseListener<String> listener) {
+
+    }
+
+
+
+    @Override
+    public void offline() {
+
+    }
+
+    @Override
+    public void online() {
+
+    }
+
 }

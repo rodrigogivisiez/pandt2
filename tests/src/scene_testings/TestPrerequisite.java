@@ -71,7 +71,7 @@ public class TestPrerequisite extends TestAbstract {
         T_Threadings.sleep(100);
         verify(logic, times(0)).downloadFile(anyString(), any(File.class), anyDouble(), any(Runnable.class));
         verify(logic, times(1)).createRoom();
-        verify(logic, times(1)).joinRoomSuccess();
+        verify(logic, times(1)).joinRoomSuccess(anyString());
         Assert.assertEquals(_game.getVersion(), _services.getPreferences().get(_game.getAbbr()));
     }
 
@@ -82,7 +82,7 @@ public class TestPrerequisite extends TestAbstract {
         T_Threadings.sleep(100);
         verify(logic, times(2)).downloadFile(anyString(), any(File.class), anyDouble(), any(Runnable.class));
         verify(logic, times(1)).createRoom();
-        verify(logic, times(1)).joinRoomSuccess();
+        verify(logic, times(1)).joinRoomSuccess(anyString());
         Assert.assertEquals(_game.getVersion(), _services.getPreferences().get(_game.getAbbr()));
     }
 
@@ -106,7 +106,7 @@ public class TestPrerequisite extends TestAbstract {
         T_Threadings.sleep(100);
         verify(logic, times(2)).downloadFile(anyString(), any(File.class), anyDouble(), any(Runnable.class));
         verify(logic, times(2)).getGameClientFailed();
-        verify(logic, times(0)).joinRoomSuccess();
+        verify(logic, times(0)).joinRoomSuccess(anyString());
         Assert.assertEquals(null, _services.getPreferences().get(_game.getAbbr()));
     }
 
