@@ -70,4 +70,8 @@ public class Services {
     public IDownloader getDownloader() {
         return _downloader;
     }
+
+    public void setGamingKit(GamingKit _gamingKit) {
+        this._gamingKit = _gamingKit;
+    }
 }

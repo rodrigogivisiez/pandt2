@@ -20,7 +20,7 @@ back_icon
   index: -1
 black_bg
   rotate: false
-  xy: 806, 40
+  xy: 358, 6
   size: 35, 31
   orig: 35, 31
   offset: 0, 0
@@ -50,7 +50,7 @@ btn_green
   index: -1
 btn_red
   rotate: false
-  xy: 958, 93
+  xy: 124, 2
   size: 120, 35
   split: 16, 12, 13, 12
   orig: 120, 35
@@ -84,6 +84,13 @@ cross
   orig: 100, 100
   offset: 0, 0
   index: -1
+download_icon_small
+  rotate: false
+  xy: 948, 31
+  size: 15, 20
+  orig: 15, 20
+  offset: 0, 0
+  index: -1
 downward_egg_btn
   rotate: false
   xy: 1946, 565
@@ -107,7 +114,7 @@ gamelist_bg
   index: -1
 gamelist_highlight
   rotate: false
-  xy: 1560, 541
+  xy: 1598, 541
   size: 40, 40
   orig: 40, 40
   offset: 0, 0
@@ -142,7 +149,7 @@ grass_green
   index: -1
 green_rounded
   rotate: false
-  xy: 124, 11
+  xy: 1210, 426
   size: 30, 26
   split: 13, 15, 11, 12
   orig: 30, 26
@@ -187,7 +194,7 @@ play_icon
   index: -1
 point_left_icon
   rotate: false
-  xy: 806, 73
+  xy: 948, 53
   size: 150, 75
   orig: 150, 75
   offset: 0, 0
@@ -296,6 +303,13 @@ tick
   orig: 95, 78
   offset: 0, 0
   index: -1
+title_wood_board
+  rotate: false
+  xy: 246, 4
+  size: 110, 33
+  orig: 110, 33
+  offset: 0, 0
+  index: -1
 tomato_hi
   rotate: false
   xy: 766, 150
@@ -324,6 +338,13 @@ topbar_bg
   orig: 400, 98
   offset: 0, 0
   index: -1
+unknown_mascot
+  rotate: false
+  xy: 1560, 528
+  size: 36, 53
+  orig: 36, 53
+  offset: 0, 0
+  index: -1
 upright_egg_button
   rotate: false
   xy: 1854, 768
@@ -331,11 +352,27 @@ upright_egg_button
   orig: 120, 120
   offset: 0, 0
   index: -1
-wood_bg_fat
+white_rounded_bg
+  rotate: false
+  xy: 1080, 130
+  size: 26, 20
+  split: 11, 10, 8, 10
+  pad: 0, 0, 0, 0
+  orig: 26, 20
+  offset: 0, 0
+  index: -1
+wood_bg_normal
   rotate: false
   xy: 806, 358
   size: 300, 254
   orig: 300, 254
+  offset: 0, 0
+  index: -1
+wood_bg_small
+  rotate: false
+  xy: 806, 29
+  size: 140, 119
+  orig: 140, 119
   offset: 0, 0
   index: -1
 wood_bg_tall

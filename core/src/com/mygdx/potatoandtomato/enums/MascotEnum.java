@@ -5,6 +5,6 @@ package com.mygdx.potatoandtomato.enums;
  */
 public enum MascotEnum {
 
-    POTATO, TOMATO
+    POTATO, TOMATO, UNKNOWN
 
 }

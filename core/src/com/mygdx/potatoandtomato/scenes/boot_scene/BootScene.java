@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
@@ -122,7 +123,7 @@ public class BootScene extends SceneAbstract {
         }));
 
         _socialTable = new Table();
-        _socialTable.setBackground(new TextureRegionDrawable(_textures.getWoodBgFat()));
+        _socialTable.setBackground(new TextureRegionDrawable(_textures.getWoodBgNormal()));
         _socialTable.setSize(300, 230);
         _socialTable.setPosition(Positions.centerX(300), 40);
         _socialTable.getColor().a = 0;

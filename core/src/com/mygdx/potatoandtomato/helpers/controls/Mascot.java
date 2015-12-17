@@ -28,9 +28,13 @@ public class Mascot extends Image {
         if(this._mascotEnum == MascotEnum.TOMATO){
             _textureRegion = _textures.getTomatoIcon();
         }
+        else if(this._mascotEnum == MascotEnum.UNKNOWN){
+            _textureRegion = _textures.getUnknownMascotIcon();
+        }
         else{
             _textureRegion = _textures.getPotatoIcon();
         }
+
 
         this.setDrawable(new TextureRegionDrawable(_textureRegion));
     }

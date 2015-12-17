@@ -14,7 +14,7 @@ import java.io.*;
 public class Details {
 
     private String _path;
-    public String name, version, min_players, max_players, description, abbr;
+    public String name, version, min_players, max_players, description, abbr, team_min_players, team_max_players, team_count;
 
     public Details(String _path) {
         this._path = _path;
@@ -32,6 +32,9 @@ public class Details {
         min_players = (String) jsonObject.get("min_players");
         max_players = (String) jsonObject.get("max_players");
         description = (String) jsonObject.get("description");
+        team_max_players = (String) jsonObject.get("team_max_players");
+        team_min_players = (String) jsonObject.get("team_min_players");
+        team_count = (String) jsonObject.get("team_count");
         abbr = (String) jsonObject.get("abbr");
 
         if(!isNumberWith2Decimals(version) || !isInteger(min_players) || !isInteger(max_players)){
@@ -54,6 +57,9 @@ public class Details {
         obj.put("max_players", max_players);
         obj.put("version", version);
         obj.put("description", description);
+        obj.put("team_min_players", team_min_players);
+        obj.put("team_max_players", team_max_players);
+        obj.put("team_count", team_count);
         obj.put("abbr", abbr);
 
         File f = new File(_path);

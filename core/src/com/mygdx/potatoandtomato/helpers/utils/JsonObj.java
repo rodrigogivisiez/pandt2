@@ -14,6 +14,14 @@ public class JsonObj {
         _jsonObject = new JSONObject();
     }
 
+    public JsonObj(String json){
+        try {
+            _jsonObject= new JSONObject(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void put(String key, Object value){
         try {
             _jsonObject.put(key, value);
@@ -40,6 +48,20 @@ public class JsonObj {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public Integer getInt(String key){
+        try {
+            Integer value = (Integer) _jsonObject.get(key);
+            return value;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public JSONObject getJSONObject(){
+        return _jsonObject;
     }
 
 }

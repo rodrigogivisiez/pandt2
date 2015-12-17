@@ -14,6 +14,9 @@ public class UploadedGame {
     public String version;
     public String minPlayers;
     public String maxPlayers;
+    public String teamMinPlayers;
+    public String teamMaxPlayers;
+    public String teamCount;
     public String name;
     public String abbr;
     public ArrayList<String> screenShots;

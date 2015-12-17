@@ -34,15 +34,20 @@ public class Texts {
     public String joinGame() { return "Join"; }
 
     public String createGameTitle() { return "Create Game"; }
+    public String roomTitle() { return "Game Room"; }
 
     public String details() { return "Details"; }
     public String screenShots() { return "Screen Shots"; }
     public String description() { return "Description"; }
     public String create() { return "Create"; }
+    public String startGame() { return "Start Game"; }
+    public String invite() { return "Invite"; }
 
     public String yes() { return "Yes"; }
     public String no() { return "No"; }
     public String retry() { return "Retry"; }
+    public String team() { return "Team"; }
+    public String open() { return "Open"; }
 
     public String loading() { return "Loading..."; }
 
@@ -51,6 +56,13 @@ public class Texts {
     public String downloadingGame() { return "Downloading game content..."; }
     public String creatingRoom() { return "Hosting game now..."; }
     public String joiningRoom() { return "Joining room..."; }
+    public String lookingForServer() { return "Looking for server..."; }
+    public String locatingRoom() { return "Locating room server..."; }
     public String gameClientFailed() { return "Failed to retrieve game client, please try again later."; }
     public String joinRoomFailed() { return "Failed to join room, please try again later."; }
+    public String hostLeft() { return "Room host has left the room, this room will now be dismissed."; }
+    public String roomError() { return "Unexpected error occurred, you will be dismissed from this room now."; }
+
+    public String notEnoughPlayers() { return "You need at least %s players each team to start the game."; }
+    public String stillDownloadingClient() { return "Please wait until all players has downloaded game content."; }
 }

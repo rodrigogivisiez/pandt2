@@ -12,10 +12,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
 import com.mygdx.potatoandtomato.helpers.services.Fonts;
 import com.mygdx.potatoandtomato.helpers.services.Textures;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
+
+import java.util.AbstractList;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -25,7 +28,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 public class Confirm {
 
     public enum Type{
-        YESNO
+        YESNO, YES
     }
 
     Table _root;
@@ -38,11 +41,17 @@ public class Confirm {
     DummyButton _buttonYes, _buttonNo;
     ConfirmResultListener _listener;
 
-    public Confirm(Table root, Textures textures, Fonts fonts, String msg) {
+    public Confirm(Table root, Textures textures, Fonts fonts, String msg, Type type) {
         _root = root;
         _textures = textures;
         _msg = msg;
         _fonts = fonts;
+        _type = type;
+    }
+
+    public void show(String text){
+        _msg = text;
+        show();
     }
 
     public void show(){
@@ -58,8 +67,10 @@ public class Confirm {
         msgTable.setBackground(new NinePatchDrawable(_textures.getPopupBg()));
         msgTable.getColor().a = 0;
         Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = _fonts.getPizzaFont(25, Color.WHITE, 0, Color.BLACK, 2, Color.GRAY);
+        labelStyle.font = _fonts.getPizzaFont(21, Color.WHITE, 1, Color.BLACK, 2, Color.GRAY);
         Label messageLabel = new Label(_msg, labelStyle);
+        messageLabel.setWrap(true);
+        messageLabel.setAlignment(Align.center);
 
         _closeButton = new Image(_textures.getCloseButton());
 
@@ -79,10 +90,18 @@ public class Confirm {
 
         msgTable.add(_closeButton).expandX().right().padTop(-50).colspan(2);
         msgTable.row();
-        msgTable.add(messageLabel).padTop(10).padBottom(20).colspan(2);
+        msgTable.add(messageLabel).padTop(10).padBottom(20).colspan(2).expandX().fillX().padLeft(10).padRight(10);
         msgTable.row();
-        msgTable.add(buttonYesTable).uniformX();
-        msgTable.add(buttonNoTable).uniformX();
+
+        if(_type == Type.YESNO){
+            msgTable.add(buttonYesTable).uniformX();
+            msgTable.add(buttonNoTable).uniformX();
+        }
+        else if(_type == Type.YES){
+            msgTable.add(buttonYesTable).center().expandX();
+        }
+
+
 
         _confirmRoot.addAction(sequence(fadeIn(0.3f), new Action() {
             @Override

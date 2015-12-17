@@ -10,12 +10,36 @@ import java.util.ArrayList;
  */
 public class Game {
 
-    String name, minPlayers, maxPlayers,
+    String name, minPlayers, maxPlayers, teamMinPlayers, teamMaxPlayers, teamCount,
             iconUrl, gameUrl, assetUrl, abbr, description, version;
     ArrayList<String> screenShots;
 
 
     public Game() {
+    }
+
+    public String getTeamMinPlayers() {
+        return teamMinPlayers;
+    }
+
+    public void setTeamMinPlayers(String teamMinPlayers) {
+        this.teamMinPlayers = teamMinPlayers;
+    }
+
+    public String getTeamCount() {
+        return teamCount;
+    }
+
+    public void setTeamCount(String teamCount) {
+        this.teamCount = teamCount;
+    }
+
+    public String getTeamMaxPlayers() {
+        return teamMaxPlayers;
+    }
+
+    public void setTeamMaxPlayers(String teamMaxPlayers) {
+        this.teamMaxPlayers = teamMaxPlayers;
     }
 
     public String getName() {

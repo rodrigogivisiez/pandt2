@@ -29,6 +29,9 @@ public class Fonts implements Disposable {
     private String getArialPath() {
         return "fonts/arial.ttf";
     }
+    public BitmapFont getArial(int size, Color color){
+        return getFont(getArialPath(), size, color, 0, Color.BLACK, 0, Color.BLACK);
+    }
     public BitmapFont getArial(int size, Color color, int borderWidth, Color borderColor, int shadowOffset, Color shadowColor){
         return getFont(getArialPath(), size, color, borderWidth, borderColor, shadowOffset, shadowColor);
     }

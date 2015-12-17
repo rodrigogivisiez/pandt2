@@ -91,6 +91,9 @@ public class Room {
 
     @JsonIgnore
     public void addUser(Profile user){
+
+        if(roomUsers == null) roomUsers = new HashMap<>();
+
         for(int i = 0; i < Integer.valueOf(game.getMaxPlayers()); i++){
             boolean occupied = false;
             for (RoomUser roomUser : roomUsers.values()) {
@@ -107,6 +110,83 @@ public class Room {
                 break;
             }
         }
+    }
+
+    @JsonIgnore
+    public void addRoomUser(Profile user, int index){
+        RoomUser r = new RoomUser();
+        r.setProfile(user);
+        r.setSlotIndex(index);
+        roomUsers.put(user.getUserId(), r);
+    }
+
+    @JsonIgnore
+    public RoomUser getRoomUserBySlotIndex(int slotIndex){
+        for(RoomUser roomUser : this.getRoomUsers().values()){
+            if(roomUser.getSlotIndex() == slotIndex){
+                return roomUser;
+            }
+        }
+        return null;
+    }
+
+    @JsonIgnore
+    public int getSlotIndexByUserId(Profile user){
+        for(RoomUser roomUser : this.getRoomUsers().values()){
+            if(roomUser.getProfile().equals(user)){
+                return roomUser.getSlotIndex();
+            }
+        }
+        return -1;
+    }
+
+    @JsonIgnore
+    public boolean changeTeam(int toTeam, Profile user){
+        int startIndex = toTeam * Integer.valueOf(this.getGame().getTeamMaxPlayers());
+        boolean changed = false;
+        int userSlotIndex = getSlotIndexByUserId(user);
+
+        if(userSlotIndex != -1 && userSlotIndex >= startIndex && userSlotIndex + 1 < ((toTeam + 1) * Integer.valueOf(this.getGame().getTeamMaxPlayers()))){
+            if(getRoomUserBySlotIndex(userSlotIndex+1) == null){
+                changed = true;
+                addRoomUser(user, userSlotIndex + 1);
+            }
+        }
+
+        if(!changed){
+            for(int i = 0; i< Integer.valueOf(this.getGame().getTeamMaxPlayers()); i++){
+                if(getRoomUserBySlotIndex(startIndex) == null){
+                    changed = true;
+                    addRoomUser(user, startIndex);
+                    break;
+                }
+                startIndex++;
+            }
+        }
+
+        return changed;
+    }
+
+    @JsonIgnore
+    public boolean checkAllTeamHasMinPlayers(){
+        for(int i = 0; i < Integer.valueOf(this.getGame().getTeamCount()); i++){
+            int playerCount = 0;
+
+            int startIndex = i * Integer.valueOf(this.getGame().getTeamMaxPlayers());
+            int endIndex = startIndex + Integer.valueOf(this.getGame().getTeamMaxPlayers());
+
+            for(int q = startIndex; q < endIndex; q++){
+                if(getRoomUserBySlotIndex(q) != null){
+                    playerCount++;
+                }
+            }
+
+            if(playerCount < Integer.valueOf(this.getGame().getTeamMinPlayers())){
+                return false;
+            }
+        }
+
+        return true;
     }
 
 

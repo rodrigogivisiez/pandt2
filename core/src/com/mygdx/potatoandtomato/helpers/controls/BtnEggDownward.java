@@ -68,7 +68,7 @@ public class BtnEggDownward extends Table {
 
     public void setText(String text){
         Label.LabelStyle textLabelStyle = new Label.LabelStyle();
-        textLabelStyle.font = _fonts.getPizzaFont(22, Color.WHITE, 0, Color.BLACK, 1, Color.GRAY);
+        textLabelStyle.font = _fonts.getPizzaFont(22, Color.WHITE, 1, Color.BLACK, 1, Color.GRAY);
         _textLabel = new Label(text, textLabelStyle);
         _textLabel.setWrap(true);
         _textLabel.setAlignment(Align.center);

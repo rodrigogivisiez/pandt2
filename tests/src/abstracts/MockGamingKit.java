@@ -26,4 +26,9 @@ public class MockGamingKit extends GamingKit {
     public void leaveRoom() {
 
     }
+
+    @Override
+    public void updateRoomMates(int updateRoomMatesCode, String msg) {
+
+    }
 }

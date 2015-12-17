@@ -10,10 +10,12 @@ public abstract class GamingKit {
 
     private Array<ConnectionChangedListener> _connectionChangedListeners;
     private Array<JoinRoomListener> _joinRoomListeners;
+    private Array<UpdateRoomMatesListener> _updateRoomMatesListeners;
 
     public GamingKit() {
         _connectionChangedListeners = new Array<>();
         _joinRoomListeners = new Array<>();
+        _updateRoomMatesListeners = new Array<>();
     }
 
     public void addListener(Object listener){
@@ -23,6 +25,9 @@ public abstract class GamingKit {
         else if(listener instanceof JoinRoomListener){
             _joinRoomListeners.add((JoinRoomListener) listener);
         }
+        else if(listener instanceof UpdateRoomMatesListener){
+            _updateRoomMatesListeners.add((UpdateRoomMatesListener) listener);
+        }
     }
 
     public void removeListener(Object listener){
@@ -31,6 +36,9 @@ public abstract class GamingKit {
         }
         else if(listener instanceof JoinRoomListener){
             _joinRoomListeners.removeValue((JoinRoomListener) listener, false);
+        }
+        else if(listener instanceof UpdateRoomMatesListener){
+            _updateRoomMatesListeners.removeValue((UpdateRoomMatesListener) listener, false);
         }
     }
 
@@ -67,6 +75,17 @@ public abstract class GamingKit {
         });
     }
 
+    public void onUpdateRoomMatesReceived(final int code, final String msg, final String senderId){
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                for(UpdateRoomMatesListener listener : _updateRoomMatesListeners){
+                    listener.onUpdateRoomMatesReceived(code, msg, senderId);
+                }
+            }
+        });
+    }
+
 
     public abstract void connect(String username);
 
@@ -75,5 +94,7 @@ public abstract class GamingKit {
     public abstract void joinRoom(String roomId);
 
     public abstract void leaveRoom();
+
+    public abstract void updateRoomMates(int updateRoomMatesCode, String msg);
 
 }

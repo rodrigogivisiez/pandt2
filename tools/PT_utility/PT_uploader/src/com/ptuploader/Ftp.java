@@ -38,6 +38,9 @@ public class Ftp {
         uploadedGame.abbr = details.abbr;
         uploadedGame.iconUrl = uploadFile(new File(paths.icon), path);
         uploadedGame.name = details.name;
+        uploadedGame.teamMaxPlayers = details.team_max_players;
+        uploadedGame.teamMinPlayers = details.team_min_players;
+        uploadedGame.teamCount = details.team_count;
 
         ArrayList<String> screenShotsArr = new ArrayList<>();
         for(File f : screenShots.getAllScreenShotsPath()){

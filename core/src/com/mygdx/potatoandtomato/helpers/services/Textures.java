@@ -40,8 +40,10 @@ public class Textures {
     public TextureRegion getLoginIcon() { return getBackgroundsPack().findRegion("login_icon"); };
     public TextureRegion getTick() { return getBackgroundsPack().findRegion("tick"); };
     public TextureRegion getCross() { return getBackgroundsPack().findRegion("cross"); };
+    public TextureRegion getWoodBgSmall() { return getBackgroundsPack().findRegion("wood_bg_small"); };
     public TextureRegion getWoodBgTall() { return getBackgroundsPack().findRegion("wood_bg_tall"); };
-    public TextureRegion getWoodBgFat() { return getBackgroundsPack().findRegion("wood_bg_fat"); };
+    public TextureRegion getWoodBgNormal() { return getBackgroundsPack().findRegion("wood_bg_normal"); };
+    public TextureRegion getWoodBgTitle() { return getBackgroundsPack().findRegion("title_wood_board"); };
 
     public TextureRegion getDownwardEggButton() { return getBackgroundsPack().findRegion("downward_egg_btn"); };
     public TextureRegion getTopBarBg() { return getBackgroundsPack().findRegion("topbar_bg"); };
@@ -57,6 +59,7 @@ public class Textures {
     public TextureRegion getSettingsIcon() { return getBackgroundsPack().findRegion("settings_icon"); };
     public TextureRegion getTomatoIcon() { return getBackgroundsPack().findRegion("tomato_icon"); };
     public TextureRegion getPotatoIcon() { return getBackgroundsPack().findRegion("potato_icon"); };
+    public TextureRegion getUnknownMascotIcon() { return getBackgroundsPack().findRegion("unknown_mascot"); };
     public TextureRegion getBackIcon() { return getBackgroundsPack().findRegion("back_icon"); };
     public NinePatch getIrregularBg() { return getBackgroundsPack().createPatch("irregular_bg"); }
     public TextureRegion getComingSoon() { return getBackgroundsPack().findRegion("coming_soon"); };
@@ -65,6 +68,7 @@ public class Textures {
 
     public TextureRegion getPointLeftIcon() { return getBackgroundsPack().findRegion("point_left_icon"); }
     public TextureRegion getCloseButton() { return getBackgroundsPack().findRegion("close_button"); }
+    public TextureRegion getDownloadIconSmall() { return getBackgroundsPack().findRegion("download_icon_small"); }
 
 
     public NinePatch getPopupBg() { return getBackgroundsPack().createPatch("popup_bg"); }
@@ -72,6 +76,7 @@ public class Textures {
     public NinePatch getButtonGreen() { return getBackgroundsPack().createPatch("btn_green"); }
     public NinePatch getProgressBarInner() { return getBackgroundsPack().createPatch("progress_bar_inner"); }
     public NinePatch getProgressBarBg() { return getBackgroundsPack().createPatch("progress_bar_bg"); }
+    public NinePatch getWhiteRoundedBg() { return getBackgroundsPack().createPatch("white_rounded_bg"); }
 
 
 

@@ -45,10 +45,37 @@ public class Profile {
         this.mascotEnum = mascotEnum;
     }
 
+    public String getFacebookName() {
+        return facebookName;
+    }
+
+    public void setFacebookName(String facebookName) {
+        this.facebookName = facebookName;
+    }
+
+    public String getGameName() {
+        return gameName;
+    }
+
+    public void setGameName(String gameName) {
+        this.gameName = gameName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if(o instanceof Profile){
-            return ((Profile) o).getUserId().equals(this.getUserId());
+            Profile p = (Profile) o;
+            if(p.getUserId() == null && this.getUserId() == null){
+                return true;
+            }
+            else if((p.getUserId() != null && this.getUserId() == null) || (p.getUserId() == null && this.getUserId() != null)){
+                return false;
+            }
+            else{
+                return ((Profile) o).getUserId().equals(this.getUserId());
+            }
+
+
         }
         return super.equals(o);
     }
