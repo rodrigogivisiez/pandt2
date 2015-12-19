@@ -1,14 +1,21 @@
 package abstracts;
 
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
+import com.mygdx.potatoandtomato.models.Profile;
 
 /**
  * Created by SiongLeng on 15/12/2015.
  */
 public class MockGamingKit extends GamingKit {
 
+
     @Override
-    public void connect(String username) {
+    public void connect(Profile user) {
+
+    }
+
+    @Override
+    public void disconnect() {
 
     }
 

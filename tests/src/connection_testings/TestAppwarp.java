@@ -6,6 +6,8 @@ import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.JoinRoomListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
 import com.mygdx.potatoandtomato.helpers.services.Appwarp;
+import com.mygdx.potatoandtomato.helpers.utils.Threadings;
+import helpers.MockModel;
 import helpers.T_Threadings;
 import org.junit.*;
 
@@ -30,7 +32,7 @@ public class TestAppwarp extends TestAbstract {
                 }
             });
 
-            _gamingKit.connect("random");
+            _gamingKit.connect(MockModel.mockProfile("random"));
 
             while(waiting[0]){
                 T_Threadings.sleep(100);
@@ -39,7 +41,7 @@ public class TestAppwarp extends TestAbstract {
     }
 
     @Test
-    public void testCreateRoomAndUpdatePeers(){
+    public void testCreateRoomAndUpdatePeersAndLeaveRoom(){
         final boolean[] waiting = {true};
         final boolean[] success = {false};
         final String[] joinedRoomId = new String[1];
@@ -71,6 +73,7 @@ public class TestAppwarp extends TestAbstract {
         waiting[0] = true;
         final int code = 10;
         final String sendingMsg = "nothing";
+        final int[] monitorCount = new int[]{0};
 
         //test update peers
         _gamingKit.addListener(new UpdateRoomMatesListener() {
@@ -80,6 +83,7 @@ public class TestAppwarp extends TestAbstract {
                 Assert.assertEquals(sendingMsg, msg);
                 Assert.assertEquals(senderId, "random");
                 waiting[0] = false;
+                monitorCount[0]++;
             }
         });
 
@@ -88,6 +92,14 @@ public class TestAppwarp extends TestAbstract {
         while(waiting[0]){
             T_Threadings.sleep(100);
         }
+
+        _gamingKit.leaveRoom();
+
+        _gamingKit.updateRoomMates(code, sendingMsg);
+
+        Threadings.sleep(1000);
+
+        Assert.assertEquals(1, monitorCount[0]);
 
     }
 

@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.MascotEnum;
 import com.mygdx.potatoandtomato.helpers.controls.Animator;
@@ -30,9 +31,10 @@ public class MascotPickScene extends SceneAbstract {
     Animator _potatoHiAnimator, _tomatoHiAnimator;
     Button _nextSceneButton;
 
-    public MascotPickScene(Services services) {
-        super(services);
+    public MascotPickScene(Services services, PTScreen screen) {
+        super(services, screen);
     }
+
 
     @Override
     public void populateRoot() {

@@ -65,7 +65,8 @@ public class Room {
     }
 
     public HashMap<String, RoomUser> getRoomUsers() {
-        return roomUsers;
+        if(roomUsers == null) return new HashMap<>();
+        else return roomUsers;
     }
 
     public void setRoomUsers(HashMap<String, RoomUser> roomUsers) {
@@ -88,21 +89,21 @@ public class Room {
         this.id = id;
     }
 
+    @JsonIgnore
+    public int getRoomUsersCount(){
+        if(roomUsers == null) return 0;
+        else return roomUsers.size();
+    }
 
     @JsonIgnore
-    public void addUser(Profile user){
+    public void addRoomUser(Profile user){
 
         if(roomUsers == null) roomUsers = new HashMap<>();
 
+        if(getSlotIndexByUserId(user) != -1) return;
+
         for(int i = 0; i < Integer.valueOf(game.getMaxPlayers()); i++){
-            boolean occupied = false;
-            for (RoomUser roomUser : roomUsers.values()) {
-                if(roomUser.getSlotIndex() == i){
-                    occupied = true;
-                    break;
-                }
-            }
-            if(!occupied){
+            if(getRoomUserBySlotIndex(i) == null){
                 RoomUser r = new RoomUser();
                 r.setProfile(user);
                 r.setSlotIndex(i);

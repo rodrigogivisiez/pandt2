@@ -65,4 +65,8 @@ public class Texts {
 
     public String notEnoughPlayers() { return "You need at least %s players each team to start the game."; }
     public String stillDownloadingClient() { return "Please wait until all players has downloaded game content."; }
+
+    public String confirmLeaveRoom() { return "Are you sure you want to leave this room?"; }
+    public String confirmHostLeaveRoom() { return "Are you sure you want to leave this room? (This room will be dismissed)"; }
+
 }

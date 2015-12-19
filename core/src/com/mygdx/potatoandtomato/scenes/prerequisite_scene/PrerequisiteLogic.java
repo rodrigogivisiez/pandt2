@@ -3,6 +3,7 @@ package com.mygdx.potatoandtomato.scenes.prerequisite_scene;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
+import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.JoinRoomListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
@@ -25,8 +26,9 @@ public class PrerequisiteLogic extends LogicAbstract {
 
     public PrerequisiteLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
+        setSaveToStack(false);
         _texts = _services.getTexts();
-        _scene = new PrerequisiteScene(_services);
+        _scene = new PrerequisiteScene(services, screen);
         _game = (Game) objs[0];
         _isCreating = (boolean) objs[1];
         if(!_isCreating) _joiningRoom = (Room) objs[2];
@@ -41,8 +43,14 @@ public class PrerequisiteLogic extends LogicAbstract {
     }
 
     @Override
-    public void init() {
-        super.init();
+    public void onQuit(OnQuitListener listener) {
+        _services.getGamingKit().leaveRoom();
+        super.onQuit(listener);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
         restart();
     }
 
@@ -108,9 +116,17 @@ public class PrerequisiteLogic extends LogicAbstract {
         _screen.toScene(SceneEnum.ROOM, _joiningRoom);
     }
 
+    @Override
+    public void dispose() {
+        super.dispose();
+
+    }
 
     @Override
     public SceneAbstract getScene() {
         return _scene;
     }
+
+
+
 }

@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.helpers.services.Fonts;
 import com.mygdx.potatoandtomato.helpers.services.Textures;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
@@ -28,14 +29,16 @@ public class TopBar {
     float _barHeight = 70;
     Image _iconImg;
     Label _titleLabel;
+    PTScreen _screen;
 
     public TopBar(Table _root, String _title, boolean _noPreviousScene,
-                        Textures _textures, Fonts _fonts) {
+                        Textures _textures, Fonts _fonts, PTScreen _screen) {
         this._root = _root;
         this._title = _title;
         this._noPreviousScene = _noPreviousScene;
         this._textures = _textures;
         this._fonts = _fonts;
+        this._screen = _screen;
         setTopBar();
         setIconListener();
     }
@@ -62,6 +65,15 @@ public class TopBar {
         _topBarTable.add(_titleLabel).expand().fill().padLeft(90);
         _root.padTop(_barHeight);
         _root.addActor(_topBarTable);
+
+        _iconImg.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                _screen.back();
+            }
+        });
+
     }
 
     public void setIconListener(){

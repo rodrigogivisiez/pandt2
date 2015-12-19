@@ -7,8 +7,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.helpers.controls.BtnColor;
+import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.helpers.controls.DummyButton;
 import com.mygdx.potatoandtomato.helpers.controls.TopBar;
 import com.mygdx.potatoandtomato.models.Services;
@@ -22,8 +24,8 @@ public class PrerequisiteScene extends SceneAbstract {
     Label _msgLabel;
     BtnColor _retryButton;
 
-    public PrerequisiteScene(Services services) {
-        super(services);
+    public PrerequisiteScene(Services services, PTScreen screen) {
+        super(services, screen);
     }
 
     public BtnColor getRetryButton() {
@@ -32,7 +34,7 @@ public class PrerequisiteScene extends SceneAbstract {
 
     @Override
     public void populateRoot() {
-        new TopBar(_root, _texts.loading(), false, _textures, _fonts);
+        new TopBar(_root, _texts.loading(), false, _textures, _fonts, _screen);
 
         _loadingTable = new Table();
         _loadingTable.align(Align.top);

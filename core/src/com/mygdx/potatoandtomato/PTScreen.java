@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.services.Fonts;
@@ -21,7 +22,7 @@ import com.mygdx.potatoandtomato.scenes.mascot_pick_scene.MascotPickLogic;
 import com.mygdx.potatoandtomato.scenes.prerequisite_scene.PrerequisiteLogic;
 import com.mygdx.potatoandtomato.scenes.room_scene.RoomLogic;
 
-import java.util.HashMap;
+import java.util.Stack;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -31,21 +32,19 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 public class PTScreen implements Screen {
 
     Image _bgBlueImg, _bgAutumnImg, _sunriseImg, _sunrayImg, _greenGroundImg, _autumnGroundImg;
-    SceneEnum _currentScene;
-    HashMap<SceneEnum, LogicAbstract> _sceneMap;
     Services _services;
     Textures _textures;
     Fonts _fonts;
     Texts _texts;
     Stage _stage;
+    Stack<LogicEnumPair> _logicStacks;
 
     public PTScreen(Services services) {
         this._services = services;
         this._textures = _services.getTextures();
         this._fonts = _services.getFonts();
         this._texts = _services.getTexts();
-        _currentScene = SceneEnum.NOTHING;
-        _sceneMap = new HashMap<SceneEnum, LogicAbstract>();
+        this._logicStacks = new Stack<>();
     }
 
     //call this function to change scene
@@ -53,63 +52,114 @@ public class PTScreen implements Screen {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                LogicAbstract logic = getSceneLogic(sceneEnum, objs);
-                logic.init();
-                Actor transitionInRoot = logic.getScene().getRoot();
-
-                if(_currentScene == SceneEnum.NOTHING){
-                    _stage.addActor(transitionInRoot);
+                final LogicAbstract logic = newSceneLogic(sceneEnum, objs);
+                logic.onCreate();
+                if(_logicStacks.size() == 0){
+                    _stage.addActor(logic.getScene().getRoot());
                 }
                 else{
-                    final Actor originalRoot = getSceneLogic(_currentScene).getScene().getRoot(); //remove original root
-                    transitionInRoot.setPosition(Positions.getWidth(), 0);
-                    _stage.addActor(transitionInRoot);
-                    float duration = 0.5f;
-                    transitionInRoot.addAction(moveTo(0, 0, duration));
-                    originalRoot.addAction(sequence(moveBy(-Positions.getWidth(), 0, duration), new Action() {
+                    final LogicEnumPair logicOut = _logicStacks.peek();
+                    sceneTransition(logic.getScene().getRoot(), logicOut.getLogic().getScene().getRoot(), true, new Runnable() {
                         @Override
-                        public boolean act(float delta) {
-                            originalRoot.remove();
-                            return false;
+                        public void run() {
+                            logicOut.getLogic().onHide();
+                            if (!logicOut.getLogic().isSaveToStack()) {
+                                _logicStacks.remove(logicOut);
+                                logicOut.getLogic().dispose();
+                            }
                         }
-                    }));
-
+                    });
                 }
+                _logicStacks.push(new LogicEnumPair(logic, sceneEnum, objs));
 
-                _currentScene = sceneEnum;
             }
         });
-
     }
 
-    private LogicAbstract getSceneLogic(SceneEnum sceneEnum, Object... objs){
-        if(!_sceneMap.containsKey(sceneEnum)){
-            LogicAbstract logic = null;
-            switch (sceneEnum){
-                case BOOT:
-                    logic = new BootLogic(this, _services, objs);
-                    break;
-                case MASCOT_PICK:
-                    logic = new MascotPickLogic(this, _services, objs);
-                    break;
-                case GAME_LIST:
-                    logic = new GameListLogic(this, _services, objs);
-                    break;
-                case CREATE_GAME:
-                    logic = new CreateGameLogic(this, _services, objs);
-                    break;
-                case PREREQUISITE:
-                    logic = new PrerequisiteLogic(this, _services, objs);
-                    break;
-                case ROOM:
-                    logic = new RoomLogic(this, _services, objs);
-                    break;
+    public void back(){
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+
+                if(_logicStacks.size() == 1){
+                    confirmQuitGame();
+                    return;
+                }
+
+                _logicStacks.peek().getLogic().onQuit(new OnQuitListener() {
+                    @Override
+                    public void onResult(Result result) {
+                        if(result == Result.YES){
+                            final LogicEnumPair current = _logicStacks.pop();
+                            final LogicEnumPair previous = _logicStacks.peek();
+                            previous.getLogic().onCreate();
+                            sceneTransition(previous.getLogic().getScene().getRoot(), current.getLogic().getScene().getRoot(), false, new Runnable() {
+                                @Override
+                                public void run() {
+                                    current.getLogic().onHide();
+                                    current.getLogic().dispose();
+                                }
+                            });
+                        }
+                    }
+                });
             }
-            _sceneMap.put(sceneEnum, logic);
-        }
-        return _sceneMap.get(sceneEnum);
+        });
     }
 
+    public void confirmQuitGame(){
+
+    }
+
+    private LogicAbstract newSceneLogic(SceneEnum sceneEnum, Object... objs){
+        LogicAbstract logic = null;
+        switch (sceneEnum){
+            case BOOT:
+                logic = new BootLogic(this, _services, objs);
+                break;
+            case MASCOT_PICK:
+                logic = new MascotPickLogic(this, _services, objs);
+                break;
+            case GAME_LIST:
+                logic = new GameListLogic(this, _services, objs);
+                break;
+            case CREATE_GAME:
+                logic = new CreateGameLogic(this, _services, objs);
+                break;
+            case PREREQUISITE:
+                logic = new PrerequisiteLogic(this, _services, objs);
+                break;
+            case ROOM:
+                logic = new RoomLogic(this, _services, objs);
+                break;
+        }
+        return logic;
+    }
+
+    private void sceneTransition(Actor _rootIn, final Actor _rootOut, boolean toRight, final Runnable onFinish){
+
+        float duration = 0.5f;
+        _rootIn.remove();
+        _rootOut.remove();
+        _rootIn.clearActions();
+        _rootOut.clearActions();
+        _stage.addActor(_rootIn);
+        _stage.addActor(_rootOut);
+
+        _rootIn.setPosition(toRight ? Positions.getWidth() : -Positions.getWidth(), 0);
+        _rootOut.setPosition(0, 0);
+
+        _rootIn.addAction(moveTo(0, 0, duration));
+        _rootOut.addAction(sequence(moveBy(toRight ? -Positions.getWidth() : Positions.getWidth(), 0, duration), new Action() {
+            @Override
+            public boolean act(float delta) {
+                _rootOut.remove();
+                onFinish.run();
+                return false;
+            }
+        }));
+
+    }
 
     @Override
     public void show() {
@@ -193,4 +243,33 @@ public class PTScreen implements Screen {
     public void dispose() {
 
     }
+
+    private class LogicEnumPair{
+        LogicAbstract logicAbstract;
+        SceneEnum sceneEnum;
+        Object[] objs;
+
+        public LogicEnumPair(LogicAbstract logicAbstract, SceneEnum sceneEnum, Object... objs) {
+            this.logicAbstract = logicAbstract;
+            this.sceneEnum = sceneEnum;
+            this.objs = objs;
+        }
+
+        public LogicAbstract getLogic() {
+            return logicAbstract;
+        }
+
+        public SceneEnum getSceneEnum() {
+            return sceneEnum;
+        }
+
+        public void setLogic(LogicAbstract logicAbstract) {
+            this.logicAbstract = logicAbstract;
+        }
+
+        public Object[] getObjs() {
+            return objs;
+        }
+    }
+
 }

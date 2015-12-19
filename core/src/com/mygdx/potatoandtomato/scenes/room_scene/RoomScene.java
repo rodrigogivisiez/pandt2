@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.MascotEnum;
 import com.mygdx.potatoandtomato.helpers.controls.*;
@@ -31,6 +32,7 @@ public class RoomScene extends SceneAbstract {
     Table _teamsRoot, _detailsRoot;
     HashMap<String, Table> _playerMaps;
     Confirm _hostLeftConfirm, _errorConfirm, _messageConfirm;
+    Confirm _leaveRoomConfirm;
 
     public Array<Table> getTeamTables() {
         return _teamTables;
@@ -44,19 +46,32 @@ public class RoomScene extends SceneAbstract {
         return _errorConfirm;
     }
 
-    public RoomScene(Services services) {
-        super(services);
+    public Confirm getLeaveRoomConfirm() {
+        return _leaveRoomConfirm;
+    }
+
+    public BtnEggDownward getStartButton() {
+        return _startButton;
+    }
+
+    public BtnEggDownward getInviteButton() {
+        return _inviteButton;
+    }
+
+    public RoomScene(Services services, PTScreen screen) {
+        super(services, screen);
     }
 
     @Override
     public void populateRoot() {
 
-        new TopBar(_root, _texts.roomTitle(), false, _textures, _fonts);
+        new TopBar(_root, _texts.roomTitle(), false, _textures, _fonts, _screen);
         _root.align(Align.top);
 
         _hostLeftConfirm = new Confirm(_root, _textures, _fonts, _texts.hostLeft(), Confirm.Type.YES);
         _errorConfirm = new Confirm(_root, _textures, _fonts, _texts.roomError(), Confirm.Type.YES);
         _messageConfirm = new Confirm(_root, _textures, _fonts, "", Confirm.Type.YES);
+        _leaveRoomConfirm = new Confirm(_root, _textures, _fonts, "", Confirm.Type.YESNO);
 
         _teamTables = new Array<>();
         _playerMaps = new HashMap<>();
@@ -203,6 +218,10 @@ public class RoomScene extends SceneAbstract {
 
     public void showMessage(String msg){
         _messageConfirm.show(msg);
+    }
+
+    public void showLeaveRoomConfirm(boolean isHost){
+        _leaveRoomConfirm.show(isHost ? _texts.confirmHostLeaveRoom(): _texts.confirmLeaveRoom());
     }
 
     public void updateDownloadPercentage(String userId, int percent){

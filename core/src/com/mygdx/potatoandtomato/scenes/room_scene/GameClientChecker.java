@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.mygdx.potatoandtomato.absintflis.downloader.DownloaderListener;
 import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
-import com.mygdx.potatoandtomato.helpers.services.Downloader;
 import com.mygdx.potatoandtomato.helpers.services.Preferences;
 import com.mygdx.potatoandtomato.helpers.utils.Files;
 import com.mygdx.potatoandtomato.helpers.utils.SafeThread;
@@ -92,7 +91,7 @@ public class GameClientChecker {
             @Override
             public void onCallback(byte[] bytes, Status st) {
                 if(st == Status.FAILED){
-                    downloadFailed();
+                    killDownloads();
                 }
                 else{
                     complete.run();
@@ -110,15 +109,10 @@ public class GameClientChecker {
 
     public void updatePercent(final double added){
         _currentPercent += added;
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                _listener.onStep(_currentPercent);
-            }
-        });
+        _listener.onStep(_currentPercent);
     }
 
-    public void downloadFailed(){
+    public void killDownloads(){
         if(_downloadJarThread != null) _downloadJarThread.kill();
         if(_downloadAssetThread != null) _downloadAssetThread.kill();
     }

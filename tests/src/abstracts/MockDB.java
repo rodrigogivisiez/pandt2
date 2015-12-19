@@ -1,5 +1,6 @@
 package abstracts;
 
+import com.firebase.client.annotations.Nullable;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
  * Created by SiongLeng on 9/12/2015.
  */
 public class MockDB implements IDatabase {
+
     @Override
     public void getTestTableCount(DatabaseListener<Integer> listener) {
         listener.onCallback(1, DatabaseListener.Status.SUCCESS);
@@ -70,8 +72,8 @@ public class MockDB implements IDatabase {
     }
 
     @Override
-    public void saveRoom(Room room, DatabaseListener<String> listener) {
-        listener.onCallback(null, DatabaseListener.Status.SUCCESS);
+    public void saveRoom(Room room, @Nullable DatabaseListener<String> listener) {
+        if(listener!= null) listener.onCallback(null, DatabaseListener.Status.SUCCESS);
     }
 
     @Override
@@ -95,8 +97,8 @@ public class MockDB implements IDatabase {
     }
 
     @Override
-    public void notifyRoomChanged(Room room) {
-
+    public String notifyRoomChanged(Room room) {
+        return null;
     }
 
     @Override
@@ -113,6 +115,11 @@ public class MockDB implements IDatabase {
 
     @Override
     public void online() {
+
+    }
+
+    @Override
+    public void clearListenersByClass(Class clss) {
 
     }
 

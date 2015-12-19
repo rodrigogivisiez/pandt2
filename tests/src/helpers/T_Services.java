@@ -8,6 +8,7 @@ import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
 import com.mygdx.potatoandtomato.helpers.services.*;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.models.Profile;
+import org.mockito.Mock;
 
 /**
  * Created by SiongLeng on 6/12/2015.

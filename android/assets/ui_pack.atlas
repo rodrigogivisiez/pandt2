@@ -160,7 +160,7 @@ irregular_bg
   xy: 958, 130
   size: 120, 160
   split: 11, 8, 9, 11
-  pad: -1, -1, 72, 83
+  pad: 1, 0, 0, 0
   orig: 120, 160
   offset: 0, 0
   index: -1

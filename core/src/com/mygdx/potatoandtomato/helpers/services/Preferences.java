@@ -1,6 +1,7 @@
 package com.mygdx.potatoandtomato.helpers.services;
 
 import com.badlogic.gdx.Gdx;
+import com.mygdx.potatoandtomato.helpers.utils.Terms;
 
 /**
  * Created by SiongLeng on 9/12/2015.
@@ -10,7 +11,7 @@ public class Preferences {
     private com.badlogic.gdx.Preferences _prefs;
 
     public Preferences() {
-        _prefs = Gdx.app.getPreferences("potatoandtomato");
+        _prefs = Gdx.app.getPreferences(Terms.PREF_NAME);
     }
 
     public Preferences(String name) {

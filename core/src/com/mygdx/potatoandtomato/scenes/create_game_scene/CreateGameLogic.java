@@ -2,11 +2,13 @@ package com.mygdx.potatoandtomato.scenes.create_game_scene;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.models.Game;
 
@@ -20,12 +22,25 @@ public class CreateGameLogic extends LogicAbstract {
 
     CreateGameScene _scene;
     ArrayList<Game> _games;
+    Game _selectedGame;
 
     public CreateGameLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
-        _scene = new CreateGameScene(_services);
+
+        _scene = new CreateGameScene(_services, _screen);
 
         getAllGames();
+
+        _scene.getCreateButton().addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                if(_selectedGame != null){
+                    _screen.toScene(SceneEnum.PREREQUISITE, _selectedGame, true);
+                }
+            }
+        });
+
     }
 
     public void getAllGames(){
@@ -45,13 +60,13 @@ public class CreateGameLogic extends LogicAbstract {
                         });
                     }
                     _scene.populateGame(null);
-                    _scene.populateGame(null);
                 }
             }
         });
     }
 
     public void onGameClicked(Game game){
+        _selectedGame = game;
         _scene.showGameDetails(game);
     }
 

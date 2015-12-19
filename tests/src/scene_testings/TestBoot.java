@@ -1,11 +1,13 @@
 package scene_testings;
 
+import abstracts.MockGamingKit;
 import abstracts.TestAbstract;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.enums.MascotEnum;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
+import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
@@ -45,6 +47,7 @@ public class TestBoot extends TestAbstract {
     @Test
     public void testBootLogicScene(){
         BootLogic logic = new BootLogic(mock(PTScreen.class), _services);
+        logic.onCreate();
         Assert.assertEquals(true, ((Table) logic.getScene().getRoot()).hasChildren());
     }
 
@@ -53,6 +56,7 @@ public class TestBoot extends TestAbstract {
         Assert.assertEquals(true, _services.getPreferences().get(Terms.USERID) == null);
         Assert.assertEquals(true, _services.getProfile().getUserId() == null);
         BootLogic logic = new BootLogic(mock(PTScreen.class), _services);
+        logic.onCreate();
         logic.showLoginBox();
         logic.loginPT();
         Assert.assertEquals(false, _services.getPreferences().get(Terms.USERID) == null);
@@ -63,6 +67,7 @@ public class TestBoot extends TestAbstract {
     public void testLoginWithExistingUser(){
         _services.getPreferences().put(Terms.USERID, "999");
         BootLogic logic = new BootLogic(mock(PTScreen.class), _services);
+        logic.onCreate();
         logic.showLoginBox();
         logic.loginPT();
         Assert.assertEquals("999", _services.getProfile().getUserId());
@@ -71,6 +76,7 @@ public class TestBoot extends TestAbstract {
     @Test
     public void testRetrieveUserFailed(){
         BootLogic logic = new BootLogic(mock(PTScreen.class), _services);
+        logic.onCreate();
         logic.showLoginBox();
         logic.retrieveUserFailed();
     }
@@ -113,9 +119,21 @@ public class TestBoot extends TestAbstract {
             }
         }).when(mockPTScreen).toScene(SceneEnum.GAME_LIST);
 
+        _services.setGamingKit(new MockGamingKit(){
+            @Override
+            public void connect(Profile user) {
+                super.connect(user);
+                this.onConnectionChanged(true);
+            }
+        });
         BootLogic logic = new BootLogic(mockPTScreen, _services);
+
+        logic.onCreate();
         _services.getProfile().setMascotEnum(MascotEnum.TOMATO);
         logic.loginPTSuccess();
+
+        Threadings.sleep(100);
+
         Assert.assertEquals(true, called[0]);
     }
 
@@ -134,8 +152,19 @@ public class TestBoot extends TestAbstract {
             }
         }).when(mockPTScreen).toScene(SceneEnum.MASCOT_PICK);
 
+        _services.setGamingKit(new MockGamingKit(){
+            @Override
+            public void connect(Profile user) {
+                super.connect(user);
+                this.onConnectionChanged(true);
+            }
+        });
+
         BootLogic logic = new BootLogic(mockPTScreen, _services);
+        logic.onCreate();
         logic.loginPTSuccess();
+
+        Threadings.sleep(100);
         Assert.assertEquals(true, called[0]);
     }
 

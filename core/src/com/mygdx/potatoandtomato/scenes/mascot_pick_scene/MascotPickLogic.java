@@ -21,7 +21,8 @@ public class MascotPickLogic extends LogicAbstract {
 
     public MascotPickLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
-        _scene = new MascotPickScene(services);
+        setSaveToStack(false);
+        _scene = new MascotPickScene(services, screen);
 
         _scene.getPotatoButton().addListener(new ClickListener(){
             @Override

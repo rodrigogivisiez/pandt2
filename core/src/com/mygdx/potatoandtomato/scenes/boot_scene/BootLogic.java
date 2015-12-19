@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
+import com.mygdx.potatoandtomato.absintflis.gamingkit.ConnectionChangedListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
@@ -15,8 +16,6 @@ import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Broadcaster;
-
-import java.util.Objects;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 
@@ -35,8 +34,33 @@ public class BootLogic extends LogicAbstract {
 
     public BootLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
+
+        _services.getGamingKit().addListener(new ConnectionChangedListener() {
+            @Override
+            public void onChanged(Status st) {
+                if(st == Status.CONNECTED){
+                    if(_services.getProfile().getMascotEnum() == null){
+                        _screen.toScene(SceneEnum.MASCOT_PICK);
+                    }
+                    else{
+                        _screen.toScene(SceneEnum.GAME_LIST);
+                    }
+                }
+                else{
+                    retrieveUserFailed();
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        _services.getGamingKit().disconnect();
         _fbStepPast = false;
-        _bootScene = new BootScene(services);
+        _bootScene = new BootScene(_services, _screen);
         _bootScene.getPlayButton().addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -168,15 +192,7 @@ public class BootLogic extends LogicAbstract {
             _services.getDatabase().updateProfile(_services.getProfile());
         }
 
-        if(_services.getProfile().getMascotEnum() == null){
-            _screen.toScene(SceneEnum.MASCOT_PICK);
-        }
-        else{
-            _screen.toScene(SceneEnum.GAME_LIST);
-        }
-
-
-
+        _services.getGamingKit().connect(_services.getProfile());
     }
 
 

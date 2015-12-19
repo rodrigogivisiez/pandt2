@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.helpers.controls.BtnEggDownward;
 import com.mygdx.potatoandtomato.helpers.controls.TopBar;
@@ -31,26 +32,32 @@ public class CreateGameScene extends SceneAbstract {
     ScrollPane _gameDetailsScroll;
     BtnEggDownward _createButton;
 
-    public CreateGameScene(Services services) {
-        super(services);
+    public CreateGameScene(Services services, PTScreen screen) {
+        super(services, screen);
     }
+
+    public BtnEggDownward getCreateButton() {
+        return _createButton;
+    }
+
 
     @Override
     public void populateRoot() {
-        new TopBar(_root, _texts.createGameTitle(), false, _textures, _fonts);
+        new TopBar(_root, _texts.createGameTitle(), false, _textures, _fonts, _screen);
         _root.align(Align.topLeft);
 
         //left game list START
         _gameList = new Table();
         _gameList.setBackground(new NinePatchDrawable(_textures.getIrregularBg()));
         _gameList.align(Align.top);
+        _gameList.padRight(10).padTop(10);
         //left game list END
 
         //right side game details START
         _gameDetailsParent = new Table();
         _gameDetailsParent.setBackground(new NinePatchDrawable(_textures.getIrregularBg()));
         _gameDetailsParent.align(Align.topLeft);
-        _gameDetailsParent.padRight(15);
+        _gameDetailsParent.padRight(15).padLeft(10).padTop(10).padBottom(15);
         _gameDetails = new Table();
         _gameDetailsScroll = new ScrollPane(_gameDetails);
         _gameDetailsScroll.setScrollingDisabled(true, false);
@@ -106,13 +113,13 @@ public class CreateGameScene extends SceneAbstract {
 
 
         Label.LabelStyle titleStyle = new Label.LabelStyle();
-        titleStyle.font = _fonts.getArialBold(17, Color.valueOf("976b2d"), 0, Color.BLACK, 0, Color.GRAY);
+        titleStyle.font = _fonts.getPizzaFont(17, Color.valueOf("976b2d"), 1, Color.WHITE, 0, Color.GRAY);
 
         Label.LabelStyle contentStyle1 = new Label.LabelStyle();
-        contentStyle1.font = _fonts.getArial(14, Color.WHITE, 0, Color.BLACK, 0, Color.BLACK);
+        contentStyle1.font = _fonts.getArial(14, Color.WHITE, 1, Color.GRAY, 1, Color.GRAY);
 
         Label.LabelStyle contentStyle2 = new Label.LabelStyle();
-        contentStyle2.font = _fonts.getArial(11, Color.WHITE, 0, Color.BLACK, 0, Color.BLACK);
+        contentStyle2.font = _fonts.getArial(12, Color.WHITE, 1, Color.GRAY, 0, Color.BLACK);
 
         WebImage gameLogo = new WebImage(game.getIconUrl(), _textures, _services.getDownloader());
         Label detailsTitleLabel = new Label(_texts.details(), titleStyle);

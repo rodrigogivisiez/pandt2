@@ -6,11 +6,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.helpers.controls.BtnEggDownward;
 import com.mygdx.potatoandtomato.helpers.controls.Mascot;
 import com.mygdx.potatoandtomato.helpers.controls.TopBar;
+import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
 
 import java.util.HashMap;
@@ -24,8 +26,7 @@ public class GameListScene extends SceneAbstract {
     Table _gameListTable, _gameTitleTable;
     Label _titleGameLabel, _titlePlayersLabel, _titleHostLabel;
     Image _titleSeparator1, _titleSeparator2;
-    HashMap<Integer, Table> _gameRowsTableMap;
-    int _gameRowIndex;
+    HashMap<String, Table> _gameRowsTableMap;
     ScrollPane _gameListScrollPane;
     Table _scrollTable;
     BtnEggDownward _newGameButton, _joinGameButton;
@@ -36,9 +37,12 @@ public class GameListScene extends SceneAbstract {
     Table _settingsTable, _ratingTable;
     Image _settingsIconImg, _ratingIconImg;
 
-    public GameListScene(Services services) {
-        super(services);
-        _gameRowIndex = 0;
+    public int getGameRowsCount() {
+        return _gameRowsTableMap.size();
+    }
+
+    public GameListScene(Services services, PTScreen screen) {
+        super(services, screen);
         _gameRowsTableMap = new HashMap<>();
     }
 
@@ -46,9 +50,13 @@ public class GameListScene extends SceneAbstract {
         return _newGameButton;
     }
 
+    public BtnEggDownward getJoinGameButton() {
+        return _joinGameButton;
+    }
+
     @Override
     public void populateRoot() {
-        new TopBar(_root, _texts.gamesList(), true, _textures, _fonts);
+        new TopBar(_root, _texts.gamesList(), true, _textures, _fonts, _screen);
         _root.align(Align.top);
 
         //Game List Table START
@@ -74,6 +82,7 @@ public class GameListScene extends SceneAbstract {
         _gameTitleTable.add(_titlePlayersLabel).padLeft(8).padRight(10).expandX().left();
 
         _scrollTable = new Table();
+        _scrollTable.align(Align.top);
         ScrollPane.ScrollPaneStyle scrollPaneStyle = new ScrollPane.ScrollPaneStyle();
         scrollPaneStyle.vScrollKnob = new NinePatchDrawable(_textures.getScrollVerticalHandle());
         _gameListScrollPane = new ScrollPane(_scrollTable, scrollPaneStyle);
@@ -134,17 +143,18 @@ public class GameListScene extends SceneAbstract {
         _root.add(_userProfileTable).colspan(2).expand().fill().padTop(10).padLeft(30).padRight(30);
     }
 
-    public Actor addNewGameRow(){
+    public Actor addNewRoomRow(Room room){
 
         Table gameRowTable = new Table();
         Label.LabelStyle contentLabelStyle = new Label.LabelStyle();
         contentLabelStyle.font = _fonts.getArial(12, Color.WHITE, 0, Color.BLACK, 0, Color.BLACK);
-        Label gameNameLabel = new Label("Covered Chess", contentLabelStyle);
+        Label gameNameLabel = new Label(room.getGame().getName(), contentLabelStyle);
         gameNameLabel.setWrap(true);
-        Label hostNameLabel = new Label("soulwraith", contentLabelStyle);
+        Label hostNameLabel = new Label(room.getHost().getDisplayName(), contentLabelStyle);
         hostNameLabel.setWrap(true);
-        Label playersCountLable = new Label("1 / 2", contentLabelStyle);
-        playersCountLable.setWrap(true);
+        Label playersCountLabel = new Label(String.format("%s / %s", room.getRoomUsersCount(), room.getGame().getMaxPlayers()), contentLabelStyle);
+        playersCountLabel.setName("playerCount");
+        playersCountLabel.setWrap(true);
 
         Button dummyButton = new Button(new TextureRegionDrawable(_textures.getEmpty()));
         dummyButton.setFillParent(true);
@@ -152,32 +162,54 @@ public class GameListScene extends SceneAbstract {
 
         gameRowTable.add(gameNameLabel).width(115).padLeft(10).padRight(10);
         gameRowTable.add(hostNameLabel).width(100).padLeft(8).padRight(10);
-        gameRowTable.add(playersCountLable).expandX().left().padLeft(8).padRight(10);
+        gameRowTable.add(playersCountLabel).expandX().left().padLeft(8).padRight(10);
         gameRowTable.padTop(5).padBottom(5);
         gameRowTable.addActor(dummyButton);
         _scrollTable.add(gameRowTable).expandX().fillX();
         _scrollTable.row();
 
-        dummyButton.setName(String.valueOf(_gameRowIndex));
-        _gameRowsTableMap.put(_gameRowIndex, gameRowTable);
-        _gameRowIndex++;
+        dummyButton.setName(String.valueOf(room.getId()));
+        _gameRowsTableMap.put(room.getId(), gameRowTable);
 
         return dummyButton;
     }
 
     public void gameRowHighlight(String tableName){
-        for (Map.Entry<Integer, Table> entry : _gameRowsTableMap.entrySet()) {
-            Integer key = entry.getKey();
+        boolean found = false;
+        for (Map.Entry<String, Table> entry : _gameRowsTableMap.entrySet()) {
+            String key = entry.getKey();
             Table gameRowTable = entry.getValue();
 
             if(String.valueOf(key).equals(tableName)){
+                found = true;
                 gameRowTable.background(new TextureRegionDrawable(_textures.getGameListHighlight()));
             }
             else{
                 gameRowTable.background(new TextureRegionDrawable(_textures.getEmpty()));
             }
         }
-        _joinGameButton.setEnabled(true);
+
+        if(found) _joinGameButton.setEnabled(true);
+        else _joinGameButton.setEnabled(false);
+    }
+
+    public Actor updatedRoom(Room room){
+        if(!_gameRowsTableMap.containsKey(room.getId())){
+            return addNewRoomRow(room);
+        }
+        else{
+            Label playerCountLabel = _gameRowsTableMap.get(room.getId()).findActor("playerCount");
+            playerCountLabel.setText(String.format("%s / %s", room.getRoomUsersCount(), room.getGame().getMaxPlayers()));
+            playerCountLabel.invalidate();
+            return null;
+        }
+    }
+
+    public void removeRoom(Room room){
+        if(_gameRowsTableMap.containsKey(room.getId())){
+            _gameRowsTableMap.get(room.getId()).remove();
+            _gameRowsTableMap.remove(room.getId());
+        }
     }
 
 }

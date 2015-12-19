@@ -56,6 +56,9 @@ public class Confirm {
 
     public void show(){
         Stage stage = _root.getStage();
+
+        if(stage == null) return;
+
         _root.setTouchable(Touchable.disabled);
 
         _confirmRoot = new Table();
@@ -125,6 +128,7 @@ public class Confirm {
                 if(_listener != null){
                     _listener.onResult(ConfirmResultListener.Result.YES);
                 }
+                close();
             }
         });
 

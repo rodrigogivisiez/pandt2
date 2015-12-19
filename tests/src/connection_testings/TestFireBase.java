@@ -15,6 +15,7 @@ import helpers.MockModel;
 import helpers.T_Threadings;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -26,6 +27,8 @@ import java.util.Map;
 public class TestFireBase extends TestAbstract {
 
     private String _unitTestUrl = "https://forunittest.firebaseio.com";
+
+
 
     @Test
     public void testConnectFirebase(){
@@ -273,7 +276,7 @@ public class TestFireBase extends TestAbstract {
             T_Threadings.sleep(100);
         }
 
-        Assert.assertEquals(1, monitorCount[0]);
+        Assert.assertEquals(2, monitorCount[0]);
 
         for(Room r1 : rooms){
             if(r1.getId().equals(r.getId())){
@@ -281,5 +284,81 @@ public class TestFireBase extends TestAbstract {
             }
         }
     }
+
+
+    @Test
+    public void testRemoveListeners(){
+        final IDatabase databases = new FirebaseDB(_unitTestUrl);
+        final boolean[] waiting = {true};
+
+        final Room r = MockModel.mockRoom(null);
+        r.setOpen(true);
+
+        databases.saveRoom(r, new DatabaseListener<String>() {
+            @Override
+            public void onCallback(String obj, Status st) {
+                waiting[0] = false;
+            }
+        });
+
+        while (waiting[0]){
+            Threadings.sleep(100);
+        }
+
+        final int[] trigger = {0};
+        waiting[0] = true;
+
+        databases.monitorAllRooms(new ArrayList<Room>(), new SpecialDatabaseListener<ArrayList<Room>, Room>(Room.class) {
+            @Override
+            public void onCallbackTypeOne(ArrayList<Room> obj, Status st) {
+                waiting[0] = false;
+            }
+
+            @Override
+            public void onCallbackTypeTwo(Room obj, Status st) {
+                trigger[0]++;
+                waiting[0] = false;
+            }
+        });
+
+        while (waiting[0]){
+            Threadings.sleep(100);
+        }
+
+        waiting[0] = true;
+
+        databases.monitorRoomById(r.getId(), new DatabaseListener<Room>(Room.class) {
+            @Override
+            public void onCallback(Room obj, Status st) {
+                waiting[0] = false;
+                trigger[0]++;
+            }
+        });
+
+        while (waiting[0]){
+            Threadings.sleep(100);
+        }
+
+        databases.clearListenersByClass(this.getClass());
+
+        waiting[0] = true;
+
+        r.setOpen(true);
+        databases.saveRoom(r, new DatabaseListener<String>() {
+            @Override
+            public void onCallback(String obj, Status st) {
+                waiting[0] = false;
+            }
+        });
+
+        while (waiting[0]){
+            Threadings.sleep(100);
+        }
+        Threadings.sleep(1000);
+
+        Assert.assertEquals(2, trigger[0]);
+
+    }
+
 
 }

@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.helpers.controls.BtnEggUpright;
 import com.mygdx.potatoandtomato.models.Services;
@@ -28,8 +29,8 @@ public class BootScene extends SceneAbstract {
     Label _socialLoginLabel;
     Image _socialIcon, _tickIcon, _crossIcon;
 
-    public BootScene(Services services) {
-        super(services);
+    public BootScene(Services services, PTScreen screen) {
+        super(services, screen);
     }
 
     public BtnEggUpright getPlayButton() {
@@ -185,6 +186,7 @@ public class BootScene extends SceneAbstract {
     public void showRetrieveUserFailed(){
         _socialIcon.setDrawable(new TextureRegionDrawable(_textures.getLoginIcon()));
         _socialLoginLabel.clearActions();
+        _socialLoginLabel.getColor().a = 1;
         _socialLoginLabel.setText(_texts.failedRetrieveProfile());
         _socialLoginLabel.setAlignment(Align.center);
         _tickIcon.setVisible(true);

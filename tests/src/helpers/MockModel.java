@@ -21,10 +21,11 @@ public class MockModel {
         g.setAbbr("covered_chess");
         g.setGameUrl("http://www.potato-and-tomato.com/covered_chess/core.jar");
         g.setAssetUrl("http://www.potato-and-tomato.com/covered_chess/assets.zip");
-        g.setMaxPlayers("2");
-        g.setMinPlayers("2");
-        g.setTeamMaxPlayers("1");
-        g.setTeamMinPlayers("1");
+        g.setMaxPlayers("9");
+        g.setMinPlayers("3");
+        g.setTeamMaxPlayers("3");
+        g.setTeamMinPlayers("3");
+        g.setTeamCount("3");
         return g;
     }
 
@@ -47,8 +48,8 @@ public class MockModel {
         r.setOpen(false);
         r.setPlaying(true);
         r.setRoomId("12");
+        r.setRoundCounter(0);
         if(id != null) r.setId(id);
-        r.setRoundCounter(2);
         HashMap<String, RoomUser> roomUsers = new HashMap<>();
         RoomUser user1 = new RoomUser();
         RoomUser user2 = new RoomUser();

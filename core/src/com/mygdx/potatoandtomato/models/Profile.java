@@ -1,6 +1,8 @@
 package com.mygdx.potatoandtomato.models;
 
 import com.mygdx.potatoandtomato.enums.MascotEnum;
+import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
+import com.shaded.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * Created by SiongLeng on 9/12/2015.
@@ -16,9 +18,14 @@ public class Profile {
     public Profile() {
     }
 
+    @JsonIgnore
     public String getDisplayName(){
-        if(gameName == null) return facebookName;
-        else return gameName;
+        String returnName;
+        if(gameName == null) returnName = facebookName;
+        else returnName = gameName;
+
+        if(returnName == null) returnName = "Anonymous";
+        return returnName;
     }
 
     public String getUserId() {

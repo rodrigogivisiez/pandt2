@@ -2,6 +2,7 @@ package com.mygdx.potatoandtomato.absintflis.scenes;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.helpers.services.Fonts;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
 import com.mygdx.potatoandtomato.helpers.services.Textures;
@@ -17,9 +18,11 @@ public abstract class SceneAbstract {
     protected Services _services;
     protected Texts _texts;
     protected Table _root;
+    protected PTScreen _screen;
 
-    public SceneAbstract(Services services) {
+    public SceneAbstract(Services services, PTScreen screen) {
         _services = services;
+        _screen = screen;
         _textures = _services.getTextures();
         _fonts = _services.getFonts();
         _texts = _services.getTexts();

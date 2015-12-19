@@ -2,11 +2,13 @@ package com.mygdx.potatoandtomato.helpers.services;
 
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.helpers.utils.JsonObj;
+import com.mygdx.potatoandtomato.models.Profile;
 import com.shephertz.app42.gaming.multiplayer.client.WarpClient;
 import com.shephertz.app42.gaming.multiplayer.client.events.*;
 import com.shephertz.app42.gaming.multiplayer.client.listener.*;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * Created by SiongLeng on 15/12/2015.
@@ -43,10 +45,15 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
     }
 
     @Override
-    public void connect(String username) {
-        _realUsername = username;
-        _username = username + "_warp!" + System.currentTimeMillis();
+    public void connect(Profile user) {
+        _realUsername = user.getUserId();
+        _username = user.getUserId().replace("-", "") + "_" + System.currentTimeMillis();
         _warpInstance.connectWithUserName(_username);
+    }
+
+    @Override
+    public void disconnect() {
+        _warpInstance.disconnect();
     }
 
     @Override
@@ -83,7 +90,7 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
     @Override
     public void onDisconnectDone(ConnectEvent connectEvent) {
-        onConnectionChanged(false);
+        //onConnectionChanged(false);
     }
 
     @Override

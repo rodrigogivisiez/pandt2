@@ -11,7 +11,8 @@ import org.junit.runners.Suite;
         TestMascotPick.class,
         TestGameList.class,
         TestCreateGame.class,
-        TestPrerequisite.class
+        TestPrerequisite.class,
+        TestRoom.class
 })
 public class SceneSuites {
 }
