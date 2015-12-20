@@ -42,7 +42,7 @@ public class BtnColor extends Table {
     }
 
     public void setText(String msg){
-        Label.LabelStyle labelStyle = new Label.LabelStyle(_fonts.getArialBold(17, Color.WHITE), Color.WHITE);
+        Label.LabelStyle labelStyle = new Label.LabelStyle(_fonts.getBold(17, Color.WHITE), Color.WHITE);
         Label lblMessage = new Label(msg, labelStyle);
         lblMessage.setAlignment(Align.center);
         lblMessage.setWrap(true);

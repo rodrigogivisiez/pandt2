@@ -16,24 +16,24 @@ public class Fonts implements Disposable {
 
     HashMap<String, FreeTypeFontGenerator> fontGenerators = new HashMap();
 
-    private String getArialBoldPath() {
-        return "fonts/arial_bold.ttf";
+    private String getBoldPath() {
+        return "fonts/helvetica_bold.ttf";
     }
-    public BitmapFont getArialBold(int size, Color color){
-        return getFont(getArialBoldPath(), size, color, 0, Color.BLACK, 0, Color.BLACK);
+    public BitmapFont getBold(int size, Color color){
+        return getFont(getBoldPath(), size, color, 0, Color.BLACK, 0, Color.BLACK);
     }
-    public BitmapFont getArialBold(int size, Color color, int borderWidth, Color borderColor, int shadowOffset, Color shadowColor){
-        return getFont(getArialBoldPath(), size, color, borderWidth, borderColor, shadowOffset, shadowColor);
+    public BitmapFont getBold(int size, Color color, int borderWidth, Color borderColor, int shadowOffset, Color shadowColor){
+        return getFont(getBoldPath(), size, color, borderWidth, borderColor, shadowOffset, shadowColor);
     }
 
-    private String getArialPath() {
-        return "fonts/arial.ttf";
+    private String getNormalPath() {
+        return "fonts/helvetica_regular.ttf";
     }
-    public BitmapFont getArial(int size, Color color){
-        return getFont(getArialPath(), size, color, 0, Color.BLACK, 0, Color.BLACK);
+    public BitmapFont getNormal(int size, Color color){
+        return getFont(getNormalPath(), size, color, 0, Color.BLACK, 0, Color.BLACK);
     }
-    public BitmapFont getArial(int size, Color color, int borderWidth, Color borderColor, int shadowOffset, Color shadowColor){
-        return getFont(getArialPath(), size, color, borderWidth, borderColor, shadowOffset, shadowColor);
+    public BitmapFont getNormal(int size, Color color, int borderWidth, Color borderColor, int shadowOffset, Color shadowColor){
+        return getFont(getNormalPath(), size, color, borderWidth, borderColor, shadowOffset, shadowColor);
     }
 
     private String getPizzaPath() {

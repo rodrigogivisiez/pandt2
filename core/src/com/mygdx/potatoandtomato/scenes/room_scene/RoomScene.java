@@ -33,6 +33,7 @@ public class RoomScene extends SceneAbstract {
     HashMap<String, Table> _playerMaps;
     Confirm _hostLeftConfirm, _errorConfirm, _messageConfirm;
     Confirm _leaveRoomConfirm;
+    Room _room;
 
     public Array<Table> getTeamTables() {
         return _teamTables;
@@ -58,8 +59,9 @@ public class RoomScene extends SceneAbstract {
         return _inviteButton;
     }
 
-    public RoomScene(Services services, PTScreen screen) {
+    public RoomScene(Services services, PTScreen screen, Room room) {
         super(services, screen);
+        this._room = room;
     }
 
     @Override
@@ -114,9 +116,9 @@ public class RoomScene extends SceneAbstract {
         Label.LabelStyle titleStyle = new Label.LabelStyle();
         titleStyle.font = _fonts.getPizzaFont(18, Color.WHITE, 1, Color.BLACK, 1, Color.GRAY);
         Label.LabelStyle smallStyle = new Label.LabelStyle();
-        smallStyle.font = _fonts.getArial(13, Color.WHITE, 1, Color.GRAY, 1, Color.GRAY);
+        smallStyle.font = _fonts.getNormal(13, Color.WHITE, 1, Color.GRAY, 1, Color.GRAY);
         Label.LabelStyle contentStyle = new Label.LabelStyle();
-        contentStyle.font = _fonts.getArial(12, Color.WHITE, 0, Color.BROWN, 0, Color.GRAY);
+        contentStyle.font = _fonts.getNormal(12, Color.WHITE, 1, Color.GRAY, 0, Color.GRAY);
 
         Table _subRoot = new Table();
         _subRoot.align(Align.topLeft);
@@ -142,6 +144,12 @@ public class RoomScene extends SceneAbstract {
 
         _detailsRoot.add(gameImg).size(120).padLeft(20).padRight(10).top();
         _detailsRoot.add(_subRoot).expandX().fillX().top().padRight(20).padBottom(20);
+    }
+
+    @Override
+    public void onShow() {
+        super.onShow();
+        _services.getChat().show(_root, _textures, _fonts, _texts, _room, _services.getGamingKit());
     }
 
     public void populateTeamTables(int totalTeams, int teamMaxPlayers, HashMap<String, RoomUser> roomUsers){
@@ -273,12 +281,12 @@ public class RoomScene extends SceneAbstract {
         mascotImage.resizeTo(20, 20);
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = _fonts.getArialBold(11, fontColor, 0, Color.BLACK, 0, Color.GRAY);
+        labelStyle.font = _fonts.getBold(11, fontColor, 0, Color.BLACK, 0, Color.GRAY);
 
         Label nameLabel = new Label(name, labelStyle);
 
         Label.LabelStyle progressLabelStyle = new Label.LabelStyle();
-        progressLabelStyle.font = _fonts.getArial(11, Color.valueOf("51bf1b"));
+        progressLabelStyle.font = _fonts.getNormal(11, Color.valueOf("51bf1b"));
         Label progressLabel = new Label("12", progressLabelStyle);
         progressLabel.setName("progress");
         progressLabel.setVisible(false);
@@ -298,5 +306,8 @@ public class RoomScene extends SceneAbstract {
         return playerTable;
     }
 
+    public void removeChat(){
+        _services.getChat().dispose();
+    }
 
 }

@@ -24,7 +24,18 @@ public class Profile {
         if(gameName == null) returnName = facebookName;
         else returnName = gameName;
 
-        if(returnName == null) returnName = "Anonymous";
+        if(returnName == null){
+            if(mascotEnum == MascotEnum.POTATO){
+                returnName = "A Potato and join thewh";
+            }
+            else{
+                returnName = "A Tomato and join thewh";
+            }
+        }
+        if(returnName.length() > 15) {
+            returnName = returnName.substring(0, 12);
+            returnName+="...";
+        }
         return returnName;
     }
 

@@ -1,12 +1,12 @@
 package com.mygdx.potatoandtomato.scenes.boot_scene;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.PTScreen;
@@ -131,7 +131,8 @@ public class BootScene extends SceneAbstract {
 
         _socialIcon = new Image(_textures.getSocialIcon());
 
-        _socialLoginLabel = new Label(_texts.socialLogin(), _texts.getH4Style(_fonts));
+        Label.LabelStyle socialLoginStyle = new Label.LabelStyle(_fonts.getBold(13, Color.WHITE, 1, Color.GRAY, 1, Color.GRAY), Color.WHITE);
+        _socialLoginLabel = new Label(_texts.socialLogin(), socialLoginStyle);
         _socialLoginLabel.setWrap(true);
 
         _tickIcon = new Image(_textures.getTick());

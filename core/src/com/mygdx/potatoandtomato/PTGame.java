@@ -6,6 +6,7 @@ import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.ConnectionChangedListener;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
+import com.mygdx.potatoandtomato.helpers.controls.Chat;
 import com.mygdx.potatoandtomato.helpers.services.*;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.mygdx.potatoandtomato.models.Room;
@@ -26,7 +27,7 @@ public class PTGame extends Game {
 	public void create () {
 		_services = new Services(new Textures(), new Fonts(), new Texts(),
 									new Preferences(), new Profile(), new FirebaseDB(Terms.FIREBASE_URL),
-									new Shaders(), new Appwarp(), new Downloader());
+									new Shaders(), new Appwarp(), new Downloader(), new Chat());
 		_screen = new PTScreen(_services);
 
 		setScreen(_screen);

@@ -3,12 +3,15 @@ package com.mygdx.potatoandtomato;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
+import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.services.Fonts;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
@@ -21,6 +24,7 @@ import com.mygdx.potatoandtomato.scenes.game_list_scene.GameListLogic;
 import com.mygdx.potatoandtomato.scenes.mascot_pick_scene.MascotPickLogic;
 import com.mygdx.potatoandtomato.scenes.prerequisite_scene.PrerequisiteLogic;
 import com.mygdx.potatoandtomato.scenes.room_scene.RoomLogic;
+import com.mygdx.potatoandtomato.scenes.settings_scene.SettingsLogic;
 
 import java.util.Stack;
 
@@ -37,6 +41,7 @@ public class PTScreen implements Screen {
     Fonts _fonts;
     Texts _texts;
     Stage _stage;
+    OrthographicCamera _camera;
     Stack<LogicEnumPair> _logicStacks;
 
     public PTScreen(Services services) {
@@ -56,13 +61,14 @@ public class PTScreen implements Screen {
                 logic.onCreate();
                 if(_logicStacks.size() == 0){
                     _stage.addActor(logic.getScene().getRoot());
+                    logic.getScene().onShow();
                 }
                 else{
                     final LogicEnumPair logicOut = _logicStacks.peek();
-                    sceneTransition(logic.getScene().getRoot(), logicOut.getLogic().getScene().getRoot(), true, new Runnable() {
+                    logicOut.getLogic().onHide();
+                    sceneTransition(logic.getScene().getRoot(), logicOut.getLogic().getScene().getRoot(), logic.getScene(), true, new Runnable() {
                         @Override
                         public void run() {
-                            logicOut.getLogic().onHide();
                             if (!logicOut.getLogic().isSaveToStack()) {
                                 _logicStacks.remove(logicOut);
                                 logicOut.getLogic().dispose();
@@ -93,10 +99,10 @@ public class PTScreen implements Screen {
                             final LogicEnumPair current = _logicStacks.pop();
                             final LogicEnumPair previous = _logicStacks.peek();
                             previous.getLogic().onCreate();
-                            sceneTransition(previous.getLogic().getScene().getRoot(), current.getLogic().getScene().getRoot(), false, new Runnable() {
+                            current.getLogic().onHide();
+                            sceneTransition(previous.getLogic().getScene().getRoot(), current.getLogic().getScene().getRoot(), previous.getLogic().getScene(), false, new Runnable() {
                                 @Override
                                 public void run() {
-                                    current.getLogic().onHide();
                                     current.getLogic().dispose();
                                 }
                             });
@@ -132,11 +138,14 @@ public class PTScreen implements Screen {
             case ROOM:
                 logic = new RoomLogic(this, _services, objs);
                 break;
+            case SETTINGS:
+                logic = new SettingsLogic(this, _services, objs);
+                break;
         }
         return logic;
     }
 
-    private void sceneTransition(Actor _rootIn, final Actor _rootOut, boolean toRight, final Runnable onFinish){
+    private void sceneTransition(Actor _rootIn, final Actor _rootOut, SceneAbstract sceneToShow, boolean toRight, final Runnable onFinish){
 
         float duration = 0.5f;
         _rootIn.remove();
@@ -145,6 +154,8 @@ public class PTScreen implements Screen {
         _rootOut.clearActions();
         _stage.addActor(_rootIn);
         _stage.addActor(_rootOut);
+
+        sceneToShow.onShow();
 
         _rootIn.setPosition(toRight ? Positions.getWidth() : -Positions.getWidth(), 0);
         _rootOut.setPosition(0, 0);
@@ -163,7 +174,10 @@ public class PTScreen implements Screen {
 
     @Override
     public void show() {
-        _stage = new Stage();
+        _camera = new OrthographicCamera(Positions.getWidth(), Positions.getHeight());
+        _camera.setToOrtho(false);
+        StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight(), _camera);
+        _stage = new Stage(viewPort);
 
         //Ground Texture START////////////////////////////////////////////
         _greenGroundImg = new Image(_textures.getGreenGround());

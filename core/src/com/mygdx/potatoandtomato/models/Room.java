@@ -1,10 +1,12 @@
 package com.mygdx.potatoandtomato.models;
 
+import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.helpers.serializings.IntProfileMapDeserializer;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
 import com.shaded.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 /**
@@ -132,6 +134,16 @@ public class Room {
     }
 
     @JsonIgnore
+    public Profile getProfileByUserId(String userId){
+        for(RoomUser roomUser : this.getRoomUsers().values()){
+            if(roomUser.getProfile().getUserId().equals(userId)){
+                return roomUser.getProfile();
+            }
+        }
+        return null;
+    }
+
+    @JsonIgnore
     public int getSlotIndexByUserId(Profile user){
         for(RoomUser roomUser : this.getRoomUsers().values()){
             if(roomUser.getProfile().equals(user)){
@@ -188,6 +200,32 @@ public class Room {
         }
 
         return true;
+    }
+
+    @JsonIgnore
+    public ArrayList<RoomUser> getJustLeftUsers(Room newRoom){
+        return getRoomUsersDifference(this.getRoomUsers().values(), newRoom.getRoomUsers().values());
+    }
+
+    @JsonIgnore
+    public ArrayList<RoomUser>  getJustJoinedUsers(Room newRoom){
+        return getRoomUsersDifference(newRoom.getRoomUsers().values(), this.getRoomUsers().values());
+    }
+
+    @JsonIgnore
+    public ArrayList<RoomUser> getRoomUsersDifference(Collection<RoomUser> roomUsers1, Collection<RoomUser> roomUsers2){
+        ArrayList<RoomUser> results = new ArrayList<>();
+        for(RoomUser roomUser : roomUsers1){
+            boolean found = false;
+            for(RoomUser roomUser2 : roomUsers2){
+                if(roomUser.getProfile().equals(roomUser2.getProfile())){
+                    found = true;
+                    break;
+                }
+            }
+            if(!found) results.add(roomUser);
+        }
+        return results;
     }
 
 

@@ -4,6 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.mygdx.potatoandtomato.PTGame;
+import com.potatoandtomato.common.Broadcaster;
+import helpers.T_Services;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 
@@ -76,5 +80,16 @@ public abstract class TestAbstract {
 
 
     }
+
+    @Before
+    public void setUp() throws Exception {
+        Broadcaster.getInstance().clear();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        Broadcaster.getInstance().clear();
+    }
+
 
 }

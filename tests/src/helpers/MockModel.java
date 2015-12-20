@@ -1,10 +1,7 @@
 package helpers;
 
 import com.mygdx.potatoandtomato.enums.MascotEnum;
-import com.mygdx.potatoandtomato.models.Game;
-import com.mygdx.potatoandtomato.models.Profile;
-import com.mygdx.potatoandtomato.models.Room;
-import com.mygdx.potatoandtomato.models.RoomUser;
+import com.mygdx.potatoandtomato.models.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,6 +58,11 @@ public class MockModel {
         roomUsers.put(user2.getProfile().getUserId(), user2);
         r.setRoomUsers(roomUsers);
         return r;
+    }
+
+    public static ChatMessage mockChatMessage(){
+        ChatMessage c = new ChatMessage("test message", ChatMessage.FromType.USER, MockModel.mockProfile().getUserId());
+        return c;
     }
 
 

@@ -9,6 +9,6 @@ public class Terms {
     public static String FACEBOOK_USERID = "facebookUserId";
     public static String PREF_NAME = "potatoandtomato";
     public static String FIREBASE_URL = "https://glaring-inferno-8572.firebaseIO.com";
-
+    public static String FACEBOOK_USERNAME = "facebookUsername";
 
 }

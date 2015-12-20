@@ -1,12 +1,10 @@
 package connection_testings;
 
 import abstracts.TestAbstract;
-import com.mygdx.potatoandtomato.absintflis.gamingkit.ConnectionChangedListener;
-import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
-import com.mygdx.potatoandtomato.absintflis.gamingkit.JoinRoomListener;
-import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
+import com.mygdx.potatoandtomato.absintflis.gamingkit.*;
 import com.mygdx.potatoandtomato.helpers.services.Appwarp;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
+import com.mygdx.potatoandtomato.models.ChatMessage;
 import helpers.MockModel;
 import helpers.T_Threadings;
 import org.junit.*;
@@ -41,7 +39,7 @@ public class TestAppwarp extends TestAbstract {
     }
 
     @Test
-    public void testCreateRoomAndUpdatePeersAndLeaveRoom(){
+    public void testCreateRoomAndUpdatePeersAndPrivateMsgAndLeaveRoom(){
         final boolean[] waiting = {true};
         final boolean[] success = {false};
         final String[] joinedRoomId = new String[1];
@@ -88,6 +86,24 @@ public class TestAppwarp extends TestAbstract {
         });
 
         _gamingKit.updateRoomMates(code, sendingMsg);
+
+        while(waiting[0]){
+            T_Threadings.sleep(100);
+        }
+
+        waiting[0] = true;
+        final ChatMessage chatMessage = new ChatMessage("test msg", ChatMessage.FromType.USER, "random");
+        //test send room msg
+        _gamingKit.addListener(new MessagingListener() {
+            @Override
+            public void onRoomMessageReceived(String msg, String senderId) {
+                Assert.assertEquals(chatMessage.getMessage(), msg);
+                Assert.assertEquals(chatMessage.getSenderId(), senderId);
+                waiting[0] = false;
+            }
+        });
+
+        _gamingKit.sendRoomMessage(chatMessage.getMessage());
 
         while(waiting[0]){
             T_Threadings.sleep(100);

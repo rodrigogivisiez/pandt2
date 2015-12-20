@@ -26,6 +26,11 @@ public class Broadcaster {
         subScribeOnceArr = new ArrayList<String>();
     }
 
+    public void clear(){
+        callbacks.clear();
+        subScribeOnceArr.clear();
+    }
+
     public String subscribeOnce(int event, BroadcastListener listener){
         String id = subscribe(event, listener);
         subScribeOnceArr.add(id);

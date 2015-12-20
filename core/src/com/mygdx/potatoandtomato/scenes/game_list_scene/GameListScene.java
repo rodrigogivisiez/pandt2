@@ -68,7 +68,7 @@ public class GameListScene extends SceneAbstract {
         _gameTitleTable.align(Align.left);
         _gameTitleTable.setBackground(new TextureRegionDrawable(_textures.getGameListTitleBg()));
         Label.LabelStyle titleLabelStyle = new Label.LabelStyle();
-        titleLabelStyle.font = _fonts.getArialBold(11, Color.valueOf("e5f7e2"), 0, Color.BLACK, 0, Color.BLACK);
+        titleLabelStyle.font = _fonts.getBold(11, Color.valueOf("e5f7e2"), 0, Color.BLACK, 0, Color.BLACK);
         _titleGameLabel = new Label(_texts.game(), titleLabelStyle);
         _titleHostLabel = new Label(_texts.host(), titleLabelStyle);
         _titlePlayersLabel = new Label(_texts.players(), titleLabelStyle);
@@ -105,8 +105,8 @@ public class GameListScene extends SceneAbstract {
         Profile profile = _services.getProfile();
         _userMascot = new Mascot(profile.getMascotEnum(), _textures);
         _userMascot.resizeTo(50, 45);
-        _usernameLabel = new Label(profile.getDisplayName(), new Label.LabelStyle(_fonts.getArialBold(17, Color.WHITE,
-                                                                        0, Color.BLACK, 0, Color.BLACK), Color.WHITE));
+        _usernameLabel = new Label(profile.getDisplayName(), new Label.LabelStyle(_fonts.getPizzaFont(15, Color.WHITE,
+                1, Color.BLACK, 1, Color.GRAY), Color.WHITE));
 
 
         _settingsTable = new Table();
@@ -125,7 +125,7 @@ public class GameListScene extends SceneAbstract {
         _ratingButtons.setFillParent(true);
         _ratingTable.addActor(_ratingButtons);
 
-        _userProfileTable.add(_userMascot).padLeft(10).padRight(10);
+        _userProfileTable.add(_userMascot).size(_userMascot.getPrefWidth(), _userMascot.getPrefHeight()).padLeft(10).padRight(5);
         _userProfileTable.add(_usernameLabel).expand().fill().padLeft(10).padRight(10);
         _userProfileTable.add(_settingsTable).size(40).padRight(10);
         _userProfileTable.add(_ratingTable).size(40).padRight(10);
@@ -147,7 +147,7 @@ public class GameListScene extends SceneAbstract {
 
         Table gameRowTable = new Table();
         Label.LabelStyle contentLabelStyle = new Label.LabelStyle();
-        contentLabelStyle.font = _fonts.getArial(12, Color.WHITE, 0, Color.BLACK, 0, Color.BLACK);
+        contentLabelStyle.font = _fonts.getNormal(12, Color.WHITE, 0, Color.BLACK, 0, Color.BLACK);
         Label gameNameLabel = new Label(room.getGame().getName(), contentLabelStyle);
         gameNameLabel.setWrap(true);
         Label hostNameLabel = new Label(room.getHost().getDisplayName(), contentLabelStyle);

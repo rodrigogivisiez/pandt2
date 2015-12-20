@@ -116,10 +116,10 @@ public class CreateGameScene extends SceneAbstract {
         titleStyle.font = _fonts.getPizzaFont(17, Color.valueOf("976b2d"), 1, Color.WHITE, 0, Color.GRAY);
 
         Label.LabelStyle contentStyle1 = new Label.LabelStyle();
-        contentStyle1.font = _fonts.getArial(14, Color.WHITE, 1, Color.GRAY, 1, Color.GRAY);
+        contentStyle1.font = _fonts.getNormal(14, Color.WHITE, 1, Color.GRAY, 1, Color.GRAY);
 
         Label.LabelStyle contentStyle2 = new Label.LabelStyle();
-        contentStyle2.font = _fonts.getArial(12, Color.WHITE, 1, Color.GRAY, 0, Color.BLACK);
+        contentStyle2.font = _fonts.getNormal(12, Color.WHITE, 1, Color.GRAY, 0, Color.BLACK);
 
         WebImage gameLogo = new WebImage(game.getIconUrl(), _textures, _services.getDownloader());
         Label detailsTitleLabel = new Label(_texts.details(), titleStyle);

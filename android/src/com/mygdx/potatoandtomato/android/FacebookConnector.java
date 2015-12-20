@@ -33,9 +33,9 @@ public class FacebookConnector {
             @Override
             public void onCallback(Object obj, Status st) {
                 registerCallBack();
-                com.facebook.login.LoginManager.getInstance().logInWithPublishPermissions(
+                com.facebook.login.LoginManager.getInstance().logInWithReadPermissions(
                         _activity,
-                        Arrays.asList("publish_actions"));
+                        Arrays.asList("user_friends"));
             }
         });
 
@@ -45,10 +45,33 @@ public class FacebookConnector {
 
         LoginManager.getInstance().registerCallback(_callbackManager,
                 new FacebookCallback<LoginResult>() {
+                    private ProfileTracker mProfileTracker;
                     @Override
-                    public void onSuccess(LoginResult loginResult) {
+                    public void onSuccess(final LoginResult loginResult) {
+
+                        if(Profile.getCurrentProfile() == null) {
+                            mProfileTracker = new ProfileTracker() {
+                                @Override
+                                protected void onCurrentProfileChanged(Profile profile, Profile profile2) {
+                                    mProfileTracker.stopTracking();
+                                    successRetrieved(loginResult.getAccessToken().getUserId(), profile2.getName());
+                                }
+                            };
+                            mProfileTracker.startTracking();
+                        }
+                        else {
+                            Profile profile = Profile.getCurrentProfile();
+                            successRetrieved(loginResult.getAccessToken().getUserId(), profile.getName());
+                        }
+
+
+
+                    }
+
+                    private void successRetrieved(String fbUserId, String fbUsername){
                         JsonObj json = new JsonObj();
-                        json.put(Terms.FACEBOOK_USERID, loginResult.getAccessToken().getUserId());
+                        json.put(Terms.FACEBOOK_USERID, fbUserId);
+                        json.put(Terms.FACEBOOK_USERNAME, fbUsername);
                         Broadcaster.getInstance().broadcast(BroadcastEvent.LOGIN_FACEBOOK_CALLBACK,
                                 json, BroadcastListener.Status.SUCCESS);
                     }

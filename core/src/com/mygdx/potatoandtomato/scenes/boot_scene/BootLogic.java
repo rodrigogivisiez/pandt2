@@ -26,6 +26,7 @@ public class BootLogic extends LogicAbstract {
 
     BootScene _bootScene;
     boolean _fbStepPast;
+    String _fbUsername;
 
     @Override
     public SceneAbstract getScene() {
@@ -107,6 +108,7 @@ public class BootLogic extends LogicAbstract {
                 if(st == Status.SUCCESS){
                     if(obj != null){
                         String fbUserId = obj.getString(Terms.FACEBOOK_USERID);
+                        _fbUsername = obj.getString(Terms.FACEBOOK_USERNAME);
                         if(fbUserId != null){
                             _services.getPreferences().put(Terms.FACEBOOK_USERID, fbUserId);
                             loginPT();
@@ -189,6 +191,7 @@ public class BootLogic extends LogicAbstract {
         String fbUserId = _services.getPreferences().get(Terms.FACEBOOK_USERID);
         if(fbUserId != null){
             _services.getProfile().setFacebookUserId(fbUserId);
+            _services.getProfile().setFacebookName(_fbUsername);
             _services.getDatabase().updateProfile(_services.getProfile());
         }
 

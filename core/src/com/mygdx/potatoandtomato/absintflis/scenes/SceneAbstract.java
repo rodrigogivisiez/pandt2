@@ -35,6 +35,8 @@ public abstract class SceneAbstract {
 
     public Actor getRoot(){ return _root; };
 
+    public void onShow(){
 
+    }
 
 }

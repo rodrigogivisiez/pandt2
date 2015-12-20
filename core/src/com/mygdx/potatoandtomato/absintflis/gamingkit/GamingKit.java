@@ -4,7 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.utils.Logs;
+import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.models.Profile;
+import com.potatoandtomato.common.BroadcastEvent;
+import com.potatoandtomato.common.Broadcaster;
 
 import java.util.HashMap;
 
@@ -16,11 +19,13 @@ public abstract class GamingKit {
     private HashMap<String, ConnectionChangedListener> _connectionChangedListeners;
     private HashMap<String, JoinRoomListener> _joinRoomListeners;
     private HashMap<String, UpdateRoomMatesListener> _updateRoomMatesListeners;
+    private HashMap<String, MessagingListener> _messagingListeners;
 
     public GamingKit() {
         _connectionChangedListeners = new HashMap<>();
         _joinRoomListeners = new HashMap<>();
         _updateRoomMatesListeners = new HashMap<>();
+        _messagingListeners = new HashMap<>();
     }
 
     public void addListener(Object listener){
@@ -33,12 +38,16 @@ public abstract class GamingKit {
         else if(listener instanceof UpdateRoomMatesListener){
             _updateRoomMatesListeners.put(Logs.getCallerClassName(), (UpdateRoomMatesListener) listener);
         }
+        else if(listener instanceof MessagingListener){
+            _messagingListeners.put(Logs.getCallerClassName(), (MessagingListener) listener);
+        }
     }
 
     public void removeListenersByClass(Class clss){
         _connectionChangedListeners.remove(clss.getName());
         _joinRoomListeners.remove(clss.getName());
         _updateRoomMatesListeners.remove(clss.getName());
+        _messagingListeners.remove(clss.getName());
     }
 
 
@@ -86,6 +95,18 @@ public abstract class GamingKit {
         });
     }
 
+    public void onRoomMessageReceived(final String msg, final String senderId){
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                for(MessagingListener listener : _messagingListeners.values()){
+                    listener.onRoomMessageReceived(msg, senderId);
+                }
+            }
+        });
+        Broadcaster.getInstance().broadcast(BroadcastEvent.CHAT_NEW_MESSAGE, new ChatMessage(msg, ChatMessage.FromType.USER, senderId));
+    }
+
     public HashMap<String, ConnectionChangedListener> getConnectionChangedListeners() {
         return _connectionChangedListeners;
     }
@@ -103,6 +124,8 @@ public abstract class GamingKit {
     public abstract void disconnect();
 
     public abstract void createAndJoinRoom();
+
+    public abstract void sendRoomMessage(String msg);
 
     public abstract void joinRoom(String roomId);
 

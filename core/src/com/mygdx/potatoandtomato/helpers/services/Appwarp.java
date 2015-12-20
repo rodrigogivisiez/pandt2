@@ -84,6 +84,14 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
     }
 
     @Override
+    public void sendRoomMessage(String msg) {
+        JsonObj data = new JsonObj();
+        data.put("msg", msg);
+        data.put("realUsername", _realUsername);
+        _warpInstance.sendChat(data.getJSONObject().toString());
+    }
+
+    @Override
     public void onConnectDone(ConnectEvent connectEvent) {
         onConnectionChanged(connectEvent.getResult() == 0);
     }
@@ -139,7 +147,11 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
         onUpdateRoomMatesReceived(jsonObj.getInt("code"), jsonObj.getString("msg"), jsonObj.getString("realUsername"));
     }
 
-
+    @Override
+    public void onChatReceived(ChatEvent chatEvent) {
+        JsonObj jsonObj = new JsonObj(chatEvent.getMessage());
+        onRoomMessageReceived(jsonObj.getString("msg"), jsonObj.getString("realUsername"));
+    }
 
 
 
@@ -256,11 +268,6 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
     @Override
     public void onUserJoinedLobby(LobbyData lobbyData, String s) {
-
-    }
-
-    @Override
-    public void onChatReceived(ChatEvent chatEvent) {
 
     }
 

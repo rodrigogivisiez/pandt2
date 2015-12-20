@@ -3,6 +3,7 @@ package com.mygdx.potatoandtomato.models;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
+import com.mygdx.potatoandtomato.helpers.controls.Chat;
 import com.mygdx.potatoandtomato.helpers.services.*;
 
 /**
@@ -19,9 +20,10 @@ public class Services {
     Shaders _shaders;
     GamingKit _gamingKit;
     IDownloader _downloader;
+    Chat _chat;
 
     public Services(Textures textures, Fonts fonts, Texts texts, Preferences preferences,
-                    Profile profile, IDatabase database, Shaders shaders, GamingKit gamingKit, IDownloader downloader) {
+                    Profile profile, IDatabase database, Shaders shaders, GamingKit gamingKit, IDownloader downloader, Chat chat) {
         _fonts = fonts;
         _texts = texts;
         _textures = textures;
@@ -31,6 +33,7 @@ public class Services {
         _shaders = shaders;
         _gamingKit = gamingKit;
         _downloader = downloader;
+        _chat = chat;
     }
 
     public Fonts getFonts() {
@@ -77,5 +80,9 @@ public class Services {
 
     public void setGamingKit(GamingKit _gamingKit) {
         this._gamingKit = _gamingKit;
+    }
+
+    public Chat getChat() {
+        return _chat;
     }
 }

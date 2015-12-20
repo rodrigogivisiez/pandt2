@@ -15,10 +15,11 @@ import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.helpers.utils.SafeThread;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
-import com.mygdx.potatoandtomato.models.Room;
-import com.mygdx.potatoandtomato.models.RoomUser;
-import com.mygdx.potatoandtomato.models.Services;
+import com.mygdx.potatoandtomato.models.*;
+import com.potatoandtomato.common.BroadcastEvent;
+import com.potatoandtomato.common.Broadcaster;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -42,8 +43,8 @@ public class RoomLogic extends LogicAbstract {
     public RoomLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
 
-        _scene = new RoomScene(services, screen);
         _room = (Room) objs[0];
+        _scene = new RoomScene(services, screen, _room);
         _noGameClientUsers = new HashMap<>();
     }
 
@@ -54,6 +55,7 @@ public class RoomLogic extends LogicAbstract {
         _scene.populateGameDetails(_room.getGame());
 
         _room.addRoomUser(_services.getProfile());
+        userJustJoinedRoom(_services.getProfile());
         openRoom();
 
         if(!isHost()) flushRoom(true, null);
@@ -65,7 +67,14 @@ public class RoomLogic extends LogicAbstract {
             public void onCallback(Room obj, Status st) {
                 if(st == Status.SUCCESS){
                     if(_countDownThread != null) _countDownThread.kill();
+                    for(RoomUser u : _room.getJustJoinedUsers(obj)){
+                        userJustJoinedRoom(u.getProfile());
+                    }
+                    for(RoomUser u : _room.getJustLeftUsers(obj)){
+                        userJustLeftRoom(u.getProfile());
+                    }
                     _room = obj;
+                    _services.getChat().setRoom(_room);
                     refreshRoomDesign();
                     checkHostInRoom();
                 }
@@ -223,6 +232,16 @@ public class RoomLogic extends LogicAbstract {
         }
     }
 
+    public void userJustJoinedRoom(Profile user){
+        Broadcaster.getInstance().broadcast(BroadcastEvent.CHAT_NEW_MESSAGE,
+                        new ChatMessage(String.format(_services.getTexts().userHasJoinedRoom(), user.getDisplayName()), ChatMessage.FromType.SYSTEM, null));
+    }
+
+    public void userJustLeftRoom(Profile user){
+        Broadcaster.getInstance().broadcast(BroadcastEvent.CHAT_NEW_MESSAGE,
+                        new ChatMessage(String.format(_services.getTexts().userHasLeftRoom(), user.getDisplayName()), ChatMessage.FromType.SYSTEM, null));
+    }
+
     public void openRoom(){
         _room.setOpen(true);
         _room.setPlaying(false);
@@ -343,4 +362,11 @@ public class RoomLogic extends LogicAbstract {
     public SceneAbstract getScene() {
         return _scene;
     }
+
+    @Override
+    public void onHide() {
+        _scene.removeChat();
+        super.onHide();
+    }
+
 }

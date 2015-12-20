@@ -1,21 +1,25 @@
 package com.mygdx.potatoandtomato.android;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.graphics.Rect;
 import android.os.Bundle;
 
+import android.view.View;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.firebase.client.Firebase;
 import com.mygdx.potatoandtomato.PTGame;
-import com.facebook.FacebookSdk;
-
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
+import com.mygdx.potatoandtomato.helpers.utils.Positions;
+import com.potatoandtomato.common.BroadcastEvent;
+import com.potatoandtomato.common.Broadcaster;
 
 public class AndroidLauncher extends AndroidApplication {
 
 	FacebookConnector _facebookConnector;
+	private View _rootView;
+	private int _screenHeight;
+	int width, _height;
+
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
@@ -23,6 +27,33 @@ public class AndroidLauncher extends AndroidApplication {
 		_facebookConnector = new FacebookConnector(this);
 		Firebase.setAndroidContext(this);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
+
+
+		_rootView = this.getWindow().getDecorView().getRootView();
+		Rect rect = new Rect();
+		_rootView.getWindowVisibleDisplayFrame(rect);
+		_screenHeight = rect.height();
+
+		_rootView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+
+			@Override
+			public void onLayoutChange(View v, int left, int top, int right,
+									   int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+
+				Rect rect = new Rect();
+				_rootView.getWindowVisibleDisplayFrame(rect);
+
+				if (!(width == rect.width() && _height == rect.height())) {
+					width = rect.width();
+					_height = rect.height();
+					Broadcaster.getInstance().broadcast(BroadcastEvent.SCREEN_LAYOUT_CHANGED,
+							Positions.screenYToGdxY(_screenHeight - _height, _screenHeight));
+
+				}
+			}
+		});
+
+
 		initialize(new PTGame(), config);
 	}
 

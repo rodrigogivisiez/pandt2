@@ -5,6 +5,7 @@ package com.mygdx.potatoandtomato.enums;
  */
 public enum SceneEnum {
     NOTHING, BOOT, MASCOT_PICK,
-    GAME_LIST, CREATE_GAME, PREREQUISITE, ROOM
+    GAME_LIST, CREATE_GAME, PREREQUISITE, ROOM,
+    SETTINGS
 
 }

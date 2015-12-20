@@ -9,10 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 public class Texts {
 
     public Label.LabelStyle getH3Style(Fonts fonts){
-        return  new Label.LabelStyle(fonts.getArialBold(18, Color.WHITE, 0, Color.BLACK, 1, Color.GRAY), Color.WHITE);
+        return  new Label.LabelStyle(fonts.getBold(18, Color.WHITE, 0, Color.BLACK, 1, Color.GRAY), Color.WHITE);
     }
     public Label.LabelStyle getH4Style(Fonts fonts){
-        return  new Label.LabelStyle(fonts.getArialBold(15, Color.WHITE, 0, Color.BLACK, 1, Color.GRAY), Color.WHITE);
+        return  new Label.LabelStyle(fonts.getBold(15, Color.WHITE, 0, Color.BLACK, 1, Color.GRAY), Color.WHITE);
     }
 
 
@@ -48,6 +48,7 @@ public class Texts {
     public String retry() { return "Retry"; }
     public String team() { return "Team"; }
     public String open() { return "Open"; }
+    public String send() { return "Send"; }
 
     public String loading() { return "Loading..."; }
 
@@ -69,4 +70,6 @@ public class Texts {
     public String confirmLeaveRoom() { return "Are you sure you want to leave this room?"; }
     public String confirmHostLeaveRoom() { return "Are you sure you want to leave this room? (This room will be dismissed)"; }
 
+    public String userHasJoinedRoom() { return "%s has joined the room."; }
+    public String userHasLeftRoom() { return "%s has left the room."; }
 }

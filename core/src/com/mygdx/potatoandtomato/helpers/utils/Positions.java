@@ -20,4 +20,9 @@ public class Positions {
         return (float) getWidth() / 2 - textureWidth / 2;
     }
 
+    public static float screenYToGdxY(float y, float screenHeight){
+        return ((y * getHeight())/screenHeight);
+    }
+
+
 }

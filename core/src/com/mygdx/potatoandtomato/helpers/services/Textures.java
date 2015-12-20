@@ -61,6 +61,8 @@ public class Textures {
     public TextureRegion getPotatoIcon() { return getBackgroundsPack().findRegion("potato_icon"); };
     public TextureRegion getUnknownMascotIcon() { return getBackgroundsPack().findRegion("unknown_mascot"); };
     public TextureRegion getBackIcon() { return getBackgroundsPack().findRegion("back_icon"); };
+    public TextureRegion getInfoIcon() { return getBackgroundsPack().findRegion("info_icon"); };
+    public TextureRegion getImportantIcon() { return getBackgroundsPack().findRegion("important_icon"); };
     public NinePatch getIrregularBg() { return getBackgroundsPack().createPatch("irregular_bg"); }
     public TextureRegion getComingSoon() { return getBackgroundsPack().findRegion("coming_soon"); };
     public NinePatch getScrollVerticalHandle() { return getBackgroundsPack().createPatch("scrollbar_handle"); }
@@ -78,6 +80,14 @@ public class Textures {
     public NinePatch getProgressBarBg() { return getBackgroundsPack().createPatch("progress_bar_bg"); }
     public NinePatch getWhiteRoundedBg() { return getBackgroundsPack().createPatch("white_rounded_bg"); }
 
+    public TextureRegion getMessageNotification() { return getBackgroundsPack().findRegion("message_notification"); }
+    public TextureRegion getOrangeLine() { return getBackgroundsPack().findRegion("orange_line"); }
+    public TextureRegion getGreyLine() { return getBackgroundsPack().findRegion("grey_line"); }
+    public TextureRegion getChatContainer() { return getBackgroundsPack().findRegion("chat_container"); }
+    public TextureRegion getTextCursor() { return getBackgroundsPack().findRegion("cursor_black"); }
+
+    public NinePatch getChatBox() { return getBackgroundsPack().createPatch("chat_box"); }
+    public NinePatch getYellowGradientBox() { return getBackgroundsPack().createPatch("yellow_gradient_box"); }
 
 
     public Array<? extends TextureRegion> getPotatoHiAnimation() {
