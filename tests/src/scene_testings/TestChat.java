@@ -53,8 +53,7 @@ public class TestChat extends TestAbstract{
 
         Chat _chat = services.getChat();
 
-        _chat.show(new Table(), services.getTextures(), services.getFonts(),
-                services.getTexts(), MockModel.mockRoom("1"), services.getGamingKit());
+        _chat.show(new Table(), services.getTextures(), services.getTexts(), MockModel.mockRoom("1"), services.getGamingKit());
 
         _chat.setMessage("testing");
         _chat.sendMessage();

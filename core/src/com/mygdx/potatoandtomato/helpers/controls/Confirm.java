@@ -1,6 +1,5 @@
 package com.mygdx.potatoandtomato.helpers.controls;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -14,11 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
-import com.mygdx.potatoandtomato.helpers.services.Fonts;
-import com.mygdx.potatoandtomato.helpers.services.Textures;
+import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
-
-import java.util.AbstractList;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -32,20 +28,18 @@ public class Confirm {
     }
 
     Table _root;
-    Textures _textures;
+    Assets _assets;
     String _msg;
     Type _type;
     Table _confirmRoot;
-    Fonts _fonts;
     Image _closeButton;
     DummyButton _buttonYes, _buttonNo;
     ConfirmResultListener _listener;
 
-    public Confirm(Table root, Textures textures, Fonts fonts, String msg, Type type) {
+    public Confirm(Table root, Assets assets, String msg, Type type) {
         _root = root;
-        _textures = textures;
+        _assets = assets;
         _msg = msg;
-        _fonts = fonts;
         _type = type;
     }
 
@@ -62,34 +56,34 @@ public class Confirm {
         _root.setTouchable(Touchable.disabled);
 
         _confirmRoot = new Table();
-        _confirmRoot.setBackground(new TextureRegionDrawable(_textures.getBlackBg()));
+        _confirmRoot.setBackground(new TextureRegionDrawable(_assets.getBlackBg()));
         _confirmRoot.setFillParent(true);
         _confirmRoot.getColor().a = 0;
 
         final Table msgTable = new Table();
-        msgTable.setBackground(new NinePatchDrawable(_textures.getPopupBg()));
+        msgTable.setBackground(new NinePatchDrawable(_assets.getPopupBg()));
         msgTable.getColor().a = 0;
         Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = _fonts.getPizzaFont(21, Color.WHITE, 1, Color.BLACK, 2, Color.GRAY);
+        labelStyle.font = _assets.getWhitePizza3BlackS();
         Label messageLabel = new Label(_msg, labelStyle);
         messageLabel.setWrap(true);
         messageLabel.setAlignment(Align.center);
 
-        _closeButton = new Image(_textures.getCloseButton());
+        _closeButton = new Image(_assets.getCloseButton());
 
         Table buttonYesTable = new Table();
-        buttonYesTable.setBackground(new NinePatchDrawable(_textures.getButtonGreen()));
-        Vector2 yesSize = Sizes.resize(30, _textures.getTick());
-        Image yesImage = new Image(_textures.getTick());
+        buttonYesTable.setBackground(new NinePatchDrawable(_assets.getButtonGreen()));
+        Vector2 yesSize = Sizes.resize(30, _assets.getTick());
+        Image yesImage = new Image(_assets.getTick());
         buttonYesTable.add(yesImage).size(yesSize.x, yesSize.y);
-        _buttonYes = new DummyButton(buttonYesTable, _textures);
+        _buttonYes = new DummyButton(buttonYesTable, _assets);
 
         Table buttonNoTable = new Table();
-        buttonNoTable.setBackground(new NinePatchDrawable(_textures.getButtonRed()));
-        Vector2 noSize = Sizes.resize(30, _textures.getCross());
-        Image noImage = new Image(_textures.getCross());
+        buttonNoTable.setBackground(new NinePatchDrawable(_assets.getButtonRed()));
+        Vector2 noSize = Sizes.resize(30, _assets.getCross());
+        Image noImage = new Image(_assets.getCross());
         buttonNoTable.add(noImage).size(noSize.x, noSize.y);
-        _buttonNo = new DummyButton(buttonNoTable, _textures);
+        _buttonNo = new DummyButton(buttonNoTable, _assets);
 
         msgTable.add(_closeButton).expandX().right().padTop(-50).colspan(2);
         msgTable.row();

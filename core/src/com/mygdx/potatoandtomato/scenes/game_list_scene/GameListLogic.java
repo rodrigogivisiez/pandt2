@@ -48,6 +48,14 @@ public class GameListLogic extends LogicAbstract {
             }
         });
 
+        _scene.getSettingsButton().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                _screen.toScene(SceneEnum.SETTINGS);
+            }
+        });
+
 
         _services.getDatabase().monitorAllRooms(_rooms, new SpecialDatabaseListener<ArrayList<Room>, Room>(Room.class) {
             @Override

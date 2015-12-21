@@ -56,7 +56,7 @@ public class TestPrerequisite extends TestAbstract {
 
         PTScreen screen = mock(PTScreen.class);
         PrerequisiteLogic logic = Mockito.spy(new PrerequisiteLogic(screen, _services, _game, true));
-        logic.onCreate();
+        logic.onInit();
         T_Threadings.sleep(100);
         verify(logic, times(0)).joinRoomSuccess();
         verify(logic, times(1)).createRoomSuccess(eq("123"));
@@ -73,7 +73,7 @@ public class TestPrerequisite extends TestAbstract {
 
         PTScreen screen = mock(PTScreen.class);
         PrerequisiteLogic logic = Mockito.spy(new PrerequisiteLogic(screen, _services, _game, false, room));
-        logic.onCreate();
+        logic.onInit();
         T_Threadings.sleep(100);
         verify(logic, times(1)).joinRoomSuccess();
         verify(logic, times(0)).createRoomSuccess(anyString());

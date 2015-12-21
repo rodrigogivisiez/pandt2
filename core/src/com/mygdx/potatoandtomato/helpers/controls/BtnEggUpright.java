@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.mygdx.potatoandtomato.helpers.services.Textures;
+import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -20,16 +20,16 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 public class BtnEggUpright extends Table {
 
     Button _button;
-    Textures _textures;
+    Assets _assets;
     Vector2 _size;
     Image _contentImg;
 
-    public BtnEggUpright(Textures textures) {
-        this._textures = textures;
-        this._button = new Button(new TextureRegionDrawable(_textures.getEmpty()));
+    public BtnEggUpright(Assets assets) {
+        this._assets = assets;
+        this._button = new Button(new TextureRegionDrawable(_assets.getEmpty()));
         _button.setFillParent(true);
-        this.setBackground(new TextureRegionDrawable(_textures.getUprightEggButton()));
-        _size = Sizes.resize(120, _textures.getUprightEggButton());
+        this.setBackground(new TextureRegionDrawable(_assets.getUprightEggButton()));
+        _size = Sizes.resize(120, _assets.getUprightEggButton());
         this.setSize(_size.x, _size.y);
 
         _button.addListener(new ClickListener(){

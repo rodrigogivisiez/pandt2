@@ -38,16 +38,28 @@ public abstract class LogicAbstract implements Disposable {
         return _saveToStack;
     }
 
-    public void onCreate(){
+    public void setScreen(PTScreen _screen) {
+        this._screen = _screen;
+    }
+
+    //will be called everytime scene onshow, whether is back or forward direction
+    public void onShow(){
+        getScene().onShow();
 
     }
 
+    //will be called everytime scene on hide, whether is back or forward direction
     public void onHide(){
 
     }
 
+    //will only be called when scene init, must be forward direction
+    public void onInit(){
+
+    }
 
 
+    //will be called everytime scene on hide and dispose, must be back direction
     @Override
     public void dispose() {
         _services.getGamingKit().removeListenersByClass(this.getClass());

@@ -29,7 +29,7 @@ public class TestGameList extends TestAbstract {
     @Test
     public void testGameListLogicSceneAddRemoveRecord(){
         GameListLogic logic = new GameListLogic(mock(PTScreen.class), T_Services.mockServices());
-        logic.onCreate();
+        logic.onShow();
         GameListScene scene = (GameListScene) logic.getScene();
         Room room = MockModel.mockRoom("1");
         room.setOpen(true);

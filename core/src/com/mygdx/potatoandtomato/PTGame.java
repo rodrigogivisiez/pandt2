@@ -1,39 +1,43 @@
 package com.mygdx.potatoandtomato;
 
 import com.badlogic.gdx.Game;
-import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
-import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
-import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
-import com.mygdx.potatoandtomato.absintflis.gamingkit.ConnectionChangedListener;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.controls.Chat;
 import com.mygdx.potatoandtomato.helpers.services.*;
+import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
-import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.models.Profile;
-
-import java.util.ArrayList;
 
 public class PTGame extends Game {
 
 	Services _services;
-	Textures _textures;
-	Fonts _fonts;
+	Assets _assets;
 	PTScreen _screen;
 	Texts _texts;
 
 	@Override
 	public void create () {
-		_services = new Services(new Textures(), new Fonts(), new Texts(),
-									new Preferences(), new Profile(), new FirebaseDB(Terms.FIREBASE_URL),
-									new Shaders(), new Appwarp(), new Downloader(), new Chat());
+
+		_assets = new Assets();
+		Preferences preferences = new Preferences();
+		_services = new Services(_assets, new Texts(),
+									preferences, new Profile(), new FirebaseDB(Terms.FIREBASE_URL),
+									new Shaders(), new Appwarp(), new Downloader(), new Chat(), new Socials(preferences));
 		_screen = new PTScreen(_services);
 
-		setScreen(_screen);
+		//run when assets done loading
+		_assets.loadBasic(new Runnable() {
+			@Override
+			public void run() {
+				setScreen(_screen);
+				_screen.toScene(SceneEnum.BOOT);
+			}
+		});
 
-		_screen.toScene(SceneEnum.BOOT);
 
+		Logs.startLogFps();
 
 
 	}

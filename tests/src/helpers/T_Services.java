@@ -9,7 +9,6 @@ import com.mygdx.potatoandtomato.helpers.controls.Chat;
 import com.mygdx.potatoandtomato.helpers.services.*;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.models.Profile;
-import org.mockito.Mock;
 
 /**
  * Created by SiongLeng on 6/12/2015.
@@ -30,8 +29,12 @@ public class T_Services {
 
     public static Services mockServices(IDatabase databases, IDownloader downloader){
         Preferences preferences = new Preferences("potatoandtomato_test");
-        return new Services(new Textures(), new Fonts(), new Texts(), preferences,
-                new Profile(), databases, new Shaders(), new MockGamingKit(), downloader, new Chat());
+        preferences.deleteAll();
+        Assets assets = new Assets();
+        assets.loadBasic(null);
+
+        return new Services(assets, new Texts(), preferences,
+                new Profile(), databases, new Shaders(), new MockGamingKit(), downloader, new Chat(), new Socials(preferences));
     }
 
 }

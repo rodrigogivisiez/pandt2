@@ -7,7 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.PTScreen;
@@ -39,35 +38,35 @@ public class MascotPickScene extends SceneAbstract {
     @Override
     public void populateRoot() {
 
-        _nextSceneButton = new Button(new TextureRegionDrawable(_textures.getEmpty()));
+        _nextSceneButton = new Button(new TextureRegionDrawable(_assets.getEmpty()));
         _nextSceneButton.setFillParent(true);
         _nextSceneButton.setVisible(false);
 
         //Label Question START
         Label.LabelStyle lblPizzaStyle = new Label.LabelStyle();
-        lblPizzaStyle.font = _fonts.getPizzaFont(28, Color.WHITE, 0, Color.BLACK, 2, Color.GRAY);
+        lblPizzaStyle.font = _assets.getWhitePizza3BlackS();
         _questionLabel = new Label(_texts.mascotQuestion() ,lblPizzaStyle);
         _questionLabel.setAlignment(Align.center);
         //Label Question END
 
         //Potato Mascot START
         _potatoTable = new Table();
-        _potatoTable.setBackground(new TextureRegionDrawable(_textures.getWoodBgTall()));
-        _potatoHiImg = new Image(_textures.getPotatoHi());
-        Vector2 potatoSizes = Sizes.resize(140, _textures.getPotatoHi());
+        _potatoTable.setBackground(new TextureRegionDrawable(_assets.getWoodBgTall()));
+        _potatoHiImg = new Image(_assets.getPotatoHi());
+        Vector2 potatoSizes = Sizes.resize(140, _assets.getPotatoHi());
         _potatoTable.add(_potatoHiImg).size(potatoSizes.x, potatoSizes.y).align(Align.bottom).expand().padBottom(60);
-        _potatoButton = new Button(new TextureRegionDrawable(_textures.getEmpty()));
+        _potatoButton = new Button(new TextureRegionDrawable(_assets.getEmpty()));
         _potatoButton.setFillParent(true);
         _potatoTable.addActor(_potatoButton);
         //Potato Mascot END
 
         //Tomato Mascot START
         _tomatoTable = new Table();
-        _tomatoTable.setBackground(new TextureRegionDrawable(_textures.getWoodBgTall()));
-        _tomatoHiImg = new Image(_textures.getTomatoHi());
-        Vector2 tomatoSizes = Sizes.resize(140, _textures.getTomatoHi());
+        _tomatoTable.setBackground(new TextureRegionDrawable(_assets.getWoodBgTall()));
+        _tomatoHiImg = new Image(_assets.getTomatoHi());
+        Vector2 tomatoSizes = Sizes.resize(140, _assets.getTomatoHi());
         _tomatoTable.add(_tomatoHiImg).size(tomatoSizes.x, tomatoSizes.y).align(Align.bottom).expand().padBottom(60);
-        _tomatoButton = new Button(new TextureRegionDrawable(_textures.getEmpty()));
+        _tomatoButton = new Button(new TextureRegionDrawable(_assets.getEmpty()));
         _tomatoButton.setFillParent(true);
         _tomatoTable.addActor(_tomatoButton);
         //Tomato Mascot END
@@ -105,8 +104,8 @@ public class MascotPickScene extends SceneAbstract {
             _potatoTable.addAction(moveBy(90, 0, 0.3f));
             msg = _texts.mascotPotato();
             _potatoHiImg.remove();
-            _potatoHiAnimator = new Animator(0.2f, _textures.getPotatoHiAnimation());
-            Vector2 size = Sizes.resize(140, _textures.getPotatoHiAnimation().first());
+            _potatoHiAnimator = new Animator(0.2f, _assets.getPotatoHiAnimation());
+            Vector2 size = Sizes.resize(140, _assets.getPotatoHiAnimation().first());
             _potatoTable.add(_potatoHiAnimator).size(size.x, size.y).align(Align.bottom).padBottom(60).padRight(10);
         }
         else{
@@ -121,8 +120,8 @@ public class MascotPickScene extends SceneAbstract {
             _tomatoTable.addAction(moveBy(-90, 0, 0.3f));
             msg = _texts.mascotTomato();
             _tomatoHiImg.remove();
-            _tomatoHiAnimator = new Animator(0.2f, _textures.getTomatoHiAnimation());
-            Vector2 size = Sizes.resize(140, _textures.getTomatoHiAnimation().first());
+            _tomatoHiAnimator = new Animator(0.2f, _assets.getTomatoHiAnimation());
+            Vector2 size = Sizes.resize(140, _assets.getTomatoHiAnimation().first());
             _tomatoTable.add(_tomatoHiAnimator).size(size.x, size.y).align(Align.bottom).padBottom(60).padRight(10);
         }
 

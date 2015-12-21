@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.potatoandtomato.enums.MascotEnum;
-import com.mygdx.potatoandtomato.helpers.services.Textures;
+import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 
 /**
@@ -14,25 +14,25 @@ import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 public class Mascot extends Image {
 
     MascotEnum _mascotEnum;
-    Textures _textures;
+    Assets _assets;
     TextureRegion _textureRegion;
     float _prefWidth, _prefHeight;
 
-    public Mascot(MascotEnum _mascotEnum, Textures _textures) {
+    public Mascot(MascotEnum _mascotEnum, Assets _assets) {
         this._mascotEnum = _mascotEnum;
-        this._textures = _textures;
+        this._assets = _assets;
         build();
     }
 
     public void build(){
         if(this._mascotEnum == MascotEnum.TOMATO){
-            _textureRegion = _textures.getTomatoIcon();
+            _textureRegion = _assets.getTomatoIcon();
         }
         else if(this._mascotEnum == MascotEnum.UNKNOWN){
-            _textureRegion = _textures.getUnknownMascotIcon();
+            _textureRegion = _assets.getUnknownMascotIcon();
         }
         else{
-            _textureRegion = _textures.getPotatoIcon();
+            _textureRegion = _assets.getPotatoIcon();
         }
 
 

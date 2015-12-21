@@ -8,14 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
  */
 public class Texts {
 
-    public Label.LabelStyle getH3Style(Fonts fonts){
-        return  new Label.LabelStyle(fonts.getBold(18, Color.WHITE, 0, Color.BLACK, 1, Color.GRAY), Color.WHITE);
-    }
-    public Label.LabelStyle getH4Style(Fonts fonts){
-        return  new Label.LabelStyle(fonts.getBold(15, Color.WHITE, 0, Color.BLACK, 1, Color.GRAY), Color.WHITE);
-    }
-
-
     public String mascotQuestion() { return "Are you a Potato or \nTomato?";};
     public String mascotPotato() { return "Potatoes welcome \nYOU!";};
     public String mascotTomato() { return "Tomatoes welcome \nYOU!";};
@@ -32,9 +24,11 @@ public class Texts {
     public String host() { return "HOST"; }
     public String newGame() { return "Create"; }
     public String joinGame() { return "Join"; }
+    public String pickAGame() { return "Pick a game!"; }
 
     public String createGameTitle() { return "Create Game"; }
     public String roomTitle() { return "Game Room"; }
+    public String settingsTitle() { return "Settings"; }
 
     public String details() { return "Details"; }
     public String screenShots() { return "Screen Shots"; }
@@ -42,6 +36,14 @@ public class Texts {
     public String create() { return "Create"; }
     public String startGame() { return "Start Game"; }
     public String invite() { return "Invite"; }
+    public String displayName() { return "Display Name"; }
+    public String facebook() { return "Facebook"; }
+    public String login() { return "Login"; }
+    public String logout() { return "Logout"; }
+    public String confirmLogoutFacebook() { return "Are you sure you want to logout from facebook? (Potato and Tomato will need to restart after this action.)"; }
+    public String confirmLoginFacebook() { return "Are you sure you want to login into facebook? (Potato and Tomato will need to restart after this action.)"; }
+    public String facebookLoginFailed() { return "Facebook request failed..."; }
+
 
     public String yes() { return "Yes"; }
     public String no() { return "No"; }

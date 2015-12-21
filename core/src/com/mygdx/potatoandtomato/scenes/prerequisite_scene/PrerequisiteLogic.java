@@ -49,8 +49,8 @@ public class PrerequisiteLogic extends LogicAbstract {
     }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
+    public void onInit() {
+        super.onInit();
         restart();
     }
 

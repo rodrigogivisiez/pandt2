@@ -19,7 +19,6 @@ import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.Broadcaster;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -46,11 +45,14 @@ public class RoomLogic extends LogicAbstract {
         _room = (Room) objs[0];
         _scene = new RoomScene(services, screen, _room);
         _noGameClientUsers = new HashMap<>();
+
+
+
     }
 
     @Override
-    public void onCreate() {
-        super.onCreate();
+    public void onInit() {
+        super.onInit();
 
         _scene.populateGameDetails(_room.getGame());
 
@@ -136,7 +138,6 @@ public class RoomLogic extends LogicAbstract {
         });
 
     }
-
 
     @Override
     public void onQuit(final OnQuitListener listener) {

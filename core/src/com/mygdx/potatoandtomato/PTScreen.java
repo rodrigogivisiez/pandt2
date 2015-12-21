@@ -13,9 +13,8 @@ import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.helpers.services.Fonts;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
-import com.mygdx.potatoandtomato.helpers.services.Textures;
+import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.scenes.boot_scene.BootLogic;
@@ -37,8 +36,7 @@ public class PTScreen implements Screen {
 
     Image _bgBlueImg, _bgAutumnImg, _sunriseImg, _sunrayImg, _greenGroundImg, _autumnGroundImg;
     Services _services;
-    Textures _textures;
-    Fonts _fonts;
+    Assets _assets;
     Texts _texts;
     Stage _stage;
     OrthographicCamera _camera;
@@ -46,8 +44,7 @@ public class PTScreen implements Screen {
 
     public PTScreen(Services services) {
         this._services = services;
-        this._textures = _services.getTextures();
-        this._fonts = _services.getFonts();
+        this._assets = _services.getTextures();
         this._texts = _services.getTexts();
         this._logicStacks = new Stack<>();
     }
@@ -58,10 +55,10 @@ public class PTScreen implements Screen {
             @Override
             public void run() {
                 final LogicAbstract logic = newSceneLogic(sceneEnum, objs);
-                logic.onCreate();
+                logic.onInit();
+                logic.onShow();
                 if(_logicStacks.size() == 0){
                     _stage.addActor(logic.getScene().getRoot());
-                    logic.getScene().onShow();
                 }
                 else{
                     final LogicEnumPair logicOut = _logicStacks.peek();
@@ -98,7 +95,7 @@ public class PTScreen implements Screen {
                         if(result == Result.YES){
                             final LogicEnumPair current = _logicStacks.pop();
                             final LogicEnumPair previous = _logicStacks.peek();
-                            previous.getLogic().onCreate();
+                            previous.getLogic().onShow();
                             current.getLogic().onHide();
                             sceneTransition(previous.getLogic().getScene().getRoot(), current.getLogic().getScene().getRoot(), previous.getLogic().getScene(), false, new Runnable() {
                                 @Override
@@ -114,6 +111,17 @@ public class PTScreen implements Screen {
     }
 
     public void confirmQuitGame(){
+
+    }
+
+    public void backToBoot(){
+        while(_logicStacks.size() > 0){
+            LogicEnumPair logicEnumPair = _logicStacks.pop();
+            logicEnumPair.getLogic().getScene().getRoot().remove();
+            logicEnumPair.getLogic().onHide();
+            logicEnumPair.getLogic().dispose();
+        }
+        toScene(SceneEnum.BOOT);
 
     }
 
@@ -180,24 +188,24 @@ public class PTScreen implements Screen {
         _stage = new Stage(viewPort);
 
         //Ground Texture START////////////////////////////////////////////
-        _greenGroundImg = new Image(_textures.getGreenGround());
-        _autumnGroundImg = new Image(_textures.getAutumnGround());
+        _greenGroundImg = new Image(_assets.getGreenGround());
+        _autumnGroundImg = new Image(_assets.getAutumnGround());
         _autumnGroundImg.getColor().a = 0;
         _autumnGroundImg.addAction(sequence(delay(0.4f), fadeIn(0.5f)));
         //Ground Texture END//////////////////////////////////////////////
 
         //Background Texture START
-        _bgBlueImg = new Image(_textures.getBlueBg());
+        _bgBlueImg = new Image(_assets.getBlueBg());
         _bgBlueImg.setSize(Positions.getWidth(), Positions.getHeight());
 
-        _bgAutumnImg = new Image(_textures.getAutumnBg());
+        _bgAutumnImg = new Image(_assets.getAutumnBg());
         _bgAutumnImg.setSize(Positions.getWidth(), Positions.getHeight());
         _bgAutumnImg.getColor().a = 0;
 
-        _sunriseImg = new Image(_textures.getSunrise());
+        _sunriseImg = new Image(_assets.getSunrise());
         _sunriseImg.getColor().a = 0;
 
-        _sunrayImg = new Image(_textures.getSunray());
+        _sunrayImg = new Image(_assets.getSunray());
         _sunrayImg.setPosition(Positions.centerX(1200), -470);
         _sunrayImg.setOrigin(599f, 601f);
         _sunrayImg.setSize(1200, 1200);

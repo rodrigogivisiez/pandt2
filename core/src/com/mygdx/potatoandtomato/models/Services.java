@@ -11,9 +11,8 @@ import com.mygdx.potatoandtomato.helpers.services.*;
  */
 public class Services {
 
-    Fonts _fonts;
     Texts _texts;
-    Textures _textures;
+    Assets _assets;
     Preferences _preferences;
     Profile _profile;
     IDatabase _database;
@@ -21,12 +20,12 @@ public class Services {
     GamingKit _gamingKit;
     IDownloader _downloader;
     Chat _chat;
+    Socials _socials;
 
-    public Services(Textures textures, Fonts fonts, Texts texts, Preferences preferences,
-                    Profile profile, IDatabase database, Shaders shaders, GamingKit gamingKit, IDownloader downloader, Chat chat) {
-        _fonts = fonts;
+    public Services(Assets assets, Texts texts, Preferences preferences,
+                    Profile profile, IDatabase database, Shaders shaders, GamingKit gamingKit, IDownloader downloader, Chat chat, Socials socials) {
         _texts = texts;
-        _textures = textures;
+        _assets = assets;
         _preferences = preferences;
         _profile = profile;
         _database = database;
@@ -34,18 +33,15 @@ public class Services {
         _gamingKit = gamingKit;
         _downloader = downloader;
         _chat = chat;
-    }
-
-    public Fonts getFonts() {
-        return _fonts;
+        _socials = socials;
     }
 
     public Texts getTexts() {
         return _texts;
     }
 
-    public Textures getTextures() {
-        return _textures;
+    public Assets getTextures() {
+        return _assets;
     }
 
     public Preferences getPreferences() { return _preferences; }
@@ -85,4 +81,14 @@ public class Services {
     public Chat getChat() {
         return _chat;
     }
+
+    public Socials getSocials() {
+        return _socials;
+    }
+
+    public void setSocials(Socials _socials) {
+        this._socials = _socials;
+    }
 }
+
+

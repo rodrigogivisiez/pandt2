@@ -44,14 +44,14 @@ public class BootScene extends SceneAbstract {
     @Override
     public void populateRoot() {
         //Logo Image START////////////////////////////////////////////////////
-        _logoImg = new Image(_textures.getLogoNoWeapon());
-        Vector2 logoSize = Sizes.resize(260, _textures.getLogoNoWeapon());
+        _logoImg = new Image(_assets.getLogoNoWeapon());
+        Vector2 logoSize = Sizes.resize(260, _assets.getLogoNoWeapon());
         _logoImg.setSize(logoSize.x * 2.5f, logoSize.y * 2.5f);
         _logoImg.setPosition(Positions.centerX(logoSize.x * 2.5f), 250);
         _logoImg.getColor().a = 0;
 
-        _tomatoWeaponImg = new Image(_textures.getLogoTomatoWeapon());
-        _potatoWeaponImg = new Image(_textures.getLogoPotatoWeapon());
+        _tomatoWeaponImg = new Image(_assets.getLogoTomatoWeapon());
+        _potatoWeaponImg = new Image(_assets.getLogoPotatoWeapon());
         _potatoWeaponImg.setOrigin(Align.bottomRight);
         _tomatoWeaponImg.setPosition(230, 380);
         _potatoWeaponImg.setPosition(150, 380);
@@ -101,10 +101,10 @@ public class BootScene extends SceneAbstract {
         //Logo Image END////////////////////////////////////////////////////
 
         //Play Button START
-        _playButton = new BtnEggUpright(_textures);
+        _playButton = new BtnEggUpright(_assets);
         _playButton.setPosition(Positions.centerX(_playButton.getWidth()), 160);
         _playButton.getColor().a = 0;
-        _playButton.setContent(_textures.getPlayIcon());
+        _playButton.setContent(_assets.getPlayIcon());
         //Play Button END
 
         _root.addActor(_potatoWeaponImg);
@@ -124,21 +124,21 @@ public class BootScene extends SceneAbstract {
         }));
 
         _socialTable = new Table();
-        _socialTable.setBackground(new TextureRegionDrawable(_textures.getWoodBgNormal()));
+        _socialTable.setBackground(new TextureRegionDrawable(_assets.getWoodBgNormal()));
         _socialTable.setSize(300, 230);
         _socialTable.setPosition(Positions.centerX(300), 40);
         _socialTable.getColor().a = 0;
 
-        _socialIcon = new Image(_textures.getSocialIcon());
+        _socialIcon = new Image(_assets.getSocialIcon());
 
-        Label.LabelStyle socialLoginStyle = new Label.LabelStyle(_fonts.getBold(13, Color.WHITE, 1, Color.GRAY, 1, Color.GRAY), Color.WHITE);
+        Label.LabelStyle socialLoginStyle = new Label.LabelStyle(_assets.getWhiteBold3GrayS(), Color.WHITE);
         _socialLoginLabel = new Label(_texts.socialLogin(), socialLoginStyle);
         _socialLoginLabel.setWrap(true);
 
-        _tickIcon = new Image(_textures.getTick());
-        _crossIcon = new Image(_textures.getCross());
-        Vector2 tickSize = Sizes.resizeByH(40, _textures.getTick());
-        Vector2 crossSize = Sizes.resizeByH(40, _textures.getCross());
+        _tickIcon = new Image(_assets.getTick());
+        _crossIcon = new Image(_assets.getCross());
+        Vector2 tickSize = Sizes.resizeByH(40, _assets.getTick());
+        Vector2 crossSize = Sizes.resizeByH(40, _assets.getCross());
 
         _socialTable.add(_socialIcon).padLeft(20).padRight(10);
         _socialTable.add(_socialLoginLabel).expandX().fillX().padRight(20).height(150);
@@ -167,7 +167,7 @@ public class BootScene extends SceneAbstract {
     }
 
     public void showLoggingIn(){
-        _socialIcon.setDrawable(new TextureRegionDrawable(_textures.getLoginIcon()));
+        _socialIcon.setDrawable(new TextureRegionDrawable(_assets.getLoginIcon()));
         _socialLoginLabel.addAction(forever(sequence(fadeOut(0.5f), fadeIn(0.5f))));
         _socialLoginLabel.setText(_texts.loginProcessing());
         _socialLoginLabel.setAlignment(Align.center);
@@ -176,7 +176,7 @@ public class BootScene extends SceneAbstract {
     }
 
     public void showCreatingUser(){
-        _socialIcon.setDrawable(new TextureRegionDrawable(_textures.getLoginIcon()));
+        _socialIcon.setDrawable(new TextureRegionDrawable(_assets.getLoginIcon()));
         _socialLoginLabel.addAction(forever(sequence(fadeOut(0.5f), fadeIn(0.5f))));
         _socialLoginLabel.setText(_texts.creatingUser());
         _socialLoginLabel.setAlignment(Align.center);
@@ -185,7 +185,7 @@ public class BootScene extends SceneAbstract {
     }
 
     public void showRetrieveUserFailed(){
-        _socialIcon.setDrawable(new TextureRegionDrawable(_textures.getLoginIcon()));
+        _socialIcon.setDrawable(new TextureRegionDrawable(_assets.getLoginIcon()));
         _socialLoginLabel.clearActions();
         _socialLoginLabel.getColor().a = 1;
         _socialLoginLabel.setText(_texts.failedRetrieveProfile());

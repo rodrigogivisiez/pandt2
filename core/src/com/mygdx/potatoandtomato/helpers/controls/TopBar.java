@@ -1,6 +1,5 @@
 package com.mygdx.potatoandtomato.helpers.controls;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -10,8 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.potatoandtomato.PTScreen;
-import com.mygdx.potatoandtomato.helpers.services.Fonts;
-import com.mygdx.potatoandtomato.helpers.services.Textures;
+import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 
@@ -23,8 +21,7 @@ public class TopBar {
     Table _root;
     String _title;
     boolean _noPreviousScene;
-    Textures _textures;
-    Fonts _fonts;
+    Assets _assets;
     Table _topBarTable;
     float _barHeight = 70;
     Image _iconImg;
@@ -32,12 +29,11 @@ public class TopBar {
     PTScreen _screen;
 
     public TopBar(Table _root, String _title, boolean _noPreviousScene,
-                        Textures _textures, Fonts _fonts, PTScreen _screen) {
+                        Assets _assets, PTScreen _screen) {
         this._root = _root;
         this._title = _title;
         this._noPreviousScene = _noPreviousScene;
-        this._textures = _textures;
-        this._fonts = _fonts;
+        this._assets = _assets;
         this._screen = _screen;
         setTopBar();
         setIconListener();
@@ -48,17 +44,17 @@ public class TopBar {
         _topBarTable = new Table();
         _topBarTable.setWidth(Positions.getWidth());
         _topBarTable.setHeight(_barHeight);
-        _topBarTable.setBackground(new TextureRegionDrawable(_textures.getTopBarBg()));
+        _topBarTable.setBackground(new TextureRegionDrawable(_assets.getTopBarBg()));
         _topBarTable.setPosition(0, Positions.getHeight() - _barHeight);
 
-        TextureRegion iconRegion = _noPreviousScene ? _textures.getQuitIcon() : _textures.getBackIcon();
+        TextureRegion iconRegion = _noPreviousScene ? _assets.getQuitIcon() : _assets.getBackIcon();
         Vector2 iconSize = Sizes.resize(45, iconRegion);
         _iconImg = new Image(iconRegion);
         _iconImg.setSize(iconSize.x, iconSize.y);
         _iconImg.setPosition(76f/2 - iconSize.x/2, _barHeight/2 - iconSize.y/2);
 
         Label.LabelStyle titleLabelStyle = new Label.LabelStyle();
-        titleLabelStyle.font = _fonts.getPizzaFont(30, Color.valueOf("000000"), 4, Color.valueOf("fed778"), 0, Color.BLACK);
+        titleLabelStyle.font = _assets.getTopBarFont();
         _titleLabel = new Label(_title, titleLabelStyle);
 
         _topBarTable.addActor(_iconImg);

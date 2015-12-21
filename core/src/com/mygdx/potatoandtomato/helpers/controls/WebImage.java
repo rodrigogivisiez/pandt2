@@ -10,9 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Disposable;
 import com.mygdx.potatoandtomato.absintflis.downloader.DownloaderListener;
 import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
-import com.mygdx.potatoandtomato.helpers.services.Textures;
+import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Caches;
-import com.mygdx.potatoandtomato.helpers.services.Downloader;
 
 /**
  * Created by SiongLeng on 13/12/2015.
@@ -23,16 +22,16 @@ public class WebImage extends Table implements Disposable {
     private Texture _tempTexture;
     private Caches _caches;
     private IDownloader _downloader;
-    private Textures _textures;
+    private Assets _assets;
 
-    public WebImage(String url, Textures textures, IDownloader downloader) {
+    public WebImage(String url, Assets assets, IDownloader downloader) {
 
         _caches = Caches.getInstance();
-        _textures = textures;
+        _assets = assets;
         _downloader = downloader;
         this._url = url;
 
-        new DummyButton(this, _textures);
+        new DummyButton(this, _assets);
 
         if(_caches.exist(_url)){
             getFromCache();
@@ -81,7 +80,7 @@ public class WebImage extends Table implements Disposable {
     }
 
     private void downloadImageFailed(){
-        this.setBackground(new TextureRegionDrawable(_textures.getNoImage()));
+        this.setBackground(new TextureRegionDrawable(_assets.getNoImage()));
     }
 
 

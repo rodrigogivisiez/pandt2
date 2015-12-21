@@ -39,6 +39,14 @@ public class FacebookConnector {
             }
         });
 
+        Broadcaster.getInstance().subscribe(BroadcastEvent.LOGOUT_FACEBOOK_REQUEST, new BroadcastListener() {
+            @Override
+            public void onCallback(Object obj, Status st) {
+                LoginManager.getInstance().logOut();
+                Broadcaster.getInstance().broadcast(BroadcastEvent.LOGOUT_FACEBOOK_CALLBACK, null, Status.SUCCESS);
+            }
+        });
+
     }
 
     private void registerCallBack(){

@@ -47,19 +47,19 @@ public class TestBoot extends TestAbstract {
     @Test
     public void testBootLogicScene(){
         BootLogic logic = new BootLogic(mock(PTScreen.class), _services);
-        logic.onCreate();
+        logic.onShow();
         Assert.assertEquals(true, ((Table) logic.getScene().getRoot()).hasChildren());
     }
 
     @Test
     public void testCreateUser(){
-        Assert.assertEquals(true, _services.getPreferences().get(Terms.USERID) == null);
+        Assert.assertEquals(true, _services.getSocials().getFacebookProfile() == null);
         Assert.assertEquals(true, _services.getProfile().getUserId() == null);
         BootLogic logic = new BootLogic(mock(PTScreen.class), _services);
-        logic.onCreate();
+        logic.onShow();
         logic.showLoginBox();
         logic.loginPT();
-        Assert.assertEquals(false, _services.getPreferences().get(Terms.USERID) == null);
+        Assert.assertEquals(true, _services.getSocials().getFacebookProfile() == null);
         Assert.assertEquals(false, _services.getProfile().getUserId() == null);
     }
 
@@ -67,7 +67,7 @@ public class TestBoot extends TestAbstract {
     public void testLoginWithExistingUser(){
         _services.getPreferences().put(Terms.USERID, "999");
         BootLogic logic = new BootLogic(mock(PTScreen.class), _services);
-        logic.onCreate();
+        logic.onShow();
         logic.showLoginBox();
         logic.loginPT();
         Assert.assertEquals("999", _services.getProfile().getUserId());
@@ -76,7 +76,7 @@ public class TestBoot extends TestAbstract {
     @Test
     public void testRetrieveUserFailed(){
         BootLogic logic = new BootLogic(mock(PTScreen.class), _services);
-        logic.onCreate();
+        logic.onShow();
         logic.showLoginBox();
         logic.retrieveUserFailed();
     }
@@ -91,16 +91,21 @@ public class TestBoot extends TestAbstract {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
                 Object[] arguments = invocation.getArguments();
-                if(((Profile) arguments[0]).getFacebookUserId().equals("999")){
+                Profile p = ((Profile) arguments[0]);
+                if(p.getFacebookUserId().equals("999") && p.getFacebookName().equals("andy")){
                     called[0] = true;
                 }
                 return null;
             }
         }).when(mockDatabase).updateProfile(any(Profile.class));
         _services.getPreferences().put(Terms.FACEBOOK_USERID, "999");
+        _services.getPreferences().put(Terms.FACEBOOK_USERNAME, "andy");
         BootLogic logic = new BootLogic(mock(PTScreen.class), _services);
         logic.loginPTSuccess();
+        Assert.assertEquals(false, _services.getSocials().getFacebookProfile() == null);
+        Assert.assertEquals(true, _services.getSocials().isFacebookLogon());
         Assert.assertEquals("999", _services.getProfile().getFacebookUserId());
+        Assert.assertEquals("andy", _services.getProfile().getFacebookName());
         Assert.assertEquals(true, called[0]);
     }
 
@@ -128,7 +133,7 @@ public class TestBoot extends TestAbstract {
         });
         BootLogic logic = new BootLogic(mockPTScreen, _services);
 
-        logic.onCreate();
+        logic.onShow();
         _services.getProfile().setMascotEnum(MascotEnum.TOMATO);
         logic.loginPTSuccess();
 
@@ -161,7 +166,7 @@ public class TestBoot extends TestAbstract {
         });
 
         BootLogic logic = new BootLogic(mockPTScreen, _services);
-        logic.onCreate();
+        logic.onShow();
         logic.loginPTSuccess();
 
         Threadings.sleep(100);

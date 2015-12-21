@@ -1,6 +1,7 @@
 package com.mygdx.potatoandtomato.scenes.room_scene;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -67,24 +68,24 @@ public class RoomScene extends SceneAbstract {
     @Override
     public void populateRoot() {
 
-        new TopBar(_root, _texts.roomTitle(), false, _textures, _fonts, _screen);
+        new TopBar(_root, _texts.roomTitle(), false, _assets, _screen);
         _root.align(Align.top);
 
-        _hostLeftConfirm = new Confirm(_root, _textures, _fonts, _texts.hostLeft(), Confirm.Type.YES);
-        _errorConfirm = new Confirm(_root, _textures, _fonts, _texts.roomError(), Confirm.Type.YES);
-        _messageConfirm = new Confirm(_root, _textures, _fonts, "", Confirm.Type.YES);
-        _leaveRoomConfirm = new Confirm(_root, _textures, _fonts, "", Confirm.Type.YESNO);
+        _hostLeftConfirm = new Confirm(_root, _assets, _texts.hostLeft(), Confirm.Type.YES);
+        _errorConfirm = new Confirm(_root, _assets, _texts.roomError(), Confirm.Type.YES);
+        _messageConfirm = new Confirm(_root, _assets, "", Confirm.Type.YES);
+        _leaveRoomConfirm = new Confirm(_root, _assets, "", Confirm.Type.YESNO);
 
         _teamTables = new Array<>();
         _playerMaps = new HashMap<>();
 
         Table buttonTable = new Table();
 
-        _startButton = new BtnEggDownward(_textures, _fonts, _services.getShaders());
+        _startButton = new BtnEggDownward(_assets, _services.getShaders());
         _startButton.setEnabled(false);
         _startButton.setText(_texts.startGame());
 
-        _inviteButton = new BtnEggDownward(_textures, _fonts);
+        _inviteButton = new BtnEggDownward(_assets);
         _inviteButton.setText(_texts.invite());
 
         buttonTable.add(_startButton).padRight(10);
@@ -93,9 +94,9 @@ public class RoomScene extends SceneAbstract {
         _teamsRoot = new Table();
 
         _detailsRoot = new Table();
-        _detailsRoot.setBackground(new TextureRegionDrawable(_textures.getWoodBgNormal()));
+        _detailsRoot.setBackground(new TextureRegionDrawable(_assets.getWoodBgNormal()));
         _detailsRoot.align(Align.top);
-        _detailsRoot.add(getWoodBoardTitleTable(22, _texts.details())).width(170).height(50).padTop(-10).padBottom(20).colspan(2);
+        _detailsRoot.add(getWoodBoardTitleTable(0, _texts.details())).width(170).height(50).padTop(-10).padBottom(20).colspan(2);
         _detailsRoot.row();
 
         Table scrollableTable = new Table();
@@ -111,14 +112,14 @@ public class RoomScene extends SceneAbstract {
     }
 
     public void populateGameDetails(Game game){
-        WebImage gameImg = new WebImage(game.getIconUrl(), _textures, _services.getDownloader());
+        WebImage gameImg = new WebImage(game.getIconUrl(), _assets, _services.getDownloader());
 
         Label.LabelStyle titleStyle = new Label.LabelStyle();
-        titleStyle.font = _fonts.getPizzaFont(18, Color.WHITE, 1, Color.BLACK, 1, Color.GRAY);
+        titleStyle.font = _assets.getWhitePizza2BlackS();
         Label.LabelStyle smallStyle = new Label.LabelStyle();
-        smallStyle.font = _fonts.getNormal(13, Color.WHITE, 1, Color.GRAY, 1, Color.GRAY);
+        smallStyle.font = _assets.getWhiteNormal3GrayS();
         Label.LabelStyle contentStyle = new Label.LabelStyle();
-        contentStyle.font = _fonts.getNormal(12, Color.WHITE, 1, Color.GRAY, 0, Color.GRAY);
+        contentStyle.font = _assets.getWhiteNormal2GrayS();
 
         Table _subRoot = new Table();
         _subRoot.align(Align.topLeft);
@@ -149,7 +150,7 @@ public class RoomScene extends SceneAbstract {
     @Override
     public void onShow() {
         super.onShow();
-        _services.getChat().show(_root, _textures, _fonts, _texts, _room, _services.getGamingKit());
+        _services.getChat().show(_root, _assets, _texts, _room, _services.getGamingKit());
     }
 
     public void populateTeamTables(int totalTeams, int teamMaxPlayers, HashMap<String, RoomUser> roomUsers){
@@ -159,11 +160,11 @@ public class RoomScene extends SceneAbstract {
         for(int i=0; i<totalTeams; i++){
 
             Table teamTable = new Table();
-            new DummyButton(teamTable, _textures);
-            teamTable.setBackground(new TextureRegionDrawable(_textures.getWoodBgSmall()));
+            new DummyButton(teamTable, _assets);
+            teamTable.setBackground(new TextureRegionDrawable(_assets.getWoodBgSmall()));
             teamTable.align(Align.top);
             teamTable.padBottom(20);
-            teamTable.add(getWoodBoardTitleTable(15, _texts.team() + " " + (i+1))).padTop(-7);
+            teamTable.add(getWoodBoardTitleTable(1, _texts.team() + " " + (i+1))).padTop(-7);
             teamTable.row();
 
 
@@ -250,12 +251,12 @@ public class RoomScene extends SceneAbstract {
         }
     }
 
-    private Table getWoodBoardTitleTable(int fontSize, String title){
+    private Table getWoodBoardTitleTable(int bigOrSmall, String title){
         Table detailsTitleTable = new Table();
-        detailsTitleTable.setBackground(new TextureRegionDrawable(_textures.getWoodBgTitle()));
+        detailsTitleTable.setBackground(new TextureRegionDrawable(_assets.getWoodBgTitle()));
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = _fonts.getPizzaFont(fontSize, Color.WHITE, 2, Color.valueOf("302505"), 0, Color.WHITE);
+        labelStyle.font = bigOrSmall == 0 ? _assets.getWhitePizza3BlackS() : _assets.getWhitePizza2BlackS();
 
         Label labelTitle = new Label(title, labelStyle);
         labelTitle.setAlignment(Align.center);
@@ -267,31 +268,31 @@ public class RoomScene extends SceneAbstract {
 
         if(_playerMaps.containsKey(userId) && userId != null) return _playerMaps.get(userId);
 
-        Color fontColor = Color.BLACK;
+        BitmapFont font = _assets.getBlackBold2();
         if(name == null){
             name = _texts.open();
-            fontColor = Color.valueOf("c4c4c4");
+            font = _assets.getGrayBold2();
         }
 
         Table playerTable = new Table();
         playerTable.padTop(5).padBottom(5).padLeft(7).padRight(7);
-        playerTable.setBackground(new NinePatchDrawable(_textures.getWhiteRoundedBg()));
+        playerTable.setBackground(new NinePatchDrawable(_assets.getWhiteRoundedBg()));
 
-        Mascot mascotImage = new Mascot(mascotEnum, _textures);
+        Mascot mascotImage = new Mascot(mascotEnum, _assets);
         mascotImage.resizeTo(20, 20);
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = _fonts.getBold(11, fontColor, 0, Color.BLACK, 0, Color.GRAY);
+        labelStyle.font = font;
 
         Label nameLabel = new Label(name, labelStyle);
 
         Label.LabelStyle progressLabelStyle = new Label.LabelStyle();
-        progressLabelStyle.font = _fonts.getNormal(11, Color.valueOf("51bf1b"));
-        Label progressLabel = new Label("12", progressLabelStyle);
+        progressLabelStyle.font = _assets.getGreenNormal2();
+        Label progressLabel = new Label("", progressLabelStyle);
         progressLabel.setName("progress");
         progressLabel.setVisible(false);
 
-        Image downloadImage = new Image(_textures.getDownloadIconSmall());
+        Image downloadImage = new Image(_assets.getDownloadIconSmall());
         downloadImage.addAction(forever(sequence(moveBy(0, -2), moveBy(0, 2, 0.9f))));
         downloadImage.setName("download");
         downloadImage.setVisible(false);

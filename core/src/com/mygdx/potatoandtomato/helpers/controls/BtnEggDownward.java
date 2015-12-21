@@ -1,6 +1,5 @@
 package com.mygdx.potatoandtomato.helpers.controls;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -15,9 +14,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.mygdx.potatoandtomato.helpers.services.Fonts;
 import com.mygdx.potatoandtomato.helpers.services.Shaders;
-import com.mygdx.potatoandtomato.helpers.services.Textures;
+import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -27,8 +25,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 public class BtnEggDownward extends Table {
 
     Button _button;
-    Textures _textures;
-    Fonts _fonts;
+    Assets _assets;
     Vector2 _size;
     Image _contentImg;
     Label _textLabel;
@@ -36,19 +33,18 @@ public class BtnEggDownward extends Table {
     ShaderProgram _shader;
     boolean _enabled;
 
-    public BtnEggDownward(Textures textures, Fonts fonts) {
-        this(textures, fonts, null);
+    public BtnEggDownward(Assets assets) {
+        this(assets, null);
     }
 
-    public BtnEggDownward(Textures textures, Fonts fonts, Shaders shaders) {
-        this._textures = textures;
+    public BtnEggDownward(Assets assets, Shaders shaders) {
+        this._assets = assets;
         this._shaders = shaders;
-        this._fonts = fonts;
-        this._button = new Button(new TextureRegionDrawable(_textures.getEmpty()));
+        this._button = new Button(new TextureRegionDrawable(_assets.getEmpty()));
         this._enabled = true;
         _button.setFillParent(true);
-        this.setBackground(new TextureRegionDrawable(_textures.getDownwardEggButton()));
-        _size = Sizes.resize(100, _textures.getDownwardEggButton());
+        this.setBackground(new TextureRegionDrawable(_assets.getDownwardEggButton()));
+        _size = Sizes.resize(100, _assets.getDownwardEggButton());
         this.setSize(_size.x, _size.y);
 
         _button.addListener(new ClickListener(){
@@ -68,7 +64,7 @@ public class BtnEggDownward extends Table {
 
     public void setText(String text){
         Label.LabelStyle textLabelStyle = new Label.LabelStyle();
-        textLabelStyle.font = _fonts.getPizzaFont(22, Color.WHITE, 1, Color.BLACK, 1, Color.GRAY);
+        textLabelStyle.font = _assets.getWhitePizza3BlackS();
         _textLabel = new Label(text, textLabelStyle);
         _textLabel.setWrap(true);
         _textLabel.setAlignment(Align.center);

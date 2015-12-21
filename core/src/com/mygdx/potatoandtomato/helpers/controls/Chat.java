@@ -10,14 +10,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.*;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
-import com.mygdx.potatoandtomato.absintflis.gamingkit.MessagingListener;
-import com.mygdx.potatoandtomato.helpers.services.Fonts;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
-import com.mygdx.potatoandtomato.helpers.services.Textures;
-import com.mygdx.potatoandtomato.helpers.utils.Logs;
+import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
-import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Room;
@@ -34,8 +30,7 @@ public class Chat implements Disposable {
 
     private Table _chatRoot, _allMessagesTable, _messageBoxTable;
     private Stage _stage;
-    private Textures _textures;
-    private Fonts _fonts;
+    private Assets _assets;
     private Texts _texts;
     private GamingKit _gamingKit;
     private boolean _init;
@@ -87,11 +82,10 @@ public class Chat implements Disposable {
         });
     }
 
-    public void show(Actor _root, Textures textures, Fonts fonts, Texts texts, Room room, GamingKit gamingKit){
+    public void show(Actor _root, Assets assets, Texts texts, Room room, GamingKit gamingKit){
 
         if(!_init){
-            _textures = textures;
-            _fonts = fonts;
+            _assets = assets;
             _texts = texts;
             _room = room;
             _gamingKit = gamingKit;
@@ -101,7 +95,7 @@ public class Chat implements Disposable {
             //All Messages Table
             ///////////////////////
             _allMessagesTable = new Table();
-            _allMessagesTable.setBackground(new TextureRegionDrawable(_textures.getChatContainer()));
+            _allMessagesTable.setBackground(new TextureRegionDrawable(_assets.getChatContainer()));
             _allMessagesTable.align(Align.top);
 
 
@@ -110,7 +104,7 @@ public class Chat implements Disposable {
             _chatScroll = new ScrollPane(_messagesContentTable);
             _chatScroll.setScrollingDisabled(true, false);
 
-            _dummyCloseButton = new Image(_textures.getEmpty());
+            _dummyCloseButton = new Image(_assets.getEmpty());
             _allMessagesTable.add(_chatScroll).expand().fill().padLeft(20).padTop(15);
             _allMessagesTable.add(_dummyCloseButton).width(35).height(35).top();
 
@@ -119,30 +113,30 @@ public class Chat implements Disposable {
             //Bottom message box
             ///////////////////////////////////
             _messageBoxTable = new Table();
-            _messageBoxTable.setBackground(new NinePatchDrawable(_textures.getYellowGradientBox()));
+            _messageBoxTable.setBackground(new NinePatchDrawable(_assets.getYellowGradientBox()));
             _boxChildTable = new Table();
-            _boxChildTable.setBackground(new NinePatchDrawable(_textures.getChatBox()));
-            new DummyButton(_boxChildTable, _textures);
+            _boxChildTable.setBackground(new NinePatchDrawable(_assets.getChatBox()));
+            new DummyButton(_boxChildTable, _assets);
             _messageBoxTable.add(_boxChildTable).expandX().fillX().padLeft(15).padRight(15).padTop(3).padBottom(3);
 
-            _textFieldFocusImage = new Image(_textures.getOrangeLine());
-            _textFieldNotFocusImage = new Image(_textures.getGreyLine());
+            _textFieldFocusImage = new Image(_assets.getOrangeLine());
+            _textFieldNotFocusImage = new Image(_assets.getGreyLine());
             _textFieldFocusImage.setVisible(false);
 
             TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle();
-            textFieldStyle.font = _fonts.getNormal(15, Color.BLACK);
+            textFieldStyle.font = _assets.getBlackNormal3();
             textFieldStyle.fontColor = Color.BLACK;
-            textFieldStyle.cursor = new TextureRegionDrawable(_textures.getTextCursor());
+            textFieldStyle.cursor = new TextureRegionDrawable(_assets.getTextCursor());
             _messageTextField = new TextField("", textFieldStyle);
 
             ///////////////////////////////
             //Send Label
             /////////////////////////////////
             _sendTable = new Table();
-            new DummyButton(_sendTable, _textures);
+            new DummyButton(_sendTable, _assets);
 
             Label.LabelStyle sendLabelStyle = new Label.LabelStyle();
-            sendLabelStyle.font = _fonts.getPizzaFont(22, Color.valueOf("f05837"), 0, Color.BLACK, 0, Color.BLACK);
+            sendLabelStyle.font = _assets.getOrangePizza3();
             _sendLabel = new Label(_texts.send(), sendLabelStyle);
             _sendTable.add(_sendLabel);
 
@@ -162,13 +156,13 @@ public class Chat implements Disposable {
             ////////////////////////////////
             //Message notification counter
             ////////////////////////////////////
-            Vector2 _messageNotfSize = Sizes.resize(30, _textures.getMessageNotification());
+            Vector2 _messageNotfSize = Sizes.resize(30, _assets.getMessageNotification());
             _newMsgCounterTable = new Table();
-            _newMsgCounterTable.setBackground(new TextureRegionDrawable(_textures.getMessageNotification()));
-            new DummyButton(_newMsgCounterTable, _textures);
+            _newMsgCounterTable.setBackground(new TextureRegionDrawable(_assets.getMessageNotification()));
+            new DummyButton(_newMsgCounterTable, _assets);
 
             Label.LabelStyle messageCounterStyle = new Label.LabelStyle();
-            messageCounterStyle.font = _fonts.getBold(12, Color.valueOf("e40404"));
+            messageCounterStyle.font = _assets.getRedNormal2();
             _messageCounterLabel = new Label("0", messageCounterStyle);
             _newMsgCounterTable.add(_messageCounterLabel).padBottom(5).padRight(1);
 
@@ -211,7 +205,7 @@ public class Chat implements Disposable {
     }
 
     public void show(){
-        show(null, null, null, null, null, null);
+        show(null, null, null, null, null);
     }
 
     private void moveChatPosition(float newY){
@@ -327,21 +321,21 @@ public class Chat implements Disposable {
             //Styles
             ///////////////
             Label.LabelStyle lblUsernameStyle = new Label.LabelStyle();
-            lblUsernameStyle.font = _fonts.getBold(11, Color.BLACK);
+            lblUsernameStyle.font = _assets.getBlackBold2();
 
             Label.LabelStyle lblMessageStyle = new Label.LabelStyle();
-            lblMessageStyle.font = _fonts.getNormal(11, Color.BLACK);
+            lblMessageStyle.font = _assets.getBlackNormal2();
 
             Label.LabelStyle lblInfoStyle = new Label.LabelStyle();
-            lblInfoStyle.font = _fonts.getNormal(11, Color.valueOf("4169e1"));
+            lblInfoStyle.font =  _assets.getBlueNormal2();
 
             Label.LabelStyle lblImportantStyle = new Label.LabelStyle();
-            lblImportantStyle.font = _fonts.getNormal(11, Color.valueOf("e40404"));
+            lblImportantStyle.font =  _assets.getRedNormal2();
 
             if(msg.getFromType() == ChatMessage.FromType.USER){
                 Profile sender = _room.getProfileByUserId(msg.getSenderId());
                 if(sender == null) return;
-                Mascot mascotIcon = new Mascot(sender.getMascotEnum(), _textures);
+                Mascot mascotIcon = new Mascot(sender.getMascotEnum(), _assets);
                 mascotIcon.resizeTo(20, 20);
                 chatTable.add(mascotIcon).padRight(5).padLeft(5);
 
@@ -354,7 +348,7 @@ public class Chat implements Disposable {
                 chatTable.row();
             }
             else{
-                Image icon = new Image(msg.getFromType() == ChatMessage.FromType.SYSTEM ? _textures.getInfoIcon() : _textures.getImportantIcon());
+                Image icon = new Image(msg.getFromType() == ChatMessage.FromType.SYSTEM ? _assets.getInfoIcon() : _assets.getImportantIcon());
                 Label lblMessage = new Label(msg.getMessage(), msg.getFromType() == ChatMessage.FromType.SYSTEM ? lblInfoStyle : lblImportantStyle);
 
                 chatTable.add(icon).size(20, 20).padRight(5).padLeft(5);
@@ -362,7 +356,7 @@ public class Chat implements Disposable {
                 chatTable.row();
             }
 
-            Image separator = new Image(_textures.getGreyLine());
+            Image separator = new Image(_assets.getGreyLine());
             chatTable.add(separator).colspan(3).padTop(5).padBottom(5).expandX().fillX();
             chatTable.row();
 

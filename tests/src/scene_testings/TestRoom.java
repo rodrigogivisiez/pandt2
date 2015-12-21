@@ -3,9 +3,11 @@ package scene_testings;
 import abstracts.MockDB;
 import abstracts.MockGamingKit;
 import abstracts.TestAbstract;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
+import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.downloader.DownloaderListener;
 import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
@@ -22,13 +24,14 @@ import helpers.T_Services;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 
 import java.io.File;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.atLeast;
@@ -54,7 +57,7 @@ public class TestRoom extends TestAbstract {
     public void testRoomLogicScene(){
         setPreferenceHasGame();
         RoomLogic logic = new RoomLogic(mock(PTScreen.class), _services, _room);
-        logic.onCreate();
+        logic.onShow();
         RoomScene scene = (RoomScene) logic.getScene();
         Assert.assertEquals(true, ((Table) scene.getRoot()).hasChildren());
     }
@@ -79,7 +82,7 @@ public class TestRoom extends TestAbstract {
 
             }
         });
-        logic.onCreate();
+        logic.onInit();
         Threadings.sleep(4000);
         verify(logic, atLeast(2)).sendUpdateRoomMates(eq(UpdateRoomMatesCode.UPDATE_DOWNLOAD), anyString());
         verify(logic, times(1)).sendUpdateRoomMates(eq(UpdateRoomMatesCode.UPDATE_DOWNLOAD), eq(String.valueOf(100)));
@@ -91,7 +94,7 @@ public class TestRoom extends TestAbstract {
     @Test
     public void testStartGameCheck(){
         RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room));
-        logic.onCreate();
+        logic.onInit();
 
         Assert.assertEquals(1, logic.startGameCheck());
 
@@ -113,7 +116,6 @@ public class TestRoom extends TestAbstract {
 
     @Test
     public void testHostLeft(){
-        RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room));
 
         _services.setDatabase(new MockDB(){
             @Override
@@ -124,8 +126,8 @@ public class TestRoom extends TestAbstract {
             }
         });
 
-        logic.onCreate();
-
+        RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room));
+        logic.onInit();
         verify(logic, times(1)).checkHostInRoom();
         Assert.assertEquals(false, logic.checkHostInRoom());
     }
@@ -152,7 +154,7 @@ public class TestRoom extends TestAbstract {
     @Test
     public void testGameStartOrEndParameters(){
         RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room));
-        logic.onCreate();
+        logic.onInit();
 
         Assert.assertEquals(false, _room.isPlaying());
         Assert.assertEquals(true, _room.isOpen());
@@ -184,7 +186,7 @@ public class TestRoom extends TestAbstract {
         GamingKit mockKit = Mockito.spy(new MockGamingKit());
         _services.setGamingKit(mockKit);
         RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room));
-        logic.onCreate();
+        logic.onShow();
 
         logic.leaveRoom();
 
@@ -203,7 +205,7 @@ public class TestRoom extends TestAbstract {
         _services.setGamingKit(mockKit);
         _services.setProfile(MockModel.mockProfile("another"));
         RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room));
-        logic.onCreate();
+        logic.onShow();
 
         logic.leaveRoom();
 

@@ -9,8 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.mygdx.potatoandtomato.helpers.services.Fonts;
-import com.mygdx.potatoandtomato.helpers.services.Textures;
+import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 
 /**
@@ -22,14 +21,12 @@ public class BtnColor extends Table {
         GREEN, RED
     }
 
-    private Textures _textures;
+    private Assets _assets;
     private ColorChoice _colorChoice;
-    private Fonts _fonts;
 
-    public BtnColor(ColorChoice colorChoice, Fonts fonts, Textures textures) {
-        _textures = textures;
+    public BtnColor(ColorChoice colorChoice, Assets assets) {
+        _assets = assets;
         _colorChoice = colorChoice;
-        _fonts = fonts;
         Table buttonYesTable = new Table();
         this.setBackground(new NinePatchDrawable(getColorNinePatch()));
     }
@@ -38,24 +35,24 @@ public class BtnColor extends Table {
         Image img = new Image(textureRegion);
         Vector2 sizes = Sizes.resize(width, textureRegion);
         this.add(img).size(sizes.x, sizes.y);
-        new DummyButton(this, _textures);
+        new DummyButton(this, _assets);
     }
 
     public void setText(String msg){
-        Label.LabelStyle labelStyle = new Label.LabelStyle(_fonts.getBold(17, Color.WHITE), Color.WHITE);
+        Label.LabelStyle labelStyle = new Label.LabelStyle(_assets.getWhiteBold3GrayS(), Color.WHITE);
         Label lblMessage = new Label(msg, labelStyle);
         lblMessage.setAlignment(Align.center);
         lblMessage.setWrap(true);
         this.add(lblMessage).expandX().fillX();
-        new DummyButton(this, _textures);
+        new DummyButton(this, _assets);
     }
 
     private NinePatch getColorNinePatch(){
         if(_colorChoice == ColorChoice.GREEN){
-            return _textures.getButtonGreen();
+            return _assets.getButtonGreen();
         }
         else{
-            return  _textures.getButtonRed();
+            return  _assets.getButtonRed();
         }
     }
 

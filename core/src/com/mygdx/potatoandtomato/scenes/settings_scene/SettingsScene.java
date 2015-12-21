@@ -1,7 +1,8 @@
 package com.mygdx.potatoandtomato.scenes.settings_scene;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -9,22 +10,22 @@ import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.MascotEnum;
-import com.mygdx.potatoandtomato.helpers.utils.Logs;
-import com.mygdx.potatoandtomato.helpers.utils.Positions;
+import com.mygdx.potatoandtomato.helpers.controls.BtnColor;
+import com.mygdx.potatoandtomato.helpers.controls.Confirm;
+import com.mygdx.potatoandtomato.helpers.controls.TopBar;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
-import com.potatoandtomato.common.BroadcastEvent;
-import com.potatoandtomato.common.BroadcastListener;
-import com.potatoandtomato.common.Broadcaster;
 
 /**
  * Created by SiongLeng on 19/12/2015.
  */
 public class SettingsScene extends SceneAbstract {
 
-    TextField textField;
+    TextField _displayNameTextField;
+    BtnColor _facebookBtn;
+    Confirm _facebookConfirm;
 
     public SettingsScene(Services services, PTScreen screen) {
         super(services, screen);
@@ -32,22 +33,70 @@ public class SettingsScene extends SceneAbstract {
 
     @Override
     public void populateRoot() {
+        new TopBar(_root, _texts.settingsTitle(), false, _assets, _screen);
 
+        _facebookConfirm = new Confirm(_root, _assets, _services.getSocials().isFacebookLogon() ? _texts.confirmLogoutFacebook() : _texts.confirmLoginFacebook(),
+                                    Confirm.Type.YESNO);
+
+        Table settingsTable = new Table();
+        settingsTable.setBackground(new NinePatchDrawable(_assets.getIrregularBg()));
+        settingsTable.pad(10);
+
+        ///////////////////
+        //Display name
+        ////////////////////
+        Label displayNameLabel = new Label(_texts.displayName(), new Label.LabelStyle(_assets.getWhitePizza2BlackS(), Color.WHITE));
+
+        Table displayNameFieldTable = new Table();
+        displayNameFieldTable.setBackground(new NinePatchDrawable(_assets.getWhiteRoundedBg()));
+        TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle();
+        textFieldStyle.font = _assets.getBlackNormal3();
+        textFieldStyle.fontColor = Color.BLACK;
+        textFieldStyle.cursor = new TextureRegionDrawable(_assets.getTextCursor());
+        _displayNameTextField = new TextField(_services.getProfile().getDisplayName(), textFieldStyle);
+        displayNameFieldTable.add(_displayNameTextField).expand().fill().pad(10);
+
+        ///////////////////////////
+        //Facebook status
+        //////////////////////////
+        Label facebookLabel = new Label(_texts.facebook(), new Label.LabelStyle(_assets.getWhitePizza2BlackS(), Color.WHITE));
+
+        _facebookBtn = new BtnColor(_services.getSocials().isFacebookLogon() ? BtnColor.ColorChoice.RED : BtnColor.ColorChoice.GREEN, _assets);
+        _facebookBtn.setText(_services.getSocials().isFacebookLogon() ? _texts.logout() : _texts.login());
+
+
+
+        ////////////////////////
+        //populations
+        /////////////////////////
+        settingsTable.align(Align.top);
+        settingsTable.add(displayNameLabel).width(150);
+        settingsTable.add(displayNameFieldTable).expandX().fillX();
+        settingsTable.row().padTop(30);
+        settingsTable.add(facebookLabel).width(150);
+        settingsTable.add(_facebookBtn).expandX().right();
+
+        _root.add(settingsTable);
     }
 
     @Override
     public void onShow() {
         super.onShow();
+    }
 
-        Room r = new Room();
-        Game g = new Game();
-        g.setMaxPlayers("5");
-        Profile p = new Profile();
-        p.setGameName("soulwraith");
-        p.setMascotEnum(MascotEnum.TOMATO);
-        p.setUserId("1");
-        r.setGame(g);
-        r.addRoomUser(p);
-        _services.getChat().show(_root, _textures, _fonts, _texts, r, _services.getGamingKit());
+    public void showFacebookRequestFailed(){
+        new Confirm(_root, _assets, _texts.facebookLoginFailed(), Confirm.Type.YES).show();
+    }
+
+    public TextField getDisplayNameTextField() {
+        return _displayNameTextField;
+    }
+
+    public BtnColor getFacebookBtn() {
+        return _facebookBtn;
+    }
+
+    public Confirm getFacebookConfirm() {
+        return _facebookConfirm;
     }
 }
