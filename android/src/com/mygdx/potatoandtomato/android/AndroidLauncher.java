@@ -1,5 +1,6 @@
 package com.mygdx.potatoandtomato.android;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import com.potatoandtomato.common.Broadcaster;
 public class AndroidLauncher extends AndroidApplication {
 
 	FacebookConnector _facebookConnector;
+	GCMClientManager _gcm;
 	private View _rootView;
 	private int _screenHeight;
 	int width, _height;
@@ -25,15 +27,21 @@ public class AndroidLauncher extends AndroidApplication {
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		_facebookConnector = new FacebookConnector(this);
+		_gcm = new GCMClientManager(this);
 		Firebase.setAndroidContext(this);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-
-
 		_rootView = this.getWindow().getDecorView().getRootView();
 		Rect rect = new Rect();
 		_rootView.getWindowVisibleDisplayFrame(rect);
 		_screenHeight = rect.height();
+		addLayoutChangedListener();
 
+		initialize(new PTGame(), config);
+
+	}
+
+
+	private void addLayoutChangedListener(){
 		_rootView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
 
 			@Override
@@ -52,9 +60,6 @@ public class AndroidLauncher extends AndroidApplication {
 				}
 			}
 		});
-
-
-		initialize(new PTGame(), config);
 	}
 
 

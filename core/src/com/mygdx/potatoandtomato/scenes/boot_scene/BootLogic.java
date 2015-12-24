@@ -14,6 +14,9 @@ import com.mygdx.potatoandtomato.models.FacebookProfile;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
+import com.potatoandtomato.common.BroadcastEvent;
+import com.potatoandtomato.common.BroadcastListener;
+import com.potatoandtomato.common.Broadcaster;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 
@@ -138,7 +141,7 @@ public class BootLogic extends LogicAbstract {
                     }
                     else{
                         _services.setProfile(obj);
-                        loginPTSuccess();
+                        loginGCM();
                     }
                 }
             }
@@ -166,7 +169,7 @@ public class BootLogic extends LogicAbstract {
                 else{
                     _services.getPreferences().put(Terms.USERID, obj.getUserId());
                     _services.setProfile(obj);
-                    loginPTSuccess();
+                    loginGCM();
                 }
             }
         });
@@ -176,14 +179,34 @@ public class BootLogic extends LogicAbstract {
         _bootScene.showRetrieveUserFailed();
     }
 
+    public void loginGCM(){
+        Broadcaster.getInstance().subscribeOnceWithTimeout(BroadcastEvent.LOGIN_GCM_CALLBACK, 10000, new BroadcastListener<String>() {
+            @Override
+            public void onCallback(String obj, Status st) {
+                if(st == Status.SUCCESS){
+                    _services.getProfile().setGcmId(obj);
+                    loginPTSuccess();
+                }
+                else{
+                    retrieveUserFailed();
+                }
+            }
+        });
+        Broadcaster.getInstance().broadcast(BroadcastEvent.LOGIN_GCM_REQUEST);
+    }
+
+
     public void loginPTSuccess(){
         FacebookProfile facebookProfile = _services.getSocials().getFacebookProfile();
         if(facebookProfile != null){
             _services.getProfile().setFacebookUserId(facebookProfile.getUserId());
             _services.getProfile().setFacebookName(facebookProfile.getName());
-            _services.getDatabase().updateProfile(_services.getProfile());
         }
-
+        else{
+            _services.getProfile().setFacebookUserId(null);
+            _services.getProfile().setFacebookName(null);
+        }
+        _services.getDatabase().updateProfile(_services.getProfile());
         _services.getGamingKit().connect(_services.getProfile());
     }
 }

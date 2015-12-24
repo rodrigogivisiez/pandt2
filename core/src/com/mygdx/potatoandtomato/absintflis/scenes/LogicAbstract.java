@@ -3,6 +3,9 @@ package com.mygdx.potatoandtomato.absintflis.scenes;
 import com.badlogic.gdx.utils.Disposable;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
+import com.mygdx.potatoandtomato.helpers.services.Texts;
+import com.mygdx.potatoandtomato.helpers.utils.SafeThread;
+import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Services;
 
 import java.util.Objects;
@@ -14,11 +17,15 @@ public abstract class LogicAbstract implements Disposable {
 
     protected PTScreen _screen;
     protected Services _services;
+    protected Texts _texts;
     protected boolean _cache, _saveToStack;
+    private SafeThread _keepAlive;
+    private boolean _alive;
 
     public LogicAbstract(PTScreen screen, Services services, Object... objs) {
         this._screen = screen;
         this._services = services;
+        _texts = _services.getTexts();
         setSaveToStack(true);
     }
 
@@ -42,9 +49,8 @@ public abstract class LogicAbstract implements Disposable {
         this._screen = _screen;
     }
 
-    //will be called everytime scene onshow, whether is back or forward direction
+    //will be called everytime scene onshow, whether is back or forward direction, root might not have stage parent yet
     public void onShow(){
-        getScene().onShow();
 
     }
 
@@ -55,14 +61,46 @@ public abstract class LogicAbstract implements Disposable {
 
     //will only be called when scene init, must be forward direction
     public void onInit(){
-
+        _alive = true;
     }
 
+    protected void keepAlive(){
+        _keepAlive = new SafeThread();
+    }
+
+    protected void killKeepAlive(){
+        _keepAlive.kill();
+    }
+
+    public boolean isAlive() {
+        return _alive;
+    }
 
     //will be called everytime scene on hide and dispose, must be back direction
     @Override
     public void dispose() {
+        if(_keepAlive == null){
+            disposeEverything();
+        }
+        else{
+            Threadings.runInBackground(new Runnable() {
+                @Override
+                public void run() {
+                    while (true){
+                        if(_keepAlive.isKilled()) break;
+                        Threadings.sleep(1000);
+                    }
+                    disposeEverything();
+                }
+            });
+        }
+
+    }
+
+    private void disposeEverything(){
         _services.getGamingKit().removeListenersByClass(this.getClass());
         _services.getDatabase().clearListenersByClass(this.getClass());
+        _alive = false;
     }
+
 }

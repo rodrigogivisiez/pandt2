@@ -2,6 +2,7 @@ package helpers;
 
 import com.mygdx.potatoandtomato.enums.MascotEnum;
 import com.mygdx.potatoandtomato.models.*;
+import org.lwjgl.Sys;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ public class MockModel {
         g.setTeamMaxPlayers("3");
         g.setTeamMinPlayers("3");
         g.setTeamCount("3");
+        g.setName("Covered Chess");
         return g;
     }
 
@@ -65,6 +67,13 @@ public class MockModel {
         return c;
     }
 
+    public static GameHistory mockGameHistory(){
+        GameHistory gameHistory = new GameHistory();
+        gameHistory.setPlayedWith(mockProfile("another"));
+        gameHistory.setNameOfGame(mockGame().getName());
+        gameHistory.setCreationDate(System.currentTimeMillis() / 1000L);
+        return gameHistory;
+    }
 
 
 

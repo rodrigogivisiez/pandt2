@@ -13,6 +13,7 @@ public class Profile {
     String facebookName;
     String userId;
     String gameName;
+    String gcmId;
     MascotEnum mascotEnum;
 
     public Profile() {
@@ -77,6 +78,14 @@ public class Profile {
 
     public void setGameName(String gameName) {
         this.gameName = gameName;
+    }
+
+    public String getGcmId() {
+        return gcmId;
+    }
+
+    public void setGcmId(String gcmId) {
+        this.gcmId = gcmId;
     }
 
     @Override

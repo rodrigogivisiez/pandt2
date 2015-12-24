@@ -20,6 +20,7 @@ import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.scenes.boot_scene.BootLogic;
 import com.mygdx.potatoandtomato.scenes.create_game_scene.CreateGameLogic;
 import com.mygdx.potatoandtomato.scenes.game_list_scene.GameListLogic;
+import com.mygdx.potatoandtomato.scenes.invite_scene.InviteLogic;
 import com.mygdx.potatoandtomato.scenes.mascot_pick_scene.MascotPickLogic;
 import com.mygdx.potatoandtomato.scenes.prerequisite_scene.PrerequisiteLogic;
 import com.mygdx.potatoandtomato.scenes.room_scene.RoomLogic;
@@ -148,6 +149,9 @@ public class PTScreen implements Screen {
                 break;
             case SETTINGS:
                 logic = new SettingsLogic(this, _services, objs);
+                break;
+            case INVITE:
+                logic= new InviteLogic(this, _services, objs);
                 break;
         }
         return logic;

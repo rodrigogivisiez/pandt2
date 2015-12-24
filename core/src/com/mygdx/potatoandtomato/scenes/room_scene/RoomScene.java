@@ -150,7 +150,8 @@ public class RoomScene extends SceneAbstract {
     @Override
     public void onShow() {
         super.onShow();
-        _services.getChat().show(_root, _assets, _texts, _room, _services.getGamingKit());
+        _services.getChat().show(_root, _assets, _texts, _room, _services.getGamingKit(), true);
+        _services.getChat().setVisible(true);
     }
 
     public void populateTeamTables(int totalTeams, int teamMaxPlayers, HashMap<String, RoomUser> roomUsers){
@@ -297,7 +298,7 @@ public class RoomScene extends SceneAbstract {
         downloadImage.setName("download");
         downloadImage.setVisible(false);
 
-        playerTable.add(mascotImage);
+        playerTable.add(mascotImage).padRight(mascotImage.getPadWidth());
         playerTable.add(nameLabel).expandX().fillX().padLeft(5);
         playerTable.add(downloadImage).padRight(2);
         playerTable.add(progressLabel);

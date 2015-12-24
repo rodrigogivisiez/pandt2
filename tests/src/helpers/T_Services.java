@@ -34,7 +34,8 @@ public class T_Services {
         assets.loadBasic(null);
 
         return new Services(assets, new Texts(), preferences,
-                new Profile(), databases, new Shaders(), new MockGamingKit(), downloader, new Chat(), new Socials(preferences));
+                new Profile(), databases, new Shaders(), new MockGamingKit(), downloader, new Chat(),
+                new Socials(preferences), new GCMSender());
     }
 
 }

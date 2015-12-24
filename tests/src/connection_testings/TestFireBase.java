@@ -6,17 +6,17 @@ import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
 import com.mygdx.potatoandtomato.helpers.services.FirebaseDB;
+import com.mygdx.potatoandtomato.helpers.utils.DateTimes;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
-import com.mygdx.potatoandtomato.models.Profile;
-import com.mygdx.potatoandtomato.models.Game;
-import com.mygdx.potatoandtomato.models.Room;
-import com.mygdx.potatoandtomato.models.RoomUser;
+import com.mygdx.potatoandtomato.models.*;
 import helpers.MockModel;
 import helpers.T_Threadings;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.omg.PortableInterceptor.SUCCESSFUL;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -276,7 +276,7 @@ public class TestFireBase extends TestAbstract {
             T_Threadings.sleep(100);
         }
 
-        Assert.assertEquals(2, monitorCount[0]);
+        Assert.assertEquals(1, monitorCount[0]);
 
         for(Room r1 : rooms){
             if(r1.getId().equals(r.getId())){
@@ -359,6 +359,128 @@ public class TestFireBase extends TestAbstract {
         Assert.assertEquals(2, trigger[0]);
 
     }
+
+    @Test
+    public void testSaveGameHistoryAndRetrieve(){
+
+        Room room = MockModel.mockRoom("1");
+        Profile myProfile =((RoomUser) room.getRoomUsers().values().toArray()[0]).getProfile();
+        final Profile anotherProfile = ((RoomUser) room.getRoomUsers().values().toArray()[1]).getProfile();
+        anotherProfile.setGameName("first");
+
+        final IDatabase databases = new FirebaseDB(_unitTestUrl);
+        final boolean[] waiting = {true};
+
+        databases.updateProfile(myProfile);
+        databases.updateProfile(anotherProfile);
+
+        databases.savePlayedHistory(myProfile, room, new DatabaseListener<String>() {
+            @Override
+            public void onCallback(String obj, Status st) {
+                Assert.assertEquals(Status.SUCCESS, st);
+                waiting[0] =false;
+            }
+        });
+
+        while (waiting[0]){
+            Threadings.sleep(100);
+        }
+
+        waiting[0] = true;
+        anotherProfile.setGameName("second");
+        databases.updateProfile(anotherProfile);
+
+        databases.getPlayedHistories(myProfile, new DatabaseListener<ArrayList<GameHistory>>(GameHistory.class) {
+            @Override
+            public void onCallback(ArrayList<GameHistory> obj, Status st) {
+                Assert.assertEquals(Status.SUCCESS, st);
+                Assert.assertEquals(1, obj.size());
+                GameHistory history = obj.get(0);
+                Assert.assertEquals(false, history.getCreationDateLong() == null);
+                Assert.assertEquals(anotherProfile.getGameName(), history.getPlayedWith().getGameName());
+                Assert.assertEquals(true, Integer.valueOf(history.getCreationDateAgo().replace("s ago", "")) < 30);
+                waiting[0] = false;
+            }
+        });
+
+        while (waiting[0]){
+            Threadings.sleep(100);
+        }
+
+    }
+
+
+    @Test
+    public void testGetPendingInviteCount(){
+
+        Room room = MockModel.mockRoom("1");
+        room.setOpen(true);
+        Profile myProfile =MockModel.mockProfile("33");
+        room.addInvitedUser(myProfile);
+
+        final IDatabase databases = new FirebaseDB(_unitTestUrl);
+        final boolean[] waiting = {true};
+
+        databases.saveRoom(room, new DatabaseListener<String>() {
+            @Override
+            public void onCallback(String obj, Status st) {
+                Assert.assertEquals(Status.SUCCESS, st);
+                waiting[0] =false;
+            }
+        });
+
+        while (waiting[0]){
+            Threadings.sleep(100);
+        }
+
+        waiting[0] = true;
+
+        databases.getPendingInvitationsCount(myProfile, new DatabaseListener<Integer>() {
+            @Override
+            public void onCallback(Integer obj, Status st) {
+                Assert.assertEquals(true, obj == 1);
+                waiting[0] =false;
+            }
+        });
+
+
+        while (waiting[0]){
+            Threadings.sleep(100);
+        }
+
+        waiting[0] = true;
+        room.setOpen(false);
+        databases.saveRoom(room, new DatabaseListener<String>() {
+            @Override
+            public void onCallback(String obj, Status st) {
+                Assert.assertEquals(Status.SUCCESS, st);
+                waiting[0] =false;
+            }
+        });
+
+        while (waiting[0]){
+            Threadings.sleep(100);
+        }
+        waiting[0] = true;
+
+        databases.getPendingInvitationsCount(myProfile, new DatabaseListener<Integer>() {
+            @Override
+            public void onCallback(Integer obj, Status st) {
+                Assert.assertEquals(true, obj == 0);
+                waiting[0] =false;
+            }
+        });
+
+        while (waiting[0]){
+            Threadings.sleep(100);
+        }
+
+    }
+
+
+
+
+
 
 
 }

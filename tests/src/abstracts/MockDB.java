@@ -4,9 +4,11 @@ import com.firebase.client.annotations.Nullable;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
+import com.mygdx.potatoandtomato.models.GameHistory;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Room;
+import helpers.MockModel;
 
 import java.util.ArrayList;
 
@@ -122,5 +124,23 @@ public class MockDB implements IDatabase {
     public void clearListenersByClass(Class clss) {
 
     }
+
+    @Override
+    public void savePlayedHistory(Profile profile, Room room, DatabaseListener<String> listener) {
+
+    }
+
+    @Override
+    public void getPlayedHistories(Profile profile, DatabaseListener<ArrayList<GameHistory>> listener) {
+        ArrayList<GameHistory> results = new ArrayList<>();
+        results.add(MockModel.mockGameHistory());
+        listener.onCallback(results, DatabaseListener.Status.SUCCESS);
+    }
+
+    @Override
+    public void getPendingInvitationsCount(Profile profile, DatabaseListener<Integer> listener) {
+        listener.onCallback(1, DatabaseListener.Status.SUCCESS);
+    }
+
 
 }

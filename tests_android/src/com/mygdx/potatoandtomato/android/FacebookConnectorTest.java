@@ -1,5 +1,6 @@
 package com.mygdx.potatoandtomato.android;
 
+import android.app.Activity;
 import android.test.ActivityInstrumentationTestCase2;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
@@ -10,13 +11,15 @@ import com.potatoandtomato.common.Broadcaster;
  */
 public class FacebookConnectorTest extends ActivityInstrumentationTestCase2<AndroidLauncher> {
 
+    Activity _activity;
+
     public FacebookConnectorTest() {
         super(AndroidLauncher.class);
     }
 
     @Override
     protected void setUp() throws Exception {
-        getActivity();
+        _activity = getActivity();
     }
 
     public void testLoginTimeout() {

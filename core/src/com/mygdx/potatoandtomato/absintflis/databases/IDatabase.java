@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Array;
 import com.firebase.client.Query;
 import com.firebase.client.annotations.Nullable;
 import com.mygdx.potatoandtomato.helpers.utils.Logs;
+import com.mygdx.potatoandtomato.models.GameHistory;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Room;
@@ -49,8 +50,10 @@ public interface IDatabase {
 
      void clearListenersByClass(Class clss);
 
+     void savePlayedHistory(Profile profile, Room room, DatabaseListener<String> listener);
 
-
+     void getPlayedHistories(Profile profile, DatabaseListener<ArrayList<GameHistory>> listener);
    
+     void getPendingInvitationsCount(Profile profile, DatabaseListener<Integer> listener);
 
 }

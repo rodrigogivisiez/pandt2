@@ -17,6 +17,7 @@ public class Mascot extends Image {
     Assets _assets;
     TextureRegion _textureRegion;
     float _prefWidth, _prefHeight;
+    float _padWidth;
 
     public Mascot(MascotEnum _mascotEnum, Assets _assets) {
         this._mascotEnum = _mascotEnum;
@@ -46,6 +47,11 @@ public class Mascot extends Image {
         }
         _prefWidth = sizes.x;
         _prefHeight = sizes.y;
+        _padWidth = maxWidth - _prefWidth;
+    }
+
+    public float getPadWidth() {
+        return _padWidth;
     }
 
     public float getPrefWidth() {

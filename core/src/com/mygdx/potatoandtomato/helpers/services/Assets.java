@@ -35,9 +35,9 @@ public class Assets {
             gameListBg, gameListTitleBg, btnWhiteRound, blackBg, ratingIcon, settingsIcon, tomatoIcon,
             potatoIcon, unknownMascotIcon, backIcon, infoIcon, importantIcon, comingSoon, noImage,
             pointLeftIcon, closeButton, downloadIconSmall, messageNotification, orangeLine, greyLine,
-            chatContainer, textCursor;
+            chatContainer, textCursor, unselectBox, selectBox, whiteLine, expandIcon, collapsedIcon;
     private NinePatch popupBg, buttonRed, buttonGreen, progressBarInner, progressBarBg, whiteRoundedBg,
-            blackRoundedBg, chatBox, yellowGradientBox, scrollVerticalHandle, irregularBg;
+            blackRoundedBg, chatBox, yellowGradientBox, scrollVerticalHandle, irregularBg, expandTitleBg;
     private BitmapFont blackNormal2, redNormal2, blueNormal2, blackBold2, blackNormal3, orangePizza3,
             whiteBold3GrayS, topBarFont, whitePizza3BlackS, orangePizza2White, whiteNormal3GrayS, whiteNormal2GrayS,
             whiteNormal2, whitePizza2BlackS, greenNormal2, grayBold2;
@@ -215,6 +215,11 @@ public class Assets {
         greyLine = _backgroundsPack.findRegion("grey_line");
         chatContainer = _backgroundsPack.findRegion("chat_container");
         textCursor = _backgroundsPack.findRegion("cursor_black");
+        expandIcon = _backgroundsPack.findRegion("expand_icon");
+        collapsedIcon = _backgroundsPack.findRegion("collapsed_icon");
+        whiteLine = _backgroundsPack.findRegion("white_line");
+        selectBox = _backgroundsPack.findRegion("select_box");
+        unselectBox = _backgroundsPack.findRegion("unselect_box");
     }
 
     private void basicNinePatchLoaded(){
@@ -229,6 +234,7 @@ public class Assets {
         yellowGradientBox =  _backgroundsPack .createPatch("yellow_gradient_box");
         scrollVerticalHandle =  _backgroundsPack .createPatch("scrollbar_handle");
         irregularBg =  _backgroundsPack .createPatch("irregular_bg");
+        expandTitleBg = _backgroundsPack.createPatch("expandable_title_bg");
     }
 
     public TextureRegion getBlueBg() {
@@ -425,6 +431,30 @@ public class Assets {
 
     public TextureRegion getTextCursor() {
         return textCursor;
+    }
+
+    public TextureRegion getUnselectBox() {
+        return unselectBox;
+    }
+
+    public TextureRegion getSelectBox() {
+        return selectBox;
+    }
+
+    public TextureRegion getWhiteLine() {
+        return whiteLine;
+    }
+
+    public TextureRegion getExpandIcon() {
+        return expandIcon;
+    }
+
+    public TextureRegion getCollapsedIcon() {
+        return collapsedIcon;
+    }
+
+    public NinePatch getExpandTitleBg() {
+        return expandTitleBg;
     }
 
     public NinePatch getPopupBg() {

@@ -21,9 +21,11 @@ public class Services {
     IDownloader _downloader;
     Chat _chat;
     Socials _socials;
+    GCMSender _gcmSender;
 
     public Services(Assets assets, Texts texts, Preferences preferences,
-                    Profile profile, IDatabase database, Shaders shaders, GamingKit gamingKit, IDownloader downloader, Chat chat, Socials socials) {
+                    Profile profile, IDatabase database, Shaders shaders, GamingKit gamingKit, IDownloader downloader,
+                    Chat chat, Socials socials, GCMSender gcmSender) {
         _texts = texts;
         _assets = assets;
         _preferences = preferences;
@@ -34,6 +36,7 @@ public class Services {
         _downloader = downloader;
         _chat = chat;
         _socials = socials;
+        _gcmSender = gcmSender;
     }
 
     public Texts getTexts() {
@@ -82,12 +85,24 @@ public class Services {
         return _chat;
     }
 
+    public void setChat(Chat _chat) {
+        this._chat = _chat;
+    }
+
     public Socials getSocials() {
         return _socials;
     }
 
     public void setSocials(Socials _socials) {
         this._socials = _socials;
+    }
+
+    public GCMSender getGcmSender() {
+        return _gcmSender;
+    }
+
+    public void setGcmSender(GCMSender _gcmSender) {
+        this._gcmSender = _gcmSender;
     }
 }
 

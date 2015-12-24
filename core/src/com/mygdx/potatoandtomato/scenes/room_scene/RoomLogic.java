@@ -13,6 +13,7 @@ import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.utils.SafeThread;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.*;
@@ -134,6 +135,14 @@ public class RoomLogic extends LogicAbstract {
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 startGame();
+            }
+        });
+
+        _scene.getInviteButton().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                _screen.toScene(SceneEnum.INVITE, _room);
             }
         });
 
@@ -349,6 +358,9 @@ public class RoomLogic extends LogicAbstract {
         _room.setPlaying(true);
         _room.setRoundCounter(_room.getRoundCounter()+1);
         flushRoom(false, null);
+
+        _services.getDatabase().savePlayedHistory(_services.getProfile(), _room, null);
+
     }
 
     public void gameFinished(){
@@ -365,9 +377,9 @@ public class RoomLogic extends LogicAbstract {
     }
 
     @Override
-    public void onHide() {
+    public void dispose() {
+        super.dispose();
         _scene.removeChat();
-        super.onHide();
     }
 
 }

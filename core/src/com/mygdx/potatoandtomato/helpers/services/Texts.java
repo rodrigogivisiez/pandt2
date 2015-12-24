@@ -29,6 +29,7 @@ public class Texts {
     public String createGameTitle() { return "Create Game"; }
     public String roomTitle() { return "Game Room"; }
     public String settingsTitle() { return "Settings"; }
+    public String inviteTitle() { return "Invite Friends"; }
 
     public String details() { return "Details"; }
     public String screenShots() { return "Screen Shots"; }
@@ -74,4 +75,22 @@ public class Texts {
 
     public String userHasJoinedRoom() { return "%s has joined the room."; }
     public String userHasLeftRoom() { return "%s has left the room."; }
+
+    public String recentlyPlay() { return "Recently Played Together"; }
+    public String faebookFriends() { return "Facebook Friends"; }
+    public String facebookCannotGetFriends() { return "You need to login with your facebook first.";}
+    public String noRecords() { return "No records found.";}
+    public String requestFailed() { return "Request failed.";}
+
+    public String xInvitedX() { return "%s has invited %s to join this room.";}
+    public String xInvitedXFailed() { return "%s has invited %s to join this room, but request failed.";}
+
+    //push notifications part
+    public String PUSHGameInvitationsTitle() { return "P&T Game Invitations"; }
+    public String PUSHGameInvitationsContent() { return "You have %s new inviations from your friends.";}
+    public String PUSHGameInvitationContent() { return "%s have invited you to play %s together.";}
+
+
+
+
 }

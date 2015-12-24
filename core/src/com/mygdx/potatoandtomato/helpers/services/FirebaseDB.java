@@ -6,10 +6,7 @@ import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
 import com.mygdx.potatoandtomato.helpers.utils.Logs;
-import com.mygdx.potatoandtomato.models.Game;
-import com.mygdx.potatoandtomato.models.Profile;
-import com.mygdx.potatoandtomato.models.Room;
-import com.mygdx.potatoandtomato.models.RoomUser;
+import com.mygdx.potatoandtomato.models.*;
 
 import java.util.*;
 
@@ -23,6 +20,7 @@ public class FirebaseDB implements IDatabase {
     private String _tableUsers = "users";
     private String _tableGames = "games";
     private String _tableRooms = "rooms";
+    private String _tableHistories = "histories";
     private String _tableRoomNotifications = "roomNotifications";
     private Array<ListenerModel> _listenerModels;
 
@@ -67,9 +65,74 @@ public class FirebaseDB implements IDatabase {
     }
 
     @Override
+    public void savePlayedHistory(Profile profile, Room room, DatabaseListener<String> listener) {
+        for(RoomUser u : room.getRoomUsers().values()){
+            if(!u.getProfile().equals(profile)){
+                GameHistory history = new GameHistory();
+                history.setPlayedWith(u.getProfile());
+                history.setNameOfGame(room.getGame().getName());
+                save(getTable(_tableHistories).child(profile.getUserId()).child(u.getProfile().getUserId()), history, listener);
+            }
+        }
+    }
+
+    @Override
+    public void getPlayedHistories(Profile profile, final DatabaseListener<ArrayList<GameHistory>> listener) {
+        DatabaseListener<ArrayList<GameHistory>> intermediateListener = new DatabaseListener<ArrayList<GameHistory>>(GameHistory.class) {
+            @Override
+            public void onCallback(final ArrayList<GameHistory> obj, Status st) {
+                if(st == Status.SUCCESS){
+                    Collections.reverse(obj);
+                    final int[] count = {0};
+                    for(final GameHistory history : obj){
+                        //profile might be outdated, need to refresh
+                        getProfileByUserId(history.getPlayedWith().getUserId(), new DatabaseListener<Profile>(Profile.class) {
+                            @Override
+                            public void onCallback(Profile obj2, Status st) {
+                                if(st == Status.SUCCESS){
+                                    history.setPlayedWith(obj2);
+                                    count[0]++;
+                                    if(count[0] == obj.size()){
+                                        listener.onCallback(obj, st);
+                                    }
+                                }
+                                else{
+                                    listener.onCallback(null, st);
+                                }
+                            }
+                        });
+                    }
+                }
+                else{
+                    listener.onCallback(null, st);
+                }
+
+            }
+        };
+        getData(getTable(_tableHistories).child(profile.getUserId()).orderByChild("creationDate"), intermediateListener);
+    }
+
+    @Override
+    public void getPendingInvitationsCount(final Profile profile, final DatabaseListener<Integer> listener) {
+        getData(getTable(_tableRooms).orderByChild("open").equalTo(true), new DatabaseListener<ArrayList<Room>>(Room.class) {
+            @Override
+            public void onCallback(ArrayList<Room> obj, Status st) {
+                if(st == Status.SUCCESS){
+                    int result = 0;
+                    for(Room room : obj){
+                        if(room.getInvitedUserByUserId(profile.getUserId()) != null) result++;
+                    }
+                    listener.onCallback(result, Status.SUCCESS);
+                }
+                else{
+                    listener.onCallback(null, Status.FAILED);
+                }
+            }
+        });
+    }
+
+    @Override
     public void loginAnonymous(final DatabaseListener<Profile> listener) {
-
-
         _ref.authAnonymously(new Firebase.AuthResultHandler() {
             @Override
             public void onAuthenticated(AuthData authData) {

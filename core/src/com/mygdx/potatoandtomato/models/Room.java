@@ -1,6 +1,5 @@
 package com.mygdx.potatoandtomato.models;
 
-import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.helpers.serializings.IntProfileMapDeserializer;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
 import com.shaded.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -22,8 +21,11 @@ public class Room {
     Profile host;
     String id;
 
+    ArrayList<Profile> invitedUsers;
+
     @JsonDeserialize(using = IntProfileMapDeserializer.class)
     HashMap<String, RoomUser> roomUsers;
+
 
 
     public Game getGame() {
@@ -67,12 +69,25 @@ public class Room {
     }
 
     public HashMap<String, RoomUser> getRoomUsers() {
-        if(roomUsers == null) return new HashMap<>();
-        else return roomUsers;
+        if(roomUsers == null){
+            roomUsers = new HashMap<>();
+        }
+        return roomUsers;
     }
 
     public void setRoomUsers(HashMap<String, RoomUser> roomUsers) {
         this.roomUsers = roomUsers;
+    }
+
+    public ArrayList<Profile> getInvitedUsers() {
+        if(invitedUsers == null){
+            invitedUsers = new ArrayList<>();
+        }
+        return invitedUsers;
+    }
+
+    public void setInvitedUsers(ArrayList<Profile> invitedUsers) {
+        this.invitedUsers = invitedUsers;
     }
 
     public Profile getHost() {
@@ -95,6 +110,25 @@ public class Room {
     public int getRoomUsersCount(){
         if(roomUsers == null) return 0;
         else return roomUsers.size();
+    }
+
+    @JsonIgnore
+    public Profile getInvitedUserByUserId(String userId){
+        for(Profile user : this.getInvitedUsers()){
+            if(user.getUserId().equals(userId)){
+                return user;
+            }
+        }
+        return null;
+    }
+
+    @JsonIgnore
+    public boolean addInvitedUser(Profile user){
+        if(getInvitedUserByUserId(user.getUserId()) == null){
+            getInvitedUsers().add(user);
+            return true;
+        }
+        return false;
     }
 
     @JsonIgnore

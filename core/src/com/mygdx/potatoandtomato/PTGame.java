@@ -1,7 +1,9 @@
 package com.mygdx.potatoandtomato;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.FPSLogger;
+import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.controls.Chat;
 import com.mygdx.potatoandtomato.helpers.services.*;
@@ -9,6 +11,7 @@ import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.models.Profile;
+import com.mygdx.potatoandtomato.scenes.boot_scene.BootLogic;
 
 public class PTGame extends Game {
 
@@ -24,7 +27,8 @@ public class PTGame extends Game {
 		Preferences preferences = new Preferences();
 		_services = new Services(_assets, new Texts(),
 									preferences, new Profile(), new FirebaseDB(Terms.FIREBASE_URL),
-									new Shaders(), new Appwarp(), new Downloader(), new Chat(), new Socials(preferences));
+									new Shaders(), new Appwarp(), new Downloader(), new Chat(),
+									new Socials(preferences), new GCMSender());
 		_screen = new PTScreen(_services);
 
 		//run when assets done loading
@@ -35,6 +39,7 @@ public class PTGame extends Game {
 				_screen.toScene(SceneEnum.BOOT);
 			}
 		});
+
 
 
 		Logs.startLogFps();

@@ -12,6 +12,9 @@ import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.mygdx.potatoandtomato.scenes.boot_scene.BootLogic;
+import com.potatoandtomato.common.BroadcastEvent;
+import com.potatoandtomato.common.BroadcastListener;
+import com.potatoandtomato.common.Broadcaster;
 import helpers.T_Services;
 import org.junit.After;
 import org.junit.Assert;
@@ -108,6 +111,20 @@ public class TestBoot extends TestAbstract {
         Assert.assertEquals("andy", _services.getProfile().getFacebookName());
         Assert.assertEquals(true, called[0]);
     }
+
+    @Test
+    public void testUpdateGCMId(){
+        Broadcaster.getInstance().subscribe(BroadcastEvent.LOGIN_GCM_REQUEST, new BroadcastListener() {
+            @Override
+            public void onCallback(Object obj, Status st) {
+                Broadcaster.getInstance().broadcast(BroadcastEvent.LOGIN_GCM_CALLBACK, "gcmid1", Status.SUCCESS);
+            }
+        });
+        BootLogic logic = new BootLogic(mock(PTScreen.class), _services);
+        logic.loginGCM();
+        Assert.assertEquals("gcmid1", _services.getProfile().getGcmId());
+    }
+
 
     @Test
     public void testLoginSuccessWithMascot(){

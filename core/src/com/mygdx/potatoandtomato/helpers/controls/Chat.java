@@ -82,8 +82,7 @@ public class Chat implements Disposable {
         });
     }
 
-    public void show(Actor _root, Assets assets, Texts texts, Room room, GamingKit gamingKit){
-
+    public void show(Actor _root, Assets assets, Texts texts, Room room, GamingKit gamingKit, boolean preserveState){
         if(!_init){
             _assets = assets;
             _texts = texts;
@@ -194,9 +193,12 @@ public class Chat implements Disposable {
             _allMessagesTable.setVisible(false);
         }
         else{
+            if(preserveState){
+                return;
+            }
             _allMessagesTable.setVisible(true);
             _allMessagesTable.addAction(sequence(moveTo(_allMessagesTable.getX(), _allMessagesTable.getY() - _allMessagesTable.getHeight(), 0),
-                                                moveTo(_allMessagesTable.getX(), _originalY, 0.25f, Interpolation.circleOut)));
+                    moveTo(_allMessagesTable.getX(), _originalY, 0.25f, Interpolation.circleOut)));
             _shown = true;
         }
 
@@ -205,11 +207,21 @@ public class Chat implements Disposable {
     }
 
     public void show(){
-        show(null, null, null, null, null);
+        show(null, null, null, null, null, false);
     }
 
     private void moveChatPosition(float newY){
         _chatRoot.setPosition(0, newY);
+    }
+
+    public void setVisible(boolean visible){
+        if(visible){
+            _chatRoot.setVisible(true);
+            _chatRoot.setZIndex(99);
+        }
+        else{
+            _chatRoot.setVisible(false);
+        }
     }
 
     public void hide(){
@@ -314,61 +326,67 @@ public class Chat implements Disposable {
         _messageTextField.setText("");
     }
 
-    public void newChatMessage(ChatMessage msg){
-        if(_init){
-            Table chatTable = new Table();
-            ////////////////
-            //Styles
-            ///////////////
-            Label.LabelStyle lblUsernameStyle = new Label.LabelStyle();
-            lblUsernameStyle.font = _assets.getBlackBold2();
+    public void newChatMessage(final ChatMessage msg){
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(_init){
+                    Table chatTable = new Table();
+                    ////////////////
+                    //Styles
+                    ///////////////
+                    Label.LabelStyle lblUsernameStyle = new Label.LabelStyle();
+                    lblUsernameStyle.font = _assets.getBlackBold2();
 
-            Label.LabelStyle lblMessageStyle = new Label.LabelStyle();
-            lblMessageStyle.font = _assets.getBlackNormal2();
+                    Label.LabelStyle lblMessageStyle = new Label.LabelStyle();
+                    lblMessageStyle.font = _assets.getBlackNormal2();
 
-            Label.LabelStyle lblInfoStyle = new Label.LabelStyle();
-            lblInfoStyle.font =  _assets.getBlueNormal2();
+                    Label.LabelStyle lblInfoStyle = new Label.LabelStyle();
+                    lblInfoStyle.font =  _assets.getBlueNormal2();
 
-            Label.LabelStyle lblImportantStyle = new Label.LabelStyle();
-            lblImportantStyle.font =  _assets.getRedNormal2();
+                    Label.LabelStyle lblImportantStyle = new Label.LabelStyle();
+                    lblImportantStyle.font =  _assets.getRedNormal2();
 
-            if(msg.getFromType() == ChatMessage.FromType.USER){
-                Profile sender = _room.getProfileByUserId(msg.getSenderId());
-                if(sender == null) return;
-                Mascot mascotIcon = new Mascot(sender.getMascotEnum(), _assets);
-                mascotIcon.resizeTo(20, 20);
-                chatTable.add(mascotIcon).padRight(5).padLeft(5);
+                    if(msg.getFromType() == ChatMessage.FromType.USER){
+                        Profile sender = _room.getProfileByUserId(msg.getSenderId());
+                        if(sender == null) return;
+                        Mascot mascotIcon = new Mascot(sender.getMascotEnum(), _assets);
+                        mascotIcon.resizeTo(20, 20);
+                        chatTable.add(mascotIcon).padRight(5).padLeft(5);
 
-                Label lblUsername = new Label(sender.getDisplayName() + ": ", lblUsernameStyle);
-                chatTable.add(lblUsername).minHeight(20).padRight(5);
+                        Label lblUsername = new Label(sender.getDisplayName() + ": ", lblUsernameStyle);
+                        chatTable.add(lblUsername).minHeight(20).padRight(5);
 
-                Label lblMessage = new Label(msg.getMessage(), lblMessageStyle);
-                lblMessage.setWrap(true);
-                chatTable.add(lblMessage).expandX().fillX();
-                chatTable.row();
+                        Label lblMessage = new Label(msg.getMessage(), lblMessageStyle);
+                        lblMessage.setWrap(true);
+                        chatTable.add(lblMessage).expandX().fillX();
+                        chatTable.row();
+                    }
+                    else{
+                        Image icon = new Image(msg.getFromType() == ChatMessage.FromType.SYSTEM ? _assets.getInfoIcon() : _assets.getImportantIcon());
+                        Label lblMessage = new Label(msg.getMessage(), msg.getFromType() == ChatMessage.FromType.SYSTEM ? lblInfoStyle : lblImportantStyle);
+                        lblMessage.setWrap(true);
+                        chatTable.add(icon).size(20, 20).padRight(5).padLeft(5);
+                        chatTable.add(lblMessage).colspan(2).expandX().fillX();
+                        chatTable.row();
+                    }
+
+                    Image separator = new Image(_assets.getGreyLine());
+                    chatTable.add(separator).colspan(3).padTop(5).padBottom(5).expandX().fillX();
+                    chatTable.row();
+
+                    _messagesContentTable.add(chatTable).expandX().fillX();
+                    _messagesContentTable.row();
+                    scrollToBottom();
+
+                    if(!_shown){
+                        addMessageNotificationCount();
+                    }
+
+                }
             }
-            else{
-                Image icon = new Image(msg.getFromType() == ChatMessage.FromType.SYSTEM ? _assets.getInfoIcon() : _assets.getImportantIcon());
-                Label lblMessage = new Label(msg.getMessage(), msg.getFromType() == ChatMessage.FromType.SYSTEM ? lblInfoStyle : lblImportantStyle);
+        });
 
-                chatTable.add(icon).size(20, 20).padRight(5).padLeft(5);
-                chatTable.add(lblMessage).colspan(2).expandX().fillX();
-                chatTable.row();
-            }
-
-            Image separator = new Image(_assets.getGreyLine());
-            chatTable.add(separator).colspan(3).padTop(5).padBottom(5).expandX().fillX();
-            chatTable.row();
-
-            _messagesContentTable.add(chatTable).expandX().fillX();
-            _messagesContentTable.row();
-            scrollToBottom();
-
-            if(!_shown){
-                addMessageNotificationCount();
-            }
-
-        }
     }
 
     private void addMessageNotificationCount(){

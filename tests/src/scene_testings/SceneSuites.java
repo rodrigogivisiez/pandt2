@@ -12,7 +12,10 @@ import org.junit.runners.Suite;
         TestGameList.class,
         TestCreateGame.class,
         TestPrerequisite.class,
-        TestRoom.class
+        TestRoom.class,
+        TestChat.class,
+        TestSettings.class,
+        TestInvite.class
 })
 public class SceneSuites {
 }

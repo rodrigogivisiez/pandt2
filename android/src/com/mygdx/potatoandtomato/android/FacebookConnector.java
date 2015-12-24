@@ -11,6 +11,7 @@ import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Broadcaster;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,6 +24,7 @@ public class FacebookConnector {
 
     Activity _activity;
     CallbackManager _callbackManager;
+    AccessToken _accessToken;
 
     public FacebookConnector(Activity activity) {
         this._activity = activity;
@@ -47,6 +49,46 @@ public class FacebookConnector {
             }
         });
 
+        Broadcaster.getInstance().subscribe(BroadcastEvent.FACEBOOK_GET_FRIENDS_REQUEST, new BroadcastListener() {
+            @Override
+            public void onCallback(Object obj, Status st) {
+                getAllFriends();
+            }
+        });
+
+
+    }
+
+    private void getAllFriends(){
+        GraphRequestBatch batch = new GraphRequestBatch(
+                GraphRequest.newMyFriendsRequest(
+                        _accessToken,
+                        new GraphRequest.GraphJSONArrayCallback() {
+                            @Override
+                            public void onCompleted(JSONArray objects, GraphResponse response) {
+                                Broadcaster.getInstance().broadcast(BroadcastEvent.FACEBOOK_GET_FRIENDS_RESPONSE, null, BroadcastListener.Status.SUCCESS);
+
+                                System.out.println("getFriendsData onCompleted : response " + response);
+                                try {
+                                    JSONObject jsonObject = response.getJSONObject();
+                                    System.out.println("getFriendsData onCompleted : jsonObject " + jsonObject);
+                                    JSONObject summary = jsonObject.getJSONObject("summary");
+                                    System.out.println("getFriendsData onCompleted : summary total_count - " + summary.getString("total_count"));
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        })
+
+        );
+
+        batch.addCallback(new GraphRequestBatch.Callback() {
+            @Override
+            public void onBatchCompleted(GraphRequestBatch graphRequests) {
+                // Application code for when the batch finishes
+            }
+        });
+        batch.executeAsync();
     }
 
     private void registerCallBack(){
@@ -56,7 +98,7 @@ public class FacebookConnector {
                     private ProfileTracker mProfileTracker;
                     @Override
                     public void onSuccess(final LoginResult loginResult) {
-
+                        _accessToken = loginResult.getAccessToken();
                         if(Profile.getCurrentProfile() == null) {
                             mProfileTracker = new ProfileTracker() {
                                 @Override
