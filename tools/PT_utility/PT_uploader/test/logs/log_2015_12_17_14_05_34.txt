@@ -1,7 +1,0 @@
-Upload success!
-Name : Covered Chess
-Min Players : 2
-Max Players : 2
-Current Version : 1.04
-Screenshot Counts : 1
-Description : this is a game!

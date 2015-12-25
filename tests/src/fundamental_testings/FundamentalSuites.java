@@ -13,7 +13,8 @@ import scene_testings.TestGameList;
         TestBroadCaster.class,
         TestPositions.class,
         TestDownloader.class,
-        TestGamingKit.class
+        TestGamingKit.class,
+        TestGameLoader.class
 })
 public class FundamentalSuites {
 }

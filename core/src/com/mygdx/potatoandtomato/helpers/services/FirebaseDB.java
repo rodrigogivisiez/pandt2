@@ -39,6 +39,8 @@ public class FirebaseDB implements IDatabase {
         Firebase.goOnline();
     }
 
+
+
     @Override
     public void clearListenersByClass(Class clss) {
         ArrayList<Integer> toRemove = new ArrayList<>();

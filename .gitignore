@@ -64,3 +64,4 @@ build/
 .DS_Store
 
 pt_downloads/
+logs/

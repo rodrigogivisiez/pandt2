@@ -10,5 +10,6 @@ public class Terms {
     public static String PREF_NAME = "potatoandtomato";
     public static String FIREBASE_URL = "https://glaring-inferno-8572.firebaseIO.com";
     public static String FACEBOOK_USERNAME = "facebookUsername";
+    public static String GAME_ENTRANCE = "com.potatoandtomato.games.Entrance";
 
 }

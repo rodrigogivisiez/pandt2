@@ -12,13 +12,16 @@ import com.mygdx.potatoandtomato.absintflis.downloader.DownloaderListener;
 import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesCode;
+import com.mygdx.potatoandtomato.helpers.services.GCMSender;
 import com.mygdx.potatoandtomato.helpers.utils.SafeThread;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Profile;
+import com.mygdx.potatoandtomato.models.PushNotification;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.scenes.room_scene.RoomLogic;
 import com.mygdx.potatoandtomato.scenes.room_scene.RoomScene;
+import com.potatoandtomato.common.Team;
 import helpers.MockModel;
 import helpers.T_Services;
 import org.junit.Assert;
@@ -28,9 +31,9 @@ import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
 import java.io.File;
+import java.util.ArrayList;
 
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -96,7 +99,7 @@ public class TestRoom extends TestAbstract {
         RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room));
         logic.onInit();
 
-        Assert.assertEquals(1, logic.startGameCheck());
+        Assert.assertEquals(1, logic.startGameCheck(true));
 
         Profile user2 = MockModel.mockProfile("99");
         _room.addRoomUser(user2);
@@ -107,11 +110,11 @@ public class TestRoom extends TestAbstract {
         _services.getGamingKit().onUpdateRoomMatesReceived(UpdateRoomMatesCode.UPDATE_DOWNLOAD, "50", _services.getProfile().getUserId());
         Threadings.sleep(500);
         verify(logic, times(1)).receivedUpdateRoomMates(eq(UpdateRoomMatesCode.UPDATE_DOWNLOAD), eq("50"), eq(_services.getProfile().getUserId()));
-        Assert.assertEquals(2, logic.startGameCheck());
+        Assert.assertEquals(2, logic.startGameCheck(true));
         _services.getGamingKit().onUpdateRoomMatesReceived(UpdateRoomMatesCode.UPDATE_DOWNLOAD, "100", _services.getProfile().getUserId());
         Threadings.sleep(500);
         verify(logic, times(1)).receivedUpdateRoomMates(eq(UpdateRoomMatesCode.UPDATE_DOWNLOAD), eq("100"), eq(_services.getProfile().getUserId()));
-        Assert.assertEquals(0, logic.startGameCheck());
+        Assert.assertEquals(0, logic.startGameCheck(true));
     }
 
     @Test
@@ -149,10 +152,42 @@ public class TestRoom extends TestAbstract {
 
     }
 
+    @Test
+    public void testGameStartCancel(){
 
+        MockGamingKit gamingKit = mock(MockGamingKit.class);
+        _services.setGamingKit(gamingKit);
+        _room.getGame().setTeamMinPlayers("1");
+        _room.getGame().setMinPlayers("2");
+        _room.getGame().setTeamCount("2");
+        _room.getGame().setTeamMaxPlayers("1");
+        _room.getRoomUsers().get("another").setSlotIndex(1);
+        ArrayList<Team> teams = _room.convertRoomUsersToTeams();
+        Assert.assertEquals(2, teams.size());
+        Assert.assertEquals(1, teams.get(0).getPlayers().size());
+        Assert.assertEquals(1, teams.get(1).getPlayers().size());
+        RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room));
+        logic.onInit();
+        logic.hostSendStartGame();
+
+        verify(gamingKit, times(1)).updateRoomMates(eq(UpdateRoomMatesCode.START_GAME), anyString());
+
+        logic.receivedUpdateRoomMates(UpdateRoomMatesCode.START_GAME, "", "");
+
+        logic.stopGameStartCountDown(_room.getRoomUsers().get("another").getProfile());
+        Threadings.sleep(1600);
+        verify(logic, times(0)).gameStarted();
+
+        logic.receivedUpdateRoomMates(UpdateRoomMatesCode.START_GAME, "", "");
+        Threadings.sleep(5000);
+        verify(logic, times(1)).gameStarted();
+
+    }
 
     @Test
     public void testGameStartOrEndParameters(){
+        IDatabase database = mock(MockDB.class);
+        _services.setDatabase(database);
         RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room));
         logic.onInit();
 
@@ -165,20 +200,45 @@ public class TestRoom extends TestAbstract {
         _room.getGame().setTeamMinPlayers("1");
         _room.getGame().setTeamCount("2");
 
-        logic.startGame();
+        logic.gameStarted();
         Threadings.sleep(3100);
 
         Assert.assertEquals(true, _room.isPlaying());
         Assert.assertEquals(false, _room.isOpen());
         Assert.assertEquals(1, _room.getRoundCounter());
         verify(logic, times(1)).gameStarted();
+        verify(database, Mockito.times(2)).saveRoom(any(Room.class), any(DatabaseListener.class));
+        verify(database, times(1)).savePlayedHistory(any(Profile.class), any(Room.class), any(DatabaseListener.class));
 
         logic.gameFinished();
         Assert.assertEquals(false, _room.isPlaying());
         Assert.assertEquals(true, _room.isOpen());
         Assert.assertEquals(1, _room.getRoundCounter());
+        verify(database, times(3)).saveRoom(any(Room.class), any(DatabaseListener.class));
+    }
+
+    @Test
+    public void testPushNotificationSent(){
+        GCMSender gcmSender = mock(GCMSender.class);
+        _services.setGcmSender(gcmSender);
+        RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room));
+        _room.getRoomUsers().remove("another");
+        logic.onInit();
+        _room.addRoomUser(MockModel.mockProfile("another"), 1);
+
+        logic.hostSendUpdateRoomStatePush();
+        verify(gcmSender, times(1)).send(eq(_room.getProfileByUserId("another")), any(PushNotification.class));
+        verify(gcmSender, times(2)).send(eq(_room.getProfileByUserId("123")), any(PushNotification.class));
+
+        gcmSender = mock(GCMSender.class);
+        _services.setGcmSender(gcmSender);
+        logic.gameStarted();
+        verify(gcmSender, times(1)).send(eq(_room.getProfileByUserId("another")), any(PushNotification.class));
+        verify(gcmSender, times(0)).send(eq(_room.getProfileByUserId("123")), any(PushNotification.class));
+
 
     }
+
 
     @Test
     public void testHostLeaveRoomParameters(){

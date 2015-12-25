@@ -12,6 +12,7 @@ import com.mygdx.potatoandtomato.models.*;
 import helpers.MockModel;
 import helpers.T_Threadings;
 import org.apache.commons.lang.builder.EqualsBuilder;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,13 +28,26 @@ import java.util.Map;
 public class TestFireBase extends TestAbstract {
 
     private String _unitTestUrl = "https://forunittest.firebaseio.com";
+    IDatabase databases;
 
 
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        databases = new FirebaseDB(_unitTestUrl);
+    }
+
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+        databases.clearListenersByClass(this.getClass());
+    }
 
     @Test
     public void testConnectFirebase(){
         final boolean[] waiting = {true};
-        IDatabase databases = new FirebaseDB(_unitTestUrl);
         databases.getTestTableCount(new DatabaseListener<Integer>() {
             @Override
             public void onCallback(Integer obj, Status st) {
@@ -51,7 +65,6 @@ public class TestFireBase extends TestAbstract {
     @Test
     public void testCreateUser(){
         final boolean[] waiting = {true};
-        final IDatabase databases = new FirebaseDB(_unitTestUrl);
         databases.loginAnonymous(new DatabaseListener<Profile>() {
             @Override
             public void onCallback(Profile obj, Status st) {
@@ -85,7 +98,6 @@ public class TestFireBase extends TestAbstract {
     @Test
     public void testGetAllGames(){
         final boolean[] waiting = {true};
-        final IDatabase databases = new FirebaseDB(_unitTestUrl);
         databases.getAllGames(new DatabaseListener<ArrayList<Game>>(Game.class) {
             @Override
             public void onCallback(ArrayList<Game> obj, Status st) {
@@ -105,7 +117,6 @@ public class TestFireBase extends TestAbstract {
     public void testSave_MonitorSingleRoom_OnDisconnectRoom(){
 
         final int[] monitorCount = {0};
-        final IDatabase databases = new FirebaseDB(_unitTestUrl);
         final boolean[] waiting = {true};
 
         //create room
@@ -220,7 +231,6 @@ public class TestFireBase extends TestAbstract {
     @Test
     public void TestMonitorAllRoom(){
         final int[] monitorCount = {0};
-        final IDatabase databases = new FirebaseDB(_unitTestUrl);
         final boolean[] waiting = {true};
         ArrayList<Room> rooms = new ArrayList<>();
 
@@ -245,7 +255,6 @@ public class TestFireBase extends TestAbstract {
             public void onCallbackTypeOne(ArrayList<Room> obj, Status st) {
                 Assert.assertEquals(st , Status.SUCCESS);
                 Assert.assertEquals(true , obj.size()>0);
-                waiting[0] = false;
             }
 
             @Override
@@ -276,7 +285,8 @@ public class TestFireBase extends TestAbstract {
             T_Threadings.sleep(100);
         }
 
-        Assert.assertEquals(1, monitorCount[0]);
+
+        Assert.assertEquals(2, monitorCount[0]);
 
         for(Room r1 : rooms){
             if(r1.getId().equals(r.getId())){
@@ -288,7 +298,6 @@ public class TestFireBase extends TestAbstract {
 
     @Test
     public void testRemoveListeners(){
-        final IDatabase databases = new FirebaseDB(_unitTestUrl);
         final boolean[] waiting = {true};
 
         final Room r = MockModel.mockRoom(null);
@@ -368,7 +377,6 @@ public class TestFireBase extends TestAbstract {
         final Profile anotherProfile = ((RoomUser) room.getRoomUsers().values().toArray()[1]).getProfile();
         anotherProfile.setGameName("first");
 
-        final IDatabase databases = new FirebaseDB(_unitTestUrl);
         final boolean[] waiting = {true};
 
         databases.updateProfile(myProfile);
@@ -418,7 +426,6 @@ public class TestFireBase extends TestAbstract {
         Profile myProfile =MockModel.mockProfile("33");
         room.addInvitedUser(myProfile);
 
-        final IDatabase databases = new FirebaseDB(_unitTestUrl);
         final boolean[] waiting = {true};
 
         databases.saveRoom(room, new DatabaseListener<String>() {

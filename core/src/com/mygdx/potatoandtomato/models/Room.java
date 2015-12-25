@@ -1,6 +1,9 @@
 package com.mygdx.potatoandtomato.models;
 
+import com.mygdx.potatoandtomato.enums.MascotEnum;
 import com.mygdx.potatoandtomato.helpers.serializings.IntProfileMapDeserializer;
+import com.potatoandtomato.common.Player;
+import com.potatoandtomato.common.Team;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
 import com.shaded.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -262,5 +265,29 @@ public class Room {
         return results;
     }
 
+    private int convertSlotIndexToTeamNumber(int slotIndex){
+        for(int i = 0; i < Integer.valueOf(this.getGame().getTeamCount()); i++) {
+            int startIndex = i * Integer.valueOf(this.getGame().getTeamMaxPlayers());
+            int endIndex = startIndex + Integer.valueOf(this.getGame().getTeamMaxPlayers());
+            if(slotIndex >= startIndex && slotIndex < endIndex){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    @JsonIgnore
+    public ArrayList<Team> convertRoomUsersToTeams() {
+        ArrayList<Team> teams = new ArrayList<>();
+        for (int i = 0; i < Integer.valueOf(this.getGame().getTeamCount()); i++) {
+            teams.add(new Team());
+        }
+        for (RoomUser user : this.getRoomUsers().values()) {
+            int index = convertSlotIndexToTeamNumber(user.getSlotIndex());
+            teams.get(index).addPlayer(new Player(user.getProfile().getDisplayName(), user.getProfile().getUserId(),
+                    user.getProfile().getMascotEnum() == MascotEnum.POTATO ? 0 : 1));
+        }
+        return teams;
+    }
 
 }

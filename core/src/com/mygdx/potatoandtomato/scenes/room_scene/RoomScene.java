@@ -35,6 +35,7 @@ public class RoomScene extends SceneAbstract {
     Confirm _hostLeftConfirm, _errorConfirm, _messageConfirm;
     Confirm _leaveRoomConfirm;
     Room _room;
+    Image _loadingScreen;
 
     public Array<Table> getTeamTables() {
         return _teamTables;
@@ -150,7 +151,11 @@ public class RoomScene extends SceneAbstract {
     @Override
     public void onShow() {
         super.onShow();
-        _services.getChat().show(_root, _assets, _texts, _room, _services.getGamingKit(), true);
+       showChat(false);
+    }
+
+    public void showChat(boolean forceShow){
+        _services.getChat().show(_root, null, _assets, _texts, _room, _services.getGamingKit(), !forceShow);
         _services.getChat().setVisible(true);
     }
 
@@ -308,8 +313,22 @@ public class RoomScene extends SceneAbstract {
         return playerTable;
     }
 
-    public void removeChat(){
-        _services.getChat().dispose();
+    public void showLoadingScreen(){
+        _loadingScreen = new Image(_assets.getLoading());
+        _loadingScreen.setZIndex(100);
+        _screen.addToStage(_loadingScreen);
     }
 
+    public void removeLoadingScreen(){
+        if(_loadingScreen != null){
+            _loadingScreen.remove();
+            _loadingScreen = null;
+        }
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        _services.getChat().dispose();
+    }
 }

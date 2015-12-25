@@ -1,6 +1,7 @@
 package com.mygdx.potatoandtomato;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -8,11 +9,14 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
 import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
+import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.models.Services;
@@ -42,6 +46,8 @@ public class PTScreen implements Screen {
     Stage _stage;
     OrthographicCamera _camera;
     Stack<LogicEnumPair> _logicStacks;
+    boolean _backRunning;
+    Actor _currentRoot;
 
     public PTScreen(Services services) {
         this._services = services;
@@ -60,6 +66,7 @@ public class PTScreen implements Screen {
                 logic.onShow();
                 if(_logicStacks.size() == 0){
                     _stage.addActor(logic.getScene().getRoot());
+                    _currentRoot = logic.getScene().getRoot();
                 }
                 else{
                     final LogicEnumPair logicOut = _logicStacks.peek();
@@ -81,6 +88,10 @@ public class PTScreen implements Screen {
     }
 
     public void back(){
+
+        if(_backRunning) return;
+
+        _backRunning = true;
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -98,12 +109,16 @@ public class PTScreen implements Screen {
                             final LogicEnumPair previous = _logicStacks.peek();
                             previous.getLogic().onShow();
                             current.getLogic().onHide();
+                            current.getLogic().dispose();
                             sceneTransition(previous.getLogic().getScene().getRoot(), current.getLogic().getScene().getRoot(), previous.getLogic().getScene(), false, new Runnable() {
                                 @Override
                                 public void run() {
-                                    current.getLogic().dispose();
+                                    _backRunning = false;
                                 }
                             });
+                        }
+                        else{
+                            _backRunning = false;
                         }
                     }
                 });
@@ -111,8 +126,22 @@ public class PTScreen implements Screen {
         });
     }
 
-    public void confirmQuitGame(){
+    public void addToStage(Actor actor){
+        _stage.addActor(actor);
+    }
 
+    public void confirmQuitGame(){
+        Confirm confirm = new Confirm((Table) _currentRoot, _assets, _texts.confirmQuit(), Confirm.Type.YESNO);
+        confirm.setListener(new ConfirmResultListener() {
+            @Override
+            public void onResult(Result result) {
+                if(result == Result.YES){
+                    Gdx.app.exit();
+                }
+                _backRunning = false;
+            }
+        });
+        confirm.show();
     }
 
     public void backToBoot(){
@@ -164,8 +193,10 @@ public class PTScreen implements Screen {
         _rootOut.remove();
         _rootIn.clearActions();
         _rootOut.clearActions();
+        _rootIn.setName("root");
         _stage.addActor(_rootIn);
         _stage.addActor(_rootOut);
+        _currentRoot = _rootIn;
 
         sceneToShow.onShow();
 
@@ -235,10 +266,14 @@ public class PTScreen implements Screen {
         _stage.addActor(_greenGroundImg);
         _stage.addActor(_autumnGroundImg);
         Gdx.input.setInputProcessor(_stage);
+        Gdx.input.setCatchBackKey(true);
     }
 
     @Override
     public void render(float delta) {
+        if (Gdx.input.isKeyPressed(Input.Keys.BACK)){
+            back();
+        }
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
         _stage.act(delta);

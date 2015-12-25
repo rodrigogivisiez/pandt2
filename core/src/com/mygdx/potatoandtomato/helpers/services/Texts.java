@@ -85,12 +85,17 @@ public class Texts {
     public String xInvitedX() { return "%s has invited %s to join this room.";}
     public String xInvitedXFailed() { return "%s has invited %s to join this room, but request failed.";}
 
+    public String gameStartingIn() { return "Game starting in %s...";}
+    public String gameStartStop() { return "Game start process is stopped by %s...";}
+
+    public String confirmQuit() { return "Are you sure you want to quit Potato and Tomato?";}
+
     //push notifications part
     public String PUSHGameInvitationsTitle() { return "P&T Game Invitations"; }
     public String PUSHGameInvitationsContent() { return "You have %s new inviations from your friends.";}
     public String PUSHGameInvitationContent() { return "%s have invited you to play %s together.";}
-
-
-
-
+    public String PUSHRoomUpdateTitle() { return "Room Update";}
+    public String PUSHRoomUpdateContent() { return "Current players %s / %s";}
+    public String PUSHRoomUpdateGameReadyTitle() { return "Game is ready to start";}
+    public String PUSHRoomUpdateGameStartedTitle() { return "Game started!";}
 }

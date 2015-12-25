@@ -50,6 +50,7 @@ public class Broadcaster {
                 }
                 if(subScribeOnceArr.contains(id)){
                     broadcast(event, null, BroadcastListener.Status.FAILED);
+                    subScribeOnceArr.remove(id);
                 }
             }
         }).start();

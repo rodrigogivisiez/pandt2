@@ -74,7 +74,7 @@ public class Chat implements Disposable {
                     Gdx.app.postRunnable(new Runnable() {
                         @Override
                         public void run() {
-                            newChatMessage(obj);
+                            add(obj);
                         }
                     });
                 }
@@ -82,13 +82,20 @@ public class Chat implements Disposable {
         });
     }
 
-    public void show(Actor _root, Assets assets, Texts texts, Room room, GamingKit gamingKit, boolean preserveState){
+    public void show(Actor _root, Stage stage, Assets assets, Texts texts, Room room, GamingKit gamingKit, boolean preserveState){
         if(!_init){
             _assets = assets;
             _texts = texts;
             _room = room;
             _gamingKit = gamingKit;
-            _stage = _root.getStage();
+
+            if(stage != null){
+                _stage = stage;
+            }
+            else{
+                _stage = _root.getStage();
+            }
+
 
             ////////////////////////
             //All Messages Table
@@ -207,7 +214,7 @@ public class Chat implements Disposable {
     }
 
     public void show(){
-        show(null, null, null, null, null, false);
+        show(null, null, null, null, null, null, false);
     }
 
     private void moveChatPosition(float newY){
@@ -326,7 +333,7 @@ public class Chat implements Disposable {
         _messageTextField.setText("");
     }
 
-    public void newChatMessage(final ChatMessage msg){
+    public void add(final ChatMessage msg){
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {

@@ -138,6 +138,11 @@ public class Game {
     }
 
     @JsonIgnore
+    public String getFullLocalJarPath() {
+        return getFullBasePath() + "/game.jar";
+    }
+
+    @JsonIgnore
     public String getLocalAssetsPath() {
         return getBasePath() + "/assets.zip";
     }

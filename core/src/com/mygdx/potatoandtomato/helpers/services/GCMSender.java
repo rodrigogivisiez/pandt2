@@ -3,6 +3,7 @@ package com.mygdx.potatoandtomato.helpers.services;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.MulticastResult;
 import com.google.android.gcm.server.Sender;
+import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.PushNotification;
 
@@ -18,25 +19,30 @@ public class GCMSender {
 
     public boolean send(ArrayList<Profile> profiles, PushNotification msg){
 
-        ArrayList<String> regIds = new ArrayList<>();
+        final ArrayList<String> regIds = new ArrayList<>();
         for(Profile p : profiles){
             if(p.getGcmId() != null) regIds.add(p.getGcmId());
         }
 
         if(regIds.size() > 0){
-            Sender sender = new Sender(_apiKey);
-            Message message = new Message.Builder()
+            final Sender sender = new Sender(_apiKey);
+            final Message message = new Message.Builder()
                     .addData("message", msg.toString())
                     .build();
-            try {
-                MulticastResult result = sender.send(message, regIds, 5);
-                return (result.getFailure() == 0);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
+            Threadings.runInBackground(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        MulticastResult result = sender.send(message, regIds, 5);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            return true;
         }
         return false;
-
     }
 
     public boolean send(Profile profile, PushNotification msg){

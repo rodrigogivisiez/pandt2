@@ -12,7 +12,9 @@ import com.firebase.client.Firebase;
 import com.mygdx.potatoandtomato.PTGame;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.potatoandtomato.common.BroadcastEvent;
+import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Broadcaster;
+import com.potatoandtomato.common.GameLibCoordinator;
 
 public class AndroidLauncher extends AndroidApplication {
 
@@ -21,11 +23,13 @@ public class AndroidLauncher extends AndroidApplication {
 	private View _rootView;
 	private int _screenHeight;
 	int width, _height;
-
+	private static boolean _isVisible;
+	private AndroidLauncher _this;
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		_this = this;
 		_facebookConnector = new FacebookConnector(this);
 		_gcm = new GCMClientManager(this);
 		Firebase.setAndroidContext(this);
@@ -38,6 +42,14 @@ public class AndroidLauncher extends AndroidApplication {
 
 		initialize(new PTGame(), config);
 
+		Broadcaster.getInstance().subscribe(BroadcastEvent.DESTROY_ROOM, new BroadcastListener() {
+			@Override
+			public void onCallback(Object obj, Status st) {
+				GcmMessageHandler.destroyRoom(_this);
+			}
+		});
+
+		subscribeLoadGameRequest();
 	}
 
 
@@ -62,6 +74,22 @@ public class AndroidLauncher extends AndroidApplication {
 		});
 	}
 
+	private void subscribeLoadGameRequest(){
+		Broadcaster.getInstance().subscribe(BroadcastEvent.LOAD_GAME_REQUEST, new BroadcastListener<GameLibCoordinator>() {
+			@Override
+			public void onCallback(GameLibCoordinator obj, Status st) {
+				JarLoader loader = new JarLoader(_this);
+				try {
+					obj = loader.load(obj);
+					Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_GAME_RESPONSE, obj, Status.SUCCESS);
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+					Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_GAME_RESPONSE, null, Status.FAILED);
+				}
+
+			}
+		});
+	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -69,6 +97,30 @@ public class AndroidLauncher extends AndroidApplication {
 		_facebookConnector.getCallbackManager().onActivityResult(requestCode,
 				resultCode, data);
 	}
+
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		_isVisible = false;
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		_isVisible = true;
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		GcmMessageHandler.destroyRoom(_this);
+	}
+
+	public static boolean isVisible() {
+		return _isVisible;
+	}
+
 
 
 }

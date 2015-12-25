@@ -11,6 +11,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import com.mygdx.potatoandtomato.absintflis.push_notifications.PushCode;
 import com.mygdx.potatoandtomato.models.PushNotification;
 
 public class GcmMessageHandler extends GcmListenerService {
@@ -21,19 +22,13 @@ public class GcmMessageHandler extends GcmListenerService {
     @Override
     public void onMessageReceived(String from, Bundle data) {
         String message = data.getString("message");
-        showNotification(this, new PushNotification(message));
-    }
-
-    // Creates notification based on title and body received
-    private void createNotification(String title, String body) {
-        Context context = getBaseContext();
-//        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
-//                .setSmallIcon(R.mipmap.ic_launcher).setContentTitle(title)
-//                .setContentText(body);
-//
-//        NotificationManager mNotificationManager = (NotificationManager) context
-//                .getSystemService(Context.NOTIFICATION_SERVICE);
-//        mNotificationManager.notify(MESSAGE_NOTIFICATION_ID, mBuilder.build());
+        PushNotification pushNotification = new PushNotification(message);
+        if(pushNotification.getId() == PushCode.DESTROY_ROOM){
+            destroyRoom(this);
+        }
+        else{
+            showNotification(this, new PushNotification(message));
+        }
     }
 
 
@@ -54,12 +49,12 @@ public class GcmMessageHandler extends GcmListenerService {
 
         if(!pushNotification.isSticky()) builder.setAutoCancel(true);
 
-        if(!pushNotification.isSilentNotification()){
-            builder.setDefaults(Notification.DEFAULT_ALL);
-        }
-        else{
+        if(pushNotification.isSilentNotification() || (pushNotification.isSilentIfInGame() && AndroidLauncher.isVisible())){
             builder.setSound(null);
             builder.setVibrate(null);
+        }
+        else{
+            builder.setDefaults(Notification.DEFAULT_ALL);
         }
 
         Notification n;
@@ -74,6 +69,16 @@ public class GcmMessageHandler extends GcmListenerService {
 
     }
 
+    public static void destroyRoom(Context context){
+        NotificationManager notificationManager = (NotificationManager) context
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(PushCode.UPDATE_ROOM);
+    }
 
 
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        destroyRoom(this);
+    }
 }

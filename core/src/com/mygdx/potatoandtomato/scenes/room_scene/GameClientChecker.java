@@ -41,6 +41,9 @@ public class GameClientChecker {
         if(localVersion == null || !localVersion.equals(_game.getVersion())){
             downloadGame();
         }
+        else{
+            _listener.onCallback(null, DownloaderListener.Status.SUCCESS);
+        }
     }
 
     public void downloadGame(){
@@ -81,6 +84,8 @@ public class GameClientChecker {
 
                 updatePercent(_unzipWeight);
 
+                _listener.onCallback(null, DownloaderListener.Status.SUCCESS);
+
             }
         });
     }
@@ -115,6 +120,8 @@ public class GameClientChecker {
     public void killDownloads(){
         if(_downloadJarThread != null) _downloadJarThread.kill();
         if(_downloadAssetThread != null) _downloadAssetThread.kill();
+        _listener.onCallback(null, DownloaderListener.Status.FAILED);
+
     }
 
 }

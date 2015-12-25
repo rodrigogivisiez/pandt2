@@ -20,6 +20,7 @@ public class PushNotification {
     private String extras;
     private String title;
     private boolean silentNotification;
+    private boolean silentIfInGame;
 
     public PushNotification() {
     }
@@ -34,6 +35,7 @@ public class PushNotification {
             this.setMessage(p.getMessage());
             this.setTitle(p.getTitle());
             this.setSilentNotification(p.isSilentNotification());
+            this.setSilentIfInGame(p.isSilentIfInGame());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -90,6 +92,14 @@ public class PushNotification {
 
     public void setSilentNotification(boolean silentNotification) {
         this.silentNotification = silentNotification;
+    }
+
+    public boolean isSilentIfInGame() {
+        return silentIfInGame;
+    }
+
+    public void setSilentIfInGame(boolean silentIfInGame) {
+        this.silentIfInGame = silentIfInGame;
     }
 
     @JsonIgnore

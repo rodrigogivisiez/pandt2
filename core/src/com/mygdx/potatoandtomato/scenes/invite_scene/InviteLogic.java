@@ -7,8 +7,6 @@ import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.push_notifications.PushCode;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
-import com.mygdx.potatoandtomato.helpers.services.Texts;
-import com.mygdx.potatoandtomato.helpers.utils.SafeThread;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.BroadcastEvent;
@@ -48,13 +46,12 @@ public class InviteLogic extends LogicAbstract {
                 _scene.getFacebookFriendsTable());
 
         if(_services.getSocials().isFacebookLogon()){
-            Broadcaster.getInstance().subscribe(BroadcastEvent.FACEBOOK_GET_FRIENDS_RESPONSE, new BroadcastListener() {
+            Broadcaster.getInstance().subscribeOnceWithTimeout(BroadcastEvent.FACEBOOK_GET_FRIENDS_RESPONSE, 10000, new BroadcastListener() {
                 @Override
                 public void onCallback(Object obj, Status st) {
-                    if(st == Status.SUCCESS){
+                    if (st == Status.SUCCESS) {
 
-                    }
-                    else{
+                    } else {
                         _scene.putMessageToTable(_texts.requestFailed(), _scene.getFacebookFriendsTable());
                     }
                 }
@@ -132,6 +129,7 @@ public class InviteLogic extends LogicAbstract {
                                         push.setId(PushCode.SEND_INVITATION);
                                         push.setSilentNotification(false);
                                         push.setSticky(false);
+                                        push.setSilentIfInGame(false);
                                         push.setTitle(_texts.PUSHGameInvitationsTitle());
                                         if(obj == 1){
                                             push.setMessage(String.format(_texts.PUSHGameInvitationContent(),
@@ -142,11 +140,11 @@ public class InviteLogic extends LogicAbstract {
                                                     obj));
                                         }
                                         _services.getGcmSender().send(user, push);
-                                        _services.getChat().newChatMessage(new ChatMessage(String.format(_texts.xInvitedX(),
-                                                        _services.getProfile().getDisplayName(), user.getDisplayName()), ChatMessage.FromType.SYSTEM, null));
+                                        _services.getChat().add(new ChatMessage(String.format(_texts.xInvitedX(),
+                                                _services.getProfile().getDisplayName(), user.getDisplayName()), ChatMessage.FromType.SYSTEM, null));
                                     }
                                     else{
-                                        _services.getChat().newChatMessage(new ChatMessage(String.format(_texts.xInvitedXFailed(),
+                                        _services.getChat().add(new ChatMessage(String.format(_texts.xInvitedXFailed(),
                                                 _services.getProfile().getDisplayName(), user.getDisplayName()), ChatMessage.FromType.IMPORTANT, null));
                                     }
                                     done[0]++;

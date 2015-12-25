@@ -35,7 +35,7 @@ public class Assets {
             gameListBg, gameListTitleBg, btnWhiteRound, blackBg, ratingIcon, settingsIcon, tomatoIcon,
             potatoIcon, unknownMascotIcon, backIcon, infoIcon, importantIcon, comingSoon, noImage,
             pointLeftIcon, closeButton, downloadIconSmall, messageNotification, orangeLine, greyLine,
-            chatContainer, textCursor, unselectBox, selectBox, whiteLine, expandIcon, collapsedIcon;
+            chatContainer, textCursor, unselectBox, selectBox, whiteLine, expandIcon, collapsedIcon, loading;
     private NinePatch popupBg, buttonRed, buttonGreen, progressBarInner, progressBarBg, whiteRoundedBg,
             blackRoundedBg, chatBox, yellowGradientBox, scrollVerticalHandle, irregularBg, expandTitleBg;
     private BitmapFont blackNormal2, redNormal2, blueNormal2, blackBold2, blackNormal3, orangePizza3,
@@ -220,6 +220,7 @@ public class Assets {
         whiteLine = _backgroundsPack.findRegion("white_line");
         selectBox = _backgroundsPack.findRegion("select_box");
         unselectBox = _backgroundsPack.findRegion("unselect_box");
+        loading = _backgroundsPack.findRegion("loading");
     }
 
     private void basicNinePatchLoaded(){
@@ -451,6 +452,10 @@ public class Assets {
 
     public TextureRegion getCollapsedIcon() {
         return collapsedIcon;
+    }
+
+    public TextureRegion getLoading() {
+        return loading;
     }
 
     public NinePatch getExpandTitleBg() {

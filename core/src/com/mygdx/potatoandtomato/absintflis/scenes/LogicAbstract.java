@@ -7,7 +7,10 @@ import com.mygdx.potatoandtomato.helpers.services.Texts;
 import com.mygdx.potatoandtomato.helpers.utils.SafeThread;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Services;
+import com.potatoandtomato.common.BroadcastListener;
+import com.potatoandtomato.common.Broadcaster;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -21,15 +24,19 @@ public abstract class LogicAbstract implements Disposable {
     protected boolean _cache, _saveToStack;
     private SafeThread _keepAlive;
     private boolean _alive;
+    private ArrayList<String> _broadcastSubscribes;
 
     public LogicAbstract(PTScreen screen, Services services, Object... objs) {
         this._screen = screen;
         this._services = services;
         _texts = _services.getTexts();
         setSaveToStack(true);
+        _broadcastSubscribes = new ArrayList<>();
     }
 
-
+    public void subscribeBroadcast(int event, BroadcastListener listener){
+        _broadcastSubscribes.add(Broadcaster.getInstance().subscribe(event, listener));
+    }
 
     public void onQuit(OnQuitListener listener){
         listener.onResult(OnQuitListener.Result.YES);
@@ -98,9 +105,14 @@ public abstract class LogicAbstract implements Disposable {
     }
 
     private void disposeEverything(){
+        if(getScene() != null) getScene().dispose();
         _services.getGamingKit().removeListenersByClass(this.getClass());
         _services.getDatabase().clearListenersByClass(this.getClass());
         _alive = false;
+        for(String id : _broadcastSubscribes){
+            Broadcaster.getInstance().unsubscribe(id);
+        }
+        _broadcastSubscribes.clear();
     }
 
 }

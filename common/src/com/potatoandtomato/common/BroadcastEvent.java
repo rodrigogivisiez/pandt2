@@ -19,4 +19,11 @@ public class BroadcastEvent {
     public static final int LOGIN_GCM_CALLBACK = 11; //ask for login gcm
     public static final int FACEBOOK_GET_FRIENDS_REQUEST = 12; //ask for fb friends
     public static final int FACEBOOK_GET_FRIENDS_RESPONSE = 13; //ask for fb friends
+    public static final int DESTROY_ROOM = 14; //destroy room, clear push notification
+    public static final int LOAD_GAME_REQUEST = 15; //request to load game
+    public static final int LOAD_GAME_RESPONSE = 16; //response to load game
+
+
+
+
 }

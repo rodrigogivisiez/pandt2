@@ -36,4 +36,8 @@ public abstract class SceneAbstract {
 
     }
 
+    public void dispose(){
+
+    }
+
 }
