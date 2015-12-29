@@ -556,7 +556,7 @@ public final class AccessToken implements Parcelable {
 
     AccessToken(Parcel parcel) {
         this.expires = new Date(parcel.readLong());
-        ArrayList<String> permissionsList = new ArrayList<>();
+        ArrayList<String> permissionsList = new ArrayList();
         parcel.readStringList(permissionsList);
         this.permissions = Collections.unmodifiableSet(new HashSet<String>(permissionsList));
         permissionsList.clear();

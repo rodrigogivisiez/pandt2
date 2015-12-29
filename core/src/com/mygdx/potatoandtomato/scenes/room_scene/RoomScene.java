@@ -35,7 +35,6 @@ public class RoomScene extends SceneAbstract {
     Confirm _hostLeftConfirm, _errorConfirm, _messageConfirm;
     Confirm _leaveRoomConfirm;
     Room _room;
-    Image _loadingScreen;
 
     public Array<Table> getTeamTables() {
         return _teamTables;
@@ -77,8 +76,8 @@ public class RoomScene extends SceneAbstract {
         _messageConfirm = new Confirm(_root, _assets, "", Confirm.Type.YES);
         _leaveRoomConfirm = new Confirm(_root, _assets, "", Confirm.Type.YESNO);
 
-        _teamTables = new Array<>();
-        _playerMaps = new HashMap<>();
+        _teamTables = new Array();
+        _playerMaps = new HashMap();
 
         Table buttonTable = new Table();
 
@@ -146,17 +145,6 @@ public class RoomScene extends SceneAbstract {
 
         _detailsRoot.add(gameImg).size(120).padLeft(20).padRight(10).top();
         _detailsRoot.add(_subRoot).expandX().fillX().top().padRight(20).padBottom(20);
-    }
-
-    @Override
-    public void onShow() {
-        super.onShow();
-       showChat(false);
-    }
-
-    public void showChat(boolean forceShow){
-        _services.getChat().show(_root, null, _assets, _texts, _room, _services.getGamingKit(), !forceShow);
-        _services.getChat().setVisible(true);
     }
 
     public void populateTeamTables(int totalTeams, int teamMaxPlayers, HashMap<String, RoomUser> roomUsers){
@@ -311,24 +299,5 @@ public class RoomScene extends SceneAbstract {
         if(userId != null) _playerMaps.put(userId, playerTable);
 
         return playerTable;
-    }
-
-    public void showLoadingScreen(){
-        _loadingScreen = new Image(_assets.getLoading());
-        _loadingScreen.setZIndex(100);
-        _screen.addToStage(_loadingScreen);
-    }
-
-    public void removeLoadingScreen(){
-        if(_loadingScreen != null){
-            _loadingScreen.remove();
-            _loadingScreen = null;
-        }
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        _services.getChat().dispose();
     }
 }

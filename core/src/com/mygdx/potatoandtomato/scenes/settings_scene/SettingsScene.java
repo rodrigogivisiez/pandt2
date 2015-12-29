@@ -79,11 +79,6 @@ public class SettingsScene extends SceneAbstract {
         _root.add(settingsTable);
     }
 
-    @Override
-    public void onShow() {
-        super.onShow();
-    }
-
     public void showFacebookRequestFailed(){
         new Confirm(_root, _assets, _texts.facebookLoginFailed(), Confirm.Type.YES).show();
     }

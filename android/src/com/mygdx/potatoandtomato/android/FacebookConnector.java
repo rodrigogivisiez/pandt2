@@ -85,7 +85,7 @@ public class FacebookConnector {
         batch.addCallback(new GraphRequestBatch.Callback() {
             @Override
             public void onBatchCompleted(GraphRequestBatch graphRequests) {
-                // Application code for when the batch finishes
+                // Application code for when the spriteBatch finishes
             }
         });
         batch.executeAsync();

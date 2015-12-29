@@ -68,7 +68,7 @@ public final class GameRequestContent implements ShareModel {
         this.actionType = ActionType.valueOf(in.readString());
         this.objectId = in.readString();
         this.filters = Filters.valueOf(in.readString());
-        this.suggestions = new ArrayList<>();
+        this.suggestions = new ArrayList();
         in.readStringList(this.suggestions);
     }
 

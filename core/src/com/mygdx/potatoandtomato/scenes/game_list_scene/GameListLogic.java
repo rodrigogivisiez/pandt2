@@ -28,7 +28,7 @@ public class GameListLogic extends LogicAbstract {
         super(screen, services, objs);
 
         _scene = new GameListScene(services, screen);
-        _rooms = new ArrayList<>();
+        _rooms = new ArrayList();
 
         _scene.getNewGameButton().addListener(new ClickListener(){
             @Override
@@ -77,7 +77,11 @@ public class GameListLogic extends LogicAbstract {
 
     }
 
-
+    @Override
+    public void onShow() {
+        super.onShow();
+        _scene.setUsername(_services.getProfile().getDisplayName());
+    }
 
     public void roomDataChanged(final Room room){
         Gdx.app.postRunnable(new Runnable() {

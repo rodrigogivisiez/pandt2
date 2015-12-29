@@ -1,11 +1,10 @@
 package fundamental_testings;
 
 import abstracts.TestAbstract;
-import com.badlogic.gdx.Gdx;
-import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.downloader.DownloaderListener;
 import com.mygdx.potatoandtomato.desktop.DesktopLauncher;
 import com.mygdx.potatoandtomato.helpers.services.Downloader;
+import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Services;
@@ -15,9 +14,7 @@ import helpers.T_Services;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.omg.PortableInterceptor.SUCCESSFUL;
 
-import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -40,7 +37,7 @@ public class TestGameLoader extends TestAbstract{
 
         final boolean[] waiting = {true};
         Game game = new Game();
-        game.setGameUrl("http://www.potato-and-tomato.com/sample/core.jar");
+        game.setGameUrl("http://www.potato-and-tomato.com/sample/game.jar");
         game.setAssetUrl("http://www.potato-and-tomato.com/sample/assets.zip");
         game.setName("Sample");
         game.setAbbr("sample");
@@ -50,7 +47,7 @@ public class TestGameLoader extends TestAbstract{
         game.setTeamCount("2");
         game.setTeamMaxPlayers("1");
         game.setTeamMinPlayers("1");
-        game.setVersion("1.0");
+        game.setVersion("1.1");
 
 
         GameClientChecker clientChecker = new GameClientChecker(game, _services.getPreferences(), new Downloader(), new DownloaderListener() {
@@ -68,18 +65,18 @@ public class TestGameLoader extends TestAbstract{
         waiting[0] = true;
 
         DesktopLauncher.subscribeLoadGameRequest();
-        Broadcaster.getInstance().subscribe(BroadcastEvent.LOAD_GAME_RESPONSE, new BroadcastListener<GameLibCoordinator>() {
+        Broadcaster.getInstance().subscribe(BroadcastEvent.LOAD_GAME_RESPONSE, new BroadcastListener<GameCoordinator>() {
             @Override
-            public void onCallback(GameLibCoordinator obj, Status st) {
+            public void onCallback(GameCoordinator obj, Status st) {
                 Assert.assertEquals(Status.SUCCESS, st);
-                Assert.assertEquals(false, obj.getGameEntrance().getFirstScreen() == null);
                 waiting[0] = false;
             }
         });
 
-        GameLibCoordinator gameLibCoordinator = new GameLibCoordinator(game.getFullLocalJarPath(),
-                                        game.getLocalAssetsPath(), game.getFullBasePath(), new ArrayList<Team>());
-        Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_GAME_REQUEST, gameLibCoordinator);
+        GameCoordinator gameCoordinator = new GameCoordinator(game.getFullLocalJarPath(),
+                                        game.getLocalAssetsPath(), game.getBasePath(), new ArrayList<Team>(), Positions.getWidth(),
+                                        Positions.getHeight(), null, null);
+        Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_GAME_REQUEST, gameCoordinator);
 
         while (waiting[0]){
             Threadings.sleep(100);

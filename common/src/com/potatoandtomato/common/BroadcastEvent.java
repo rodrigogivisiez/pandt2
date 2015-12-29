@@ -22,8 +22,9 @@ public class BroadcastEvent {
     public static final int DESTROY_ROOM = 14; //destroy room, clear push notification
     public static final int LOAD_GAME_REQUEST = 15; //request to load game
     public static final int LOAD_GAME_RESPONSE = 16; //response to load game
-
-
-
-
+    public static final int GAME_END = 17; //game ended\
+    public static final int GAME_PAUSED = 19;   //notify game that game is paused
+    public static final int GAME_RESUME = 20;   //notify game that game is resumed
+    public static final int INGAME_UPDATE_REQUEST = 21;     //imgame update request
+    public static final int INGAME_UPDATE_RESPONSE = 22;     //imgame update request
 }

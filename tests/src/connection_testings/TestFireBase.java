@@ -232,7 +232,8 @@ public class TestFireBase extends TestAbstract {
     public void TestMonitorAllRoom(){
         final int[] monitorCount = {0};
         final boolean[] waiting = {true};
-        ArrayList<Room> rooms = new ArrayList<>();
+        final boolean[] waiting2 = {true};
+        ArrayList<Room> rooms = new ArrayList();
 
         final Room r = MockModel.mockRoom(null);
         r.setOpen(true);
@@ -255,6 +256,7 @@ public class TestFireBase extends TestAbstract {
             public void onCallbackTypeOne(ArrayList<Room> obj, Status st) {
                 Assert.assertEquals(st , Status.SUCCESS);
                 Assert.assertEquals(true , obj.size()>0);
+                waiting2[0] = false;
             }
 
             @Override
@@ -293,6 +295,11 @@ public class TestFireBase extends TestAbstract {
                 Assert.assertEquals(r1.isOpen(), r.isOpen());
             }
         }
+
+        while(waiting2[0]){
+            T_Threadings.sleep(100);
+        }
+
     }
 
 

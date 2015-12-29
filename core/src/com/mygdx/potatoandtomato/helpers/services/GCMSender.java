@@ -19,7 +19,7 @@ public class GCMSender {
 
     public boolean send(ArrayList<Profile> profiles, PushNotification msg){
 
-        final ArrayList<String> regIds = new ArrayList<>();
+        final ArrayList<String> regIds = new ArrayList();
         for(Profile p : profiles){
             if(p.getGcmId() != null) regIds.add(p.getGcmId());
         }
@@ -46,7 +46,7 @@ public class GCMSender {
     }
 
     public boolean send(Profile profile, PushNotification msg){
-        ArrayList<Profile> profiles = new ArrayList<>();
+        ArrayList<Profile> profiles = new ArrayList();
         profiles.add(profile);
         return send(profiles, msg);
     }

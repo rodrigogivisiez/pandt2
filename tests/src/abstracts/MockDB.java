@@ -57,7 +57,7 @@ public class MockDB implements IDatabase {
 
     @Override
     public void getAllGames(DatabaseListener<ArrayList<Game>> listener) {
-        ArrayList<Game> gameList = new ArrayList<>();
+        ArrayList<Game> gameList = new ArrayList();
         Game game = new Game();
         game.setVersion("1");
         game.setName("Test");
@@ -132,7 +132,7 @@ public class MockDB implements IDatabase {
 
     @Override
     public void getPlayedHistories(Profile profile, DatabaseListener<ArrayList<GameHistory>> listener) {
-        ArrayList<GameHistory> results = new ArrayList<>();
+        ArrayList<GameHistory> results = new ArrayList();
         results.add(MockModel.mockGameHistory());
         listener.onCallback(results, DatabaseListener.Status.SUCCESS);
     }

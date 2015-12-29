@@ -31,7 +31,7 @@ public abstract class LogicAbstract implements Disposable {
         this._services = services;
         _texts = _services.getTexts();
         setSaveToStack(true);
-        _broadcastSubscribes = new ArrayList<>();
+        _broadcastSubscribes = new ArrayList();
     }
 
     public void subscribeBroadcast(int event, BroadcastListener listener){
@@ -105,7 +105,6 @@ public abstract class LogicAbstract implements Disposable {
     }
 
     private void disposeEverything(){
-        if(getScene() != null) getScene().dispose();
         _services.getGamingKit().removeListenersByClass(this.getClass());
         _services.getDatabase().clearListenersByClass(this.getClass());
         _alive = false;

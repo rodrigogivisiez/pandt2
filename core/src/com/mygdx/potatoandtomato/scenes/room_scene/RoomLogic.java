@@ -19,12 +19,11 @@ import com.mygdx.potatoandtomato.helpers.utils.SafeThread;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.BroadcastEvent;
-import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Broadcaster;
-import com.potatoandtomato.common.GameLibCoordinator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by SiongLeng on 16/12/2015.
@@ -49,7 +48,7 @@ public class RoomLogic extends LogicAbstract {
 
         _room = (Room) objs[0];
         _scene = new RoomScene(services, screen, _room);
-        _noGameClientUsers = new HashMap<>();
+        _noGameClientUsers = new HashMap();
 
 
 
@@ -59,7 +58,6 @@ public class RoomLogic extends LogicAbstract {
     public void onInit() {
         super.onInit();
 
-        subscribeLoadGameResponse();
         _scene.populateGameDetails(_room.getGame());
 
         _room.addRoomUser(_services.getProfile());
@@ -256,7 +254,8 @@ public class RoomLogic extends LogicAbstract {
                 _noGameClientUsers.remove(senderId);
             }
             if(_noGameClientUsers.size() > 0){
-                stopGameStartCountDown(_room.getProfileByUserId(_noGameClientUsers.get(0)));
+                Map.Entry<String, String> entry = _noGameClientUsers.entrySet().iterator().next();  //first item
+                stopGameStartCountDown(_room.getProfileByUserId(entry.getKey()));
             }
             Gdx.app.postRunnable(new Runnable() {
                 @Override
@@ -294,7 +293,6 @@ public class RoomLogic extends LogicAbstract {
         flushRoom(true, null);
 
         _services.getGamingKit().leaveRoom();
-        _scene.removeLoadingScreen();
         Broadcaster.getInstance().broadcast(BroadcastEvent.DESTROY_ROOM);
     }
 
@@ -419,8 +417,9 @@ public class RoomLogic extends LogicAbstract {
             @Override
             public void run() {
                 int i = 3;
+                _services.getChat().show();
+                _services.getChat().expand();
                 while(i > 0){
-                    _scene.showChat(true);
                     _services.getChat().add(new ChatMessage(String.format(_texts.gameStartingIn(), i), ChatMessage.FromType.IMPORTANT, null));
                     Threadings.sleep(1500);
                     i--;
@@ -443,42 +442,29 @@ public class RoomLogic extends LogicAbstract {
         if(_countDownThread != null){
             _countDownThread.kill();
             if(profile != null){
-                _services.getChat().add(new ChatMessage(String.format(_texts.gameStartStop(), profile.getDisplayName()), ChatMessage.FromType.SYSTEM, null));
+                _services.getChat().add(new ChatMessage(String.format(_texts.gameStartStop(),
+                        profile.getDisplayName()), ChatMessage.FromType.SYSTEM, null));
             }
         }
     }
 
 
     public void gameStarted(){
-        _scene.showLoadingScreen();
         _room.setOpen(false);
         _room.setPlaying(true);
         _room.setRoundCounter(_room.getRoundCounter()+1);
         flushRoom(false, null);
         _services.getDatabase().savePlayedHistory(_services.getProfile(), _room, null);
         hostSendGameStartedPush();
-        Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_GAME_REQUEST, new GameLibCoordinator(_room.getGame().getLocalJarPath(),
-                                        _room.getGame().getLocalAssetsPath(), _room.getGame().getFullBasePath(), _room.convertRoomUsersToTeams()));
+        _services.getChat().hide();
+        _screen.toScene(SceneEnum.GAME_SANDBOX, _room);
     }
 
-    private void subscribeLoadGameResponse(){
-        subscribeBroadcast(BroadcastEvent.LOAD_GAME_REQUEST, new BroadcastListener<GameLibCoordinator>() {
-            @Override
-            public void onCallback(GameLibCoordinator obj, Status st) {
-                if(st == Status.SUCCESS){
 
-                }
-                else{
-
-                }
-            }
-        });
-    }
 
 
     public void gameFinished(){
         openRoom();
-        _scene.removeLoadingScreen();
         hostSendUpdateRoomStatePush();
     }
 
@@ -491,5 +477,18 @@ public class RoomLogic extends LogicAbstract {
         return _scene;
     }
 
+    @Override
+    public void onShow() {
+        super.onShow();
+        _services.getChat().setRoom(_room);
+        _services.getChat().show();
+        _services.getChat().expand();
+    }
 
+    @Override
+    public void dispose() {
+        super.dispose();
+        _services.getChat().hide();
+        _services.getChat().resetChat();
+    }
 }

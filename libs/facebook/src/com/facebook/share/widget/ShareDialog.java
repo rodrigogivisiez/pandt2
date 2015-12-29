@@ -220,7 +220,7 @@ public final class ShareDialog
 
     @Override
     protected List<ModeHandler> getOrderedModeHandlers() {
-        ArrayList<ModeHandler> handlers = new ArrayList<>();
+        ArrayList<ModeHandler> handlers = new ArrayList();
         handlers.add(new NativeHandler());
         handlers.add(new FeedHandler()); // Feed takes precedence for link-shares for Mode.AUTOMATIC
         handlers.add(new WebShareHandler());

@@ -523,19 +523,19 @@ public final class Utility {
         if (value == null) {
             bundle.remove(key);
         } else if (value instanceof Boolean) {
-            bundle.putBoolean(key, (boolean) value);
+            bundle.putBoolean(key, (Boolean) value);
         } else if (value instanceof boolean[]) {
             bundle.putBooleanArray(key, (boolean[]) value);
         } else if (value instanceof Double) {
-            bundle.putDouble(key, (double) value);
+            bundle.putDouble(key, (Double) value);
         } else if (value instanceof double[]) {
             bundle.putDoubleArray(key, (double[]) value);
         } else if (value instanceof Integer) {
-            bundle.putInt(key, (int) value);
+            bundle.putInt(key, (Integer) value);
         } else if (value instanceof int[]) {
             bundle.putIntArray(key, (int[]) value);
         } else if (value instanceof Long) {
-            bundle.putLong(key, (long) value);
+            bundle.putLong(key, (Long) value);
         } else if (value instanceof long[]) {
             bundle.putLongArray(key, (long[]) value);
         } else if (value instanceof String) {
@@ -958,7 +958,7 @@ public final class Utility {
     }
 
     public static List<String> jsonArrayToStringList(JSONArray jsonArray) throws JSONException {
-        ArrayList<String> result = new ArrayList<>();
+        ArrayList<String> result = new ArrayList();
 
         for (int i = 0; i < jsonArray.length(); i++) {
             result.add(jsonArray.getString(i));
@@ -968,7 +968,7 @@ public final class Utility {
     }
 
     public static Set<String> jsonArrayToSet(JSONArray jsonArray) throws JSONException {
-        Set<String> result = new HashSet<>();
+        Set<String> result = new HashSet();
         for (int i = 0; i < jsonArray.length(); i++) {
             result.add(jsonArray.getString(i));
         }
@@ -1240,7 +1240,7 @@ public final class Utility {
         if (size < 0) {
             return null;
         }
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap();
         for (int i = 0; i < size; i++) {
             map.put(parcel.readString(), parcel.readString());
         }

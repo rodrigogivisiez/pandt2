@@ -26,7 +26,7 @@ public class FirebaseDB implements IDatabase {
 
     public FirebaseDB(String url){
         _ref = new Firebase(url);
-        _listenerModels = new Array<>();
+        _listenerModels = new Array();
     }
 
     @Override
@@ -43,7 +43,7 @@ public class FirebaseDB implements IDatabase {
 
     @Override
     public void clearListenersByClass(Class clss) {
-        ArrayList<Integer> toRemove = new ArrayList<>();
+        ArrayList<Integer> toRemove = new ArrayList();
         for(int i = 0; i< _listenerModels.size; i++){
             if(_listenerModels.get(i).getClassName().equals(clss.getName())){
                 toRemove.add(i);
@@ -168,7 +168,7 @@ public class FirebaseDB implements IDatabase {
     @Override
     public void createUserByUserId(final String userId, final DatabaseListener<Profile> listener) {
 
-        HashMap<String, String> userMap = new HashMap<>();
+        HashMap<String, String> userMap = new HashMap();
         userMap.put("userId", userId);
         getTable(_tableUsers).child(userId).setValue(userMap, new Firebase.CompletionListener() {
             @Override

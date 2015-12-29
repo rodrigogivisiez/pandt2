@@ -1,18 +1,28 @@
 package com.potatoandtomato.games;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.potatoandtomato.common.GameCoordinator;
+import com.potatoandtomato.common.IPTGame;
+import com.potatoandtomato.common.MockGame;
 
-public class SampleGame extends Game {
+public class SampleGame extends MockGame {
 
 	public SampleGame() {
-
+		super();
 	}
 
 	@Override
-	public void create () {
-		SampleScreen test = new SampleScreen();
-		setScreen(test);
+	public void create() {
+		super.create();
+		initiateMockGamingKit(1, 0);
 	}
 
-
+	@Override
+	public void onReady() {
+		SampleScreen test = new SampleScreen(getCoordinator());
+		setScreen(test);
+	}
 }

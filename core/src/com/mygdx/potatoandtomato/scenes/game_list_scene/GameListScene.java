@@ -43,7 +43,7 @@ public class GameListScene extends SceneAbstract {
 
     public GameListScene(Services services, PTScreen screen) {
         super(services, screen);
-        _gameRowsTableMap = new HashMap<>();
+        _gameRowsTableMap = new HashMap();
     }
 
     public BtnEggDownward getNewGameButton() {
@@ -215,9 +215,7 @@ public class GameListScene extends SceneAbstract {
         }
     }
 
-    @Override
-    public void onShow() {
-        super.onShow();
-        _usernameLabel.setText(_services.getProfile().getDisplayName());
+    public void setUsername(String username){
+        _usernameLabel.setText(username);
     }
 }

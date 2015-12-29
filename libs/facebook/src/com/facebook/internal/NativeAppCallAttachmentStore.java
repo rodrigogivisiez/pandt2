@@ -109,7 +109,7 @@ public final class NativeAppCallAttachmentStore {
 
         ensureAttachmentsDirectoryExists();
 
-        List<File> filesToCleanup = new ArrayList<>();
+        List<File> filesToCleanup = new ArrayList();
 
         try {
             for (Attachment attachment : attachments) {

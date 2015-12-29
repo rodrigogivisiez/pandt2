@@ -16,7 +16,7 @@ public class Shaders implements Disposable{
 
     public Shaders() {
         ShaderProgram.pedantic = false;
-        _shaders = new HashMap<>();
+        _shaders = new HashMap();
     }
 
     public ShaderProgram getBlackOverlay(){

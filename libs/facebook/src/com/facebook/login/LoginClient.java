@@ -490,7 +490,7 @@ class LoginClient implements Parcelable {
         private Request(Parcel parcel) {
             String enumValue = parcel.readString();
             this.loginBehavior = enumValue != null ? LoginBehavior.valueOf(enumValue) : null;
-            ArrayList<String> permissionsList = new ArrayList<>();
+            ArrayList<String> permissionsList = new ArrayList();
             parcel.readStringList(permissionsList);
             this.permissions = new HashSet<String>(permissionsList);
             enumValue = parcel.readString();

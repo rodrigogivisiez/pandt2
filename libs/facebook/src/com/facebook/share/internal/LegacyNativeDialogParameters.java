@@ -103,7 +103,7 @@ public class LegacyNativeDialogParameters {
             boolean dataErrorsFatal) {
         Bundle params = createBaseParameters(photoContent, dataErrorsFatal);
 
-        params.putStringArrayList(ShareConstants.LEGACY_PHOTOS, new ArrayList<>(imageUrls));
+        params.putStringArrayList(ShareConstants.LEGACY_PHOTOS, new ArrayList(imageUrls));
 
         return params;
     }
@@ -149,7 +149,7 @@ public class LegacyNativeDialogParameters {
         if (!Utility.isNullOrEmpty(peopleIds)) {
             params.putStringArrayList(
                     ShareConstants.LEGACY_FRIEND_TAGS,
-                    new ArrayList<>(peopleIds));
+                    new ArrayList(peopleIds));
         }
 
         return params;

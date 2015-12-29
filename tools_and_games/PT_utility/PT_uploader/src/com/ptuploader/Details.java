@@ -47,7 +47,7 @@ public class Details {
     public void addVersion(){
         double v = Double.valueOf(version);
         v += 0.01;
-        version = String.valueOf(v);
+        version = String.format("%.2f", v);
     }
 
     public void writeBackJson() throws IOException {

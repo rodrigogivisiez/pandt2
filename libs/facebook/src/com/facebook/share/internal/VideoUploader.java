@@ -93,7 +93,7 @@ public class VideoUploader {
     private static Handler handler;
     private static WorkQueue uploadQueue = new WorkQueue(UPLOAD_QUEUE_MAX_CONCURRENT);
 
-    private static Set<UploadContext> pendingUploads = new HashSet<>();
+    private static Set<UploadContext> pendingUploads = new HashSet();
 
     private static AccessTokenTracker accessTokenTracker;
 

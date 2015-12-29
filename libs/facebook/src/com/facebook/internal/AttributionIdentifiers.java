@@ -248,7 +248,7 @@ public class AttributionIdentifiers {
 
     private static final class GoogleAdServiceConnection implements ServiceConnection {
         private AtomicBoolean consumed = new AtomicBoolean(false);
-        private final BlockingQueue<IBinder> queue = new LinkedBlockingDeque<>();
+        private final BlockingQueue<IBinder> queue = new LinkedBlockingDeque();
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {

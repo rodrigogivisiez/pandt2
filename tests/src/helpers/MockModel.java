@@ -49,7 +49,7 @@ public class MockModel {
         r.setRoomId("12");
         r.setRoundCounter(0);
         if(id != null) r.setId(id);
-        HashMap<String, RoomUser> roomUsers = new HashMap<>();
+        HashMap<String, RoomUser> roomUsers = new HashMap();
         RoomUser user1 = new RoomUser();
         RoomUser user2 = new RoomUser();
         user1.setProfile(mockProfile());

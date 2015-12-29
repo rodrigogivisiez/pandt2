@@ -14,7 +14,7 @@ public class MultiHashMap<S, T> {
 
 
     public MultiHashMap() {
-        _hashMap = new HashMap<>();
+        _hashMap = new HashMap();
     }
 
     public void put(S s, T t){
@@ -23,7 +23,7 @@ public class MultiHashMap<S, T> {
             tArrayList = _hashMap.get(s);
         }
         else{
-            tArrayList = new ArrayList<>();
+            tArrayList = new ArrayList();
         }
         tArrayList.add(t);
         _hashMap.put(s, tArrayList);

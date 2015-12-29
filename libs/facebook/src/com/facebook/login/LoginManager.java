@@ -353,7 +353,7 @@ public class LoginManager {
     ) throws FacebookException {
 
         this.pendingLoginRequest = request;
-        this.pendingLoggingExtras = new HashMap<>();
+        this.pendingLoggingExtras = new HashMap();
         this.loginLogger = getLoggerForContext(startActivityDelegate.getActivityContext());
 
         logStartLogin();

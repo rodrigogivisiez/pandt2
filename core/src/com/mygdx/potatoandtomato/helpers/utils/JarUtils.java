@@ -1,7 +1,7 @@
 package com.mygdx.potatoandtomato.helpers.utils;
 
-import com.potatoandtomato.common.GameLibCoordinator;
-import com.potatoandtomato.common.GameEntranceAbstract;
+import com.potatoandtomato.common.GameCoordinator;
+import com.potatoandtomato.common.GameEntrance;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -10,22 +10,22 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class JarUtils {
 
-    public static GameLibCoordinator fillGameEntrance(Class<?> loadedClass, GameLibCoordinator gameLibCoordinator){
-        GameEntranceAbstract instance = null;
+    public static GameCoordinator fillGameEntrance(Class<?> loadedClass, GameCoordinator gameCoordinator){
+        GameEntrance instance = null;
         try {
             Class[] cArg = new Class[1]; //Our constructor has 3 arguments
-            cArg[0] = GameLibCoordinator.class;
-            instance = (GameEntranceAbstract) loadedClass.getDeclaredConstructor(cArg)
-                    .newInstance(gameLibCoordinator);
-            gameLibCoordinator.setGameEntrance(instance);
-            return gameLibCoordinator;
+            cArg[0] = GameCoordinator.class;
+            instance = (GameEntrance) loadedClass.getDeclaredConstructor(cArg)
+                    .newInstance(gameCoordinator);
+            gameCoordinator.setGameEntrance(instance);
+            return gameCoordinator;
 
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }

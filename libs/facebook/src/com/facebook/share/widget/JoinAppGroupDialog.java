@@ -152,7 +152,7 @@ public class JoinAppGroupDialog extends FacebookDialogBase<String, JoinAppGroupD
 
     @Override
     protected List<ModeHandler> getOrderedModeHandlers() {
-        ArrayList<ModeHandler> handlers = new ArrayList<>();
+        ArrayList<ModeHandler> handlers = new ArrayList();
         handlers.add(new WebHandler());
 
         return handlers;

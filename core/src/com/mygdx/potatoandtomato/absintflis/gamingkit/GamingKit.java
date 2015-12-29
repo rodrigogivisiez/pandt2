@@ -22,10 +22,10 @@ public abstract class GamingKit {
     private HashMap<String, MessagingListener> _messagingListeners;
 
     public GamingKit() {
-        _connectionChangedListeners = new HashMap<>();
-        _joinRoomListeners = new HashMap<>();
-        _updateRoomMatesListeners = new HashMap<>();
-        _messagingListeners = new HashMap<>();
+        _connectionChangedListeners = new HashMap();
+        _joinRoomListeners = new HashMap();
+        _updateRoomMatesListeners = new HashMap();
+        _messagingListeners = new HashMap();
     }
 
     public void addListener(Object listener){

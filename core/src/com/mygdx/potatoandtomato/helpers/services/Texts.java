@@ -90,6 +90,9 @@ public class Texts {
 
     public String confirmQuit() { return "Are you sure you want to quit Potato and Tomato?";}
 
+    public String loadGameFailed() { return "The following users failed to load the game: %s";}
+
+
     //push notifications part
     public String PUSHGameInvitationsTitle() { return "P&T Game Invitations"; }
     public String PUSHGameInvitationsContent() { return "You have %s new inviations from your friends.";}

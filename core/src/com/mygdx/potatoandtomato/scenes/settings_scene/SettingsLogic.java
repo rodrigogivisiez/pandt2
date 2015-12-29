@@ -64,11 +64,6 @@ public class SettingsLogic extends LogicAbstract {
         }
     }
 
-    @Override
-    public void onShow() {
-        super.onShow();
-    }
-
 
     private void updateProfile(){
         String newName = _scene.getDisplayNameTextField().getText();

@@ -302,7 +302,7 @@ public final class ShareInternalUtility {
                         appCallId,
                         videoContent.getVideo().getLocalUrl());
 
-        ArrayList<NativeAppCallAttachmentStore.Attachment> attachments = new ArrayList<>(1);
+        ArrayList<NativeAppCallAttachmentStore.Attachment> attachments = new ArrayList(1);
         attachments.add(attachment);
         NativeAppCallAttachmentStore.addAttachments(attachments);
 
@@ -314,7 +314,7 @@ public final class ShareInternalUtility {
             final ShareOpenGraphContent content)
             throws JSONException {
         final ShareOpenGraphAction action = content.getAction();
-        final ArrayList<NativeAppCallAttachmentStore.Attachment> attachments = new ArrayList<>();
+        final ArrayList<NativeAppCallAttachmentStore.Attachment> attachments = new ArrayList();
         JSONObject actionJSON = OpenGraphJSONUtility.toJSONObject(
                 action,
                 new OpenGraphJSONUtility.PhotoJSONProcessor() {
@@ -365,7 +365,7 @@ public final class ShareInternalUtility {
             for (String peopleId : content.getPeopleIds()) {
                 peopleIdSet.add(peopleId);
             }
-            actionJSON.put("tags", new ArrayList<>(peopleIdSet));
+            actionJSON.put("tags", new ArrayList(peopleIdSet));
         }
 
         return actionJSON;
@@ -472,7 +472,7 @@ public final class ShareInternalUtility {
         } else {
             fieldName = fullName;
         }
-        return new Pair<>(namespace, fieldName);
+        return new Pair(namespace, fieldName);
     }
 
     private static NativeAppCallAttachmentStore.Attachment getAttachment(
@@ -602,7 +602,7 @@ public final class ShareInternalUtility {
         ParcelFileDescriptor descriptor =
                 ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
         GraphRequest.ParcelableResourceWithMimeType<ParcelFileDescriptor> resourceWithMimeType =
-                new GraphRequest.ParcelableResourceWithMimeType<>(descriptor, "image/png");
+                new GraphRequest.ParcelableResourceWithMimeType(descriptor, "image/png");
         Bundle parameters = new Bundle(1);
         parameters.putParcelable(STAGING_PARAM, resourceWithMimeType);
 
@@ -642,7 +642,7 @@ public final class ShareInternalUtility {
         }
 
         GraphRequest.ParcelableResourceWithMimeType<Uri> resourceWithMimeType =
-                new GraphRequest.ParcelableResourceWithMimeType<>(imageUri, "image/png");
+                new GraphRequest.ParcelableResourceWithMimeType(imageUri, "image/png");
         Bundle parameters = new Bundle(1);
         parameters.putParcelable(STAGING_PARAM, resourceWithMimeType);
 

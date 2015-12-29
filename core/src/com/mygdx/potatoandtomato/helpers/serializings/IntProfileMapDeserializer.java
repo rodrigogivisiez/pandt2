@@ -22,7 +22,7 @@ public class IntProfileMapDeserializer extends JsonDeserializer<Map<String, Room
 
     @Override
     public HashMap<String, RoomUser> deserialize(JsonParser jsonParser, DeserializationContext ctxt) throws IOException {
-        HashMap<String, RoomUser> result = new HashMap<>();
+        HashMap<String, RoomUser> result = new HashMap();
         ObjectCodec oc = jsonParser.getCodec();
 
         JsonNode node = oc.readTree(jsonParser);

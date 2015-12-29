@@ -114,7 +114,7 @@ public class LikeActionController {
 
     private static FileLruCache controllerDiskCache;
     private static final ConcurrentHashMap<String, LikeActionController> cache =
-            new ConcurrentHashMap<>();
+            new ConcurrentHashMap();
 
     // This MUST be 1 for proper synchronization
     private static WorkQueue mruCacheWorkQueue = new WorkQueue(1);

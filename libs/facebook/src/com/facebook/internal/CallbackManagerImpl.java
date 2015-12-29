@@ -34,7 +34,7 @@ import java.util.Map;
  * unsupported, and they may be modified or removed without warning at any time.
  */
 public final class CallbackManagerImpl implements CallbackManager {
-    private static Map<Integer, Callback> staticCallbacks = new HashMap<>();
+    private static Map<Integer, Callback> staticCallbacks = new HashMap();
 
     /**
      * If there is no explicit callback, but we still need to call the Facebook component,
@@ -68,7 +68,7 @@ public final class CallbackManagerImpl implements CallbackManager {
         return false;
     }
 
-    private Map<Integer, Callback> callbacks = new HashMap<>();
+    private Map<Integer, Callback> callbacks = new HashMap();
 
     public void registerCallback(int requestCode, Callback callback) {
         Validate.notNull(callback, "callback");

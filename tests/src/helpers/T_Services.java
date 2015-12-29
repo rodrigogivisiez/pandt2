@@ -3,12 +3,16 @@ package helpers;
 import abstracts.MockDB;
 import abstracts.MockDownloader;
 import abstracts.MockGamingKit;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
 import com.mygdx.potatoandtomato.helpers.controls.Chat;
 import com.mygdx.potatoandtomato.helpers.services.*;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.models.Profile;
+import com.potatoandtomato.common.IPTGame;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * Created by SiongLeng on 6/12/2015.
@@ -34,7 +38,7 @@ public class T_Services {
         assets.loadBasic(null);
 
         return new Services(assets, new Texts(), preferences,
-                new Profile(), databases, new Shaders(), new MockGamingKit(), downloader, new Chat(),
+                new Profile(), databases, new Shaders(), new MockGamingKit(), downloader, new Chat(new MockGamingKit(), new Texts(), assets, mock(SpriteBatch.class), mock(IPTGame.class)),
                 new Socials(preferences), new GCMSender());
     }
 

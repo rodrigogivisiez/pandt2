@@ -176,7 +176,7 @@ public class AppInviteDialog
 
     @Override
     protected List<ModeHandler> getOrderedModeHandlers() {
-        ArrayList<ModeHandler> handlers = new ArrayList<>();
+        ArrayList<ModeHandler> handlers = new ArrayList();
         handlers.add(new NativeHandler());
         handlers.add(new WebFallbackHandler());
 

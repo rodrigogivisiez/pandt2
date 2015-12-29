@@ -73,7 +73,7 @@ public class Room {
 
     public HashMap<String, RoomUser> getRoomUsers() {
         if(roomUsers == null){
-            roomUsers = new HashMap<>();
+            roomUsers = new HashMap();
         }
         return roomUsers;
     }
@@ -84,7 +84,7 @@ public class Room {
 
     public ArrayList<Profile> getInvitedUsers() {
         if(invitedUsers == null){
-            invitedUsers = new ArrayList<>();
+            invitedUsers = new ArrayList();
         }
         return invitedUsers;
     }
@@ -137,7 +137,7 @@ public class Room {
     @JsonIgnore
     public void addRoomUser(Profile user){
 
-        if(roomUsers == null) roomUsers = new HashMap<>();
+        if(roomUsers == null) roomUsers = new HashMap();
 
         if(getSlotIndexByUserId(user) != -1) return;
 
@@ -251,7 +251,7 @@ public class Room {
 
     @JsonIgnore
     public ArrayList<RoomUser> getRoomUsersDifference(Collection<RoomUser> roomUsers1, Collection<RoomUser> roomUsers2){
-        ArrayList<RoomUser> results = new ArrayList<>();
+        ArrayList<RoomUser> results = new ArrayList();
         for(RoomUser roomUser : roomUsers1){
             boolean found = false;
             for(RoomUser roomUser2 : roomUsers2){
@@ -265,6 +265,7 @@ public class Room {
         return results;
     }
 
+    @JsonIgnore
     private int convertSlotIndexToTeamNumber(int slotIndex){
         for(int i = 0; i < Integer.valueOf(this.getGame().getTeamCount()); i++) {
             int startIndex = i * Integer.valueOf(this.getGame().getTeamMaxPlayers());
@@ -278,7 +279,7 @@ public class Room {
 
     @JsonIgnore
     public ArrayList<Team> convertRoomUsersToTeams() {
-        ArrayList<Team> teams = new ArrayList<>();
+        ArrayList<Team> teams = new ArrayList();
         for (int i = 0; i < Integer.valueOf(this.getGame().getTeamCount()); i++) {
             teams.add(new Team());
         }
@@ -289,5 +290,7 @@ public class Room {
         }
         return teams;
     }
+
+
 
 }

@@ -10,7 +10,7 @@ public class Team {
     ArrayList<Player> players;
 
     public Team() {
-        players = new ArrayList<>();
+        players = new ArrayList();
     }
 
     public void addPlayer(Player p){

@@ -30,7 +30,7 @@ public class Ftp {
         UploadedGame uploadedGame = new UploadedGame();
         String path = details.abbr;
         uploadedGame.assetUrl = uploadFile(new File("assets.zip"), path);
-        uploadedGame.gameUrl = uploadFile(new File(paths.jar), path);
+        uploadedGame.gameUrl = uploadFile(new File("game.jar"), path);
         uploadedGame.description = details.description;
         uploadedGame.maxPlayers = details.max_players;
         uploadedGame.minPlayers = details.min_players;

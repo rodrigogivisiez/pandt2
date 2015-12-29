@@ -30,7 +30,7 @@ public class PrerequisiteLogic extends LogicAbstract {
         _texts = _services.getTexts();
         _scene = new PrerequisiteScene(services, screen);
         _game = (Game) objs[0];
-        _isCreating = (boolean) objs[1];
+        _isCreating = (Boolean) objs[1];
         if(!_isCreating) _joiningRoom = (Room) objs[2];
 
         _scene.getRetryButton().addListener((new ClickListener(){

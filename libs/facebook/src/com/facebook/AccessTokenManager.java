@@ -221,8 +221,8 @@ final class AccessTokenManager {
 
         lastAttemptedTokenExtendDate = new Date();
 
-        final Set<String> permissions = new HashSet<>();
-        final Set<String> declinedPermissions = new HashSet<>();
+        final Set<String> permissions = new HashSet();
+        final Set<String> declinedPermissions = new HashSet();
         final AtomicBoolean permissionsCallSucceeded = new AtomicBoolean(false);
         final RefreshResult refreshResult = new RefreshResult();
 

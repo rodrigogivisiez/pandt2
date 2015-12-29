@@ -6,6 +6,8 @@ import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.models.Services;
+import com.potatoandtomato.common.BroadcastEvent;
+import com.potatoandtomato.common.Broadcaster;
 
 /**
  * Created by SiongLeng on 4/12/2015.
@@ -32,12 +34,5 @@ public abstract class SceneAbstract {
 
     public Actor getRoot(){ return _root; };
 
-    public void onShow(){
-
-    }
-
-    public void dispose(){
-
-    }
 
 }

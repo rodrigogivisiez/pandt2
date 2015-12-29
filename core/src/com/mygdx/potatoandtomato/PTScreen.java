@@ -25,10 +25,12 @@ import com.mygdx.potatoandtomato.scenes.boot_scene.BootLogic;
 import com.mygdx.potatoandtomato.scenes.create_game_scene.CreateGameLogic;
 import com.mygdx.potatoandtomato.scenes.game_list_scene.GameListLogic;
 import com.mygdx.potatoandtomato.scenes.invite_scene.InviteLogic;
+import com.mygdx.potatoandtomato.scenes.game_sandbox_scene.GameSandboxLogic;
 import com.mygdx.potatoandtomato.scenes.mascot_pick_scene.MascotPickLogic;
 import com.mygdx.potatoandtomato.scenes.prerequisite_scene.PrerequisiteLogic;
 import com.mygdx.potatoandtomato.scenes.room_scene.RoomLogic;
 import com.mygdx.potatoandtomato.scenes.settings_scene.SettingsLogic;
+import com.potatoandtomato.common.GameScreen;
 
 import java.util.Stack;
 
@@ -39,6 +41,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
  */
 public class PTScreen implements Screen {
 
+    PTGame _ptGame;
     Image _bgBlueImg, _bgAutumnImg, _sunriseImg, _sunrayImg, _greenGroundImg, _autumnGroundImg;
     Services _services;
     Assets _assets;
@@ -49,11 +52,22 @@ public class PTScreen implements Screen {
     boolean _backRunning;
     Actor _currentRoot;
 
-    public PTScreen(Services services) {
+    public PTScreen(PTGame ptGame, Services services) {
+        this._ptGame = ptGame;
         this._services = services;
         this._assets = _services.getTextures();
         this._texts = _services.getTexts();
-        this._logicStacks = new Stack<>();
+        this._logicStacks = new Stack();
+    }
+
+    public void switchToGameScreen(GameScreen newScreen){
+        _ptGame.removeInputProcessor(_stage);
+        _ptGame.setScreen(newScreen);
+    }
+
+    public void switchToPTScreen(){
+        _ptGame.addInputProcessor(_stage);
+        _ptGame.setScreen(this);
     }
 
     //call this function to change scene
@@ -63,8 +77,8 @@ public class PTScreen implements Screen {
             public void run() {
                 final LogicAbstract logic = newSceneLogic(sceneEnum, objs);
                 logic.onInit();
-                logic.onShow();
                 if(_logicStacks.size() == 0){
+                    logic.onShow();
                     _stage.addActor(logic.getScene().getRoot());
                     _currentRoot = logic.getScene().getRoot();
                 }
@@ -76,6 +90,7 @@ public class PTScreen implements Screen {
                         public void run() {
                             if (!logicOut.getLogic().isSaveToStack()) {
                                 _logicStacks.remove(logicOut);
+                                logic.onShow();
                                 logicOut.getLogic().dispose();
                             }
                         }
@@ -110,7 +125,8 @@ public class PTScreen implements Screen {
                             previous.getLogic().onShow();
                             current.getLogic().onHide();
                             current.getLogic().dispose();
-                            sceneTransition(previous.getLogic().getScene().getRoot(), current.getLogic().getScene().getRoot(), previous.getLogic().getScene(), false, new Runnable() {
+                            sceneTransition(previous.getLogic().getScene().getRoot(), current.getLogic().getScene().getRoot(),
+                                    previous.getLogic().getScene(), false, new Runnable() {
                                 @Override
                                 public void run() {
                                     _backRunning = false;
@@ -124,10 +140,6 @@ public class PTScreen implements Screen {
                 });
             }
         });
-    }
-
-    public void addToStage(Actor actor){
-        _stage.addActor(actor);
     }
 
     public void confirmQuitGame(){
@@ -182,6 +194,9 @@ public class PTScreen implements Screen {
             case INVITE:
                 logic= new InviteLogic(this, _services, objs);
                 break;
+            case GAME_SANDBOX:
+                logic = new GameSandboxLogic(this, _services, objs);
+                break;
         }
         return logic;
     }
@@ -197,8 +212,6 @@ public class PTScreen implements Screen {
         _stage.addActor(_rootIn);
         _stage.addActor(_rootOut);
         _currentRoot = _rootIn;
-
-        sceneToShow.onShow();
 
         _rootIn.setPosition(toRight ? Positions.getWidth() : -Positions.getWidth(), 0);
         _rootOut.setPosition(0, 0);
@@ -220,7 +233,7 @@ public class PTScreen implements Screen {
         _camera = new OrthographicCamera(Positions.getWidth(), Positions.getHeight());
         _camera.setToOrtho(false);
         StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight(), _camera);
-        _stage = new Stage(viewPort);
+        _stage = new Stage(viewPort, _ptGame.getSpriteBatch());
 
         //Ground Texture START////////////////////////////////////////////
         _greenGroundImg = new Image(_assets.getGreenGround());
@@ -265,7 +278,7 @@ public class PTScreen implements Screen {
         _stage.addActor(_sunriseImg);
         _stage.addActor(_greenGroundImg);
         _stage.addActor(_autumnGroundImg);
-        Gdx.input.setInputProcessor(_stage);
+        _ptGame.addInputProcessor(_stage);
         Gdx.input.setCatchBackKey(true);
     }
 
@@ -278,6 +291,10 @@ public class PTScreen implements Screen {
         Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
         _stage.act(delta);
         _stage.draw();
+    }
+
+    public PTGame getGame() {
+        return _ptGame;
     }
 
     @Override

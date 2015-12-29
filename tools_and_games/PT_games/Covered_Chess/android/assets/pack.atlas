@@ -1,0 +1,85 @@
+
+pack.png
+size: 512,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+bg
+  rotate: false
+  xy: 2, 290
+  size: 400, 710
+  orig: 400, 710
+  offset: 0, 0
+  index: -1
+black_bg
+  rotate: false
+  xy: 404, 928
+  size: 58, 72
+  orig: 58, 72
+  offset: 0, 0
+  index: -1
+black_bg_trans
+  rotate: false
+  xy: 134, 216
+  size: 58, 72
+  orig: 58, 72
+  offset: 0, 0
+  index: -1
+pawn_red
+  rotate: false
+  xy: 194, 228
+  size: 60, 60
+  orig: 60, 60
+  offset: 0, 0
+  index: -1
+pawn_selected
+  rotate: false
+  xy: 64, 4
+  size: 60, 60
+  orig: 60, 60
+  offset: 0, 0
+  index: -1
+pawn_unknown
+  rotate: false
+  xy: 256, 228
+  size: 60, 60
+  orig: 60, 60
+  offset: 0, 0
+  index: -1
+pawn_yellow
+  rotate: false
+  xy: 318, 228
+  size: 60, 60
+  orig: 60, 60
+  offset: 0, 0
+  index: -1
+red_side
+  rotate: false
+  xy: 2, 178
+  size: 130, 110
+  orig: 130, 110
+  offset: 0, 0
+  index: -1
+vs
+  rotate: false
+  xy: 2, 2
+  size: 60, 62
+  orig: 60, 62
+  offset: 0, 0
+  index: -1
+yellow_gradient_box
+  rotate: false
+  xy: 404, 886
+  size: 40, 40
+  split: 7, 16, 1, 7
+  pad: 0, 0, 1, 0
+  orig: 40, 40
+  offset: 0, 0
+  index: -1
+yellow_side
+  rotate: false
+  xy: 2, 66
+  size: 130, 110
+  orig: 130, 110
+  offset: 0, 0
+  index: -1

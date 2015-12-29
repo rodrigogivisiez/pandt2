@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 class ProfileInformationCache {
     final private static ConcurrentHashMap<String, JSONObject> infoCache =
-            new ConcurrentHashMap<>();
+            new ConcurrentHashMap();
 
     public static JSONObject getProfileInformation(String accessToken) {
         return infoCache.get(accessToken);

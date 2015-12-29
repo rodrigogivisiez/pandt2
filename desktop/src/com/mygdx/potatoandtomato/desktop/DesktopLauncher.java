@@ -8,7 +8,7 @@ import com.mygdx.potatoandtomato.PTGame;
 import com.mygdx.potatoandtomato.helpers.utils.JarUtils;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
-import com.potatoandtomato.common.GameLibCoordinator;
+import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Broadcaster;
@@ -46,9 +46,9 @@ public class DesktopLauncher {
 	}
 
 	public static void subscribeLoadGameRequest(){
-		Broadcaster.getInstance().subscribe(BroadcastEvent.LOAD_GAME_REQUEST, new BroadcastListener<GameLibCoordinator>() {
+		Broadcaster.getInstance().subscribe(BroadcastEvent.LOAD_GAME_REQUEST, new BroadcastListener<GameCoordinator>() {
 			@Override
-			public void onCallback(GameLibCoordinator obj, Status st) {
+			public void onCallback(GameCoordinator obj, Status st) {
 				String jarPath = "file:///" + obj.getJarPath();
 				URLClassLoader child = null;
 				Class classToLoad = null;

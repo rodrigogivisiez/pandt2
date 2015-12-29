@@ -7,8 +7,10 @@ import com.potatoandtomato.games.SampleGame;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
-		Entrance.setGameLibCoordinator(new com.potatoandtomato.common.GameLibCoordinator("", "", "", null));
+		//Entrance.setGameLibCoordinator(new com.potatoandtomato.common.GameLibCoordinator("", "", "", null, ));
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		config.width = 360;
+		config.height = 640;
 		new LwjglApplication(new SampleGame(), config);
 	}
 }

@@ -1,6 +1,5 @@
 package com.mygdx.potatoandtomato.android;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -14,7 +13,7 @@ import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Broadcaster;
-import com.potatoandtomato.common.GameLibCoordinator;
+import com.potatoandtomato.common.GameCoordinator;
 
 public class AndroidLauncher extends AndroidApplication {
 
@@ -74,10 +73,10 @@ public class AndroidLauncher extends AndroidApplication {
 		});
 	}
 
-	private void subscribeLoadGameRequest(){
-		Broadcaster.getInstance().subscribe(BroadcastEvent.LOAD_GAME_REQUEST, new BroadcastListener<GameLibCoordinator>() {
+	public void subscribeLoadGameRequest(){
+		Broadcaster.getInstance().subscribe(BroadcastEvent.LOAD_GAME_REQUEST, new BroadcastListener<GameCoordinator>() {
 			@Override
-			public void onCallback(GameLibCoordinator obj, Status st) {
+			public void onCallback(GameCoordinator obj, Status st) {
 				JarLoader loader = new JarLoader(_this);
 				try {
 					obj = loader.load(obj);

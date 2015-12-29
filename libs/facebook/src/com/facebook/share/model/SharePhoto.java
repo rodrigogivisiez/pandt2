@@ -203,7 +203,7 @@ public final class SharePhoto extends ShareMedia {
         }
 
         public static void writeListTo(final Parcel out, final List<SharePhoto> photos) {
-            final List<SharePhoto> list = new ArrayList<>();
+            final List<SharePhoto> list = new ArrayList();
             for (SharePhoto photo : photos) {
                 list.add(photo);
             }
@@ -211,7 +211,7 @@ public final class SharePhoto extends ShareMedia {
         }
 
         public static List<SharePhoto> readListFrom(final Parcel in) {
-            final List<SharePhoto> list = new ArrayList<>();
+            final List<SharePhoto> list = new ArrayList();
             in.readTypedList(list, CREATOR);
             return list;
         }

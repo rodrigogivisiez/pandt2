@@ -27,7 +27,7 @@ public class InviteLogic extends LogicAbstract {
     public InviteLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
         _scene = new InviteScene(_services, _screen);
-        _invitedUsers = new ArrayList<>();
+        _invitedUsers = new ArrayList();
 
         _room = (Room) objs[0];
     }
@@ -39,6 +39,8 @@ public class InviteLogic extends LogicAbstract {
     @Override
     public void onInit() {
         super.onInit();
+
+        _services.getChat().hide();
 
         _scene.putMessageToTable(_services.getTexts().loading(), _scene.getRecentPlayedTable());
 

@@ -49,14 +49,8 @@ public class InviteScene extends SceneAbstract {
     }
 
     @Override
-    public void onShow() {
-        super.onShow();
-        _services.getChat().setVisible(false);
-    }
-
-    @Override
     public void populateRoot() {
-        _usersHashMap = new MultiHashMap<>();
+        _usersHashMap = new MultiHashMap();
         new TopBar(_root, _texts.inviteTitle(), false, _assets, _screen);
 
 

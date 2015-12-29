@@ -769,7 +769,7 @@ public final class NativeProtocol {
 
     private static TreeSet<Integer> fetchAllAvailableProtocolVersionsForAppInfo(
             NativeAppInfo appInfo) {
-        TreeSet<Integer> allAvailableVersions = new TreeSet<>();
+        TreeSet<Integer> allAvailableVersions = new TreeSet();
 
         Context appContext = FacebookSdk.getApplicationContext();
         ContentResolver contentResolver = appContext.getContentResolver();

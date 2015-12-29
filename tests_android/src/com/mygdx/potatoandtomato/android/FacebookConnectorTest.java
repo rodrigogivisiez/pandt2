@@ -37,7 +37,7 @@ public class FacebookConnectorTest extends ActivityInstrumentationTestCase2<Andr
         assertEquals(true, Broadcaster.getInstance().hasEventCallback(BroadcastEvent.LOGIN_FACEBOOK_REQUEST));
         Broadcaster.getInstance().broadcast(BroadcastEvent.LOGIN_FACEBOOK_REQUEST);     //just to test facebook activity can be launched
 
-        while (waiting[0]){
+        while (waiting[0]) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -45,8 +45,6 @@ public class FacebookConnectorTest extends ActivityInstrumentationTestCase2<Andr
             }
         }
     }
-
-
 
 
 }

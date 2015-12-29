@@ -43,14 +43,6 @@ public class Assets {
             whiteNormal2, whitePizza2BlackS, greenNormal2, grayBold2;
 
 
-
-    private TextureAtlas getBackgroundsPack() {
-        if(_backgroundsPack == null){
-            _backgroundsPack = new TextureAtlas(Gdx.files.internal("ui_pack.atlas"));;
-        }
-        return _backgroundsPack;
-    }
-
     public Assets() {
         _manager = new AssetManager();;
     }
