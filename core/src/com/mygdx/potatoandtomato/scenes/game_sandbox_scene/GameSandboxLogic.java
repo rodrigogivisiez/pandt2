@@ -93,8 +93,9 @@ public class GameSandboxLogic extends LogicAbstract {
         });
 
         Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_GAME_REQUEST, new GameCoordinator(_room.getGame().getFullLocalJarPath(),
-                _room.getGame().getLocalAssetsPath(), _room.getGame().getBasePath(), _room.convertRoomUsersToTeams(),
-                Positions.getWidth(), Positions.getHeight(), _screen.getGame(), _screen.getGame().getSpriteBatch()));
+                _room.getGame().getLocalAssetsPath(), _room.getGame().getBasePath(), _room.convertRoomUsersToTeams(_services.getProfile()),
+                Positions.getWidth(), Positions.getHeight(), _screen.getGame(), _screen.getGame().getSpriteBatch(),
+                _room.getHost().equals(_services.getProfile()), _services.getProfile().getUserId()));
 
 
         Threadings.delay(10000, new Runnable() {
@@ -132,6 +133,7 @@ public class GameSandboxLogic extends LogicAbstract {
         _gameStarted = true;
         _services.getChat().show();
         _screen.switchToGameScreen(_coordinator.getGameEntrance().getCurrentScreen());
+        _coordinator.getGameEntrance().init();
     }
 
     public void failLoad(ArrayList<RoomUser> roomUsers){
@@ -192,6 +194,8 @@ public class GameSandboxLogic extends LogicAbstract {
     }
 
     public void exitSandbox(){
+        _services.getChat().add(new ChatMessage(_texts.gameEnded(),
+                                 ChatMessage.FromType.SYSTEM, null));
         _screen.switchToPTScreen();
         _screen.back();
     }

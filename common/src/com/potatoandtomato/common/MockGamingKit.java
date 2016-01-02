@@ -6,10 +6,7 @@ import com.potatoandtomato.common.*;
 import com.shephertz.app42.gaming.multiplayer.client.WarpClient;
 import com.shephertz.app42.gaming.multiplayer.client.command.WarpResponseResultCode;
 import com.shephertz.app42.gaming.multiplayer.client.events.*;
-import com.shephertz.app42.gaming.multiplayer.client.listener.ConnectionRequestListener;
-import com.shephertz.app42.gaming.multiplayer.client.listener.NotifyListener;
-import com.shephertz.app42.gaming.multiplayer.client.listener.RoomRequestListener;
-import com.shephertz.app42.gaming.multiplayer.client.listener.ZoneRequestListener;
+import com.shephertz.app42.gaming.multiplayer.client.listener.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -60,6 +57,7 @@ public class MockGamingKit {
         _warpInstance.addConnectionRequestListener(listeners);
         _warpInstance.addZoneRequestListener(listeners);
         _warpInstance.addNotificationListener(listeners);
+        _warpInstance.addUpdateRequestListener(listeners);
 
         _userId = String.valueOf(MathUtils.random(1, 999999));
         _warpInstance.connectWithUserName(_userId);
@@ -84,7 +82,7 @@ public class MockGamingKit {
         return _userId;
     }
 
-    public class WarpListeners implements ConnectionRequestListener, RoomRequestListener, ZoneRequestListener, NotifyListener {
+    public class WarpListeners implements ConnectionRequestListener, RoomRequestListener, ZoneRequestListener, NotifyListener, UpdateRequestListener {
 
         @Override
         public void onConnectDone(ConnectEvent connectEvent) {
@@ -137,12 +135,17 @@ public class MockGamingKit {
         @Override
         public void onGetLiveRoomInfoDone(final LiveRoomInfoEvent liveRoomInfoEvent) {
             System.out.println("onGetLiveRoomInfoDone, current user count: " + liveRoomInfoEvent.getJoinedUsers().length);
+            if(liveRoomInfoEvent.getJoinedUsers().length > (_expectedTeamCount * _eachTeamExpectedPlayers)){
+                _warpInstance.deleteRoom(liveRoomInfoEvent.getData().getId());
+                System.out.println("Corrupted room destroyed, please restart");
+            }
+
             if(liveRoomInfoEvent.getJoinedUsers().length == (_expectedTeamCount * _eachTeamExpectedPlayers)){
                 ArrayList<Team> teams = new ArrayList<Team>();
                 int i = 0;
                 Team team = new Team();
                 for(String user : liveRoomInfoEvent.getJoinedUsers()) {
-                    team.addPlayer(new Player(user, user, 0));
+                    team.addPlayer(new Player(user, user, 0, user.equals(_userId)));
                     i++;
                     if(i == _eachTeamExpectedPlayers){
                         teams.add(team);
@@ -167,7 +170,10 @@ public class MockGamingKit {
             _warpInstance.getLiveRoomInfo(roomData.getId());
         }
 
-
+        @Override
+        public void onSendUpdateDone(byte b) {
+            System.out.println("onSendUpdateDone:" + b);
+        }
 
 
 
@@ -326,6 +332,11 @@ public class MockGamingKit {
 
         @Override
         public void onNextTurnRequest(String s) {
+
+        }
+
+        @Override
+        public void onSendPrivateUpdateDone(byte b) {
 
         }
     }

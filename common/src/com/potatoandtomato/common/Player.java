@@ -8,11 +8,13 @@ public class Player {
     public String name;
     public String userId;
     public int potatoOrTomato;
+    public boolean isMe;
 
-    public Player(String name, String userId, int potatoOrTomato) {
+    public Player(String name, String userId, int potatoOrTomato, boolean isMe) {
         this.name = name;
         this.userId = userId;
         this.potatoOrTomato = potatoOrTomato;
+        this.isMe = isMe;
     }
 
     public String getName() {
@@ -37,5 +39,9 @@ public class Player {
 
     public void setPotatoOrTomato(int potatoOrTomato) {
         this.potatoOrTomato = potatoOrTomato;
+    }
+
+    public boolean isMe() {
+        return isMe;
     }
 }

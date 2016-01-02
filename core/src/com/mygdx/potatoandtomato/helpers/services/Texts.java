@@ -91,6 +91,8 @@ public class Texts {
     public String confirmQuit() { return "Are you sure you want to quit Potato and Tomato?";}
 
     public String loadGameFailed() { return "The following users failed to load the game: %s";}
+    public String gameStarted() { return "Game started.";}
+    public String gameEnded() { return "Game ended.";}
 
 
     //push notifications part

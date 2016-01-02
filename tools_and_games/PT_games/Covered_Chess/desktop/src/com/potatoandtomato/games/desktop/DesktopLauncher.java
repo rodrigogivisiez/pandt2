@@ -20,7 +20,7 @@ public class DesktopLauncher {
 		settings.filterMin = Texture.TextureFilter.Linear;
 		//TexturePacker.process(settings, "../../images", "../../android/assets", "pack");
 
-		new LwjglApplication(new CoveredChessGame(), config);
+		new LwjglApplication(new CoveredChessGame(arg.length<=0), config);
 
 
 

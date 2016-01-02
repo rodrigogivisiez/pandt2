@@ -2,6 +2,7 @@ package com.potatoandtomato.common;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
@@ -18,9 +19,11 @@ public class GameCoordinator {
     private String basePath;
     private GameEntrance gameEntrance;
     private ArrayList<Team> teams;
+    private boolean meIsHost;
     private float gameWidth, gameHeight;
     private IPTGame game;
     private SpriteBatch spriteBatch;
+    private String userId;
 
     private ArrayList<String> _subscribedIds;
     private Array<InputProcessor> _processors;
@@ -29,7 +32,7 @@ public class GameCoordinator {
     public GameCoordinator(String jarPath, String assetsPath,
                            String basePath, ArrayList<Team> teams,
                            float gameWidth, float gameHeight,
-                           IPTGame game, SpriteBatch batch) {
+                           IPTGame game, SpriteBatch batch, boolean meIsHost, String userId) {
         this.jarPath = jarPath;
         this.assetsPath = assetsPath;
         this.basePath = basePath;
@@ -38,11 +41,25 @@ public class GameCoordinator {
         this.gameHeight = gameHeight;
         this.game = game;
         this.spriteBatch = batch;
+        this.meIsHost = meIsHost;
+        this.userId = userId;
 
         _subscribedIds = new ArrayList<String>();
         _processors = new Array<InputProcessor>();
         _inGameUpdateListeners = new ArrayList<InGameUpdateListener>();
         subscribeListeners();
+    }
+
+    public boolean getMeIsHost() {
+        return meIsHost;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public SpriteBatch getSpriteBatch() {
@@ -152,5 +169,10 @@ public class GameCoordinator {
             }
         });
     }
+
+    public AssetManager getAssetManagerInstance(){
+        return new AssetManager(new MyFileResolver(this));
+    }
+
 
 }

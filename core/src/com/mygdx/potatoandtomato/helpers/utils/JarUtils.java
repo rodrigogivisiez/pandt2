@@ -25,7 +25,7 @@ public class JarUtils {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }

@@ -29,6 +29,6 @@ public abstract class GameEntrance {
         return _gameCoordinator;
     }
 
-
+    public abstract void init();
 
 }

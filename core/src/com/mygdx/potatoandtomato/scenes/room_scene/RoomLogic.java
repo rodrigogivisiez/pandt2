@@ -456,6 +456,7 @@ public class RoomLogic extends LogicAbstract {
         flushRoom(false, null);
         _services.getDatabase().savePlayedHistory(_services.getProfile(), _room, null);
         hostSendGameStartedPush();
+        _services.getChat().add(new ChatMessage(_texts.gameStarted(), ChatMessage.FromType.SYSTEM, null));
         _services.getChat().hide();
         _screen.toScene(SceneEnum.GAME_SANDBOX, _room);
     }

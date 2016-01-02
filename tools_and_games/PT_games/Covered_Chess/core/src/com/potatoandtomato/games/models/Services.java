@@ -1,6 +1,7 @@
 package com.potatoandtomato.games.models;
 
 import com.potatoandtomato.games.helpers.Assets;
+import com.potatoandtomato.games.helpers.BattleReference;
 import com.potatoandtomato.games.helpers.Texts;
 
 /**
@@ -10,10 +11,12 @@ public class Services {
 
     private Assets assets;
     private Texts texts;
+    private BattleReference battleReference;
 
-    public Services(Assets assets, Texts texts) {
+    public Services(Assets assets, Texts texts, BattleReference battleReference) {
         this.texts = texts;
         this.assets = assets;
+        this.battleReference = battleReference;
     }
 
     public Texts getTexts() {
@@ -26,5 +29,13 @@ public class Services {
 
     public void setAssets(Assets assets) {
         this.assets = assets;
+    }
+
+    public BattleReference getBattleReference() {
+        return battleReference;
+    }
+
+    public void setBattleReference(BattleReference battleReference) {
+        this.battleReference = battleReference;
     }
 }

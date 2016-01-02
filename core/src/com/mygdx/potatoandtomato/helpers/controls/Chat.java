@@ -201,14 +201,17 @@ public class Chat {
     }
 
     public void expand(){
-        _allMessagesTable.addAction(sequence(moveTo(_allMessagesTable.getX(), _expandedY, 0.25f, Interpolation.circleOut)));
+        _allMessagesTable.clearActions();
+        _allMessagesTable.addAction(sequence(moveTo(_allMessagesTable.getX(), _collapsedY), fadeIn(0),
+                            moveTo(_allMessagesTable.getX(), _expandedY, 0.25f, Interpolation.circleOut)));
         _expanded = true;
         resetMessageNotificationCount();
         scrollToBottom();
     }
 
     public void collapsed(){
-        _allMessagesTable.addAction(sequence(moveTo(_allMessagesTable.getX(), _collapsedY, 0.35f, Interpolation.circleIn)));
+        _allMessagesTable.clearActions();
+        _allMessagesTable.addAction(sequence(moveTo(_allMessagesTable.getX(), _collapsedY, 0.35f, Interpolation.circleIn), fadeOut(0)));
         _expanded = false;
         _stage.setKeyboardFocus(_stage.getActors().get(0));
         _textFieldNotFocusImage.setVisible(true);

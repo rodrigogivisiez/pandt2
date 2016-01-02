@@ -162,7 +162,7 @@ public class TestRoom extends TestAbstract {
         _room.getGame().setTeamCount("2");
         _room.getGame().setTeamMaxPlayers("1");
         _room.getRoomUsers().get("another").setSlotIndex(1);
-        ArrayList<Team> teams = _room.convertRoomUsersToTeams();
+        ArrayList<Team> teams = _room.convertRoomUsersToTeams(MockModel.mockProfile());
         Assert.assertEquals(2, teams.size());
         Assert.assertEquals(1, teams.get(0).getPlayers().size());
         Assert.assertEquals(1, teams.get(1).getPlayers().size());

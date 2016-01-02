@@ -68,6 +68,7 @@ public class TestGameLoader extends TestAbstract{
         Broadcaster.getInstance().subscribe(BroadcastEvent.LOAD_GAME_RESPONSE, new BroadcastListener<GameCoordinator>() {
             @Override
             public void onCallback(GameCoordinator obj, Status st) {
+                Assert.assertEquals(false, obj == null);
                 Assert.assertEquals(Status.SUCCESS, st);
                 waiting[0] = false;
             }
@@ -75,7 +76,7 @@ public class TestGameLoader extends TestAbstract{
 
         GameCoordinator gameCoordinator = new GameCoordinator(game.getFullLocalJarPath(),
                                         game.getLocalAssetsPath(), game.getBasePath(), new ArrayList<Team>(), Positions.getWidth(),
-                                        Positions.getHeight(), null, null);
+                                        Positions.getHeight(), null, null, true, "123");
         Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_GAME_REQUEST, gameCoordinator);
 
         while (waiting[0]){

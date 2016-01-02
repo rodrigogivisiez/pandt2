@@ -278,7 +278,7 @@ public class Room {
     }
 
     @JsonIgnore
-    public ArrayList<Team> convertRoomUsersToTeams() {
+    public ArrayList<Team> convertRoomUsersToTeams(Profile selfProfile) {
         ArrayList<Team> teams = new ArrayList();
         for (int i = 0; i < Integer.valueOf(this.getGame().getTeamCount()); i++) {
             teams.add(new Team());
@@ -286,7 +286,7 @@ public class Room {
         for (RoomUser user : this.getRoomUsers().values()) {
             int index = convertSlotIndexToTeamNumber(user.getSlotIndex());
             teams.get(index).addPlayer(new Player(user.getProfile().getDisplayName(), user.getProfile().getUserId(),
-                    user.getProfile().getMascotEnum() == MascotEnum.POTATO ? 0 : 1));
+                    user.getProfile().getMascotEnum() == MascotEnum.POTATO ? 0 : 1, user.getProfile().equals(selfProfile)));
         }
         return teams;
     }

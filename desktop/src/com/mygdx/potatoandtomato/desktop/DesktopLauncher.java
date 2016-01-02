@@ -57,7 +57,8 @@ public class DesktopLauncher {
 					child = new URLClassLoader(new URL[]{new URL(jarPath)}, this.getClass().getClassLoader());
 					classToLoad = Class.forName (Terms.GAME_ENTRANCE, true, child);
 					obj = JarUtils.fillGameEntrance(classToLoad, obj);
-					success = true;
+					if(obj == null) success = false;
+					else success = true;
 				} catch (MalformedURLException e) {
 					success = false;
 				} catch (ClassNotFoundException e) {
