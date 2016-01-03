@@ -94,7 +94,7 @@ public class RoomScene extends SceneAbstract {
         _teamsRoot = new Table();
 
         _detailsRoot = new Table();
-        _detailsRoot.setBackground(new TextureRegionDrawable(_assets.getWoodBgNormal()));
+        _detailsRoot.setBackground(new NinePatchDrawable(_assets.getIrregularBg()));
         _detailsRoot.align(Align.top);
         _detailsRoot.add(getWoodBoardTitleTable(0, _texts.details())).width(170).height(50).padTop(-10).padBottom(20).colspan(2);
         _detailsRoot.row();
@@ -132,8 +132,6 @@ public class RoomScene extends SceneAbstract {
 
         Table descriptionTable = new Table();
         descriptionTable.add(descriptionLabel).expand().fill();
-        ScrollPane scrollPane = new ScrollPane(descriptionTable);
-        scrollPane.setScrollingDisabled(true, false);
 
         _subRoot.add(titleLabel).expandX().fillX();
         _subRoot.row();
@@ -141,7 +139,7 @@ public class RoomScene extends SceneAbstract {
         _subRoot.row();
         _subRoot.add(versionLabel).left();
         _subRoot.row();
-        _subRoot.add(scrollPane).left().expandX().fillX().height(100).padTop(5);
+        _subRoot.add(descriptionTable).left().expandX().fillX().padTop(5);
 
         _detailsRoot.add(gameImg).size(120).padLeft(20).padRight(10).top();
         _detailsRoot.add(_subRoot).expandX().fillX().top().padRight(20).padBottom(20);

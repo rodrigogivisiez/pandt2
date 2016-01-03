@@ -139,6 +139,7 @@ public class CreateGameScene extends SceneAbstract {
         Table screenShotsTable = new Table();
         screenShotsTable.align(Align.left);
         ScrollPane screenShotsScroll = new ScrollPane(screenShotsTable);
+        screenShotsScroll.setCancelTouchFocus(false);
         screenShotsScroll.setScrollingDisabled(false, true);
         screenShotsTableParent.add(screenShotsScroll).expand().fill();
 
