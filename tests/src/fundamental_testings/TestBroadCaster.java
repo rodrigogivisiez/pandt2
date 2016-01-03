@@ -1,6 +1,7 @@
 package fundamental_testings;
 
 import abstracts.TestAbstract;
+import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.potatoandtomato.common.BroadcastListener;
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,6 +28,22 @@ public class TestBroadCaster extends TestAbstract {
         Assert.assertEquals(0, Broadcaster.getInstance().getEventCallbacksSize(-1));
 
     }
+
+    @Test
+    public void testUnSubscribeAnoynymous(){
+        Broadcaster.getInstance().subscribe(-1, new BroadcastListener<MockResponse>() {
+            @Override
+            public void onCallback(MockResponse obj, Status status) {
+                Broadcaster.getInstance().unsubscribe(this.getId());
+            }
+        });
+
+        Assert.assertEquals(1, Broadcaster.getInstance().getEventCallbacksSize(-1));
+        Broadcaster.getInstance().broadcast(-1, null);
+        Assert.assertEquals(0, Broadcaster.getInstance().getEventCallbacksSize(-1));
+
+    }
+
 
     @Test
     public void testBroadcast(){

@@ -20,7 +20,7 @@ back_icon
   index: -1
 black_bg
   rotate: false
-  xy: 320, 14
+  xy: 888, 158
   size: 35, 31
   orig: 35, 31
   offset: 0, 0
@@ -58,7 +58,7 @@ btn_red
   index: -1
 btn_white_round
   rotate: false
-  xy: 1316, 180
+  xy: 1964, 229
   size: 73, 75
   orig: 73, 75
   offset: 0, 0
@@ -88,56 +88,56 @@ close_button
   index: -1
 collapsed_icon
   rotate: false
-  xy: 888, 171
+  xy: 1188, 336
   size: 17, 18
   orig: 17, 18
   offset: 0, 0
   index: -1
 coming_soon
   rotate: false
-  xy: 908, 215
+  xy: 1026, 215
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
 cross
   rotate: false
-  xy: 1010, 215
+  xy: 1128, 225
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
 cursor_black
   rotate: false
-  xy: 1567, 313
+  xy: 1165, 340
   size: 1, 41
   orig: 1, 41
   offset: 0, 0
   index: -1
 download_icon_small
   rotate: false
-  xy: 968, 193
+  xy: 1207, 334
   size: 15, 20
   orig: 15, 20
   offset: 0, 0
   index: -1
 downward_egg_btn
   rotate: false
-  xy: 1214, 255
+  xy: 1332, 255
   size: 100, 99
   orig: 100, 99
   offset: 0, 0
   index: -1
 empty
   rotate: false
-  xy: 1165, 380
+  xy: 1128, 222
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 expand_icon
   rotate: false
-  xy: 1418, 257
+  xy: 1168, 337
   size: 18, 17
   orig: 18, 17
   offset: 0, 0
@@ -153,7 +153,7 @@ expandable_title_bg
   index: -1
 gamelist_bg
   rotate: false
-  xy: 1112, 225
+  xy: 1230, 254
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
@@ -174,7 +174,7 @@ gamelist_title_separator
   index: -1
 gamelist_titlebg
   rotate: false
-  xy: 1994, 769
+  xy: 1089, 166
   size: 40, 47
   orig: 40, 47
   offset: 0, 0
@@ -195,7 +195,7 @@ grass_green
   index: -1
 green_rounded
   rotate: false
-  xy: 1994, 741
+  xy: 1994, 740
   size: 30, 26
   split: 13, 15, 11, 12
   orig: 30, 26
@@ -203,21 +203,21 @@ green_rounded
   index: -1
 grey_line
   rotate: false
-  xy: 1772, 390
+  xy: 397, 44
   size: 5, 1
   orig: 5, 1
   offset: 0, 0
   index: -1
 important_icon
   rotate: false
-  xy: 1391, 178
+  xy: 1536, 286
   size: 30, 30
   orig: 30, 30
   offset: 0, 0
   index: -1
 info_icon
   rotate: false
-  xy: 908, 183
+  xy: 1536, 254
   size: 30, 30
   orig: 30, 30
   offset: 0, 0
@@ -238,9 +238,16 @@ loading
   orig: 360, 639
   offset: 0, 0
   index: -1
+loading_image
+  rotate: false
+  xy: 908, 199
+  size: 116, 116
+  orig: 116, 116
+  offset: 0, 0
+  index: -1
 login_icon
   rotate: false
-  xy: 1316, 257
+  xy: 1434, 257
   size: 100, 97
   orig: 100, 97
   offset: 0, 0
@@ -254,7 +261,7 @@ logo
   index: -1
 message_notification
   rotate: false
-  xy: 357, 9
+  xy: 1536, 318
   size: 30, 36
   orig: 30, 36
   offset: 0, 0
@@ -268,14 +275,14 @@ noimage
   index: -1
 orange_line
   rotate: false
-  xy: 1872, 660
+  xy: 397, 41
   size: 5, 1
   orig: 5, 1
   offset: 0, 0
   index: -1
 play_icon
   rotate: false
-  xy: 1964, 92
+  xy: 1964, 15
   size: 58, 68
   orig: 58, 68
   offset: 0, 0
@@ -318,7 +325,7 @@ potato_weapon
   index: -1
 progress_bar_bg
   rotate: false
-  xy: 1165, 334
+  xy: 320, 25
   size: 47, 20
   split: 7, 6, 8, 8
   pad: 1, 0, 0, 0
@@ -327,7 +334,7 @@ progress_bar_bg
   index: -1
 progress_bar_inner
   rotate: false
-  xy: 985, 193
+  xy: 1530, 460
   size: 15, 20
   split: 7, 7, 9, 10
   pad: 0, 0, 0, 0
@@ -336,14 +343,14 @@ progress_bar_inner
   index: -1
 quit_icon
   rotate: false
-  xy: 1964, 237
+  xy: 1964, 160
   size: 61, 67
   orig: 61, 67
   offset: 0, 0
   index: -1
 rating_icon
   rotate: false
-  xy: 1515, 306
+  xy: 1994, 874
   size: 50, 48
   orig: 50, 48
   offset: 0, 0
@@ -358,21 +365,21 @@ scrollbar_handle
   index: -1
 select_box
   rotate: false
-  xy: 1391, 210
+  xy: 1131, 178
   size: 40, 45
   orig: 40, 45
   offset: 0, 0
   index: -1
 settings_icon
   rotate: false
-  xy: 1994, 873
+  xy: 1994, 823
   size: 47, 49
   orig: 47, 49
   offset: 0, 0
   index: -1
 social
   rotate: false
-  xy: 1214, 183
+  xy: 1230, 182
   size: 100, 70
   orig: 100, 70
   offset: 0, 0
@@ -393,7 +400,7 @@ sunrise
   index: -1
 tick
   rotate: false
-  xy: 1418, 276
+  xy: 1332, 175
   size: 95, 78
   orig: 95, 78
   offset: 0, 0
@@ -421,7 +428,7 @@ tomato_icon
   index: -1
 tomato_weapon
   rotate: false
-  xy: 1964, 162
+  xy: 1964, 85
   size: 55, 73
   orig: 55, 73
   offset: 0, 0
@@ -435,14 +442,14 @@ topbar_bg
   index: -1
 unknown_mascot
   rotate: false
-  xy: 1994, 818
+  xy: 1994, 768
   size: 36, 53
   orig: 36, 53
   offset: 0, 0
   index: -1
 unselect_box
   rotate: false
-  xy: 1515, 259
+  xy: 1173, 178
   size: 40, 45
   orig: 40, 45
   offset: 0, 0
@@ -463,7 +470,7 @@ white_line
   index: -1
 white_rounded_bg
   rotate: false
-  xy: 940, 193
+  xy: 369, 25
   size: 26, 20
   split: 11, 10, 8, 10
   pad: 0, 0, 0, 0
@@ -493,7 +500,7 @@ wood_bg_tall
   index: -1
 yellow_gradient_box
   rotate: false
-  xy: 1964, 37
+  xy: 1026, 160
   size: 61, 53
   split: 2, 2, 1, 3
   pad: 0, 0, 0, 0

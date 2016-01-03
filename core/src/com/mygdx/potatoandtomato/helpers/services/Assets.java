@@ -35,7 +35,7 @@ public class Assets {
             gameListBg, gameListTitleBg, btnWhiteRound, blackBg, ratingIcon, settingsIcon, tomatoIcon,
             potatoIcon, unknownMascotIcon, backIcon, infoIcon, importantIcon, comingSoon, noImage,
             pointLeftIcon, closeButton, downloadIconSmall, messageNotification, orangeLine, greyLine,
-            chatContainer, textCursor, unselectBox, selectBox, whiteLine, expandIcon, collapsedIcon, loading;
+            chatContainer, textCursor, unselectBox, selectBox, whiteLine, expandIcon, collapsedIcon, loading, webImageLoading;
     private NinePatch popupBg, buttonRed, buttonGreen, progressBarInner, progressBarBg, whiteRoundedBg,
             blackRoundedBg, chatBox, yellowGradientBox, scrollVerticalHandle, irregularBg, expandTitleBg;
     private BitmapFont blackNormal2, redNormal2, blueNormal2, blackBold2, blackNormal3, orangePizza3,
@@ -213,6 +213,7 @@ public class Assets {
         selectBox = _backgroundsPack.findRegion("select_box");
         unselectBox = _backgroundsPack.findRegion("unselect_box");
         loading = _backgroundsPack.findRegion("loading");
+        webImageLoading = _backgroundsPack.findRegion("loading_image");
     }
 
     private void basicNinePatchLoaded(){
@@ -228,6 +229,10 @@ public class Assets {
         scrollVerticalHandle =  _backgroundsPack .createPatch("scrollbar_handle");
         irregularBg =  _backgroundsPack .createPatch("irregular_bg");
         expandTitleBg = _backgroundsPack.createPatch("expandable_title_bg");
+    }
+
+    public TextureRegion getWebImageLoading() {
+        return webImageLoading;
     }
 
     public TextureRegion getBlueBg() {

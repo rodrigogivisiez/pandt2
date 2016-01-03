@@ -60,7 +60,6 @@ public class CreateGameLogic extends LogicAbstract {
                             }
                         });
                     }
-                    _scene.populateGame(null);
                 }
             }
         });

@@ -74,7 +74,7 @@ public class GameLoaderTest extends ActivityInstrumentationTestCase2<AndroidLaun
 
         GameCoordinator gameCoordinator = new GameCoordinator(game.getFullLocalJarPath(),
                 game.getLocalAssetsPath(), game.getBasePath(), new ArrayList<Team>(), Positions.getWidth(),
-                Positions.getHeight(), null, null);
+                Positions.getHeight(), null, null, false, "123");
         Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_GAME_REQUEST, gameCoordinator);
 
         while (waiting[0]) {

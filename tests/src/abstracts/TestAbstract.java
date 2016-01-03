@@ -1,5 +1,6 @@
 package abstracts;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
@@ -26,6 +27,7 @@ public abstract class TestAbstract {
 
         Gdx.gl = mock(GL20.class);
         Gdx.gl20 = mock(GL20.class);
+        Gdx.app = mock(Application.class);
 
         final HeadlessApplicationConfiguration config = new HeadlessApplicationConfiguration();
         new HeadlessApplication(mock(PTGame.class), config);

@@ -3,6 +3,7 @@ package com.mygdx.potatoandtomato.desktop;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import com.mygdx.potatoandtomato.PTGame;
 import com.mygdx.potatoandtomato.helpers.utils.JarUtils;
@@ -18,7 +19,12 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 public class DesktopLauncher {
+
+	private static ImageLoader _imageLoader;
+
 	public static void main (String[] arg) {
+
+		_imageLoader = new ImageLoader();
 
 		if(arg.length > 0){
 			Terms.PREF_NAME = arg[0];
@@ -57,8 +63,7 @@ public class DesktopLauncher {
 					child = new URLClassLoader(new URL[]{new URL(jarPath)}, this.getClass().getClassLoader());
 					classToLoad = Class.forName (Terms.GAME_ENTRANCE, true, child);
 					obj = JarUtils.fillGameEntrance(classToLoad, obj);
-					if(obj == null) success = false;
-					else success = true;
+				    success = true;
 				} catch (MalformedURLException e) {
 					success = false;
 				} catch (ClassNotFoundException e) {

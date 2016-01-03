@@ -87,7 +87,7 @@ public class CreateGameScene extends SceneAbstract {
 
     public Actor populateGame(Game game){
 
-        Actor gameIcon = game != null ? new WebImage(game.getIconUrl(), _assets, _services.getDownloader()) : new Image(_assets.getComingSoon());
+        Actor gameIcon = game != null ? new WebImage(game.getIconUrl(), _assets) : new Image(_assets.getComingSoon());
         _gameList.add(gameIcon).size(90).right().expandX().fillX().padBottom(7);
         _gameList.row();
         return gameIcon;
@@ -120,7 +120,7 @@ public class CreateGameScene extends SceneAbstract {
         Label.LabelStyle contentStyle2 = new Label.LabelStyle();
         contentStyle2.font = _assets.getWhiteNormal2GrayS();
 
-        WebImage gameLogo = new WebImage(game.getIconUrl(), _assets, _services.getDownloader());
+        WebImage gameLogo = new WebImage(game.getIconUrl(), _assets);
         Label detailsTitleLabel = new Label(_texts.details(), titleStyle);
 
         Table detailsTable = new Table();
@@ -144,7 +144,7 @@ public class CreateGameScene extends SceneAbstract {
 
         if(game.getScreenShots() != null){
             for(String ssUrl : game.getScreenShots()){
-                WebImage screenShotImage = new WebImage(ssUrl, _assets, _services.getDownloader());
+                WebImage screenShotImage = new WebImage(ssUrl, _assets);
                 screenShotsTable.add(screenShotImage).size(100).padRight(10);
             }
         }

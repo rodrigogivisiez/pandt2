@@ -112,7 +112,7 @@ public class RoomScene extends SceneAbstract {
     }
 
     public void populateGameDetails(Game game){
-        WebImage gameImg = new WebImage(game.getIconUrl(), _assets, _services.getDownloader());
+        WebImage gameImg = new WebImage(game.getIconUrl(), _assets);
 
         Label.LabelStyle titleStyle = new Label.LabelStyle();
         titleStyle.font = _assets.getWhitePizza2BlackS();

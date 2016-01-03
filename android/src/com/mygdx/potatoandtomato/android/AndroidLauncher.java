@@ -24,11 +24,13 @@ public class AndroidLauncher extends AndroidApplication {
 	int width, _height;
 	private static boolean _isVisible;
 	private AndroidLauncher _this;
+	private ImageLoader _imageLoader;
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		_this = this;
+		_imageLoader = new ImageLoader(_this);
 		_facebookConnector = new FacebookConnector(this);
 		_gcm = new GCMClientManager(this);
 		Firebase.setAndroidContext(this);
@@ -49,6 +51,8 @@ public class AndroidLauncher extends AndroidApplication {
 		});
 
 		subscribeLoadGameRequest();
+
+
 	}
 
 

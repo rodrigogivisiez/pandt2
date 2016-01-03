@@ -27,4 +27,8 @@ public class BroadcastEvent {
     public static final int GAME_RESUME = 20;   //notify game that game is resumed
     public static final int INGAME_UPDATE_REQUEST = 21;     //imgame update request
     public static final int INGAME_UPDATE_RESPONSE = 22;     //imgame update request
+    public static final int LOAD_IMAGE_REQUEST = 23;    //load image from url
+    public static final int LOAD_IMAGE_RESPONSE = 24;   //load image from url
+
+
 }

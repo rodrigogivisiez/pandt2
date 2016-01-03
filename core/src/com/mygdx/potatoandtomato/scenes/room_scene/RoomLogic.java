@@ -461,9 +461,6 @@ public class RoomLogic extends LogicAbstract {
         _screen.toScene(SceneEnum.GAME_SANDBOX, _room);
     }
 
-
-
-
     public void gameFinished(){
         openRoom();
         hostSendUpdateRoomStatePush();
