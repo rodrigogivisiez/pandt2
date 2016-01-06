@@ -5,6 +5,7 @@ import com.firebase.client.Firebase;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
+import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.services.FirebaseDB;
 import com.mygdx.potatoandtomato.helpers.utils.DateTimes;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
@@ -63,8 +64,9 @@ public class TestFireBase extends TestAbstract {
     }
 
     @Test
-    public void testCreateUser(){
-        final boolean[] waiting = {true};
+    public void testCreateUserAndMonitorUser(){
+        final int[] count = {0};
+
         databases.loginAnonymous(new DatabaseListener<Profile>() {
             @Override
             public void onCallback(Profile obj, Status st) {
@@ -81,7 +83,20 @@ public class TestFireBase extends TestAbstract {
                                 Assert.assertEquals(false, st == Status.FAILED);
                                 Assert.assertEquals(false, obj == null);
                                 Assert.assertEquals(false, obj.getUserId() == null);
-                                waiting[0] = false;
+
+
+                                databases.monitorProfileByUserId(obj.getUserId(), new DatabaseListener<Profile>(Profile.class) {
+                                    @Override
+                                    public void onCallback(Profile obj, Status st) {
+                                        if(obj.getUserPlayingState() != null)
+                                            Assert.assertEquals("1", obj.getUserPlayingState().getRoomId());
+                                            Assert.assertEquals(true, obj.getUserPlayingState().getConnected());
+                                            count[0] = 2;
+                                        }
+                                });
+
+                                obj.setUserPlayingState(new UserPlayingState("1", true));
+                                databases.updateProfile(obj);
                             }
                         });
                     }
@@ -90,7 +105,7 @@ public class TestFireBase extends TestAbstract {
             }
         });
 
-        while(waiting[0]){
+        while(count[0] < 1){
             T_Threadings.sleep(100);
         }
     }

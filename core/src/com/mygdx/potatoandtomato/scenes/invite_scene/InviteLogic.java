@@ -1,6 +1,7 @@
 package com.mygdx.potatoandtomato.scenes.invite_scene;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
@@ -48,11 +49,28 @@ public class InviteLogic extends LogicAbstract {
                 _scene.getFacebookFriendsTable());
 
         if(_services.getSocials().isFacebookLogon()){
-            Broadcaster.getInstance().subscribeOnceWithTimeout(BroadcastEvent.FACEBOOK_GET_FRIENDS_RESPONSE, 10000, new BroadcastListener() {
+            Broadcaster.getInstance().subscribeOnceWithTimeout(BroadcastEvent.FACEBOOK_GET_FRIENDS_RESPONSE, 10000, new BroadcastListener<ArrayList<FacebookProfile>>() {
                 @Override
-                public void onCallback(Object obj, Status st) {
+                public void onCallback(ArrayList<FacebookProfile> obj, Status st) {
                     if (st == Status.SUCCESS) {
-
+                        if(obj.size() == 0){
+                            _scene.putMessageToTable(_texts.noRecords(), _scene.getFacebookFriendsTable());
+                        }
+                        else{
+                            for(final FacebookProfile facebookProfile : obj){
+                                _services.getDatabase().getProfileByFacebookUserId(facebookProfile.getUserId(), new DatabaseListener<Profile>(Profile.class) {
+                                    @Override
+                                    public void onCallback(Profile profile, Status st) {
+                                        if(st == Status.SUCCESS){
+                                            if(!facebookProfile.getName().equals(profile.getDisplayName(0))){
+                                                profile.setGameName(facebookProfile.getName() + " / " + profile.getDisplayName(0));
+                                            }
+                                            putProfileToTable(profile, _scene.getFacebookFriendsTable());
+                                        }
+                                    }
+                                });
+                            }
+                        }
                     } else {
                         _scene.putMessageToTable(_texts.requestFailed(), _scene.getFacebookFriendsTable());
                     }
@@ -70,13 +88,7 @@ public class InviteLogic extends LogicAbstract {
                     }
                     else{
                         for(final GameHistory gameHistory : obj){
-                            _scene.putUserToTable(gameHistory.getPlayedWith(), _scene.getRecentPlayedTable()).addListener(new ClickListener(){
-                                @Override
-                                public void clicked(InputEvent event, float x, float y) {
-                                    super.clicked(event, x, y);
-                                    toggleUserSelection(gameHistory.getPlayedWith());
-                                }
-                            });
+                            putProfileToTable(gameHistory.getPlayedWith(), _scene.getRecentPlayedTable());
                         }
                     }
                 }
@@ -95,6 +107,16 @@ public class InviteLogic extends LogicAbstract {
         });
 
 
+    }
+
+    private void putProfileToTable(final Profile profile, Table table){
+        _scene.putUserToTable(profile, table).addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                toggleUserSelection(profile);
+            }
+        });
     }
 
     public void toggleUserSelection(Profile profile){
@@ -135,7 +157,7 @@ public class InviteLogic extends LogicAbstract {
                                         push.setTitle(_texts.PUSHGameInvitationsTitle());
                                         if(obj == 1){
                                             push.setMessage(String.format(_texts.PUSHGameInvitationContent(),
-                                                    _services.getProfile().getDisplayName(), _room.getGame().getName()));
+                                                    _services.getProfile().getDisplayName(15), _room.getGame().getName()));
                                         }
                                         else if(obj > 1){
                                             push.setMessage(String.format(_texts.PUSHGameInvitationsContent(),
@@ -143,11 +165,11 @@ public class InviteLogic extends LogicAbstract {
                                         }
                                         _services.getGcmSender().send(user, push);
                                         _services.getChat().add(new ChatMessage(String.format(_texts.xInvitedX(),
-                                                _services.getProfile().getDisplayName(), user.getDisplayName()), ChatMessage.FromType.SYSTEM, null));
+                                                _services.getProfile().getDisplayName(0), user.getDisplayName(0)), ChatMessage.FromType.SYSTEM, null));
                                     }
                                     else{
                                         _services.getChat().add(new ChatMessage(String.format(_texts.xInvitedXFailed(),
-                                                _services.getProfile().getDisplayName(), user.getDisplayName()), ChatMessage.FromType.IMPORTANT, null));
+                                                _services.getProfile().getDisplayName(0), user.getDisplayName(0)), ChatMessage.FromType.IMPORTANT, null));
                                     }
                                     done[0]++;
                                 }

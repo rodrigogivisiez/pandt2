@@ -19,11 +19,11 @@ public class MockModel {
         g.setAbbr("covered_chess");
         g.setGameUrl("http://www.potato-and-tomato.com/covered_chess/core.jar");
         g.setAssetUrl("http://www.potato-and-tomato.com/covered_chess/assets.zip");
-        g.setMaxPlayers("9");
-        g.setMinPlayers("3");
-        g.setTeamMaxPlayers("3");
-        g.setTeamMinPlayers("3");
-        g.setTeamCount("3");
+        g.setMaxPlayers("100");
+        g.setMinPlayers("1");
+        g.setTeamMaxPlayers("10");
+        g.setTeamMinPlayers("1");
+        g.setTeamCount("10");
         g.setName("Covered Chess");
         return g;
     }
@@ -54,8 +54,10 @@ public class MockModel {
         RoomUser user2 = new RoomUser();
         user1.setProfile(mockProfile());
         user1.setSlotIndex(0);
+        user1.setReady(true);
         user2.setProfile(mockProfile("another"));
         user2.setSlotIndex(99);
+        user2.setReady(true);
         roomUsers.put(user1.getProfile().getUserId(), user1);
         roomUsers.put(user2.getProfile().getUserId(), user2);
         r.setRoomUsers(roomUsers);

@@ -10,9 +10,23 @@ import com.potatoandtomato.common.GameScreen;
  */
 public class Entrance extends GameEntrance {
 
+    SampleScreen _screen;
+
     public Entrance(GameCoordinator gameCoordinator) {
         super(gameCoordinator);
-        setCurrentScreen(new SampleScreen(gameCoordinator));
+
+        _screen = new SampleScreen(gameCoordinator);
+        setCurrentScreen(_screen);
+    }
+
+    @Override
+    public void init() {
+
+    }
+
+    @Override
+    public void dispose() {
+        _screen.dispose();
     }
 
 }

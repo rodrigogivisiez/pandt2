@@ -21,7 +21,12 @@ public abstract class MockGame extends Game implements IPTGame {
 
     public MockGame(boolean isHost) {
         _processors = new Array<InputProcessor>();
-        _gameCoordinator = new GameCoordinator("", "", "", new ArrayList<Team>(), 360, 640, this, _spriteBatch, isHost, "");
+        _gameCoordinator = new GameCoordinator("", "", "", new ArrayList<Team>(), 360, 640, this, _spriteBatch, isHost, "", new IGameSandBox() {
+            @Override
+            public void useConfirm(String msg, Runnable yesRunnable, Runnable noRunnable) {
+                System.out.println("show confirm: " + msg);
+            }
+        });
     }
 
     public void initiateMockGamingKit(int expectedTeamCount, int eachTeamExpectedPlayers){

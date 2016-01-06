@@ -21,6 +21,7 @@ import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
+import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Room;
@@ -162,56 +163,31 @@ public class Chat {
         _chatRoot.add(_messageBoxTable).expandX().fillX().height(60);
 
         _chatRoot.setBounds(0, 0, Positions.getWidth(), _chatRoot.getPrefHeight());
-        _chatRoot.getColor().a = 0;
 
         _stage.addActor(_chatRoot);
 
         attachListeners();
         resetMessageNotificationCount();
-        _visible = true;
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                _allMessagesTable.addAction(sequence(moveBy(0, 0), new Action() {
-                    @Override
-                    public boolean act(float delta) {
-                        _expandedY = _allMessagesTable.getY();
-
-                        _allMessagesTable.addAction(sequence(moveBy(0, -_allMessagesTable.getHeight()), new Action() {
-                            @Override
-                            public boolean act(float delta) {
-                                _collapsedY = _allMessagesTable.getY();
-                                _visible = false;
-                                _allMessagesTable.setVisible(true);
-                                _chatRoot.getColor().a = 1;
-                                return true;
-                            }
-                        }));
-
-                        return true;
-                    }
-                }));
-            }
-        });
-
+        positionHack();
     }
 
     private void positionHack(){
-
+        _expandedY = 60;
+        _collapsedY = -70;
     }
 
     public void expand(){
-        _allMessagesTable.clearActions();
-        _allMessagesTable.addAction(sequence(moveTo(_allMessagesTable.getX(), _collapsedY), fadeIn(0),
-                            moveTo(_allMessagesTable.getX(), _expandedY, 0.25f, Interpolation.circleOut)));
-        _expanded = true;
         resetMessageNotificationCount();
+        _allMessagesTable.setVisible(true);
+        _allMessagesTable.clearActions();
+        _allMessagesTable.addAction(sequence(fadeIn(0),moveTo(_allMessagesTable.getX(), _expandedY)));
+        _expanded = true;
         scrollToBottom();
     }
 
-    public void collapsed(){
+    public void collapsed(boolean withAnimation){
         _allMessagesTable.clearActions();
-        _allMessagesTable.addAction(sequence(moveTo(_allMessagesTable.getX(), _collapsedY, 0.35f, Interpolation.circleIn), fadeOut(0)));
+        _allMessagesTable.addAction(sequence(moveTo(_allMessagesTable.getX(), _collapsedY, withAnimation ? 0.35f : 0f, Interpolation.circleIn)));
         _expanded = false;
         _stage.setKeyboardFocus(_stage.getActors().get(0));
         _textFieldNotFocusImage.setVisible(true);
@@ -224,8 +200,10 @@ public class Chat {
     }
 
     public void show(){
-        _visible = true;
-        _game.addInputProcessor(_stage, 0);
+        if(!_visible){
+            _visible = true;
+            _game.addInputProcessor(_stage, 10);
+        }
     }
 
 
@@ -286,7 +264,7 @@ public class Chat {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                collapsed();
+                collapsed(true);
             }
         });
 
@@ -351,65 +329,69 @@ public class Chat {
     }
 
     public void add(final ChatMessage msg){
-        Gdx.app.postRunnable(new Runnable() {
+        Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                    Table chatTable = new Table();
-                    if(!_notFirstMessage){
-                        chatTable.padTop(12);
-                        _notFirstMessage = true;
-                    }
 
-                    ////////////////
-                    //Styles
-                    ///////////////
-                    Label.LabelStyle lblUsernameStyle = new Label.LabelStyle();
-                    lblUsernameStyle.font = _assets.getBlackBold2();
+                if(!_expanded) _allMessagesTable.setVisible(false);
 
-                    Label.LabelStyle lblMessageStyle = new Label.LabelStyle();
-                    lblMessageStyle.font = _assets.getBlackNormal2();
+                Table chatTable = new Table();
+                if (!_notFirstMessage) {
+                    chatTable.padTop(12);
+                    _notFirstMessage = true;
+                }
 
-                    Label.LabelStyle lblInfoStyle = new Label.LabelStyle();
-                    lblInfoStyle.font =  _assets.getBlueNormal2();
+                ////////////////
+                //Styles
+                ///////////////
+                Label.LabelStyle lblUsernameStyle = new Label.LabelStyle();
+                lblUsernameStyle.font = _assets.getBlackBold2();
 
-                    Label.LabelStyle lblImportantStyle = new Label.LabelStyle();
-                    lblImportantStyle.font =  _assets.getRedNormal2();
+                Label.LabelStyle lblMessageStyle = new Label.LabelStyle();
+                lblMessageStyle.font = _assets.getBlackNormal2();
 
-                    if(msg.getFromType() == ChatMessage.FromType.USER){
-                        Profile sender = _room.getProfileByUserId(msg.getSenderId());
-                        if(sender == null) return;
-                        Mascot mascotIcon = new Mascot(sender.getMascotEnum(), _assets);
-                        mascotIcon.resizeTo(20, 20);
-                        chatTable.add(mascotIcon).padRight(5).padLeft(5);
+                Label.LabelStyle lblInfoStyle = new Label.LabelStyle();
+                lblInfoStyle.font = _assets.getBlueNormal2();
 
-                        Label lblUsername = new Label(sender.getDisplayName() + ": ", lblUsernameStyle);
-                        chatTable.add(lblUsername).minHeight(20).padRight(5);
+                Label.LabelStyle lblImportantStyle = new Label.LabelStyle();
+                lblImportantStyle.font = _assets.getRedNormal2();
 
-                        Label lblMessage = new Label(msg.getMessage(), lblMessageStyle);
-                        lblMessage.setWrap(true);
-                        chatTable.add(lblMessage).expandX().fillX();
-                        chatTable.row();
-                    }
-                    else{
-                        Image icon = new Image(msg.getFromType() == ChatMessage.FromType.SYSTEM ? _assets.getInfoIcon() : _assets.getImportantIcon());
-                        Label lblMessage = new Label(msg.getMessage(), msg.getFromType() == ChatMessage.FromType.SYSTEM ? lblInfoStyle : lblImportantStyle);
-                        lblMessage.setWrap(true);
-                        chatTable.add(icon).size(20, 20).padRight(5).padLeft(5);
-                        chatTable.add(lblMessage).colspan(2).expandX().fillX();
-                        chatTable.row();
-                    }
+                if (msg.getFromType() == ChatMessage.FromType.USER) {
+                    Profile sender = _room.getProfileByUserId(msg.getSenderId());
+                    if (sender == null) return;
+                    Mascot mascotIcon = new Mascot(sender.getMascotEnum(), _assets);
+                    mascotIcon.resizeTo(20, 20);
+                    chatTable.add(mascotIcon).padRight(5).padLeft(5);
 
-                    Image separator = new Image(_assets.getGreyLine());
-                    chatTable.add(separator).colspan(3).padTop(5).padBottom(5).expandX().fillX();
+                    Label lblUsername = new Label(sender.getDisplayName(0) + ": ", lblUsernameStyle);
+                    chatTable.add(lblUsername).minHeight(20).padRight(5);
+
+                    Label lblMessage = new Label(msg.getMessage(), lblMessageStyle);
+                    lblMessage.setWrap(true);
+                    chatTable.add(lblMessage).expandX().fillX();
                     chatTable.row();
+                } else {
+                    Image icon = new Image(msg.getFromType() == ChatMessage.FromType.SYSTEM ? _assets.getInfoIcon() : _assets.getImportantIcon());
+                    Label lblMessage = new Label(msg.getMessage(), msg.getFromType() == ChatMessage.FromType.SYSTEM ? lblInfoStyle : lblImportantStyle);
+                    lblMessage.setWrap(true);
+                    chatTable.add(icon).size(20, 20).padRight(5).padLeft(5);
+                    chatTable.add(lblMessage).colspan(2).expandX().fillX();
+                    chatTable.row();
+                }
 
-                    _messagesContentTable.add(chatTable).expandX().fillX();
-                    _messagesContentTable.row();
-                    scrollToBottom();
+                Image separator = new Image(_assets.getGreyLine());
+                chatTable.add(separator).colspan(3).padTop(5).padBottom(5).expandX().fillX();
+                chatTable.row();
 
-                    if(!_expanded){
-                        addMessageNotificationCount();
-                    }
+                _messagesContentTable.add(chatTable).expandX().fillX();
+                _messagesContentTable.row();
+                scrollToBottom();
+
+                if (!_expanded) {
+                    _allMessagesTable.setVisible(false);
+                    collapsed(false);
+                    addMessageNotificationCount();
+                }
 
             }
         });
@@ -422,7 +404,7 @@ public class Chat {
 
         if(!_messageNotificationShown){
             _messageNotificationShown = true;
-            _newMsgCounterTable.addAction(sequence(moveTo(_newMsgCounterTable.getX(), 58, 0.25f) ,forever(sequence(moveBy(0, -2, 0.3f), moveBy(0, 2, 0.3f)))));
+            _newMsgCounterTable.addAction(sequence(moveTo(Positions.getWidth()-60, 58, 0.25f) ,forever(sequence(moveBy(0, -2, 0.3f), moveBy(0, 2, 0.3f)))));
         }
 
     }
@@ -455,8 +437,13 @@ public class Chat {
 
     public void render(float delta){
         if(isVisible()){
-            _stage.draw();
-            _stage.act(delta);
+            try{
+                _stage.act(delta);
+                _stage.draw();
+            }
+            catch (Exception e){
+
+            }
         }
     }
 

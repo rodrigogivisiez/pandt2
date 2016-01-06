@@ -64,6 +64,11 @@ public class Texts {
     public String locatingRoom() { return "Locating room server..."; }
     public String gameClientFailed() { return "Failed to retrieve game client, please try again later."; }
     public String joinRoomFailed() { return "Failed to join room, please try again later."; }
+
+    public String roomIsFull() { return "Room is full, please try again later.";}
+    public String roomStarted() { return "Game has already started.";}
+
+
     public String hostLeft() { return "Room host has left the room, this room will now be dismissed."; }
     public String roomError() { return "Unexpected error occurred, you will be dismissed from this room now."; }
 
@@ -93,7 +98,11 @@ public class Texts {
     public String loadGameFailed() { return "The following users failed to load the game: %s";}
     public String gameStarted() { return "Game started.";}
     public String gameEnded() { return "Game ended.";}
+    public String waitingHost() { return "Waiting For Host";}
 
+    public String waitAllUsersReady() { return "Please wait for all users to get ready(Green) before start.";}
+
+    public String confirmAbandon() { return "Are you sure you want to admit defeat and run away like a rat??"; }
 
     //push notifications part
     public String PUSHGameInvitationsTitle() { return "P&T Game Invitations"; }
@@ -103,4 +112,15 @@ public class Texts {
     public String PUSHRoomUpdateContent() { return "Current players %s / %s";}
     public String PUSHRoomUpdateGameReadyTitle() { return "Game is ready to start";}
     public String PUSHRoomUpdateGameStartedTitle() { return "Game started!";}
+
+
+
+    public String getSpecialText(String name){
+        if(name.equals("PTTEXT_ABANDON")){
+            return confirmAbandon();
+        }
+        return null;
+    }
+
+
 }

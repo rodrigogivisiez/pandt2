@@ -198,7 +198,7 @@ public class MockGamingKit {
 
         @Override
         public void onInitUDPDone(byte b) {
-            //todo error
+
         }
 
 

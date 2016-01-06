@@ -84,6 +84,12 @@ public class FirebaseDB implements IDatabase {
             @Override
             public void onCallback(final ArrayList<GameHistory> obj, Status st) {
                 if(st == Status.SUCCESS){
+
+                    if(obj.size() == 0){
+                        listener.onCallback(obj, Status.SUCCESS);
+                        return;
+                    }
+
                     Collections.reverse(obj);
                     final int[] count = {0};
                     for(final GameHistory history : obj){
@@ -150,14 +156,30 @@ public class FirebaseDB implements IDatabase {
     }
 
     @Override
+    public void monitorProfileByUserId(String userId, DatabaseListener<Profile> listener) {
+        getSingleDataMonitor(getTable(_tableUsers).child(userId), listener);
+    }
+
+    @Override
     public void getProfileByUserId(String userId, DatabaseListener<Profile> listener) {
         getSingleData(getTable(_tableUsers).child(userId), listener);
     }
 
     @Override
-    public void getProfileByFacebookUserId(String facebookUserId, DatabaseListener<Profile> listener) {
+    public void getProfileByFacebookUserId(String facebookUserId, final DatabaseListener<Profile> listener) {
         Query queryRef = getTable(_tableUsers).orderByChild("facebookUserId").equalTo(facebookUserId);
-        getSingleData(queryRef, listener);
+        DatabaseListener<ArrayList<Profile>> intermediate = new DatabaseListener<ArrayList<Profile>>(Profile.class) {
+            @Override
+            public void onCallback(ArrayList<Profile> obj, Status st) {
+                if(st == Status.SUCCESS && obj.size() >= 1){
+                    listener.onCallback(obj.get(0), Status.SUCCESS);
+                }
+                else{
+                    listener.onCallback(null, Status.FAILED);
+                }
+            }
+        };
+        getData(queryRef, intermediate);
     }
 
     @Override

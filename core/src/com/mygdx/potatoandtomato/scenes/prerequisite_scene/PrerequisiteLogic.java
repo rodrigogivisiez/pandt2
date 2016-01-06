@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
+import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.JoinRoomListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
@@ -73,7 +74,7 @@ public class PrerequisiteLogic extends LogicAbstract {
 
             @Override
             public void onJoinRoomFailed() {
-                joinRoomFailed();
+                joinRoomFailed(0);
             }
         });
         _services.getGamingKit().createAndJoinRoom();
@@ -81,22 +82,54 @@ public class PrerequisiteLogic extends LogicAbstract {
 
     public void joinRoom(){
         _scene.changeMessage(_texts.locatingRoom());
-        _services.getGamingKit().addListener(new JoinRoomListener() {
-            @Override
-            public void onRoomJoined(String roomId) {
-                joinRoomSuccess();
-            }
 
+        _services.getDatabase().getRoomById(_joiningRoom.getId(), new DatabaseListener<Room>(Room.class) {
             @Override
-            public void onJoinRoomFailed() {
-                joinRoomFailed();
+            public void onCallback(Room obj, Status st) {
+                if(st == Status.SUCCESS){
+
+                    if(obj.getRoomUsersCount() >= Integer.valueOf(obj.getGame().getMaxPlayers())){
+                        joinRoomFailed(1);
+                        return;
+                    }
+
+                    if(!obj.isOpen()){
+                        joinRoomFailed(2);
+                        return;
+                    }
+
+                    _joiningRoom = obj;
+
+                    _services.getGamingKit().addListener(new JoinRoomListener() {
+                        @Override
+                        public void onRoomJoined(String roomId) {
+                            joinRoomSuccess();
+                        }
+
+                        @Override
+                        public void onJoinRoomFailed() {
+                            joinRoomFailed(0);
+                        }
+                    });
+                    _services.getGamingKit().joinRoom(_joiningRoom.getRoomId());
+                }
+                else{
+                    joinRoomFailed(0);
+                }
             }
         });
-        _services.getGamingKit().joinRoom(_joiningRoom.getRoomId());
     }
 
-    public void joinRoomFailed(){
-        _scene.failedMessage(_texts.joinRoomFailed());
+    public void joinRoomFailed(int reason){
+        if(reason == 0){    //general msg
+            _scene.failedMessage(_texts.joinRoomFailed());
+        }
+       else if(reason == 1){    //full room
+            _scene.failedMessage(_texts.roomIsFull());
+        }
+        else if(reason == 2){    //room is not open
+            _scene.failedMessage(_texts.roomStarted());
+        }
     }
 
     public void createRoomSuccess(String roomId){

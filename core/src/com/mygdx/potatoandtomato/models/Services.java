@@ -4,6 +4,7 @@ import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.helpers.controls.Chat;
+import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.helpers.services.*;
 
 /**
@@ -22,10 +23,11 @@ public class Services {
     Chat _chat;
     Socials _socials;
     GCMSender _gcmSender;
+    Confirm _confirm;
 
     public Services(Assets assets, Texts texts, Preferences preferences,
                     Profile profile, IDatabase database, Shaders shaders, GamingKit gamingKit, IDownloader downloader,
-                    Chat chat, Socials socials, GCMSender gcmSender) {
+                    Chat chat, Socials socials, GCMSender gcmSender, Confirm confirm) {
         _texts = texts;
         _assets = assets;
         _preferences = preferences;
@@ -37,6 +39,15 @@ public class Services {
         _chat = chat;
         _socials = socials;
         _gcmSender = gcmSender;
+        _confirm = confirm;
+    }
+
+    public Confirm getConfirm() {
+        return _confirm;
+    }
+
+    public void setConfirm(Confirm _confirm) {
+        this._confirm = _confirm;
     }
 
     public Texts getTexts() {

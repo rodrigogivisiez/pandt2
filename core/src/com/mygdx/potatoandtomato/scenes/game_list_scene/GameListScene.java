@@ -109,7 +109,7 @@ public class GameListScene extends SceneAbstract {
         Profile profile = _services.getProfile();
         _userMascot = new Mascot(profile.getMascotEnum(), _assets);
         _userMascot.resizeTo(50, 45);
-        _usernameLabel = new Label(profile.getDisplayName(), new Label.LabelStyle(_assets.getWhiteNormal3GrayS(), Color.WHITE));
+        _usernameLabel = new Label(profile.getDisplayName(15), new Label.LabelStyle(_assets.getWhiteNormal3GrayS(), Color.WHITE));
 
 
         _settingsTable = new Table();
@@ -153,7 +153,7 @@ public class GameListScene extends SceneAbstract {
         contentLabelStyle.font = _assets.getWhiteNormal2GrayS();
         Label gameNameLabel = new Label(room.getGame().getName(), contentLabelStyle);
         gameNameLabel.setWrap(true);
-        Label hostNameLabel = new Label(room.getHost().getDisplayName(), contentLabelStyle);
+        Label hostNameLabel = new Label(room.getHost().getDisplayName(15), contentLabelStyle);
         hostNameLabel.setWrap(true);
         Label playersCountLabel = new Label(String.format("%s / %s", room.getRoomUsersCount(), room.getGame().getMaxPlayers()), contentLabelStyle);
         playersCountLabel.setName("playerCount");

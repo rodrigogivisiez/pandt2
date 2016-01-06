@@ -80,7 +80,7 @@ public class GameListLogic extends LogicAbstract {
     @Override
     public void onShow() {
         super.onShow();
-        _scene.setUsername(_services.getProfile().getDisplayName());
+        _scene.setUsername(_services.getProfile().getDisplayName(15));
     }
 
     public void roomDataChanged(final Room room){

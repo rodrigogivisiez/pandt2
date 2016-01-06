@@ -24,6 +24,7 @@ public class GameCoordinator {
     private IPTGame game;
     private SpriteBatch spriteBatch;
     private String userId;
+    private IGameSandBox gameSandBox;
 
     private ArrayList<String> _subscribedIds;
     private Array<InputProcessor> _processors;
@@ -32,7 +33,8 @@ public class GameCoordinator {
     public GameCoordinator(String jarPath, String assetsPath,
                            String basePath, ArrayList<Team> teams,
                            float gameWidth, float gameHeight,
-                           IPTGame game, SpriteBatch batch, boolean meIsHost, String userId) {
+                           IPTGame game, SpriteBatch batch, boolean meIsHost,
+                           String userId, IGameSandBox gameSandBox) {
         this.jarPath = jarPath;
         this.assetsPath = assetsPath;
         this.basePath = basePath;
@@ -43,11 +45,20 @@ public class GameCoordinator {
         this.spriteBatch = batch;
         this.meIsHost = meIsHost;
         this.userId = userId;
+        this.gameSandBox = gameSandBox;
 
         _subscribedIds = new ArrayList<String>();
         _processors = new Array<InputProcessor>();
         _inGameUpdateListeners = new ArrayList<InGameUpdateListener>();
         subscribeListeners();
+    }
+
+    public IGameSandBox getGameSandBox() {
+        return gameSandBox;
+    }
+
+    public void setGameSandBox(IGameSandBox gameSandBox) {
+        this.gameSandBox = gameSandBox;
     }
 
     public boolean getMeIsHost() {
@@ -134,7 +145,22 @@ public class GameCoordinator {
         for(InputProcessor p : _processors){
             getGame().removeInputProcessor(p);
         }
+
         Broadcaster.getInstance().broadcast(BroadcastEvent.GAME_END);
+    }
+
+    public void abandon(){
+        getGameSandBox().useConfirm("PTTEXT_ABANDON", new Runnable() {
+            @Override
+            public void run() {     //yes
+                endGame();
+            }
+        }, new Runnable() {
+            @Override
+            public void run() {     //no
+
+            }
+        });
     }
 
     public void addInputProcessor(InputProcessor processor){

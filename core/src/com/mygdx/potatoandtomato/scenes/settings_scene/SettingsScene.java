@@ -25,7 +25,6 @@ public class SettingsScene extends SceneAbstract {
 
     TextField _displayNameTextField;
     BtnColor _facebookBtn;
-    Confirm _facebookConfirm;
 
     public SettingsScene(Services services, PTScreen screen) {
         super(services, screen);
@@ -34,9 +33,6 @@ public class SettingsScene extends SceneAbstract {
     @Override
     public void populateRoot() {
         new TopBar(_root, _texts.settingsTitle(), false, _assets, _screen);
-
-        _facebookConfirm = new Confirm(_root, _assets, _services.getSocials().isFacebookLogon() ? _texts.confirmLogoutFacebook() : _texts.confirmLoginFacebook(),
-                                    Confirm.Type.YESNO);
 
         Table settingsTable = new Table();
         settingsTable.setBackground(new NinePatchDrawable(_assets.getIrregularBg()));
@@ -53,7 +49,7 @@ public class SettingsScene extends SceneAbstract {
         textFieldStyle.font = _assets.getBlackNormal3();
         textFieldStyle.fontColor = Color.BLACK;
         textFieldStyle.cursor = new TextureRegionDrawable(_assets.getTextCursor());
-        _displayNameTextField = new TextField(_services.getProfile().getDisplayName(), textFieldStyle);
+        _displayNameTextField = new TextField(_services.getProfile().getDisplayName(15), textFieldStyle);
         displayNameFieldTable.add(_displayNameTextField).expand().fill().pad(10);
 
         ///////////////////////////
@@ -79,10 +75,6 @@ public class SettingsScene extends SceneAbstract {
         _root.add(settingsTable);
     }
 
-    public void showFacebookRequestFailed(){
-        new Confirm(_root, _assets, _texts.facebookLoginFailed(), Confirm.Type.YES).show();
-    }
-
     public TextField getDisplayNameTextField() {
         return _displayNameTextField;
     }
@@ -91,7 +83,4 @@ public class SettingsScene extends SceneAbstract {
         return _facebookBtn;
     }
 
-    public Confirm getFacebookConfirm() {
-        return _facebookConfirm;
-    }
 }

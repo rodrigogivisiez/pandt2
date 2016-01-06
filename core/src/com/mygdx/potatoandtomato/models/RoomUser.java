@@ -7,6 +7,7 @@ public class RoomUser {
 
     Profile profile;
     Integer slotIndex;
+    boolean ready;
 
     public Profile getProfile() {
         return profile;
@@ -22,5 +23,13 @@ public class RoomUser {
 
     public void setSlotIndex(Integer slotIndex) {
         this.slotIndex = slotIndex;
+    }
+
+    public boolean getReady() {
+        return ready;
+    }
+
+    public void setReady(boolean isReady) {
+        this.ready = isReady;
     }
 }

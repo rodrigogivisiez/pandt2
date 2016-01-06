@@ -10,5 +10,6 @@ public class UpdateRoomMatesCode {
     public final static int USER_IS_READY = 2;
     public final static int ASK_FOR_USER_READY = 3;
     public final static int IN_GAME_UPDATE = 4;
+    public final static int UPDATE_USER_READY = 5;
 
 }

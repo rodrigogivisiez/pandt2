@@ -1,11 +1,13 @@
 package com.mygdx.potatoandtomato.scenes.game_sandbox_scene;
 
 import com.mygdx.potatoandtomato.PTScreen;
+import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.*;
@@ -17,7 +19,7 @@ import java.util.ArrayList;
 /**
  * Created by SiongLeng on 26/12/2015.
  */
-public class GameSandboxLogic extends LogicAbstract {
+public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
 
     GameSandboxScene _scene;
     Room _room;
@@ -44,6 +46,9 @@ public class GameSandboxLogic extends LogicAbstract {
             }
         });
 
+        _services.getProfile().setUserPlayingState(new UserPlayingState(_room.getId(), true));
+        _services.getDatabase().updateProfile(_services.getProfile());
+
         _services.getDatabase().monitorRoomById(_room.getId(), new DatabaseListener<Room>(Room.class) {
             @Override
             public void onCallback(Room obj, Status st) {
@@ -51,15 +56,6 @@ public class GameSandboxLogic extends LogicAbstract {
                 if(leftUsers.size() > 0){
                     if(!_gameStarted){
                         failLoad(leftUsers);
-                    }
-                    else{
-                        //show msg waiting for user to connect back?
-                        _coordinator.getGameEntrance().getCurrentScreen().setPause(true);
-                    }
-                }
-                else{
-                    if(_gameStarted){
-                        _coordinator.getGameEntrance().getCurrentScreen().setPause(false);
                     }
                 }
             }
@@ -95,7 +91,7 @@ public class GameSandboxLogic extends LogicAbstract {
         Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_GAME_REQUEST, new GameCoordinator(_room.getGame().getFullLocalJarPath(),
                 _room.getGame().getLocalAssetsPath(), _room.getGame().getBasePath(), _room.convertRoomUsersToTeams(_services.getProfile()),
                 Positions.getWidth(), Positions.getHeight(), _screen.getGame(), _screen.getGame().getSpriteBatch(),
-                _room.getHost().equals(_services.getProfile()), _services.getProfile().getUserId()));
+                _room.getHost().equals(_services.getProfile()), _services.getProfile().getUserId(), this));
 
 
         Threadings.delay(10000, new Runnable() {
@@ -130,10 +126,41 @@ public class GameSandboxLogic extends LogicAbstract {
     }
 
     public void gameStart(){
+
+        for(RoomUser user : _room.getRoomUsers().values()){
+            _services.getDatabase().monitorProfileByUserId(user.getProfile().getUserId(), new DatabaseListener<Profile>(Profile.class) {
+                @Override
+                public void onCallback(Profile obj, Status st) {
+                    if (st == Status.SUCCESS && obj != null) {
+                        final UserPlayingState userPlayingState = obj.getUserPlayingState();
+                        if (userPlayingState != null) {
+                            if (userPlayingState.getRoomId().equals(_room.getId())) {
+                                Threadings.postRunnable(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (userPlayingState.getAbandon()) {
+                                            //user abandoned
+                                        } else if (userPlayingState.getConnected()) {
+                                            //user connected back
+                                        } else if (!userPlayingState.getConnected()) {
+                                            //user disconnected
+                                        }
+                                    }
+                                });
+                            }
+                        }
+
+                    }
+                }
+            });
+        }
+
         _gameStarted = true;
-        _services.getChat().show();
         _screen.switchToGameScreen(_coordinator.getGameEntrance().getCurrentScreen());
         _coordinator.getGameEntrance().init();
+        _scene.clearRoot();
+        _services.getChat().show();
+
     }
 
     public void failLoad(ArrayList<RoomUser> roomUsers){
@@ -153,7 +180,7 @@ public class GameSandboxLogic extends LogicAbstract {
     public void failLoad(ArrayList<Profile> profiles, boolean dummy){
         ArrayList<String> names = new ArrayList<String>();
         for(Profile profile : profiles){
-            names.add(profile.getDisplayName());
+            names.add(profile.getDisplayName(0));
         }
         if(names.size() > 0){
             _services.getChat().add(new ChatMessage(String.format(_texts.loadGameFailed(), StringUtils.join(names, ", ")),
@@ -194,10 +221,10 @@ public class GameSandboxLogic extends LogicAbstract {
     }
 
     public void exitSandbox(){
-        _services.getChat().add(new ChatMessage(_texts.gameEnded(),
-                                 ChatMessage.FromType.SYSTEM, null));
         _screen.switchToPTScreen();
         _screen.back();
+        _services.getChat().add(new ChatMessage(_texts.gameEnded(),
+                ChatMessage.FromType.SYSTEM, null));
     }
 
     @Override
@@ -206,5 +233,31 @@ public class GameSandboxLogic extends LogicAbstract {
     }
 
 
+    @Override
+    public void useConfirm(String msg, final Runnable yesRunnable, final Runnable noRunnable) {
+        Confirm.Type type = Confirm.Type.YESNO;
+        if(noRunnable == null){
+            type = Confirm.Type.YES;
+        }
+        String text = _texts.getSpecialText(msg);
+        if(text == null) text = msg;
 
+        _confirm.show(text, type, new ConfirmResultListener() {
+            @Override
+            public void onResult(Result result) {
+                if(result == Result.YES){
+                    if(yesRunnable != null) yesRunnable.run();
+                }
+                else {
+                    if(noRunnable != null) noRunnable.run();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        if(_coordinator.getGameEntrance() != null) _coordinator.getGameEntrance().dispose();
+    }
 }

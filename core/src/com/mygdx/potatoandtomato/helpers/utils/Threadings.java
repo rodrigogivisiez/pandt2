@@ -7,6 +7,12 @@ import com.badlogic.gdx.Gdx;
  */
 public class Threadings {
 
+    private static long mainTreadId;
+
+    public static void setMainTreadId(){
+        mainTreadId = Thread.currentThread().getId();
+    }
+
     public static Thread runInBackground(Runnable toRun){
         Thread t = new Thread(toRun);
         t.start();
@@ -42,7 +48,17 @@ public class Threadings {
         }
     }
 
-
+    public static void postRunnable(Runnable runnable){
+        if(Thread.currentThread().getId() != mainTreadId){
+            Gdx.app.postRunnable(runnable);
+        }
+        else{
+            runnable.run();
+        }
     }
+
+
+
+}
 
 

@@ -19,4 +19,9 @@ public class GameSandboxScene extends SceneAbstract {
         Image loadingImage = new Image(_assets.getLoading());
         _root.add(loadingImage).expand().fill();
     }
+
+    public void clearRoot(){
+        _root.clear();
+    }
+
 }

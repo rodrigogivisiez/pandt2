@@ -20,6 +20,8 @@ public interface IDatabase {
 
      void loginAnonymous(DatabaseListener<Profile> listener);
 
+     void monitorProfileByUserId(String userId, DatabaseListener<Profile> listener);
+
      void getProfileByUserId(String userId, DatabaseListener<Profile> listener);
 
      void getProfileByFacebookUserId(String facebookUserId, DatabaseListener<Profile> listener);

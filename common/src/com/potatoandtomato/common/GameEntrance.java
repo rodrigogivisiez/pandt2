@@ -31,4 +31,6 @@ public abstract class GameEntrance {
 
     public abstract void init();
 
+    public abstract void dispose();
+
 }

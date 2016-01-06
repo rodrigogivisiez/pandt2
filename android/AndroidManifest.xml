@@ -8,7 +8,6 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
@@ -32,6 +31,7 @@
             android:name="com.mygdx.potatoandtomato.android.AndroidLauncher"
             android:label="@string/app_name" 
             android:screenOrientation="portrait"
+            android:launchMode="singleTask"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -55,6 +55,9 @@
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <category android:name="com.mygdx.potatoandtomato.android" />
             </intent-filter>
+        </receiver>
+
+        <receiver android:name=".HandleNotificationBroadcastReceiver" >
         </receiver>
 
         <service

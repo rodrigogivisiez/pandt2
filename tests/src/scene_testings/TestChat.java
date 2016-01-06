@@ -10,6 +10,7 @@ import com.mygdx.potatoandtomato.helpers.controls.Chat;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.models.Profile;
+import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.scenes.create_game_scene.CreateGameLogic;
 import com.mygdx.potatoandtomato.scenes.create_game_scene.CreateGameScene;
@@ -57,9 +58,12 @@ public class TestChat extends TestAbstract{
 
         _chat.setMessage("testing");
         _chat.sendMessage();
+        Room _room = MockModel.mockRoom("1");
+        _chat.setRoom(_room);
+        _chat.add(new ChatMessage("test", ChatMessage.FromType.USER, MockModel.mockProfile().getUserId()));
 
         while (waiting[0]){
-            Threadings.sleep(100);
+            Threadings.sleep(1000);
         }
 
         Assert.assertEquals(1, Broadcaster.getInstance().getEventCallbacksSize(BroadcastEvent.CHAT_NEW_MESSAGE) - 1);

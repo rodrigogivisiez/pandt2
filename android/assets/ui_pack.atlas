@@ -88,7 +88,7 @@ close_button
   index: -1
 collapsed_icon
   rotate: false
-  xy: 1188, 336
+  xy: 2027, 185
   size: 17, 18
   orig: 17, 18
   offset: 0, 0
@@ -116,7 +116,7 @@ cursor_black
   index: -1
 download_icon_small
   rotate: false
-  xy: 1207, 334
+  xy: 2024, 690
   size: 15, 20
   orig: 15, 20
   offset: 0, 0
@@ -201,6 +201,15 @@ green_rounded
   orig: 30, 26
   offset: 0, 0
   index: -1
+green_rounded_bg
+  rotate: false
+  xy: 2024, 712
+  size: 22, 26
+  split: 10, 11, 11, 13
+  pad: 0, 0, 0, 0
+  orig: 22, 26
+  offset: 0, 0
+  index: -1
 grey_line
   rotate: false
   xy: 397, 44
@@ -275,7 +284,7 @@ noimage
   index: -1
 orange_line
   rotate: false
-  xy: 397, 41
+  xy: 2041, 709
   size: 5, 1
   orig: 5, 1
   offset: 0, 0
@@ -334,7 +343,7 @@ progress_bar_bg
   index: -1
 progress_bar_inner
   rotate: false
-  xy: 1530, 460
+  xy: 2027, 163
   size: 15, 20
   split: 7, 7, 9, 10
   pad: 0, 0, 0, 0
@@ -505,5 +514,14 @@ yellow_gradient_box
   split: 2, 2, 1, 3
   pad: 0, 0, 0, 0
   orig: 61, 53
+  offset: 0, 0
+  index: -1
+yellow_rounded_bg
+  rotate: false
+  xy: 2027, 205
+  size: 19, 22
+  split: 8, 10, 9, 10
+  pad: 0, 0, 0, 0
+  orig: 19, 22
   offset: 0, 0
   index: -1

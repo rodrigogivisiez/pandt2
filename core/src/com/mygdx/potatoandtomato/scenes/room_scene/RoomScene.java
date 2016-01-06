@@ -1,6 +1,5 @@
 package com.mygdx.potatoandtomato.scenes.room_scene;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -32,24 +31,10 @@ public class RoomScene extends SceneAbstract {
     Array<Table> _teamTables;
     Table _teamsRoot, _detailsRoot;
     HashMap<String, Table> _playerMaps;
-    Confirm _hostLeftConfirm, _errorConfirm, _messageConfirm;
-    Confirm _leaveRoomConfirm;
     Room _room;
 
     public Array<Table> getTeamTables() {
         return _teamTables;
-    }
-
-    public Confirm getHostLeftConfirm() {
-        return _hostLeftConfirm;
-    }
-
-    public Confirm getErrorConfirm() {
-        return _errorConfirm;
-    }
-
-    public Confirm getLeaveRoomConfirm() {
-        return _leaveRoomConfirm;
     }
 
     public BtnEggDownward getStartButton() {
@@ -71,11 +56,6 @@ public class RoomScene extends SceneAbstract {
         new TopBar(_root, _texts.roomTitle(), false, _assets, _screen);
         _root.align(Align.top);
 
-        _hostLeftConfirm = new Confirm(_root, _assets, _texts.hostLeft(), Confirm.Type.YES);
-        _errorConfirm = new Confirm(_root, _assets, _texts.roomError(), Confirm.Type.YES);
-        _messageConfirm = new Confirm(_root, _assets, "", Confirm.Type.YES);
-        _leaveRoomConfirm = new Confirm(_root, _assets, "", Confirm.Type.YESNO);
-
         _teamTables = new Array();
         _playerMaps = new HashMap();
 
@@ -83,7 +63,7 @@ public class RoomScene extends SceneAbstract {
 
         _startButton = new BtnEggDownward(_assets, _services.getShaders());
         _startButton.setEnabled(false);
-        _startButton.setText(_texts.startGame());
+        _startButton.setText(_texts.waitingHost());
 
         _inviteButton = new BtnEggDownward(_assets);
         _inviteButton.setText(_texts.invite());
@@ -106,9 +86,13 @@ public class RoomScene extends SceneAbstract {
         scrollableTable.row();
         scrollableTable.add(_detailsRoot).expandX().fillX().padTop(20).padLeft(10).padRight(10).padBottom(200);
 
-        _root.add(buttonTable).height(100).right().expandX().padTop(-10);
+        _root.add(buttonTable).height(110).right().expandX().padTop(-20);
         _root.row();
         _root.add(scrollPane).expandX().fillX().padTop(10);
+    }
+
+    public void setStartButtonText(String text){
+        _startButton.setText(text);
     }
 
     public void populateGameDetails(Game game){
@@ -141,7 +125,7 @@ public class RoomScene extends SceneAbstract {
         _subRoot.row();
         _subRoot.add(descriptionTable).left().expandX().fillX().padTop(5);
 
-        _detailsRoot.add(gameImg).size(120).padLeft(20).padRight(10).top();
+        _detailsRoot.add(gameImg).size(120).padLeft(20).padRight(10).top().padBottom(20);
         _detailsRoot.add(_subRoot).expandX().fillX().top().padRight(20).padBottom(20);
     }
 
@@ -171,10 +155,12 @@ public class RoomScene extends SceneAbstract {
                 Table playerTable;
                 if(occupiedUser != null){
                     playerTable = getPlayerTable(occupiedUser.getProfile().getMascotEnum(),
-                                                occupiedUser.getProfile().getDisplayName(), occupiedUser.getProfile().getUserId());
+                                                occupiedUser.getProfile().getDisplayName(15),
+                                                occupiedUser.getProfile().getUserId(),
+                                                occupiedUser.getReady());
                 }
                 else{
-                    playerTable = getPlayerTable(MascotEnum.UNKNOWN, null, null);
+                    playerTable = getPlayerTable(MascotEnum.UNKNOWN, null, null, false);
                 }
 
                 teamTable.add(playerTable).expandX().fillX().padLeft(10).padRight(10).padTop(10);
@@ -209,22 +195,6 @@ public class RoomScene extends SceneAbstract {
                                 Integer.valueOf(room.getGame().getTeamMaxPlayers()), room.getRoomUsers());
     }
 
-    public void hostLeft(){
-        _hostLeftConfirm.show();
-    }
-
-    public void showError(){
-        _errorConfirm.show();
-    }
-
-    public void showMessage(String msg){
-        _messageConfirm.show(msg);
-    }
-
-    public void showLeaveRoomConfirm(boolean isHost){
-        _leaveRoomConfirm.show(isHost ? _texts.confirmHostLeaveRoom(): _texts.confirmLeaveRoom());
-    }
-
     public void updateDownloadPercentage(String userId, int percent){
         if(_playerMaps.containsKey(userId)){
             Table playerTable = _playerMaps.get(userId);
@@ -256,9 +226,13 @@ public class RoomScene extends SceneAbstract {
         return detailsTitleTable;
     }
 
-    private Table getPlayerTable(MascotEnum mascotEnum, String name, String userId){
+    private Table getPlayerTable(MascotEnum mascotEnum, String name, String userId, boolean isReady){
 
-        if(_playerMaps.containsKey(userId) && userId != null) return _playerMaps.get(userId);
+        if(_playerMaps.containsKey(userId) && userId != null){
+            Table playerTable = _playerMaps.get(userId);
+            playerTable.setBackground(new NinePatchDrawable(isReady ?  _assets.getGreenRoundedBg() : _assets.getYellowRoundedBg()));
+            return _playerMaps.get(userId);
+        }
 
         BitmapFont font = _assets.getBlackBold2();
         if(name == null){
@@ -268,7 +242,13 @@ public class RoomScene extends SceneAbstract {
 
         Table playerTable = new Table();
         playerTable.padTop(5).padBottom(5).padLeft(7).padRight(7);
-        playerTable.setBackground(new NinePatchDrawable(_assets.getWhiteRoundedBg()));
+        if(userId != null){
+            playerTable.setBackground(new NinePatchDrawable(isReady ?  _assets.getGreenRoundedBg() : _assets.getYellowRoundedBg()));
+        }
+        else{
+            playerTable.setBackground(new NinePatchDrawable(_assets.getWhiteRoundedBg()));
+        }
+
 
         Mascot mascotImage = new Mascot(mascotEnum, _assets);
         mascotImage.resizeTo(20, 20);

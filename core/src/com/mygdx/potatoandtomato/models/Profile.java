@@ -2,7 +2,6 @@ package com.mygdx.potatoandtomato.models;
 
 import com.mygdx.potatoandtomato.enums.MascotEnum;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
-import com.shaded.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * Created by SiongLeng on 9/12/2015.
@@ -15,29 +14,39 @@ public class Profile {
     String gameName;
     String gcmId;
     MascotEnum mascotEnum;
+    UserPlayingState userPlayingState;
 
     public Profile() {
     }
 
     @JsonIgnore
-    public String getDisplayName(){
+    public String getDisplayName(int limit){
+        if(limit == 0) limit = 9999;
         String returnName;
-        if(gameName == null) returnName = facebookName;
+        if(gameName == null || gameName.trim().equals("")) returnName = facebookName;
         else returnName = gameName;
 
-        if(returnName == null){
+        if(returnName == null || returnName.trim().equals("")){
             if(mascotEnum == MascotEnum.POTATO){
-                returnName = "A Potato and join thewh";
+                returnName = "Just a Potato";
             }
             else{
-                returnName = "A Tomato and join thewh";
+                returnName = "Just a Tomato";
             }
         }
-        if(returnName.length() > 15) {
-            returnName = returnName.substring(0, 12);
-            returnName+="...";
+        if(returnName.length() > limit) {
+            returnName = returnName.substring(0, limit);
+            returnName+="..";
         }
         return returnName;
+    }
+
+    public UserPlayingState getUserPlayingState() {
+        return userPlayingState;
+    }
+
+    public void setUserPlayingState(UserPlayingState userPlayingState) {
+        this.userPlayingState = userPlayingState;
     }
 
     public String getUserId() {

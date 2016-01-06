@@ -37,7 +37,6 @@ public class TestSettings extends TestAbstract {
         SettingsLogic logic = new SettingsLogic(mock(PTScreen.class), T_Services.mockServices());
         logic.onShow();
         SettingsScene scene = (SettingsScene) logic.getScene();
-        scene.showFacebookRequestFailed();
         Assert.assertEquals(true, ((Table) scene.getRoot()).hasChildren());
     }
 
@@ -51,7 +50,7 @@ public class TestSettings extends TestAbstract {
 
         scene.getDisplayNameTextField().setText("testing");
         logic.onHide();
-        Assert.assertEquals("testing", services.getProfile().getDisplayName());
+        Assert.assertEquals("testing", services.getProfile().getDisplayName(15));
         verify(database, times(1)).updateProfile(any(Profile.class));
     }
 

@@ -1,6 +1,7 @@
 package com.potatoandtomato.games;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
@@ -21,22 +22,24 @@ public class SampleScreen extends GameScreen {
     private Image _image;
     private Image _image2;
     private Stage _stage;
+    Texture _texture1, _texture2;
 
     public SampleScreen(GameCoordinator gameCoordinator) {
         super(gameCoordinator);
 
         _stage = new Stage(new StretchViewport(getCoordinator().getGameWidth(), getCoordinator().getGameHeight()));
-        _image = new Image(new Texture(getCoordinator().getFileH("test.png")));
-        _image2 = new Image(new Texture(getCoordinator().getFileH("test2.png")));
 
-
+        _texture1 = new Texture(getCoordinator().getFileH("test.png"));
+        _texture2 = new Texture(getCoordinator().getFileH("test2.png"));
+        _image = new Image(_texture1);
+        _image2 = new Image(_texture2);
 
 
         _image.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                getCoordinator().sendRoomUpdate("1");
+                getCoordinator().endGame();
             }
         });
 
@@ -81,6 +84,9 @@ public class SampleScreen extends GameScreen {
 
     @Override
     public void render(float delta) {
+        if (Gdx.input.isKeyPressed(Input.Keys.BACK)){
+            getCoordinator().abandon();
+        }
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.gl.glClearColor(253/255, 221/255, 221/255, 1f);
         _stage.act();
@@ -109,6 +115,8 @@ public class SampleScreen extends GameScreen {
 
     @Override
     public void dispose() {
-
+        _stage.dispose();
+        _texture2.dispose();
+        _texture1.dispose();
     }
 }

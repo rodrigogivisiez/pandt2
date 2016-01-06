@@ -10,14 +10,15 @@ import com.potatoandtomato.common.MockGame;
 
 public class SampleGame extends MockGame {
 
-	public SampleGame() {
-		super();
+
+	public SampleGame(boolean isHost) {
+		super(isHost);
 	}
 
 	@Override
 	public void create() {
 		super.create();
-		initiateMockGamingKit(1, 0);
+		initiateMockGamingKit(1, 1);
 	}
 
 	@Override

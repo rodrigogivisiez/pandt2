@@ -8,6 +8,8 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.mygdx.potatoandtomato.helpers.utils.JsonObj;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
+import com.mygdx.potatoandtomato.helpers.utils.Threadings;
+import com.mygdx.potatoandtomato.models.FacebookProfile;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Broadcaster;
@@ -15,6 +17,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -60,35 +63,41 @@ public class FacebookConnector {
     }
 
     private void getAllFriends(){
-        GraphRequestBatch batch = new GraphRequestBatch(
+        final GraphRequestBatch batch = new GraphRequestBatch(
                 GraphRequest.newMyFriendsRequest(
                         _accessToken,
                         new GraphRequest.GraphJSONArrayCallback() {
                             @Override
-                            public void onCompleted(JSONArray objects, GraphResponse response) {
-                                Broadcaster.getInstance().broadcast(BroadcastEvent.FACEBOOK_GET_FRIENDS_RESPONSE, null, BroadcastListener.Status.SUCCESS);
-
-                                System.out.println("getFriendsData onCompleted : response " + response);
-                                try {
-                                    JSONObject jsonObject = response.getJSONObject();
-                                    System.out.println("getFriendsData onCompleted : jsonObject " + jsonObject);
-                                    JSONObject summary = jsonObject.getJSONObject("summary");
-                                    System.out.println("getFriendsData onCompleted : summary total_count - " + summary.getString("total_count"));
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                            public void onCompleted(JSONArray jsonArray, GraphResponse response) {
+                                ArrayList<FacebookProfile> friendsList = new ArrayList<>();
+                                for(int i=0; i<jsonArray.length();i++){
+                                    JSONObject c= null;
+                                    try {
+                                        c = jsonArray.getJSONObject(i);
+                                        FacebookProfile profile = new FacebookProfile(c.getString("name"), c.getString("id"));
+                                        friendsList.add(profile);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
+
+                                Broadcaster.getInstance().broadcast(BroadcastEvent.FACEBOOK_GET_FRIENDS_RESPONSE,
+                                        friendsList, BroadcastListener.Status.SUCCESS);
                             }
+
+
                         })
 
         );
 
-        batch.addCallback(new GraphRequestBatch.Callback() {
+        Threadings.runInBackground(new Runnable() {
             @Override
-            public void onBatchCompleted(GraphRequestBatch graphRequests) {
-                // Application code for when the spriteBatch finishes
+            public void run() {
+                batch.executeAndWait();
             }
         });
-        batch.executeAsync();
+
+
     }
 
     private void registerCallBack(){
@@ -133,7 +142,17 @@ public class FacebookConnector {
 
                     @Override
                     public void onError(FacebookException error) {
-                        Broadcaster.getInstance().broadcast(BroadcastEvent.LOGIN_FACEBOOK_CALLBACK, null, BroadcastListener.Status.FAILED);
+
+                        if (error instanceof FacebookAuthorizationException) {
+                            if (AccessToken.getCurrentAccessToken() != null) {
+                                LoginManager.getInstance().logOut();
+                                Broadcaster.getInstance().broadcast(BroadcastEvent.LOGOUT_FACEBOOK_REQUEST);
+                            }
+                        }
+                        else{
+                            Broadcaster.getInstance().broadcast(BroadcastEvent.LOGIN_FACEBOOK_CALLBACK, null, BroadcastListener.Status.FAILED);
+                        }
+
                     }
                 });
 

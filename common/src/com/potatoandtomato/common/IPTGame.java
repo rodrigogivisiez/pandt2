@@ -7,7 +7,10 @@ import com.badlogic.gdx.InputProcessor;
  */
 public interface IPTGame {
 
-    void addInputProcessor(InputProcessor processor, int index);
+    void addInputProcessor(InputProcessor processor, int priority);
     void addInputProcessor(InputProcessor processor);
     void removeInputProcessor(InputProcessor processor);
+
+
+
 }

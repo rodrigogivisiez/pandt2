@@ -1,9 +1,11 @@
 package scene_testings;
 
+import abstracts.MockDB;
 import abstracts.MockGamingKit;
 import abstracts.TestAbstract;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.mygdx.potatoandtomato.PTScreen;
+import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Room;
@@ -69,7 +71,16 @@ public class TestPrerequisite extends TestAbstract {
         Services _services = T_Services.mockServices();
         _services.setGamingKit(new MockGamingKit());
 
-        Room room = MockModel.mockRoom("99");
+        final Room room = MockModel.mockRoom("99");
+        room.setOpen(true);
+
+        MockDB mockDB = new MockDB(){
+            @Override
+            public void getRoomById(String id, DatabaseListener<Room> listener) {
+                listener.onCallback(room, DatabaseListener.Status.SUCCESS);
+            }
+        };
+        _services.setDatabase(mockDB);
 
         PTScreen screen = mock(PTScreen.class);
         PrerequisiteLogic logic = Mockito.spy(new PrerequisiteLogic(screen, _services, _game, false, room));
@@ -79,6 +90,57 @@ public class TestPrerequisite extends TestAbstract {
         verify(logic, times(0)).createRoomSuccess(anyString());
         verify(screen, times(1)).toScene(eq(SceneEnum.ROOM), any(Room.class));
     }
+
+
+    @Test
+    public void testJoinNotOpenedRoom(){
+        Services _services = T_Services.mockServices();
+        _services.setGamingKit(new MockGamingKit());
+
+        final Room room = MockModel.mockRoom("99");
+        room.setOpen(false);
+
+        MockDB mockDB = new MockDB(){
+            @Override
+            public void getRoomById(String id, DatabaseListener<Room> listener) {
+                listener.onCallback(room, DatabaseListener.Status.SUCCESS);
+            }
+        };
+        _services.setDatabase(mockDB);
+
+        PTScreen screen = mock(PTScreen.class);
+        PrerequisiteLogic logic = Mockito.spy(new PrerequisiteLogic(screen, _services, _game, false, room));
+        logic.onInit();
+        T_Threadings.sleep(100);
+        verify(logic, times(1)).joinRoomFailed(eq(2));
+        verify(screen, times(0)).toScene(eq(SceneEnum.ROOM), any(Room.class));
+    }
+
+    @Test
+    public void testJoinFullRoom(){
+        Services _services = T_Services.mockServices();
+        _services.setGamingKit(new MockGamingKit());
+
+        final Room room = MockModel.mockRoom("99");
+        room.getGame().setMaxPlayers("1");
+        room.setOpen(true);
+
+        MockDB mockDB = new MockDB(){
+            @Override
+            public void getRoomById(String id, DatabaseListener<Room> listener) {
+                listener.onCallback(room, DatabaseListener.Status.SUCCESS);
+            }
+        };
+        _services.setDatabase(mockDB);
+
+        PTScreen screen = mock(PTScreen.class);
+        PrerequisiteLogic logic = Mockito.spy(new PrerequisiteLogic(screen, _services, _game, false, room));
+        logic.onInit();
+        T_Threadings.sleep(100);
+        verify(logic, times(1)).joinRoomFailed(eq(1));
+        verify(screen, times(0)).toScene(eq(SceneEnum.ROOM), any(Room.class));
+    }
+
 
 
 }

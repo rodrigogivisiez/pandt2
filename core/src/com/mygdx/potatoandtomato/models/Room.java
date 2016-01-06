@@ -126,6 +126,16 @@ public class Room {
     }
 
     @JsonIgnore
+    public RoomUser getRoomUserByUserId(String userId){
+        for(RoomUser user : this.getRoomUsers().values()){
+            if(user.getProfile().getUserId().equals(userId)){
+                return user;
+            }
+        }
+        return null;
+    }
+
+    @JsonIgnore
     public boolean addInvitedUser(Profile user){
         if(getInvitedUserByUserId(user.getUserId()) == null){
             getInvitedUsers().add(user);
@@ -135,7 +145,7 @@ public class Room {
     }
 
     @JsonIgnore
-    public void addRoomUser(Profile user){
+    public void addRoomUser(Profile user, boolean isReady){
 
         if(roomUsers == null) roomUsers = new HashMap();
 
@@ -146,6 +156,7 @@ public class Room {
                 RoomUser r = new RoomUser();
                 r.setProfile(user);
                 r.setSlotIndex(i);
+                r.setReady(isReady);
                 roomUsers.put(user.getUserId(), r);
                 break;
             }
@@ -153,10 +164,11 @@ public class Room {
     }
 
     @JsonIgnore
-    public void addRoomUser(Profile user, int index){
+    public void addRoomUser(Profile user, int index, boolean isReady){
         RoomUser r = new RoomUser();
         r.setProfile(user);
         r.setSlotIndex(index);
+        r.setReady(isReady);
         roomUsers.put(user.getUserId(), r);
     }
 
@@ -199,7 +211,7 @@ public class Room {
         if(userSlotIndex != -1 && userSlotIndex >= startIndex && userSlotIndex + 1 < ((toTeam + 1) * Integer.valueOf(this.getGame().getTeamMaxPlayers()))){
             if(getRoomUserBySlotIndex(userSlotIndex+1) == null){
                 changed = true;
-                addRoomUser(user, userSlotIndex + 1);
+                addRoomUser(user, userSlotIndex + 1, true);
             }
         }
 
@@ -207,7 +219,7 @@ public class Room {
             for(int i = 0; i< Integer.valueOf(this.getGame().getTeamMaxPlayers()); i++){
                 if(getRoomUserBySlotIndex(startIndex) == null){
                     changed = true;
-                    addRoomUser(user, startIndex);
+                    addRoomUser(user, startIndex, true);
                     break;
                 }
                 startIndex++;
@@ -285,12 +297,31 @@ public class Room {
         }
         for (RoomUser user : this.getRoomUsers().values()) {
             int index = convertSlotIndexToTeamNumber(user.getSlotIndex());
-            teams.get(index).addPlayer(new Player(user.getProfile().getDisplayName(), user.getProfile().getUserId(),
+            teams.get(index).addPlayer(new Player(user.getProfile().getDisplayName(15), user.getProfile().getUserId(),
                     user.getProfile().getMascotEnum() == MascotEnum.POTATO ? 0 : 1, user.getProfile().equals(selfProfile)));
         }
         return teams;
     }
 
+
+    @JsonIgnore
+    public int getNotYetReadyCount(){
+        int count = 0;
+        for(RoomUser roomUser : this.roomUsers.values()){
+            if(!roomUser.getReady()) count++;
+        }
+        return count;
+    }
+
+    @JsonIgnore
+    public void setRoomUserReady(String userId, boolean isReady){
+        for(RoomUser roomUser : this.roomUsers.values()){
+            if(roomUser.getProfile().getUserId().equals(userId)){
+                roomUser.setReady(isReady);
+                break;
+            }
+        }
+    }
 
 
 }

@@ -4,12 +4,16 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 
+import android.support.annotation.Keep;
 import android.view.View;
+import android.view.WindowManager;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.firebase.client.Firebase;
 import com.mygdx.potatoandtomato.PTGame;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
+import com.mygdx.potatoandtomato.helpers.utils.SafeThread;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Broadcaster;
@@ -19,28 +23,24 @@ public class AndroidLauncher extends AndroidApplication {
 
 	FacebookConnector _facebookConnector;
 	GCMClientManager _gcm;
-	private View _rootView;
-	private int _screenHeight;
-	int width, _height;
 	private static boolean _isVisible;
 	private AndroidLauncher _this;
 	private ImageLoader _imageLoader;
+	private KeepAlive _keepAlive;
+	private LayoutChangedFix _layoutChangedFix;
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		_this = this;
 		_imageLoader = new ImageLoader(_this);
+		_keepAlive = new KeepAlive(_this);
 		_facebookConnector = new FacebookConnector(this);
 		_gcm = new GCMClientManager(this);
 		Firebase.setAndroidContext(this);
-		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-		_rootView = this.getWindow().getDecorView().getRootView();
-		Rect rect = new Rect();
-		_rootView.getWindowVisibleDisplayFrame(rect);
-		_screenHeight = rect.height();
-		addLayoutChangedListener();
+		_layoutChangedFix = new LayoutChangedFix(this.getWindow().getDecorView().getRootView());
 
+		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 		initialize(new PTGame(), config);
 
 		Broadcaster.getInstance().subscribe(BroadcastEvent.DESTROY_ROOM, new BroadcastListener() {
@@ -53,28 +53,6 @@ public class AndroidLauncher extends AndroidApplication {
 		subscribeLoadGameRequest();
 
 
-	}
-
-
-	private void addLayoutChangedListener(){
-		_rootView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-
-			@Override
-			public void onLayoutChange(View v, int left, int top, int right,
-									   int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-
-				Rect rect = new Rect();
-				_rootView.getWindowVisibleDisplayFrame(rect);
-
-				if (!(width == rect.width() && _height == rect.height())) {
-					width = rect.width();
-					_height = rect.height();
-					Broadcaster.getInstance().broadcast(BroadcastEvent.SCREEN_LAYOUT_CHANGED,
-							Positions.screenYToGdxY(_screenHeight - _height, _screenHeight));
-
-				}
-			}
-		});
 	}
 
 	public void subscribeLoadGameRequest(){
@@ -118,6 +96,21 @@ public class AndroidLauncher extends AndroidApplication {
 	protected void onDestroy() {
 		super.onDestroy();
 		GcmMessageHandler.destroyRoom(_this);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+	}
+
+	@Override
+	protected void onRestart() {
+		super.onRestart();
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
 	}
 
 	public static boolean isVisible() {

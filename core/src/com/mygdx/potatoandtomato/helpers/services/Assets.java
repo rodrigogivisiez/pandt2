@@ -37,6 +37,7 @@ public class Assets {
             pointLeftIcon, closeButton, downloadIconSmall, messageNotification, orangeLine, greyLine,
             chatContainer, textCursor, unselectBox, selectBox, whiteLine, expandIcon, collapsedIcon, loading, webImageLoading;
     private NinePatch popupBg, buttonRed, buttonGreen, progressBarInner, progressBarBg, whiteRoundedBg,
+            yellowRoundedBg,  greenRoundedBg,
             blackRoundedBg, chatBox, yellowGradientBox, scrollVerticalHandle, irregularBg, expandTitleBg;
     private BitmapFont blackNormal2, redNormal2, blueNormal2, blackBold2, blackNormal3, orangePizza3,
             whiteBold3GrayS, topBarFont, whitePizza3BlackS, orangePizza2White, whiteNormal3GrayS, whiteNormal2GrayS,
@@ -223,6 +224,8 @@ public class Assets {
         progressBarInner =  _backgroundsPack .createPatch("progress_bar_inner");
         progressBarBg =  _backgroundsPack .createPatch("progress_bar_bg");
         whiteRoundedBg =  _backgroundsPack .createPatch("white_rounded_bg");
+        yellowRoundedBg =  _backgroundsPack .createPatch("yellow_rounded_bg");
+        greenRoundedBg =  _backgroundsPack .createPatch("green_rounded_bg");
         blackRoundedBg =  _backgroundsPack .createPatch("black_rounded_bg");;
         chatBox =  _backgroundsPack .createPatch("chat_box");
         yellowGradientBox =  _backgroundsPack .createPatch("yellow_gradient_box");
@@ -477,6 +480,14 @@ public class Assets {
 
     public NinePatch getProgressBarBg() {
         return progressBarBg;
+    }
+
+    public NinePatch getGreenRoundedBg() {
+        return greenRoundedBg;
+    }
+
+    public NinePatch getYellowRoundedBg() {
+        return yellowRoundedBg;
     }
 
     public NinePatch getWhiteRoundedBg() {

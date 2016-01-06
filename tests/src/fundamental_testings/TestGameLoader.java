@@ -17,6 +17,8 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
+import static org.mockito.Mockito.mock;
+
 /**
  * Created by SiongLeng on 25/12/2015.
  */
@@ -76,7 +78,7 @@ public class TestGameLoader extends TestAbstract{
 
         GameCoordinator gameCoordinator = new GameCoordinator(game.getFullLocalJarPath(),
                                         game.getLocalAssetsPath(), game.getBasePath(), new ArrayList<Team>(), Positions.getWidth(),
-                                        Positions.getHeight(), null, null, true, "123");
+                                        Positions.getHeight(), null, null, true, "123", mock(IGameSandBox.class));
         Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_GAME_REQUEST, gameCoordinator);
 
         while (waiting[0]){

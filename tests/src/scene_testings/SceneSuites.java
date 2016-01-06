@@ -15,7 +15,9 @@ import org.junit.runners.Suite;
         TestRoom.class,
         TestChat.class,
         TestSettings.class,
-        TestInvite.class
+        TestInvite.class,
+        TestConfirm.class,
+        TestGameSandBox.class
 })
 public class SceneSuites {
 }

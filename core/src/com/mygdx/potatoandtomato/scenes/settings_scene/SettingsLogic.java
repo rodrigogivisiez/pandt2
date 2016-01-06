@@ -7,6 +7,7 @@ import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.absintflis.socials.FacebookListener;
+import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.models.Services;
 
 /**
@@ -23,17 +24,16 @@ public class SettingsLogic extends LogicAbstract {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                _scene.getFacebookConfirm().show();
-                _scene.getFacebookConfirm().setListener(new ConfirmResultListener() {
-                    @Override
-                    public void onResult(Result result) {
-                        if(result == Result.YES){
-                            facebookRequest();
-                        }
-                    }
-                });
 
-
+                _confirm.show(_services.getSocials().isFacebookLogon() ? _texts.confirmLogoutFacebook() : _texts.confirmLoginFacebook(),
+                        Confirm.Type.YESNO, new ConfirmResultListener() {
+                            @Override
+                            public void onResult(Result result) {
+                                if(result == Result.YES){
+                                    facebookRequest();
+                                }
+                            }
+                        });
             }
         });
     }
@@ -47,7 +47,7 @@ public class SettingsLogic extends LogicAbstract {
                         _screen.backToBoot();
                     }
                     else{
-                        _scene.showFacebookRequestFailed();
+                        _confirm.show(_texts.facebookLoginFailed(), Confirm.Type.YES, null);
                     }
                 }
             });

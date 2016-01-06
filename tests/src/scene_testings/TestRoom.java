@@ -5,6 +5,7 @@ import abstracts.MockGamingKit;
 import abstracts.TestAbstract;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.firebase.client.annotations.Nullable;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
@@ -102,7 +103,7 @@ public class TestRoom extends TestAbstract {
         Assert.assertEquals(1, logic.startGameCheck(true));
 
         Profile user2 = MockModel.mockProfile("99");
-        _room.addRoomUser(user2);
+        _room.addRoomUser(user2, true);
         _room.changeTeam(1, user2);
         _room.getGame().setTeamMinPlayers("1");
         _room.getGame().setTeamCount("2");
@@ -139,10 +140,10 @@ public class TestRoom extends TestAbstract {
     public void testJoinRoom(){
         _room.getRoomUsers().clear();
 
-        _room.addRoomUser(MockModel.mockProfile("1"));      //0
-        _room.addRoomUser(MockModel.mockProfile("2"));      //1
-        _room.addRoomUser(MockModel.mockProfile("3"), 3);       //3
-        _room.addRoomUser(MockModel.mockProfile("4"));      //2
+        _room.addRoomUser(MockModel.mockProfile("1"), true);      //0
+        _room.addRoomUser(MockModel.mockProfile("2"), true);      //1
+        _room.addRoomUser(MockModel.mockProfile("3"), 3, true);       //3
+        _room.addRoomUser(MockModel.mockProfile("4"), true);      //2
 
         Assert.assertEquals(4, _room.getRoomUsersCount());
         Assert.assertEquals(0, _room.getSlotIndexByUserId(MockModel.mockProfile("1")));
@@ -224,7 +225,7 @@ public class TestRoom extends TestAbstract {
         RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room));
         _room.getRoomUsers().remove("another");
         logic.onInit();
-        _room.addRoomUser(MockModel.mockProfile("another"), 1);
+        _room.addRoomUser(MockModel.mockProfile("another"), 1, true);
 
         logic.hostSendUpdateRoomStatePush();
         verify(gcmSender, times(1)).send(eq(_room.getProfileByUserId("another")), any(PushNotification.class));
@@ -272,7 +273,6 @@ public class TestRoom extends TestAbstract {
         verify(mockKit, times(1)).leaveRoom();
         Assert.assertEquals(true, _room.isOpen());
         Assert.assertEquals(-1, _room.getSlotIndexByUserId(_services.getProfile()));
-
     }
 
 
@@ -280,6 +280,55 @@ public class TestRoom extends TestAbstract {
         _services.getPreferences().put(_room.getGame().getAbbr(), _room.getGame().getVersion());
 
     }
+
+    @Test
+    public void testUserReady(){
+        final Profile profile = MockModel.mockProfile();
+        final boolean[] waiting = {true};
+        GamingKit mockKit = Mockito.spy(new MockGamingKit());
+        _room.setOpen(true);
+        _services.setGamingKit(mockKit);
+        _services.setProfile(MockModel.mockProfile());
+        _room.getRoomUserByUserId(profile.getUserId()).setReady(false);
+        Assert.assertEquals(false, _room.getRoomUserByUserId(profile.getUserId()).getReady());
+
+        RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room));
+        logic.onInit();
+
+        MockDB mockDB = new MockDB(){
+            @Override
+            public void saveRoom(Room room, @Nullable DatabaseListener<String> listener) {
+                waiting[0] = false;
+                Assert.assertEquals(true, room.getRoomUserByUserId(profile.getUserId()).getReady());
+            }
+        };
+        _services.setDatabase(mockDB);
+        logic.onShow();
+
+        while (waiting[0]){
+            Threadings.sleep(100);
+        }
+
+        waiting[0] = true;
+        _room.getRoomUserByUserId("another").setReady(true);
+        Assert.assertEquals(true, _room.getRoomUserByUserId(profile.getUserId()).getReady());
+
+        MockDB mockDB2 = new MockDB(){
+            @Override
+            public void saveRoom(Room room, @Nullable DatabaseListener<String> listener) {
+                waiting[0] = false;
+                Assert.assertEquals(false, room.getRoomUserByUserId(profile.getUserId()).getReady());
+            }
+        };
+        _services.setDatabase(mockDB2);
+        logic.onHide();
+
+        while (waiting[0]){
+            Threadings.sleep(100);
+        }
+
+    }
+
 
 
 }

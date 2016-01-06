@@ -63,8 +63,15 @@ public class BtnEggDownward extends Table {
     }
 
     public void setText(String text){
+        this.clear();
         Label.LabelStyle textLabelStyle = new Label.LabelStyle();
-        textLabelStyle.font = _assets.getWhitePizza3BlackS();
+
+        if(text.length() > 12){
+            textLabelStyle.font = _assets.getWhitePizza2BlackS();
+        }
+        else{
+            textLabelStyle.font = _assets.getWhitePizza3BlackS();
+        }
         _textLabel = new Label(text, textLabelStyle);
         _textLabel.setWrap(true);
         _textLabel.setAlignment(Align.center);
@@ -79,8 +86,8 @@ public class BtnEggDownward extends Table {
 
     public void animate(){
         if(this._enabled){
-            this.setSize(_size.x, _size.y - 40);
             Vector2 originalPosition = new Vector2(this.getX(), this.getY());
+            this.setSize(_size.x, _size.y - 40);
             this.setPosition(originalPosition.x, originalPosition.y + 10);
             float duration = 0.2f;
             this.addAction(parallel(

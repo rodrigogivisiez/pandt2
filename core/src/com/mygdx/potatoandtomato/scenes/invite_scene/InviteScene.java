@@ -152,7 +152,7 @@ public class InviteScene extends SceneAbstract {
         Mascot mascotIcon = new Mascot(profile.getMascotEnum(), _assets);
         mascotIcon.resizeTo(35, 35);
 
-        Label nameLabel = new Label(profile.getDisplayName(), new Label.LabelStyle(_assets.getWhiteBold3GrayS(), Color.WHITE));
+        Label nameLabel = new Label(profile.getDisplayName(30), new Label.LabelStyle(_assets.getWhiteBold3GrayS(), Color.WHITE));
 
         Image selectBoxImage = new Image(_assets.getUnselectBox());
         selectBoxImage.setName("selectbox");

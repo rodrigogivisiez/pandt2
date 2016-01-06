@@ -30,6 +30,11 @@ public class MockDB implements IDatabase {
     }
 
     @Override
+    public void monitorProfileByUserId(String userId, DatabaseListener<Profile> listener) {
+
+    }
+
+    @Override
     public void getProfileByUserId(String userId, DatabaseListener<Profile> listener) {
         Profile p = new Profile();
         p.setUserId(userId);

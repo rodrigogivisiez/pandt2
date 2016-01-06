@@ -35,9 +35,14 @@ public class GcmMessageHandler extends GcmListenerService {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void showNotification(Context context, PushNotification pushNotification){
 
-        Intent intent = new Intent(context, AndroidLauncher.class);
+        //Intent intent = new Intent(context, AndroidLauncher.class);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(context,
+        Intent intent = new Intent(context, HandleNotificationBroadcastReceiver.class);
+
+//        PendingIntent pendingIntent = PendingIntent.getActivity(context,
+//                pushNotification.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
                 pushNotification.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification.Builder builder = new Notification.Builder(context)

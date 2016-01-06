@@ -58,6 +58,7 @@ public class PTScreen implements Screen {
         this._assets = _services.getTextures();
         this._texts = _services.getTexts();
         this._logicStacks = new Stack();
+        init();
     }
 
     public void switchToGameScreen(GameScreen newScreen){
@@ -122,8 +123,8 @@ public class PTScreen implements Screen {
                         if(result == Result.YES){
                             final LogicEnumPair current = _logicStacks.pop();
                             final LogicEnumPair previous = _logicStacks.peek();
-                            previous.getLogic().onShow();
                             current.getLogic().onHide();
+                            previous.getLogic().onShow();
                             current.getLogic().dispose();
                             sceneTransition(previous.getLogic().getScene().getRoot(), current.getLogic().getScene().getRoot(),
                                     previous.getLogic().getScene(), false, new Runnable() {
@@ -143,8 +144,7 @@ public class PTScreen implements Screen {
     }
 
     public void confirmQuitGame(){
-        Confirm confirm = new Confirm((Table) _currentRoot, _assets, _texts.confirmQuit(), Confirm.Type.YESNO);
-        confirm.setListener(new ConfirmResultListener() {
+        _services.getConfirm().show(_texts.confirmQuit(), Confirm.Type.YESNO, new ConfirmResultListener() {
             @Override
             public void onResult(Result result) {
                 if(result == Result.YES){
@@ -153,7 +153,6 @@ public class PTScreen implements Screen {
                 _backRunning = false;
             }
         });
-        confirm.show();
     }
 
     public void backToBoot(){
@@ -228,8 +227,7 @@ public class PTScreen implements Screen {
 
     }
 
-    @Override
-    public void show() {
+    public void init(){
         _camera = new OrthographicCamera(Positions.getWidth(), Positions.getHeight());
         _camera.setToOrtho(false);
         StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight(), _camera);
@@ -283,6 +281,11 @@ public class PTScreen implements Screen {
     }
 
     @Override
+    public void show() {
+
+    }
+
+    @Override
     public void render(float delta) {
         if (Gdx.input.isKeyPressed(Input.Keys.BACK)){
             back();
@@ -295,6 +298,10 @@ public class PTScreen implements Screen {
 
     public PTGame getGame() {
         return _ptGame;
+    }
+
+    public void setGame(PTGame _ptGame) {
+        this._ptGame = _ptGame;
     }
 
     @Override
