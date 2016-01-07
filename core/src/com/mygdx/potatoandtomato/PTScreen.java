@@ -51,6 +51,7 @@ public class PTScreen implements Screen {
     Stack<LogicEnumPair> _logicStacks;
     boolean _backRunning;
     Actor _currentRoot;
+    boolean _isPTScreen;
 
     public PTScreen(PTGame ptGame, Services services) {
         this._ptGame = ptGame;
@@ -58,17 +59,21 @@ public class PTScreen implements Screen {
         this._assets = _services.getTextures();
         this._texts = _services.getTexts();
         this._logicStacks = new Stack();
+        this._isPTScreen = true;
         init();
     }
 
-    public void switchToGameScreen(GameScreen newScreen){
+    public void switchToGameScreen(){
         _ptGame.removeInputProcessor(_stage);
-        _ptGame.setScreen(newScreen);
+        _isPTScreen = false;
     }
 
     public void switchToPTScreen(){
-        _ptGame.addInputProcessor(_stage);
-        _ptGame.setScreen(this);
+        if(!_isPTScreen){
+            _isPTScreen = true;
+            _ptGame.addInputProcessor(_stage);
+            _ptGame.setScreen(this);
+        }
     }
 
     //call this function to change scene
@@ -89,9 +94,9 @@ public class PTScreen implements Screen {
                     sceneTransition(logic.getScene().getRoot(), logicOut.getLogic().getScene().getRoot(), logic.getScene(), true, new Runnable() {
                         @Override
                         public void run() {
+                            logic.onShow();
                             if (!logicOut.getLogic().isSaveToStack()) {
                                 _logicStacks.remove(logicOut);
-                                logic.onShow();
                                 logicOut.getLogic().dispose();
                             }
                         }

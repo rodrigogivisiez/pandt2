@@ -25,6 +25,7 @@ public class Room {
     String id;
 
     ArrayList<Profile> invitedUsers;
+    ArrayList<String> originalRoomUserIds;
 
     @JsonDeserialize(using = IntProfileMapDeserializer.class)
     HashMap<String, RoomUser> roomUsers;
@@ -71,6 +72,17 @@ public class Room {
         this.roomId = roomId;
     }
 
+    public ArrayList<String> getOriginalRoomUserIds() {
+        if(originalRoomUserIds == null){
+            originalRoomUserIds = new ArrayList<>();
+        }
+        return originalRoomUserIds;
+    }
+
+    public void setOriginalRoomUserIds(ArrayList<String> originalRoomUserIds) {
+        this.originalRoomUserIds = originalRoomUserIds;
+    }
+
     public HashMap<String, RoomUser> getRoomUsers() {
         if(roomUsers == null){
             roomUsers = new HashMap();
@@ -107,6 +119,15 @@ public class Room {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    @JsonIgnore
+    public void storeRoomUsersToOriginalRoomUserIds(){
+        ArrayList<String> result = new ArrayList<>();
+        for(RoomUser roomUser : getRoomUsers().values()){
+            result.add(roomUser.getProfile().getUserId());
+        }
+        setOriginalRoomUserIds(result);
     }
 
     @JsonIgnore
@@ -297,8 +318,10 @@ public class Room {
         }
         for (RoomUser user : this.getRoomUsers().values()) {
             int index = convertSlotIndexToTeamNumber(user.getSlotIndex());
+            boolean isHost = false;
+            if(user.getProfile().equals(this.getHost())) isHost = true;
             teams.get(index).addPlayer(new Player(user.getProfile().getDisplayName(15), user.getProfile().getUserId(),
-                    user.getProfile().getMascotEnum() == MascotEnum.POTATO ? 0 : 1, user.getProfile().equals(selfProfile)));
+                    user.getProfile().getMascotEnum() == MascotEnum.POTATO ? 0 : 1, user.getProfile().equals(selfProfile), isHost));
         }
         return teams;
     }
@@ -321,6 +344,17 @@ public class Room {
                 break;
             }
         }
+    }
+
+    @JsonIgnore
+    public boolean canContinue(String myUserId, int myRoundCounter, String myRoomDBId){
+        if(getRoomUsers().size() > 0 && isPlaying() && !isOpen() && getRoundCounter() == myRoundCounter && getId().equals(myRoomDBId)){
+            if(getRoomUsers().size() == 1 && getRoomUserByUserId(myUserId) != null){
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 
 

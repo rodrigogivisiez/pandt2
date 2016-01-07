@@ -12,6 +12,7 @@ import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.models.Game;
+import com.mygdx.potatoandtomato.scenes.prerequisite_scene.PrerequisiteLogic;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -37,7 +38,7 @@ public class CreateGameLogic extends LogicAbstract {
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 if(_selectedGame != null){
-                    _screen.toScene(SceneEnum.PREREQUISITE, _selectedGame, true);
+                    _screen.toScene(SceneEnum.PREREQUISITE, _selectedGame, PrerequisiteLogic.JoinType.CREATING);
                 }
             }
         });

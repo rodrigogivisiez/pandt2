@@ -45,6 +45,10 @@ public class RoomScene extends SceneAbstract {
         return _inviteButton;
     }
 
+    public Table getTeamsRoot() {
+        return _teamsRoot;
+    }
+
     public RoomScene(Services services, PTScreen screen, Room room) {
         super(services, screen);
         this._room = room;

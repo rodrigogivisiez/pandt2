@@ -19,12 +19,12 @@ public class GameCoordinator {
     private String basePath;
     private GameEntrance gameEntrance;
     private ArrayList<Team> teams;
-    private boolean meIsHost;
     private float gameWidth, gameHeight;
     private IPTGame game;
     private SpriteBatch spriteBatch;
     private String userId;
     private IGameSandBox gameSandBox;
+    private UserStateListener userStateListener;
 
     private ArrayList<String> _subscribedIds;
     private Array<InputProcessor> _processors;
@@ -33,7 +33,7 @@ public class GameCoordinator {
     public GameCoordinator(String jarPath, String assetsPath,
                            String basePath, ArrayList<Team> teams,
                            float gameWidth, float gameHeight,
-                           IPTGame game, SpriteBatch batch, boolean meIsHost,
+                           IPTGame game, SpriteBatch batch,
                            String userId, IGameSandBox gameSandBox) {
         this.jarPath = jarPath;
         this.assetsPath = assetsPath;
@@ -43,7 +43,6 @@ public class GameCoordinator {
         this.gameHeight = gameHeight;
         this.game = game;
         this.spriteBatch = batch;
-        this.meIsHost = meIsHost;
         this.userId = userId;
         this.gameSandBox = gameSandBox;
 
@@ -59,10 +58,6 @@ public class GameCoordinator {
 
     public void setGameSandBox(IGameSandBox gameSandBox) {
         this.gameSandBox = gameSandBox;
-    }
-
-    public boolean getMeIsHost() {
-        return meIsHost;
     }
 
     public String getUserId() {
@@ -153,6 +148,7 @@ public class GameCoordinator {
         getGameSandBox().useConfirm("PTTEXT_ABANDON", new Runnable() {
             @Override
             public void run() {     //yes
+                getGameSandBox().userAbandoned();
                 endGame();
             }
         }, new Runnable() {
@@ -161,6 +157,21 @@ public class GameCoordinator {
 
             }
         });
+    }
+
+    public void userAbandon(String userId){
+        if(this.userStateListener != null) userStateListener.userAbandoned(userId);
+    }
+
+    public void userConnectionChanged(String userId, boolean connected){
+        if(this.userStateListener != null) {
+            if(connected){
+                userStateListener.userConnected(userId);
+            }
+            else{
+                userStateListener.userDisconnected(userId);
+            }
+        }
     }
 
     public void addInputProcessor(InputProcessor processor){
@@ -198,6 +209,10 @@ public class GameCoordinator {
 
     public AssetManager getAssetManagerInstance(){
         return new AssetManager(new MyFileResolver(this));
+    }
+
+    public void setUserStateListener(UserStateListener userStateListener){
+        this.userStateListener = userStateListener;
     }
 
 

@@ -8,6 +8,7 @@ import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
+import com.mygdx.potatoandtomato.helpers.controls.Notification;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.*;
@@ -26,12 +27,16 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     ArrayList<String> _readyUserIds;
     boolean _gameStarted;
     GameCoordinator _coordinator;
+    Notification _notification;
+    boolean _isContinue;
 
     public GameSandboxLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
+        _notification = services.getNotification();
         _scene = new GameSandboxScene(_services, _screen);
         _readyUserIds = new ArrayList<String>();
         _room = (Room) objs[0];
+        _isContinue = (Boolean) objs[1];
     }
 
     @Override
@@ -39,17 +44,14 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         super.onInit();
         _services.getChat().hide();
 
-        _services.getGamingKit().addListener(new UpdateRoomMatesListener() {
+        _services.getGamingKit().addListener(getClassTag(), new UpdateRoomMatesListener() {
             @Override
             public void onUpdateRoomMatesReceived(int code, String msg, String senderId) {
                 updateReceived(code, msg, senderId);
             }
         });
 
-        _services.getProfile().setUserPlayingState(new UserPlayingState(_room.getId(), true));
-        _services.getDatabase().updateProfile(_services.getProfile());
-
-        _services.getDatabase().monitorRoomById(_room.getId(), new DatabaseListener<Room>(Room.class) {
+        _services.getDatabase().monitorRoomById(_room.getId(), getClassTag(), new DatabaseListener<Room>(Room.class) {
             @Override
             public void onCallback(Room obj, Status st) {
                 ArrayList<RoomUser> leftUsers = _room.getJustLeftUsers(obj);
@@ -67,7 +69,13 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             public void onCallback(GameCoordinator obj, Status st) {
                 if (st == Status.SUCCESS) {
                     _coordinator = obj;
-                    _services.getGamingKit().updateRoomMates(UpdateRoomMatesCode.USER_IS_READY, "");
+                    if(!_isContinue){
+                        _services.getGamingKit().updateRoomMates(UpdateRoomMatesCode.USER_IS_READY, "");
+                    }
+                    else{
+                        gameStart();
+                    }
+
                 } else {
                     failLoad(_services.getProfile());
                 }
@@ -91,27 +99,31 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_GAME_REQUEST, new GameCoordinator(_room.getGame().getFullLocalJarPath(),
                 _room.getGame().getLocalAssetsPath(), _room.getGame().getBasePath(), _room.convertRoomUsersToTeams(_services.getProfile()),
                 Positions.getWidth(), Positions.getHeight(), _screen.getGame(), _screen.getGame().getSpriteBatch(),
-                _room.getHost().equals(_services.getProfile()), _services.getProfile().getUserId(), this));
+                _services.getProfile().getUserId(), this));
 
 
-        Threadings.delay(10000, new Runnable() {
-            @Override
-            public void run() {
-                if(_readyUserIds.size() < _room.getRoomUsersCount()){
-                    askForUserIsReady();
+        if(!_isContinue){
+            Threadings.delay(10000, new Runnable() {
+                @Override
+                public void run() {
+                    if(_readyUserIds.size() < _room.getRoomUsersCount()){
+                        askForUserIsReady();
+                    }
                 }
-            }
-        });
+            });
 
-        //timeout
-        Threadings.delay(60 * 1000, new Runnable() {
-            @Override
-            public void run() {
-                if(_readyUserIds.size() < _room.getRoomUsersCount()){
-                    failLoad(getNotReadyUsers(), false);
+            //timeout
+            Threadings.delay(60 * 1000, new Runnable() {
+                @Override
+                public void run() {
+                    if(_readyUserIds.size() < _room.getRoomUsersCount()){
+                        failLoad(getNotReadyUsers(), false);
+                    }
                 }
-            }
-        });
+            });
+        }
+
+
 
     }
 
@@ -127,40 +139,56 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
 
     public void gameStart(){
 
-        for(RoomUser user : _room.getRoomUsers().values()){
-            _services.getDatabase().monitorProfileByUserId(user.getProfile().getUserId(), new DatabaseListener<Profile>(Profile.class) {
-                @Override
-                public void onCallback(Profile obj, Status st) {
-                    if (st == Status.SUCCESS && obj != null) {
-                        final UserPlayingState userPlayingState = obj.getUserPlayingState();
-                        if (userPlayingState != null) {
-                            if (userPlayingState.getRoomId().equals(_room.getId())) {
-                                Threadings.postRunnable(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (userPlayingState.getAbandon()) {
-                                            //user abandoned
-                                        } else if (userPlayingState.getConnected()) {
-                                            //user connected back
-                                        } else if (!userPlayingState.getConnected()) {
-                                            //user disconnected
-                                        }
+        _services.getProfile().setUserPlayingState(new UserPlayingState(_room.getId(), true, _room.getRoundCounter()));
+        _services.getDatabase().updateProfile(_services.getProfile(), new DatabaseListener() {
+            @Override
+            public void onCallback(Object obj, Status st) {
+                for(String userId : _room.getOriginalRoomUserIds()){
+                    _services.getDatabase().monitorProfileByUserId(userId, getClassTag(), new DatabaseListener<Profile>(Profile.class) {
+                        @Override
+                        public void onCallback(final Profile obj, Status st) {
+                            if (st == Status.SUCCESS && obj != null) {
+                                final UserPlayingState userPlayingState = obj.getUserPlayingState();
+                                if (userPlayingState != null) {
+                                    if (userPlayingState.getRoomId().equals(_room.getId())) {
+                                        Threadings.postRunnable(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                if (userPlayingState.getAbandon()) {
+                                                    //user abandoned
+                                                    _notification.important(String.format(_texts.notificationAbandon(), obj.getDisplayName(15)));
+                                                    _coordinator.userAbandon(obj.getUserId());
+                                                } else if (userPlayingState.getConnected()) {
+                                                    //user connected back
+                                                    _notification.info(String.format(_texts.notificationConnected(), obj.getDisplayName(15)));
+                                                    _coordinator.userConnectionChanged(obj.getUserId(), true);
+                                                } else if (!userPlayingState.getConnected()) {
+                                                    //user disconnected
+                                                    _notification.important(String.format(_texts.notificationDisconnected(), obj.getDisplayName(15)));
+                                                    _coordinator.userConnectionChanged(obj.getUserId(), false);
+                                                }
+                                            }
+                                        });
                                     }
-                                });
+                                }
+
                             }
                         }
-
-                    }
+                    });
                 }
-            });
-        }
 
-        _gameStarted = true;
-        _screen.switchToGameScreen(_coordinator.getGameEntrance().getCurrentScreen());
-        _coordinator.getGameEntrance().init();
-        _scene.clearRoot();
-        _services.getChat().show();
-
+                _gameStarted = true;
+                _screen.switchToGameScreen();
+                if(!_isContinue){
+                    _coordinator.getGameEntrance().init();
+                }
+                else{
+                    _coordinator.getGameEntrance().onContinue();
+                }
+                _scene.clearRoot();
+                _services.getChat().show();
+            }
+        });
     }
 
     public void failLoad(ArrayList<RoomUser> roomUsers){
@@ -256,8 +284,18 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     }
 
     @Override
+    public void userAbandoned() {
+        UserPlayingState userPlayingState = _services.getProfile().getUserPlayingState();
+        userPlayingState.setAbandon(true);
+        userPlayingState.setConnected(false);
+        _services.getProfile().setUserPlayingState(userPlayingState);
+        _services.getDatabase().updateProfile(_services.getProfile(), null);
+    }
+
+    @Override
     public void dispose() {
         super.dispose();
+        _screen.switchToPTScreen();
         if(_coordinator.getGameEntrance() != null) _coordinator.getGameEntrance().dispose();
     }
 }

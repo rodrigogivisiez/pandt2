@@ -21,8 +21,9 @@ public class SampleScreen extends GameScreen {
 
     private Image _image;
     private Image _image2;
+    private Image _surrenderImg;
     private Stage _stage;
-    Texture _texture1, _texture2;
+    Texture _texture1, _texture2, _surrenderTexture;
 
     public SampleScreen(GameCoordinator gameCoordinator) {
         super(gameCoordinator);
@@ -31,8 +32,10 @@ public class SampleScreen extends GameScreen {
 
         _texture1 = new Texture(getCoordinator().getFileH("test.png"));
         _texture2 = new Texture(getCoordinator().getFileH("test2.png"));
+        _surrenderTexture = new Texture(getCoordinator().getFileH("surrender.png"));
         _image = new Image(_texture1);
         _image2 = new Image(_texture2);
+        _surrenderImg = new Image(_surrenderTexture);
 
 
         _image.addListener(new ClickListener(){
@@ -48,6 +51,14 @@ public class SampleScreen extends GameScreen {
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 getCoordinator().sendRoomUpdate("2");
+            }
+        });
+
+        _surrenderImg.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                getCoordinator().abandon();
             }
         });
 
@@ -78,6 +89,8 @@ public class SampleScreen extends GameScreen {
         table.add(_image).expandX().fillX().height(300);
         table.add(_image2).expandX().fillX().height(300);
         switchImage("1");
+        table.row();
+        table.add(_surrenderImg).colspan(2).padTop(30);
         _stage.addActor(table);
         getCoordinator().addInputProcessor(_stage);
     }
@@ -118,5 +131,6 @@ public class SampleScreen extends GameScreen {
         _stage.dispose();
         _texture2.dispose();
         _texture1.dispose();
+        _surrenderTexture.dispose();
     }
 }

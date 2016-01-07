@@ -29,7 +29,7 @@ public class GameListScene extends SceneAbstract {
     HashMap<String, Table> _gameRowsTableMap;
     ScrollPane _gameListScrollPane;
     Table _scrollTable;
-    BtnEggDownward _newGameButton, _joinGameButton;
+    BtnEggDownward _newGameButton, _joinGameButton, _continueGameButton;
     Table _userProfileTable;
     Mascot _userMascot;
     Label _usernameLabel;
@@ -52,6 +52,10 @@ public class GameListScene extends SceneAbstract {
 
     public BtnEggDownward getJoinGameButton() {
         return _joinGameButton;
+    }
+
+    public BtnEggDownward getContinueGameButton() {
+        return _continueGameButton;
     }
 
     public Button getSettingsButton() {
@@ -100,6 +104,11 @@ public class GameListScene extends SceneAbstract {
         _joinGameButton = new BtnEggDownward(_assets, _services.getShaders());
         _joinGameButton.setText(_texts.joinGame());
         _joinGameButton.setEnabled(false);
+
+        _continueGameButton = new BtnEggDownward(_assets, _services.getShaders());
+        _continueGameButton.setText(_texts.continueLastGame());
+        _continueGameButton.setEnabled(false);
+
         //Buttons END
 
         //User profile START
@@ -138,12 +147,13 @@ public class GameListScene extends SceneAbstract {
         _gameListTable.row();
         _gameListTable.add(_gameListScrollPane).expand().fill().padBottom(15);
 
-        _root.add(_gameListTable).padLeft(15).padRight(15).padTop(15).expandX().fillX().height(400).colspan(2);
+        _root.add(_gameListTable).padLeft(15).padRight(15).padTop(15).expandX().fillX().height(400).colspan(3);
         _root.row();
         _root.add(_newGameButton).padTop(-15).uniformX();
+        _root.add(_continueGameButton).padTop(-15).uniformX();
         _root.add(_joinGameButton).padTop(-15).uniformX();
         _root.row();
-        _root.add(_userProfileTable).colspan(2).expand().fill().padTop(10).padLeft(30).padRight(30);
+        _root.add(_userProfileTable).colspan(3).expand().fill().padTop(10).padLeft(30).padRight(30);
     }
 
     public Actor addNewRoomRow(Room room){

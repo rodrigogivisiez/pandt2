@@ -8,13 +8,23 @@ public class UserPlayingState {
     public String roomId;
     public boolean abandon;
     public boolean connected;
+    public int roundCounter;
 
     public UserPlayingState() {
     }
 
-    public UserPlayingState(String roomId, boolean connected) {
+    public UserPlayingState(String roomId, boolean connected, int roundCounter) {
         this.roomId = roomId;
         this.connected = connected;
+        this.roundCounter = roundCounter;
+    }
+
+    public int getRoundCounter() {
+        return roundCounter;
+    }
+
+    public void setRoundCounter(int roundCounter) {
+        this.roundCounter = roundCounter;
     }
 
     public String getRoomId() {

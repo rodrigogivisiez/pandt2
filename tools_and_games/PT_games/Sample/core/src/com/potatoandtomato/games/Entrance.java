@@ -16,12 +16,17 @@ public class Entrance extends GameEntrance {
         super(gameCoordinator);
 
         _screen = new SampleScreen(gameCoordinator);
-        setCurrentScreen(_screen);
+
     }
 
     @Override
     public void init() {
+        getGameCoordinator().getGame().setScreen(_screen);
+    }
 
+    @Override
+    public void onContinue() {
+        getGameCoordinator().getGame().setScreen(_screen);
     }
 
     @Override

@@ -4,6 +4,7 @@ import abstracts.MockGamingKit;
 import abstracts.TestAbstract;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.mygdx.potatoandtomato.PTScreen;
+import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.enums.MascotEnum;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
@@ -100,7 +101,7 @@ public class TestBoot extends TestAbstract {
                 }
                 return null;
             }
-        }).when(mockDatabase).updateProfile(any(Profile.class));
+        }).when(mockDatabase).updateProfile(any(Profile.class), any(DatabaseListener.class));
         _services.getPreferences().put(Terms.FACEBOOK_USERID, "999");
         _services.getPreferences().put(Terms.FACEBOOK_USERNAME, "andy");
         BootLogic logic = new BootLogic(mock(PTScreen.class), _services);

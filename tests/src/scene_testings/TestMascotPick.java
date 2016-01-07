@@ -3,6 +3,7 @@ package scene_testings;
 import abstracts.TestAbstract;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.mygdx.potatoandtomato.PTScreen;
+import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.enums.MascotEnum;
 import com.mygdx.potatoandtomato.models.Profile;
@@ -47,7 +48,7 @@ public class TestMascotPick extends TestAbstract {
                 if(((Profile) arguments[0]).getMascotEnum() == MascotEnum.TOMATO) called[0] = true;
                 return null;
             }
-        }).when(mockServices.getDatabase()).updateProfile(any(Profile.class));
+        }).when(mockServices.getDatabase()).updateProfile(any(Profile.class), any(DatabaseListener.class));
 
 
         MascotPickLogic logic = new MascotPickLogic(mock(PTScreen.class), mockServices);

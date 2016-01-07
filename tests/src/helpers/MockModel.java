@@ -45,7 +45,7 @@ public class MockModel {
         r.setGame(mockGame());
         r.setHost(mockProfile());
         r.setOpen(false);
-        r.setPlaying(true);
+        r.setPlaying(false);
         r.setRoomId("12");
         r.setRoundCounter(0);
         if(id != null) r.setId(id);

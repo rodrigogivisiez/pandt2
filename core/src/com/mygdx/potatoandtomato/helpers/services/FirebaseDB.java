@@ -5,7 +5,6 @@ import com.firebase.client.*;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
-import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.mygdx.potatoandtomato.models.*;
 
 import java.util.*;
@@ -42,10 +41,10 @@ public class FirebaseDB implements IDatabase {
 
 
     @Override
-    public void clearListenersByClass(Class clss) {
+    public void clearListenersByClassTag(String classTag) {
         ArrayList<Integer> toRemove = new ArrayList();
         for(int i = 0; i< _listenerModels.size; i++){
-            if(_listenerModels.get(i).getClassName().equals(clss.getName())){
+            if(_listenerModels.get(i).getClassName().equals(classTag)){
                 toRemove.add(i);
             }
         }
@@ -156,8 +155,8 @@ public class FirebaseDB implements IDatabase {
     }
 
     @Override
-    public void monitorProfileByUserId(String userId, DatabaseListener<Profile> listener) {
-        getSingleDataMonitor(getTable(_tableUsers).child(userId), listener);
+    public void monitorProfileByUserId(String userId, String classTag, DatabaseListener<Profile> listener) {
+        getSingleDataMonitor(getTable(_tableUsers).child(userId), classTag, listener);
     }
 
     @Override
@@ -183,8 +182,8 @@ public class FirebaseDB implements IDatabase {
     }
 
     @Override
-    public void updateProfile(Profile profile) {
-        getTable(_tableUsers).child(profile.getUserId()).setValue(profile);
+    public void updateProfile(Profile profile, DatabaseListener listener) {
+        save(getTable(_tableUsers).child(profile.getUserId()), profile, listener);
     }
 
     @Override
@@ -218,10 +217,10 @@ public class FirebaseDB implements IDatabase {
             room.setId(ref.getKey());
             save(ref, room, listener);
             ref.child("open").onDisconnect().setValue(false);
-            _listenerModels.add(new ListenerModel(ref.child("open"), Logs.getCallerClassName()));
+            //_listenerModels.add(new ListenerModel(ref.child("open"), Logs.getCallerClassName()));
             String notifyKey = notifyRoomChanged(room);
             getTable(_tableRoomNotifications).child(notifyKey).onDisconnect().setValue(room.getId() + "_DC");
-            _listenerModels.add(new ListenerModel(getTable(_tableRoomNotifications).child(notifyKey), Logs.getCallerClassName()));
+           // _listenerModels.add(new ListenerModel(getTable(_tableRoomNotifications).child(notifyKey), Logs.getCallerClassName()));
         }
         else{
             save(getTable(_tableRooms).child(room.getId()), room, listener);
@@ -230,14 +229,24 @@ public class FirebaseDB implements IDatabase {
     }
 
     @Override
+    public void onDcSetGameStateDisconnected(Profile profile,  final DatabaseListener listener) {
+        getTable(_tableUsers).child(profile.getUserId()).child("userPlayingState").child("connected").onDisconnect().setValue(false, new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                if(listener != null)  listener.onCallback(null, DatabaseListener.Status.SUCCESS);
+            }
+        });
+    }
+
+    @Override
     public void changeSlotIndex(Room room, Profile user, Integer newIndex, DatabaseListener<String> listener) {
         getTable(_tableRooms).child(room.getId()).child("roomUsers").child(user.getUserId()).child("slotIndex").setValue(newIndex);
     }
 
     @Override
-    public void monitorRoomById(String id, DatabaseListener<Room> listener) {
+    public void monitorRoomById(String id, String classTag, DatabaseListener<Room> listener) {
         Query queryRef = getTable(_tableRooms).child(id);
-        getSingleDataMonitor(queryRef, listener);
+        getSingleDataMonitor(queryRef, classTag, listener);
     }
 
     @Override
@@ -247,7 +256,7 @@ public class FirebaseDB implements IDatabase {
     }
 
     @Override
-    public void monitorAllRooms(final ArrayList<Room> rooms, final SpecialDatabaseListener<ArrayList<Room>, Room> listener) {
+    public void monitorAllRooms(final ArrayList<Room> rooms, String classTag, final SpecialDatabaseListener<ArrayList<Room>, Room> listener) {
         getData(getTable(_tableRooms).orderByChild("open").equalTo(true), new DatabaseListener<ArrayList<Room>>(Room.class) {
             @Override
             public void onCallback(ArrayList<Room> obj, Status st) {
@@ -315,7 +324,7 @@ public class FirebaseDB implements IDatabase {
         };
 
         getTable(_tableRoomNotifications).limitToLast(1).addChildEventListener(childEventListener);
-        _listenerModels.add(new ListenerModel(getTable(_tableRoomNotifications), Logs.getCallerClassName(), childEventListener));
+        _listenerModels.add(new ListenerModel(getTable(_tableRoomNotifications), classTag, childEventListener));
 
     }
 
@@ -351,7 +360,7 @@ public class FirebaseDB implements IDatabase {
                         }
                     }
                 });
-                _listenerModels.add(new ListenerModel(ref, Logs.getCallerClassName()));
+                //_listenerModels.add(new ListenerModel(ref, Logs.getCallerClassName()));
 
                 Firebase ref2 = getTable(_tableRoomNotifications).child(room.getId() + "_" + System.currentTimeMillis());
                 ref2.onDisconnect().setValue(room.getId(), new Firebase.CompletionListener() {
@@ -369,7 +378,7 @@ public class FirebaseDB implements IDatabase {
                         }
                     }
                 });
-                _listenerModels.add(new ListenerModel(ref2, Logs.getCallerClassName()));
+               // _listenerModels.add(new ListenerModel(ref2, Logs.getCallerClassName()));
             }
         }
     }
@@ -417,7 +426,7 @@ public class FirebaseDB implements IDatabase {
         });
     }
 
-    private void getSingleDataMonitor(Query ref, final DatabaseListener listener){
+    private void getSingleDataMonitor(Query ref, String classTag, final DatabaseListener listener){
 
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
@@ -436,7 +445,7 @@ public class FirebaseDB implements IDatabase {
         };
         ref.addValueEventListener(valueEventListener);
 
-        _listenerModels.add(new ListenerModel(ref, Logs.getCallerClassName(), valueEventListener));
+        _listenerModels.add(new ListenerModel(ref, classTag, valueEventListener));
     }
 
     private void getData(final Query ref, final DatabaseListener listener){
@@ -458,7 +467,7 @@ public class FirebaseDB implements IDatabase {
         });
     }
 
-    private void getDataMonitor(final Query ref, final DatabaseListener listener){
+    private void getDataMonitor(final Query ref, String classTag, final DatabaseListener listener){
 
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
@@ -479,7 +488,7 @@ public class FirebaseDB implements IDatabase {
 
         ref.addValueEventListener(valueEventListener);
 
-        _listenerModels.add(new ListenerModel(ref, Logs.getCallerClassName(), valueEventListener));
+        _listenerModels.add(new ListenerModel(ref, classTag, valueEventListener));
 
     }
 

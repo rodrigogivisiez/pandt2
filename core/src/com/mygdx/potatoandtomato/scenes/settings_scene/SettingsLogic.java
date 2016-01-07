@@ -70,7 +70,7 @@ public class SettingsLogic extends LogicAbstract {
         if(_services.getProfile().getFacebookName() == null || !_services.getProfile().getFacebookName().equals(newName)){
             _services.getProfile().setGameName(newName);
         }
-        _services.getDatabase().updateProfile(_services.getProfile());
+        _services.getDatabase().updateProfile(_services.getProfile(), null);
     }
 
     @Override

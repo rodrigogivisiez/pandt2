@@ -4,6 +4,7 @@ import abstracts.MockDB;
 import abstracts.TestAbstract;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.mygdx.potatoandtomato.PTScreen;
+import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.socials.FacebookListener;
 import com.mygdx.potatoandtomato.helpers.services.Socials;
@@ -22,6 +23,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -51,7 +53,7 @@ public class TestSettings extends TestAbstract {
         scene.getDisplayNameTextField().setText("testing");
         logic.onHide();
         Assert.assertEquals("testing", services.getProfile().getDisplayName(15));
-        verify(database, times(1)).updateProfile(any(Profile.class));
+        verify(database, times(1)).updateProfile(any(Profile.class), any(DatabaseListener.class));
     }
 
     @Test

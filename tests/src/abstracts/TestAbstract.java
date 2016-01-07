@@ -43,5 +43,8 @@ public abstract class TestAbstract {
         Broadcaster.getInstance().clear();
     }
 
+    protected String getClassTag(){
+        return this.getClass().getName();
+    }
 
 }

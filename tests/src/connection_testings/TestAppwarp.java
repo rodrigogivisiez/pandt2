@@ -22,7 +22,7 @@ public class TestAppwarp extends TestAbstract {
             final boolean[] waiting = {true};
             _gamingKit = new Appwarp();
 
-            _gamingKit.addListener(new ConnectionChangedListener() {
+            _gamingKit.addListener(getClassTag(), new ConnectionChangedListener() {
                 @Override
                 public void onChanged(Status st) {
                     waiting[0] = false;
@@ -44,7 +44,7 @@ public class TestAppwarp extends TestAbstract {
         final boolean[] success = {false};
         final String[] joinedRoomId = new String[1];
 
-        _gamingKit.addListener(new JoinRoomListener() {
+        _gamingKit.addListener(getClassTag(), new JoinRoomListener() {
             @Override
             public void onRoomJoined(String roomId) {
                 waiting[0] = false;
@@ -74,7 +74,7 @@ public class TestAppwarp extends TestAbstract {
         final int[] monitorCount = new int[]{0};
 
         //test update peers
-        _gamingKit.addListener(new UpdateRoomMatesListener() {
+        _gamingKit.addListener(getClassTag(), new UpdateRoomMatesListener() {
             @Override
             public void onUpdateRoomMatesReceived(int broadcastCode, String msg, String senderId) {
                 Assert.assertEquals(code, broadcastCode);
@@ -94,7 +94,7 @@ public class TestAppwarp extends TestAbstract {
         waiting[0] = true;
         final ChatMessage chatMessage = new ChatMessage("test msg", ChatMessage.FromType.USER, "random");
         //test send room msg
-        _gamingKit.addListener(new MessagingListener() {
+        _gamingKit.addListener(getClassTag(), new MessagingListener() {
             @Override
             public void onRoomMessageReceived(String msg, String senderId) {
                 Assert.assertEquals(chatMessage.getMessage(), msg);

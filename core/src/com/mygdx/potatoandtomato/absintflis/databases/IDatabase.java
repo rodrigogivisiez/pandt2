@@ -20,13 +20,13 @@ public interface IDatabase {
 
      void loginAnonymous(DatabaseListener<Profile> listener);
 
-     void monitorProfileByUserId(String userId, DatabaseListener<Profile> listener);
+     void monitorProfileByUserId(String userId, String classTag, DatabaseListener<Profile> listener);
 
      void getProfileByUserId(String userId, DatabaseListener<Profile> listener);
 
      void getProfileByFacebookUserId(String facebookUserId, DatabaseListener<Profile> listener);
 
-     void updateProfile(Profile profile);
+     void updateProfile(Profile profile, DatabaseListener listener);
 
      void createUserByUserId(String userId, DatabaseListener<Profile> listener);
 
@@ -36,11 +36,11 @@ public interface IDatabase {
 
      void changeSlotIndex(Room room, Profile user, Integer newIndex, DatabaseListener<String> listener);
 
-     void monitorRoomById(String id, DatabaseListener<Room> listener);
+     void monitorRoomById(String id, String classTag, DatabaseListener<Room> listener);
 
      void getRoomById(String id, DatabaseListener<Room> listener);
 
-     void monitorAllRooms(ArrayList<Room> rooms, SpecialDatabaseListener<ArrayList<Room>, Room> listener);
+     void monitorAllRooms(ArrayList<Room> rooms, String classTag, SpecialDatabaseListener<ArrayList<Room>, Room> listener);
 
      String notifyRoomChanged(Room room);
 
@@ -50,12 +50,14 @@ public interface IDatabase {
 
      void online();
 
-     void clearListenersByClass(Class clss);
+     void clearListenersByClassTag(String classTag);
 
      void savePlayedHistory(Profile profile, Room room, DatabaseListener<String> listener);
 
      void getPlayedHistories(Profile profile, DatabaseListener<ArrayList<GameHistory>> listener);
    
      void getPendingInvitationsCount(Profile profile, DatabaseListener<Integer> listener);
+
+     void onDcSetGameStateDisconnected(Profile profile, DatabaseListener listener);
 
 }

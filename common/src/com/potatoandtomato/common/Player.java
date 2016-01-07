@@ -9,12 +9,22 @@ public class Player {
     public String userId;
     public int potatoOrTomato;
     public boolean isMe;
+    public boolean isHost;
 
-    public Player(String name, String userId, int potatoOrTomato, boolean isMe) {
+    public Player(String name, String userId, int potatoOrTomato, boolean isMe, boolean isHost) {
         this.name = name;
         this.userId = userId;
         this.potatoOrTomato = potatoOrTomato;
         this.isMe = isMe;
+        this.isHost = isHost;
+    }
+
+    public boolean isHost() {
+        return isHost;
+    }
+
+    public void setIsHost(boolean isHost) {
+        this.isHost = isHost;
     }
 
     public String getName() {

@@ -2,8 +2,10 @@ package com.mygdx.potatoandtomato.helpers.services;
 
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.helpers.utils.JsonObj;
+import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.shephertz.app42.gaming.multiplayer.client.WarpClient;
+import com.shephertz.app42.gaming.multiplayer.client.command.WarpResponseResultCode;
 import com.shephertz.app42.gaming.multiplayer.client.events.*;
 import com.shephertz.app42.gaming.multiplayer.client.listener.*;
 
@@ -32,7 +34,7 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
     public void init(){
         WarpClient.initialize(_appKey, _secretKey);
-        WarpClient.setRecoveryAllowance(120);
+        //WarpClient.setRecoveryAllowance(120);
         try {
             _warpInstance = WarpClient.getInstance();
             _warpInstance.addConnectionRequestListener(this);
@@ -93,7 +95,25 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
     @Override
     public void onConnectDone(ConnectEvent connectEvent) {
-        onConnectionChanged(connectEvent.getResult() == 0);
+        if (connectEvent.getResult() == WarpResponseResultCode.SUCCESS ){
+            onConnectionChanged(true);
+        }
+        else if (connectEvent.getResult() == WarpResponseResultCode.SUCCESS_RECOVERED ){
+            onConnectionChanged(true);
+        }
+
+//        else if (connectEvent.getResult() == WarpResponseResultCode .CONNECTION_ERROR_RECOVERABLE ){
+//            System.out.println("Try connect again.");
+//            Threadings.delay(5000, new Runnable() {
+//                @Override
+//                public void run() {
+//                    _warpInstance.RecoverConnection();
+//                }
+//            });
+//        }
+        else {
+            onConnectionChanged(false);
+        }
     }
 
     @Override

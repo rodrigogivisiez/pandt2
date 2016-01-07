@@ -42,6 +42,7 @@ public class Profile {
     }
 
     public UserPlayingState getUserPlayingState() {
+        if(userPlayingState == null) userPlayingState = new UserPlayingState("0", false, -1);
         return userPlayingState;
     }
 

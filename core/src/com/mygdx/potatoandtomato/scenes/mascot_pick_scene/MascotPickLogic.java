@@ -64,7 +64,7 @@ public class MascotPickLogic extends LogicAbstract {
 
     public void updateMascot(MascotEnum mascotEnum){
         _services.getProfile().setMascotEnum(mascotEnum);
-        _services.getDatabase().updateProfile(_services.getProfile());
+        _services.getDatabase().updateProfile(_services.getProfile(), null);
     }
 
 

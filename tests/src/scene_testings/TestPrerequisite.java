@@ -46,7 +46,7 @@ public class TestPrerequisite extends TestAbstract {
 
     @Test
     public void testPrerequisiteLogicScene(){
-        PrerequisiteLogic logic = new PrerequisiteLogic(mock(PTScreen.class), T_Services.mockServices(), _game, true);
+        PrerequisiteLogic logic = new PrerequisiteLogic(mock(PTScreen.class), T_Services.mockServices(), _game, PrerequisiteLogic.JoinType.CREATING, null);
         PrerequisiteScene scene = (PrerequisiteScene) logic.getScene();
         Assert.assertEquals(true, ((Table) scene.getRoot()).hasChildren());
     }
@@ -57,12 +57,12 @@ public class TestPrerequisite extends TestAbstract {
         _services.setGamingKit(new MockGamingKit());
 
         PTScreen screen = mock(PTScreen.class);
-        PrerequisiteLogic logic = Mockito.spy(new PrerequisiteLogic(screen, _services, _game, true));
+        PrerequisiteLogic logic = Mockito.spy(new PrerequisiteLogic(screen, _services, _game, PrerequisiteLogic.JoinType.CREATING));
         logic.onInit();
         T_Threadings.sleep(100);
         verify(logic, times(0)).joinRoomSuccess();
         verify(logic, times(1)).createRoomSuccess(eq("123"));
-        verify(screen, times(1)).toScene(eq(SceneEnum.ROOM), any(Room.class));
+        verify(screen, times(1)).toScene(eq(SceneEnum.ROOM), any(Room.class), eq(false));
     }
 
 
@@ -83,12 +83,12 @@ public class TestPrerequisite extends TestAbstract {
         _services.setDatabase(mockDB);
 
         PTScreen screen = mock(PTScreen.class);
-        PrerequisiteLogic logic = Mockito.spy(new PrerequisiteLogic(screen, _services, _game, false, room));
+        PrerequisiteLogic logic = Mockito.spy(new PrerequisiteLogic(screen, _services, _game, PrerequisiteLogic.JoinType.JOINING, room.getId()));
         logic.onInit();
         T_Threadings.sleep(100);
         verify(logic, times(1)).joinRoomSuccess();
         verify(logic, times(0)).createRoomSuccess(anyString());
-        verify(screen, times(1)).toScene(eq(SceneEnum.ROOM), any(Room.class));
+        verify(screen, times(1)).toScene(eq(SceneEnum.ROOM), any(Room.class), eq(false));
     }
 
 
@@ -109,7 +109,7 @@ public class TestPrerequisite extends TestAbstract {
         _services.setDatabase(mockDB);
 
         PTScreen screen = mock(PTScreen.class);
-        PrerequisiteLogic logic = Mockito.spy(new PrerequisiteLogic(screen, _services, _game, false, room));
+        PrerequisiteLogic logic = Mockito.spy(new PrerequisiteLogic(screen, _services, _game, PrerequisiteLogic.JoinType.JOINING, room.getId()));
         logic.onInit();
         T_Threadings.sleep(100);
         verify(logic, times(1)).joinRoomFailed(eq(2));
@@ -134,7 +134,7 @@ public class TestPrerequisite extends TestAbstract {
         _services.setDatabase(mockDB);
 
         PTScreen screen = mock(PTScreen.class);
-        PrerequisiteLogic logic = Mockito.spy(new PrerequisiteLogic(screen, _services, _game, false, room));
+        PrerequisiteLogic logic = Mockito.spy(new PrerequisiteLogic(screen, _services, _game, PrerequisiteLogic.JoinType.JOINING, room.getId()));
         logic.onInit();
         T_Threadings.sleep(100);
         verify(logic, times(1)).joinRoomFailed(eq(1));

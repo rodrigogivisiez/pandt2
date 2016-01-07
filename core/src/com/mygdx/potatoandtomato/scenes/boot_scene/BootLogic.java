@@ -10,6 +10,7 @@ import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.absintflis.socials.FacebookListener;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
+import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.models.FacebookProfile;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
@@ -28,6 +29,7 @@ public class BootLogic extends LogicAbstract {
     BootScene _bootScene;
     boolean _fbStepPast;
     String _fbUsername;
+    boolean _logined;
 
     @Override
     public SceneAbstract getScene() {
@@ -40,10 +42,13 @@ public class BootLogic extends LogicAbstract {
 
     @Override
     public void onShow() {
+        _services.getDatabase().offline();
         _services.getGamingKit().disconnect();
         _fbStepPast = false;
+        _logined = false;
         dispose();
 
+        _services.getDatabase().online();
         _bootScene = new BootScene(_services, _screen);
         _bootScene.getPlayButton().addListener(new ClickListener(){
             @Override
@@ -53,20 +58,31 @@ public class BootLogic extends LogicAbstract {
             }
         });
 
-        _services.getGamingKit().addListener(new ConnectionChangedListener() {
+        _services.getGamingKit().addListener(getClassTag(), new ConnectionChangedListener() {
             @Override
             public void onChanged(Status st) {
-                if(st == Status.CONNECTED){
-                    if(_services.getProfile().getMascotEnum() == null){
-                        _screen.toScene(SceneEnum.MASCOT_PICK);
+
+                if(!_logined){
+                    if(st == Status.CONNECTED){
+                        if(_services.getProfile().getMascotEnum() == null){
+                            _screen.toScene(SceneEnum.MASCOT_PICK);
+                        }
+                        else{
+                            _screen.toScene(SceneEnum.GAME_LIST);
+                        }
+                        _logined = true;
                     }
                     else{
-                        _screen.toScene(SceneEnum.GAME_LIST);
+                        retrieveUserFailed();
                     }
                 }
                 else{
-                    retrieveUserFailed();
+                    if(st == Status.DISCONNECTED){
+                        _screen.backToBoot();
+                        _confirm.show(_texts.noConnection(), Confirm.Type.YES, null);
+                    }
                 }
+
             }
         });
 
@@ -206,7 +222,8 @@ public class BootLogic extends LogicAbstract {
             _services.getProfile().setFacebookUserId(null);
             _services.getProfile().setFacebookName(null);
         }
-        _services.getDatabase().updateProfile(_services.getProfile());
+        _services.getDatabase().updateProfile(_services.getProfile(), null);
         _services.getGamingKit().connect(_services.getProfile());
+        _services.getDatabase().onDcSetGameStateDisconnected(_services.getProfile(), null);
     }
 }

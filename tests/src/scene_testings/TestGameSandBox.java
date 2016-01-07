@@ -21,7 +21,7 @@ public class TestGameSandBox extends TestAbstract{
     @Test
     public void testGameSandBoxLogicScene(){
         Room _room = MockModel.mockRoom("123");
-        GameSandboxLogic logic = new GameSandboxLogic(mock(PTScreen.class), T_Services.mockServices(), _room);
+        GameSandboxLogic logic = new GameSandboxLogic(mock(PTScreen.class), T_Services.mockServices(), _room, false);
         GameSandboxScene scene = (GameSandboxScene) logic.getScene();
         Assert.assertEquals(true, ((Table) scene.getRoot()).hasChildren());
     }

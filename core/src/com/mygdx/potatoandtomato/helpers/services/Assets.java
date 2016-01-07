@@ -41,7 +41,7 @@ public class Assets {
             blackRoundedBg, chatBox, yellowGradientBox, scrollVerticalHandle, irregularBg, expandTitleBg;
     private BitmapFont blackNormal2, redNormal2, blueNormal2, blackBold2, blackNormal3, orangePizza3,
             whiteBold3GrayS, topBarFont, whitePizza3BlackS, orangePizza2White, whiteNormal3GrayS, whiteNormal2GrayS,
-            whiteNormal2, whitePizza2BlackS, greenNormal2, grayBold2;
+            whiteNormal2, whitePizza2BlackS, greenNormal2, grayBold2, redBold2, blueBold2;
 
 
     public Assets() {
@@ -71,6 +71,8 @@ public class Assets {
         loadOneFont(_fontBoldPath, "blackBold2.ttf", Color.BLACK, 11);
         loadOneFont(_fontBoldPath, "grayBold2.ttf", Color.valueOf("c4c4c4"), 11);
         loadOneFont(_fontBoldPath, "whiteBold3GrayS.ttf", Color.WHITE, 13, 1, Color.GRAY, 1, Color.GRAY);
+        loadOneFont(_fontBoldPath, "redBold2.ttf", Color.valueOf("e40404"), 11);
+        loadOneFont(_fontBoldPath, "blueBold2.ttf", Color.valueOf("11b1bf"), 11);
 
         _manager.finishLoading();
 
@@ -119,6 +121,17 @@ public class Assets {
         whitePizza2BlackS = _manager.get("whitePizza2BlackS.ttf", BitmapFont.class);
         greenNormal2 = _manager.get("greenNormal2.ttf", BitmapFont.class);
         grayBold2 = _manager.get("grayBold2.ttf", BitmapFont.class);
+        redBold2 = _manager.get("redBold2.ttf", BitmapFont.class);
+        blueBold2 = _manager.get("blueBold2.ttf", BitmapFont.class);
+
+    }
+
+    public BitmapFont getBlueBold2() {
+        return blueBold2;
+    }
+
+    public BitmapFont getRedBold2() {
+        return redBold2;
     }
 
     public BitmapFont getGrayBold2() {

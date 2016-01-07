@@ -52,6 +52,7 @@ public class Texts {
     public String team() { return "Team"; }
     public String open() { return "Open"; }
     public String send() { return "Send"; }
+    public String continueLastGame() { return "Continue"; }
 
     public String loading() { return "Loading..."; }
 
@@ -64,6 +65,7 @@ public class Texts {
     public String locatingRoom() { return "Locating room server..."; }
     public String gameClientFailed() { return "Failed to retrieve game client, please try again later."; }
     public String joinRoomFailed() { return "Failed to join room, please try again later."; }
+    public String cannotContinue() { return "Failed to continue game, the game might be already finished.";}
 
     public String roomIsFull() { return "Room is full, please try again later.";}
     public String roomStarted() { return "Game has already started.";}
@@ -102,7 +104,13 @@ public class Texts {
 
     public String waitAllUsersReady() { return "Please wait for all users to get ready(Green) before start.";}
 
-    public String confirmAbandon() { return "Are you sure you want to admit defeat and run away like a rat??"; }
+    public String confirmAbandon() { return "Are you sure you want to abandon this game?"; }
+
+    public String notificationAbandon() { return "%s has abandoned the game!";}
+    public String notificationConnected() { return "%s has connected to the game.";}
+    public String notificationDisconnected() { return "%s has disconnected from the game.";}
+
+    public String noConnection() { return "You have been disconnected from the server, please check your connection."; }
 
     //push notifications part
     public String PUSHGameInvitationsTitle() { return "P&T Game Invitations"; }

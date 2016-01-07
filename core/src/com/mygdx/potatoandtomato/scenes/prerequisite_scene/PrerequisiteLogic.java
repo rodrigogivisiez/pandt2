@@ -22,7 +22,8 @@ public class PrerequisiteLogic extends LogicAbstract {
     PrerequisiteScene _scene;
     Game _game;
     Texts _texts;
-    boolean _isCreating;
+    JoinType _joinType;
+    String _roomId;
     Room _joiningRoom;
 
     public PrerequisiteLogic(PTScreen screen, Services services, Object... objs) {
@@ -31,8 +32,8 @@ public class PrerequisiteLogic extends LogicAbstract {
         _texts = _services.getTexts();
         _scene = new PrerequisiteScene(services, screen);
         _game = (Game) objs[0];
-        _isCreating = (Boolean) objs[1];
-        if(!_isCreating) _joiningRoom = (Room) objs[2];
+        _joinType = (JoinType) objs[1];
+        if(objs.length > 2) _roomId = (String) objs[2];
 
         _scene.getRetryButton().addListener((new ClickListener(){
             @Override
@@ -56,7 +57,7 @@ public class PrerequisiteLogic extends LogicAbstract {
     }
 
     public void restart(){
-        if(_isCreating){
+        if(_joinType == JoinType.CREATING){
             createRoom();
         }
         else{
@@ -66,7 +67,7 @@ public class PrerequisiteLogic extends LogicAbstract {
 
     public void createRoom(){
         _scene.changeMessage(_texts.lookingForServer());
-        _services.getGamingKit().addListener(new JoinRoomListener() {
+        _services.getGamingKit().addListener(getClassTag(), new JoinRoomListener() {
             @Override
             public void onRoomJoined(String roomId) {
                 createRoomSuccess(roomId);
@@ -83,7 +84,7 @@ public class PrerequisiteLogic extends LogicAbstract {
     public void joinRoom(){
         _scene.changeMessage(_texts.locatingRoom());
 
-        _services.getDatabase().getRoomById(_joiningRoom.getId(), new DatabaseListener<Room>(Room.class) {
+        _services.getDatabase().getRoomById(_roomId, new DatabaseListener<Room>(Room.class) {
             @Override
             public void onCallback(Room obj, Status st) {
                 if(st == Status.SUCCESS){
@@ -93,14 +94,20 @@ public class PrerequisiteLogic extends LogicAbstract {
                         return;
                     }
 
-                    if(!obj.isOpen()){
+                    if(!obj.isOpen() && _joinType == JoinType.JOINING){
                         joinRoomFailed(2);
+                        return;
+                    }
+
+                    if(_joinType == JoinType.CONTINUING && !obj.canContinue(_services.getProfile().getUserId(),
+                            _services.getProfile().getUserPlayingState().getRoundCounter(), _services.getProfile().getUserPlayingState().getRoomId())){
+                        joinRoomFailed(3);
                         return;
                     }
 
                     _joiningRoom = obj;
 
-                    _services.getGamingKit().addListener(new JoinRoomListener() {
+                    _services.getGamingKit().addListener(getClassTag(), new JoinRoomListener() {
                         @Override
                         public void onRoomJoined(String roomId) {
                             joinRoomSuccess();
@@ -130,6 +137,9 @@ public class PrerequisiteLogic extends LogicAbstract {
         else if(reason == 2){    //room is not open
             _scene.failedMessage(_texts.roomStarted());
         }
+        else if(reason == 3){   //cannot continue game
+            _scene.failedMessage(_texts.cannotContinue());
+        }
     }
 
     public void createRoomSuccess(String roomId){
@@ -141,12 +151,17 @@ public class PrerequisiteLogic extends LogicAbstract {
         room.setHost(_services.getProfile());
         room.setPlaying(false);
         room.setRoundCounter(0);
-        _screen.toScene(SceneEnum.ROOM, room);
+        _services.getDatabase().saveRoom(room, new DatabaseListener<String>() {
+            @Override
+            public void onCallback(String obj, Status st) {
+                _screen.toScene(SceneEnum.ROOM, room, false);
+            }
+        });
     }
 
     public void joinRoomSuccess(){
         _scene.changeMessage(_texts.joiningRoom());
-        _screen.toScene(SceneEnum.ROOM, _joiningRoom);
+        _screen.toScene(SceneEnum.ROOM, _joiningRoom, _joinType == JoinType.CONTINUING);
     }
 
     @Override
@@ -160,6 +175,8 @@ public class PrerequisiteLogic extends LogicAbstract {
         return _scene;
     }
 
-
+    public enum JoinType{
+        CREATING, JOINING, CONTINUING
+    }
 
 }

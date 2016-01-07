@@ -66,7 +66,7 @@ public class BtnEggDownward extends Table {
         this.clear();
         Label.LabelStyle textLabelStyle = new Label.LabelStyle();
 
-        if(text.length() > 12){
+        if(text.length() > 12 || (text.length() > 7 && !text.contains(" "))){
             textLabelStyle.font = _assets.getWhitePizza2BlackS();
         }
         else{

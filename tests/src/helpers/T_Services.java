@@ -9,6 +9,7 @@ import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
 import com.mygdx.potatoandtomato.helpers.controls.Chat;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
+import com.mygdx.potatoandtomato.helpers.controls.Notification;
 import com.mygdx.potatoandtomato.helpers.services.*;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.models.Profile;
@@ -41,7 +42,8 @@ public class T_Services {
 
         return new Services(assets, new Texts(), preferences,
                 new Profile(), databases, new Shaders(), new MockGamingKit(), downloader, new Chat(new MockGamingKit(), new Texts(), assets, mock(SpriteBatch.class), mock(IPTGame.class)),
-                new Socials(preferences), new GCMSender(), new Confirm(mock(SpriteBatch.class), mock(PTGame.class), assets));
+                new Socials(preferences), new GCMSender(), new Confirm(mock(SpriteBatch.class), mock(PTGame.class), assets),
+                new Notification(mock(SpriteBatch.class), assets, mock(PTGame.class)));
     }
 
 }

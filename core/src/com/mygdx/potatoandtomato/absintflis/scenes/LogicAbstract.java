@@ -5,6 +5,7 @@ import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
+import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.mygdx.potatoandtomato.helpers.utils.SafeThread;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Services;
@@ -12,7 +13,6 @@ import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Broadcaster;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 /**
  * Created by SiongLeng on 2/12/2015.
@@ -27,8 +27,10 @@ public abstract class LogicAbstract implements Disposable {
     private boolean _alive;
     private ArrayList<String> _broadcastSubscribes;
     protected Confirm _confirm;
+    private String _classTag;
 
     public LogicAbstract(PTScreen screen, Services services, Object... objs) {
+        setClassTag();
         this._screen = screen;
         this._services = services;
         _texts = _services.getTexts();
@@ -39,6 +41,10 @@ public abstract class LogicAbstract implements Disposable {
 
     public void subscribeBroadcast(int event, BroadcastListener listener){
         _broadcastSubscribes.add(Broadcaster.getInstance().subscribe(event, listener));
+    }
+
+    public void setClassTag(){
+        _classTag = Logs.getCallerClassName();
     }
 
     public void onQuit(OnQuitListener listener){
@@ -72,6 +78,10 @@ public abstract class LogicAbstract implements Disposable {
     //will only be called when scene init, must be forward direction
     public void onInit(){
         _alive = true;
+    }
+
+    protected String getClassTag(){
+        return _classTag;
     }
 
     protected void keepAlive(){
@@ -108,8 +118,8 @@ public abstract class LogicAbstract implements Disposable {
     }
 
     private void disposeEverything(){
-        _services.getGamingKit().removeListenersByClass(this.getClass());
-        _services.getDatabase().clearListenersByClass(this.getClass());
+        _services.getGamingKit().removeListenersByClassTag(getClassTag());
+        _services.getDatabase().clearListenersByClassTag(getClassTag());
         _alive = false;
         for(String id : _broadcastSubscribes){
             Broadcaster.getInstance().unsubscribe(id);

@@ -16,7 +16,7 @@ public class TestGamingKit extends TestAbstract {
     public void testAddRemoveListeners(){
 
         GamingKit kit = new MockGamingKit();
-        kit.addListener(new ConnectionChangedListener() {
+        kit.addListener(getClassTag(), new ConnectionChangedListener() {
             @Override
             public void onChanged(Status st) {
 
@@ -25,7 +25,7 @@ public class TestGamingKit extends TestAbstract {
 
         Assert.assertEquals(1, kit.getConnectionChangedListeners().size());
 
-        kit.removeListenersByClass(this.getClass());
+        kit.removeListenersByClassTag(getClassTag());
 
         Assert.assertEquals(0, kit.getConnectionChangedListeners().size());
 

@@ -1,13 +1,10 @@
 package connection_testings;
 
 import abstracts.TestAbstract;
-import com.firebase.client.Firebase;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
-import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.services.FirebaseDB;
-import com.mygdx.potatoandtomato.helpers.utils.DateTimes;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.*;
 import helpers.MockModel;
@@ -17,8 +14,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.omg.PortableInterceptor.SUCCESSFUL;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -43,7 +38,7 @@ public class TestFireBase extends TestAbstract {
     @After
     public void tearDown() throws Exception {
         super.tearDown();
-        databases.clearListenersByClass(this.getClass());
+        databases.clearListenersByClassTag(getClassTag());
     }
 
     @Test
@@ -85,7 +80,7 @@ public class TestFireBase extends TestAbstract {
                                 Assert.assertEquals(false, obj.getUserId() == null);
 
 
-                                databases.monitorProfileByUserId(obj.getUserId(), new DatabaseListener<Profile>(Profile.class) {
+                                databases.monitorProfileByUserId(obj.getUserId(), getClassTag(),  new DatabaseListener<Profile>(Profile.class) {
                                     @Override
                                     public void onCallback(Profile obj, Status st) {
                                         if(obj.getUserPlayingState() != null)
@@ -95,8 +90,8 @@ public class TestFireBase extends TestAbstract {
                                         }
                                 });
 
-                                obj.setUserPlayingState(new UserPlayingState("1", true));
-                                databases.updateProfile(obj);
+                                obj.setUserPlayingState(new UserPlayingState("1", true, 0));
+                                databases.updateProfile(obj, null);
                             }
                         });
                     }
@@ -158,21 +153,21 @@ public class TestFireBase extends TestAbstract {
 
         waiting[0] = true;
 
-        databases.monitorRoomById(r.getId(), new DatabaseListener<Room>(Room.class) {
+        databases.monitorRoomById(r.getId(), getClassTag(),  new DatabaseListener<Room>(Room.class) {
             @Override
             public void onCallback(Room obj, Status st) {
                 Assert.assertEquals(true, st == Status.SUCCESS);
                 Assert.assertEquals(r.getId(), obj.getId());
 
                 Assert.assertTrue(EqualsBuilder.reflectionEquals(obj.getGame(), r.getGame()));
-                Assert.assertTrue(EqualsBuilder.reflectionEquals(obj.getHost(), r.getHost()));
+                Assert.assertTrue(obj.getHost().equals(r.getHost()));
                 Assert.assertEquals(obj.getRoomUsers().size(), r.getRoomUsers().size());
                 for (Map.Entry<String, RoomUser> entry : obj.getRoomUsers().entrySet()) {
                     String key = entry.getKey();
                     RoomUser user1 = obj.getRoomUsers().get(key);
                     RoomUser user2 = r.getRoomUsers().get(key);
 
-                    Assert.assertTrue(EqualsBuilder.reflectionEquals(user1.getProfile(), user2.getProfile()));
+                    Assert.assertTrue((user1.getProfile().equals(user2.getProfile())));
                     Assert.assertEquals(user1.getSlotIndex(), user2.getSlotIndex());
                 }
                 Assert.assertEquals(r.getRoomId(), obj.getRoomId());
@@ -266,7 +261,7 @@ public class TestFireBase extends TestAbstract {
 
 
         waiting[0] = true;
-        databases.monitorAllRooms(rooms, new SpecialDatabaseListener<ArrayList<Room>, Room>() {
+        databases.monitorAllRooms(rooms, getClassTag(),  new SpecialDatabaseListener<ArrayList<Room>, Room>() {
             @Override
             public void onCallbackTypeOne(ArrayList<Room> obj, Status st) {
                 Assert.assertEquals(st , Status.SUCCESS);
@@ -339,7 +334,7 @@ public class TestFireBase extends TestAbstract {
         final int[] trigger = {0};
         waiting[0] = true;
 
-        databases.monitorAllRooms(new ArrayList<Room>(), new SpecialDatabaseListener<ArrayList<Room>, Room>(Room.class) {
+        databases.monitorAllRooms(new ArrayList<Room>(), getClassTag(),  new SpecialDatabaseListener<ArrayList<Room>, Room>(Room.class) {
             @Override
             public void onCallbackTypeOne(ArrayList<Room> obj, Status st) {
                 waiting[0] = false;
@@ -358,7 +353,7 @@ public class TestFireBase extends TestAbstract {
 
         waiting[0] = true;
 
-        databases.monitorRoomById(r.getId(), new DatabaseListener<Room>(Room.class) {
+        databases.monitorRoomById(r.getId(), getClassTag(),  new DatabaseListener<Room>(Room.class) {
             @Override
             public void onCallback(Room obj, Status st) {
                 waiting[0] = false;
@@ -370,7 +365,7 @@ public class TestFireBase extends TestAbstract {
             Threadings.sleep(100);
         }
 
-        databases.clearListenersByClass(this.getClass());
+        databases.clearListenersByClassTag(getClassTag());
 
         waiting[0] = true;
 
@@ -392,6 +387,43 @@ public class TestFireBase extends TestAbstract {
     }
 
     @Test
+    public void testOnDcSetGameStateDisconnected(){
+        final boolean[] waiting = {true};
+        Profile profile = MockModel.mockProfile();
+        profile.setUserPlayingState(new UserPlayingState("1", true, 0));
+        databases.updateProfile(profile, null);
+
+        databases.onDcSetGameStateDisconnected(profile, new DatabaseListener() {
+            @Override
+            public void onCallback(Object obj, Status st) {
+                databases.offline();
+                databases.online();
+                waiting[0] = false;
+            }
+        });
+
+        while (waiting[0]){
+            Threadings.sleep(100);
+        }
+
+        waiting[0] = true;
+
+        databases.getProfileByUserId(profile.getUserId(), new DatabaseListener<Profile>(Profile.class) {
+            @Override
+            public void onCallback(Profile obj, Status st) {
+                Assert.assertEquals(false, obj.getUserPlayingState().getConnected());
+                Assert.assertEquals(Status.SUCCESS, st);
+                waiting[0] = false;
+            }
+        });
+
+        while (waiting[0]){
+            Threadings.sleep(100);
+        }
+
+    }
+
+    @Test
     public void testSaveGameHistoryAndRetrieve(){
 
         Room room = MockModel.mockRoom("1");
@@ -401,8 +433,8 @@ public class TestFireBase extends TestAbstract {
 
         final boolean[] waiting = {true};
 
-        databases.updateProfile(myProfile);
-        databases.updateProfile(anotherProfile);
+        databases.updateProfile(myProfile, null);
+        databases.updateProfile(anotherProfile, null);
 
         databases.savePlayedHistory(myProfile, room, new DatabaseListener<String>() {
             @Override
@@ -418,7 +450,7 @@ public class TestFireBase extends TestAbstract {
 
         waiting[0] = true;
         anotherProfile.setGameName("second");
-        databases.updateProfile(anotherProfile);
+        databases.updateProfile(anotherProfile, null);
 
         databases.getPlayedHistories(myProfile, new DatabaseListener<ArrayList<GameHistory>>(GameHistory.class) {
             @Override

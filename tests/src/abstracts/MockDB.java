@@ -30,7 +30,7 @@ public class MockDB implements IDatabase {
     }
 
     @Override
-    public void monitorProfileByUserId(String userId, DatabaseListener<Profile> listener) {
+    public void monitorProfileByUserId(String userId, String classTag, DatabaseListener<Profile> listener) {
 
     }
 
@@ -49,7 +49,7 @@ public class MockDB implements IDatabase {
     }
 
     @Override
-    public void updateProfile(Profile profile) {
+    public void updateProfile(Profile profile, DatabaseListener listener) {
 
     }
 
@@ -84,7 +84,7 @@ public class MockDB implements IDatabase {
     }
 
     @Override
-    public void monitorRoomById(String id, DatabaseListener<Room> listener) {
+    public void monitorRoomById(String id, String classTag, DatabaseListener<Room> listener) {
 
     }
 
@@ -99,7 +99,7 @@ public class MockDB implements IDatabase {
     }
 
     @Override
-    public void monitorAllRooms(ArrayList<Room> rooms, SpecialDatabaseListener<ArrayList<Room>, Room> listener) {
+    public void monitorAllRooms(ArrayList<Room> rooms, String classTag, SpecialDatabaseListener<ArrayList<Room>, Room> listener) {
 
     }
 
@@ -126,9 +126,10 @@ public class MockDB implements IDatabase {
     }
 
     @Override
-    public void clearListenersByClass(Class clss) {
+    public void clearListenersByClassTag(String classTag) {
 
     }
+
 
     @Override
     public void savePlayedHistory(Profile profile, Room room, DatabaseListener<String> listener) {
@@ -145,6 +146,11 @@ public class MockDB implements IDatabase {
     @Override
     public void getPendingInvitationsCount(Profile profile, DatabaseListener<Integer> listener) {
         listener.onCallback(1, DatabaseListener.Status.SUCCESS);
+    }
+
+    @Override
+    public void onDcSetGameStateDisconnected(Profile profile,  DatabaseListener listener) {
+
     }
 
 

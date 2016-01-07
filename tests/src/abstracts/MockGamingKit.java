@@ -14,8 +14,8 @@ import helpers.MockModel;
 public class MockGamingKit extends GamingKit {
 
     @Override
-    public void addListener(Object listener) {
-        super.addListener(listener);
+    public void addListener(String classTag, Object listener) {
+        super.addListener(classTag, listener);
     }
 
     @Override

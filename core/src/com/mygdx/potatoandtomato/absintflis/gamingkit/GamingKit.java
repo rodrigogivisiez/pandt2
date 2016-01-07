@@ -1,9 +1,6 @@
 package com.mygdx.potatoandtomato.absintflis.gamingkit;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.Array;
-import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.potatoandtomato.common.BroadcastEvent;
@@ -28,26 +25,26 @@ public abstract class GamingKit {
         _messagingListeners = new HashMap();
     }
 
-    public void addListener(Object listener){
+    public void addListener(String classTag, Object listener){
         if(listener instanceof ConnectionChangedListener){
-            _connectionChangedListeners.put(Logs.getCallerClassName(), (ConnectionChangedListener) listener);
+            _connectionChangedListeners.put(classTag, (ConnectionChangedListener) listener);
         }
         else if(listener instanceof JoinRoomListener){
-            _joinRoomListeners.put(Logs.getCallerClassName(), (JoinRoomListener) listener);
+            _joinRoomListeners.put(classTag, (JoinRoomListener) listener);
         }
         else if(listener instanceof UpdateRoomMatesListener){
-            _updateRoomMatesListeners.put(Logs.getCallerClassName(), (UpdateRoomMatesListener) listener);
+            _updateRoomMatesListeners.put(classTag, (UpdateRoomMatesListener) listener);
         }
         else if(listener instanceof MessagingListener){
-            _messagingListeners.put(Logs.getCallerClassName(), (MessagingListener) listener);
+            _messagingListeners.put(classTag, (MessagingListener) listener);
         }
     }
 
-    public void removeListenersByClass(Class clss){
-        _connectionChangedListeners.remove(clss.getName());
-        _joinRoomListeners.remove(clss.getName());
-        _updateRoomMatesListeners.remove(clss.getName());
-        _messagingListeners.remove(clss.getName());
+    public void removeListenersByClassTag(String classTag){
+        _connectionChangedListeners.remove(classTag);
+        _joinRoomListeners.remove(classTag);
+        _updateRoomMatesListeners.remove(classTag);
+        _messagingListeners.remove(classTag);
     }
 
 

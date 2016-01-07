@@ -145,7 +145,7 @@ public class MockGamingKit {
                 int i = 0;
                 Team team = new Team();
                 for(String user : liveRoomInfoEvent.getJoinedUsers()) {
-                    team.addPlayer(new Player(user, user, 0, user.equals(_userId)));
+                    team.addPlayer(new Player(user, user, 0, user.equals(_userId), i==0));
                     i++;
                     if(i == _eachTeamExpectedPlayers){
                         teams.add(team);

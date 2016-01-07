@@ -4,12 +4,14 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.controls.Chat;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
+import com.mygdx.potatoandtomato.helpers.controls.Notification;
 import com.mygdx.potatoandtomato.helpers.services.*;
 import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
@@ -34,6 +36,7 @@ public class PTGame extends Game implements IPTGame {
 	PTGame _game;
 	HashMap<InputProcessor, Integer> _processors;
 	Confirm _confirm;
+	Notification _notification;
 
 	@Override
 	public void create () {
@@ -52,11 +55,13 @@ public class PTGame extends Game implements IPTGame {
 				_texts = new Texts();
 				_chat = new Chat(_gamingKit, _texts, _assets, _batch, _game);
 				_confirm = new Confirm(_batch, _game, _assets);
+				_notification = new Notification(_batch, _assets, _game);
+
 				Preferences preferences = new Preferences();
 				_services = new Services(_assets, _texts,
 						preferences, new Profile(), new FirebaseDB(Terms.FIREBASE_URL),
 						new Shaders(), _gamingKit, new Downloader(), _chat,
-						new Socials(preferences), new GCMSender(), _confirm);
+						new Socials(preferences), new GCMSender(), _confirm, _notification);
 				_screen = new PTScreen(_game, _services);
 
 				setScreen(_screen);
@@ -78,6 +83,7 @@ public class PTGame extends Game implements IPTGame {
 		super.render();
 		_confirm.render(Gdx.graphics.getDeltaTime());
 		_chat.render(Gdx.graphics.getDeltaTime());
+		_notification.render(Gdx.graphics.getDeltaTime());
 	}
 
 	@Override

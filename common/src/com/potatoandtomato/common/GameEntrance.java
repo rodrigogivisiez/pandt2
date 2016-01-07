@@ -17,14 +17,6 @@ public abstract class GameEntrance {
         _gameCoordinator = gameCoordinator;
     }
 
-    public GameScreen getCurrentScreen(){
-        return _currentScreen;
-    }
-
-    public void setCurrentScreen(GameScreen screen){
-        _currentScreen = screen;
-    }
-
     public GameCoordinator getGameCoordinator() {
         return _gameCoordinator;
     }
@@ -32,5 +24,7 @@ public abstract class GameEntrance {
     public abstract void init();
 
     public abstract void dispose();
+
+    public abstract void onContinue();
 
 }
