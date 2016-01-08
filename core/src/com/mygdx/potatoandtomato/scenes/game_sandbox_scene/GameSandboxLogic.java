@@ -99,7 +99,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_GAME_REQUEST, new GameCoordinator(_room.getGame().getFullLocalJarPath(),
                 _room.getGame().getLocalAssetsPath(), _room.getGame().getBasePath(), _room.convertRoomUsersToTeams(_services.getProfile()),
                 Positions.getWidth(), Positions.getHeight(), _screen.getGame(), _screen.getGame().getSpriteBatch(),
-                _services.getProfile().getUserId(), this));
+                _services.getProfile().getUserId(), this, _services.getDatabase().getGameBelongDatabase(_room.getGame().getAbbr()), _room.getId()));
 
 
         if(!_isContinue){
@@ -177,16 +177,23 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                     });
                 }
 
-                _gameStarted = true;
-                _screen.switchToGameScreen();
-                if(!_isContinue){
-                    _coordinator.getGameEntrance().init();
-                }
-                else{
-                    _coordinator.getGameEntrance().onContinue();
-                }
-                _scene.clearRoot();
-                _services.getChat().show();
+                Threadings.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        _gameStarted = true;
+                        _screen.switchToGameScreen();
+                        if(!_isContinue){
+                            _coordinator.getGameEntrance().init();
+                        }
+                        else{
+                            _coordinator.getGameEntrance().onContinue();
+                        }
+                        _scene.clearRoot();
+                        _services.getChat().show();
+                    }
+                });
+
+
             }
         });
     }

@@ -3,6 +3,7 @@ package fundamental_testings;
 import abstracts.TestAbstract;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.potatoandtomato.common.BroadcastListener;
+import com.potatoandtomato.common.Status;
 import org.junit.Assert;
 import org.junit.Test;
 import com.potatoandtomato.common.Broadcaster;
@@ -50,7 +51,7 @@ public class TestBroadCaster extends TestAbstract {
         String id = Broadcaster.getInstance().subscribe(-2, new BroadcastListener<MockResponse>() {
             @Override
             public void onCallback(MockResponse obj, Status st) {
-                Assert.assertEquals(BroadcastListener.Status.SUCCESS, st);
+                Assert.assertEquals(Status.SUCCESS, st);
                 Assert.assertEquals(20, obj.testField);
             }
         });
@@ -65,7 +66,7 @@ public class TestBroadCaster extends TestAbstract {
             @Override
             public void onCallback(MockResponse obj, Status st) {
                 Assert.assertEquals(10, obj.testField);
-                Assert.assertEquals(BroadcastListener.Status.SUCCESS, st);
+                Assert.assertEquals(Status.SUCCESS, st);
                 Assert.assertEquals(0, Broadcaster.getInstance().getEventCallbacksSize(-3));
                 Assert.assertEquals(0, Broadcaster.getInstance().getSubScribeOnceArr().size());
             }
@@ -85,7 +86,7 @@ public class TestBroadCaster extends TestAbstract {
         String id = Broadcaster.getInstance().subscribeOnceWithTimeout(-3, 1000, new BroadcastListener<MockResponse>() {
             @Override
             public void onCallback(MockResponse obj, Status st) {
-                Assert.assertEquals(BroadcastListener.Status.FAILED, st);
+                Assert.assertEquals(Status.FAILED, st);
                 Assert.assertEquals(0, Broadcaster.getInstance().getEventCallbacksSize(-3));
                 Assert.assertEquals(0, Broadcaster.getInstance().getSubScribeOnceArr().size());
                 waiting[0] = false;

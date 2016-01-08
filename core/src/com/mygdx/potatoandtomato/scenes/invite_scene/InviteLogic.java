@@ -13,6 +13,7 @@ import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Broadcaster;
+import com.potatoandtomato.common.Status;
 
 import java.util.ArrayList;
 

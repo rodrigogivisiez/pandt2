@@ -1,15 +1,19 @@
 package com.mygdx.potatoandtomato.android;
 
 import android.test.ActivityInstrumentationTestCase2;
+import com.firebase.client.annotations.Nullable;
+import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
+import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
+import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.downloader.DownloaderListener;
+import com.mygdx.potatoandtomato.absintflis.game_file_checker.GameFileCheckerListener;
 import com.mygdx.potatoandtomato.helpers.controls.Chat;
+import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.helpers.services.*;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
-import com.mygdx.potatoandtomato.models.Game;
-import com.mygdx.potatoandtomato.models.Profile;
-import com.mygdx.potatoandtomato.models.Services;
-import com.mygdx.potatoandtomato.scenes.room_scene.GameClientChecker;
+import com.mygdx.potatoandtomato.models.*;
+import com.mygdx.potatoandtomato.scenes.room_scene.GameFileChecker;
 import com.potatoandtomato.common.*;
 import junit.framework.Assert;
 
@@ -32,7 +36,7 @@ public class GameLoaderTest extends ActivityInstrumentationTestCase2<AndroidLaun
 
     public void testLoadGame() {
         final boolean[] waiting = {true};
-        Game game = new Game();
+        final Game game = new Game();
         game.setGameUrl("http://www.potato-and-tomato.com/sample/game.jar");
         game.setAssetUrl("http://www.potato-and-tomato.com/sample/assets.zip");
         game.setName("Sample");
@@ -44,16 +48,24 @@ public class GameLoaderTest extends ActivityInstrumentationTestCase2<AndroidLaun
         game.setTeamMaxPlayers("1");
         game.setTeamMinPlayers("1");
         game.setVersion("1.1");
+        game.setClientVersion("1");
 
         Services _services = mockServices();
         _services.getPreferences().deleteAll();
 
-        GameClientChecker clientChecker = new GameClientChecker(game, _services.getPreferences(), new Downloader(), new DownloaderListener() {
+        GameFileChecker clientChecker = new GameFileChecker(game, _services.getPreferences(), new Downloader(), new MockDB(){
             @Override
-            public void onCallback(byte[] bytes, Status st) {
+            public void getGameByAbbr(String abbr, DatabaseListener<Game> listener) {
+                listener.onCallback(game, Status.SUCCESS);
+            }
+        }, new GameFileCheckerListener() {
+
+            @Override
+            public void onCallback(GameFileChecker.GameFileResult result, Status st) {
                 Assert.assertEquals(Status.SUCCESS, st);
                 waiting[0] = false;
             }
+
         });
 
         while (waiting[0]) {
@@ -74,7 +86,17 @@ public class GameLoaderTest extends ActivityInstrumentationTestCase2<AndroidLaun
 
         GameCoordinator gameCoordinator = new GameCoordinator(game.getFullLocalJarPath(),
                 game.getLocalAssetsPath(), game.getBasePath(), new ArrayList<Team>(), Positions.getWidth(),
-                Positions.getHeight(), null, null, false, "123");
+                Positions.getHeight(), null, null, "123", new IGameSandBox() {
+            @Override
+            public void useConfirm(String msg, Runnable yesRunnable, Runnable noRunnable) {
+
+            }
+
+            @Override
+            public void userAbandoned() {
+
+            }
+        }, null, "1");
         Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_GAME_REQUEST, gameCoordinator);
 
         while (waiting[0]) {
@@ -90,7 +112,7 @@ public class GameLoaderTest extends ActivityInstrumentationTestCase2<AndroidLaun
 
         return new Services(assets, new Texts(), preferences,
                 new Profile(), null, new Shaders(), null, new Downloader(), new Chat(null, null, null, null, null),
-                new Socials(preferences), new GCMSender());
+                new Socials(preferences), new GCMSender(), null, null);
     }
 
 }

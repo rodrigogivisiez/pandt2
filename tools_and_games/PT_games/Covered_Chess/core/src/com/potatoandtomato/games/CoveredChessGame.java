@@ -4,8 +4,12 @@ import com.potatoandtomato.common.MockGame;
 
 public class CoveredChessGame extends MockGame {
 
-	public CoveredChessGame(boolean isHost) {
-		super(isHost);
+	private boolean _initialized;
+
+	public boolean isContinue;
+
+	public CoveredChessGame(String gameId) {
+		super(gameId);
 	}
 
 	@Override
@@ -16,8 +20,17 @@ public class CoveredChessGame extends MockGame {
 
 	@Override
 	public void onReady() {
-		Entrance entrance = new Entrance(getCoordinator());
-		setScreen(entrance.getCurrentScreen());
-		entrance.init();
+		if(!_initialized){
+			_initialized = true;
+			Entrance entrance = new Entrance(getCoordinator());
+
+			if(!isContinue){
+				entrance.init();
+			}
+			else{
+				entrance.onContinue();
+			}
+		}
+
 	}
 }

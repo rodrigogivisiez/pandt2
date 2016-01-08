@@ -12,10 +12,12 @@ public class Paths {
     String base;
     String dx;
     String assets;
+    String working;
     String jar;
     String screenshots;
     String details;
     String icon;
+    String clientVersion;
 
 
     public Paths() {
@@ -45,10 +47,14 @@ public class Paths {
                     else if(tokens[0].equals("DX")){
                         dx = path;
                     }
+                    else if(tokens[0].equals("WORKING")){
+                        working = path;
+                    }
                 }
             }
 
             assets = assets.replace("{BASE}", base);
+            clientVersion = working.replace("{BASE}", base) + "client_version.txt";
             jar = jar.replace("{BASE}", base);
             dx = dx.replace("{BASE}", base);
             screenshots = System.getProperty("user.dir") +"/screenshots/";
@@ -81,6 +87,10 @@ public class Paths {
         f = new File(icon);
         if(!f.exists() || !f.isFile()) {
             throw new InvalidPathException(icon, "");
+        }
+        f = new File(clientVersion);
+        if(!f.exists() || !f.isFile()) {
+            throw new InvalidPathException(clientVersion, "");
         }
     }
 

@@ -53,7 +53,7 @@ public abstract class GamingKit {
             @Override
             public void run() {
                 for(ConnectionChangedListener listener : _connectionChangedListeners.values()){
-                    listener.onChanged(connected ? ConnectionChangedListener.Status.CONNECTED : ConnectionChangedListener.Status.DISCONNECTED);
+                    listener.onChanged(connected ? ConnectionChangedListener.ConnectStatus.CONNECTED : ConnectionChangedListener.ConnectStatus.DISCONNECTED);
                 }
             }
         });

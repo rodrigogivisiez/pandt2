@@ -7,6 +7,7 @@ import com.mygdx.potatoandtomato.models.FacebookProfile;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Broadcaster;
+import com.potatoandtomato.common.Status;
 
 /**
  * Created by SiongLeng on 21/12/2015.

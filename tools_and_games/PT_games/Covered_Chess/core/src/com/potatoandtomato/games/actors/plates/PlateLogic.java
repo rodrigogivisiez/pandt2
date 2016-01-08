@@ -16,6 +16,7 @@ import com.potatoandtomato.games.absint.MainScreenListener;
 import com.potatoandtomato.games.actors.chesses.ChessActor;
 import com.potatoandtomato.games.actors.chesses.enums.ChessType;
 import com.potatoandtomato.games.helpers.*;
+import com.potatoandtomato.games.models.PlateSimple;
 
 import java.util.ArrayList;
 
@@ -221,6 +222,7 @@ public class PlateLogic {
                     final Actor clone = loserLogic.getChessActor().clone();
                     final boolean loserIsYellow = loserLogic.getChessActor().isYellow();
                     final Drawable loserAnimal = loserLogic.getChessActor().getAnimalDrawable();
+                    final ChessType loserChessType = loserLogic.getChessActor().getChessType();
                     loserLogic.setChessActor(null);
 
                     Threadings.delay(1500, new Runnable() {
@@ -238,7 +240,7 @@ public class PlateLogic {
                                 @Override
                                 public void run() {
                                     getPlateActor().hideBattle();
-                                    _mainScreenListener.onChessKilled(loserAnimal, loserIsYellow);
+                                    _mainScreenListener.onChessKilled(loserChessType, loserAnimal, loserIsYellow);
                                 }
                             });
 
@@ -439,6 +441,10 @@ public class PlateLogic {
         return _opened;
     }
 
+    public void setOpened(boolean _opened) {
+        this._opened = _opened;
+    }
+
     public PlateActor getPlateActor() {
         return _plateActor;
     }
@@ -446,4 +452,15 @@ public class PlateLogic {
     public ChessActor getChessActor() {
         return _chessActor;
     }
+
+    public PlateSimple getPlateSimple(){
+        ChessActor chessActor = _chessActor;
+        if(chessActor == null){
+            chessActor = new ChessActor(_assets);
+            chessActor.setChessType(ChessType.RED_CAT);
+        }
+        return new PlateSimple(chessActor.getChessType(), isOpened(), isEmpty());
+    }
+
+
 }

@@ -10,7 +10,6 @@ import com.potatoandtomato.common.MockGame;
 
 public class SampleGame extends MockGame {
 
-
 	@Override
 	public void create() {
 		super.create();
@@ -19,7 +18,7 @@ public class SampleGame extends MockGame {
 
 	@Override
 	public void onReady() {
-		SampleScreen test = new SampleScreen(getCoordinator());
-		setScreen(test);
+		Entrance entrance = new Entrance(getCoordinator());
+		entrance.init();
 	}
 }

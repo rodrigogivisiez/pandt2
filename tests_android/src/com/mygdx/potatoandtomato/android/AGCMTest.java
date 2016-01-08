@@ -8,6 +8,7 @@ import com.mygdx.potatoandtomato.models.PushNotification;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Broadcaster;
+import com.potatoandtomato.common.Status;
 import junit.framework.Assert;
 
 /**

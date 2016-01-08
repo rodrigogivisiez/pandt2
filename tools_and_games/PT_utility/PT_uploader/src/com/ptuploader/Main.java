@@ -20,6 +20,8 @@ public class Main {
             paths.getAll();
             paths.checkAllPathsExist();
 
+            String clientVersion = readFile(paths.clientVersion).trim();
+
             Zippings zippings = new Zippings(paths.assets);
             zippings.run();
 
@@ -38,6 +40,8 @@ public class Main {
 
             Ftp ftp = new Ftp();
             UploadedGame uploadedGame = ftp.uploadEverything(details, paths, screenShots);
+            uploadedGame.clientVersion = clientVersion;
+
 
             FireDB db = new FireDB();
             db.save(uploadedGame);
@@ -74,4 +78,23 @@ public class Main {
 
 
     }
+
+
+    private static String readFile(String fileName) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(fileName));
+        try {
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+
+            while (line != null) {
+                sb.append(line);
+                sb.append("\n");
+                line = br.readLine();
+            }
+            return sb.toString();
+        } finally {
+            br.close();
+        }
+    }
+
 }

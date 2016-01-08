@@ -170,6 +170,10 @@ public class ChessActor extends Table {
             _selected = selected;
         }
 
+        setChessSurface();
+    }
+
+    public void setChessSurface(){
         String chessTypeString = _chessType.name();
 
         if(_selected){
@@ -206,8 +210,6 @@ public class ChessActor extends Table {
             _frontChess.setHeight(_frontChess.getHeight() - 2);
             _frontChess.setPosition(_frontChess.getX() + 1f, _frontChess.getY() + 1f);
         }
-
-
     }
 
     public boolean isOpened() {

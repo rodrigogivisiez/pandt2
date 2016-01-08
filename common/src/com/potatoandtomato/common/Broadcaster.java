@@ -49,7 +49,7 @@ public class Broadcaster {
                     e.printStackTrace();
                 }
                 if(subScribeOnceArr.contains(id)){
-                    broadcast(event, null, BroadcastListener.Status.FAILED);
+                    broadcast(event, null, Status.FAILED);
                     subScribeOnceArr.remove(id);
                 }
             }
@@ -88,14 +88,14 @@ public class Broadcaster {
     }
 
     public void broadcast(int event){ //overload of null object, success broadcast
-        broadcast(event, null, BroadcastListener.Status.SUCCESS);
+        broadcast(event, null, Status.SUCCESS);
     }
 
     public void broadcast(int event, @Nullable Object obj){ //overload of success broadcast
-        broadcast(event, obj, BroadcastListener.Status.SUCCESS);
+        broadcast(event, obj, Status.SUCCESS);
     }
 
-    public void broadcast(int event, @Nullable Object obj, BroadcastListener.Status status){
+    public void broadcast(int event, @Nullable Object obj, Status status){
         ArrayList<BroadcastListener> arr = callbacks.get(event);
         if(arr != null){
             for(int i = 0; i < arr.size(); i ++){

@@ -112,6 +112,12 @@ public class Texts {
 
     public String noConnection() { return "You have been disconnected from the server, please check your connection."; }
 
+    public String confirmNotContinueGame() { return "You still have an unfinished game! Are you sure you want to abandon it?" ;}
+    public String failedRetriveGameData() { return "Failed to retrive game data, please try again later.";}
+    public String gameClientOutdated() { return "This game required latest game client to run, please update your P&T game client.";}
+    public String gameVersionOutdated() { return "This game has newer version, host need to recreate the room.";}
+
+
     //push notifications part
     public String PUSHGameInvitationsTitle() { return "P&T Game Invitations"; }
     public String PUSHGameInvitationsContent() { return "You have %s new inviations from your friends.";}

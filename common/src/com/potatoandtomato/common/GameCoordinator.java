@@ -6,6 +6,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
+import com.firebase.client.Firebase;
 
 import java.util.ArrayList;
 
@@ -25,16 +26,20 @@ public class GameCoordinator {
     private String userId;
     private IGameSandBox gameSandBox;
     private UserStateListener userStateListener;
+    private Object database;
+    private String id;
 
     private ArrayList<String> _subscribedIds;
     private Array<InputProcessor> _processors;
     private ArrayList<InGameUpdateListener> _inGameUpdateListeners;
 
+
     public GameCoordinator(String jarPath, String assetsPath,
                            String basePath, ArrayList<Team> teams,
                            float gameWidth, float gameHeight,
                            IPTGame game, SpriteBatch batch,
-                           String userId, IGameSandBox gameSandBox) {
+                           String userId, IGameSandBox gameSandBox,
+                           Object database, String id) {
         this.jarPath = jarPath;
         this.assetsPath = assetsPath;
         this.basePath = basePath;
@@ -45,6 +50,8 @@ public class GameCoordinator {
         this.spriteBatch = batch;
         this.userId = userId;
         this.gameSandBox = gameSandBox;
+        this.database = database;
+        this.id = id;
 
         _subscribedIds = new ArrayList<String>();
         _processors = new Array<InputProcessor>();
@@ -215,5 +222,22 @@ public class GameCoordinator {
         this.userStateListener = userStateListener;
     }
 
+    public String getHostUserId(){
+        for(Team team : getTeams()){
+            for(Player player : team.getPlayers()){
+                if(player.isHost()){
+                    return player.getUserId();
+                }
+            }
+        }
+        return null;
+    }
 
+    public Firebase getFirebase(){
+        return (Firebase) database;
+    }
+
+    public String getId() {
+        return id;
+    }
 }

@@ -5,6 +5,7 @@ import android.test.ActivityInstrumentationTestCase2;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Broadcaster;
+import com.potatoandtomato.common.Status;
 
 /**
  * Created by SiongLeng on 9/12/2015.

@@ -7,6 +7,7 @@ import com.mygdx.potatoandtomato.absintflis.downloader.DownloaderListener;
 import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
 import com.mygdx.potatoandtomato.helpers.utils.SafeThread;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
+import com.potatoandtomato.common.Status;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -37,7 +38,7 @@ public class Downloader implements IDownloader{
                     url = new URL(urlString);
                     con = (HttpURLConnection) url.openConnection();
                     if (con.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                        listener.onCallback(null, DownloaderListener.Status.FAILED);
+                        listener.onCallback(null, Status.FAILED);
                         return;
                     }
                     completeFileSize = con.getContentLength();
@@ -68,14 +69,14 @@ public class Downloader implements IDownloader{
                     bis.close();
                     bos.close();
 
-                    listener.onCallback(null, DownloaderListener.Status.SUCCESS);
+                    listener.onCallback(null, Status.SUCCESS);
 
                 } catch (MalformedInputException malformedInputException) {
                     malformedInputException.printStackTrace();
-                    listener.onCallback(null, DownloaderListener.Status.FAILED);
+                    listener.onCallback(null, Status.FAILED);
                 } catch (IOException ioException) {
                     ioException.printStackTrace();
-                    listener.onCallback(null, DownloaderListener.Status.FAILED);
+                    listener.onCallback(null, Status.FAILED);
                 }
             }
         });
@@ -101,9 +102,9 @@ public class Downloader implements IDownloader{
                             @Override
                             public void run() {
                                 if (status.getStatusCode() >= 200 && status.getStatusCode() < 300) {
-                                    listener.onCallback(result, DownloaderListener.Status.SUCCESS);
+                                    listener.onCallback(result, Status.SUCCESS);
                                 } else {    //failed
-                                    listener.onCallback(null, DownloaderListener.Status.FAILED);
+                                    listener.onCallback(null, Status.FAILED);
                                 }
                             }
                         });
@@ -116,7 +117,7 @@ public class Downloader implements IDownloader{
                             Gdx.app.postRunnable(new Runnable() {
                                 @Override
                                 public void run() {
-                                    listener.onCallback(null, DownloaderListener.Status.FAILED);
+                                    listener.onCallback(null, Status.FAILED);
                                 }
                             });
 
@@ -130,7 +131,7 @@ public class Downloader implements IDownloader{
                         Gdx.app.postRunnable(new Runnable() {
                             @Override
                             public void run() {
-                                listener.onCallback(null, DownloaderListener.Status.FAILED);
+                                listener.onCallback(null, Status.FAILED);
                             }
                         });
                     }

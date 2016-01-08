@@ -41,6 +41,7 @@ public class MainScreen extends GameScreen {
     private Services _services;
     private Texts _texts;
     private Table _root;
+    private Table _overlayTable;
     private Table _transitionTable;
     private Table _endGameTable;
     private Table _preStartTable;
@@ -56,7 +57,7 @@ public class MainScreen extends GameScreen {
     private Array<Drawable> _yellowGraveDrawables, _redGraveDrawables;
     private GrayScaleShader _grayScaleShader;
     private boolean _useGrayScaleShader;
-
+    private boolean _paused;
 
     public MainScreen(GameCoordinator gameCoordinator, Services services){
         super(gameCoordinator);
@@ -78,7 +79,13 @@ public class MainScreen extends GameScreen {
         _root.align(Align.top);
         _root.getColor().a = 0;
 
+        _overlayTable = new Table();
+        _overlayTable.setFillParent(true);
+        _overlayTable.setBackground(new TextureRegionDrawable(_assets.getBlackBgTrans()));
+        _overlayTable.setVisible(false);
+
         _stage.addActor(_root);
+        _stage.addActor(_overlayTable);
 
         getCoordinator().addInputProcessor(_stage);
         setCanTouchChessTable(false);
@@ -402,6 +409,19 @@ public class MainScreen extends GameScreen {
             }
         })));
 
+
+    }
+
+    public void setPaused(boolean paused){
+        _paused = paused;
+        if(_paused){
+            _overlayTable.setVisible(true);
+            setCanTouchChessTable(false);
+        }
+        else{
+            _overlayTable.setVisible(false);
+            setCanTouchChessTable(true);
+        }
 
     }
 

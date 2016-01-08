@@ -20,7 +20,10 @@ public class DesktopLauncher {
 		settings.filterMin = Texture.TextureFilter.Linear;
 		//TexturePacker.process(settings, "../../images", "../../android/assets", "pack");
 
-		new LwjglApplication(new CoveredChessGame(arg.length<=0), config);
+		CoveredChessGame coveredChessGame = new CoveredChessGame("covered_chess");
+		if(arg.length > 0 && arg[0].equals("continue")) coveredChessGame.isContinue = true;
+
+		new LwjglApplication(coveredChessGame, config);
 
 
 

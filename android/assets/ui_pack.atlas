@@ -137,7 +137,7 @@ empty
   index: -1
 expand_icon
   rotate: false
-  xy: 1168, 337
+  xy: 1196, 337
   size: 18, 17
   orig: 18, 17
   offset: 0, 0
@@ -212,7 +212,7 @@ green_rounded_bg
   index: -1
 grey_line
   rotate: false
-  xy: 397, 44
+  xy: 2041, 709
   size: 5, 1
   orig: 5, 1
   offset: 0, 0
@@ -229,6 +229,13 @@ info_icon
   xy: 1536, 254
   size: 30, 30
   orig: 30, 30
+  offset: 0, 0
+  index: -1
+invited_icon
+  rotate: false
+  xy: 369, 19
+  size: 30, 26
+  orig: 30, 26
   offset: 0, 0
   index: -1
 irregular_bg
@@ -284,7 +291,7 @@ noimage
   index: -1
 orange_line
   rotate: false
-  xy: 2041, 709
+  xy: 2041, 706
   size: 5, 1
   orig: 5, 1
   offset: 0, 0
@@ -479,7 +486,7 @@ white_line
   index: -1
 white_rounded_bg
   rotate: false
-  xy: 369, 25
+  xy: 1168, 334
   size: 26, 20
   split: 11, 10, 8, 10
   pad: 0, 0, 0, 0

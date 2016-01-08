@@ -1,13 +1,11 @@
 package com.mygdx.potatoandtomato.absintflis.databases;
 
+import com.potatoandtomato.common.Status;
+
 /**
  * Created by SiongLeng on 16/12/2015.
  */
 public abstract class SpecialDatabaseListener<T, A> {
-
-    public enum Status{
-        SUCCESS, FAILED
-    }
 
     private Class _type;
 

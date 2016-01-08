@@ -5,6 +5,7 @@ import android.os.PowerManager;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Broadcaster;
+import com.potatoandtomato.common.Status;
 
 /**
  * Created by SiongLeng on 5/1/2016.

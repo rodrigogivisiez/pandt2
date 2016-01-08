@@ -88,7 +88,7 @@ public class SampleScreen extends GameScreen {
         table.setFillParent(true);
         table.add(_image).expandX().fillX().height(300);
         table.add(_image2).expandX().fillX().height(300);
-        switchImage("1");
+        switchImage("2");
         table.row();
         table.add(_surrenderImg).colspan(2).padTop(30);
         _stage.addActor(table);

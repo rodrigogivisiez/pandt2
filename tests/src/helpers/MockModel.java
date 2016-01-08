@@ -25,6 +25,7 @@ public class MockModel {
         g.setTeamMinPlayers("1");
         g.setTeamCount("10");
         g.setName("Covered Chess");
+        g.setClientVersion("1");
         return g;
     }
 

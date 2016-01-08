@@ -13,6 +13,7 @@ import com.mygdx.potatoandtomato.helpers.utils.Pair;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Broadcaster;
+import com.potatoandtomato.common.Status;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -103,7 +104,7 @@ public class ImageLoader {
                 GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
                 //bitmap.recycle();
                 Pair<String, Texture> pair = new Pair<>(url, tex);
-                Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_IMAGE_RESPONSE, pair, BroadcastListener.Status.SUCCESS);
+                Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_IMAGE_RESPONSE, pair, Status.SUCCESS);
             }
         });
 
@@ -114,7 +115,7 @@ public class ImageLoader {
             @Override
             public void run() {
                 Pair<String, Texture> pair = new Pair<>(url, null);
-                Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_IMAGE_RESPONSE, pair, BroadcastListener.Status.FAILED);
+                Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_IMAGE_RESPONSE, pair, Status.FAILED);
             }
         });
     }

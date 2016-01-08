@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -59,7 +60,8 @@ public class MockGamingKit {
         _warpInstance.addNotificationListener(listeners);
         _warpInstance.addUpdateRequestListener(listeners);
 
-        _userId = String.valueOf(MathUtils.random(1, 999999));
+        long unixTime = System.currentTimeMillis() / 1000L;
+        _userId = String.valueOf(unixTime);
         _warpInstance.connectWithUserName(_userId);
 
         Broadcaster.getInstance().subscribe(BroadcastEvent.INGAME_UPDATE_REQUEST, new BroadcastListener<String>() {
@@ -94,7 +96,7 @@ public class MockGamingKit {
 
         @Override
         public void onJoinRoomDone(RoomEvent roomEvent) {
-             System.out.println("onJoinRoomDone");
+             System.out.println("onJoinRoomDone: " + roomEvent.getData().getId());
             _warpInstance.getLiveRoomInfo(roomEvent.getData().getId());
         }
 
@@ -142,10 +144,20 @@ public class MockGamingKit {
 
             if(liveRoomInfoEvent.getJoinedUsers().length == (_expectedTeamCount * _eachTeamExpectedPlayers)){
                 ArrayList<Team> teams = new ArrayList<Team>();
+                boolean isHost = true;
                 int i = 0;
                 Team team = new Team();
-                for(String user : liveRoomInfoEvent.getJoinedUsers()) {
-                    team.addPlayer(new Player(user, user, 0, user.equals(_userId), i==0));
+
+                ArrayList<String> users = new ArrayList<>();
+                for(String user : liveRoomInfoEvent.getJoinedUsers()){
+                    users.add(user);
+                }
+
+                Collections.sort(users);
+
+                for(String user : users) {
+                    team.addPlayer(new Player(user, user, 0, user.equals(_userId), isHost));
+                    isHost = false;
                     i++;
                     if(i == _eachTeamExpectedPlayers){
                         teams.add(team);
@@ -153,6 +165,7 @@ public class MockGamingKit {
                         i=0;
                     }
                 }
+                _coordinator.setUserId(_userId);
                 _coordinator.setTeams(teams);
                 Gdx.app.postRunnable(new Runnable() {
                     @Override

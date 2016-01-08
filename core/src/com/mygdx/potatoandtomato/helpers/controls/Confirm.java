@@ -5,7 +5,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -15,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
+import com.mygdx.potatoandtomato.absintflis.controls.ConfirmStateChangedListener;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
@@ -41,6 +41,7 @@ public class Confirm {
     Stage _stage;
     SpriteBatch _batch;
     IPTGame _game;
+    ConfirmStateChangedListener _stateChangedListener;
 
     public Confirm(SpriteBatch spriteBatch, IPTGame game, Assets assets) {
         _batch = spriteBatch;
@@ -114,6 +115,7 @@ public class Confirm {
             @Override
             public boolean act(float delta) {
                 _msgTable.addAction(sequence(moveBy(-50, 0), fadeOut(0f), parallel(moveBy(50, 0, 0.1f), fadeIn(0.1f))));
+                if(_stateChangedListener != null) _stateChangedListener.onShow();
                 return true;
             }
         }));
@@ -176,15 +178,24 @@ public class Confirm {
         this._listener = _listener;
     }
 
+    public void setStateChangedListener(ConfirmStateChangedListener _stateListener) {
+        this._stateChangedListener = _stateListener;
+    }
+
     public void close(){
         _confirmRoot.addAction(sequence(fadeOut(0.2f), new Action() {
             @Override
             public boolean act(float delta) {
                 _visible = false;
                 _game.removeInputProcessor(_stage);
+                if(_stateChangedListener != null) _stateChangedListener.onHide();
                 return true;
             }
         }));
+    }
+
+    public boolean isVisible() {
+        return _visible;
     }
 
     public void render(float delta){

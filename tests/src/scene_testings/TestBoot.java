@@ -16,6 +16,7 @@ import com.mygdx.potatoandtomato.scenes.boot_scene.BootLogic;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Broadcaster;
+import com.potatoandtomato.common.Status;
 import helpers.T_Services;
 import org.junit.After;
 import org.junit.Assert;

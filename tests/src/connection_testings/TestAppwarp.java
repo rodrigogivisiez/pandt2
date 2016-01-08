@@ -24,9 +24,9 @@ public class TestAppwarp extends TestAbstract {
 
             _gamingKit.addListener(getClassTag(), new ConnectionChangedListener() {
                 @Override
-                public void onChanged(Status st) {
+                public void onChanged(ConnectStatus st) {
                     waiting[0] = false;
-                    Assert.assertEquals(Status.CONNECTED, st);
+                    Assert.assertEquals(ConnectStatus.CONNECTED, st);
                 }
             });
 

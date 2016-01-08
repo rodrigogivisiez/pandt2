@@ -10,8 +10,10 @@ import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
+import com.mygdx.potatoandtomato.models.UserPlayingState;
 import com.mygdx.potatoandtomato.scenes.prerequisite_scene.PrerequisiteLogic;
 import com.mygdx.potatoandtomato.scenes.prerequisite_scene.PrerequisiteScene;
+import com.potatoandtomato.common.Status;
 import helpers.MockModel;
 import helpers.T_Services;
 import helpers.T_Threadings;
@@ -55,6 +57,13 @@ public class TestPrerequisite extends TestAbstract {
     public void testHostGame(){
         Services _services = T_Services.mockServices();
         _services.setGamingKit(new MockGamingKit());
+        _services.setDatabase(new MockDB(){
+            @Override
+            public void getGameByAbbr(String abbr, DatabaseListener<Game> listener) {
+                listener.onCallback(MockModel.mockGame(), Status.SUCCESS);
+            }
+        });
+
 
         PTScreen screen = mock(PTScreen.class);
         PrerequisiteLogic logic = Mockito.spy(new PrerequisiteLogic(screen, _services, _game, PrerequisiteLogic.JoinType.CREATING));
@@ -63,6 +72,8 @@ public class TestPrerequisite extends TestAbstract {
         verify(logic, times(0)).joinRoomSuccess();
         verify(logic, times(1)).createRoomSuccess(eq("123"));
         verify(screen, times(1)).toScene(eq(SceneEnum.ROOM), any(Room.class), eq(false));
+        Assert.assertEquals(true, logic.getJoiningRoom().isOpen());
+        Assert.assertEquals(false, logic.getJoiningRoom().isPlaying());
     }
 
 
@@ -77,7 +88,11 @@ public class TestPrerequisite extends TestAbstract {
         MockDB mockDB = new MockDB(){
             @Override
             public void getRoomById(String id, DatabaseListener<Room> listener) {
-                listener.onCallback(room, DatabaseListener.Status.SUCCESS);
+                listener.onCallback(room, Status.SUCCESS);
+            }
+            @Override
+            public void getGameByAbbr(String abbr, DatabaseListener<Game> listener) {
+                listener.onCallback(MockModel.mockGame(), Status.SUCCESS);
             }
         };
         _services.setDatabase(mockDB);
@@ -93,9 +108,48 @@ public class TestPrerequisite extends TestAbstract {
 
 
     @Test
+    public void testContinueGame(){
+        Services _services = T_Services.mockServices();
+        _services.setGamingKit(new MockGamingKit());
+
+        _services.getProfile().setUserPlayingState(new UserPlayingState("99", false, 1));
+        final Room room = MockModel.mockRoom("99");
+        room.setRoundCounter(1);
+        room.setPlaying(true);
+        room.setOpen(false);
+
+        MockDB mockDB = new MockDB(){
+            @Override
+            public void getRoomById(String id, DatabaseListener<Room> listener) {
+                listener.onCallback(room, Status.SUCCESS);
+            }
+            @Override
+            public void getGameByAbbr(String abbr, DatabaseListener<Game> listener) {
+                listener.onCallback(MockModel.mockGame(), Status.SUCCESS);
+            }
+        };
+        _services.setDatabase(mockDB);
+
+        PTScreen screen = mock(PTScreen.class);
+        PrerequisiteLogic logic = Mockito.spy(new PrerequisiteLogic(screen, _services, _game, PrerequisiteLogic.JoinType.CONTINUING, room.getId()));
+        logic.onInit();
+        T_Threadings.sleep(100);
+        verify(logic, times(1)).joinRoomSuccess();
+        verify(logic, times(0)).createRoomSuccess(anyString());
+        verify(screen, times(1)).toScene(eq(SceneEnum.ROOM), any(Room.class), eq(true));
+    }
+
+
+    @Test
     public void testJoinNotOpenedRoom(){
         Services _services = T_Services.mockServices();
         _services.setGamingKit(new MockGamingKit());
+        _services.setDatabase(new MockDB(){
+            @Override
+            public void getGameByAbbr(String abbr, DatabaseListener<Game> listener) {
+                listener.onCallback(MockModel.mockGame(), Status.SUCCESS);
+            }
+        });
 
         final Room room = MockModel.mockRoom("99");
         room.setOpen(false);
@@ -103,7 +157,7 @@ public class TestPrerequisite extends TestAbstract {
         MockDB mockDB = new MockDB(){
             @Override
             public void getRoomById(String id, DatabaseListener<Room> listener) {
-                listener.onCallback(room, DatabaseListener.Status.SUCCESS);
+                listener.onCallback(room, Status.SUCCESS);
             }
         };
         _services.setDatabase(mockDB);
@@ -120,6 +174,12 @@ public class TestPrerequisite extends TestAbstract {
     public void testJoinFullRoom(){
         Services _services = T_Services.mockServices();
         _services.setGamingKit(new MockGamingKit());
+        _services.setDatabase(new MockDB(){
+            @Override
+            public void getGameByAbbr(String abbr, DatabaseListener<Game> listener) {
+                listener.onCallback(MockModel.mockGame(), Status.SUCCESS);
+            }
+        });
 
         final Room room = MockModel.mockRoom("99");
         room.getGame().setMaxPlayers("1");
@@ -128,7 +188,7 @@ public class TestPrerequisite extends TestAbstract {
         MockDB mockDB = new MockDB(){
             @Override
             public void getRoomById(String id, DatabaseListener<Room> listener) {
-                listener.onCallback(room, DatabaseListener.Status.SUCCESS);
+                listener.onCallback(room, Status.SUCCESS);
             }
         };
         _services.setDatabase(mockDB);
@@ -141,6 +201,37 @@ public class TestPrerequisite extends TestAbstract {
         verify(screen, times(0)).toScene(eq(SceneEnum.ROOM), any(Room.class));
     }
 
+    @Test
+    public void testCannotContinueGame(){
+        Services _services = T_Services.mockServices();
+        _services.setGamingKit(new MockGamingKit());
+
+        _services.getProfile().setUserPlayingState(new UserPlayingState("99", false, 1));
+        final Room room = MockModel.mockRoom("99");
+        room.setRoundCounter(2);
+        room.setPlaying(true);
+        room.setOpen(false);
+
+        MockDB mockDB = new MockDB(){
+            @Override
+            public void getRoomById(String id, DatabaseListener<Room> listener) {
+                listener.onCallback(room, Status.SUCCESS);
+            }
+            @Override
+            public void getGameByAbbr(String abbr, DatabaseListener<Game> listener) {
+                listener.onCallback(MockModel.mockGame(), Status.SUCCESS);
+            }
+        };
+        _services.setDatabase(mockDB);
+
+        PTScreen screen = mock(PTScreen.class);
+        PrerequisiteLogic logic = Mockito.spy(new PrerequisiteLogic(screen, _services, _game, PrerequisiteLogic.JoinType.CONTINUING, room.getId()));
+        logic.onInit();
+        T_Threadings.sleep(100);
+        verify(logic, times(0)).joinRoomSuccess();
+        verify(logic, times(0)).createRoomSuccess(anyString());
+        verify(logic, times(1)).joinRoomFailed(eq(3));
+    }
 
 
 }

@@ -156,24 +156,33 @@ public class GameListScene extends SceneAbstract {
         _root.add(_userProfileTable).colspan(3).expand().fill().padTop(10).padLeft(30).padRight(30);
     }
 
-    public Actor addNewRoomRow(Room room){
+    public Actor addNewRoomRow(Room room, boolean isInvited){
 
         Table gameRowTable = new Table();
         Label.LabelStyle contentLabelStyle = new Label.LabelStyle();
         contentLabelStyle.font = _assets.getWhiteNormal2GrayS();
+
+        Table gameNameInvitationTable = new Table();
+        gameNameInvitationTable.align(Align.topLeft);
+        gameNameInvitationTable.setName("gameNameInvitationTable");
+        Image invitedImage = new Image(_assets.getInvitedIcon());
+        gameNameInvitationTable.add(invitedImage).size(isInvited ? 12 : 0, 10).padRight(3);
         Label gameNameLabel = new Label(room.getGame().getName(), contentLabelStyle);
         gameNameLabel.setWrap(true);
+        gameNameInvitationTable.add(gameNameLabel).expand().fill();
+
         Label hostNameLabel = new Label(room.getHost().getDisplayName(15), contentLabelStyle);
         hostNameLabel.setWrap(true);
         Label playersCountLabel = new Label(String.format("%s / %s", room.getRoomUsersCount(), room.getGame().getMaxPlayers()), contentLabelStyle);
         playersCountLabel.setName("playerCount");
         playersCountLabel.setWrap(true);
 
+
         Button dummyButton = new Button(new TextureRegionDrawable(_assets.getEmpty()));
         dummyButton.setFillParent(true);
 
 
-        gameRowTable.add(gameNameLabel).width(115).padLeft(10).padRight(10);
+        gameRowTable.add(gameNameInvitationTable).width(115).padLeft(10).padRight(10);
         gameRowTable.add(hostNameLabel).width(100).padLeft(8).padRight(10);
         gameRowTable.add(playersCountLabel).expandX().left().padLeft(8).padRight(10);
         gameRowTable.padTop(5).padBottom(5);
@@ -207,10 +216,17 @@ public class GameListScene extends SceneAbstract {
     }
 
     public Actor updatedRoom(Room room){
+        boolean isInvited = (room.getInvitedUserByUserId(_services.getProfile().getUserId()) != null);
         if(!_gameRowsTableMap.containsKey(room.getId())){
-            return addNewRoomRow(room);
+            return addNewRoomRow(room, false);
         }
         else{
+            if(isInvited){
+                Table table = _gameRowsTableMap.get(room.getId()).findActor("gameNameInvitationTable");
+                table.getCells().get(0).width(12);
+                table.invalidate();
+            }
+
             Label playerCountLabel = _gameRowsTableMap.get(room.getId()).findActor("playerCount");
             playerCountLabel.setText(String.format("%s / %s", room.getRoomUsersCount(), room.getGame().getMaxPlayers()));
             playerCountLabel.invalidate();

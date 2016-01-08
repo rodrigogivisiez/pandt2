@@ -5,7 +5,7 @@ package com.mygdx.potatoandtomato.absintflis.gamingkit;
  */
 public abstract class ConnectionChangedListener {
 
-    public enum Status{
+    public enum ConnectStatus {
         CONNECTED, DISCONNECTED
     }
 
@@ -13,6 +13,6 @@ public abstract class ConnectionChangedListener {
 
     }
 
-    public abstract void onChanged(Status st);
+    public abstract void onChanged(ConnectStatus st);
 
 }

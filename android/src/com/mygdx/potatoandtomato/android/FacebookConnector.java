@@ -13,6 +13,7 @@ import com.mygdx.potatoandtomato.models.FacebookProfile;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Broadcaster;
+import com.potatoandtomato.common.Status;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -82,7 +83,7 @@ public class FacebookConnector {
                                 }
 
                                 Broadcaster.getInstance().broadcast(BroadcastEvent.FACEBOOK_GET_FRIENDS_RESPONSE,
-                                        friendsList, BroadcastListener.Status.SUCCESS);
+                                        friendsList, Status.SUCCESS);
                             }
 
 
@@ -132,12 +133,12 @@ public class FacebookConnector {
                         json.put(Terms.FACEBOOK_USERID, fbUserId);
                         json.put(Terms.FACEBOOK_USERNAME, fbUsername);
                         Broadcaster.getInstance().broadcast(BroadcastEvent.LOGIN_FACEBOOK_CALLBACK,
-                                json, BroadcastListener.Status.SUCCESS);
+                                json, Status.SUCCESS);
                     }
 
                     @Override
                     public void onCancel() {
-                        Broadcaster.getInstance().broadcast(BroadcastEvent.LOGIN_FACEBOOK_CALLBACK, null, BroadcastListener.Status.SUCCESS);
+                        Broadcaster.getInstance().broadcast(BroadcastEvent.LOGIN_FACEBOOK_CALLBACK, null, Status.SUCCESS);
                     }
 
                     @Override
@@ -150,7 +151,7 @@ public class FacebookConnector {
                             }
                         }
                         else{
-                            Broadcaster.getInstance().broadcast(BroadcastEvent.LOGIN_FACEBOOK_CALLBACK, null, BroadcastListener.Status.FAILED);
+                            Broadcaster.getInstance().broadcast(BroadcastEvent.LOGIN_FACEBOOK_CALLBACK, null, Status.FAILED);
                         }
 
                     }

@@ -9,10 +9,7 @@ import com.mygdx.potatoandtomato.PTGame;
 import com.mygdx.potatoandtomato.helpers.utils.JarUtils;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
-import com.potatoandtomato.common.GameCoordinator;
-import com.potatoandtomato.common.BroadcastEvent;
-import com.potatoandtomato.common.BroadcastListener;
-import com.potatoandtomato.common.Broadcaster;
+import com.potatoandtomato.common.*;
 
 import java.net.MalformedURLException;
 import java.net.URL;

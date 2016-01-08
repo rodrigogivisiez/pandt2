@@ -2,6 +2,9 @@ package com.mygdx.potatoandtomato.scenes.room_scene;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
+import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
+import com.mygdx.potatoandtomato.absintflis.game_file_checker.GameFileCheckerListener;
 import com.mygdx.potatoandtomato.absintflis.downloader.DownloaderListener;
 import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
 import com.mygdx.potatoandtomato.helpers.services.Preferences;
@@ -10,15 +13,21 @@ import com.mygdx.potatoandtomato.helpers.utils.SafeThread;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.helpers.utils.Zippings;
 import com.mygdx.potatoandtomato.models.Game;
+import com.potatoandtomato.common.ClientVersion;
+import com.potatoandtomato.common.Status;
 
 import java.io.File;
 
 /**
  * Created by SiongLeng on 17/12/2015.
  */
-public class GameClientChecker {
+public class GameFileChecker {
 
-    private DownloaderListener _listener;
+    public enum GameFileResult {
+        FAILED_RETRIEVE, CLIENT_OUTDATED, GAME_OUTDATED
+    }
+
+    private GameFileCheckerListener _listener;
     double _currentPercent = 0;
     double _downloadGameWeight = 20, _downloadAssetsWeight = 79, _unzipWeight = 1;     //total must be 100;
     Thread _downloadThread;
@@ -26,13 +35,39 @@ public class GameClientChecker {
     Preferences _preferences;
     IDownloader _downloader;
     Game _game;
+    IDatabase _database;
 
-    public GameClientChecker(Game _game, Preferences _preferences, IDownloader _downloader, DownloaderListener _listener) {
+    public GameFileChecker(Game _game, Preferences _preferences, IDownloader _downloader, IDatabase database, GameFileCheckerListener _listener) {
         this._listener = _listener;
         this._game = _game;
+        this._database = database;
         this._preferences = _preferences;
         this._downloader = _downloader;
-        checkGameVersion();
+        getLatestGameModel();
+    }
+
+    public void getLatestGameModel(){
+        _database.getGameByAbbr(_game.getAbbr(), new DatabaseListener<Game>(Game.class) {
+            @Override
+            public void onCallback(Game obj, Status st) {
+                if(st == Status.SUCCESS){
+                    if(Integer.valueOf(obj.getClientVersion()) > Integer.valueOf(ClientVersion.VERSION)){
+                        _listener.onCallback(GameFileResult.CLIENT_OUTDATED, Status.FAILED);
+                    }
+                    else{
+                        if(!obj.getVersion().equals(_game.getVersion())){
+                            _listener.onCallback(GameFileResult.GAME_OUTDATED, Status.FAILED);
+                        }
+                        else{
+                            checkGameVersion();
+                        }
+                    }
+                }
+                else{
+                    _listener.onCallback(GameFileResult.FAILED_RETRIEVE, Status.FAILED);
+                }
+            }
+        });
     }
 
     public void checkGameVersion(){
@@ -42,7 +77,7 @@ public class GameClientChecker {
             downloadGame();
         }
         else{
-            _listener.onCallback(null, DownloaderListener.Status.SUCCESS);
+            _listener.onCallback(null, Status.SUCCESS);
         }
     }
 
@@ -84,7 +119,7 @@ public class GameClientChecker {
 
                 updatePercent(_unzipWeight);
 
-                _listener.onCallback(null, DownloaderListener.Status.SUCCESS);
+                _listener.onCallback(null, Status.SUCCESS);
 
             }
         });
@@ -120,7 +155,7 @@ public class GameClientChecker {
     public void killDownloads(){
         if(_downloadJarThread != null) _downloadJarThread.kill();
         if(_downloadAssetThread != null) _downloadAssetThread.kill();
-        _listener.onCallback(null, DownloaderListener.Status.FAILED);
+        _listener.onCallback(GameFileResult.FAILED_RETRIEVE, Status.FAILED);
 
     }
 

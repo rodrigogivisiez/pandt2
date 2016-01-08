@@ -13,6 +13,7 @@ import com.mygdx.potatoandtomato.helpers.services.Texts;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
+import com.potatoandtomato.common.Status;
 
 /**
  * Created by SiongLeng on 15/12/2015.
@@ -67,18 +68,33 @@ public class PrerequisiteLogic extends LogicAbstract {
 
     public void createRoom(){
         _scene.changeMessage(_texts.lookingForServer());
-        _services.getGamingKit().addListener(getClassTag(), new JoinRoomListener() {
-            @Override
-            public void onRoomJoined(String roomId) {
-                createRoomSuccess(roomId);
-            }
 
+        _services.getDatabase().getGameByAbbr(_game.getAbbr(), new DatabaseListener<Game>(Game.class) {
             @Override
-            public void onJoinRoomFailed() {
-                joinRoomFailed(0);
+            public void onCallback(Game obj, Status st) {
+                if(st == Status.SUCCESS){
+                    _game = obj;
+
+                    _services.getGamingKit().addListener(getClassTag(), new JoinRoomListener() {
+                        @Override
+                        public void onRoomJoined(String roomId) {
+                            createRoomSuccess(roomId);
+                        }
+
+                        @Override
+                        public void onJoinRoomFailed() {
+                            joinRoomFailed(0);
+                        }
+                    });
+                    _services.getGamingKit().createAndJoinRoom();
+                }
+                else{
+                    joinRoomFailed(0);
+                }
             }
         });
-        _services.getGamingKit().createAndJoinRoom();
+
+
     }
 
     public void joinRoom(){
@@ -99,8 +115,7 @@ public class PrerequisiteLogic extends LogicAbstract {
                         return;
                     }
 
-                    if(_joinType == JoinType.CONTINUING && !obj.canContinue(_services.getProfile().getUserId(),
-                            _services.getProfile().getUserPlayingState().getRoundCounter(), _services.getProfile().getUserPlayingState().getRoomId())){
+                    if(_joinType == JoinType.CONTINUING && !obj.canContinue(_services.getProfile())){
                         joinRoomFailed(3);
                         return;
                     }
@@ -144,17 +159,17 @@ public class PrerequisiteLogic extends LogicAbstract {
 
     public void createRoomSuccess(String roomId){
         _scene.changeMessage(_texts.joiningRoom());
-        final Room room = new Room();
-        room.setRoomId(roomId);
-        room.setGame(_game);
-        room.setOpen(true);
-        room.setHost(_services.getProfile());
-        room.setPlaying(false);
-        room.setRoundCounter(0);
-        _services.getDatabase().saveRoom(room, new DatabaseListener<String>() {
+        _joiningRoom = new Room();
+        _joiningRoom.setRoomId(roomId);
+        _joiningRoom.setGame(_game);
+        _joiningRoom.setOpen(true);
+        _joiningRoom.setHost(_services.getProfile());
+        _joiningRoom.setPlaying(false);
+        _joiningRoom.setRoundCounter(0);
+        _services.getDatabase().saveRoom(_joiningRoom, new DatabaseListener<String>() {
             @Override
             public void onCallback(String obj, Status st) {
-                _screen.toScene(SceneEnum.ROOM, room, false);
+                _screen.toScene(SceneEnum.ROOM, _joiningRoom, false);
             }
         });
     }
@@ -175,8 +190,14 @@ public class PrerequisiteLogic extends LogicAbstract {
         return _scene;
     }
 
+    public Room getJoiningRoom() {
+        return _joiningRoom;
+    }
+
     public enum JoinType{
         CREATING, JOINING, CONTINUING
     }
+
+
 
 }

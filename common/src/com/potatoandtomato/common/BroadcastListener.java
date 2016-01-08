@@ -6,11 +6,7 @@ import java.util.Random;
  * Created by SiongLeng on 20/9/2015.
  */
 public abstract class BroadcastListener<T> {
-
-    public enum Status{
-        SUCCESS, FAILED
-    }
-
+    
     private String id;
 
     public BroadcastListener() {

@@ -1,11 +1,17 @@
 package com.potatoandtomato.games.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.google.gson.Gson;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.InGameUpdateListener;
@@ -16,10 +22,12 @@ import com.potatoandtomato.games.helpers.Threadings;
 import com.potatoandtomato.games.helpers.UpdateCode;
 import com.potatoandtomato.games.helpers.UpdateRoomHelper;
 import com.potatoandtomato.games.models.GameInfo;
+import com.potatoandtomato.games.models.PlateSimple;
 import com.potatoandtomato.games.models.Services;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -39,17 +47,24 @@ public class MainScreenLogic {
     private boolean _isMyTurn;
     private int _redChessTotal, _yellowChessTotal;
     MainScreenListener _mainScreenListener;
+    boolean _isContinue;
+    boolean _initialized;
+    ArrayList<ChessType> _graveyard;
 
-    public MainScreenLogic(Services services, GameCoordinator coordinator) {
+    public MainScreenLogic(Services services, GameCoordinator coordinator, boolean isContinue) {
         this._services = services;
         this._coordinator = coordinator;
         _gson = new Gson();
         _plateLogics = new PlateLogic[4][8];
         _redChessTotal = _yellowChessTotal = 16;
+        _isContinue = isContinue;
+        _graveyard = new ArrayList<ChessType>();
+
         _mainScreenListener = new MainScreenListener() {
             @Override
-            public void onChessKilled(Drawable animalDrawable, boolean isYellow) {
+            public void onChessKilled(ChessType chessType, Drawable animalDrawable, boolean isYellow) {
                 chessIsKilled(animalDrawable, isYellow);
+                _graveyard.add(chessType);
             }
 
             @Override
@@ -65,11 +80,20 @@ public class MainScreenLogic {
             }
         });
 
-        if(_coordinator.getMeIsHost()){
-            computeAndSendGameInfo();
+        _screen = new MainScreen(coordinator, services);
+
+        if(!_isContinue){
+            if(_coordinator.getHostUserId().equals(_coordinator.getUserId())){
+                computeAndSendGameInfo();
+            }
+            else{
+                _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.REQUEST_GAME_INFO, ""));
+            }
+        }
+        else{
+            _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.REQUEST_GAME_DATA, ""));
         }
 
-        _screen = new MainScreen(coordinator, services);
     }
 
     public void init(){
@@ -102,6 +126,19 @@ public class MainScreenLogic {
                                                 _screen.setChessTotalCount(ChessType.RED, String.valueOf(_redChessTotal));
                                                 _screen.setChessTotalCount(ChessType.YELLOW, String.valueOf(_yellowChessTotal));
                                                 switchTurn(_gameInfo.isYellowTurn());
+
+
+                                                if(_isContinue){
+                                                    for(ChessType type : _graveyard){
+                                                        chessIsKilled(getDrawableFromChessType(type), type.name().startsWith("YELLOW"));
+                                                    }
+                                                    _isContinue = false;
+                                                    _initialized = true;
+                                                    _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.SUCCESS_CONTINUE, ""));
+                                                }
+                                                //only for continue game
+
+
                                             }
                                         });
                                     }
@@ -138,6 +175,7 @@ public class MainScreenLogic {
             @Override
             public void run() {
                 switchTurn(isYellowTurnNext);
+
             }
         });
     }
@@ -185,6 +223,8 @@ public class MainScreenLogic {
 
         gameInfo.setChessInfo(chessesInfo);
 
+        _gameInfo = gameInfo;
+
         _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.GAME_INFO, _gson.toJson(gameInfo)));
     }
 
@@ -195,24 +235,30 @@ public class MainScreenLogic {
             String receivedMsg = jsonObject.getString("msg");
             String[] arr;
             switch (code){
+                case UpdateCode.REQUEST_GAME_INFO:
+                    _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.GAME_INFO, _gson.toJson(_gameInfo)));
+                    break;
                 case UpdateCode.GAME_INFO:
-                    gameInfoInitialized(receivedMsg);
+                    if(!_initialized){
+                        gameInfoInitialized(receivedMsg);
+                        _initialized = true;
+                    }
                     break;
                 case UpdateCode.CHESS_SELECTED:
-                    if(!senderId.equals(_coordinator.getUserId())){
+                    if(!senderId.equals(_coordinator.getUserId()) && _initialized){
                         arr = receivedMsg.split(",");
                         _plateLogics[Integer.valueOf(arr[0])][Integer.valueOf(arr[1])].clearAllSelectedExceptSelf();
                         _plateLogics[Integer.valueOf(arr[0])][Integer.valueOf(arr[1])].setSelected(true);
                     }
                     break;
                 case UpdateCode.CHESS_OPEN_FULL:
-                    if(!senderId.equals(_coordinator.getUserId())) {
+                    if(!senderId.equals(_coordinator.getUserId()) && _initialized) {
                         arr = receivedMsg.split(",");
                         _plateLogics[Integer.valueOf(arr[0])][Integer.valueOf(arr[1])].openChess();
                     }
                     break;
                 case UpdateCode.CHESS_MOVE:
-                    if(!senderId.equals(_coordinator.getUserId())) {
+                    if(!senderId.equals(_coordinator.getUserId()) && _initialized) {
                         arr = receivedMsg.split("\\|");
                         String[] from = arr[0].split(",");
                         String[] to = arr[1].split(",");
@@ -223,11 +269,123 @@ public class MainScreenLogic {
                         );
                     }
                     break;
+                case UpdateCode.REQUEST_GAME_DATA:
+                    if(!_isContinue){
+                        _screen.setPaused(true);
+                        saveGameDataToJson(new Runnable() {
+                            @Override
+                            public void run() {
+                                _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.SAVED_GAME_DATA, ""));
+                            }
+                        });
+                    }
+                    break;
+                case UpdateCode.SAVED_GAME_DATA:
+                    if(_isContinue){
+                        continueGame();
+                    }
+                    break;
+                case UpdateCode.SUCCESS_CONTINUE:
+                    _screen.setPaused(false);
+                    break;
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    private void saveGameDataToJson(final Runnable onFinish){
+        String currentTurn;
+
+        if(_isMyTurn){
+            if(meIsYellow()) currentTurn = "yellow";
+            else currentTurn = "red";
+        }
+        else{
+            if(meIsYellow()) currentTurn = "red";
+            else currentTurn = "yellow";
+        }
+
+        PlateSimple[][] platesSimple = new PlateSimple[4][8];
+        for(int row = 0; row < 8 ; row++){
+            for(int col = 0; col < 4; col++){
+                platesSimple[col][row] = _plateLogics[col][row].getPlateSimple();
+            }
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("turn", currentTurn);
+            jsonObject.put("plateLogics", _gson.toJson(platesSimple));
+            jsonObject.put("graveyard", _gson.toJson(_graveyard));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        _coordinator.getFirebase().child(_coordinator.getId()).child("info").setValue(jsonObject.toString(), new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                onFinish.run();
+            }
+        });
+    }
+
+    private void continueGame(){
+        Firebase ref = _coordinator.getFirebase().child(_coordinator.getId()).child("info");
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if(snapshot.exists()){
+                    final String json = (String) snapshot.getValue();
+                    Gdx.app.postRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            JSONObject jsonObject = null;
+                            try {
+                                jsonObject = new JSONObject(json);
+                                PlateSimple[][] platesSimple = _gson.fromJson(jsonObject.getString("plateLogics"), PlateSimple[][].class);
+
+                                ArrayList<String> grave = _gson.fromJson(jsonObject.getString("graveyard"), ArrayList.class);
+                                for(String item : grave){
+                                    _graveyard.add(ChessType.valueOf(item));
+                                }
+                                String turn = jsonObject.getString("turn");
+                                _gameInfo = new GameInfo();
+                                _gameInfo.setYellowTurn(turn.equals("yellow"));
+                                for(int row = 0; row < 8 ; row++){
+                                    for(int col = 0; col < 4; col++){
+                                        PlateSimple plateSimple = platesSimple[col][row];
+                                        PlateLogic plateLogic = new PlateLogic(_plateLogics, col, row,
+                                                _services.getAssets(), _services.getBattleReference(), _coordinator,
+                                                plateSimple.getChessType(), meIsYellow(), _mainScreenListener);
+                                        if(plateSimple.isOpen()){
+                                            plateLogic.setOpened(true);
+                                            plateLogic.getChessActor().openChess(false);
+                                            plateLogic.getChessActor().setChessSurface();
+                                        }
+                                        if(plateSimple.isEmpty){
+                                            plateLogic.setEmpty(true);
+                                            plateLogic.getChessActor().remove();
+                                        }
+                                        _plateLogics[col][row] = plateLogic;
+                                    }
+                                }
+                                init();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            }
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+
+
     }
 
     private void gameInfoInitialized(String gameInfoString){
@@ -297,4 +455,41 @@ public class MainScreenLogic {
     public MainScreen getScreen() {
         return _screen;
     }
+
+    private Drawable getDrawableFromChessType(ChessType chessType){
+        TextureRegion region = null;
+        String chessTypeString = chessType.name();
+
+        if(chessTypeString.endsWith("ELEPHANT")){
+            if(chessTypeString.startsWith("RED")) region = _services.getAssets().getRedElephant();
+            else region = _services.getAssets().getYellowElephant();
+        }
+        else if(chessTypeString.endsWith("MOUSE")){
+            if(chessTypeString.startsWith("RED")) region = _services.getAssets().getRedMouse();
+            else region = _services.getAssets().getYellowMouse();
+        }
+        else if(chessTypeString.endsWith("CAT")){
+            if(chessTypeString.startsWith("RED")) region = _services.getAssets().getRedCat();
+            else region = _services.getAssets().getYellowCat();
+        }
+        else if(chessTypeString.endsWith("DOG")){
+            if(chessTypeString.startsWith("RED")) region = _services.getAssets().getRedDog();
+            else region = _services.getAssets().getYellowDog();
+        }
+        else if(chessTypeString.endsWith("LION")){
+            if(chessTypeString.startsWith("RED")) region = _services.getAssets().getRedLion();
+            else region = _services.getAssets().getYellowLion();
+        }
+        else if(chessTypeString.endsWith("TIGER")){
+            if(chessTypeString.startsWith("RED")) region = _services.getAssets().getRedTiger();
+            else region = _services.getAssets().getYellowTiger();
+        }
+        else if(chessTypeString.endsWith("WOLF")){
+            if(chessTypeString.startsWith("RED")) region = _services.getAssets().getRedWolf();
+            else region = _services.getAssets().getYellowWolf();
+        }
+
+        return new TextureRegionDrawable(region);
+    }
+
 }

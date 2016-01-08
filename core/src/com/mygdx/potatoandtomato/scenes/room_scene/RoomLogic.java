@@ -8,8 +8,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
 import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
+import com.mygdx.potatoandtomato.absintflis.controls.ConfirmStateChangedListener;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
-import com.mygdx.potatoandtomato.absintflis.downloader.DownloaderListener;
+import com.mygdx.potatoandtomato.absintflis.game_file_checker.GameFileCheckerListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
 import com.mygdx.potatoandtomato.absintflis.push_notifications.PushCode;
@@ -22,6 +23,7 @@ import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.Broadcaster;
+import com.potatoandtomato.common.Status;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +36,7 @@ public class RoomLogic extends LogicAbstract {
 
     RoomScene _scene;
     Room _room;
-    GameClientChecker _gameClientChecker;
+    GameFileChecker _gameFileChecker;
     HashMap<String, String> _noGameClientUsers;
     int _currentPercentage, _previousSentPercentage;
     SafeThread _downloadThread, _countDownThread, _checkReadyThread;
@@ -107,7 +109,7 @@ public class RoomLogic extends LogicAbstract {
                             }
                         }
                         else{
-                            errorOccured();
+                            errorOccured(_texts.roomError());
                         }
                     }
                 });
@@ -120,7 +122,7 @@ public class RoomLogic extends LogicAbstract {
             @Override
             public void onCallback(String obj, Status st) {
                 if(st == Status.FAILED){
-                    errorOccured();
+                    errorOccured(_texts.roomError());
                 }
             }
         });
@@ -132,18 +134,37 @@ public class RoomLogic extends LogicAbstract {
             }
         });
 
-        _gameClientChecker = new GameClientChecker(_room.getGame(), _services.getPreferences(), _services.getDownloader(), new DownloaderListener() {
-            @Override
-            public void onCallback(byte[] bytes, Status st) {
+        if(!_isContinue){
+            _gameFileChecker = new GameFileChecker(_room.getGame(), _services.getPreferences(),
+                    _services.getDownloader(), _services.getDatabase(), new GameFileCheckerListener() {
+                @Override
+                public void onCallback(GameFileChecker.GameFileResult result, Status st) {
+                    if(st == Status.FAILED){
+                        switch (result){
+                            case FAILED_RETRIEVE:
+                                errorOccured(_texts.failedRetriveGameData());
+                                break;
 
-            }
-            @Override
-            public void onStep(double percentage) {
-                super.onStep(percentage);
-                _currentPercentage = (int) percentage;
-                downloadingGameNotify();
-            }
-        });
+                            case GAME_OUTDATED:
+                                sendUpdateRoomMates(UpdateRoomMatesCode.GAME_OUTDATED, "");
+                                break;
+
+                            case CLIENT_OUTDATED:
+                                errorOccured(_texts.gameClientOutdated());
+                                break;
+                        }
+                    }
+                }
+
+                @Override
+                public void onStep(double percentage) {
+                    super.onStep(percentage);
+                    _currentPercentage = (int) percentage;
+                    downloadingGameNotify();
+                }
+            });
+        }
+
 
         _scene.getStartButton().addListener(new ClickListener() {
             @Override
@@ -174,7 +195,7 @@ public class RoomLogic extends LogicAbstract {
                 while (true){
                     if(_checkReadyThread.isKilled()) return;
                     Threadings.sleep(3000);
-                    if(_onScreen){
+                    if(_onScreen && !_confirm.isVisible()){
                         if(!_room.getRoomUserByUserId(_services.getProfile().getUserId()).getReady()){
                             sendUpdateRoomMates(UpdateRoomMatesCode.UPDATE_USER_READY, "1");
                         }
@@ -190,6 +211,19 @@ public class RoomLogic extends LogicAbstract {
     @Override
     public void onShow() {
         super.onShow();
+
+        _confirm.setStateChangedListener(new ConfirmStateChangedListener() {
+            @Override
+            public void onShow() {
+                sendUpdateRoomMates(UpdateRoomMatesCode.UPDATE_USER_READY, "0");
+            }
+
+            @Override
+            public void onHide() {
+                sendUpdateRoomMates(UpdateRoomMatesCode.UPDATE_USER_READY, "1");
+            }
+        });
+
         _gameStarted = false;
         _onScreen = true;
 
@@ -272,7 +306,7 @@ public class RoomLogic extends LogicAbstract {
                         }
                         Threadings.sleep(2000);
                         if(_downloadThread.isKilled()){
-                            _gameClientChecker.killDownloads();
+                            _gameFileChecker.killDownloads();
                             _previousSentPercentage = _currentPercentage = 0;
                             return;
                         }
@@ -318,6 +352,9 @@ public class RoomLogic extends LogicAbstract {
                 flushRoom(false, null);
             }
         }
+        else if(code == UpdateRoomMatesCode.GAME_OUTDATED){
+            errorOccured(_texts.gameVersionOutdated());
+        }
     }
 
     public void userJustJoinedRoom(Profile user){
@@ -356,13 +393,13 @@ public class RoomLogic extends LogicAbstract {
         }
         if(!found) {
             _room.setOpen(false);
+            _forceQuit = true;
             Gdx.app.postRunnable(new Runnable() {
                 @Override
                 public void run() {
                     _confirm.show(_texts.hostLeft(), Confirm.Type.YES, new ConfirmResultListener() {
                         @Override
                         public void onResult(Result result) {
-                            _forceQuit = true;
                             _screen.back();
                         }
                     });
@@ -413,13 +450,13 @@ public class RoomLogic extends LogicAbstract {
         }
     }
 
-    public void errorOccured(){
+    public void errorOccured(String message){
         if(_forceQuit) return;
         else{
-            _confirm.show(_texts.roomError(), Confirm.Type.YES, new ConfirmResultListener() {
+            _forceQuit = true;
+            _confirm.show(message, Confirm.Type.YES, new ConfirmResultListener() {
                 @Override
                 public void onResult(Result result) {
-                    _forceQuit = true;
                     _screen.back();
                 }
             });
@@ -548,6 +585,7 @@ public class RoomLogic extends LogicAbstract {
     @Override
     public void onHide() {
         super.onHide();
+        _confirm.setStateChangedListener(null);
         _onScreen = false;
         if(!_quiting) sendUpdateRoomMates(UpdateRoomMatesCode.UPDATE_USER_READY, "0");
 

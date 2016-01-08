@@ -20,9 +20,9 @@ public class Room {
     boolean open;
     int roundCounter;
     boolean playing;
-    String roomId;
+    String roomId;  //this is APPWARP ROOMID
     Profile host;
-    String id;
+    String id;  //this is database ID
 
     ArrayList<Profile> invitedUsers;
     ArrayList<String> originalRoomUserIds;
@@ -347,9 +347,12 @@ public class Room {
     }
 
     @JsonIgnore
-    public boolean canContinue(String myUserId, int myRoundCounter, String myRoomDBId){
-        if(getRoomUsers().size() > 0 && isPlaying() && !isOpen() && getRoundCounter() == myRoundCounter && getId().equals(myRoomDBId)){
-            if(getRoomUsers().size() == 1 && getRoomUserByUserId(myUserId) != null){
+    public boolean canContinue(Profile myProfile){
+        if(getRoomUsers().size() > 0 && isPlaying() && !isOpen() &&
+                getRoundCounter() == myProfile.getUserPlayingState().getRoundCounter() &&
+                getId().equals(myProfile.getUserPlayingState().getRoomId()) &&
+                !myProfile.getUserPlayingState().getAbandon()){
+            if(getRoomUsers().size() == 1 && getRoomUserByUserId(myProfile.getUserId()) != null){
                 return false;
             }
             return true;

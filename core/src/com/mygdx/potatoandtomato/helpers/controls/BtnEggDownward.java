@@ -102,6 +102,10 @@ public class BtnEggDownward extends Table {
         return _size.x;
     }
 
+    public boolean isEnabled() {
+        return _enabled;
+    }
+
     @Override
     public void draw(Batch batch, float parentAlpha) {
         if(_shader!=null){

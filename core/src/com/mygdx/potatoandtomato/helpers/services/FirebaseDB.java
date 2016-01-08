@@ -6,6 +6,7 @@ import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
 import com.mygdx.potatoandtomato.models.*;
+import com.potatoandtomato.common.Status;
 
 import java.util.*;
 
@@ -21,6 +22,7 @@ public class FirebaseDB implements IDatabase {
     private String _tableRooms = "rooms";
     private String _tableHistories = "histories";
     private String _tableRoomNotifications = "roomNotifications";
+    private String _tableGameBelongData = "gameBelongData";
     private Array<ListenerModel> _listenerModels;
 
     public FirebaseDB(String url){
@@ -145,11 +147,11 @@ public class FirebaseDB implements IDatabase {
             public void onAuthenticated(AuthData authData) {
                 Profile profile = new Profile();
                 profile.setUserId(authData.getUid());
-                listener.onCallback(profile, DatabaseListener.Status.SUCCESS);
+                listener.onCallback(profile, Status.SUCCESS);
             }
             @Override
             public void onAuthenticationError(FirebaseError firebaseError) {
-                listener.onCallback(null, DatabaseListener.Status.FAILED);
+                listener.onCallback(null, Status.FAILED);
             }
         });
     }
@@ -197,9 +199,9 @@ public class FirebaseDB implements IDatabase {
                 if (firebaseError == null) {
                     Profile profile = new Profile();
                     profile.setUserId(userId);
-                    listener.onCallback(profile, DatabaseListener.Status.SUCCESS);
+                    listener.onCallback(profile, Status.SUCCESS);
                 } else {
-                    listener.onCallback(null, DatabaseListener.Status.FAILED);
+                    listener.onCallback(null, Status.FAILED);
                 }
             }
         });
@@ -233,9 +235,19 @@ public class FirebaseDB implements IDatabase {
         getTable(_tableUsers).child(profile.getUserId()).child("userPlayingState").child("connected").onDisconnect().setValue(false, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                if(listener != null)  listener.onCallback(null, DatabaseListener.Status.SUCCESS);
+                if(listener != null)  listener.onCallback(null, Status.SUCCESS);
             }
         });
+    }
+
+    @Override
+    public void getGameByAbbr(String abbr, DatabaseListener<Game> listener) {
+        getSingleData(getTable(_tableGames).child(abbr), listener);
+    }
+
+    @Override
+    public Object getGameBelongDatabase(String abbr) {
+        return getTable(_tableGameBelongData).child(abbr);
     }
 
     @Override
@@ -264,10 +276,10 @@ public class FirebaseDB implements IDatabase {
                     for(Room r : obj){
                         rooms.add(r);
                     }
-                    listener.onCallbackTypeOne(rooms, SpecialDatabaseListener.Status.SUCCESS);
+                    listener.onCallbackTypeOne(rooms, Status.SUCCESS);
                 }
                 else{
-                    listener.onCallbackTypeOne(null, SpecialDatabaseListener.Status.FAILED);
+                    listener.onCallbackTypeOne(null, Status.FAILED);
                     return;
                 }
             }
@@ -315,7 +327,7 @@ public class FirebaseDB implements IDatabase {
                                     break;
                                 }
                             }
-                            listener.onCallbackTypeTwo(obj, SpecialDatabaseListener.Status.SUCCESS);
+                            listener.onCallbackTypeTwo(obj, Status.SUCCESS);
                         }
                     }
                 });
@@ -351,12 +363,12 @@ public class FirebaseDB implements IDatabase {
                         if (error != null) {
                             if(!failed[0]){
                                 failed[0] = true;
-                                listener.onCallback(error.getMessage(), DatabaseListener.Status.FAILED);
+                                listener.onCallback(error.getMessage(), Status.FAILED);
                             }
                         }
                         else{
                             roomUserSuccess[0] = true;
-                            if(roomNotificationSuccess[0] && !failed[0]) listener.onCallback(null, DatabaseListener.Status.SUCCESS);
+                            if(roomNotificationSuccess[0] && !failed[0]) listener.onCallback(null, Status.SUCCESS);
                         }
                     }
                 });
@@ -369,12 +381,12 @@ public class FirebaseDB implements IDatabase {
                         if (error != null) {
                             if(!failed[0]){
                                 failed[0] = true;
-                                listener.onCallback(error.getMessage(), DatabaseListener.Status.FAILED);
+                                listener.onCallback(error.getMessage(), Status.FAILED);
                             }
                         }
                         else{
                             roomNotificationSuccess[0] = true;
-                            if(roomUserSuccess[0] && !failed[0]) listener.onCallback(null, DatabaseListener.Status.SUCCESS);
+                            if(roomUserSuccess[0] && !failed[0]) listener.onCallback(null, Status.SUCCESS);
                         }
                     }
                 });
@@ -398,11 +410,11 @@ public class FirebaseDB implements IDatabase {
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                listener.onCallback((int) snapshot.getChildrenCount(), DatabaseListener.Status.SUCCESS);
+                listener.onCallback((int) snapshot.getChildrenCount(), Status.SUCCESS);
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                listener.onCallback(0, DatabaseListener.Status.FAILED);
+                listener.onCallback(0, Status.FAILED);
             }
         });
     }
@@ -412,16 +424,16 @@ public class FirebaseDB implements IDatabase {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if(snapshot.exists()){
-                    listener.onCallback(snapshot.getValue(listener.getType()), DatabaseListener.Status.SUCCESS);
+                    listener.onCallback(snapshot.getValue(listener.getType()), Status.SUCCESS);
                 }
                 else{
-                    listener.onCallback(null, DatabaseListener.Status.SUCCESS);
+                    listener.onCallback(null, Status.SUCCESS);
                 }
 
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                listener.onCallback(0, DatabaseListener.Status.FAILED);
+                listener.onCallback(0, Status.FAILED);
             }
         });
     }
@@ -432,15 +444,15 @@ public class FirebaseDB implements IDatabase {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if(snapshot.exists()){
-                    listener.onCallback(snapshot.getValue(listener.getType()), DatabaseListener.Status.SUCCESS);
+                    listener.onCallback(snapshot.getValue(listener.getType()), Status.SUCCESS);
                 }
                 else{
-                    listener.onCallback(null, DatabaseListener.Status.SUCCESS);
+                    listener.onCallback(null, Status.SUCCESS);
                 }
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                listener.onCallback(0, DatabaseListener.Status.FAILED);
+                listener.onCallback(0, Status.FAILED);
             }
         };
         ref.addValueEventListener(valueEventListener);
@@ -457,12 +469,12 @@ public class FirebaseDB implements IDatabase {
                     Object newPost = postSnapShot.getValue(listener.getType());
                     results.add(newPost);
                 }
-                listener.onCallback(results, DatabaseListener.Status.SUCCESS);
+                listener.onCallback(results, Status.SUCCESS);
 
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                listener.onCallback(0, DatabaseListener.Status.FAILED);
+                listener.onCallback(0, Status.FAILED);
             }
         });
     }
@@ -477,12 +489,12 @@ public class FirebaseDB implements IDatabase {
                     Object newPost = postSnapShot.getValue(listener.getType());
                     results.add(newPost);
                 }
-                listener.onCallback(results, DatabaseListener.Status.SUCCESS);
+                listener.onCallback(results, Status.SUCCESS);
             }
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                listener.onCallback(0, DatabaseListener.Status.FAILED);
+                listener.onCallback(0, Status.FAILED);
             }
         };
 
@@ -498,9 +510,9 @@ public class FirebaseDB implements IDatabase {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 if (firebaseError != null) {
-                    if(listener != null) listener.onCallback(firebaseError.getMessage(), DatabaseListener.Status.FAILED);
+                    if(listener != null) listener.onCallback(firebaseError.getMessage(), Status.FAILED);
                 } else {
-                    if(listener != null) listener.onCallback(null, DatabaseListener.Status.SUCCESS);
+                    if(listener != null) listener.onCallback(null, Status.SUCCESS);
                 }
             }
         });

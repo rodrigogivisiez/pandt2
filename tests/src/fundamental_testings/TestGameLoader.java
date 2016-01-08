@@ -1,14 +1,17 @@
 package fundamental_testings;
 
+import abstracts.MockDB;
 import abstracts.TestAbstract;
+import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.downloader.DownloaderListener;
+import com.mygdx.potatoandtomato.absintflis.game_file_checker.GameFileCheckerListener;
 import com.mygdx.potatoandtomato.desktop.DesktopLauncher;
 import com.mygdx.potatoandtomato.helpers.services.Downloader;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Services;
-import com.mygdx.potatoandtomato.scenes.room_scene.GameClientChecker;
+import com.mygdx.potatoandtomato.scenes.room_scene.GameFileChecker;
 import com.potatoandtomato.common.*;
 import helpers.T_Services;
 import org.junit.Assert;
@@ -38,7 +41,7 @@ public class TestGameLoader extends TestAbstract{
     public void testLoadGame(){
 
         final boolean[] waiting = {true};
-        Game game = new Game();
+        final Game game = new Game();
         game.setGameUrl("http://www.potato-and-tomato.com/sample/game.jar");
         game.setAssetUrl("http://www.potato-and-tomato.com/sample/assets.zip");
         game.setName("Sample");
@@ -50,14 +53,22 @@ public class TestGameLoader extends TestAbstract{
         game.setTeamMaxPlayers("1");
         game.setTeamMinPlayers("1");
         game.setVersion("1.1");
+        game.setClientVersion("1");
 
 
-        GameClientChecker clientChecker = new GameClientChecker(game, _services.getPreferences(), new Downloader(), new DownloaderListener() {
+        GameFileChecker clientChecker = new GameFileChecker(game, _services.getPreferences(), new Downloader(), new MockDB(){
             @Override
-            public void onCallback(byte[] bytes, Status st) {
+            public void getGameByAbbr(String abbr, DatabaseListener<Game> listener) {
+                listener.onCallback(game, Status.SUCCESS);
+            }
+        }, new GameFileCheckerListener() {
+
+            @Override
+            public void onCallback(GameFileChecker.GameFileResult result, Status st) {
                 Assert.assertEquals(Status.SUCCESS, st);
                 waiting[0] = false;
             }
+
         });
 
         while (waiting[0]){
@@ -78,7 +89,7 @@ public class TestGameLoader extends TestAbstract{
 
         GameCoordinator gameCoordinator = new GameCoordinator(game.getFullLocalJarPath(),
                                         game.getLocalAssetsPath(), game.getBasePath(), new ArrayList<Team>(), Positions.getWidth(),
-                                        Positions.getHeight(), null, null, "123", mock(IGameSandBox.class));
+                                        Positions.getHeight(), null, null, "123", mock(IGameSandBox.class), null, "1");
         Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_GAME_REQUEST, gameCoordinator);
 
         while (waiting[0]){

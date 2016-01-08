@@ -6,15 +6,18 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
+import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
+import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.models.UserPlayingState;
 import com.mygdx.potatoandtomato.scenes.prerequisite_scene.PrerequisiteLogic;
+import com.potatoandtomato.common.Status;
 
 import java.util.ArrayList;
 
@@ -38,7 +41,12 @@ public class GameListLogic extends LogicAbstract {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                _screen.toScene(SceneEnum.CREATE_GAME);
+                joinGamePreCheck(new Runnable() {
+                    @Override
+                    public void run() {
+                        _screen.toScene(SceneEnum.CREATE_GAME);
+                    }
+                });
             }
         });
 
@@ -57,7 +65,12 @@ public class GameListLogic extends LogicAbstract {
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 if(_selectedRoom != null){
-                    _screen.toScene(SceneEnum.PREREQUISITE, null, PrerequisiteLogic.JoinType.JOINING, _selectedRoom.getId());
+                    joinGamePreCheck(new Runnable() {
+                        @Override
+                        public void run() {
+                            _screen.toScene(SceneEnum.PREREQUISITE, null, PrerequisiteLogic.JoinType.JOINING, _selectedRoom.getId());
+                        }
+                    });
                 }
             }
         });
@@ -99,6 +112,24 @@ public class GameListLogic extends LogicAbstract {
         _scene.setUsername(_services.getProfile().getDisplayName(15));
     }
 
+    private void joinGamePreCheck(final Runnable toRun){
+        if(_continueRoomId != null){
+            _confirm.show(_texts.confirmNotContinueGame(), Confirm.Type.YESNO, new ConfirmResultListener() {
+                @Override
+                public void onResult(Result result) {
+                    if(result == Result.YES){
+                        _services.getProfile().getUserPlayingState().setAbandon(true);
+                        _services.getDatabase().updateProfile(_services.getProfile(), null);
+                        toRun.run();
+                    }
+                }
+            });
+        }
+        else{
+            toRun.run();
+        }
+    }
+
     private void checkCanContinue(){
         _scene.getContinueGameButton().setEnabled(false);
         _continueRoomId = null;
@@ -108,12 +139,12 @@ public class GameListLogic extends LogicAbstract {
                 @Override
                 public void onCallback(Room obj, Status st) {
                     if(st == Status.SUCCESS){
-                        if(obj.canContinue(_services.getProfile().getUserId(), state.getRoundCounter(), state.getRoomId())){
+                        if(obj.canContinue(_services.getProfile())){
                             _continueRoomId = obj.getId();
                             _scene.getContinueGameButton().setEnabled(true);
                         }
                         else{
-                            _services.getProfile().setUserPlayingState(null);
+                            _services.getProfile().getUserPlayingState().setAbandon(true);
                             _services.getDatabase().updateProfile(_services.getProfile(), null);
                         }
                     }

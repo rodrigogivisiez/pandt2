@@ -6,7 +6,10 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
+import com.firebase.client.Firebase;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 /**
@@ -19,7 +22,19 @@ public abstract class MockGame extends Game implements IPTGame {
     MockGamingKit _mockGamingKit;
     GameCoordinator _gameCoordinator;
 
-    public MockGame() {
+    public MockGame(String gameId) {
+
+        try {
+            PrintWriter out = new PrintWriter("client_version.txt");
+            out.print(ClientVersion.VERSION);
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        Firebase _ref = new Firebase("https://forunittest.firebaseio.com");
+
+
         _processors = new Array<InputProcessor>();
         _gameCoordinator = new GameCoordinator("", "", "", new ArrayList<Team>(), 360, 640, this, _spriteBatch, "", new IGameSandBox() {
             @Override
@@ -31,7 +46,7 @@ public abstract class MockGame extends Game implements IPTGame {
             public void userAbandoned() {
 
             }
-        });
+        },  _ref.child("gameBelongData").child(gameId), "1");
     }
 
     public void initiateMockGamingKit(int expectedTeamCount, int eachTeamExpectedPlayers){

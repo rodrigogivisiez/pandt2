@@ -60,4 +60,8 @@ public interface IDatabase {
 
      void onDcSetGameStateDisconnected(Profile profile, DatabaseListener listener);
 
+     void getGameByAbbr(String abbr, DatabaseListener<Game> listener);
+
+     Object getGameBelongDatabase(String abbr);
+
 }

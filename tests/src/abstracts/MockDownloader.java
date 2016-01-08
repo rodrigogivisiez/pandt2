@@ -3,6 +3,7 @@ package abstracts;
 import com.mygdx.potatoandtomato.absintflis.downloader.DownloaderListener;
 import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
 import com.mygdx.potatoandtomato.helpers.utils.SafeThread;
+import com.potatoandtomato.common.Status;
 
 import java.io.File;
 
@@ -13,7 +14,7 @@ public class MockDownloader implements IDownloader {
     @Override
     public SafeThread downloadFileToPath(String urlString, File targetFile, DownloaderListener listener) {
         listener.onStep(100);
-        listener.onCallback(null, DownloaderListener.Status.SUCCESS);
+        listener.onCallback(null, Status.SUCCESS);
         return new SafeThread();
     }
 

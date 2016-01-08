@@ -18,6 +18,7 @@ import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Broadcaster;
+import com.potatoandtomato.common.Status;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 
@@ -60,10 +61,10 @@ public class BootLogic extends LogicAbstract {
 
         _services.getGamingKit().addListener(getClassTag(), new ConnectionChangedListener() {
             @Override
-            public void onChanged(Status st) {
+            public void onChanged(ConnectStatus st) {
 
                 if(!_logined){
-                    if(st == Status.CONNECTED){
+                    if(st == ConnectStatus.CONNECTED){
                         if(_services.getProfile().getMascotEnum() == null){
                             _screen.toScene(SceneEnum.MASCOT_PICK);
                         }
@@ -77,7 +78,7 @@ public class BootLogic extends LogicAbstract {
                     }
                 }
                 else{
-                    if(st == Status.DISCONNECTED){
+                    if(st == ConnectStatus.DISCONNECTED){
                         _screen.backToBoot();
                         _confirm.show(_texts.noConnection(), Confirm.Type.YES, null);
                     }

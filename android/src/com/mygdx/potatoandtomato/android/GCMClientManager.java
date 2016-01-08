@@ -17,6 +17,7 @@ import com.google.android.gms.iid.InstanceID;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Broadcaster;
+import com.potatoandtomato.common.Status;
 
 public class GCMClientManager {
     // Constants

@@ -13,15 +13,14 @@ import com.mygdx.potatoandtomato.absintflis.downloader.DownloaderListener;
 import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesCode;
+import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.services.GCMSender;
 import com.mygdx.potatoandtomato.helpers.utils.SafeThread;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
-import com.mygdx.potatoandtomato.models.Profile;
-import com.mygdx.potatoandtomato.models.PushNotification;
-import com.mygdx.potatoandtomato.models.Room;
-import com.mygdx.potatoandtomato.models.Services;
+import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.scenes.room_scene.RoomLogic;
 import com.mygdx.potatoandtomato.scenes.room_scene.RoomScene;
+import com.potatoandtomato.common.Status;
 import com.potatoandtomato.common.Team;
 import helpers.MockModel;
 import helpers.T_Services;
@@ -55,6 +54,12 @@ public class TestRoom extends TestAbstract {
         _room = MockModel.mockRoom("1");
         _services.getPreferences().delete(_room.getGame().getAbbr());
         _services.setProfile(MockModel.mockProfile());
+        _services.setDatabase(new MockDB(){
+            @Override
+            public void getGameByAbbr(String abbr, DatabaseListener<Game> listener) {
+                listener.onCallback(_room.getGame(), Status.SUCCESS);
+            }
+        });
     }
 
     @Test
@@ -74,10 +79,10 @@ public class TestRoom extends TestAbstract {
             public SafeThread downloadFileToPath(String urlString, File targetFile, DownloaderListener listener) {
                 int percent = 0;
                 while (percent < 100){
-                    percent+=50;
+                    percent+=25;
                     listener.onStep(percent);
                 }
-                listener.onCallback(null, DownloaderListener.Status.SUCCESS);
+                listener.onCallback(null, Status.SUCCESS);
                 return new SafeThread();
             }
 
@@ -126,7 +131,7 @@ public class TestRoom extends TestAbstract {
             public void monitorRoomById(String id, String classTag, DatabaseListener<Room> listener) {
                 super.monitorRoomById(id, classTag, listener);
                 _room.getRoomUsers().remove(_room.getHost().getUserId());
-                listener.onCallback(_room, DatabaseListener.Status.SUCCESS);
+                listener.onCallback(_room, Status.SUCCESS);
             }
         });
 
@@ -234,9 +239,28 @@ public class TestRoom extends TestAbstract {
         logic.gameStarted();
         verify(gcmSender, times(1)).send(eq(_room.getProfileByUserId("another")), any(PushNotification.class));
         verify(gcmSender, times(1)).send(eq(_room.getProfileByUserId("123")), any(PushNotification.class));
+    }
 
+    @Test
+    public void testContinueGame(){
+        GamingKit mockKit = Mockito.spy(new MockGamingKit());
+        _services.setGamingKit(mockKit);
+        PTScreen screen = mock(PTScreen.class);
+
+        _room.setOpen(false);
+        _room.setPlaying(true);
+
+        RoomLogic logic = Mockito.spy(new RoomLogic(screen, _services, _room, true));
+        logic.onInit();
+        logic.onShow();
+        verify(logic, times(0)).checkHostInRoom();
+        verify(logic, times(1)).continueGame();
+        verify(logic, times(0)).gameStarted();
+        verify(screen, times(1)).toScene(eq(SceneEnum.GAME_SANDBOX), any(Room.class), eq(true));
+        Assert.assertEquals(false, _room.isOpen());
 
     }
+
 
 
     @Test
