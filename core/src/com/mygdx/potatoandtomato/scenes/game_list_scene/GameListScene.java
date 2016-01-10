@@ -10,7 +10,6 @@ import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.helpers.controls.BtnEggDownward;
-import com.mygdx.potatoandtomato.helpers.controls.Mascot;
 import com.mygdx.potatoandtomato.helpers.controls.TopBar;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
@@ -31,7 +30,6 @@ public class GameListScene extends SceneAbstract {
     Table _scrollTable;
     BtnEggDownward _newGameButton, _joinGameButton, _continueGameButton;
     Table _userProfileTable;
-    Mascot _userMascot;
     Label _usernameLabel;
     Button _settingsButton, _ratingButtons;
     Table _settingsTable, _ratingTable;
@@ -116,8 +114,6 @@ public class GameListScene extends SceneAbstract {
         _userProfileTable.setBackground(new NinePatchDrawable(_assets.getBlackRoundedBg()));
 
         Profile profile = _services.getProfile();
-        _userMascot = new Mascot(profile.getMascotEnum(), _assets);
-        _userMascot.resizeTo(50, 45);
         _usernameLabel = new Label(profile.getDisplayName(15), new Label.LabelStyle(_assets.getWhiteNormal3GrayS(), Color.WHITE));
 
 
@@ -137,7 +133,6 @@ public class GameListScene extends SceneAbstract {
         _ratingButtons.setFillParent(true);
         _ratingTable.addActor(_ratingButtons);
 
-        _userProfileTable.add(_userMascot).size(_userMascot.getPrefWidth(), _userMascot.getPrefHeight()).padLeft(10).padRight(5);
         _userProfileTable.add(_usernameLabel).expand().fill().padLeft(10).padRight(10);
         _userProfileTable.add(_settingsTable).size(40).padRight(10);
         _userProfileTable.add(_ratingTable).size(40).padRight(10);

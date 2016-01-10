@@ -1,6 +1,5 @@
 package com.mygdx.potatoandtomato.models;
 
-import com.mygdx.potatoandtomato.enums.MascotEnum;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
@@ -13,7 +12,6 @@ public class Profile {
     String userId;
     String gameName;
     String gcmId;
-    MascotEnum mascotEnum;
     UserPlayingState userPlayingState;
 
     public Profile() {
@@ -27,12 +25,7 @@ public class Profile {
         else returnName = gameName;
 
         if(returnName == null || returnName.trim().equals("")){
-            if(mascotEnum == MascotEnum.POTATO){
-                returnName = "Just a Potato";
-            }
-            else{
-                returnName = "Just a Tomato";
-            }
+            return "No name";
         }
         if(returnName.length() > limit) {
             returnName = returnName.substring(0, limit);
@@ -64,14 +57,6 @@ public class Profile {
 
     public void setFacebookUserId(String facebookUserId) {
         this.facebookUserId = facebookUserId;
-    }
-
-    public MascotEnum getMascotEnum(){
-        return mascotEnum;
-    }
-
-    public void setMascotEnum(MascotEnum mascotEnum){
-        this.mascotEnum = mascotEnum;
     }
 
     public String getFacebookName() {

@@ -22,7 +22,7 @@ public class Assets {
     AssetManager _manager;
 
     TextureAtlas _backgroundsPack;
-    TextureAtlas _potatoHiAnimation, _tomatoHiAnimation;
+    TextureAtlas _loadingAnimation;
     private String _backgroundPackPath = "ui_pack.atlas";
     private String _fontNormalPath = "fonts/helvetica_regular.ttf";
     private String _fontBoldPath = "fonts/helvetica_bold.ttf";
@@ -33,16 +33,17 @@ public class Assets {
             tomatoHi, potatoHi, socialIcon, loginIcon, tick, cross, woodBgSmall, woodBgTall, woodBgNormal,
             woodBgTitle, downwardEggButton, topBarBg, quitIcon, gameListHighlight, gameListTitleSeparator,
             gameListBg, gameListTitleBg, btnWhiteRound, blackBg, ratingIcon, settingsIcon, tomatoIcon,
-            potatoIcon, unknownMascotIcon, backIcon, infoIcon, importantIcon, comingSoon, noImage,
+            potatoIcon, unknownIcon, backIcon, infoIcon, importantIcon, comingSoon, noImage,
             pointLeftIcon, closeButton, downloadIconSmall, messageNotification, orangeLine, greyLine,
             chatContainer, textCursor, unselectBox, selectBox, whiteLine, expandIcon, collapsedIcon, loading,
-            webImageLoading, invitedIcon;
+            webImageLoading, invitedIcon, bulletIcon, micIcon;
     private NinePatch popupBg, buttonRed, buttonGreen, progressBarInner, progressBarBg, whiteRoundedBg,
             yellowRoundedBg,  greenRoundedBg,
             blackRoundedBg, chatBox, yellowGradientBox, scrollVerticalHandle, irregularBg, expandTitleBg;
     private BitmapFont blackNormal2, redNormal2, blueNormal2, blackBold2, blackNormal3, orangePizza3,
             whiteBold3GrayS, topBarFont, whitePizza3BlackS, orangePizza2White, whiteNormal3GrayS, whiteNormal2GrayS,
-            whiteNormal2, whitePizza2BlackS, greenNormal2, grayBold2, redBold2, blueBold2;
+            whiteNormal2, whitePizza2BlackS, greenNormal2, grayBold2, redBold2, blueBold2, whiteNormal2Black,
+            whiteBold2GrayS;
 
 
     public Assets() {
@@ -69,9 +70,11 @@ public class Assets {
         loadOneFont(_fontNormalPath, "whiteNormal2.ttf", Color.WHITE, 11);
         loadOneFont(_fontNormalPath, "blueNormal2.ttf", Color.valueOf("4169e1"), 11);
         loadOneFont(_fontNormalPath, "greenNormal2.ttf", Color.valueOf("51bf1b"), 11);
+        loadOneFont(_fontNormalPath, "whiteNormal2Black.ttf", Color.WHITE, 11 , 1, Color.BLACK, 0 , Color.GRAY);
         loadOneFont(_fontBoldPath, "blackBold2.ttf", Color.BLACK, 11);
         loadOneFont(_fontBoldPath, "grayBold2.ttf", Color.valueOf("c4c4c4"), 11);
         loadOneFont(_fontBoldPath, "whiteBold3GrayS.ttf", Color.WHITE, 13, 1, Color.GRAY, 1, Color.GRAY);
+        loadOneFont(_fontBoldPath, "whiteBold2GrayS.ttf", Color.WHITE, 11, 1, Color.GRAY, 1, Color.GRAY);
         loadOneFont(_fontBoldPath, "redBold2.ttf", Color.valueOf("e40404"), 11);
         loadOneFont(_fontBoldPath, "blueBold2.ttf", Color.valueOf("11b1bf"), 11);
 
@@ -113,18 +116,28 @@ public class Assets {
         blackNormal3 = _manager.get("blackNormal3.ttf", BitmapFont.class);
         orangePizza3 = _manager.get("orangePizza3.ttf", BitmapFont.class);
         whiteBold3GrayS = _manager.get("whiteBold3GrayS.ttf", BitmapFont.class);
+        whiteBold2GrayS = _manager.get("whiteBold2GrayS.ttf", BitmapFont.class);
         topBarFont = _manager.get("topBarFont.ttf", BitmapFont.class);
         whitePizza3BlackS = _manager.get("whitePizza3BlackS.ttf", BitmapFont.class);
         orangePizza2White = _manager.get("orangePizza2White.ttf", BitmapFont.class);
         whiteNormal3GrayS = _manager.get("whiteNormal3GrayS.ttf", BitmapFont.class);
         whiteNormal2GrayS = _manager.get("whiteNormal2GrayS.ttf", BitmapFont.class);
         whiteNormal2 = _manager.get("whiteNormal2.ttf", BitmapFont.class);
+        whiteNormal2Black = _manager.get("whiteNormal2Black.ttf", BitmapFont.class);
         whitePizza2BlackS = _manager.get("whitePizza2BlackS.ttf", BitmapFont.class);
         greenNormal2 = _manager.get("greenNormal2.ttf", BitmapFont.class);
         grayBold2 = _manager.get("grayBold2.ttf", BitmapFont.class);
         redBold2 = _manager.get("redBold2.ttf", BitmapFont.class);
         blueBold2 = _manager.get("blueBold2.ttf", BitmapFont.class);
 
+    }
+
+    public BitmapFont getWhiteBold2GrayS() {
+        return whiteBold2GrayS;
+    }
+
+    public BitmapFont getWhiteNormal2Black() {
+        return whiteNormal2Black;
     }
 
     public BitmapFont getBlueBold2() {
@@ -208,7 +221,7 @@ public class Assets {
         settingsIcon = _backgroundsPack.findRegion("settings_icon");
         tomatoIcon = _backgroundsPack.findRegion("tomato_icon");
         potatoIcon = _backgroundsPack.findRegion("potato_icon");
-        unknownMascotIcon = _backgroundsPack.findRegion("unknown_mascot");
+        unknownIcon = _backgroundsPack.findRegion("unknown_mascot");
         backIcon = _backgroundsPack.findRegion("back_icon");
         infoIcon = _backgroundsPack.findRegion("info_icon");
         importantIcon = _backgroundsPack.findRegion("important_icon");
@@ -230,6 +243,8 @@ public class Assets {
         loading = _backgroundsPack.findRegion("loading");
         webImageLoading = _backgroundsPack.findRegion("loading_image");
         invitedIcon = _backgroundsPack.findRegion("invited_icon");
+        bulletIcon = _backgroundsPack.findRegion("bullet");
+        micIcon = _backgroundsPack.findRegion("mic");
     }
 
     private void basicNinePatchLoaded(){
@@ -247,6 +262,14 @@ public class Assets {
         scrollVerticalHandle =  _backgroundsPack .createPatch("scrollbar_handle");
         irregularBg =  _backgroundsPack .createPatch("irregular_bg");
         expandTitleBg = _backgroundsPack.createPatch("expandable_title_bg");
+    }
+
+    public TextureRegion getMicIcon() {
+        return micIcon;
+    }
+
+    public TextureRegion getBulletIcon() {
+        return bulletIcon;
     }
 
     public TextureRegion getInvitedIcon() {
@@ -397,8 +420,8 @@ public class Assets {
         return potatoIcon;
     }
 
-    public TextureRegion getUnknownMascotIcon() {
-        return unknownMascotIcon;
+    public TextureRegion getUnknownIcon() {
+        return unknownIcon;
     }
 
     public TextureRegion getBackIcon() {
@@ -561,28 +584,17 @@ public class Assets {
         return whiteBold3GrayS;
     }
 
-    public Array<? extends TextureRegion> getPotatoHiAnimation() {
-        if(_potatoHiAnimation == null){
-            _potatoHiAnimation = new TextureAtlas(Gdx.files.internal("animations/potato_hi.txt"));;
+    public Array<? extends TextureRegion> getLoadingAnimation() {
+        if(_loadingAnimation == null){
+            _loadingAnimation = new TextureAtlas(Gdx.files.internal("animations/loading.atlas"));;
         }
-        return _potatoHiAnimation.getRegions();
-    }
-
-    public Array<? extends TextureRegion> getTomatoHiAnimation() {
-        if(_tomatoHiAnimation == null){
-            _tomatoHiAnimation = new TextureAtlas(Gdx.files.internal("animations/tomato_hi.txt"));;
-        }
-        return _tomatoHiAnimation.getRegions();
+        return _loadingAnimation.getRegions();
     }
 
     public void disposeHiAnimation() {
-        if(_potatoHiAnimation != null){
-            _potatoHiAnimation.dispose();
-            _potatoHiAnimation = null;
-        }
-        if(_tomatoHiAnimation != null){
-            _tomatoHiAnimation.dispose();
-            _tomatoHiAnimation = null;
+        if(_loadingAnimation != null){
+            _loadingAnimation.dispose();
+            _loadingAnimation = null;
         }
     }
 

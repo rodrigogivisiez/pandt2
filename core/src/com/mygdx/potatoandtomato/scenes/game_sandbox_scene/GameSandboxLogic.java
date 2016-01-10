@@ -189,6 +189,8 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                             _coordinator.getGameEntrance().onContinue();
                         }
                         _scene.clearRoot();
+                        _services.getChat().setMode(2);
+                        _services.getChat().resetChat();
                         _services.getChat().show();
                     }
                 });
@@ -258,6 +260,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     public void exitSandbox(){
         _screen.switchToPTScreen();
         _screen.back();
+        _services.getChat().setMode(1);
         _services.getChat().add(new ChatMessage(_texts.gameEnded(),
                 ChatMessage.FromType.SYSTEM, null));
     }

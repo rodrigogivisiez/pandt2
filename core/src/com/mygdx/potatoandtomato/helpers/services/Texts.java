@@ -46,6 +46,8 @@ public class Texts {
     public String facebookLoginFailed() { return "Facebook request failed..."; }
 
 
+    public String askForName() { return "Please input your in-game display name"; }
+
     public String yes() { return "Yes"; }
     public String no() { return "No"; }
     public String retry() { return "Retry"; }

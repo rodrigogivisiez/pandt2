@@ -33,7 +33,6 @@ public class PrerequisiteScene extends SceneAbstract {
         new TopBar(_root, _texts.loading(), false, _assets, _screen);
 
         _loadingTable = new Table();
-        _loadingTable.align(Align.top);
         _loadingTable.setBackground(new TextureRegionDrawable(_assets.getWoodBgNormal()));
 
         Label.LabelStyle msgLabelStyle = new Label.LabelStyle();
@@ -46,9 +45,9 @@ public class PrerequisiteScene extends SceneAbstract {
         _retryButton.setText(_texts.retry());
         _retryButton.setVisible(false);
 
-        _loadingTable.add(_msgLabel).height(130).expandX().fillX().padLeft(20).padRight(20);
+        _loadingTable.add(_msgLabel).expandX().fillX().padLeft(10).padRight(10);
         _loadingTable.row();
-        _loadingTable.add(_retryButton).expand();
+        _loadingTable.add(_retryButton).width(140).padTop(20);
         _root.add(_loadingTable);
     }
 

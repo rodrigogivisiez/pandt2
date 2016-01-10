@@ -234,6 +234,7 @@ public class RoomLogic extends LogicAbstract {
         }
 
         _services.getChat().setRoom(_room);
+        _services.getChat().setMode(1);
         _services.getChat().show();
         _starting = false;
         sendUpdateRoomMates(UpdateRoomMatesCode.UPDATE_USER_READY, "1");
@@ -508,7 +509,7 @@ public class RoomLogic extends LogicAbstract {
             public void run() {
                 int i = 3;
                 _services.getChat().show();
-                _services.getChat().expand();
+                _services.getChat().expanded();
                 while(i > 0){
                     _services.getChat().add(new ChatMessage(String.format(_texts.gameStartingIn(), i), ChatMessage.FromType.IMPORTANT, null));
                     Threadings.sleep(1500);
@@ -555,7 +556,6 @@ public class RoomLogic extends LogicAbstract {
         Threadings.delay(1000, new Runnable() {
             @Override
             public void run() {
-                _services.getChat().collapsed(false);
                 _services.getChat().hide();
                 _screen.toScene(SceneEnum.GAME_SANDBOX, _room, false);
                 _scene.getTeamsRoot().setTouchable(Touchable.enabled);
@@ -565,7 +565,6 @@ public class RoomLogic extends LogicAbstract {
     }
 
     public void continueGame(){
-        _services.getChat().collapsed(false);
         _services.getChat().hide();
         _screen.toScene(SceneEnum.GAME_SANDBOX, _room, true);
         _gameStarted = true;

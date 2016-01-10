@@ -1,6 +1,5 @@
 package com.mygdx.potatoandtomato.models;
 
-import com.mygdx.potatoandtomato.enums.MascotEnum;
 import com.mygdx.potatoandtomato.helpers.serializings.IntProfileMapDeserializer;
 import com.potatoandtomato.common.Player;
 import com.potatoandtomato.common.Team;
@@ -321,7 +320,7 @@ public class Room {
             boolean isHost = false;
             if(user.getProfile().equals(this.getHost())) isHost = true;
             teams.get(index).addPlayer(new Player(user.getProfile().getDisplayName(15), user.getProfile().getUserId(),
-                    user.getProfile().getMascotEnum() == MascotEnum.POTATO ? 0 : 1, user.getProfile().equals(selfProfile), isHost));
+                    user.getProfile().equals(selfProfile), isHost));
         }
         return teams;
     }

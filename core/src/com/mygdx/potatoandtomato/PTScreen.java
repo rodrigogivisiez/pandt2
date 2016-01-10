@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
 import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
@@ -24,13 +23,12 @@ import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.scenes.boot_scene.BootLogic;
 import com.mygdx.potatoandtomato.scenes.create_game_scene.CreateGameLogic;
 import com.mygdx.potatoandtomato.scenes.game_list_scene.GameListLogic;
+import com.mygdx.potatoandtomato.scenes.input_name_scene.InputNameLogic;
 import com.mygdx.potatoandtomato.scenes.invite_scene.InviteLogic;
 import com.mygdx.potatoandtomato.scenes.game_sandbox_scene.GameSandboxLogic;
-import com.mygdx.potatoandtomato.scenes.mascot_pick_scene.MascotPickLogic;
 import com.mygdx.potatoandtomato.scenes.prerequisite_scene.PrerequisiteLogic;
 import com.mygdx.potatoandtomato.scenes.room_scene.RoomLogic;
 import com.mygdx.potatoandtomato.scenes.settings_scene.SettingsLogic;
-import com.potatoandtomato.common.GameScreen;
 
 import java.util.Stack;
 
@@ -94,11 +92,11 @@ public class PTScreen implements Screen {
                     sceneTransition(logic.getScene().getRoot(), logicOut.getLogic().getScene().getRoot(), logic.getScene(), true, new Runnable() {
                         @Override
                         public void run() {
-                            logic.onShow();
                             if (!logicOut.getLogic().isSaveToStack()) {
                                 _logicStacks.remove(logicOut);
                                 logicOut.getLogic().dispose();
                             }
+                            logic.onShow();
                         }
                     });
                 }
@@ -129,8 +127,8 @@ public class PTScreen implements Screen {
                             final LogicEnumPair current = _logicStacks.pop();
                             final LogicEnumPair previous = _logicStacks.peek();
                             current.getLogic().onHide();
-                            previous.getLogic().onShow();
                             current.getLogic().dispose();
+                            previous.getLogic().onShow();
                             sceneTransition(previous.getLogic().getScene().getRoot(), current.getLogic().getScene().getRoot(),
                                     previous.getLogic().getScene(), false, new Runnable() {
                                 @Override
@@ -177,8 +175,8 @@ public class PTScreen implements Screen {
             case BOOT:
                 logic = new BootLogic(this, _services, objs);
                 break;
-            case MASCOT_PICK:
-                logic = new MascotPickLogic(this, _services, objs);
+            case INPUT_NAME:
+                logic = new InputNameLogic(this, _services, objs);
                 break;
             case GAME_LIST:
                 logic = new GameListLogic(this, _services, objs);

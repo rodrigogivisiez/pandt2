@@ -43,6 +43,7 @@ public class DesktopLauncher {
 		settings.filterMag = Texture.TextureFilter.Linear;
 		settings.filterMin = Texture.TextureFilter.Linear;
 		//TexturePacker.process(settings, "../../images/ui", "../../android/assets", "ui_pack");
+
 		new LwjglApplication(new PTGame(), config);
 
 		subscribeLoadGameRequest();

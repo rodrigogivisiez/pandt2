@@ -3,12 +3,10 @@ package com.mygdx.potatoandtomato.helpers.controls;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
@@ -19,39 +17,48 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
+import com.mygdx.potatoandtomato.helpers.utils.Colors;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
-import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Room;
 import com.potatoandtomato.common.*;
 
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
+import java.util.HashMap;
+
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.delay;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 /**
  * Created by SiongLeng on 20/12/2015.
  */
 public class Chat {
 
-    private Table _chatRoot, _allMessagesTable, _messageBoxTable;
+    private Table _chatRoot, _mode1AllMessagesTable, _messageBoxTable;
+    private Table _mode2AllMessagesTable;
+
+
     private Stage _stage;
     private Assets _assets;
     private Texts _texts;
     private GamingKit _gamingKit;
     private TextField _messageTextField;
     private Image _textFieldFocusImage, _textFieldNotFocusImage;
-    private Image _dummyCloseButton;
-    private boolean _expanded, _messageNotificationShown;
-    private float _collapsedY, _expandedY;
-    private Table _boxChildTable, _messagesContentTable, _newMsgCounterTable, _sendTable;
+    private boolean _expanded;
+    private Table _boxChildTable, _mode1MessagesContentTable, _sendTable;
+    private Table _mode2MessagesContentTable;
     private Room _room;
-    private ScrollPane _chatScroll;
-    private Label _sendLabel, _messageCounterLabel;
-    private boolean _notFirstMessage;
+    private ScrollPane _mode1ChatScroll, _mode2ChatScroll;
+    private Label _sendLabel;
+    private boolean _mode1NotFirstMessage, _mode2NotFirstMessage;
     private boolean _visible;
     private SpriteBatch _batch;
     private IPTGame _game;
+    private HashMap<String, Color> _userColors;
+    private int _mode;
+    private Image _micImage;
 
     public void setRoom(Room _room) {
         this._room = _room;
@@ -63,6 +70,8 @@ public class Chat {
         this._assets = assets;
         this._batch = batch;
         this._game = game;
+        this._mode = 1;
+        this._userColors = new HashMap<>();
 
         if(batch == null) return;
 
@@ -72,23 +81,33 @@ public class Chat {
         _chatRoot = new Table();
 
         ////////////////////////
-        //All Messages Table
+        //All Messages Table Mode 1
         ///////////////////////
-        _allMessagesTable = new Table();
-        _allMessagesTable.setBackground(new TextureRegionDrawable(_assets.getChatContainer()));
-        _allMessagesTable.align(Align.top);
-        _allMessagesTable.setVisible(false);
+        _mode1AllMessagesTable = new Table();
+        _mode1AllMessagesTable.setBackground(new TextureRegionDrawable(_assets.getChatContainer()));
+        _mode1AllMessagesTable.align(Align.top);
 
+        _mode1MessagesContentTable = new Table();
+        _mode1MessagesContentTable.align(Align.top);
+        _mode1ChatScroll = new ScrollPane(_mode1MessagesContentTable);
+        _mode1ChatScroll.setScrollingDisabled(true, false);
 
-        _messagesContentTable = new Table();
-        _messagesContentTable.align(Align.top);
-        _chatScroll = new ScrollPane(_messagesContentTable);
-        _chatScroll.setScrollingDisabled(true, false);
+        //_dummyCloseButton = new Image(_assets.getEmpty());
+        _mode1AllMessagesTable.add(_mode1ChatScroll).expand().fill().padLeft(20).padTop(3);
+        //_mode1AllMessagesTable.add(_dummyCloseButton).width(35).height(35).top();
 
-        _dummyCloseButton = new Image(_assets.getEmpty());
-        _allMessagesTable.add(_chatScroll).expand().fill().padLeft(20).padTop(3);
-        _allMessagesTable.add(_dummyCloseButton).width(35).height(35).top();
+        /////////////////////////////
+        //All Messages Table Mode 2
+        /////////////////////////////
+        _mode2AllMessagesTable = new Table();
+        _mode2AllMessagesTable.setTouchable(Touchable.disabled);
+        _mode2AllMessagesTable.setPosition(0, 70);
+        _mode2AllMessagesTable.setSize(Positions.getWidth(), 90);
 
+        _mode2MessagesContentTable = new Table();
+        _mode2MessagesContentTable.align(Align.bottomLeft);
+        _mode2ChatScroll = new ScrollPane(_mode2MessagesContentTable);
+        _mode2AllMessagesTable.add(_mode2ChatScroll).expand().fill().padLeft(80).padRight(80);
 
         ////////////////////////////////
         //Bottom message box
@@ -110,6 +129,8 @@ public class Chat {
         textFieldStyle.cursor = new TextureRegionDrawable(_assets.getTextCursor());
         _messageTextField = new TextField("", textFieldStyle);
 
+        _micImage = new Image(_assets.getMicIcon());
+
         ///////////////////////////////
         //Send Label
         /////////////////////////////////
@@ -121,42 +142,27 @@ public class Chat {
         _sendLabel = new Label(_texts.send(), sendLabelStyle);
         _sendTable.add(_sendLabel);
 
-        _boxChildTable.add(_messageTextField).expandX().fillX().padLeft(15).padRight(10).padTop(5).padBottom(5);
+        _boxChildTable.add(_messageTextField).expandX().fillX().padLeft(15).padRight(40).padTop(5).padBottom(5);
         _boxChildTable.add(_sendTable).width(70).expandY().fillY();
 
-        _textFieldFocusImage.setWidth(_boxChildTable.getPrefWidth());
+        _textFieldFocusImage.setWidth(_boxChildTable.getPrefWidth() - 30);
         _textFieldFocusImage.setHeight(1);
         _textFieldFocusImage.setPosition(10, 5);
         _boxChildTable.addActor(_textFieldFocusImage);
-        _textFieldNotFocusImage.setWidth(_boxChildTable.getPrefWidth());
+        _textFieldNotFocusImage.setWidth(_boxChildTable.getPrefWidth() - 30);
         _textFieldNotFocusImage.setHeight(1);
         _textFieldNotFocusImage.setPosition(10, 5);
         _boxChildTable.addActor(_textFieldNotFocusImage);
-
-
-        ////////////////////////////////
-        //Message notification counter
-        ////////////////////////////////////
-        Vector2 _messageNotfSize = Sizes.resize(30, _assets.getMessageNotification());
-        _newMsgCounterTable = new Table();
-        _newMsgCounterTable.setBackground(new TextureRegionDrawable(_assets.getMessageNotification()));
-        new DummyButton(_newMsgCounterTable, _assets);
-
-        Label.LabelStyle messageCounterStyle = new Label.LabelStyle();
-        messageCounterStyle.font = _assets.getRedNormal2();
-        _messageCounterLabel = new Label("0", messageCounterStyle);
-        _newMsgCounterTable.add(_messageCounterLabel).padBottom(5).padRight(1);
-
-        _newMsgCounterTable.setPosition(Positions.getWidth()-60, 58);
-        _newMsgCounterTable.setSize(_messageNotfSize.x, _messageNotfSize.y);
-
+        _micImage.setSize(25, 30);
+        _micImage.setPosition(227, 13);
+        _boxChildTable.addActor(_micImage);
 
         //////////////////////////////////////
         //populating
         /////////////////////////////////////
-        _chatRoot.add(_allMessagesTable).expandX().fillX().height(130).padLeft(15).padRight(15);
+        _chatRoot.add(_mode1AllMessagesTable).expandX().fillX().height(130).padLeft(15).padRight(15);
         _chatRoot.row();
-        _chatRoot.addActor(_newMsgCounterTable);
+        _chatRoot.addActor(_mode2AllMessagesTable);
         _chatRoot.add(_messageBoxTable).expandX().fillX().height(60);
 
         _chatRoot.setBounds(0, 0, Positions.getWidth(), _chatRoot.getPrefHeight());
@@ -164,31 +170,40 @@ public class Chat {
         _stage.addActor(_chatRoot);
 
         attachListeners();
-        resetMessageNotificationCount();
-        positionHack();
     }
 
-    private void positionHack(){
-        _expandedY = 60;
-        _collapsedY = -70;
+    public void setMode(int mode){
+        _mode = mode;
+        if(mode == 1){
+            _mode1AllMessagesTable.setVisible(true);
+            _mode2AllMessagesTable.setVisible(false);
+        }
+        else if(mode == 2){
+            _mode2AllMessagesTable.setVisible(true);
+            _mode1AllMessagesTable.setVisible(false);
+        }
     }
 
-    public void expand(){
-        resetMessageNotificationCount();
-        _allMessagesTable.setVisible(true);
-        _allMessagesTable.clearActions();
-        _allMessagesTable.addAction(sequence(fadeIn(0),moveTo(_allMessagesTable.getX(), _expandedY)));
+    public void expanded(){
         _expanded = true;
-        scrollToBottom();
+
+        if(_mode == 2){
+            fadeOutMode2();
+            _mode2AllMessagesTable.setTouchable(Touchable.enabled);
+        }
     }
 
-    public void collapsed(boolean withAnimation){
-        _allMessagesTable.clearActions();
-        _allMessagesTable.addAction(sequence(moveTo(_allMessagesTable.getX(), _collapsedY, withAnimation ? 0.35f : 0f, Interpolation.circleIn)));
+    public void collapsed(){
         _expanded = false;
         _stage.setKeyboardFocus(_stage.getActors().get(0));
         _textFieldNotFocusImage.setVisible(true);
         _textFieldFocusImage.setVisible(false);
+
+        if(_mode == 2){
+            fadeOutMode2();
+            _mode2AllMessagesTable.setTouchable(Touchable.disabled);
+        }
+
     }
 
     public void hide(){
@@ -210,6 +225,12 @@ public class Chat {
 
     private void moveChatPosition(float newY){
         _chatRoot.setPosition(0, newY);
+        if(newY > 0){
+            expanded();
+        }
+        else{
+            collapsed();
+        }
     }
 
 
@@ -249,22 +270,6 @@ public class Chat {
             }
         });
 
-        _newMsgCounterTable.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                _stage.setKeyboardFocus(_messageTextField);
-            }
-        });
-
-        _dummyCloseButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                collapsed(true);
-            }
-        });
-
         _messageTextField.addListener(new FocusListener() {
             @Override
             public boolean handle(Event event) {
@@ -282,7 +287,7 @@ public class Chat {
                         eventString.equals("touchDown")) {
                     _textFieldFocusImage.setVisible(true);
                     _textFieldNotFocusImage.setVisible(false);
-                    if(!_expanded) expand();
+                    if(!_expanded) expanded();
                     return true;
                 }
                 return false;
@@ -330,106 +335,140 @@ public class Chat {
             @Override
             public void run() {
 
-                if(!_expanded) _allMessagesTable.setVisible(false);
+                if(_mode == 1){
+                    Table chatTable = new Table();
+                    if (!_mode1NotFirstMessage) {
+                        chatTable.padTop(12);
+                        _mode1NotFirstMessage = true;
+                    }
 
-                Table chatTable = new Table();
-                if (!_notFirstMessage) {
-                    chatTable.padTop(12);
-                    _notFirstMessage = true;
+                    ////////////////
+                    //Styles
+                    ///////////////
+                    Label.LabelStyle lblUsernameStyle = new Label.LabelStyle();
+                    lblUsernameStyle.font = _assets.getBlackBold2();
+
+                    Label.LabelStyle lblMessageStyle = new Label.LabelStyle();
+                    lblMessageStyle.font = _assets.getBlackNormal2();
+
+                    Label.LabelStyle lblInfoStyle = new Label.LabelStyle();
+                    lblInfoStyle.font = _assets.getBlueNormal2();
+
+                    Label.LabelStyle lblImportantStyle = new Label.LabelStyle();
+                    lblImportantStyle.font = _assets.getRedNormal2();
+
+                    if (msg.getFromType() == ChatMessage.FromType.USER) {
+                        Profile sender = _room.getProfileByUserId(msg.getSenderId());
+                        if (sender == null) return;
+
+                        Label lblUsername = new Label(sender.getDisplayName(30) + ": ", lblUsernameStyle);
+                        chatTable.add(lblUsername).minHeight(20).padRight(5);
+
+                        Label lblMessage = new Label(msg.getMessage(), lblMessageStyle);
+                        lblMessage.setWrap(true);
+                        chatTable.add(lblMessage).expandX().fillX().minHeight(20);
+                        chatTable.row();
+                    } else {
+                        // Image icon = new Image(msg.getFromType() == ChatMessage.FromType.SYSTEM ? _assets.getInfoIcon() : _assets.getImportantIcon());
+                        Label lblMessage = new Label(msg.getMessage(), msg.getFromType() == ChatMessage.FromType.SYSTEM ? lblInfoStyle : lblImportantStyle);
+                        lblMessage.setWrap(true);
+                        // chatTable.add(icon).size(20, 20).padRight(5).padLeft(5);
+                        chatTable.add(lblMessage).colspan(2).expandX().fillX().minHeight(20);
+                        chatTable.row();
+                    }
+
+                    Image separator = new Image(_assets.getGreyLine());
+                    chatTable.add(separator).colspan(3).padTop(5).padBottom(5).expandX().fillX();
+                    chatTable.row();
+
+                    _mode1MessagesContentTable.add(chatTable).expandX().fillX();
+                    _mode1MessagesContentTable.row();
                 }
+                else if(_mode == 2){
 
-                ////////////////
-                //Styles
-                ///////////////
-                Label.LabelStyle lblUsernameStyle = new Label.LabelStyle();
-                lblUsernameStyle.font = _assets.getBlackBold2();
+                    fadeOutMode2();
 
-                Label.LabelStyle lblMessageStyle = new Label.LabelStyle();
-                lblMessageStyle.font = _assets.getBlackNormal2();
+                    if(msg.getFromType() != ChatMessage.FromType.USER) return;
 
-                Label.LabelStyle lblInfoStyle = new Label.LabelStyle();
-                lblInfoStyle.font = _assets.getBlueNormal2();
+                    Table chatTable = new Table();
+                    chatTable.align(Align.left);
+                    if (!_mode2NotFirstMessage) {
+                        chatTable.padTop(12);
+                        _mode2NotFirstMessage = true;
+                    }
 
-                Label.LabelStyle lblImportantStyle = new Label.LabelStyle();
-                lblImportantStyle.font = _assets.getRedNormal2();
+                    Label.LabelStyle labelStyle = new Label.LabelStyle();
+                    labelStyle.font = _assets.getWhiteBold2GrayS();
+                    labelStyle.fontColor = getUserColor(msg.getSenderId());
 
-                if (msg.getFromType() == ChatMessage.FromType.USER) {
                     Profile sender = _room.getProfileByUserId(msg.getSenderId());
-                    if (sender == null) return;
-                    Mascot mascotIcon = new Mascot(sender.getMascotEnum(), _assets);
-                    mascotIcon.resizeTo(20, 20);
-                    chatTable.add(mascotIcon).padRight(5).padLeft(5);
+                   if (sender == null) return;
 
-                    Label lblUsername = new Label(sender.getDisplayName(0) + ": ", lblUsernameStyle);
-                    chatTable.add(lblUsername).minHeight(20).padRight(5);
+                    Label userNameLabel = new Label(sender.getDisplayName(30) + ":", labelStyle);
 
-                    Label lblMessage = new Label(msg.getMessage(), lblMessageStyle);
-                    lblMessage.setWrap(true);
-                    chatTable.add(lblMessage).expandX().fillX();
-                    chatTable.row();
-                } else {
-                    Image icon = new Image(msg.getFromType() == ChatMessage.FromType.SYSTEM ? _assets.getInfoIcon() : _assets.getImportantIcon());
-                    Label lblMessage = new Label(msg.getMessage(), msg.getFromType() == ChatMessage.FromType.SYSTEM ? lblInfoStyle : lblImportantStyle);
-                    lblMessage.setWrap(true);
-                    chatTable.add(icon).size(20, 20).padRight(5).padLeft(5);
-                    chatTable.add(lblMessage).colspan(2).expandX().fillX();
-                    chatTable.row();
+                    Label.LabelStyle labelStyle2 = new Label.LabelStyle();
+                    labelStyle2.font = _assets.getWhiteNormal2Black();
+                    labelStyle2.fontColor = Color.WHITE;
+                    Label messageLabel = new Label(msg.getMessage(), labelStyle2);
+                    messageLabel.setWrap(true);
+                    messageLabel.setAlignment(Align.left);
+
+                    chatTable.add(userNameLabel).top().padRight(5);
+                    chatTable.add(messageLabel).expandX().fillX();
+
+                    _mode2MessagesContentTable.add(chatTable).expandX().fillX();
+                    _mode2MessagesContentTable.row();
                 }
 
-                Image separator = new Image(_assets.getGreyLine());
-                chatTable.add(separator).colspan(3).padTop(5).padBottom(5).expandX().fillX();
-                chatTable.row();
-
-                _messagesContentTable.add(chatTable).expandX().fillX();
-                _messagesContentTable.row();
                 scrollToBottom();
-
-                if (!_expanded) {
-                    _allMessagesTable.setVisible(false);
-                    collapsed(false);
-                    addMessageNotificationCount();
-                }
 
             }
         });
-
     }
-
-    private void addMessageNotificationCount(){
-        Integer value = Integer.valueOf(_messageCounterLabel.getText().toString());
-        _messageCounterLabel.setText(String.valueOf(value+1));
-
-        if(!_messageNotificationShown){
-            _messageNotificationShown = true;
-            _newMsgCounterTable.addAction(sequence(moveTo(Positions.getWidth()-60, 58, 0.25f) ,forever(sequence(moveBy(0, -2, 0.3f), moveBy(0, 2, 0.3f)))));
-        }
-
-    }
-
-    private void resetMessageNotificationCount(){
-        _messageCounterLabel.setText("0");
-        _newMsgCounterTable.clearActions();
-        _newMsgCounterTable.addAction(moveTo(_newMsgCounterTable.getX(), 23));
-        _messageNotificationShown = false;
-    }
-
 
     private void scrollToBottom(){
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                _chatScroll.setScrollPercentY(100);
+                if(_mode == 1){
+                    _mode1ChatScroll.setScrollPercentY(100);
+                }
+                else if(_mode == 2){
+                    _mode2ChatScroll.setScrollPercentY(100);
+                }
             }
         });
     }
 
+    private void fadeOutMode2(){
+        _mode2MessagesContentTable.getColor().a = 1;
+        _mode2MessagesContentTable.clearActions();
+        if(!_expanded){
+            _mode2MessagesContentTable.addAction(sequence(delay(5), fadeOut(0.3f)));
+        }
+    }
+
+    private Color getUserColor(String userId){
+        if(!_userColors.containsKey(userId)){
+            _userColors.put(userId, Colors.generatePleasingColor());
+        }
+        return _userColors.get(userId);
+    }
+
     public void resetChat() {
         _expanded = false;
-        _messageNotificationShown = false;
-        _messagesContentTable.clear();
-        _messageCounterLabel.setText("0");
-        _notFirstMessage = false;
         _messageTextField.setText("");
+        _userColors.clear();
+
+        if(_mode == 1){
+            _mode1MessagesContentTable.clear();
+            _mode1NotFirstMessage = false;
+        }
+        else if(_mode == 2){
+            _mode2MessagesContentTable.clear();
+            _mode2NotFirstMessage = false;
+        }
+
     }
 
     public void render(float delta){
@@ -443,6 +482,8 @@ public class Chat {
             }
         }
     }
+
+
 
 
 }

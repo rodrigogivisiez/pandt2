@@ -12,10 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
-import com.mygdx.potatoandtomato.enums.MascotEnum;
 import com.mygdx.potatoandtomato.helpers.controls.BtnEggDownward;
 import com.mygdx.potatoandtomato.helpers.controls.DummyButton;
-import com.mygdx.potatoandtomato.helpers.controls.Mascot;
 import com.mygdx.potatoandtomato.helpers.controls.TopBar;
 import com.mygdx.potatoandtomato.helpers.utils.MultiHashMap;
 import com.mygdx.potatoandtomato.models.Profile;
@@ -149,20 +147,16 @@ public class InviteScene extends SceneAbstract {
         userTable.padLeft(10).padRight(10).padTop(5);
         new DummyButton(userTable, _assets);
 
-        Mascot mascotIcon = new Mascot(profile.getMascotEnum(), _assets);
-        mascotIcon.resizeTo(35, 35);
-
         Label nameLabel = new Label(profile.getDisplayName(30), new Label.LabelStyle(_assets.getWhiteBold3GrayS(), Color.WHITE));
 
         Image selectBoxImage = new Image(_assets.getUnselectBox());
         selectBoxImage.setName("selectbox");
         Image separator = new Image(_assets.getWhiteLine());
 
-        userTable.add(mascotIcon).padRight(5 + mascotIcon.getPadWidth()).padLeft(10);
         userTable.add(nameLabel).expandX().fillX();
         userTable.add(selectBoxImage).size(35, 35).padRight(10);
         userTable.row();
-        userTable.add(separator).expandX().fillX().padTop(5).colspan(3);
+        userTable.add(separator).expandX().fillX().padTop(5).colspan(2);
 
         contentTable.add(userTable).expandX().fillX();
         contentTable.row();

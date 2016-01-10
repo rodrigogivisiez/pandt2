@@ -6,7 +6,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
-import com.mygdx.potatoandtomato.enums.MascotEnum;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Profile;
@@ -174,7 +173,7 @@ public class TestBoot extends TestAbstract {
                 called[0] = true;
                 return null;
             }
-        }).when(mockPTScreen).toScene(SceneEnum.MASCOT_PICK);
+        }).when(mockPTScreen).toScene(SceneEnum.INPUT_NAME);
 
         _services.setGamingKit(new MockGamingKit(){
             @Override

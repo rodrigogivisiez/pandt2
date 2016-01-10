@@ -65,8 +65,8 @@ public class BootLogic extends LogicAbstract {
 
                 if(!_logined){
                     if(st == ConnectStatus.CONNECTED){
-                        if(_services.getProfile().getMascotEnum() == null){
-                            _screen.toScene(SceneEnum.MASCOT_PICK);
+                        if(_services.getProfile().getGameName() == null){
+                            _screen.toScene(SceneEnum.INPUT_NAME);
                         }
                         else{
                             _screen.toScene(SceneEnum.GAME_LIST);

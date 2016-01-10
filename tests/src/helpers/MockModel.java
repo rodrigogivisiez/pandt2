@@ -1,12 +1,8 @@
 package helpers;
 
-import com.mygdx.potatoandtomato.enums.MascotEnum;
 import com.mygdx.potatoandtomato.models.*;
-import org.lwjgl.Sys;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by SiongLeng on 16/12/2015.

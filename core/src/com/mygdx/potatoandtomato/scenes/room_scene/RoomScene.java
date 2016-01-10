@@ -1,6 +1,7 @@
 package com.mygdx.potatoandtomato.scenes.room_scene;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -11,7 +12,6 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
-import com.mygdx.potatoandtomato.enums.MascotEnum;
 import com.mygdx.potatoandtomato.helpers.controls.*;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Room;
@@ -158,13 +158,12 @@ public class RoomScene extends SceneAbstract {
                 }
                 Table playerTable;
                 if(occupiedUser != null){
-                    playerTable = getPlayerTable(occupiedUser.getProfile().getMascotEnum(),
-                                                occupiedUser.getProfile().getDisplayName(15),
+                    playerTable = getPlayerTable(occupiedUser.getProfile().getDisplayName(15),
                                                 occupiedUser.getProfile().getUserId(),
                                                 occupiedUser.getReady());
                 }
                 else{
-                    playerTable = getPlayerTable(MascotEnum.UNKNOWN, null, null, false);
+                    playerTable = getPlayerTable(null, null, false);
                 }
 
                 teamTable.add(playerTable).expandX().fillX().padLeft(10).padRight(10).padTop(10);
@@ -230,11 +229,11 @@ public class RoomScene extends SceneAbstract {
         return detailsTitleTable;
     }
 
-    private Table getPlayerTable(MascotEnum mascotEnum, String name, String userId, boolean isReady){
+    private Table getPlayerTable(String name, String userId, boolean isReady){
 
         if(_playerMaps.containsKey(userId) && userId != null){
             Table playerTable = _playerMaps.get(userId);
-            playerTable.setBackground(new NinePatchDrawable(isReady ?  _assets.getGreenRoundedBg() : _assets.getYellowRoundedBg()));
+            swapIsReadyIcon((Table) playerTable.findActor("iconTable"), userId, isReady);
             return _playerMaps.get(userId);
         }
 
@@ -246,16 +245,24 @@ public class RoomScene extends SceneAbstract {
 
         Table playerTable = new Table();
         playerTable.padTop(5).padBottom(5).padLeft(7).padRight(7);
-        if(userId != null){
-            playerTable.setBackground(new NinePatchDrawable(isReady ?  _assets.getGreenRoundedBg() : _assets.getYellowRoundedBg()));
-        }
-        else{
-            playerTable.setBackground(new NinePatchDrawable(_assets.getWhiteRoundedBg()));
-        }
+        playerTable.setBackground(new NinePatchDrawable(_assets.getWhiteRoundedBg()));
 
-
-        Mascot mascotImage = new Mascot(mascotEnum, _assets);
-        mascotImage.resizeTo(20, 20);
+        Table iconTable = new Table();
+        iconTable.setName("iconTable");
+        Animator loadingAnimator = new Animator(0.2f, _assets.getLoadingAnimation());
+        loadingAnimator.setName("loadingAnimator");
+        loadingAnimator.setSize(16, 16);
+        Image unknownImage = new Image(_assets.getUnknownIcon());
+        unknownImage.setName("unknownImage");
+        unknownImage.setSize(10, 16);
+        unknownImage.setPosition(3, 0);
+        Image bulletIcon = new Image(_assets.getBulletIcon());
+        bulletIcon.setName("bulletIcon");
+        bulletIcon.setSize(8, 8);
+        bulletIcon.setPosition(4, 4);
+        iconTable.addActor(loadingAnimator);
+        iconTable.addActor(unknownImage);
+        iconTable.addActor(bulletIcon);
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
         labelStyle.font = font;
@@ -273,13 +280,39 @@ public class RoomScene extends SceneAbstract {
         downloadImage.setName("download");
         downloadImage.setVisible(false);
 
-        playerTable.add(mascotImage).padRight(mascotImage.getPadWidth());
+        playerTable.add(iconTable).size(16, 16).padRight(3);
         playerTable.add(nameLabel).expandX().fillX().padLeft(5);
         playerTable.add(downloadImage).padRight(2);
         playerTable.add(progressLabel);
 
         if(userId != null) _playerMaps.put(userId, playerTable);
 
+        swapIsReadyIcon(iconTable, userId, isReady);
+
         return playerTable;
     }
+
+    private void swapIsReadyIcon(Table table, String userId, boolean isReady){
+        Actor loadingAnimator = table.findActor("loadingAnimator");
+        Actor unknownImage = table.findActor("unknownImage");
+        Actor bulletIcon = table.findActor("bulletIcon");
+        loadingAnimator.setVisible(false);
+        unknownImage.setVisible(false);
+        bulletIcon.setVisible(false);
+
+        if(userId == null){
+            unknownImage.setVisible(true);
+        }
+        else{
+            if(!isReady){
+                loadingAnimator.setVisible(true);
+            }
+            else{
+                bulletIcon.setVisible(true);
+            }
+        }
+
+
+    }
+
 }
