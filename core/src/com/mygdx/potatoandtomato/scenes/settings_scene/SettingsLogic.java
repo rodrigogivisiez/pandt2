@@ -66,7 +66,7 @@ public class SettingsLogic extends LogicAbstract {
 
 
     private void updateProfile(){
-        String newName = _scene.getDisplayNameTextField().getText();
+        String newName = _scene.getDisplayNameTextField().getText().trim();
         if(_services.getProfile().getFacebookName() == null || !_services.getProfile().getFacebookName().equals(newName)){
             _services.getProfile().setGameName(newName);
         }

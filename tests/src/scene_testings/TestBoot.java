@@ -128,7 +128,7 @@ public class TestBoot extends TestAbstract {
 
 
     @Test
-    public void testLoginSuccessWithMascot(){
+    public void testLoginSuccessWithGameName(){
 
         final boolean[] called = {false};
         PTScreen mockPTScreen = mock(PTScreen.class);
@@ -152,7 +152,7 @@ public class TestBoot extends TestAbstract {
         BootLogic logic = new BootLogic(mockPTScreen, _services);
 
         logic.onShow();
-        _services.getProfile().setMascotEnum(MascotEnum.TOMATO);
+        _services.getProfile().setGameName("abc");
         logic.loginPTSuccess();
 
         Threadings.sleep(100);
@@ -161,7 +161,7 @@ public class TestBoot extends TestAbstract {
     }
 
     @Test
-    public void testLoginSuccessWithoutMascot(){
+    public void testLoginSuccessWithoutGameName(){
 
         final boolean[] called = {false};
         PTScreen mockPTScreen = mock(PTScreen.class);
@@ -185,6 +185,7 @@ public class TestBoot extends TestAbstract {
 
         BootLogic logic = new BootLogic(mockPTScreen, _services);
         logic.onShow();
+        _services.getProfile().setGameName(null);
         logic.loginPTSuccess();
 
         Threadings.sleep(100);

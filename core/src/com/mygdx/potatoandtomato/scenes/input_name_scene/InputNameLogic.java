@@ -36,7 +36,8 @@ public class InputNameLogic extends LogicAbstract {
     }
 
     public void saveNameIfValid(String name){
-        if(!name.trim().equals("")){
+        name = name.trim();
+        if(!name.equals("")){
             _services.getProfile().setGameName(name);
             _services.getDatabase().updateProfile(_services.getProfile(), null);
             _screen.toScene(SceneEnum.GAME_LIST);

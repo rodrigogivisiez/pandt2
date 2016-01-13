@@ -3,10 +3,8 @@ package com.mygdx.potatoandtomato.models;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
 import com.shaded.fasterxml.jackson.core.JsonProcessingException;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.beanutils.BeanUtils;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by SiongLeng on 23/12/2015.

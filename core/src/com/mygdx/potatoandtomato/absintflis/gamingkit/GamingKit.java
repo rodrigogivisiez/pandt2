@@ -92,7 +92,7 @@ public abstract class GamingKit {
         });
     }
 
-    public void onRoomMessageReceived(final String msg, final String senderId){
+    public void onRoomMessageReceived(final ChatMessage msg, final String senderId){
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -101,7 +101,6 @@ public abstract class GamingKit {
                 }
             }
         });
-        Broadcaster.getInstance().broadcast(BroadcastEvent.CHAT_NEW_MESSAGE, new ChatMessage(msg, ChatMessage.FromType.USER, senderId));
     }
 
     public HashMap<String, ConnectionChangedListener> getConnectionChangedListeners() {
@@ -122,7 +121,7 @@ public abstract class GamingKit {
 
     public abstract void createAndJoinRoom();
 
-    public abstract void sendRoomMessage(String msg);
+    public abstract void sendRoomMessage(ChatMessage msg);
 
     public abstract void joinRoom(String roomId);
 

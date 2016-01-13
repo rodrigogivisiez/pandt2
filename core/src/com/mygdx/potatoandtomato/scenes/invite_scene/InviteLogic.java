@@ -166,11 +166,11 @@ public class InviteLogic extends LogicAbstract {
                                         }
                                         _services.getGcmSender().send(user, push);
                                         _services.getChat().add(new ChatMessage(String.format(_texts.xInvitedX(),
-                                                _services.getProfile().getDisplayName(0), user.getDisplayName(0)), ChatMessage.FromType.SYSTEM, null));
+                                                _services.getProfile().getDisplayName(0), user.getDisplayName(0)), ChatMessage.FromType.SYSTEM, null), false);
                                     }
                                     else{
                                         _services.getChat().add(new ChatMessage(String.format(_texts.xInvitedXFailed(),
-                                                _services.getProfile().getDisplayName(0), user.getDisplayName(0)), ChatMessage.FromType.IMPORTANT, null));
+                                                _services.getProfile().getDisplayName(0), user.getDisplayName(0)), ChatMessage.FromType.IMPORTANT, null), false);
                                     }
                                     done[0]++;
                                 }

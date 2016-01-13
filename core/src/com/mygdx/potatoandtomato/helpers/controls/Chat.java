@@ -1,12 +1,11 @@
 package com.mygdx.potatoandtomato.helpers.controls;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
@@ -15,7 +14,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
+import com.mygdx.potatoandtomato.absintflis.gamingkit.MessagingListener;
+import com.mygdx.potatoandtomato.absintflis.recorder.RecordListener;
+import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
+import com.mygdx.potatoandtomato.absintflis.uploader.UploadListener;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
+import com.mygdx.potatoandtomato.helpers.services.Recorder;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
 import com.mygdx.potatoandtomato.helpers.utils.Colors;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
@@ -27,9 +31,7 @@ import com.potatoandtomato.common.*;
 
 import java.util.HashMap;
 
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.delay;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 /**
  * Created by SiongLeng on 20/12/2015.
@@ -49,6 +51,7 @@ public class Chat {
     private boolean _expanded;
     private Table _boxChildTable, _mode1MessagesContentTable, _sendTable;
     private Table _mode2MessagesContentTable;
+    private Table _bigMicTable;
     private Room _room;
     private ScrollPane _mode1ChatScroll, _mode2ChatScroll;
     private Label _sendLabel;
@@ -59,17 +62,29 @@ public class Chat {
     private HashMap<String, Color> _userColors;
     private int _mode;
     private Image _micImage;
+    private Recorder _recorder;
+    private IUploader _uploader;
+    private String _recordsPath;
+    private String _userId;
 
     public void setRoom(Room _room) {
         this._room = _room;
+        _recordsPath = "records/" + _room.getId() + "/";
     }
 
-    public Chat(GamingKit gamingKit, Texts texts, Assets assets, SpriteBatch batch, IPTGame game) {
+    public void setUserId(String userId){
+        _userId = userId;
+    }
+
+    public Chat(GamingKit gamingKit, Texts texts, Assets assets, SpriteBatch batch,
+                IPTGame game, Recorder recorder, IUploader uploader) {
         this._gamingKit = gamingKit;
         this._texts = texts;
         this._assets = assets;
         this._batch = batch;
         this._game = game;
+        this._recorder = recorder;
+        this._uploader = uploader;
         this._mode = 1;
         this._userColors = new HashMap<>();
 
@@ -77,6 +92,16 @@ public class Chat {
 
         StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
         _stage = new Stage(viewPort, _batch);
+
+        //////////////////////////////
+        //Big Mic Table
+        /////////////////////////////
+        _bigMicTable = new Table();
+        _bigMicTable.setSize(Positions.getWidth(), Positions.getHeight());
+        _bigMicTable.setPosition(0, 0);
+        Image bigMicImage = new Image(_assets.getMicBig());
+        _bigMicTable.add(bigMicImage).width(150).height(300);
+        _bigMicTable.setVisible(false);
 
         _chatRoot = new Table();
 
@@ -167,6 +192,7 @@ public class Chat {
 
         _chatRoot.setBounds(0, 0, Positions.getWidth(), _chatRoot.getPrefHeight());
 
+        _chatRoot.addActor(_bigMicTable);
         _stage.addActor(_chatRoot);
 
         attachListeners();
@@ -248,17 +274,10 @@ public class Chat {
             }
         });
 
-        Broadcaster.getInstance().subscribe(BroadcastEvent.CHAT_NEW_MESSAGE, new BroadcastListener<ChatMessage>() {
+        _gamingKit.addListener(this.getClass().getName(), new MessagingListener() {
             @Override
-            public void onCallback(final ChatMessage obj, Status st) {
-                if(st == Status.SUCCESS){
-                    Gdx.app.postRunnable(new Runnable() {
-                        @Override
-                        public void run() {
-                            add(obj);
-                        }
-                    });
-                }
+            public void onRoomMessageReceived(ChatMessage chatMessage, String senderId) {
+                add(chatMessage, false);
             }
         });
 
@@ -315,6 +334,50 @@ public class Chat {
                 sendMessage();
             }
         });
+
+        _micImage.addListener(new InputListener(){
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                _recorder.stopRecording();
+                _bigMicTable.setVisible(false);
+                _bigMicTable.clearActions();
+                super.touchUp(event, x, y, pointer, button);
+            }
+
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                _bigMicTable.addAction(sequence(fadeOut(0f), forever(sequence(fadeOut(0.6f), fadeIn(0.6f)))));
+                _bigMicTable.setVisible(true);
+                final String fileName =  System.currentTimeMillis() + "_" + MathUtils.random(0, 10000) + ".bin";
+                final FileHandle file = Gdx.files.local(_recordsPath + fileName);
+                _recorder.recordToFile(file, new RecordListener(){
+                    @Override
+                    public void onFinishedRecord(FileHandle resultFile, Status status) {
+                        if(status == Status.SUCCESS){
+                            sendVoiceMessage(file);
+                        }
+                    }
+                });
+                return true;
+            }
+        });
+
+    }
+
+    private void setVoiceListener(Actor voice, final String fileName, boolean autoPlay){
+        final FileHandle fileHandle = Gdx.files.local(_recordsPath + fileName);
+        voice.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                if(fileHandle.exists()){
+                    _recorder.playBack(fileHandle);
+                }
+            }
+        });
+        if(autoPlay){
+            _recorder.playBack(fileHandle);
+        }
     }
 
     public void setMessage(String msg){
@@ -324,16 +387,38 @@ public class Chat {
     public void sendMessage(){
         String msg = _messageTextField.getText().trim();
         if(!msg.equals("")){
-            ChatMessage c = new ChatMessage(msg, ChatMessage.FromType.USER, "1");
-            _gamingKit.sendRoomMessage(msg);
+            ChatMessage chatMessage = new ChatMessage(msg, ChatMessage.FromType.USER, _userId);
+            _gamingKit.sendRoomMessage(chatMessage);
         }
         _messageTextField.setText("");
     }
 
-    public void add(final ChatMessage msg){
-        Threadings.postRunnable(new Runnable() {
+    public void sendVoiceMessage(final FileHandle file){
+        final ChatMessage c = new ChatMessage(file.file().getName(), ChatMessage.FromType.USER_VOICE, _userId);
+        add(c, true);
+        _uploader.uploadFile(file, new UploadListener<String>() {
+            @Override
+            public void onCallBack(String result, Status status) {
+                if(status == Status.SUCCESS) {
+                    _gamingKit.sendRoomMessage(c);
+                }
+            }
+        });
+
+    }
+
+    public void add(final ChatMessage msg, boolean force){
+
+        if((msg.getFromType() == ChatMessage.FromType.USER_VOICE && msg.getSenderId().equals(_userId)) && !force){
+            return;
+        }
+
+        final Runnable runnable = new Runnable() {
             @Override
             public void run() {
+                if((msg.getFromType() == ChatMessage.FromType.USER_VOICE && !msg.getSenderId().equals(_userId))){
+                    _recorder.playBack(Gdx.files.local(_recordsPath + msg.getMessage()));
+                }
 
                 if(_mode == 1){
                     Table chatTable = new Table();
@@ -357,17 +442,25 @@ public class Chat {
                     Label.LabelStyle lblImportantStyle = new Label.LabelStyle();
                     lblImportantStyle.font = _assets.getRedNormal2();
 
-                    if (msg.getFromType() == ChatMessage.FromType.USER) {
+                    if (msg.getFromType() == ChatMessage.FromType.USER || msg.getFromType() == ChatMessage.FromType.USER_VOICE) {
                         Profile sender = _room.getProfileByUserId(msg.getSenderId());
                         if (sender == null) return;
 
                         Label lblUsername = new Label(sender.getDisplayName(30) + ": ", lblUsernameStyle);
                         chatTable.add(lblUsername).minHeight(20).padRight(5);
 
-                        Label lblMessage = new Label(msg.getMessage(), lblMessageStyle);
-                        lblMessage.setWrap(true);
-                        chatTable.add(lblMessage).expandX().fillX().minHeight(20);
-                        chatTable.row();
+                        if(msg.getFromType() == ChatMessage.FromType.USER){
+                            Label lblMessage = new Label(msg.getMessage(), lblMessageStyle);
+                            lblMessage.setWrap(true);
+                            chatTable.add(lblMessage).expandX().fillX().minHeight(20);
+                            chatTable.row();
+                        }
+                        else if(msg.getFromType() == ChatMessage.FromType.USER_VOICE){
+                            Image imgVoice = new Image(_assets.getVoiceIcon());
+                            chatTable.add(imgVoice).size(20, 20).expandX().left();
+                            chatTable.row();
+                            setVoiceListener(imgVoice, msg.getMessage(), !msg.getSenderId().equals(_userId));
+                        }
                     } else {
                         // Image icon = new Image(msg.getFromType() == ChatMessage.FromType.SYSTEM ? _assets.getInfoIcon() : _assets.getImportantIcon());
                         Label lblMessage = new Label(msg.getMessage(), msg.getFromType() == ChatMessage.FromType.SYSTEM ? lblInfoStyle : lblImportantStyle);
@@ -388,7 +481,7 @@ public class Chat {
 
                     fadeOutMode2();
 
-                    if(msg.getFromType() != ChatMessage.FromType.USER) return;
+                    if(msg.getFromType() != ChatMessage.FromType.USER  && msg.getFromType() != ChatMessage.FromType.USER_VOICE) return;
 
                     Table chatTable = new Table();
                     chatTable.align(Align.left);
@@ -402,28 +495,51 @@ public class Chat {
                     labelStyle.fontColor = getUserColor(msg.getSenderId());
 
                     Profile sender = _room.getProfileByUserId(msg.getSenderId());
-                   if (sender == null) return;
+                    if (sender == null) return;
 
                     Label userNameLabel = new Label(sender.getDisplayName(30) + ":", labelStyle);
-
-                    Label.LabelStyle labelStyle2 = new Label.LabelStyle();
-                    labelStyle2.font = _assets.getWhiteNormal2Black();
-                    labelStyle2.fontColor = Color.WHITE;
-                    Label messageLabel = new Label(msg.getMessage(), labelStyle2);
-                    messageLabel.setWrap(true);
-                    messageLabel.setAlignment(Align.left);
-
                     chatTable.add(userNameLabel).top().padRight(5);
-                    chatTable.add(messageLabel).expandX().fillX();
+
+                    if(msg.getFromType() == ChatMessage.FromType.USER){
+                        Label.LabelStyle labelStyle2 = new Label.LabelStyle();
+                        labelStyle2.font = _assets.getWhiteNormal2Black();
+                        labelStyle2.fontColor = Color.WHITE;
+                        Label messageLabel = new Label(msg.getMessage(), labelStyle2);
+                        messageLabel.setWrap(true);
+                        messageLabel.setAlignment(Align.left);
+                        chatTable.add(messageLabel).expandX().fillX();
+                    }
+                    else if(msg.getFromType() == ChatMessage.FromType.USER_VOICE){
+                        Image imgVoice = new Image(_assets.getVoiceIcon());
+                        chatTable.add(imgVoice).size(15, 15).expandX().left();
+                        chatTable.row();
+                        setVoiceListener(imgVoice, msg.getMessage(), !msg.getSenderId().equals(_userId));
+                    }
 
                     _mode2MessagesContentTable.add(chatTable).expandX().fillX();
                     _mode2MessagesContentTable.row();
                 }
 
                 scrollToBottom();
-
             }
-        });
+        };
+
+        if(msg.getFromType() == ChatMessage.FromType.USER_VOICE && !msg.getSenderId().equals(_userId)){
+            String fileName = msg.getMessage();
+            final FileHandle fileHandle = Gdx.files.local(_recordsPath + fileName);
+            _uploader.getUploadedFile(fileName, fileHandle, new UploadListener<FileHandle>() {
+                @Override
+                public void onCallBack(FileHandle result, Status status) {
+                    if(status == Status.SUCCESS){
+                        Threadings.postRunnable(runnable);
+                    }
+                }
+            });
+        }
+        else{
+            Threadings.postRunnable(runnable);
+        }
+
     }
 
     private void scrollToBottom(){

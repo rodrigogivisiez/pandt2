@@ -8,7 +8,6 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         TestBoot.class,
-        TestMascotPick.class,
         TestGameList.class,
         TestCreateGame.class,
         TestPrerequisite.class,
@@ -17,7 +16,8 @@ import org.junit.runners.Suite;
         TestSettings.class,
         TestInvite.class,
         TestConfirm.class,
-        TestGameSandBox.class
+        TestGameSandBox.class,
+        TestInputName.class
 })
 public class SceneSuites {
 }

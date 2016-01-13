@@ -2,15 +2,20 @@ package com.mygdx.potatoandtomato.helpers.services;
 
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.helpers.utils.JsonObj;
-import com.mygdx.potatoandtomato.helpers.utils.Threadings;
+import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.models.Profile;
+import com.shaded.fasterxml.jackson.core.JsonProcessingException;
+import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 import com.shephertz.app42.gaming.multiplayer.client.WarpClient;
 import com.shephertz.app42.gaming.multiplayer.client.command.WarpResponseResultCode;
 import com.shephertz.app42.gaming.multiplayer.client.events.*;
-import com.shephertz.app42.gaming.multiplayer.client.listener.*;
+import com.shephertz.app42.gaming.multiplayer.client.listener.ConnectionRequestListener;
+import com.shephertz.app42.gaming.multiplayer.client.listener.NotifyListener;
+import com.shephertz.app42.gaming.multiplayer.client.listener.RoomRequestListener;
+import com.shephertz.app42.gaming.multiplayer.client.listener.ZoneRequestListener;
 
+import java.io.IOException;
 import java.util.HashMap;
-import java.util.UUID;
 
 /**
  * Created by SiongLeng on 15/12/2015.
@@ -86,11 +91,16 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
     }
 
     @Override
-    public void sendRoomMessage(String msg) {
-        JsonObj data = new JsonObj();
-        data.put("msg", msg);
-        data.put("realUsername", _realUsername);
-        _warpInstance.sendChat(data.getJSONObject().toString());
+    public void sendRoomMessage(ChatMessage msg) {
+        try {
+            JsonObj data = new JsonObj();
+            msg.setSenderId(_realUsername);
+            ObjectMapper mapper = new ObjectMapper();
+            data.put("msg", mapper.writeValueAsString(msg));
+            _warpInstance.sendChat(data.getJSONObject().toString());
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -169,8 +179,15 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
     @Override
     public void onChatReceived(ChatEvent chatEvent) {
-        JsonObj jsonObj = new JsonObj(chatEvent.getMessage());
-        onRoomMessageReceived(jsonObj.getString("msg"), jsonObj.getString("realUsername"));
+        try {
+            JsonObj jsonObj = new JsonObj(chatEvent.getMessage());
+            ObjectMapper mapper = new ObjectMapper();
+            ChatMessage chatMessage = mapper.readValue(jsonObj.getString("msg"), ChatMessage.class);
+            onRoomMessageReceived(chatMessage, chatMessage.getSenderId());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 

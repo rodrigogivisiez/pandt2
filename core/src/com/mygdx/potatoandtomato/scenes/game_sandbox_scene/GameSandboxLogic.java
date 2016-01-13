@@ -221,7 +221,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         }
         if(names.size() > 0){
             _services.getChat().add(new ChatMessage(String.format(_texts.loadGameFailed(), StringUtils.join(names, ", ")),
-                                        ChatMessage.FromType.IMPORTANT, null));
+                                        ChatMessage.FromType.IMPORTANT, null), false);
         }
        exitSandbox();
     }
@@ -262,7 +262,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         _screen.back();
         _services.getChat().setMode(1);
         _services.getChat().add(new ChatMessage(_texts.gameEnded(),
-                ChatMessage.FromType.SYSTEM, null));
+                ChatMessage.FromType.SYSTEM, null), false);
     }
 
     @Override

@@ -196,8 +196,11 @@ public class RoomLogic extends LogicAbstract {
                     if(_checkReadyThread.isKilled()) return;
                     Threadings.sleep(3000);
                     if(_onScreen && !_confirm.isVisible()){
-                        if(!_room.getRoomUserByUserId(_services.getProfile().getUserId()).getReady()){
-                            sendUpdateRoomMates(UpdateRoomMatesCode.UPDATE_USER_READY, "1");
+                        RoomUser roomUser = _room.getRoomUserByUserId(_services.getProfile().getUserId());
+                        if(roomUser != null){
+                            if(!roomUser.getReady()){
+                                sendUpdateRoomMates(UpdateRoomMatesCode.UPDATE_USER_READY, "1");
+                            }
                         }
                     }
                 }
@@ -359,13 +362,13 @@ public class RoomLogic extends LogicAbstract {
     }
 
     public void userJustJoinedRoom(Profile user){
-        Broadcaster.getInstance().broadcast(BroadcastEvent.CHAT_NEW_MESSAGE,
-                        new ChatMessage(String.format(_services.getTexts().userHasJoinedRoom(), user.getDisplayName(0)), ChatMessage.FromType.SYSTEM, null));
+        _services.getChat().add(new ChatMessage(String.format(_services.getTexts().userHasJoinedRoom(), user.getDisplayName(0)),
+                ChatMessage.FromType.SYSTEM, null), false);
     }
 
     public void userJustLeftRoom(Profile user){
-        Broadcaster.getInstance().broadcast(BroadcastEvent.CHAT_NEW_MESSAGE,
-                        new ChatMessage(String.format(_services.getTexts().userHasLeftRoom(), user.getDisplayName(0)), ChatMessage.FromType.SYSTEM, null));
+        _services.getChat().add(new ChatMessage(String.format(_services.getTexts().userHasLeftRoom(), user.getDisplayName(0)),
+                ChatMessage.FromType.SYSTEM, null), false);
     }
 
     public void openRoom(boolean forceUpdate){
@@ -511,7 +514,7 @@ public class RoomLogic extends LogicAbstract {
                 _services.getChat().show();
                 _services.getChat().expanded();
                 while(i > 0){
-                    _services.getChat().add(new ChatMessage(String.format(_texts.gameStartingIn(), i), ChatMessage.FromType.IMPORTANT, null));
+                    _services.getChat().add(new ChatMessage(String.format(_texts.gameStartingIn(), i), ChatMessage.FromType.IMPORTANT, null), false);
                     Threadings.sleep(1500);
                     i--;
                     if(_countDownThread.isKilled()){
@@ -537,7 +540,7 @@ public class RoomLogic extends LogicAbstract {
             _countDownThread.kill();
             if(profile != null){
                 _services.getChat().add(new ChatMessage(String.format(_texts.gameStartStop(),
-                        profile.getDisplayName(15)), ChatMessage.FromType.SYSTEM, null));
+                        profile.getDisplayName(15)), ChatMessage.FromType.SYSTEM, null), false);
             }
         }
     }
@@ -551,7 +554,7 @@ public class RoomLogic extends LogicAbstract {
         flushRoom(false, null);
         _services.getDatabase().savePlayedHistory(_services.getProfile(), _room, null);
         hostSendGameStartedPush();
-        _services.getChat().add(new ChatMessage(_texts.gameStarted(), ChatMessage.FromType.SYSTEM, null));
+        _services.getChat().add(new ChatMessage(_texts.gameStarted(), ChatMessage.FromType.SYSTEM, null), false);
 
         Threadings.delay(1000, new Runnable() {
             @Override
@@ -606,6 +609,7 @@ public class RoomLogic extends LogicAbstract {
     public void dispose() {
         leaveRoom();
         super.dispose();
+        Gdx.files.local("records").deleteDirectory();
         _checkReadyThread.kill();
         _services.getChat().hide();
         _services.getChat().resetChat();

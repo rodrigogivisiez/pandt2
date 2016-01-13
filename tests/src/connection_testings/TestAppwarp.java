@@ -96,14 +96,14 @@ public class TestAppwarp extends TestAbstract {
         //test send room msg
         _gamingKit.addListener(getClassTag(), new MessagingListener() {
             @Override
-            public void onRoomMessageReceived(String msg, String senderId) {
-                Assert.assertEquals(chatMessage.getMessage(), msg);
+            public void onRoomMessageReceived(ChatMessage result, String senderId) {
+                Assert.assertEquals(chatMessage.getMessage(), result.getMessage());
                 Assert.assertEquals(chatMessage.getSenderId(), senderId);
                 waiting[0] = false;
             }
         });
 
-        _gamingKit.sendRoomMessage(chatMessage.getMessage());
+        _gamingKit.sendRoomMessage(chatMessage);
 
         while(waiting[0]){
             T_Threadings.sleep(100);

@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
+import com.mygdx.potatoandtomato.absintflis.gamingkit.MessagingListener;
 import com.mygdx.potatoandtomato.helpers.controls.Chat;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.ChatMessage;
@@ -43,12 +44,12 @@ public class TestChat extends TestAbstract{
         Services services = T_Services.mockServices();
         final boolean[] waiting = {true};
 
-        Broadcaster.getInstance().subscribe(BroadcastEvent.CHAT_NEW_MESSAGE, new BroadcastListener<ChatMessage>() {
+        services.getGamingKit().addListener(this.getClassTag(), new MessagingListener() {
             @Override
-            public void onCallback(ChatMessage obj, Status st) {
-                Assert.assertEquals("testing", obj.getMessage());
-                Assert.assertEquals(ChatMessage.FromType.USER, obj.getFromType());
-                Assert.assertEquals(MockModel.mockProfile().getUserId(), obj.getSenderId());
+            public void onRoomMessageReceived(ChatMessage chatMessage, String senderId) {
+                Assert.assertEquals("testing", chatMessage.getMessage());
+                Assert.assertEquals(ChatMessage.FromType.USER, chatMessage.getFromType());
+                Assert.assertEquals(MockModel.mockProfile().getUserId(), chatMessage.getSenderId());
                 waiting[0] = false;
             }
         });
@@ -56,19 +57,29 @@ public class TestChat extends TestAbstract{
         Chat _chat = services.getChat();
 
         _chat.show();
-
+        _chat.setUserId(MockModel.mockProfile().getUserId());
         _chat.setMessage("testing");
         _chat.sendMessage();
         Room _room = MockModel.mockRoom("1");
         _chat.setRoom(_room);
-        _chat.add(new ChatMessage("test", ChatMessage.FromType.USER, MockModel.mockProfile().getUserId()));
+        _chat.add(new ChatMessage("test", ChatMessage.FromType.USER, MockModel.mockProfile().getUserId()), true);
 
         while (waiting[0]){
             Threadings.sleep(1000);
         }
 
-        Assert.assertEquals(1, Broadcaster.getInstance().getEventCallbacksSize(BroadcastEvent.CHAT_NEW_MESSAGE) - 1);
         Assert.assertEquals(1, Broadcaster.getInstance().getEventCallbacksSize(BroadcastEvent.SCREEN_LAYOUT_CHANGED));
+
+    }
+
+
+    @Test
+    public void testChatMode2(){
+
+        Services services = T_Services.mockServices();
+        Chat _chat = services.getChat();
+        _chat.setMode(2);
+        _chat.add(new ChatMessage("test", ChatMessage.FromType.USER, MockModel.mockProfile().getUserId()), true);
 
     }
 

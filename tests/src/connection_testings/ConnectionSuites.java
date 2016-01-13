@@ -8,7 +8,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         TestFireBase.class,
-        TestAppwarp.class
+        TestAppwarp.class,
+        TestUploader.class
 })
 public class ConnectionSuites {
 }

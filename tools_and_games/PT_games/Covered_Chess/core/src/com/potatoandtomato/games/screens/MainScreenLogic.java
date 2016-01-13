@@ -12,7 +12,6 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
-import com.google.gson.Gson;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.InGameUpdateListener;
 import com.potatoandtomato.games.absint.MainScreenListener;
@@ -24,9 +23,14 @@ import com.potatoandtomato.games.helpers.UpdateRoomHelper;
 import com.potatoandtomato.games.models.GameInfo;
 import com.potatoandtomato.games.models.PlateSimple;
 import com.potatoandtomato.games.models.Services;
+import com.shaded.fasterxml.jackson.core.JsonParseException;
+import com.shaded.fasterxml.jackson.core.JsonProcessingException;
+import com.shaded.fasterxml.jackson.databind.JsonMappingException;
+import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Random;
@@ -41,7 +45,6 @@ public class MainScreenLogic {
     Services _services;
     GameCoordinator _coordinator;
     MainScreen _screen;
-    Gson _gson;
     GameInfo _gameInfo;
     PlateLogic[][] _plateLogics;
     private boolean _isMyTurn;
@@ -54,7 +57,6 @@ public class MainScreenLogic {
     public MainScreenLogic(Services services, GameCoordinator coordinator, boolean isContinue) {
         this._services = services;
         this._coordinator = coordinator;
-        _gson = new Gson();
         _plateLogics = new PlateLogic[4][8];
         _redChessTotal = _yellowChessTotal = 16;
         _isContinue = isContinue;
@@ -87,7 +89,16 @@ public class MainScreenLogic {
                 computeAndSendGameInfo();
             }
             else{
-                _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.REQUEST_GAME_INFO, ""));
+                Threadings.runInBackground(new Runnable() {
+                    @Override
+                    public void run() {
+                        while (_gameInfo == null){
+                            _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.REQUEST_GAME_INFO, ""));
+                            Threadings.sleep(10000);
+                        }
+                    }
+                });
+
             }
         }
         else{
@@ -224,8 +235,7 @@ public class MainScreenLogic {
         gameInfo.setChessInfo(chessesInfo);
 
         _gameInfo = gameInfo;
-
-        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.GAME_INFO, _gson.toJson(gameInfo)));
+        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.GAME_INFO, gameInfo.toJson()));
     }
 
     private void receiveInGameUpdate(String msg, String senderId){
@@ -236,7 +246,9 @@ public class MainScreenLogic {
             String[] arr;
             switch (code){
                 case UpdateCode.REQUEST_GAME_INFO:
-                    _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.GAME_INFO, _gson.toJson(_gameInfo)));
+                    if(_gameInfo != null){
+                        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.GAME_INFO, _gameInfo.toJson()));
+                    }
                     break;
                 case UpdateCode.GAME_INFO:
                     if(!_initialized){
@@ -317,9 +329,13 @@ public class MainScreenLogic {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("turn", currentTurn);
-            jsonObject.put("plateLogics", _gson.toJson(platesSimple));
-            jsonObject.put("graveyard", _gson.toJson(_graveyard));
+            ObjectMapper mapper1 = new ObjectMapper();
+            jsonObject.put("plateLogics", mapper1.writeValueAsString(platesSimple));
+            ObjectMapper mapper2 = new ObjectMapper();
+            jsonObject.put("graveyard", mapper2.writeValueAsString(_graveyard));
         } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
         _coordinator.getFirebase().child(_coordinator.getId()).child("info").setValue(jsonObject.toString(), new Firebase.CompletionListener() {
@@ -344,9 +360,10 @@ public class MainScreenLogic {
                             JSONObject jsonObject = null;
                             try {
                                 jsonObject = new JSONObject(json);
-                                PlateSimple[][] platesSimple = _gson.fromJson(jsonObject.getString("plateLogics"), PlateSimple[][].class);
-
-                                ArrayList<String> grave = _gson.fromJson(jsonObject.getString("graveyard"), ArrayList.class);
+                                ObjectMapper mapper1 = new ObjectMapper();
+                                PlateSimple[][] platesSimple = mapper1.readValue(jsonObject.getString("plateLogics"), PlateSimple[][].class);
+                                ObjectMapper mapper2 = new ObjectMapper();
+                                ArrayList<String> grave = mapper2.readValue(jsonObject.getString("graveyard"), ArrayList.class);
                                 for(String item : grave){
                                     _graveyard.add(ChessType.valueOf(item));
                                 }
@@ -374,6 +391,12 @@ public class MainScreenLogic {
                                 init();
                             } catch (JSONException e) {
                                 e.printStackTrace();
+                            } catch (JsonMappingException e) {
+                                e.printStackTrace();
+                            } catch (JsonParseException e) {
+                                e.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
                         }
                     });
@@ -389,7 +412,13 @@ public class MainScreenLogic {
     }
 
     private void gameInfoInitialized(String gameInfoString){
-        GameInfo gameInfo = _gson.fromJson(gameInfoString, GameInfo.class);
+        ObjectMapper mapper1 = new ObjectMapper();
+        GameInfo gameInfo = null;
+        try {
+            gameInfo = mapper1.readValue(gameInfoString, GameInfo.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         ArrayList<ChessType> chessTypes  = gameInfo.getChessTypes();
         int i = 0;
         for(int row = 0; row < 8 ; row++){

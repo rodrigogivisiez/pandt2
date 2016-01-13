@@ -1,12 +1,17 @@
 package com.potatoandtomato.games.models;
 
 import com.potatoandtomato.games.actors.chesses.enums.ChessType;
+import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
+import com.shaded.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.shaded.fasterxml.jackson.core.JsonProcessingException;
+import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 
 /**
  * Created by SiongLeng on 31/12/2015.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GameInfo {
 
     public boolean yellowTurn;
@@ -48,4 +53,16 @@ public class GameInfo {
     public void setYellowTurn(boolean yellowTurn) {
         this.yellowTurn = yellowTurn;
     }
+
+    @JsonIgnore
+    public String toJson(){
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

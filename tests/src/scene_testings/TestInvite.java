@@ -17,6 +17,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
@@ -53,7 +54,7 @@ public class TestInvite extends TestAbstract {
         logic.dispose();
         Threadings.sleep(100);
         verify(services.getGcmSender(), times(1)).send(any(Profile.class), any(PushNotification.class));
-        verify(services.getChat(), times(1)).add(any(ChatMessage.class));
+        verify(services.getChat(), times(1)).add(any(ChatMessage.class), anyBoolean());
         Threadings.sleep(1000);
         Assert.assertEquals(false, logic.isAlive());
     }

@@ -27,7 +27,6 @@ public class MockModel {
 
     public static Profile mockProfile(String userId){
         Profile p = new Profile();
-        p.setMascotEnum(MascotEnum.TOMATO);
         p.setFacebookUserId("fb123");
         p.setUserId(userId);
         return p;

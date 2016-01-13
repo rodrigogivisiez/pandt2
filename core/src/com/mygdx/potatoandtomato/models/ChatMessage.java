@@ -6,12 +6,15 @@ package com.mygdx.potatoandtomato.models;
 public class ChatMessage {
 
     public enum FromType{
-        USER, SYSTEM, IMPORTANT
+        USER, SYSTEM, IMPORTANT, USER_VOICE
     }
 
     public String _message;
     public FromType _fromType;
     public String _senderId;
+
+    public ChatMessage() {
+    }
 
     public ChatMessage(String _message, FromType _fromType, String _senderId) {
         this._message = _message;

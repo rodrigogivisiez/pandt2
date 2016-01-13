@@ -1,6 +1,7 @@
 package com.mygdx.potatoandtomato.android;
 
 import android.app.Application;
+import android.content.Context;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
@@ -8,6 +9,10 @@ import com.squareup.picasso.Picasso;
  * Created by SiongLeng on 3/1/2016.
  */
 public class MyApplication extends Application {
+
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+    }
 
     @Override
     public void onCreate() {

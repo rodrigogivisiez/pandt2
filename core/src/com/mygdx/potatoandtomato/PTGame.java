@@ -4,25 +4,22 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
+import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.controls.Chat;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.helpers.controls.Notification;
 import com.mygdx.potatoandtomato.helpers.services.*;
-import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
-import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
 import com.potatoandtomato.common.IPTGame;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,9 +36,14 @@ public class PTGame extends Game implements IPTGame {
 	HashMap<InputProcessor, Integer> _processors;
 	Confirm _confirm;
 	Notification _notification;
+	Recorder _recorder;
+	IUploader _uploader;
+	IDownloader _downloader;
 
 	@Override
 	public void create () {
+
+
 		_game = this;
 		_assets = new Assets();
 		_processors = new HashMap<>();
@@ -55,15 +57,19 @@ public class PTGame extends Game implements IPTGame {
 				_batch = new SpriteBatch();
 				_gamingKit = new Appwarp();
 				_texts = new Texts();
-				_chat = new Chat(_gamingKit, _texts, _assets, _batch, _game);
+				_recorder = new Recorder();
+				_downloader = new Downloader();
+				_uploader = new App42Uploader(_downloader);
+				_chat = new Chat(_gamingKit, _texts, _assets, _batch, _game, _recorder, _uploader);
 				_confirm = new Confirm(_batch, _game, _assets);
 				_notification = new Notification(_batch, _assets, _game);
 
 				Preferences preferences = new Preferences();
 				_services = new Services(_assets, _texts,
 						preferences, new Profile(), new FirebaseDB(Terms.FIREBASE_URL),
-						new Shaders(), _gamingKit, new Downloader(), _chat,
-						new Socials(preferences), new GCMSender(), _confirm, _notification);
+						new Shaders(), _gamingKit, _downloader, _chat,
+						new Socials(preferences), new GCMSender(), _confirm, _notification,
+						_recorder, _uploader);
 				_screen = new PTScreen(_game, _services);
 
 				setScreen(_screen);

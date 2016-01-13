@@ -44,6 +44,11 @@ public class Downloader implements IDownloader{
                     completeFileSize = con.getContentLength();
                     File file = targetFile;
                     if (file.exists()) file.delete();
+
+                    if(!file.getParentFile().exists()){
+                        file.getParentFile().mkdirs();
+                    }
+
                     file.createNewFile();
                     BufferedInputStream bis = new BufferedInputStream(
                             con.getInputStream());

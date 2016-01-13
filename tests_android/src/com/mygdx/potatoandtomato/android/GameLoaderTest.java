@@ -111,8 +111,8 @@ public class GameLoaderTest extends ActivityInstrumentationTestCase2<AndroidLaun
         //assets.loadBasic(null);
 
         return new Services(assets, new Texts(), preferences,
-                new Profile(), null, new Shaders(), null, new Downloader(), new Chat(null, null, null, null, null),
-                new Socials(preferences), new GCMSender(), null, null);
+                new Profile(), null, new Shaders(), null, new Downloader(), new Chat(null, null, null, null, null, null, null),
+                new Socials(preferences), new GCMSender(), null, null, null, null);
     }
 
 }

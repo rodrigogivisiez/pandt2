@@ -226,5 +226,6 @@ public class BootLogic extends LogicAbstract {
         _services.getDatabase().updateProfile(_services.getProfile(), null);
         _services.getGamingKit().connect(_services.getProfile());
         _services.getDatabase().onDcSetGameStateDisconnected(_services.getProfile(), null);
+        _services.getChat().setUserId(_services.getProfile().getUserId());
     }
 }

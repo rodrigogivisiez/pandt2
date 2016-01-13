@@ -36,7 +36,7 @@ public class Assets {
             potatoIcon, unknownIcon, backIcon, infoIcon, importantIcon, comingSoon, noImage,
             pointLeftIcon, closeButton, downloadIconSmall, messageNotification, orangeLine, greyLine,
             chatContainer, textCursor, unselectBox, selectBox, whiteLine, expandIcon, collapsedIcon, loading,
-            webImageLoading, invitedIcon, bulletIcon, micIcon;
+            webImageLoading, invitedIcon, bulletIcon, micIcon, voiceIcon, micBig;
     private NinePatch popupBg, buttonRed, buttonGreen, progressBarInner, progressBarBg, whiteRoundedBg,
             yellowRoundedBg,  greenRoundedBg,
             blackRoundedBg, chatBox, yellowGradientBox, scrollVerticalHandle, irregularBg, expandTitleBg;
@@ -245,6 +245,8 @@ public class Assets {
         invitedIcon = _backgroundsPack.findRegion("invited_icon");
         bulletIcon = _backgroundsPack.findRegion("bullet");
         micIcon = _backgroundsPack.findRegion("mic");
+        voiceIcon = _backgroundsPack.findRegion("voice_icon");
+        micBig = _backgroundsPack.findRegion("mic_big");
     }
 
     private void basicNinePatchLoaded(){
@@ -262,6 +264,14 @@ public class Assets {
         scrollVerticalHandle =  _backgroundsPack .createPatch("scrollbar_handle");
         irregularBg =  _backgroundsPack .createPatch("irregular_bg");
         expandTitleBg = _backgroundsPack.createPatch("expandable_title_bg");
+    }
+
+    public TextureRegion getMicBig() {
+        return micBig;
+    }
+
+    public TextureRegion getVoiceIcon() {
+        return voiceIcon;
     }
 
     public TextureRegion getMicIcon() {

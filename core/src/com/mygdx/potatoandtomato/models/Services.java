@@ -3,6 +3,7 @@ package com.mygdx.potatoandtomato.models;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
+import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
 import com.mygdx.potatoandtomato.helpers.controls.Chat;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.helpers.controls.Notification;
@@ -26,10 +27,13 @@ public class Services {
     GCMSender _gcmSender;
     Confirm _confirm;
     Notification _notification;
+    Recorder _recorder;
+    IUploader _uploader;
 
     public Services(Assets assets, Texts texts, Preferences preferences,
                     Profile profile, IDatabase database, Shaders shaders, GamingKit gamingKit, IDownloader downloader,
-                    Chat chat, Socials socials, GCMSender gcmSender, Confirm confirm, Notification notification) {
+                    Chat chat, Socials socials, GCMSender gcmSender, Confirm confirm, Notification notification,
+                    Recorder recorder, IUploader uploader) {
         _texts = texts;
         _assets = assets;
         _preferences = preferences;
@@ -43,6 +47,24 @@ public class Services {
         _gcmSender = gcmSender;
         _confirm = confirm;
         _notification = notification;
+        _recorder = recorder;
+        _uploader = uploader;
+    }
+
+    public IUploader getUploader() {
+        return _uploader;
+    }
+
+    public void setUploader(IUploader _uploader) {
+        this._uploader = _uploader;
+    }
+
+    public Recorder getRecorder() {
+        return _recorder;
+    }
+
+    public void setRecorder(Recorder _recorder) {
+        this._recorder = _recorder;
     }
 
     public Notification getNotification() {

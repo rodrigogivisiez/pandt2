@@ -4,6 +4,7 @@ import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
 import com.mygdx.potatoandtomato.helpers.services.Appwarp;
 import com.mygdx.potatoandtomato.helpers.utils.JsonObj;
+import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.shephertz.app42.gaming.multiplayer.client.events.UpdateEvent;
 import helpers.MockModel;
@@ -34,8 +35,8 @@ public class MockGamingKit extends GamingKit {
     }
 
     @Override
-    public void sendRoomMessage(String msg) {
-        new Appwarp().onRoomMessageReceived(msg, MockModel.mockProfile().getUserId());
+    public void sendRoomMessage(ChatMessage msg) {
+        this.onRoomMessageReceived(msg, MockModel.mockProfile().getUserId());
     }
 
     @Override
