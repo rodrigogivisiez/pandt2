@@ -199,7 +199,7 @@ public class RoomLogic extends LogicAbstract {
                         RoomUser roomUser = _room.getRoomUserByUserId(_services.getProfile().getUserId());
                         if(roomUser != null){
                             if(!roomUser.getReady()){
-                                sendUpdateRoomMates(UpdateRoomMatesCode.UPDATE_USER_READY, "1");
+                                sendIsReadyUpdate(true);
                             }
                         }
                     }
@@ -218,12 +218,12 @@ public class RoomLogic extends LogicAbstract {
         _confirm.setStateChangedListener(new ConfirmStateChangedListener() {
             @Override
             public void onShow() {
-                sendUpdateRoomMates(UpdateRoomMatesCode.UPDATE_USER_READY, "0");
+                sendIsReadyUpdate(false);
             }
 
             @Override
             public void onHide() {
-                sendUpdateRoomMates(UpdateRoomMatesCode.UPDATE_USER_READY, "1");
+                sendIsReadyUpdate(true);
             }
         });
 
@@ -240,7 +240,7 @@ public class RoomLogic extends LogicAbstract {
         _services.getChat().setMode(1);
         _services.getChat().show();
         _starting = false;
-        sendUpdateRoomMates(UpdateRoomMatesCode.UPDATE_USER_READY, "1");
+        sendIsReadyUpdate(true);
 
         if(_isContinue) {
             continueGame();
@@ -359,6 +359,13 @@ public class RoomLogic extends LogicAbstract {
         else if(code == UpdateRoomMatesCode.GAME_OUTDATED){
             errorOccured(_texts.gameVersionOutdated());
         }
+        else if(code == UpdateRoomMatesCode.GAME_STARTED){
+            if(_countDownThread != null) _countDownThread.kill();
+            gameStarted();
+        }
+        else if(code == UpdateRoomMatesCode.PLAYER_CANCEL_START_GAME){
+            stopGameStartCountDown(_room.getProfileByUserId(msg));
+        }
     }
 
     public void userJustJoinedRoom(Profile user){
@@ -411,6 +418,13 @@ public class RoomLogic extends LogicAbstract {
             });
         }
         return found;
+    }
+
+    private void sendIsReadyUpdate(boolean isReady){
+        sendUpdateRoomMates(UpdateRoomMatesCode.UPDATE_USER_READY, isReady ? "1" : "0");
+        if(_starting && !isReady){
+            sendUpdateRoomMates(UpdateRoomMatesCode.PLAYER_CANCEL_START_GAME, _services.getProfile().getUserId());
+        }
     }
 
     public void hostSendUpdateRoomStatePush(){
@@ -547,14 +561,19 @@ public class RoomLogic extends LogicAbstract {
 
 
     public void gameStarted(){
+        if(_gameStarted) return;
+
+        hostSendGameStartedPush();
+        _gameStarted = true;
         _room.setOpen(false);
         _room.setPlaying(true);
         _room.setRoundCounter(_room.getRoundCounter()+1);
         _room.storeRoomUsersToOriginalRoomUserIds();
         flushRoom(false, null);
         _services.getDatabase().savePlayedHistory(_services.getProfile(), _room, null);
-        hostSendGameStartedPush();
         _services.getChat().add(new ChatMessage(_texts.gameStarted(), ChatMessage.FromType.SYSTEM, null), false);
+        _services.getGamingKit().updateRoomMates(UpdateRoomMatesCode.GAME_STARTED, "");
+
 
         Threadings.delay(1000, new Runnable() {
             @Override
@@ -562,7 +581,6 @@ public class RoomLogic extends LogicAbstract {
                 _services.getChat().hide();
                 _screen.toScene(SceneEnum.GAME_SANDBOX, _room, false);
                 _scene.getTeamsRoot().setTouchable(Touchable.enabled);
-                _gameStarted = true;
             }
         });
     }
@@ -589,7 +607,7 @@ public class RoomLogic extends LogicAbstract {
         super.onHide();
         _confirm.setStateChangedListener(null);
         _onScreen = false;
-        if(!_quiting) sendUpdateRoomMates(UpdateRoomMatesCode.UPDATE_USER_READY, "0");
+        if(!_quiting)  sendIsReadyUpdate(false);
 
     }
 

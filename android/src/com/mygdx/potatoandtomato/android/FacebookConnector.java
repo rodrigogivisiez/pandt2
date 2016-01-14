@@ -70,7 +70,7 @@ public class FacebookConnector {
                         new GraphRequest.GraphJSONArrayCallback() {
                             @Override
                             public void onCompleted(JSONArray jsonArray, GraphResponse response) {
-                                ArrayList<FacebookProfile> friendsList = new ArrayList<>();
+                                ArrayList<FacebookProfile> friendsList = new ArrayList();
                                 for(int i=0; i<jsonArray.length();i++){
                                     JSONObject c= null;
                                     try {

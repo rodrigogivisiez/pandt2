@@ -18,6 +18,8 @@ import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
+import com.potatoandtomato.common.BroadcastEvent;
+import com.potatoandtomato.common.Broadcaster;
 import com.potatoandtomato.common.IPTGame;
 
 import java.util.HashMap;
@@ -43,10 +45,9 @@ public class PTGame extends Game implements IPTGame {
 	@Override
 	public void create () {
 
-
 		_game = this;
 		_assets = new Assets();
-		_processors = new HashMap<>();
+		_processors = new HashMap();
 		Threadings.setMainTreadId();
 
 		//run when assets done loading
@@ -76,6 +77,13 @@ public class PTGame extends Game implements IPTGame {
 				_screen.toScene(SceneEnum.BOOT);
 			}
 		});
+	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		Broadcaster.getInstance().broadcast(BroadcastEvent.REMOVE_APPS_ALIVE);
+		Broadcaster.getInstance().broadcast(BroadcastEvent.DESTROY_ROOM);
 	}
 
 	public SpriteBatch getSpriteBatch() {
@@ -117,7 +125,7 @@ public class PTGame extends Game implements IPTGame {
 	}
 
 	private void setInputProcessors(){
-		Array<InputProcessor> inputProcessors = new Array<>();
+		Array<InputProcessor> inputProcessors = new Array();
 		for (Map.Entry<InputProcessor, Integer> entry : _processors.entrySet()) {
 			InputProcessor key = entry.getKey();
 			Integer priority = entry.getValue();

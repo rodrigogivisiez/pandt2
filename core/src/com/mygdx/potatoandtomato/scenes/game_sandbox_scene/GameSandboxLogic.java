@@ -24,11 +24,12 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
 
     GameSandboxScene _scene;
     Room _room;
-    ArrayList<String> _readyUserIds;
+    ArrayList<String> _readyUserIds;        //for host usage only
     boolean _gameStarted;
     GameCoordinator _coordinator;
     Notification _notification;
     boolean _isContinue;
+    boolean _isReady;
 
     public GameSandboxLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
@@ -70,6 +71,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                 if (st == Status.SUCCESS) {
                     _coordinator = obj;
                     if(!_isContinue){
+                        _isReady = true;
                         _services.getGamingKit().updateRoomMates(UpdateRoomMatesCode.USER_IS_READY, "");
                     }
                     else{
@@ -103,14 +105,25 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
 
 
         if(!_isContinue){
-            Threadings.delay(10000, new Runnable() {
-                @Override
-                public void run() {
-                    if(_readyUserIds.size() < _room.getRoomUsersCount()){
-                        askForUserIsReady();
+            if(_room.getHost().equals(_services.getProfile())){
+
+                Threadings.runInBackground(new Runnable() {
+                    @Override
+                    public void run() {
+                        while (true){
+                            Threadings.sleep(3000);
+                            if(_readyUserIds.size() < _room.getRoomUsersCount()){
+                                askForUserIsReady();
+                            }
+                            else{
+                                break;
+                            }
+                        }
                     }
-                }
-            });
+                });
+
+
+            }
 
             //timeout
             Threadings.delay(60 * 1000, new Runnable() {
@@ -128,13 +141,15 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     }
 
     public void userIsReady(String userId){
-        if(!_readyUserIds.contains(userId)){
-            _readyUserIds.add(userId);
+        //run by host only
+        if(_room.getHost().equals(_services.getProfile())){
+            if(!_readyUserIds.contains(userId)){
+                _readyUserIds.add(userId);
+            }
+            if(_readyUserIds.size() >= _room.getRoomUsersCount()){
+                _services.getGamingKit().updateRoomMates(UpdateRoomMatesCode.ALL_PLAYERS_LOADED_GAME_SUCCESS, "");
+            }
         }
-        if(_readyUserIds.size() >= _room.getRoomUsersCount()){
-            gameStart();
-        }
-
     }
 
     public void gameStart(){
@@ -220,7 +235,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             names.add(profile.getDisplayName(0));
         }
         if(names.size() > 0){
-            _services.getChat().add(new ChatMessage(String.format(_texts.loadGameFailed(), StringUtils.join(names, ", ")),
+            _services.getChat().add(new ChatMessage(_texts.loadGameFailed(),
                                         ChatMessage.FromType.IMPORTANT, null), false);
         }
        exitSandbox();
@@ -231,12 +246,15 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             userIsReady(senderId);
         }
         else if(code == UpdateRoomMatesCode.ASK_FOR_USER_READY){
-            if(msg.equals(_services.getProfile().getUserId())){
+            if(msg.equals(_services.getProfile().getUserId()) && _isReady){
                 _services.getGamingKit().updateRoomMates(UpdateRoomMatesCode.USER_IS_READY, "");    //resend again
             }
         }
         else if(code == UpdateRoomMatesCode.IN_GAME_UPDATE){
             Broadcaster.getInstance().broadcast(BroadcastEvent.INGAME_UPDATE_RESPONSE, new InGameUpdateMessage(senderId, msg));
+        }
+        else if(code == UpdateRoomMatesCode.ALL_PLAYERS_LOADED_GAME_SUCCESS){
+            gameStart();
         }
     }
 

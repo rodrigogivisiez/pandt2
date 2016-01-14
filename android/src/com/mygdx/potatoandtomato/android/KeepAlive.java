@@ -41,7 +41,10 @@ public class KeepAlive {
     }
 
     public void release(){
-        if(_wakeLock != null) _wakeLock.release();
+        if(_wakeLock != null) {
+            _wakeLock.release();
+            _wakeLock = null;
+        }
     }
 
 }

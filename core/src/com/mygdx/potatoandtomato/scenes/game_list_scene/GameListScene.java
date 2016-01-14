@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.SnapshotArray;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.models.Profile;
@@ -180,7 +181,7 @@ public class GameListScene extends SceneAbstract {
         gameRowTable.add(gameNameInvitationTable).width(115).padLeft(10).padRight(10);
         gameRowTable.add(hostNameLabel).width(100).padLeft(8).padRight(10);
         gameRowTable.add(playersCountLabel).expandX().left().padLeft(8).padRight(10);
-        gameRowTable.padTop(5).padBottom(5);
+        gameRowTable.padTop(10).padBottom(10);
         gameRowTable.addActor(dummyButton);
         _scrollTable.add(gameRowTable).expandX().fillX();
         _scrollTable.row();
@@ -239,4 +240,7 @@ public class GameListScene extends SceneAbstract {
     public void setUsername(String username){
         _usernameLabel.setText(username);
     }
+
+
+
 }

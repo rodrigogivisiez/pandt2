@@ -15,7 +15,10 @@ import com.shephertz.app42.gaming.multiplayer.client.listener.RoomRequestListene
 import com.shephertz.app42.gaming.multiplayer.client.listener.ZoneRequestListener;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Created by SiongLeng on 15/12/2015.
@@ -38,10 +41,13 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
     }
 
     public void init(){
-        WarpClient.initialize(_appKey, _secretKey);
+        int result =  WarpClient.initialize(_appKey, _secretKey);
         //WarpClient.setRecoveryAllowance(120);
         try {
             _warpInstance = WarpClient.getInstance();
+
+            reflectionClearListeners();
+
             _warpInstance.addConnectionRequestListener(this);
             _warpInstance.addZoneRequestListener(this);
             _warpInstance.addRoomRequestListener(this);
@@ -50,6 +56,37 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
             e.printStackTrace();
         }
     }
+
+    private void reflectionClearListeners(){
+        try {
+            Field field = WarpClient.class.getDeclaredField("ConnectionRequestListeners");
+            field.setAccessible(true);
+            Set<ConnectionRequestListener> value = (Set<ConnectionRequestListener>) field.get(_warpInstance);
+            value.clear();
+
+            Field field1 = WarpClient.class.getDeclaredField("zoneRequestListeners");
+            field1.setAccessible(true);
+            Set<ZoneRequestListener> value1 = (Set<ZoneRequestListener>) field.get(_warpInstance);
+            value1.clear();
+
+            Field field2 = WarpClient.class.getDeclaredField("roomRequestListeners");
+            field2.setAccessible(true);
+            Set<RoomRequestListener> value2 = (Set<RoomRequestListener>) field.get(_warpInstance);
+            value2.clear();
+
+            Field field3 = WarpClient.class.getDeclaredField("notifyListeners");
+            field3.setAccessible(true);
+            Set<NotifyListener> value3 = (Set<NotifyListener>) field.get(_warpInstance);
+            value3.clear();
+
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
     @Override
     public void connect(Profile user) {
@@ -88,6 +125,16 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
         data.put("msg", msg);
         data.put("realUsername", _realUsername);
         _warpInstance.sendUpdatePeers(data.getJSONObject().toString().getBytes());
+    }
+
+    @Override
+    public void dispose() {
+        _warpInstance.removeConnectionRequestListener(this);
+        _warpInstance.removeZoneRequestListener(this);
+        _warpInstance.removeRoomRequestListener(this);
+        _warpInstance.removeNotificationListener(this);
+        _warpInstance.disconnect();
+        _warpInstance = null;
     }
 
     @Override

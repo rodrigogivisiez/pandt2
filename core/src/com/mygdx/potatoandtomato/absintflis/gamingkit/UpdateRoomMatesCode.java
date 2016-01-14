@@ -7,10 +7,13 @@ public class UpdateRoomMatesCode {
 
     public final static int UPDATE_DOWNLOAD = 0;
     public final static int START_GAME = 1;
+    public final static int PLAYER_CANCEL_START_GAME = 9;
     public final static int USER_IS_READY = 2;
     public final static int ASK_FOR_USER_READY = 3;
     public final static int IN_GAME_UPDATE = 4;
     public final static int UPDATE_USER_READY = 5;
     public final static int GAME_OUTDATED = 6;
+    public final static int GAME_STARTED = 7;
+    public final static int ALL_PLAYERS_LOADED_GAME_SUCCESS = 8;
 
 }

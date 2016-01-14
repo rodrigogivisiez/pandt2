@@ -73,7 +73,7 @@ public class Room {
 
     public ArrayList<String> getOriginalRoomUserIds() {
         if(originalRoomUserIds == null){
-            originalRoomUserIds = new ArrayList<>();
+            originalRoomUserIds = new ArrayList();
         }
         return originalRoomUserIds;
     }
@@ -122,7 +122,7 @@ public class Room {
 
     @JsonIgnore
     public void storeRoomUsersToOriginalRoomUserIds(){
-        ArrayList<String> result = new ArrayList<>();
+        ArrayList<String> result = new ArrayList();
         for(RoomUser roomUser : getRoomUsers().values()){
             result.add(roomUser.getProfile().getUserId());
         }

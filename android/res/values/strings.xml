@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">potatoandtomato</string>
+    <string name="app_name">P&amp;T</string>
     <string name="facebook_app_id">500529570103453</string>
     <string name="facebook_app_name">Potato and Tomato</string>
     <integer name="google_play_services_version">8487000</integer>

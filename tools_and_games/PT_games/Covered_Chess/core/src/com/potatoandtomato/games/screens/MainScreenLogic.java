@@ -93,8 +93,8 @@ public class MainScreenLogic {
                     @Override
                     public void run() {
                         while (_gameInfo == null){
-                            _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.REQUEST_GAME_INFO, ""));
                             Threadings.sleep(10000);
+                            _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.REQUEST_GAME_INFO, ""));
                         }
                     }
                 });
@@ -246,7 +246,7 @@ public class MainScreenLogic {
             String[] arr;
             switch (code){
                 case UpdateCode.REQUEST_GAME_INFO:
-                    if(_gameInfo != null){
+                    if(_gameInfo != null && _coordinator.getHostUserId().equals(_coordinator.getUserId())){
                         _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.GAME_INFO, _gameInfo.toJson()));
                     }
                     break;

@@ -32,8 +32,8 @@ public class ImageLoader {
 
     public ImageLoader(Activity activity) {
         this._activity = activity;
-        _requestMap = new HashMap<>();
-        _retriedUrl = new ArrayList<>();
+        _requestMap = new HashMap();
+        _retriedUrl = new ArrayList();
 
         Broadcaster.getInstance().subscribe(BroadcastEvent.LOAD_IMAGE_REQUEST, new BroadcastListener<String>() {
             @Override
@@ -103,7 +103,7 @@ public class ImageLoader {
                 GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
                 GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
                 //bitmap.recycle();
-                Pair<String, Texture> pair = new Pair<>(url, tex);
+                Pair<String, Texture> pair = new Pair(url, tex);
                 Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_IMAGE_RESPONSE, pair, Status.SUCCESS);
             }
         });
@@ -114,7 +114,7 @@ public class ImageLoader {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                Pair<String, Texture> pair = new Pair<>(url, null);
+                Pair<String, Texture> pair = new Pair(url, null);
                 Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_IMAGE_RESPONSE, pair, Status.FAILED);
             }
         });

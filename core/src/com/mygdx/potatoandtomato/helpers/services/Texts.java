@@ -99,10 +99,12 @@ public class Texts {
 
     public String confirmQuit() { return "Are you sure you want to quit Potato and Tomato?";}
 
-    public String loadGameFailed() { return "The following users failed to load the game: %s";}
+    public String loadGameFailed() { return "Some players failed to load the game.";}
     public String gameStarted() { return "Game started.";}
     public String gameEnded() { return "Game ended.";}
     public String waitingHost() { return "Waiting For Host";}
+
+    public String cancel() { return "Cancel";}
 
     public String waitAllUsersReady() { return "Please wait for all users to get ready(Green) before start.";}
 

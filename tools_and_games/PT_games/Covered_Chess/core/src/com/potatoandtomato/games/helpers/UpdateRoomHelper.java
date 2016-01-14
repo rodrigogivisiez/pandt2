@@ -12,6 +12,7 @@ public class UpdateRoomHelper {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("code", code);
+            if(msg.equals("")) msg = "-";
             jsonObject.put("msg", msg);
         } catch (JSONException e) {
             e.printStackTrace();

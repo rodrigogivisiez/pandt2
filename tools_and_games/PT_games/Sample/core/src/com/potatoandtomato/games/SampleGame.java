@@ -10,6 +10,10 @@ import com.potatoandtomato.common.MockGame;
 
 public class SampleGame extends MockGame {
 
+	public SampleGame(String gameId) {
+		super(gameId);
+	}
+
 	@Override
 	public void create() {
 		super.create();

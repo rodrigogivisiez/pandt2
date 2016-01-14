@@ -208,8 +208,19 @@ public class FirebaseDB implements IDatabase {
     }
 
     @Override
-    public void getAllGames(DatabaseListener<ArrayList<Game>> listener) {
-        getData(getTable(_tableGames), listener);
+    public void getAllGames(final DatabaseListener<ArrayList<Game>> listener) {
+        getData(getTable(_tableGames), new DatabaseListener<ArrayList<Game>>(Game.class) {
+            @Override
+            public void onCallback(ArrayList<Game> obj, Status st) {
+                if(st == Status.SUCCESS){
+                    Collections.reverse(obj);
+                    listener.onCallback(obj, Status.SUCCESS);
+                }
+                else{
+                    listener.onCallback(null, Status.FAILED);
+                }
+            }
+        });
     }
 
     @Override

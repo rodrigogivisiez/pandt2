@@ -30,6 +30,8 @@ public class AndroidLauncher extends AndroidApplication {
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		_this = this;
+		reset();
+
 		_imageLoader = new ImageLoader(_this);
 		_keepAlive = new KeepAlive(_this);
 		_facebookConnector = new FacebookConnector(this);
@@ -48,8 +50,6 @@ public class AndroidLauncher extends AndroidApplication {
 		});
 
 		subscribeLoadGameRequest();
-
-
 	}
 
 	public void subscribeLoadGameRequest(){
@@ -67,6 +67,12 @@ public class AndroidLauncher extends AndroidApplication {
 
 			}
 		});
+	}
+
+	private void reset(){
+		Broadcaster.getInstance().dispose();
+		GcmMessageHandler.destroyRoom(_this);
+		if(_keepAlive != null) _keepAlive.release();
 	}
 
 	@Override
@@ -92,8 +98,10 @@ public class AndroidLauncher extends AndroidApplication {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		GcmMessageHandler.destroyRoom(_this);
+		reset();
 	}
+
+
 
 	@Override
 	protected void onStart() {

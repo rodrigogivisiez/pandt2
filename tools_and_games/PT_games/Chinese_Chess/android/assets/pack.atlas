@@ -1,0 +1,50 @@
+
+pack.png
+size: 1024,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+background
+  rotate: false
+  xy: 2, 365
+  size: 400, 644
+  orig: 400, 644
+  offset: 0, 0
+  index: -1
+blackBgTrans
+  rotate: false
+  xy: 706, 937
+  size: 58, 72
+  orig: 58, 72
+  offset: 0, 0
+  index: -1
+chessBoard
+  rotate: false
+  xy: 404, 275
+  size: 300, 338
+  orig: 300, 338
+  offset: 0, 0
+  index: -1
+chessBoardBackground
+  rotate: false
+  xy: 404, 615
+  size: 300, 394
+  orig: 300, 394
+  offset: 0, 0
+  index: -1
+redBox
+  rotate: false
+  xy: 404, 239
+  size: 34, 34
+  split: 13, 16, 13, 12
+  pad: 0, 0, 0, 0
+  orig: 34, 34
+  offset: 0, 0
+  index: -1
+topBackground
+  rotate: false
+  xy: 2, 2
+  size: 400, 361
+  orig: 400, 361
+  offset: 0, 0
+  index: -1

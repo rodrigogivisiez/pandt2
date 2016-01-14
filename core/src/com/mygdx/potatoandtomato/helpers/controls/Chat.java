@@ -86,7 +86,7 @@ public class Chat {
         this._recorder = recorder;
         this._uploader = uploader;
         this._mode = 1;
-        this._userColors = new HashMap<>();
+        this._userColors = new HashMap();
 
         if(batch == null) return;
 

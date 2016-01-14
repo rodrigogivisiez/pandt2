@@ -125,4 +125,11 @@ public class Broadcaster {
     public ArrayList<String> getSubScribeOnceArr() {
         return subScribeOnceArr;
     }
+
+    public void dispose(){
+        callbacks.clear();
+        subScribeOnceArr.clear();
+        instance = null;
+    }
+
 }

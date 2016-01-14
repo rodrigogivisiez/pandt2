@@ -129,4 +129,6 @@ public abstract class GamingKit {
 
     public abstract void updateRoomMates(int updateRoomMatesCode, String msg);
 
+    public abstract void dispose();
+
 }

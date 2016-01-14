@@ -143,6 +143,7 @@ public class PrerequisiteLogic extends LogicAbstract {
     }
 
     public void joinRoomFailed(int reason){
+        System.out.println("REASONCODE: " + reason);
         if(reason == 0){    //general msg
             _scene.failedMessage(_texts.joinRoomFailed());
         }

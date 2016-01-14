@@ -165,12 +165,13 @@ public class InviteLogic extends LogicAbstract {
                                                     obj));
                                         }
                                         _services.getGcmSender().send(user, push);
-                                        _services.getChat().add(new ChatMessage(String.format(_texts.xInvitedX(),
-                                                _services.getProfile().getDisplayName(0), user.getDisplayName(0)), ChatMessage.FromType.SYSTEM, null), false);
+
+                                        _services.getGamingKit().sendRoomMessage(new ChatMessage(String.format(_texts.xInvitedX(),
+                                                _services.getProfile().getDisplayName(0), user.getDisplayName(0)), ChatMessage.FromType.SYSTEM, null));
                                     }
                                     else{
-                                        _services.getChat().add(new ChatMessage(String.format(_texts.xInvitedXFailed(),
-                                                _services.getProfile().getDisplayName(0), user.getDisplayName(0)), ChatMessage.FromType.IMPORTANT, null), false);
+                                        _services.getGamingKit().sendRoomMessage(new ChatMessage(String.format(_texts.xInvitedXFailed(),
+                                                _services.getProfile().getDisplayName(0), user.getDisplayName(0)), ChatMessage.FromType.IMPORTANT, null));
                                     }
                                     done[0]++;
                                 }
