@@ -27,6 +27,7 @@ public class MockGamingKit {
     private Runnable _onReady;
     private GameCoordinator _coordinator;
 
+
     public MockGamingKit(GameCoordinator coordinator, int expectedTeamCount,
                          int eachTeamExpectedPlayers, Runnable onReady) {
         this._onReady = onReady;
@@ -170,7 +171,8 @@ public class MockGamingKit {
                 Gdx.app.postRunnable(new Runnable() {
                     @Override
                     public void run() {
-                        _onReady.run();
+                        if(_onReady != null) _onReady.run();
+                        _onReady = null;
                     }
                 });
 

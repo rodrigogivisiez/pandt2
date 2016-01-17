@@ -67,6 +67,8 @@ public class Broadcaster {
 
     public void unsubscribe(String listenerId){
 
+        if(listenerId == null) return;
+
         Set<Integer> keys = callbacks.keySet();
         for(Integer event: keys){
             boolean found = false;

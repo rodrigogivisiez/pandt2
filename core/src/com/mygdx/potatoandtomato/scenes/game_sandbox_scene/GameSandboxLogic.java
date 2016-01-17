@@ -1,5 +1,6 @@
 package com.mygdx.potatoandtomato.scenes.game_sandbox_scene;
 
+import com.badlogic.gdx.Gdx;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
@@ -112,7 +113,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                     public void run() {
                         while (true){
                             Threadings.sleep(3000);
-                            if(_readyUserIds.size() < _room.getRoomUsersCount()){
+                            if(_readyUserIds.size() < _room.getRoomUsersCount() && !_gameStarted){
                                 askForUserIsReady();
                             }
                             else{
@@ -129,7 +130,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             Threadings.delay(60 * 1000, new Runnable() {
                 @Override
                 public void run() {
-                    if(_readyUserIds.size() < _room.getRoomUsersCount()){
+                    if(_readyUserIds.size() < _room.getRoomUsersCount() && !_gameStarted){
                         failLoad(getNotReadyUsers(), false);
                     }
                 }
@@ -195,6 +196,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                 Threadings.postRunnable(new Runnable() {
                     @Override
                     public void run() {
+                        Gdx.graphics.setContinuousRendering(true);
                         _gameStarted = true;
                         _screen.switchToGameScreen();
                         if(!_isContinue){
@@ -325,5 +327,6 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         super.dispose();
         _screen.switchToPTScreen();
         if(_coordinator.getGameEntrance() != null) _coordinator.getGameEntrance().dispose();
+        _coordinator.dispose();
     }
 }

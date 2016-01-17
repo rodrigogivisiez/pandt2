@@ -43,6 +43,9 @@ public class BootLogic extends LogicAbstract {
 
     @Override
     public void onShow() {
+
+        _screen.showRotateSunrise();
+
         _services.getDatabase().offline();
         _services.getGamingKit().disconnect();
         _fbStepPast = false;
@@ -65,6 +68,7 @@ public class BootLogic extends LogicAbstract {
 
                 if(!_logined){
                     if(st == ConnectStatus.CONNECTED){
+                        _screen.hideRotateSunrise();
                         if(_services.getProfile().getGameName() == null){
                             _screen.toScene(SceneEnum.INPUT_NAME);
                         }

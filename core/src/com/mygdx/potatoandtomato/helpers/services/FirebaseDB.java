@@ -209,18 +209,7 @@ public class FirebaseDB implements IDatabase {
 
     @Override
     public void getAllGames(final DatabaseListener<ArrayList<Game>> listener) {
-        getData(getTable(_tableGames), new DatabaseListener<ArrayList<Game>>(Game.class) {
-            @Override
-            public void onCallback(ArrayList<Game> obj, Status st) {
-                if(st == Status.SUCCESS){
-                    Collections.reverse(obj);
-                    listener.onCallback(obj, Status.SUCCESS);
-                }
-                else{
-                    listener.onCallback(null, Status.FAILED);
-                }
-            }
-        });
+        getData(getTable(_tableGames), listener);
     }
 
     @Override
@@ -232,7 +221,8 @@ public class FirebaseDB implements IDatabase {
             ref.child("open").onDisconnect().setValue(false);
             //_listenerModels.add(new ListenerModel(ref.child("open"), Logs.getCallerClassName()));
             String notifyKey = notifyRoomChanged(room);
-            getTable(_tableRoomNotifications).child(notifyKey).onDisconnect().setValue(room.getId() + "_DC");
+            Firebase ref2 = getTable(_tableRooms).push();
+            getTable(_tableRoomNotifications).child(ref2.getKey()).onDisconnect().setValue(room.getId() + "_DC");
            // _listenerModels.add(new ListenerModel(getTable(_tableRoomNotifications).child(notifyKey), Logs.getCallerClassName()));
         }
         else{
@@ -298,6 +288,7 @@ public class FirebaseDB implements IDatabase {
 
 
         ChildEventListener childEventListener = new ChildEventListener() {
+
             @Override
             public void onChildAdded(DataSnapshot snapshot, String previousChildKey) {
                 String changedRoomId = (String) snapshot.getValue();

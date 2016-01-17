@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * Created by SiongLeng on 9/12/2015.
  */
 public interface IDatabase {
-    
+
      void getTestTableCount(DatabaseListener<Integer> listener);
 
      void loginAnonymous(DatabaseListener<Profile> listener);

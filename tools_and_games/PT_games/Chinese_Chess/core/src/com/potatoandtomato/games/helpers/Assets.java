@@ -21,18 +21,15 @@ public class Assets {
     private AssetManager _manager;
     TextureAtlas _pack;
     private String _packPath = "pack.atlas";
-    private String _fontBoldPath = "fonts/helvetica_bold.ttf";
-    private String _fontRegularPath = "fonts/helvetica_regular.ttf";
-    private String _fontPizzaPath = "fonts/pizza.ttf";
-    private TextureRegion background, topBackground,
-                blackBgTrans, chessBoard, chessBoardBackground;
+    private TextureRegion background,
+                blackBgTrans, chessBoard, chessBoardBackground,
+                chess, chessSelected, empty, yourTurn, enemyTurn,
+                redJiangJun, blackJiangJun, youWin, youLose,
+                redChe, redMa, redXiang, redPao, redBing, redShi, redShuai,
+                 blackChe, blackMa, blackXiang, blackPao, blackBing, blackShi, blackShuai;
 
 
-    private BitmapFont whiteBold2BlackS, blackBold1,
-            blackNormal1Green, greyPizza4BlackS,
-            orangePizza5BlackS, greyPizza5BlackS, whitePizza2BlackS;
-
-    private NinePatch redBox;
+    private NinePatch nameTag;
 
     public Assets(GameCoordinator coordinator) {
         _manager = coordinator.getAssetManagerInstance();
@@ -45,13 +42,6 @@ public class Assets {
         _manager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
 
         _manager.load(_packPath, TextureAtlas.class);
-        loadOneFont(_fontBoldPath, "whiteBold2BlackS.ttf", Color.WHITE, 17, 1, Color.BLACK, 1, Color.GRAY);
-        loadOneFont(_fontBoldPath, "blackBold1.ttf", Color.BLACK, 14);
-        loadOneFont(_fontRegularPath, "blackNormal1Green.ttf", Color.BLACK, 12, 1, Color.valueOf("588e54"), 0, Color.GRAY);
-        loadOneFont(_fontPizzaPath, "greyPizza4BlackS.ttf", Color.valueOf("e9e9e9"), 30, 1, Color.BLACK, 1, Color.GRAY);
-        loadOneFont(_fontPizzaPath, "greyPizza5BlackS.ttf", Color.valueOf("e9e9e9"), 50, 1, Color.BLACK, 1, Color.GRAY);
-        loadOneFont(_fontPizzaPath, "orangePizza5BlackS.ttf", Color.valueOf("fbbb31"), 50, 1, Color.BLACK, 1, Color.GRAY);
-        loadOneFont(_fontPizzaPath, "whitePizza2BlackS.ttf", Color.WHITE, 20, 1, Color.BLACK, 1, Color.GRAY);
         _manager.finishLoading();
 
         loadAllFonts();
@@ -67,23 +57,141 @@ public class Assets {
         _pack = _manager.get(_packPath, TextureAtlas.class);
         background = getTextureRegion("background");
         blackBgTrans = getTextureRegion("blackBgTrans");
-        topBackground = getTextureRegion("topBackground");
         chessBoard = getTextureRegion("chessBoard");
         chessBoardBackground = getTextureRegion("chessBoardBackground");
+        chess = getTextureRegion("chess");
+        chessSelected = getTextureRegion("chessSelected");
+        empty = getTextureRegion("empty");
 
-        redBox = getPatch("redBox");
+        redChe = getTextureRegion("redChe");
+        redMa = getTextureRegion("redMa");
+        redXiang = getTextureRegion("redXiang");
+        redPao = getTextureRegion("redPao");
+        redBing = getTextureRegion("redBing");
+        redShi = getTextureRegion("redShi");
+        redShuai = getTextureRegion("redShuai");
+
+        blackChe = getTextureRegion("blackChe");
+        blackMa = getTextureRegion("blackMa");
+        blackXiang = getTextureRegion("blackXiang");
+        blackPao = getTextureRegion("blackPao");
+        blackBing = getTextureRegion("blackBing");
+        blackShi = getTextureRegion("blackShi");
+        blackShuai = getTextureRegion("blackShuai");
+
+        yourTurn = getTextureRegion("yourTurn");
+        enemyTurn = getTextureRegion("enemyTurn");
+
+        redJiangJun = getTextureRegion("redJiangJun");
+        blackJiangJun = getTextureRegion("blackJiangJun");
+        youWin = getTextureRegion("youWin");
+        youLose = getTextureRegion("youLose");
+        nameTag = getPatch("nameTag");
+
+    }
+
+    public TextureRegion getYouLose() {
+        return youLose;
+    }
+
+    public TextureRegion getYouWin() {
+        return youWin;
+    }
+
+    public TextureRegion getBlackJiangJun() {
+        return blackJiangJun;
+    }
+
+    public TextureRegion getRedJiangJun() {
+        return redJiangJun;
+    }
+
+    public TextureRegion getEnemyTurn() {
+        return enemyTurn;
+    }
+
+    public TextureRegion getYourTurn() {
+        return yourTurn;
+    }
+
+    public NinePatch getNameTag() {
+        return nameTag;
+    }
+
+    public TextureRegion getEmpty() {
+        return empty;
+    }
+
+    public TextureRegion getRedChe() {
+        return redChe;
+    }
+
+    public TextureRegion getRedMa() {
+        return redMa;
+    }
+
+    public TextureRegion getRedXiang() {
+        return redXiang;
+    }
+
+    public TextureRegion getRedPao() {
+        return redPao;
+    }
+
+    public TextureRegion getRedBing() {
+        return redBing;
+    }
+
+    public TextureRegion getRedShi() {
+        return redShi;
+    }
+
+    public TextureRegion getRedShuai() {
+        return redShuai;
+    }
+
+    public TextureRegion getBlackChe() {
+        return blackChe;
+    }
+
+    public TextureRegion getBlackMa() {
+        return blackMa;
+    }
+
+    public TextureRegion getBlackXiang() {
+        return blackXiang;
+    }
+
+    public TextureRegion getBlackPao() {
+        return blackPao;
+    }
+
+    public TextureRegion getBlackBing() {
+        return blackBing;
+    }
+
+    public TextureRegion getBlackShi() {
+        return blackShi;
+    }
+
+    public TextureRegion getBlackShuai() {
+        return blackShuai;
     }
 
     public TextureRegion getChessBoardBackground() {
         return chessBoardBackground;
     }
 
-    public TextureRegion getChessBoard() {
-        return chessBoard;
+    public TextureRegion getChessSelected() {
+        return chessSelected;
     }
 
-    public TextureRegion getTopBackground() {
-        return topBackground;
+    public TextureRegion getChess() {
+        return chess;
+    }
+
+    public TextureRegion getChessBoard() {
+        return chessBoard;
     }
 
     public TextureRegion getBlackBgTrans() {
@@ -94,9 +202,6 @@ public class Assets {
         return background;
     }
 
-    public NinePatch getRedBox() {
-        return redBox;
-    }
 
 
 
@@ -123,13 +228,7 @@ public class Assets {
 
 
     private void loadAllFonts(){
-        blackBold1 = _manager.get("blackBold1.ttf", BitmapFont.class);
-        whiteBold2BlackS = _manager.get("whiteBold2BlackS.ttf", BitmapFont.class);
-        blackNormal1Green = _manager.get("blackNormal1Green.ttf", BitmapFont.class);
-        greyPizza4BlackS = _manager.get("greyPizza4BlackS.ttf", BitmapFont.class);
-        greyPizza5BlackS = _manager.get("greyPizza5BlackS.ttf", BitmapFont.class);
-        orangePizza5BlackS = _manager.get("orangePizza5BlackS.ttf", BitmapFont.class);
-        whitePizza2BlackS = _manager.get("whitePizza2BlackS.ttf", BitmapFont.class);
+
     }
 
     private NinePatch getPatch(String name){
@@ -161,33 +260,6 @@ public class Assets {
         _manager.load(name, BitmapFont.class, size2Params);
     }
 
-    public BitmapFont getWhitePizza2BlackS() {
-        return whitePizza2BlackS;
-    }
-
-    public BitmapFont getGreyPizza5BlackS() {
-        return greyPizza5BlackS;
-    }
-
-    public BitmapFont getOrangePizza5BlackS() {
-        return orangePizza5BlackS;
-    }
-
-    public BitmapFont getGreyPizza4BlackS() {
-        return greyPizza4BlackS;
-    }
-
-    public BitmapFont getWhiteBold2BlackS() {
-        return whiteBold2BlackS;
-    }
-
-    public BitmapFont getBlackBold1() {
-        return blackBold1;
-    }
-
-    public BitmapFont getBlackNormal1Green() {
-        return blackNormal1Green;
-    }
 
 
 }

@@ -29,6 +29,8 @@ public class BroadcastEvent {
     public static final int LOAD_IMAGE_RESPONSE = 24;   //load image from url
     public static final int KEEP_APPS_ALIVE = 25; //keep apps alive
     public static final int REMOVE_APPS_ALIVE = 26; //remove keep apps alive
-
+    public static final int SHOW_NATIVE_KEYBOARD = 27; //show native keepboard
+    public static final int NATIVE_TEXT_CHANGED = 28; //native text change notify libgdx
+    public static final int LIBGDX_TEXT_CHANGED = 29; //libgdx text change notify native
 
 }

@@ -10,6 +10,8 @@ import com.potatoandtomato.common.MockGame;
 
 public class ChineseChessGame extends MockGame {
 
+	public boolean isContinue;
+
 	public ChineseChessGame(String gameId) {
 		super(gameId);
 	}
@@ -17,12 +19,20 @@ public class ChineseChessGame extends MockGame {
 	@Override
 	public void create() {
 		super.create();
-		initiateMockGamingKit(1, 0);
+		initiateMockGamingKit(2, 1);
 	}
 
 	@Override
 	public void onReady() {
 		Entrance entrance = new Entrance(getCoordinator());
-		entrance.init();
+
+		if(!isContinue){
+			entrance.init();
+		}
+		else{
+			entrance.onContinue();
+		}
+
+
 	}
 }

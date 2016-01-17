@@ -6,14 +6,16 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Disposable;
 import com.firebase.client.Firebase;
+import com.sun.org.apache.bcel.internal.generic.IDIV;
 
 import java.util.ArrayList;
 
 /**
  * Created by SiongLeng on 25/12/2015.
  */
-public class GameCoordinator {
+public class GameCoordinator implements Disposable {
 
     private String jarPath;
     private String assetsPath;
@@ -32,6 +34,9 @@ public class GameCoordinator {
     private ArrayList<String> _subscribedIds;
     private Array<InputProcessor> _processors;
     private ArrayList<InGameUpdateListener> _inGameUpdateListeners;
+
+
+    private String _broadcastSubscribedId;
 
 
     public GameCoordinator(String jarPath, String assetsPath,
@@ -204,10 +209,10 @@ public class GameCoordinator {
     }
 
     private void subscribeListeners(){
-        Broadcaster.getInstance().subscribe(BroadcastEvent.INGAME_UPDATE_RESPONSE, new BroadcastListener<InGameUpdateMessage>() {
+        _broadcastSubscribedId = Broadcaster.getInstance().subscribe(BroadcastEvent.INGAME_UPDATE_RESPONSE, new BroadcastListener<InGameUpdateMessage>() {
             @Override
             public void onCallback(InGameUpdateMessage obj, Status st) {
-                for(InGameUpdateListener listener : _inGameUpdateListeners){
+                for (InGameUpdateListener listener : _inGameUpdateListeners) {
                     listener.onUpdateReceived(obj.getMsg(), obj.getSenderId());
                 }
             }
@@ -233,11 +238,22 @@ public class GameCoordinator {
         return null;
     }
 
+    public boolean isHost(){
+        return getHostUserId().equals(getUserId());
+    }
+
     public Firebase getFirebase(){
         return (Firebase) database;
     }
 
     public String getId() {
         return id;
+    }
+
+    @Override
+    public void dispose() {
+        Broadcaster.getInstance().unsubscribe(_broadcastSubscribedId);
+        userStateListener = null;
+        _inGameUpdateListeners.clear();
     }
 }

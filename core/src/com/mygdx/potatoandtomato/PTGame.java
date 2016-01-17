@@ -14,6 +14,7 @@ import com.mygdx.potatoandtomato.helpers.controls.Chat;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.helpers.controls.Notification;
 import com.mygdx.potatoandtomato.helpers.services.*;
+import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Profile;
@@ -75,6 +76,7 @@ public class PTGame extends Game implements IPTGame {
 
 				setScreen(_screen);
 				_screen.toScene(SceneEnum.BOOT);
+
 			}
 		});
 	}

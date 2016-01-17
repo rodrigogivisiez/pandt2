@@ -218,12 +218,15 @@ public class PTScreen implements Screen {
         _rootIn.setPosition(toRight ? Positions.getWidth() : -Positions.getWidth(), 0);
         _rootOut.setPosition(0, 0);
 
+        Gdx.graphics.setContinuousRendering(true);
+
         _rootIn.addAction(moveTo(0, 0, duration));
         _rootOut.addAction(sequence(moveBy(toRight ? -Positions.getWidth() : Positions.getWidth(), 0, duration), new Action() {
             @Override
             public boolean act(float delta) {
                 _rootOut.remove();
                 onFinish.run();
+                //Gdx.graphics.setContinuousRendering(false);
                 return false;
             }
         }));
@@ -264,10 +267,10 @@ public class PTScreen implements Screen {
         _bgAutumnImg.addAction(sequence(fadeIn(0.5f), new Action() {
             @Override
             public boolean act(float delta) {
-                _sunrayImg.addAction(parallel(
-                        fadeIn(1f),
-                        forever(rotateBy(3, 0.15f))
-                ));
+//                _sunrayImg.addAction(parallel(
+//                        fadeIn(1f),
+//                        forever(rotateBy(3, 0.15f))
+//                ));
                 return true;
             }
         }));
@@ -281,6 +284,21 @@ public class PTScreen implements Screen {
         _stage.addActor(_autumnGroundImg);
         _ptGame.addInputProcessor(_stage);
         Gdx.input.setCatchBackKey(true);
+    }
+
+    public void showRotateSunrise(){
+        _sunrayImg.clearActions();
+        _sunrayImg.addAction(parallel(
+                fadeIn(1f),
+                forever(rotateBy(3, 0.15f))
+        ));
+    }
+
+    public void hideRotateSunrise(){
+        _sunrayImg.clearActions();
+        _sunrayImg.addAction(sequence(
+                fadeOut(1f)
+        ));
     }
 
     @Override

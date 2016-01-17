@@ -3,7 +3,6 @@ package com.mygdx.potatoandtomato.scenes.game_list_scene;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
@@ -138,7 +137,7 @@ public class GameListLogic extends LogicAbstract {
             _services.getDatabase().getRoomById(state.getRoomId(), new DatabaseListener<Room>(Room.class) {
                 @Override
                 public void onCallback(Room obj, Status st) {
-                    if(st == Status.SUCCESS){
+                    if(st == Status.SUCCESS && obj != null){
                         if(obj.canContinue(_services.getProfile())){
                             _continueRoomId = obj.getId();
                             _scene.getContinueGameButton().setEnabled(true);
@@ -160,17 +159,26 @@ public class GameListLogic extends LogicAbstract {
             @Override
             public void run() {
                 if(room.isOpen()){
-                    final Actor clicked = _scene.updatedRoom(room);
-                    if(clicked != null){
-                        clicked.addListener(new ClickListener() {
-                            @Override
-                            public void clicked(InputEvent event, float x, float y) {
-                                super.clicked(event, x, y);
-                                _selectedRoom = room;
-                                _scene.gameRowHighlight(clicked.getName());
-                            }
-                        });
+                    if(room.getHost().equals(_services.getProfile())){
+                        if(isSceneVisible()){
+                            room.setOpen(false);
+                            _services.getDatabase().saveRoom(room, null);
+                        }
                     }
+                    else{
+                        final Actor clicked = _scene.updatedRoom(room);
+                        if(clicked != null){
+                            clicked.addListener(new ClickListener() {
+                                @Override
+                                public void clicked(InputEvent event, float x, float y) {
+                                    super.clicked(event, x, y);
+                                    _selectedRoom = room;
+                                    _scene.gameRowHighlight(clicked.getName());
+                                }
+                            });
+                        }
+                    }
+
                 }
                 else{
                     if(_selectedRoom != null && _selectedRoom.getId().equals(room.getId())) {

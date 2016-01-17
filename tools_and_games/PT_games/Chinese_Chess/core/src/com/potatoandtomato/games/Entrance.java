@@ -28,13 +28,14 @@ public class Entrance extends GameEntrance {
 
     @Override
     public void init() {
-        _logic = new MainScreenLogic(_services, getGameCoordinator());
+        _logic = new MainScreenLogic(_services, getGameCoordinator(), false);
         getGameCoordinator().getGame().setScreen(_logic.getMainScreen());
     }
 
     @Override
     public void onContinue() {
-
+        _logic = new MainScreenLogic(_services, getGameCoordinator(), true);
+        getGameCoordinator().getGame().setScreen(_logic.getMainScreen());
     }
 
     @Override

@@ -18,8 +18,11 @@ public class DesktopLauncher {
 		settings.maxHeight = 2048;
 		settings.filterMag = Texture.TextureFilter.Linear;
 		settings.filterMin = Texture.TextureFilter.Linear;
-		TexturePacker.process(settings, "../../images", "../../android/assets", "pack");
+		//TexturePacker.process(settings, "../../images", "../../android/assets", "pack");
 
-		new LwjglApplication(new ChineseChessGame("chinese_chess"), config);
+		ChineseChessGame chineseChessGame = new ChineseChessGame("chinese_chess");
+		chineseChessGame.isContinue = arg.length > 0;
+
+		new LwjglApplication(chineseChessGame, config);
 	}
 }

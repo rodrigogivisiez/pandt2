@@ -6,6 +6,7 @@ package com.mygdx.potatoandtomato.absintflis.push_notifications;
 public class PushCode {
 
     public static int SEND_INVITATION = 0;
-    public static int UPDATE_ROOM = 1;
+    public static int UPDATE_ROOM = 4;
     public static int DESTROY_ROOM = 2;
+    public static int KILL_ALIVE_ROOM = 3;
 }

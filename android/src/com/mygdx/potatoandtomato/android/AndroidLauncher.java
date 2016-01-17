@@ -1,19 +1,20 @@
 package com.mygdx.potatoandtomato.android;
 
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Rect;
 import android.os.Bundle;
 
-import android.support.annotation.Keep;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
-import android.view.WindowManager;
-import com.badlogic.gdx.Gdx;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.RelativeLayout;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.firebase.client.Firebase;
 import com.mygdx.potatoandtomato.PTGame;
-import com.mygdx.potatoandtomato.helpers.utils.Positions;
-import com.mygdx.potatoandtomato.helpers.utils.SafeThread;
+import com.mygdx.potatoandtomato.models.NativeLibgdxTextInfo;
 import com.potatoandtomato.common.*;
 
 public class AndroidLauncher extends AndroidApplication {
@@ -25,10 +26,15 @@ public class AndroidLauncher extends AndroidApplication {
 	private ImageLoader _imageLoader;
 	private KeepAlive _keepAlive;
 	private LayoutChangedFix _layoutChangedFix;
+	private TextFieldFix _textFieldFix;
+	private View _view;
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		setContentView(R.layout.main_activity);
+		RelativeLayout lg=(RelativeLayout)findViewById(R.id.root);
 		_this = this;
 		reset();
 
@@ -39,8 +45,11 @@ public class AndroidLauncher extends AndroidApplication {
 		Firebase.setAndroidContext(this);
 		_layoutChangedFix = new LayoutChangedFix(this.getWindow().getDecorView().getRootView());
 
+
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-		initialize(new PTGame(), config);
+		_view = initializeForView(new PTGame(), config);
+		_textFieldFix = new TextFieldFix(this, (EditText) findViewById(R.id.dummyText), _view);
+		lg.addView(_view);
 
 		Broadcaster.getInstance().subscribe(BroadcastEvent.DESTROY_ROOM, new BroadcastListener() {
 			@Override
@@ -50,6 +59,7 @@ public class AndroidLauncher extends AndroidApplication {
 		});
 
 		subscribeLoadGameRequest();
+
 	}
 
 	public void subscribeLoadGameRequest(){
@@ -82,6 +92,10 @@ public class AndroidLauncher extends AndroidApplication {
 				resultCode, data);
 	}
 
+	@Override
+	public void onBackPressed() {
+		_view.requestFocus();
+	}
 
 	@Override
 	protected void onPause() {

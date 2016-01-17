@@ -28,6 +28,7 @@ public abstract class LogicAbstract implements Disposable {
     private ArrayList<String> _broadcastSubscribes;
     protected Confirm _confirm;
     private String _classTag;
+    private boolean _isVisible;
 
     public LogicAbstract(PTScreen screen, Services services, Object... objs) {
         setClassTag();
@@ -67,12 +68,12 @@ public abstract class LogicAbstract implements Disposable {
 
     //will be called everytime scene onshow, whether is back or forward direction, root might not have stage parent yet
     public void onShow(){
-
+        _isVisible = true;
     }
 
     //will be called everytime scene on hide, whether is back or forward direction
     public void onHide(){
-
+        _isVisible = false;
     }
 
     //will only be called when scene init, must be forward direction
@@ -82,6 +83,10 @@ public abstract class LogicAbstract implements Disposable {
 
     protected String getClassTag(){
         return _classTag;
+    }
+
+    protected boolean isSceneVisible() {
+        return _isVisible;
     }
 
     protected void keepAlive(){

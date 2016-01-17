@@ -106,7 +106,7 @@ public class Texts {
 
     public String cancel() { return "Cancel";}
 
-    public String waitAllUsersReady() { return "Please wait for all users to get ready(Green) before start.";}
+    public String waitAllUsersReady() { return "Please wait for all users ready before start.";}
 
     public String confirmAbandon() { return "Are you sure you want to abandon this game?"; }
 

@@ -84,7 +84,6 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-
     }
 
 

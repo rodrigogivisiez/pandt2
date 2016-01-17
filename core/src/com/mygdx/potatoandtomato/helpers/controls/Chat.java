@@ -25,6 +25,7 @@ import com.mygdx.potatoandtomato.helpers.utils.Colors;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.ChatMessage;
+import com.mygdx.potatoandtomato.models.NativeLibgdxTextInfo;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Room;
 import com.potatoandtomato.common.*;
@@ -153,6 +154,29 @@ public class Chat {
         textFieldStyle.fontColor = Color.BLACK;
         textFieldStyle.cursor = new TextureRegionDrawable(_assets.getTextCursor());
         _messageTextField = new TextField("", textFieldStyle);
+        _messageTextField.setOnscreenKeyboard(new DummyKeyboard());
+        _messageTextField.addListener(new InputListener(){
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                super.touchUp(event, x, y, pointer, button);
+                Broadcaster.getInstance().broadcast(BroadcastEvent.LIBGDX_TEXT_CHANGED, new NativeLibgdxTextInfo(_messageTextField.getText(),
+                        _messageTextField.getCursorPosition()));
+            }
+
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                super.touchDown(event, x, y, pointer, button);
+                return true;
+            }
+        });
+
+        Broadcaster.getInstance().subscribe(BroadcastEvent.NATIVE_TEXT_CHANGED, new BroadcastListener<NativeLibgdxTextInfo>() {
+            @Override
+            public void onCallback(NativeLibgdxTextInfo obj, Status st) {
+                _messageTextField.setText(obj.getText());
+                _messageTextField.setCursorPosition(obj.getCursorPosition());
+            }
+        });
 
         _micImage = new Image(_assets.getMicIcon());
 
@@ -390,7 +414,7 @@ public class Chat {
             ChatMessage chatMessage = new ChatMessage(msg, ChatMessage.FromType.USER, _userId);
             _gamingKit.sendRoomMessage(chatMessage);
         }
-        _messageTextField.setText("");
+        clearMessageTextField();
     }
 
     public void sendVoiceMessage(final FileHandle file){
@@ -573,7 +597,7 @@ public class Chat {
 
     public void resetChat() {
         _expanded = false;
-        _messageTextField.setText("");
+        clearMessageTextField();
         _userColors.clear();
 
         if(_mode == 1){
@@ -597,6 +621,11 @@ public class Chat {
 
             }
         }
+    }
+
+    public void clearMessageTextField(){
+        _messageTextField.setText("");
+        Broadcaster.getInstance().broadcast(BroadcastEvent.LIBGDX_TEXT_CHANGED, new NativeLibgdxTextInfo("", 0));
     }
 
 

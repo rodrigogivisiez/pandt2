@@ -202,14 +202,23 @@ public class RoomScene extends SceneAbstract {
         if(_playerMaps.containsKey(userId)){
             Table playerTable = _playerMaps.get(userId);
             Image downloadImage = playerTable.findActor("download");
+            if(downloadImage != null){
+                downloadImage.addAction(forever(sequence(moveBy(0, -2), moveBy(0, 2, 0.9f))));
+                downloadImage.setName("downloading");
+            }
+            else{
+                downloadImage = playerTable.findActor("downloading");
+            }
+
             Label progressLabel = playerTable.findActor("progress");
             progressLabel.setText(String.valueOf(percent));
             progressLabel.invalidate();
             if(percent >= 100){
                 progressLabel.setVisible(false);
                 downloadImage.setVisible(false);
-            }
-            else{
+                downloadImage.clearActions();
+                downloadImage.setName("download");
+            } else{
                 progressLabel.setVisible(true);
                 downloadImage.setVisible(true);
             }
@@ -276,7 +285,6 @@ public class RoomScene extends SceneAbstract {
         progressLabel.setVisible(false);
 
         Image downloadImage = new Image(_assets.getDownloadIconSmall());
-        downloadImage.addAction(forever(sequence(moveBy(0, -2), moveBy(0, 2, 0.9f))));
         downloadImage.setName("download");
         downloadImage.setVisible(false);
 

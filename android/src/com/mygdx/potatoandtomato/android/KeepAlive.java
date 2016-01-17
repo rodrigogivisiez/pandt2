@@ -1,6 +1,7 @@
 package com.mygdx.potatoandtomato.android;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.PowerManager;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
@@ -38,6 +39,11 @@ public class KeepAlive {
         PowerManager mgr = (PowerManager) _contenxt.getSystemService(Context.POWER_SERVICE);
         _wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "roomWakeLock");
         _wakeLock.acquire();
+
+        Intent startIntent = new Intent(_contenxt, KeepAliveService.class);
+        startIntent.setAction("START");
+        _contenxt.startService(startIntent);
+
     }
 
     public void release(){
@@ -45,6 +51,14 @@ public class KeepAlive {
             _wakeLock.release();
             _wakeLock = null;
         }
+
+        Intent stopIntent = new Intent(_contenxt, KeepAliveService.class);
+        stopIntent.setAction("STOP");
+        _contenxt.startService(stopIntent);
+
     }
 
 }
+
+
+
