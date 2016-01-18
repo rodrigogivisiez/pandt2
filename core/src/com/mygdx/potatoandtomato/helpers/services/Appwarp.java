@@ -66,17 +66,17 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
             Field field1 = WarpClient.class.getDeclaredField("zoneRequestListeners");
             field1.setAccessible(true);
-            Set<ZoneRequestListener> value1 = (Set<ZoneRequestListener>) field.get(_warpInstance);
+            Set<ZoneRequestListener> value1 = (Set<ZoneRequestListener>) field1.get(_warpInstance);
             value1.clear();
 
             Field field2 = WarpClient.class.getDeclaredField("roomRequestListeners");
             field2.setAccessible(true);
-            Set<RoomRequestListener> value2 = (Set<RoomRequestListener>) field.get(_warpInstance);
+            Set<RoomRequestListener> value2 = (Set<RoomRequestListener>) field2.get(_warpInstance);
             value2.clear();
 
             Field field3 = WarpClient.class.getDeclaredField("notifyListeners");
             field3.setAccessible(true);
-            Set<NotifyListener> value3 = (Set<NotifyListener>) field.get(_warpInstance);
+            Set<NotifyListener> value3 = (Set<NotifyListener>) field3.get(_warpInstance);
             value3.clear();
 
         } catch (NoSuchFieldException e) {

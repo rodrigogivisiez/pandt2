@@ -55,7 +55,9 @@ public class TextFieldFix {
                 _activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        _editText.setText(obj.getText());
+                        if(!_editText.getText().toString().equals(obj.getText())){
+                            _editText.setText(obj.getText());
+                        }
                         _editText.setSelection(obj.getCursorPosition());
                     }
                 });

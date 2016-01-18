@@ -55,4 +55,9 @@ public class MockGamingKit extends GamingKit {
             listener.onUpdateRoomMatesReceived(updateRoomMatesCode, msg, MockModel.mockProfile().getUserId());
         }
     }
+
+    @Override
+    public void dispose() {
+
+    }
 }

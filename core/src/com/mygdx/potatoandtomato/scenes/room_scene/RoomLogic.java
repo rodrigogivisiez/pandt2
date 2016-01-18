@@ -75,7 +75,7 @@ public class RoomLogic extends LogicAbstract {
 
         refreshRoomDesign();
 
-        flushRoom(true, new DatabaseListener() {
+        flushRoom(true, true, new DatabaseListener() {
             @Override
             public void onCallback(Object obj, Status st) {
                 _services.getDatabase().monitorRoomById(_room.getId(), getClassTag(), new DatabaseListener<Room>(Room.class) {
@@ -285,7 +285,7 @@ public class RoomLogic extends LogicAbstract {
                             super.clicked(event, x, y);
                             if(_room.changeTeam(finalI, _services.getProfile())){
                                 refreshRoomDesign();
-                                flushRoom(true, null);
+                                flushRoom(true, false, null);
                             }
                         }
                     });
@@ -353,7 +353,7 @@ public class RoomLogic extends LogicAbstract {
                 boolean isReady = false;
                 if(msg.equals("1")) isReady = true;
                 _room.setRoomUserReady(senderId, isReady);
-                flushRoom(false, null);
+                flushRoom(false, false, null);
             }
         }
         else if(code == UpdateRoomMatesCode.GAME_OUTDATED){
@@ -379,14 +379,16 @@ public class RoomLogic extends LogicAbstract {
     }
 
     public void openRoom(boolean forceUpdate){
+        if(_room.isOpen() && !_room.isPlaying()) return;
+
         _room.setOpen(true);
         _room.setPlaying(false);
-        flushRoom(forceUpdate, null);
+        flushRoom(forceUpdate, true, null);
     }
 
-    public void flushRoom(boolean force, DatabaseListener listener){
+    public void flushRoom(boolean force, boolean notify, DatabaseListener listener){
         if(isHost() || force){
-            _services.getDatabase().saveRoom(_room, listener);      //only host can save room
+            _services.getDatabase().saveRoom(_room, notify, listener);      //only host can save room
         }
     }
 
@@ -569,7 +571,7 @@ public class RoomLogic extends LogicAbstract {
         _room.setPlaying(true);
         _room.setRoundCounter(_room.getRoundCounter()+1);
         _room.storeRoomUsersToOriginalRoomUserIds();
-        flushRoom(false, null);
+        flushRoom(false, true, null);
         _services.getDatabase().savePlayedHistory(_services.getProfile(), _room, null);
         _services.getChat().add(new ChatMessage(_texts.gameStarted(), ChatMessage.FromType.SYSTEM, null), false);
         _services.getGamingKit().updateRoomMates(UpdateRoomMatesCode.GAME_STARTED, "");
@@ -620,7 +622,7 @@ public class RoomLogic extends LogicAbstract {
         _services.getGamingKit().leaveRoom();
         Broadcaster.getInstance().broadcast(BroadcastEvent.DESTROY_ROOM);
         Broadcaster.getInstance().broadcast(BroadcastEvent.REMOVE_APPS_ALIVE);
-        flushRoom(true, null);
+        flushRoom(true, true, null);
     }
 
     @Override

@@ -32,7 +32,7 @@ public interface IDatabase {
 
      void getAllGames(DatabaseListener<ArrayList<Game>> listener);
 
-     void saveRoom(Room room, @Nullable DatabaseListener<String> listener);    //except slot index
+     void saveRoom(Room room, boolean notify, @Nullable DatabaseListener<String> listener);    //except slot index
 
      void changeSlotIndex(Room room, Profile user, Integer newIndex, DatabaseListener<String> listener);
 

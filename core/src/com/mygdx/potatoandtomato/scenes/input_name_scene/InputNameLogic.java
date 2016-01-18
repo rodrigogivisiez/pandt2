@@ -17,6 +17,8 @@ public class InputNameLogic extends LogicAbstract {
 
     public InputNameLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
+        setSaveToStack(false);
+
         _scene = new InputNameScene(_services, _screen);
     }
 

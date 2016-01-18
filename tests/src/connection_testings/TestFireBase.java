@@ -10,7 +10,6 @@ import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.Status;
 import helpers.MockModel;
 import helpers.T_Threadings;
-import org.apache.commons.lang.builder.EqualsBuilder;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -160,7 +159,7 @@ public class TestFireBase extends TestAbstract {
                 Assert.assertEquals(true, st == Status.SUCCESS);
                 Assert.assertEquals(r.getId(), obj.getId());
 
-                Assert.assertTrue(EqualsBuilder.reflectionEquals(obj.getGame(), r.getGame()));
+                Assert.assertEquals(obj.getGame().getAbbr(), r.getGame().getAbbr());
                 Assert.assertTrue(obj.getHost().equals(r.getHost()));
                 Assert.assertEquals(obj.getRoomUsers().size(), r.getRoomUsers().size());
                 for (Map.Entry<String, RoomUser> entry : obj.getRoomUsers().entrySet()) {
@@ -238,6 +237,93 @@ public class TestFireBase extends TestAbstract {
         Assert.assertEquals(4, monitorCount[0]);
     }
 
+    @Test
+    public void TestSaveRoomNotification(){
+        final boolean[] waiting = {true};
+        final Room r = MockModel.mockRoom(null);
+        r.setOpen(true);
+
+        databases.saveRoom(r, new DatabaseListener<String>() {
+            @Override
+            public void onCallback(String obj, Status st) {
+                waiting[0] = false;
+            }
+        });
+
+
+
+
+        while (waiting[0]){
+            Threadings.sleep(100);
+        }
+
+        Threadings.delay(15000, new Runnable() {
+            @Override
+            public void run() {
+                databases.offline();
+            }
+        });
+
+
+        while (true){}
+
+    }
+
+
+    @Test
+    public void TestMonitorAllRoomOnDisconnected() {
+
+        final boolean[] waiting = {true};
+        final Room r = MockModel.mockRoom(null);
+        final int[] monitorCount = {0};
+        ArrayList<Room> rooms = new ArrayList();
+        r.setOpen(true);
+
+        databases.saveRoom(r, new DatabaseListener<String>() {
+            @Override
+            public void onCallback(String obj, Status st) {
+                waiting[0] = false;
+            }
+        });
+
+        while(waiting[0]){
+            T_Threadings.sleep(100);
+        }
+
+        waiting[0] = true;
+
+        databases.monitorAllRooms(rooms, getClassTag(),  new SpecialDatabaseListener<ArrayList<Room>, Room>() {
+            @Override
+            public void onCallbackTypeOne(ArrayList<Room> obj, Status st) {
+                waiting[0] = false;
+            }
+
+            @Override
+            public void onCallbackTypeTwo(Room obj, Status st) {
+                Assert.assertEquals(obj.getId(), r.getId());
+                monitorCount[0]++;
+                waiting[0] = false;
+            }
+        });
+
+        while(waiting[0]){
+            T_Threadings.sleep(100);
+        }
+
+        waiting[0] = true;
+
+        Assert.assertEquals(0, monitorCount[0]);
+
+        databases.offline();
+        databases.online();
+
+        while(waiting[0]){
+            T_Threadings.sleep(100);
+        }
+        Assert.assertEquals(1, monitorCount[0]);
+
+    }
+
 
     @Test
     public void TestMonitorAllRoom(){
@@ -262,6 +348,8 @@ public class TestFireBase extends TestAbstract {
 
 
         waiting[0] = true;
+
+
         databases.monitorAllRooms(rooms, getClassTag(),  new SpecialDatabaseListener<ArrayList<Room>, Room>() {
             @Override
             public void onCallbackTypeOne(ArrayList<Room> obj, Status st) {
@@ -278,13 +366,14 @@ public class TestFireBase extends TestAbstract {
             }
         });
 
-        while(waiting[0]){
+        while(waiting2[0]){
             T_Threadings.sleep(100);
         }
 
         Assert.assertEquals(true , rooms.size()>0);
 
         waiting[0] =true;
+        waiting2[0] = true;
         r.setOpen(false);
 
         databases.saveRoom(r, new DatabaseListener<String>() {
@@ -299,18 +388,13 @@ public class TestFireBase extends TestAbstract {
         }
 
 
-        Assert.assertEquals(2, monitorCount[0]);
+        Assert.assertEquals(1, monitorCount[0]);
 
         for(Room r1 : rooms){
             if(r1.getId().equals(r.getId())){
                 Assert.assertEquals(r1.isOpen(), r.isOpen());
             }
         }
-
-        while(waiting2[0]){
-            T_Threadings.sleep(100);
-        }
-
     }
 
 

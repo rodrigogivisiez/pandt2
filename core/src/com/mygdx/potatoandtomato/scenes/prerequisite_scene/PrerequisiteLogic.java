@@ -167,7 +167,7 @@ public class PrerequisiteLogic extends LogicAbstract {
         _joiningRoom.setHost(_services.getProfile());
         _joiningRoom.setPlaying(false);
         _joiningRoom.setRoundCounter(0);
-        _services.getDatabase().saveRoom(_joiningRoom, new DatabaseListener<String>() {
+        _services.getDatabase().saveRoom(_joiningRoom, true, new DatabaseListener<String>() {
             @Override
             public void onCallback(String obj, Status st) {
                 _screen.toScene(SceneEnum.ROOM, _joiningRoom, false);

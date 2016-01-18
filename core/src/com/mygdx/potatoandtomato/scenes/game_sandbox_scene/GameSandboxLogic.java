@@ -155,6 +155,10 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
 
     public void gameStart(){
 
+        if(_gameStarted) return;
+
+        _gameStarted = true;
+
         _services.getProfile().setUserPlayingState(new UserPlayingState(_room.getId(), true, _room.getRoundCounter()));
         _services.getDatabase().updateProfile(_services.getProfile(), new DatabaseListener() {
             @Override
@@ -172,6 +176,8 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                                             public void run() {
                                                 if (userPlayingState.getAbandon()) {
                                                     //user abandoned
+                                                    _services.getChat().add(new ChatMessage(String.format(_texts.notificationAbandon(),
+                                                                            obj.getDisplayName(0)), ChatMessage.FromType.IMPORTANT, null), false);
                                                     _notification.important(String.format(_texts.notificationAbandon(), obj.getDisplayName(15)));
                                                     _coordinator.userAbandon(obj.getUserId());
                                                 } else if (userPlayingState.getConnected()) {
@@ -196,8 +202,8 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                 Threadings.postRunnable(new Runnable() {
                     @Override
                     public void run() {
-                        Gdx.graphics.setContinuousRendering(true);
-                        _gameStarted = true;
+                        _services.getSounds().stopThemeMusic();
+                        Threadings.setContinuousRenderLock(true);
                         _screen.switchToGameScreen();
                         if(!_isContinue){
                             _coordinator.getGameEntrance().init();
@@ -283,6 +289,8 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         _services.getChat().setMode(1);
         _services.getChat().add(new ChatMessage(_texts.gameEnded(),
                 ChatMessage.FromType.SYSTEM, null), false);
+        Threadings.setContinuousRenderLock(false);
+        _services.getSounds().playThemeMusic();
     }
 
     @Override

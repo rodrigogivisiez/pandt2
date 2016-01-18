@@ -3,6 +3,7 @@ package com.mygdx.potatoandtomato.models;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
+import com.mygdx.potatoandtomato.absintflis.sounds.ISounds;
 import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
 import com.mygdx.potatoandtomato.helpers.controls.Chat;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
@@ -29,11 +30,12 @@ public class Services {
     Notification _notification;
     Recorder _recorder;
     IUploader _uploader;
+    ISounds _sounds;
 
     public Services(Assets assets, Texts texts, Preferences preferences,
                     Profile profile, IDatabase database, Shaders shaders, GamingKit gamingKit, IDownloader downloader,
                     Chat chat, Socials socials, GCMSender gcmSender, Confirm confirm, Notification notification,
-                    Recorder recorder, IUploader uploader) {
+                    Recorder recorder, IUploader uploader, ISounds sounds) {
         _texts = texts;
         _assets = assets;
         _preferences = preferences;
@@ -49,6 +51,15 @@ public class Services {
         _notification = notification;
         _recorder = recorder;
         _uploader = uploader;
+        _sounds = sounds;
+    }
+
+    public ISounds getSounds() {
+        return _sounds;
+    }
+
+    public void setSounds(ISounds _sounds) {
+        this._sounds = _sounds;
     }
 
     public IUploader getUploader() {

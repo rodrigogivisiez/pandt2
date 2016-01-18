@@ -133,7 +133,7 @@ public class Chat {
         _mode2MessagesContentTable = new Table();
         _mode2MessagesContentTable.align(Align.bottomLeft);
         _mode2ChatScroll = new ScrollPane(_mode2MessagesContentTable);
-        _mode2AllMessagesTable.add(_mode2ChatScroll).expand().fill().padLeft(80).padRight(80);
+        _mode2AllMessagesTable.add(_mode2ChatScroll).expand().fill().padLeft(80).padRight(20);
 
         ////////////////////////////////
         //Bottom message box
@@ -173,6 +173,7 @@ public class Chat {
         Broadcaster.getInstance().subscribe(BroadcastEvent.NATIVE_TEXT_CHANGED, new BroadcastListener<NativeLibgdxTextInfo>() {
             @Override
             public void onCallback(NativeLibgdxTextInfo obj, Status st) {
+                Threadings.renderFor(0.2f);
                 _messageTextField.setText(obj.getText());
                 _messageTextField.setCursorPosition(obj.getCursorPosition());
             }
@@ -320,19 +321,24 @@ public class Chat {
                 if(event instanceof FocusEvent){
                     FocusEvent focusEvent = (FocusEvent) event;
                     eventString = focusEvent.getType().name();
-                    if(!focusEvent.isFocused()) return false;
+                    if(!focusEvent.isFocused()){
+                        if(_mode == 1) Threadings.setContinuousRenderLock(false);
+                        return false;
+                    }
                 }
                 else{
                     eventString = event.toString();
                 }
 
                 if (eventString.equals("keyboard") ||
-                        eventString.equals("touchDown")) {
+                        eventString.equals("touchDown") || eventString.equals("touchUp")) {
                     _textFieldFocusImage.setVisible(true);
                     _textFieldNotFocusImage.setVisible(false);
                     if(!_expanded) expanded();
+                    if(_mode == 1) Threadings.setContinuousRenderLock(true);
                     return true;
                 }
+                if(_mode == 1)  Threadings.setContinuousRenderLock(false);
                 return false;
             }
         });
@@ -505,8 +511,6 @@ public class Chat {
 
                     fadeOutMode2();
 
-                    if(msg.getFromType() != ChatMessage.FromType.USER  && msg.getFromType() != ChatMessage.FromType.USER_VOICE) return;
-
                     Table chatTable = new Table();
                     chatTable.align(Align.left);
                     if (!_mode2NotFirstMessage) {
@@ -518,11 +522,19 @@ public class Chat {
                     labelStyle.font = _assets.getWhiteBold2GrayS();
                     labelStyle.fontColor = getUserColor(msg.getSenderId());
 
-                    Profile sender = _room.getProfileByUserId(msg.getSenderId());
-                    if (sender == null) return;
+                    Label.LabelStyle labelInfoStyle = new Label.LabelStyle();
+                    labelInfoStyle.font = _assets.getBlueBold2WhiteS();
 
-                    Label userNameLabel = new Label(sender.getDisplayName(30) + ":", labelStyle);
-                    chatTable.add(userNameLabel).top().padRight(5);
+                    Label.LabelStyle labelImportantStyle = new Label.LabelStyle();
+                    labelImportantStyle.font = _assets.getRedBold2WhiteS();
+
+                    if(msg.getFromType() == ChatMessage.FromType.USER || msg.getFromType() == ChatMessage.FromType.USER_VOICE) {
+                        Profile sender = _room.getProfileByUserId(msg.getSenderId());
+                        if (sender == null) return;
+
+                        Label userNameLabel = new Label(sender.getDisplayName(30) + ":", labelStyle);
+                        chatTable.add(userNameLabel).top().padRight(5);
+                    }
 
                     if(msg.getFromType() == ChatMessage.FromType.USER){
                         Label.LabelStyle labelStyle2 = new Label.LabelStyle();
@@ -538,6 +550,13 @@ public class Chat {
                         chatTable.add(imgVoice).size(15, 15).expandX().left();
                         chatTable.row();
                         setVoiceListener(imgVoice, msg.getMessage(), !msg.getSenderId().equals(_userId));
+                    }
+                    else{
+                        Label lblMessage = new Label(msg.getMessage(), msg.getFromType() == ChatMessage.FromType.SYSTEM ? labelInfoStyle : labelImportantStyle);
+                        lblMessage.setWrap(true);
+                        lblMessage.setAlignment(Align.left);
+                        chatTable.add(lblMessage).colspan(2).expandX().fillX();
+                        chatTable.row();
                     }
 
                     _mode2MessagesContentTable.add(chatTable).expandX().fillX();

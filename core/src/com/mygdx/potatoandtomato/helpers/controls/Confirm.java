@@ -1,5 +1,6 @@
 package com.mygdx.potatoandtomato.helpers.controls;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
@@ -18,7 +19,10 @@ import com.mygdx.potatoandtomato.absintflis.controls.ConfirmStateChangedListener
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
+import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.potatoandtomato.common.IPTGame;
+
+import javax.swing.plaf.synth.SynthGraphicsUtils;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -42,11 +46,13 @@ public class Confirm {
     SpriteBatch _batch;
     IPTGame _game;
     ConfirmStateChangedListener _stateChangedListener;
+    long _previousTime;
 
     public Confirm(SpriteBatch spriteBatch, IPTGame game, Assets assets) {
         _batch = spriteBatch;
         _assets = assets;
         _game = game;
+        _previousTime = 0;
 
         StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
         _stage = new Stage(viewPort, _batch);
@@ -99,6 +105,11 @@ public class Confirm {
     public void show(String msg, Type type, ConfirmResultListener _listener){
         setListener(_listener);
 
+        if(_previousTime !=0 && System.currentTimeMillis() - _previousTime < 500){
+            return;
+        }
+        _previousTime = System.currentTimeMillis();
+
         _msgTable.getColor().a = 0;
         _messageLabel.setText(msg);
         _buttonsTable.clear();
@@ -111,10 +122,17 @@ public class Confirm {
             _buttonsTable.add(_buttonYesTable).center().expandX();
         }
 
+        Threadings.renderFor(5f);
+
         _confirmRoot.addAction(sequence(fadeOut(0f), fadeIn(0.3f), new Action() {
             @Override
             public boolean act(float delta) {
-                _msgTable.addAction(sequence(moveBy(-50, 0), fadeOut(0f), parallel(moveBy(50, 0, 0.1f), fadeIn(0.1f))));
+                _msgTable.addAction(sequence(moveBy(-50, 0), fadeOut(0f), parallel(moveBy(50, 0, 0.1f), fadeIn(0.1f)), new Action() {
+                    @Override
+                    public boolean act(float delta) {
+                        return true;
+                    }
+                }));
                 if(_stateChangedListener != null) _stateChangedListener.onShow();
                 return true;
             }

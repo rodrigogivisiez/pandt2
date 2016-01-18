@@ -2,8 +2,10 @@ package com.mygdx.potatoandtomato.android;
 
 import android.annotation.TargetApi;
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -66,4 +68,5 @@ public class KeepAliveService extends Service {
         // Used only in case of bound services.
         return null;
     }
+
 }

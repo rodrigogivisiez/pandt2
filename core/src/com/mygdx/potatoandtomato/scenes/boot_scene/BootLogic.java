@@ -44,6 +44,7 @@ public class BootLogic extends LogicAbstract {
     @Override
     public void onShow() {
 
+        _services.getSounds().playThemeMusic();
         _screen.showRotateSunrise();
 
         _services.getDatabase().offline();

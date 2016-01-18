@@ -2,13 +2,17 @@ package com.mygdx.potatoandtomato.helpers.services;
 
 import com.badlogic.gdx.utils.Array;
 import com.firebase.client.*;
+import com.firebase.client.snapshot.DoubleNode;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.Status;
+import com.shaded.fasterxml.jackson.databind.DeserializationFeature;
+import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.*;
+import java.util.concurrent.SynchronousQueue;
 
 /**
  * Created by SiongLeng on 9/12/2015.
@@ -23,6 +27,7 @@ public class FirebaseDB implements IDatabase {
     private String _tableHistories = "histories";
     private String _tableRoomNotifications = "roomNotifications";
     private String _tableGameBelongData = "gameBelongData";
+    private String _tableServerTimeInfo = ".info/serverTimeOffset";
     private Array<ListenerModel> _listenerModels;
 
     public FirebaseDB(String url){
@@ -92,25 +97,27 @@ public class FirebaseDB implements IDatabase {
                     }
 
                     Collections.reverse(obj);
-                    final int[] count = {0};
-                    for(final GameHistory history : obj){
-                        //profile might be outdated, need to refresh
-                        getProfileByUserId(history.getPlayedWith().getUserId(), new DatabaseListener<Profile>(Profile.class) {
-                            @Override
-                            public void onCallback(Profile obj2, Status st) {
-                                if(st == Status.SUCCESS){
-                                    history.setPlayedWith(obj2);
-                                    count[0]++;
-                                    if(count[0] == obj.size()){
-                                        listener.onCallback(obj, st);
-                                    }
-                                }
-                                else{
-                                    listener.onCallback(null, st);
-                                }
-                            }
-                        });
-                    }
+                    listener.onCallback(obj, st);
+
+//                    final int[] count = {0};
+//                    for(final GameHistory history : obj){
+//                        //profile might be outdated, need to refresh
+//                        getProfileByUserId(history.getPlayedWith().getUserId(), new DatabaseListener<Profile>(Profile.class) {
+//                            @Override
+//                            public void onCallback(Profile obj2, Status st) {
+//                                if(st == Status.SUCCESS){
+//                                    history.setPlayedWith(obj2);
+//                                    count[0]++;
+//                                    if(count[0] == obj.size()){
+//                                        listener.onCallback(obj, st);
+//                                    }
+//                                }
+//                                else{
+//                                    listener.onCallback(null, st);
+//                                }
+//                            }
+//                        });
+//                    }
                 }
                 else{
                     listener.onCallback(null, st);
@@ -213,21 +220,20 @@ public class FirebaseDB implements IDatabase {
     }
 
     @Override
-    public void saveRoom(Room room, DatabaseListener<String> listener) {
+    public void saveRoom(Room room, boolean notify, DatabaseListener<String> listener) {
         if(room.getId() == null){
             Firebase ref = getTable(_tableRooms).push();
             room.setId(ref.getKey());
             save(ref, room, listener);
             ref.child("open").onDisconnect().setValue(false);
-            //_listenerModels.add(new ListenerModel(ref.child("open"), Logs.getCallerClassName()));
             String notifyKey = notifyRoomChanged(room);
             Firebase ref2 = getTable(_tableRooms).push();
-            getTable(_tableRoomNotifications).child(ref2.getKey()).onDisconnect().setValue(room.getId() + "_DC");
-           // _listenerModels.add(new ListenerModel(getTable(_tableRoomNotifications).child(notifyKey), Logs.getCallerClassName()));
+
+            getTable(_tableRoomNotifications).child(ref2.getKey()).onDisconnect().setValue(new RoomNotification(room.getId()));
         }
         else{
             save(getTable(_tableRooms).child(room.getId()), room, listener);
-            notifyRoomChanged(room);
+            if(notify) notifyRoomChanged(room);
         }
     }
 
@@ -269,7 +275,7 @@ public class FirebaseDB implements IDatabase {
     }
 
     @Override
-    public void monitorAllRooms(final ArrayList<Room> rooms, String classTag, final SpecialDatabaseListener<ArrayList<Room>, Room> listener) {
+    public void monitorAllRooms(final ArrayList<Room> rooms, final String classTag, final SpecialDatabaseListener<ArrayList<Room>, Room> listener) {
         getData(getTable(_tableRooms).orderByChild("open").equalTo(true), new DatabaseListener<ArrayList<Room>>(Room.class) {
             @Override
             public void onCallback(ArrayList<Room> obj, Status st) {
@@ -287,20 +293,28 @@ public class FirebaseDB implements IDatabase {
         });
 
 
-        ChildEventListener childEventListener = new ChildEventListener() {
+        final ChildEventListener childEventListener = new ChildEventListener() {
 
             @Override
             public void onChildAdded(DataSnapshot snapshot, String previousChildKey) {
-                String changedRoomId = (String) snapshot.getValue();
-                if(changedRoomId.endsWith("_DC")) changedRoomId = changedRoomId.substring(0, changedRoomId.length() - 3);
-                roomChanged(changedRoomId);
+                String roomId = "";
+                for (DataSnapshot shot1: snapshot.getChildren()) {
+                    if(shot1.getKey().equals("roomInfo")){
+                        for (DataSnapshot shot2: shot1.getChildren()) {
+                            if(shot2.getKey().equals("roomId")){
+                                roomId = (String) shot2.getValue();
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                roomChanged(roomId);
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                String changedRoomId = (String) dataSnapshot.getValue();
-                if(changedRoomId.endsWith("_DC")) changedRoomId = changedRoomId.substring(0, changedRoomId.length() - 3);
-                roomChanged(changedRoomId);
+
             }
 
             @Override
@@ -337,17 +351,36 @@ public class FirebaseDB implements IDatabase {
 
         };
 
-        getTable(_tableRoomNotifications).limitToLast(1).addChildEventListener(childEventListener);
-        _listenerModels.add(new ListenerModel(getTable(_tableRoomNotifications), classTag, childEventListener));
+        getServerCurrentTime(new DatabaseListener<Double>() {
+            @Override
+            public void onCallback(Double result, Status st) {
+                getTable(_tableRoomNotifications).orderByChild("timestamp").startAt(result).addChildEventListener(childEventListener);
+                _listenerModels.add(new ListenerModel(getTable(_tableRoomNotifications), classTag, childEventListener));
+            }
+        });
 
+
+
+    }
+
+    private void getServerCurrentTime(final DatabaseListener<Double> listener){
+        getSingleData(getTable(_tableServerTimeInfo), new DatabaseListener<Double>(Double.class) {
+            @Override
+            public void onCallback(Double result, Status st) {
+                if(st == Status.SUCCESS){
+                    listener.onCallback(System.currentTimeMillis() + result, Status.SUCCESS);
+                }
+            }
+        });
     }
 
     @Override
     public String notifyRoomChanged(Room room) {
         Firebase ref = getTable(_tableRoomNotifications).push();
-        ref.setValue(room.getId());
+        ref.setValue(new RoomNotification(room.getId()));
         return ref.getKey();
     }
+
 
     @Override
     public void removeUserFromRoomOnDisconnect(Room room, Profile user, final DatabaseListener<String> listener) {

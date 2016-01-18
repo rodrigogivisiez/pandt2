@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.InGameUpdateListener;
+import com.potatoandtomato.common.UserStateListener;
 import com.potatoandtomato.games.actors.ChessActor;
 import com.potatoandtomato.games.actors.DummyImage;
 import com.potatoandtomato.games.helpers.*;
@@ -41,7 +42,7 @@ public class MainScreenLogic {
     private boolean _initialized;
     private boolean _isContinue;
 
-    public MainScreenLogic(Services _services, GameCoordinator _coordinator, boolean isContinue) {
+    public MainScreenLogic(Services _services, final GameCoordinator _coordinator, boolean isContinue) {
         this._services = _services;
         this._coordinator = _coordinator;
         this._isContinue = isContinue;
@@ -61,6 +62,26 @@ public class MainScreenLogic {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
+        });
+
+        _coordinator.setUserStateListener(new UserStateListener() {
+            @Override
+            public void userAbandoned(String s) {
+                if(!s.equals(_coordinator.getUserId())){
+                    _mainScreen.showWinLose(true);
+                    endGame();
+                }
+            }
+
+            @Override
+            public void userConnected(String s) {
+
+            }
+
+            @Override
+            public void userDisconnected(String s) {
+
             }
         });
 
@@ -535,27 +556,28 @@ public class MainScreenLogic {
             }
 
             if(endGame){
-                _mainScreen.setRootCanTouch(false);
-                Threadings.delay(2000, new Runnable() {
-                    @Override
-                    public void run() {
-                        _mainScreen.getOverlayMessageTable().addListener(new ClickListener(){
-                            @Override
-                            public void clicked(InputEvent event, float x, float y) {
-                                super.clicked(event, x, y);
-                                _coordinator.endGame();
-                            }
-                        });
-                    }
-                });
+                endGame();
                 return;
             }
         }
 
         switchTurn(!_isMyTurn);
+    }
 
-
-
+    public void endGame(){
+        _mainScreen.setRootCanTouch(false);
+        Threadings.delay(2000, new Runnable() {
+            @Override
+            public void run() {
+                _mainScreen.getOverlayMessageTable().addListener(new ClickListener(){
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        _coordinator.endGame();
+                    }
+                });
+            }
+        });
     }
 
     public boolean isMyChess(ChessType chessType){

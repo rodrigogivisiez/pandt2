@@ -14,6 +14,7 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.InGameUpdateListener;
+import com.potatoandtomato.common.UserStateListener;
 import com.potatoandtomato.games.absint.MainScreenListener;
 import com.potatoandtomato.games.actors.chesses.enums.ChessType;
 import com.potatoandtomato.games.actors.plates.PlateLogic;
@@ -75,6 +76,25 @@ public class MainScreenLogic {
             }
         };
 
+        _coordinator.setUserStateListener(new UserStateListener() {
+            @Override
+            public void userAbandoned(String s) {
+                if(!s.equals(_coordinator.getUserId())){
+                    showEndGameOverlay(true);
+                }
+            }
+
+            @Override
+            public void userConnected(String s) {
+
+            }
+
+            @Override
+            public void userDisconnected(String s) {
+
+            }
+        });
+
         _coordinator.addInGameUpdateListener(new InGameUpdateListener() {
             @Override
             public void onUpdateReceived(String s, String s1) {
@@ -111,6 +131,8 @@ public class MainScreenLogic {
 
         final String firstPlayerUsername = _coordinator.getTeams().get(0).getPlayers().get(0).getName();
         final String secondPlayerUsername = _coordinator.getTeams().get(1).getPlayers().get(0).getName();
+
+        _services.getSounds().playTheme();
 
         _screen.fadeInScreen(0.5f, new Runnable() {
             @Override
@@ -459,11 +481,16 @@ public class MainScreenLogic {
         else if(_yellowChessTotal == 0 && !meIsYellow()){
             won = true;
         }
-        final boolean finalWon = won;
+
+        showEndGameOverlay(won);
+
+    }
+
+    public void showEndGameOverlay(final boolean won){
         Threadings.delay(1000, new Runnable() {
             @Override
             public void run() {
-                _screen.showEndGameTable(finalWon);
+                _screen.showEndGameTable(won);
                 Threadings.delay(5000, new Runnable() {
                     @Override
                     public void run() {
@@ -473,7 +500,6 @@ public class MainScreenLogic {
 
             }
         });
-
     }
 
 

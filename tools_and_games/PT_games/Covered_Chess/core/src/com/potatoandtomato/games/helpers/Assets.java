@@ -3,6 +3,8 @@ package com.potatoandtomato.games.helpers;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
@@ -58,10 +60,12 @@ public class Assets {
         loadOneFont(_fontPizzaPath, "greyPizza5BlackS.ttf", Color.valueOf("e9e9e9"), 50, 1, Color.BLACK, 1, Color.GRAY);
         loadOneFont(_fontPizzaPath, "orangePizza5BlackS.ttf", Color.valueOf("fbbb31"), 50, 1, Color.BLACK, 1, Color.GRAY);
         loadOneFont(_fontPizzaPath, "whitePizza2BlackS.ttf", Color.WHITE, 20, 1, Color.BLACK, 1, Color.GRAY);
+        loadAllSounds();
         _manager.finishLoading();
 
         loadAllFonts();
         loadAllTextures();
+        soundsLoaded();
         //basicNinePatchLoaded();
 
         if(onFinish != null) onFinish.run();
@@ -333,5 +337,65 @@ public class Assets {
 
     public TextureRegion getVs() {
         return vs;
+    }
+
+
+    private Music themeMusic;
+    private Sound fightChessSound, flipChessSound, lossSound, moveSound, openSlideSound, startGameSound, winSound;
+
+
+    private void loadAllSounds(){
+        _manager.load("sounds/theme.mp3", Music.class);
+        _manager.load("sounds/fight_chess.ogg", Sound.class);
+        _manager.load("sounds/flip_chess.ogg", Sound.class);
+        _manager.load("sounds/lose.ogg", Sound.class);
+        _manager.load("sounds/move.ogg", Sound.class);
+        _manager.load("sounds/open_slide.ogg", Sound.class);
+        _manager.load("sounds/start_game.ogg", Sound.class);
+        _manager.load("sounds/win.ogg", Sound.class);
+    }
+
+
+    private void soundsLoaded(){
+        themeMusic = _manager.get("sounds/theme.mp3", Music.class);
+        fightChessSound  = _manager.get("sounds/fight_chess.ogg", Sound.class);
+        flipChessSound = _manager.get("sounds/flip_chess.ogg", Sound.class);
+        lossSound = _manager.get("sounds/lose.ogg", Sound.class);
+        moveSound = _manager.get("sounds/move.ogg", Sound.class);
+        openSlideSound = _manager.get("sounds/open_slide.ogg", Sound.class);
+        startGameSound = _manager.get("sounds/start_game.ogg", Sound.class);
+        winSound = _manager.get("sounds/win.ogg", Sound.class);
+    }
+
+    public Sound getWinSound() {
+        return winSound;
+    }
+
+    public Sound getStartGameSound() {
+        return startGameSound;
+    }
+
+    public Sound getOpenSlideSound() {
+        return openSlideSound;
+    }
+
+    public Sound getMoveSound() {
+        return moveSound;
+    }
+
+    public Sound getLossSound() {
+        return lossSound;
+    }
+
+    public Sound getFlipChessSound() {
+        return flipChessSound;
+    }
+
+    public Sound getFightChessSound() {
+        return fightChessSound;
+    }
+
+    public Music getThemeMusic() {
+        return themeMusic;
     }
 }

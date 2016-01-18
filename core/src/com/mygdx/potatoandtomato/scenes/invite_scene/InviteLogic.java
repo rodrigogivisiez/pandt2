@@ -182,7 +182,7 @@ public class InviteLogic extends LogicAbstract {
                             Threadings.sleep(1000);
                         }
 
-                        _services.getDatabase().saveRoom(_room, new DatabaseListener<String>() {
+                        _services.getDatabase().saveRoom(_room, false, new DatabaseListener<String>() {
                             @Override
                             public void onCallback(String obj, Status st) {
                                 killKeepAlive();

@@ -72,7 +72,7 @@ public class InviteScene extends SceneAbstract {
         invitesTable.padBottom(10);
 
 
-        _inviteButton = new BtnEggDownward(_assets);
+        _inviteButton = new BtnEggDownward(_assets, _services.getSounds());
         _inviteButton.setText("Invite");
 
 

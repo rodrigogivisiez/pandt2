@@ -65,11 +65,11 @@ public class RoomScene extends SceneAbstract {
 
         Table buttonTable = new Table();
 
-        _startButton = new BtnEggDownward(_assets, _services.getShaders());
+        _startButton = new BtnEggDownward(_assets, _services.getSounds(), _services.getShaders());
         _startButton.setEnabled(false);
         _startButton.setText(_texts.waitingHost());
 
-        _inviteButton = new BtnEggDownward(_assets);
+        _inviteButton = new BtnEggDownward(_assets, _services.getSounds());
         _inviteButton.setText(_texts.invite());
 
         buttonTable.add(_startButton).padRight(10);

@@ -14,9 +14,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.mygdx.potatoandtomato.absintflis.sounds.ISounds;
 import com.mygdx.potatoandtomato.helpers.services.Shaders;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
+import com.mygdx.potatoandtomato.helpers.utils.Threadings;
+
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 /**
@@ -32,12 +35,14 @@ public class BtnEggDownward extends Table {
     Shaders _shaders;
     ShaderProgram _shader;
     boolean _enabled;
+    ISounds _sounds;
 
-    public BtnEggDownward(Assets assets) {
-        this(assets, null);
+    public BtnEggDownward(Assets assets, ISounds sounds) {
+        this(assets, sounds, null);
     }
 
-    public BtnEggDownward(Assets assets, Shaders shaders) {
+    public BtnEggDownward(Assets assets, ISounds sounds, Shaders shaders) {
+        this._sounds = sounds;
         this._assets = assets;
         this._shaders = shaders;
         this._button = new Button(new TextureRegionDrawable(_assets.getEmpty()));
@@ -51,6 +56,7 @@ public class BtnEggDownward extends Table {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 animate();
+                _sounds.playButtonClicked();
                 return super.touchDown(event, x, y, pointer, button);
             }
         });
@@ -90,6 +96,7 @@ public class BtnEggDownward extends Table {
             this.setSize(_size.x, _size.y - 40);
             this.setPosition(originalPosition.x, originalPosition.y + 10);
             float duration = 0.2f;
+            Threadings.renderFor(duration + 0.1f);
             this.addAction(parallel(
                     fadeIn(duration, Interpolation.sineIn),
                     sizeTo(_size.x, _size.y, duration, Interpolation.bounceOut),

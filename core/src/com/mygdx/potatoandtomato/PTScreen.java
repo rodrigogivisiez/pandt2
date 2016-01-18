@@ -18,6 +18,7 @@ import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
+import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.scenes.boot_scene.BootLogic;
@@ -50,6 +51,7 @@ public class PTScreen implements Screen {
     boolean _backRunning;
     Actor _currentRoot;
     boolean _isPTScreen;
+
 
     public PTScreen(PTGame ptGame, Services services) {
         this._ptGame = ptGame;
@@ -108,9 +110,14 @@ public class PTScreen implements Screen {
 
     public void back(){
 
-        if(_backRunning) return;
 
-        _backRunning = true;
+        final LogicEnumPair currentScene = _logicStacks.peek();
+        if(currentScene.getLogic().getScene().getRoot().getActions().size > 0){
+            return;
+        }
+
+
+
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -133,12 +140,12 @@ public class PTScreen implements Screen {
                                     previous.getLogic().getScene(), false, new Runnable() {
                                 @Override
                                 public void run() {
-                                    _backRunning = false;
+                                    //_backRunning = false;
                                 }
                             });
                         }
                         else{
-                            _backRunning = false;
+                           // _backRunning = false;
                         }
                     }
                 });
@@ -206,6 +213,9 @@ public class PTScreen implements Screen {
     private void sceneTransition(Actor _rootIn, final Actor _rootOut, SceneAbstract sceneToShow, boolean toRight, final Runnable onFinish){
 
         float duration = 0.5f;
+        Threadings.renderFor(10f);
+
+
         _rootIn.remove();
         _rootOut.remove();
         _rootIn.clearActions();
@@ -218,15 +228,12 @@ public class PTScreen implements Screen {
         _rootIn.setPosition(toRight ? Positions.getWidth() : -Positions.getWidth(), 0);
         _rootOut.setPosition(0, 0);
 
-        Gdx.graphics.setContinuousRendering(true);
-
         _rootIn.addAction(moveTo(0, 0, duration));
         _rootOut.addAction(sequence(moveBy(toRight ? -Positions.getWidth() : Positions.getWidth(), 0, duration), new Action() {
             @Override
             public boolean act(float delta) {
                 _rootOut.remove();
                 onFinish.run();
-                //Gdx.graphics.setContinuousRendering(false);
                 return false;
             }
         }));
@@ -287,6 +294,7 @@ public class PTScreen implements Screen {
     }
 
     public void showRotateSunrise(){
+        Gdx.graphics.setContinuousRendering(true);
         _sunrayImg.clearActions();
         _sunrayImg.addAction(parallel(
                 fadeIn(1f),
@@ -297,7 +305,13 @@ public class PTScreen implements Screen {
     public void hideRotateSunrise(){
         _sunrayImg.clearActions();
         _sunrayImg.addAction(sequence(
-                fadeOut(1f)
+                fadeOut(1f), new Action() {
+                    @Override
+                    public boolean act(float delta) {
+                        Gdx.graphics.setContinuousRendering(false);
+                        return true;
+                    }
+                }
         ));
     }
 
@@ -349,6 +363,8 @@ public class PTScreen implements Screen {
     public void dispose() {
 
     }
+
+
 
     private class LogicEnumPair{
         LogicAbstract logicAbstract;

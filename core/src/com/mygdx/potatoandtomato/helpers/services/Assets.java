@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
@@ -43,7 +45,10 @@ public class Assets {
     private BitmapFont blackNormal2, redNormal2, blueNormal2, blackBold2, blackNormal3, orangePizza3,
             whiteBold3GrayS, topBarFont, whitePizza3BlackS, orangePizza2White, whiteNormal3GrayS, whiteNormal2GrayS,
             whiteNormal2, whitePizza2BlackS, greenNormal2, grayBold2, redBold2, blueBold2, whiteNormal2Black,
-            whiteBold2GrayS;
+            whiteBold2GrayS, redBold2WhiteS, blueBold2WhiteS;
+
+    private Music themeMusic;
+    private Sound clickWaterSound;
 
 
     public Assets() {
@@ -75,16 +80,39 @@ public class Assets {
         loadOneFont(_fontBoldPath, "grayBold2.ttf", Color.valueOf("c4c4c4"), 11);
         loadOneFont(_fontBoldPath, "whiteBold3GrayS.ttf", Color.WHITE, 13, 1, Color.GRAY, 1, Color.GRAY);
         loadOneFont(_fontBoldPath, "whiteBold2GrayS.ttf", Color.WHITE, 11, 1, Color.GRAY, 1, Color.GRAY);
+        loadOneFont(_fontBoldPath, "redBold2WhiteS.ttf", Color.valueOf("e4315b"), 12, 1, Color.valueOf("f5f5f5"), 0, Color.BLACK);
+        loadOneFont(_fontBoldPath, "blueBold2WhiteS.ttf", Color.valueOf("568187"), 12, 1, Color.valueOf("f5f5f5"), 0, Color.BLACK);
         loadOneFont(_fontBoldPath, "redBold2.ttf", Color.valueOf("e40404"), 11);
         loadOneFont(_fontBoldPath, "blueBold2.ttf", Color.valueOf("11b1bf"), 11);
 
+        loadAllSounds();
+
         _manager.finishLoading();
 
+        soundsLoaded();
         basicFontsLoaded();
         basicTextureLoaded();
         basicNinePatchLoaded();
 
         if(onFinish != null) onFinish.run();
+    }
+
+    private void loadAllSounds(){
+        _manager.load("sounds/theme.mp3", Music.class);
+        _manager.load("sounds/click_water.ogg", Sound.class);
+    }
+
+    private void soundsLoaded(){
+        themeMusic = _manager.get("sounds/theme.mp3", Music.class);
+        clickWaterSound = _manager.get("sounds/click_water.ogg", Sound.class);
+    }
+
+    public Sound getClickWaterSound() {
+        return clickWaterSound;
+    }
+
+    public Music getThemeMusic() {
+        return themeMusic;
     }
 
     private void loadOneFont(String path, String name, Color color, int size){
@@ -129,7 +157,16 @@ public class Assets {
         grayBold2 = _manager.get("grayBold2.ttf", BitmapFont.class);
         redBold2 = _manager.get("redBold2.ttf", BitmapFont.class);
         blueBold2 = _manager.get("blueBold2.ttf", BitmapFont.class);
+        blueBold2WhiteS = _manager.get("blueBold2WhiteS.ttf", BitmapFont.class);
+        redBold2WhiteS = _manager.get("redBold2WhiteS.ttf", BitmapFont.class);
+    }
 
+    public BitmapFont getBlueBold2WhiteS() {
+        return blueBold2WhiteS;
+    }
+
+    public BitmapFont getRedBold2WhiteS() {
+        return redBold2WhiteS;
     }
 
     public BitmapFont getWhiteBold2GrayS() {

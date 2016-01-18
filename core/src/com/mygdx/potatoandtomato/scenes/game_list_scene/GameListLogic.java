@@ -162,7 +162,7 @@ public class GameListLogic extends LogicAbstract {
                     if(room.getHost().equals(_services.getProfile())){
                         if(isSceneVisible()){
                             room.setOpen(false);
-                            _services.getDatabase().saveRoom(room, null);
+                            _services.getDatabase().saveRoom(room, true, null);
                         }
                     }
                     else{

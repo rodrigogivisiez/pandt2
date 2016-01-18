@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.potatoandtomato.PTGame;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
+import com.mygdx.potatoandtomato.absintflis.sounds.ISounds;
 import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
 import com.mygdx.potatoandtomato.helpers.controls.Chat;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
@@ -46,7 +47,7 @@ public class T_Services {
                 new Profile(), databases, new Shaders(), gamingKit, downloader,
                 new Chat(gamingKit, new Texts(), assets, mock(SpriteBatch.class), mock(IPTGame.class), mock(Recorder.class), mock(IUploader.class)),
                 new Socials(preferences), new GCMSender(), new Confirm(mock(SpriteBatch.class), mock(PTGame.class), assets),
-                new Notification(mock(SpriteBatch.class), assets, mock(PTGame.class)), mock(Recorder.class), mock(IUploader.class));
+                new Notification(mock(SpriteBatch.class), assets, mock(PTGame.class)), mock(Recorder.class), mock(IUploader.class), mock(ISounds.class));
     }
 
 }

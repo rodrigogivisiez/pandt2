@@ -101,7 +101,7 @@ public class BootScene extends SceneAbstract {
         //Logo Image END////////////////////////////////////////////////////
 
         //Play Button START
-        _playButton = new BtnEggUpright(_assets);
+        _playButton = new BtnEggUpright(_assets, _services.getSounds());
         _playButton.setPosition(Positions.centerX(_playButton.getWidth()), 160);
         _playButton.getColor().a = 0;
         _playButton.setContent(_assets.getPlayIcon());
