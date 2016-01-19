@@ -1,10 +1,12 @@
 package com.mygdx.potatoandtomato.models;
 
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
+import com.shaded.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * Created by SiongLeng on 9/12/2015.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Profile {
 
     String facebookUserId;
@@ -13,6 +15,7 @@ public class Profile {
     String gameName;
     String gcmId;
     UserPlayingState userPlayingState;
+    String gameNameLower;
 
     public Profile() {
     }
@@ -73,6 +76,15 @@ public class Profile {
 
     public void setGameName(String gameName) {
         this.gameName = gameName;
+    }
+
+    public String getGameNameLower(){
+        if(this.gameName == null){
+            return "";
+        }
+        else{
+            return this.gameName.toLowerCase();
+        }
     }
 
     public String getGcmId() {

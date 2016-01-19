@@ -1,8 +1,8 @@
 package com.mygdx.potatoandtomato.scenes.game_sandbox_scene;
 
-import com.badlogic.gdx.Gdx;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
+import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
@@ -14,7 +14,6 @@ import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.*;
-import com.sun.deploy.util.StringUtils;
 
 import java.util.ArrayList;
 
@@ -23,17 +22,20 @@ import java.util.ArrayList;
  */
 public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
 
+    IGameSandBox _me;
     GameSandboxScene _scene;
     Room _room;
     ArrayList<String> _readyUserIds;        //for host usage only
-    boolean _gameStarted;
+    boolean _gameCanStart;
     GameCoordinator _coordinator;
     Notification _notification;
     boolean _isContinue;
     boolean _isReady;
+    boolean _gameStarted;
 
     public GameSandboxLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
+        _me = this;
         _notification = services.getNotification();
         _scene = new GameSandboxScene(_services, _screen);
         _readyUserIds = new ArrayList<String>();
@@ -42,8 +44,14 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     }
 
     @Override
+    public void onQuit(final OnQuitListener listener) {
+        listener.onResult(_gameStarted ? OnQuitListener.Result.YES : OnQuitListener.Result.NO);
+    }
+
+    @Override
     public void onInit() {
         super.onInit();
+
         _services.getChat().hide();
 
         _services.getGamingKit().addListener(getClassTag(), new UpdateRoomMatesListener() {
@@ -58,7 +66,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             public void onCallback(Room obj, Status st) {
                 ArrayList<RoomUser> leftUsers = _room.getJustLeftUsers(obj);
                 if(leftUsers.size() > 0){
-                    if(!_gameStarted){
+                    if(!_gameCanStart){
                         failLoad(leftUsers);
                     }
                 }
@@ -99,10 +107,17 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             }
         });
 
-        Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_GAME_REQUEST, new GameCoordinator(_room.getGame().getFullLocalJarPath(),
-                _room.getGame().getLocalAssetsPath(), _room.getGame().getBasePath(), _room.convertRoomUsersToTeams(_services.getProfile()),
-                Positions.getWidth(), Positions.getHeight(), _screen.getGame(), _screen.getGame().getSpriteBatch(),
-                _services.getProfile().getUserId(), this, _services.getDatabase().getGameBelongDatabase(_room.getGame().getAbbr()), _room.getId()));
+        Threadings.delay(1000, new Runnable() {
+            @Override
+            public void run() {
+                Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_GAME_REQUEST, new GameCoordinator(_room.getGame().getFullLocalJarPath(),
+                        _room.getGame().getLocalAssetsPath(), _room.getGame().getBasePath(), _room.convertRoomUsersToTeams(_services.getProfile()),
+                        Positions.getWidth(), Positions.getHeight(), _screen.getGame(), _screen.getGame().getSpriteBatch(),
+                        _services.getProfile().getUserId(), _me, _services.getDatabase().getGameBelongDatabase(_room.getGame().getAbbr()), _room.getId()));
+            }
+        });
+
+
 
 
         if(!_isContinue){
@@ -113,7 +128,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                     public void run() {
                         while (true){
                             Threadings.sleep(3000);
-                            if(_readyUserIds.size() < _room.getRoomUsersCount() && !_gameStarted){
+                            if(_readyUserIds.size() < _room.getRoomUsersCount() && !_gameCanStart){
                                 askForUserIsReady();
                             }
                             else{
@@ -130,7 +145,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             Threadings.delay(60 * 1000, new Runnable() {
                 @Override
                 public void run() {
-                    if(_readyUserIds.size() < _room.getRoomUsersCount() && !_gameStarted){
+                    if(_readyUserIds.size() < _room.getRoomUsersCount() && !_gameCanStart){
                         failLoad(getNotReadyUsers(), false);
                     }
                 }
@@ -155,9 +170,9 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
 
     public void gameStart(){
 
-        if(_gameStarted) return;
+        if(_gameCanStart) return;
 
-        _gameStarted = true;
+        _gameCanStart = true;
 
         _services.getProfile().setUserPlayingState(new UserPlayingState(_room.getId(), true, _room.getRoundCounter()));
         _services.getDatabase().updateProfile(_services.getProfile(), new DatabaseListener() {
@@ -215,6 +230,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                         _services.getChat().setMode(2);
                         _services.getChat().resetChat();
                         _services.getChat().show();
+                        _gameStarted = true;
                     }
                 });
 

@@ -1,6 +1,7 @@
 package com.mygdx.potatoandtomato.helpers.controls;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -8,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
@@ -18,11 +20,12 @@ import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 public class BtnColor extends Table {
 
     public enum ColorChoice {
-        GREEN, RED
+        GREEN, RED, BLUE
     }
 
     private Assets _assets;
     private ColorChoice _colorChoice;
+    private Table _loadingTable;
 
     public BtnColor(ColorChoice colorChoice, Assets assets) {
         _assets = assets;
@@ -51,9 +54,29 @@ public class BtnColor extends Table {
         if(_colorChoice == ColorChoice.GREEN){
             return _assets.getButtonGreen();
         }
+        else if(_colorChoice == ColorChoice.BLUE){
+            return _assets.getButtonBlue();
+        }
         else{
             return  _assets.getButtonRed();
         }
     }
+
+    public void loading(){
+        if(!(_loadingTable == null)) _loadingTable.remove();
+        _loadingTable = new Table();
+        _loadingTable.setFillParent(true);
+        _loadingTable.setBackground(new TextureRegionDrawable(_assets.getBlackBg()));
+        Animator loadingAnimator = new Animator(0.1f, _assets.getLoadingAnimation());
+        _loadingTable.add(loadingAnimator).size(20, 20);
+        this.addActor(_loadingTable);
+    }
+
+    public void clearLoading(){
+        _loadingTable.remove();
+        _loadingTable = null;
+    }
+
+
 
 }

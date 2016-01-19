@@ -25,8 +25,8 @@ public abstract class MockGame extends Game implements IPTGame {
     public MockGame(String gameId) {
 
         try {
-            PrintWriter out = new PrintWriter("client_version.txt");
-            out.print(ClientVersion.VERSION);
+            PrintWriter out = new PrintWriter("common_version.txt");
+            out.print(CommonVersion.VERSION);
             out.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();

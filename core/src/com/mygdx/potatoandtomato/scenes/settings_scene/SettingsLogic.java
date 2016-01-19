@@ -1,14 +1,18 @@
 package com.mygdx.potatoandtomato.scenes.settings_scene;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
+import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.absintflis.socials.FacebookListener;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
+import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
+import com.potatoandtomato.common.Status;
 
 /**
  * Created by SiongLeng on 19/12/2015.
@@ -36,6 +40,15 @@ public class SettingsLogic extends LogicAbstract {
                         });
             }
         });
+
+        _scene.getSaveBtn().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                updateProfile();
+            }
+        });
+
     }
 
     public void facebookRequest(){
@@ -65,17 +78,45 @@ public class SettingsLogic extends LogicAbstract {
     }
 
 
-    private void updateProfile(){
-        String newName = _scene.getDisplayNameTextField().getText().trim();
-        if(_services.getProfile().getFacebookName() == null || !_services.getProfile().getFacebookName().equals(newName)){
-            _services.getProfile().setGameName(newName);
-        }
-        _services.getDatabase().updateProfile(_services.getProfile(), null);
+    public void updateProfile(){
+        final String newName = _scene.getDisplayNameTextField().getText().trim();
+        if(newName.equals("")) return;
+
+        loadingSave();
+        _services.getDatabase().getProfileByGameNameLower(newName, new DatabaseListener<Profile>() {
+            @Override
+            public void onCallback(Profile obj, Status st) {
+                if (st == Status.SUCCESS) {
+                    if (obj == null || obj.equals(_services.getProfile())) {
+                        if (_services.getProfile().getFacebookName() == null || !_services.getProfile().getFacebookName().equals(newName)) {
+                            _services.getProfile().setGameName(newName);
+                        }
+                        _services.getDatabase().updateProfile(_services.getProfile(), null);
+                        _screen.back();
+                    } else {
+                        _services.getConfirm().show(_texts.duplicateNameError(), Confirm.Type.YES, null);
+                        clearLoadingSave();
+                    }
+                } else {
+                    _services.getConfirm().show(_texts.generalError(), Confirm.Type.YES, null);
+                    clearLoadingSave();
+                }
+            }
+        });
+    }
+
+    public void loadingSave(){
+        _scene.getSaveBtn().loading();
+        _scene.getRoot().setTouchable(Touchable.disabled);
+    }
+
+    public void clearLoadingSave(){
+        _scene.getSaveBtn().clearLoading();
+        _scene.getRoot().setTouchable(Touchable.enabled);
     }
 
     @Override
     public void onHide() {
-        updateProfile();
         super.onHide();
     }
 

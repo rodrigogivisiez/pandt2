@@ -40,9 +40,18 @@ blue
   orig: 400, 710
   offset: 0, 0
   index: -1
+btn_blue
+  rotate: false
+  xy: 2, 7
+  size: 122, 38
+  split: 57, 48, 16, 19
+  pad: 1, 0, 0, 0
+  orig: 122, 38
+  offset: 0, 0
+  index: -1
 btn_green
   rotate: false
-  xy: 2, 10
+  xy: 1390, 253
   size: 120, 35
   split: 12, 11, 14, 16
   orig: 120, 35
@@ -50,7 +59,7 @@ btn_green
   index: -1
 btn_red
   rotate: false
-  xy: 1390, 253
+  xy: 126, 10
   size: 120, 35
   split: 16, 12, 13, 12
   orig: 120, 35
@@ -65,7 +74,7 @@ btn_white_round
   index: -1
 bullet
   rotate: false
-  xy: 236, 2
+  xy: 360, 2
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
@@ -151,7 +160,7 @@ expand_icon
   index: -1
 expandable_title_bg
   rotate: false
-  xy: 236, 14
+  xy: 360, 14
   size: 40, 31
   split: 17, 19, 8, 19
   pad: 0, 0, 0, 5
@@ -226,14 +235,14 @@ grey_line
   index: -1
 important_icon
   rotate: false
-  xy: 278, 15
+  xy: 636, 24
   size: 30, 30
   orig: 30, 30
   offset: 0, 0
   index: -1
 info_icon
   rotate: false
-  xy: 636, 24
+  xy: 668, 24
   size: 30, 30
   orig: 30, 30
   offset: 0, 0
@@ -444,7 +453,7 @@ tick
   index: -1
 title_wood_board
   rotate: false
-  xy: 124, 12
+  xy: 248, 12
   size: 110, 33
   orig: 110, 33
   offset: 0, 0

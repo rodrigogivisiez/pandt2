@@ -22,7 +22,7 @@ public abstract class LogicAbstract implements Disposable {
     protected PTScreen _screen;
     protected Services _services;
     protected Texts _texts;
-    protected boolean _cache, _saveToStack;
+    protected boolean _saveToStack;
     private SafeThread _keepAlive;
     private boolean _alive;
     private ArrayList<String> _broadcastSubscribes;

@@ -106,6 +106,39 @@ public class TestFireBase extends TestAbstract {
     }
 
     @Test
+    public void testGameNameUnique(){
+        final boolean[] waiting = {true};
+        final Profile profile = MockModel.mockProfile();
+        databases.updateProfile(profile, new DatabaseListener() {
+            @Override
+            public void onCallback(Object obj, Status st) {
+                waiting[0] = false;
+            }
+        });
+
+        while (waiting[0]){
+            Threadings.sleep(100);
+        }
+
+        waiting[0] = true;
+
+        databases.getProfileByGameNameLower(profile.getGameName(), new DatabaseListener<Profile>(Profile.class) {
+            @Override
+            public void onCallback(Profile result, Status st) {
+                Assert.assertEquals(profile.getGameName(), result.getGameName());
+                Assert.assertEquals(Status.SUCCESS, st);
+                waiting[0] = false;
+            }
+        });
+
+        while (waiting[0]){
+            Threadings.sleep(100);
+        }
+
+    }
+
+
+    @Test
     public void testGetAllGames(){
         final boolean[] waiting = {true};
         databases.getAllGames(new DatabaseListener<ArrayList<Game>>(Game.class) {
@@ -135,7 +168,7 @@ public class TestFireBase extends TestAbstract {
         Assert.assertEquals(true, r.getId() == null);
 
 
-        databases.saveRoom(r, new DatabaseListener<String>() {
+        databases.saveRoom(r, true, new DatabaseListener<String>() {
             @Override
             public void onCallback(String obj, Status st) {
                 Assert.assertEquals(true, st == Status.SUCCESS);
@@ -187,7 +220,7 @@ public class TestFireBase extends TestAbstract {
         //update room
         waiting[0] = true;
         r.setRoomId("999");
-        databases.saveRoom(r, new DatabaseListener<String>() {
+        databases.saveRoom(r, true,  new DatabaseListener<String>() {
             @Override
             public void onCallback(String obj, Status st) {
                 Assert.assertEquals(true, st == Status.SUCCESS);
@@ -224,7 +257,7 @@ public class TestFireBase extends TestAbstract {
         waiting[0] = true;
 
         r.getRoomUsers().get("another").setSlotIndex(20);
-        databases.saveRoom(r, new DatabaseListener<String>() {
+        databases.saveRoom(r, true,  new DatabaseListener<String>() {
             @Override
             public void onCallback(String obj, Status st) {
 
@@ -243,7 +276,7 @@ public class TestFireBase extends TestAbstract {
         final Room r = MockModel.mockRoom(null);
         r.setOpen(true);
 
-        databases.saveRoom(r, new DatabaseListener<String>() {
+        databases.saveRoom(r, true,  new DatabaseListener<String>() {
             @Override
             public void onCallback(String obj, Status st) {
                 waiting[0] = false;
@@ -279,7 +312,7 @@ public class TestFireBase extends TestAbstract {
         ArrayList<Room> rooms = new ArrayList();
         r.setOpen(true);
 
-        databases.saveRoom(r, new DatabaseListener<String>() {
+        databases.saveRoom(r, true, new DatabaseListener<String>() {
             @Override
             public void onCallback(String obj, Status st) {
                 waiting[0] = false;
@@ -335,7 +368,7 @@ public class TestFireBase extends TestAbstract {
         final Room r = MockModel.mockRoom(null);
         r.setOpen(true);
 
-        databases.saveRoom(r, new DatabaseListener<String>() {
+        databases.saveRoom(r, true,  new DatabaseListener<String>() {
             @Override
             public void onCallback(String obj, Status st) {
                 waiting[0] = false;
@@ -376,7 +409,7 @@ public class TestFireBase extends TestAbstract {
         waiting2[0] = true;
         r.setOpen(false);
 
-        databases.saveRoom(r, new DatabaseListener<String>() {
+        databases.saveRoom(r, true,  new DatabaseListener<String>() {
             @Override
             public void onCallback(String obj, Status st) {
 
@@ -405,7 +438,7 @@ public class TestFireBase extends TestAbstract {
         final Room r = MockModel.mockRoom(null);
         r.setOpen(true);
 
-        databases.saveRoom(r, new DatabaseListener<String>() {
+        databases.saveRoom(r, true,  new DatabaseListener<String>() {
             @Override
             public void onCallback(String obj, Status st) {
                 waiting[0] = false;
@@ -455,7 +488,7 @@ public class TestFireBase extends TestAbstract {
         waiting[0] = true;
 
         r.setOpen(true);
-        databases.saveRoom(r, new DatabaseListener<String>() {
+        databases.saveRoom(r, true,  new DatabaseListener<String>() {
             @Override
             public void onCallback(String obj, Status st) {
                 waiting[0] = false;
@@ -567,7 +600,7 @@ public class TestFireBase extends TestAbstract {
 
         final boolean[] waiting = {true};
 
-        databases.saveRoom(room, new DatabaseListener<String>() {
+        databases.saveRoom(room, true,  new DatabaseListener<String>() {
             @Override
             public void onCallback(String obj, Status st) {
                 Assert.assertEquals(Status.SUCCESS, st);
@@ -596,7 +629,7 @@ public class TestFireBase extends TestAbstract {
 
         waiting[0] = true;
         room.setOpen(false);
-        databases.saveRoom(room, new DatabaseListener<String>() {
+        databases.saveRoom(room, true,  new DatabaseListener<String>() {
             @Override
             public void onCallback(String obj, Status st) {
                 Assert.assertEquals(Status.SUCCESS, st);

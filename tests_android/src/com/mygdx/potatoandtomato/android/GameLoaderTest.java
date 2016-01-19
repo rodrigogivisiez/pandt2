@@ -1,14 +1,9 @@
 package com.mygdx.potatoandtomato.android;
 
 import android.test.ActivityInstrumentationTestCase2;
-import com.firebase.client.annotations.Nullable;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
-import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
-import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
-import com.mygdx.potatoandtomato.absintflis.downloader.DownloaderListener;
 import com.mygdx.potatoandtomato.absintflis.game_file_checker.GameFileCheckerListener;
 import com.mygdx.potatoandtomato.helpers.controls.Chat;
-import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.helpers.services.*;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
@@ -48,7 +43,7 @@ public class GameLoaderTest extends ActivityInstrumentationTestCase2<AndroidLaun
         game.setTeamMaxPlayers("1");
         game.setTeamMinPlayers("1");
         game.setVersion("1.1");
-        game.setClientVersion("1");
+        game.setCommonVersion("1");
 
         Services _services = mockServices();
         _services.getPreferences().deleteAll();

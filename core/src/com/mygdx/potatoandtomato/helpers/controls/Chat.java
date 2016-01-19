@@ -29,6 +29,7 @@ import com.mygdx.potatoandtomato.models.NativeLibgdxTextInfo;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Room;
 import com.potatoandtomato.common.*;
+import javafx.geometry.Pos;
 
 import java.util.HashMap;
 
@@ -67,6 +68,7 @@ public class Chat {
     private IUploader _uploader;
     private String _recordsPath;
     private String _userId;
+    private boolean _fading;
 
     public void setRoom(Room _room) {
         this._room = _room;
@@ -239,7 +241,7 @@ public class Chat {
         _expanded = true;
 
         if(_mode == 2){
-            fadeOutMode2();
+           fadeInMode2();
             _mode2AllMessagesTable.setTouchable(Touchable.enabled);
         }
     }
@@ -509,7 +511,7 @@ public class Chat {
                 }
                 else if(_mode == 2){
 
-                    fadeOutMode2();
+                    fadeInMode2();
 
                     Table chatTable = new Table();
                     chatTable.align(Align.left);
@@ -585,7 +587,7 @@ public class Chat {
 
     }
 
-    private void scrollToBottom(){
+    public void scrollToBottom(){
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -599,11 +601,25 @@ public class Chat {
         });
     }
 
-    private void fadeOutMode2(){
-        _mode2MessagesContentTable.getColor().a = 1;
+    private void fadeInMode2(){
+        _fading = false;
         _mode2MessagesContentTable.clearActions();
+        _mode2MessagesContentTable.getColor().a = 1;
+        fadeOutMode2();
+    }
+
+    private void fadeOutMode2(){
+        if(_fading) return;
+
         if(!_expanded){
-            _mode2MessagesContentTable.addAction(sequence(delay(5), fadeOut(0.3f)));
+            _fading = true;
+            _mode2MessagesContentTable.addAction(sequence(delay(5), fadeOut(0.3f), new Action() {
+                @Override
+                public boolean act(float delta) {
+                    _fading = false;
+                    return true;
+                }
+            }));
         }
     }
 
@@ -647,6 +663,15 @@ public class Chat {
         Broadcaster.getInstance().broadcast(BroadcastEvent.LIBGDX_TEXT_CHANGED, new NativeLibgdxTextInfo("", 0));
     }
 
+
+    public void screenTouched(float x, float y){
+        if(isVisible() && _mode == 2){
+            y = Positions.getHeight() - y;
+            if(y > _messageBoxTable.getPrefHeight()){
+                collapsed();
+            }
+        }
+    }
 
 
 

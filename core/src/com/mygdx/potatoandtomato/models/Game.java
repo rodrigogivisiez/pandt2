@@ -11,19 +11,19 @@ import java.util.ArrayList;
 public class Game {
 
     String name, minPlayers, maxPlayers, teamMinPlayers, teamMaxPlayers, teamCount,
-            iconUrl, gameUrl, assetUrl, abbr, description, version, clientVersion;
+            iconUrl, gameUrl, assetUrl, abbr, description, version, commonVersion;
     ArrayList<String> screenShots;
 
 
     public Game() {
     }
 
-    public String getClientVersion() {
-        return clientVersion;
+    public String getCommonVersion() {
+        return commonVersion;
     }
 
-    public void setClientVersion(String clientVersion) {
-        this.clientVersion = clientVersion;
+    public void setCommonVersion(String commonVersion) {
+        this.commonVersion = commonVersion;
     }
 
     public String getTeamMinPlayers() {

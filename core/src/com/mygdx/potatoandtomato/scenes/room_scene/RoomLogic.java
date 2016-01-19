@@ -18,6 +18,7 @@ import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
+import com.mygdx.potatoandtomato.helpers.services.VersionControl;
 import com.mygdx.potatoandtomato.helpers.utils.SafeThread;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.*;
@@ -136,7 +137,8 @@ public class RoomLogic extends LogicAbstract {
 
         if(!_isContinue){
             _gameFileChecker = new GameFileChecker(_room.getGame(), _services.getPreferences(),
-                    _services.getDownloader(), _services.getDatabase(), new GameFileCheckerListener() {
+                    _services.getDownloader(), _services.getDatabase(), new VersionControl(),
+                    new GameFileCheckerListener() {
                 @Override
                 public void onCallback(GameFileChecker.GameFileResult result, Status st) {
                     if(st == Status.FAILED){
@@ -239,6 +241,7 @@ public class RoomLogic extends LogicAbstract {
         _services.getChat().setRoom(_room);
         _services.getChat().setMode(1);
         _services.getChat().show();
+        _services.getChat().scrollToBottom();
         _starting = false;
         sendIsReadyUpdate(true);
 

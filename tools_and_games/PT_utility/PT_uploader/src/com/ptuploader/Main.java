@@ -20,7 +20,7 @@ public class Main {
             paths.getAll();
             paths.checkAllPathsExist();
 
-            String clientVersion = readFile(paths.clientVersion).trim();
+            String commonVersion = readFile(paths.commonVersion).trim();
 
             Zippings zippings = new Zippings(paths.assets);
             zippings.run();
@@ -40,7 +40,7 @@ public class Main {
 
             Ftp ftp = new Ftp();
             UploadedGame uploadedGame = ftp.uploadEverything(details, paths, screenShots);
-            uploadedGame.clientVersion = clientVersion;
+            uploadedGame.commonVersion = commonVersion;
 
 
             FireDB db = new FireDB();

@@ -20,6 +20,8 @@ public interface IDatabase {
 
      void loginAnonymous(DatabaseListener<Profile> listener);
 
+     void getProfileByGameNameLower(String gameName, DatabaseListener<Profile> listener);
+
      void monitorProfileByUserId(String userId, String classTag, DatabaseListener<Profile> listener);
 
      void getProfileByUserId(String userId, DatabaseListener<Profile> listener);

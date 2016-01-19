@@ -10,6 +10,7 @@ import com.mygdx.potatoandtomato.helpers.utils.JarUtils;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.potatoandtomato.common.*;
+import javafx.geometry.Pos;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -35,8 +36,10 @@ public class DesktopLauncher {
 		});
 
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.height = Positions.getHeight();
-		config.width = Positions.getWidth();
+		config.height = 800;
+		config.width = 480;
+
+
 		TexturePacker.Settings settings = new TexturePacker.Settings();
 		settings.maxWidth = 2048;
 		settings.maxHeight = 2048;

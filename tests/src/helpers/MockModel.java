@@ -21,7 +21,7 @@ public class MockModel {
         g.setTeamMinPlayers("1");
         g.setTeamCount("10");
         g.setName("Covered Chess");
-        g.setClientVersion("1");
+        g.setCommonVersion("1");
         return g;
     }
 
@@ -29,6 +29,7 @@ public class MockModel {
         Profile p = new Profile();
         p.setFacebookUserId("fb123");
         p.setUserId(userId);
+        p.setGameName("HeLlo");
         return p;
     }
 

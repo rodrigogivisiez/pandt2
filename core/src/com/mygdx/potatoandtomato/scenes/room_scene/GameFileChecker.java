@@ -8,12 +8,12 @@ import com.mygdx.potatoandtomato.absintflis.game_file_checker.GameFileCheckerLis
 import com.mygdx.potatoandtomato.absintflis.downloader.DownloaderListener;
 import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
 import com.mygdx.potatoandtomato.helpers.services.Preferences;
+import com.mygdx.potatoandtomato.helpers.services.VersionControl;
 import com.mygdx.potatoandtomato.helpers.utils.Files;
 import com.mygdx.potatoandtomato.helpers.utils.SafeThread;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.helpers.utils.Zippings;
 import com.mygdx.potatoandtomato.models.Game;
-import com.potatoandtomato.common.ClientVersion;
 import com.potatoandtomato.common.Status;
 
 import java.io.File;
@@ -36,13 +36,17 @@ public class GameFileChecker {
     IDownloader _downloader;
     Game _game;
     IDatabase _database;
+    VersionControl _versionControl;
 
-    public GameFileChecker(Game _game, Preferences _preferences, IDownloader _downloader, IDatabase database, GameFileCheckerListener _listener) {
+    public GameFileChecker(Game _game, Preferences _preferences,
+                           IDownloader _downloader, IDatabase database, VersionControl versionControl,
+                           GameFileCheckerListener _listener) {
         this._listener = _listener;
         this._game = _game;
         this._database = database;
         this._preferences = _preferences;
         this._downloader = _downloader;
+        this._versionControl = versionControl;
         getLatestGameModel();
     }
 
@@ -51,7 +55,7 @@ public class GameFileChecker {
             @Override
             public void onCallback(Game obj, Status st) {
                 if(st == Status.SUCCESS){
-                    if(Integer.valueOf(obj.getClientVersion()) > Integer.valueOf(ClientVersion.VERSION)){
+                    if(Integer.valueOf(obj.getCommonVersion()) > Integer.valueOf(_versionControl.getCommonVersion())){
                         _listener.onCallback(GameFileResult.CLIENT_OUTDATED, Status.FAILED);
                     }
                     else{

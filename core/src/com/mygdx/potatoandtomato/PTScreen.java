@@ -130,6 +130,8 @@ public class PTScreen implements Screen {
                 _logicStacks.peek().getLogic().onQuit(new OnQuitListener() {
                     @Override
                     public void onResult(Result result) {
+
+                        System.out.println(_logicStacks.size());
                         if(result == Result.YES){
                             final LogicEnumPair current = _logicStacks.pop();
                             final LogicEnumPair previous = _logicStacks.peek();
@@ -313,6 +315,10 @@ public class PTScreen implements Screen {
                     }
                 }
         ));
+    }
+
+    public boolean isPTScreen() {
+        return _isPTScreen;
     }
 
     @Override

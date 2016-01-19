@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
@@ -75,13 +76,14 @@ public class PTGame extends Game implements IPTGame {
 						preferences, new Profile(), new FirebaseDB(Terms.FIREBASE_URL),
 						new Shaders(), _gamingKit, _downloader, _chat,
 						new Socials(preferences), new GCMSender(), _confirm, _notification,
-						_recorder, _uploader, _sounds);
+						_recorder, _uploader, _sounds, new VersionControl());
 				_screen = new PTScreen(_game, _services);
 
 				setScreen(_screen);
-				_screen.toScene(SceneEnum.BOOT);
 
-			}
+
+				_screen.toScene(SceneEnum.BOOT);
+				}
 		});
 	}
 
@@ -103,6 +105,11 @@ public class PTGame extends Game implements IPTGame {
 	@Override
 	public void render() {
 		super.render();
+		if(Gdx.input.justTouched())
+		{
+			_chat.screenTouched(Gdx.input.getX(), Gdx.input.getY());
+		}
+
 		_confirm.render(Gdx.graphics.getDeltaTime());
 		_chat.render(Gdx.graphics.getDeltaTime());
 		_notification.render(Gdx.graphics.getDeltaTime());

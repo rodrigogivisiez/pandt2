@@ -107,10 +107,17 @@ public class BootScene extends SceneAbstract {
         _playButton.setContent(_assets.getPlayIcon());
         //Play Button END
 
+        //Game Version START
+        Label.LabelStyle versionStyle = new Label.LabelStyle();
+        versionStyle.font = _assets.getWhiteNormal2GrayS();
+        Label versionLabel = new Label(String.format(_texts.build(), _services.getVersionControl().getClientVersion()), versionStyle);
+        //Game Version END
+
         _root.addActor(_potatoWeaponImg);
         _root.addActor(_tomatoWeaponImg);
         _root.addActor(_logoImg);
         _root.addActor(_playButton);
+        _root.add(versionLabel).expand().bottom().right().padRight(10).padBottom(10);
     }
 
     public void showLoginBox(){

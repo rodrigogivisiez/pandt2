@@ -1,6 +1,7 @@
 package com.mygdx.potatoandtomato.scenes.settings_scene;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
@@ -19,7 +20,7 @@ import com.mygdx.potatoandtomato.models.Services;
 public class SettingsScene extends SceneAbstract {
 
     TextField _displayNameTextField;
-    BtnColor _facebookBtn;
+    BtnColor _facebookBtn, _saveBtn;
 
     public SettingsScene(Services services, PTScreen screen) {
         super(services, screen);
@@ -47,12 +48,24 @@ public class SettingsScene extends SceneAbstract {
         _displayNameTextField = new TextField(_services.getProfile().getDisplayName(15), textFieldStyle);
         displayNameFieldTable.add(_displayNameTextField).expand().fill().pad(10);
 
+        //////////////////////////
+        //Save Button
+        //////////////////////////
+        _saveBtn = new BtnColor(BtnColor.ColorChoice.GREEN, _assets);
+        _saveBtn.setText(_texts.save());
+
+
+        //////////////////////////
+        //Separator
+        //////////////////////////
+        Image separatorImage = new Image(_assets.getWhiteLine());
+
         ///////////////////////////
         //Facebook status
         //////////////////////////
         Label facebookLabel = new Label(_texts.facebook(), new Label.LabelStyle(_assets.getWhitePizza2BlackS(), Color.WHITE));
 
-        _facebookBtn = new BtnColor(_services.getSocials().isFacebookLogon() ? BtnColor.ColorChoice.RED : BtnColor.ColorChoice.GREEN, _assets);
+        _facebookBtn = new BtnColor(BtnColor.ColorChoice.RED, _assets);
         _facebookBtn.setText(_services.getSocials().isFacebookLogon() ? _texts.logout() : _texts.login());
 
 
@@ -63,9 +76,13 @@ public class SettingsScene extends SceneAbstract {
         settingsTable.align(Align.top);
         settingsTable.add(displayNameLabel).width(150);
         settingsTable.add(displayNameFieldTable).expandX().fillX();
-        settingsTable.row().padTop(30);
+        settingsTable.row();
+        settingsTable.add(_saveBtn).expandX().right().colspan(2).padTop(10).height(50);
+        settingsTable.row();
+        settingsTable.add(separatorImage).expandX().fillX().colspan(2).padTop(10).padBottom(10);
+        settingsTable.row();
         settingsTable.add(facebookLabel).width(150);
-        settingsTable.add(_facebookBtn).expandX().right();
+        settingsTable.add(_facebookBtn).expandX().right().height(50);
 
         _root.add(settingsTable);
     }
@@ -78,4 +95,7 @@ public class SettingsScene extends SceneAbstract {
         return _facebookBtn;
     }
 
+    public BtnColor getSaveBtn() {
+        return _saveBtn;
+    }
 }

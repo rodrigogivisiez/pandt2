@@ -435,6 +435,26 @@ public class FirebaseDB implements IDatabase {
         getDataCount(getTable(_tableTesting), listener);
     }
 
+    @Override
+    public void getProfileByGameNameLower(String gameName, final DatabaseListener<Profile> listener) {
+        getData(getTable(_tableUsers).orderByChild("gameNameLower").startAt(gameName.toLowerCase()).endAt(gameName.toLowerCase()), new DatabaseListener<ArrayList<Profile>>(Profile.class) {
+            @Override
+            public void onCallback(ArrayList<Profile> obj, Status st) {
+                if(st == Status.SUCCESS){
+                    if(obj.size() > 0){
+                        listener.onCallback(obj.get(0), Status.SUCCESS);
+                    }
+                    else{
+                        listener.onCallback(null, Status.SUCCESS);
+                    }
+                }
+                else{
+                    listener.onCallback(null, Status.FAILED);
+                }
+            }
+        });
+    }
+
     private Firebase getTable(String _tableName){
         Firebase r = _ref.child(_tableName);
         return r;

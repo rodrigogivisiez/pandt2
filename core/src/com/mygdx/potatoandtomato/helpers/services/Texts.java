@@ -18,6 +18,8 @@ public class Texts {
     public String failedRetrieveProfile() { return "Failed to retrieve user profile, try again?"; }
     public String loginProcessing() { return "Logging in..."; }
 
+    public String build() {return "Build %s";}
+
     public String gamesList() { return "Games List"; }
     public String game() { return "GAME"; }
     public String players() { return "PLAYERS"; }
@@ -55,9 +57,12 @@ public class Texts {
     public String open() { return "Open"; }
     public String send() { return "Send"; }
     public String continueLastGame() { return "Continue"; }
+    public String save() { return "Save"; }
 
     public String loading() { return "Loading..."; }
 
+    public String generalError() { return "Unexpected error occurred, please try again.";}
+    public String duplicateNameError() { return "This name has already been taken, please use another name.";}
 
     public String checkGameVersion() { return "Checking game version..."; }
     public String downloadingGame() { return "Downloading game content..."; }

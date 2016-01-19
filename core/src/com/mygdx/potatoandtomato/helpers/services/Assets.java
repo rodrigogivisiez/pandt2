@@ -7,6 +7,7 @@ import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.potatoandtomato.absintflis.assets.MyFreetypeFontLoader;
 
 /**
  * Created by SiongLeng on 2/12/2015.
@@ -39,7 +41,7 @@ public class Assets {
             pointLeftIcon, closeButton, downloadIconSmall, messageNotification, orangeLine, greyLine,
             chatContainer, textCursor, unselectBox, selectBox, whiteLine, expandIcon, collapsedIcon, loading,
             webImageLoading, invitedIcon, bulletIcon, micIcon, voiceIcon, micBig;
-    private NinePatch popupBg, buttonRed, buttonGreen, progressBarInner, progressBarBg, whiteRoundedBg,
+    private NinePatch popupBg, buttonRed, buttonGreen, buttonBlue, progressBarInner, progressBarBg, whiteRoundedBg,
             yellowRoundedBg,  greenRoundedBg,
             blackRoundedBg, chatBox, yellowGradientBox, scrollVerticalHandle, irregularBg, expandTitleBg;
     private BitmapFont blackNormal2, redNormal2, blueNormal2, blackBold2, blackNormal3, orangePizza3,
@@ -59,7 +61,9 @@ public class Assets {
 
         FileHandleResolver resolver = new InternalFileHandleResolver();
         _manager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
-        _manager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
+       // _manager.setLoader(BitmapFont.class, new FreeFontTypeSyncLoader(new InternalFileHandleResolver()));
+        _manager.setLoader(BitmapFont.class, ".ttf", new MyFreetypeFontLoader(resolver));
+
 
         _manager.load(_backgroundPackPath, TextureAtlas.class);
         loadOneFont(_fontPizzaPath, "orangePizza3.ttf", Color.valueOf("f05837"), 22);
@@ -120,10 +124,13 @@ public class Assets {
     }
 
     private void loadOneFont(String path, String name, Color color, int size, int borderWidth, Color borderColor, int shadowOffset, Color shadowColor){
-        FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
+        MyFreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new MyFreetypeFontLoader.FreeTypeFontLoaderParameter();
         size2Params.fontFileName = path;
         size2Params.fontParameters.size = size;
         size2Params.fontParameters.color = color;
+        size2Params.fontParameters.genMipMaps = true;
+        size2Params.fontParameters.minFilter = Texture.TextureFilter.MipMapLinearNearest;
+        size2Params.fontParameters.magFilter = Texture.TextureFilter.Linear;
         if(borderWidth != 0){
             size2Params.fontParameters.borderWidth = borderWidth;
             size2Params.fontParameters.borderColor = borderColor;
@@ -290,6 +297,7 @@ public class Assets {
         popupBg =  _backgroundsPack .createPatch("popup_bg");
         buttonRed =  _backgroundsPack .createPatch("btn_red");
         buttonGreen =  _backgroundsPack .createPatch("btn_green");
+        buttonBlue = _backgroundsPack.createPatch("btn_blue");
         progressBarInner =  _backgroundsPack .createPatch("progress_bar_inner");
         progressBarBg =  _backgroundsPack .createPatch("progress_bar_bg");
         whiteRoundedBg =  _backgroundsPack .createPatch("white_rounded_bg");
@@ -557,6 +565,10 @@ public class Assets {
 
     public NinePatch getButtonRed() {
         return buttonRed;
+    }
+
+    public NinePatch getButtonBlue() {
+        return buttonBlue;
     }
 
     public NinePatch getButtonGreen() {

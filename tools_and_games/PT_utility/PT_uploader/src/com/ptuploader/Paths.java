@@ -17,7 +17,7 @@ public class Paths {
     String screenshots;
     String details;
     String icon;
-    String clientVersion;
+    String commonVersion;
 
 
     public Paths() {
@@ -54,7 +54,7 @@ public class Paths {
             }
 
             assets = assets.replace("{BASE}", base);
-            clientVersion = working.replace("{BASE}", base) + "client_version.txt";
+            commonVersion = working.replace("{BASE}", base) + "common_version.txt";
             jar = jar.replace("{BASE}", base);
             dx = dx.replace("{BASE}", base);
             screenshots = System.getProperty("user.dir") +"/screenshots/";
@@ -88,9 +88,9 @@ public class Paths {
         if(!f.exists() || !f.isFile()) {
             throw new InvalidPathException(icon, "");
         }
-        f = new File(clientVersion);
+        f = new File(commonVersion);
         if(!f.exists() || !f.isFile()) {
-            throw new InvalidPathException(clientVersion, "");
+            throw new InvalidPathException(commonVersion, "");
         }
     }
 

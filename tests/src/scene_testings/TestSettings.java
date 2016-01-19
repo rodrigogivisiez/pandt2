@@ -13,6 +13,7 @@ import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.scenes.settings_scene.SettingsLogic;
 import com.mygdx.potatoandtomato.scenes.settings_scene.SettingsScene;
+import com.potatoandtomato.common.Status;
 import helpers.MockModel;
 import helpers.T_Services;
 import org.junit.Assert;
@@ -45,13 +46,18 @@ public class TestSettings extends TestAbstract {
     @Test
     public void testSettingsSave(){
         Services services = T_Services.mockServices();
-        IDatabase database = Mockito.spy(new MockDB());
+        IDatabase database = Mockito.spy(new MockDB(){
+            @Override
+            public void getProfileByGameNameLower(String gameName, DatabaseListener<Profile> listener) {
+                listener.onCallback(null, Status.SUCCESS);
+            }
+        });
         services.setDatabase(database);
         SettingsLogic logic = new SettingsLogic(mock(PTScreen.class), services);
         SettingsScene scene = (SettingsScene) logic.getScene();
 
         scene.getDisplayNameTextField().setText("testing");
-        logic.onHide();
+        logic.updateProfile();
         Assert.assertEquals("testing", services.getProfile().getDisplayName(15));
         verify(database, times(1)).updateProfile(any(Profile.class), any(DatabaseListener.class));
     }

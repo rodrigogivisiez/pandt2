@@ -19,7 +19,7 @@ public class UploadedGame {
     public String teamCount;
     public String name;
     public String abbr;
-    public String clientVersion;
+    public String commonVersion;
     public ArrayList<String> screenShots;
 
 

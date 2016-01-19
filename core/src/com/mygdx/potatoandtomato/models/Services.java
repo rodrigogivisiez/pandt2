@@ -31,11 +31,12 @@ public class Services {
     Recorder _recorder;
     IUploader _uploader;
     ISounds _sounds;
+    VersionControl _versionControl;
 
     public Services(Assets assets, Texts texts, Preferences preferences,
                     Profile profile, IDatabase database, Shaders shaders, GamingKit gamingKit, IDownloader downloader,
                     Chat chat, Socials socials, GCMSender gcmSender, Confirm confirm, Notification notification,
-                    Recorder recorder, IUploader uploader, ISounds sounds) {
+                    Recorder recorder, IUploader uploader, ISounds sounds, VersionControl versionControl) {
         _texts = texts;
         _assets = assets;
         _preferences = preferences;
@@ -52,6 +53,11 @@ public class Services {
         _recorder = recorder;
         _uploader = uploader;
         _sounds = sounds;
+        _versionControl = versionControl;
+    }
+
+    public VersionControl getVersionControl() {
+        return _versionControl;
     }
 
     public ISounds getSounds() {

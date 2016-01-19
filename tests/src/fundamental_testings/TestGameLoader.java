@@ -3,10 +3,10 @@ package fundamental_testings;
 import abstracts.MockDB;
 import abstracts.TestAbstract;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
-import com.mygdx.potatoandtomato.absintflis.downloader.DownloaderListener;
 import com.mygdx.potatoandtomato.absintflis.game_file_checker.GameFileCheckerListener;
 import com.mygdx.potatoandtomato.desktop.DesktopLauncher;
 import com.mygdx.potatoandtomato.helpers.services.Downloader;
+import com.mygdx.potatoandtomato.helpers.services.VersionControl;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Game;
@@ -53,15 +53,16 @@ public class TestGameLoader extends TestAbstract{
         game.setTeamMaxPlayers("1");
         game.setTeamMinPlayers("1");
         game.setVersion("1.1");
-        game.setClientVersion("1");
+        game.setCommonVersion("1");
 
 
-        GameFileChecker clientChecker = new GameFileChecker(game, _services.getPreferences(), new Downloader(), new MockDB(){
+        GameFileChecker clientChecker = new GameFileChecker(game, _services.getPreferences(),
+                new Downloader(), new MockDB(){
             @Override
             public void getGameByAbbr(String abbr, DatabaseListener<Game> listener) {
                 listener.onCallback(game, Status.SUCCESS);
             }
-        }, new GameFileCheckerListener() {
+        }, new VersionControl(), new GameFileCheckerListener() {
 
             @Override
             public void onCallback(GameFileChecker.GameFileResult result, Status st) {

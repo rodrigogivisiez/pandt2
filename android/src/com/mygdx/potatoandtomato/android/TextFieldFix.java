@@ -7,8 +7,6 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import com.badlogic.gdx.math.Vector2;
-import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.models.NativeLibgdxTextInfo;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;

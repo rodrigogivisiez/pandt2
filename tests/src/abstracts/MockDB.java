@@ -31,6 +31,11 @@ public class MockDB implements IDatabase {
     }
 
     @Override
+    public void getProfileByGameNameLower(String gameName, DatabaseListener<Profile> listener) {
+
+    }
+
+    @Override
     public void monitorProfileByUserId(String userId, String classTag, DatabaseListener<Profile> listener) {
 
     }
@@ -80,9 +85,10 @@ public class MockDB implements IDatabase {
     }
 
     @Override
-    public void saveRoom(Room room, @Nullable DatabaseListener<String> listener) {
+    public void saveRoom(Room room, boolean notify, @Nullable DatabaseListener<String> listener) {
         if(listener!= null) listener.onCallback(null, Status.SUCCESS);
     }
+
 
     @Override
     public void monitorRoomById(String id, String classTag, DatabaseListener<Room> listener) {

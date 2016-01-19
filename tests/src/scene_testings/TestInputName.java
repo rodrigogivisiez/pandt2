@@ -12,6 +12,7 @@ import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.scenes.input_name_scene.InputNameLogic;
 import com.mygdx.potatoandtomato.scenes.input_name_scene.InputNameScene;
+import com.potatoandtomato.common.Status;
 import helpers.T_Services;
 import org.junit.Assert;
 import org.junit.Test;
@@ -47,6 +48,12 @@ public class TestInputName extends TestAbstract {
                 super.updateProfile(profile, listener);
                 waiting[0] = false;
             }
+
+            @Override
+            public void getProfileByGameNameLower(String gameName, DatabaseListener<Profile> listener) {
+                listener.onCallback(null, Status.SUCCESS);
+            }
+
         };
         services.setDatabase(database);
         InputNameLogic logic = Mockito.spy(new InputNameLogic(screen, services));
