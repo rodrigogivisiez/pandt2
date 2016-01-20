@@ -14,6 +14,7 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import com.mygdx.potatoandtomato.absintflis.push_notifications.PushCode;
+import com.mygdx.potatoandtomato.models.PushNotification;
 
 public class KeepAliveService extends Service {
 
@@ -25,19 +26,25 @@ public class KeepAliveService extends Service {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent.getAction().equals("START")) {
+        if(intent == null || intent.getAction() == null){
+            RoomAliveHelper.getInstance().dispose();
+            return START_NOT_STICKY;
+        }
+
+        if (intent.getAction().startsWith("START")) {
 
             Intent intent2 = new Intent(this, HandleNotificationBroadcastReceiver.class);
 
-//        PendingIntent pendingIntent = PendingIntent.getActivity(context,
-//                pushNotification.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            String title = intent.getExtras().getString("title");
+            String content = intent.getExtras().getString("content");
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
-                    PushCode.KILL_ALIVE_ROOM, intent2, PendingIntent.FLAG_UPDATE_CURRENT);
+                    PushCode.UPDATE_ROOM, intent2, PendingIntent.FLAG_UPDATE_CURRENT);
 
             Notification.Builder builder = new Notification.Builder(this)
-                    .setContentTitle("You are currently in P&T game room")
+                    .setContentTitle(title)
                     .setContentIntent(pendingIntent)
+                    .setContentText(content)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setWhen(System.currentTimeMillis());
 
@@ -49,9 +56,8 @@ public class KeepAliveService extends Service {
             n = builder.build();
             n.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
 
-            startForeground(PushCode.KILL_ALIVE_ROOM, n);
-        } else if (intent.getAction().equals("STOP")) {
-            
+            startForeground(PushCode.UPDATE_ROOM, n);
+        } else if (intent.getAction().startsWith("STOP")) {
             stopForeground(true);
             stopSelf();
         }
@@ -61,6 +67,12 @@ public class KeepAliveService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        RoomAliveHelper.getInstance().dispose();
+        super.onTaskRemoved(rootIntent);
     }
 
     @Override

@@ -25,5 +25,16 @@ public class MyApplication extends Application {
         built.setLoggingEnabled(true);
         Picasso.setSingletonInstance(built);
 
+        Thread.setDefaultUncaughtExceptionHandler (new Thread.UncaughtExceptionHandler()
+        {
+            @Override
+            public void uncaughtException (Thread thread, Throwable e)
+            {
+                RoomAliveHelper.getInstance().dispose();
+                e.printStackTrace();
+                System.exit(1);
+            }
+        });
+
     }
 }

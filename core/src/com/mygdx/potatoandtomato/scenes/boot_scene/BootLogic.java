@@ -11,6 +11,8 @@ import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.absintflis.socials.FacebookListener;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
+import com.mygdx.potatoandtomato.helpers.services.Sounds;
+import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.FacebookProfile;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
@@ -39,6 +41,13 @@ public class BootLogic extends LogicAbstract {
 
     public BootLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
+
+        Threadings.delay(3000, new Runnable() {
+            @Override
+            public void run() {
+                if(isSceneVisible()) _services.getSounds().playSoundEffect(Sounds.Name.TOGETHER_CHEERS);
+            }
+        });
     }
 
     @Override
@@ -46,6 +55,7 @@ public class BootLogic extends LogicAbstract {
 
         _services.getSounds().playThemeMusic();
         _screen.showRotateSunrise();
+
 
         _services.getDatabase().offline();
         _services.getGamingKit().disconnect();

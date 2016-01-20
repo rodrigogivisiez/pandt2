@@ -24,7 +24,6 @@ public class AndroidLauncher extends AndroidApplication {
 	private static boolean _isVisible;
 	private AndroidLauncher _this;
 	private ImageLoader _imageLoader;
-	private KeepAlive _keepAlive;
 	private LayoutChangedFix _layoutChangedFix;
 	private TextFieldFix _textFieldFix;
 	private View _view;
@@ -38,8 +37,10 @@ public class AndroidLauncher extends AndroidApplication {
 		_this = this;
 		reset();
 
+		RoomAliveHelper.getInstance().setContext(this);
+		RoomAliveHelper.getInstance().dispose();
+
 		_imageLoader = new ImageLoader(_this);
-		_keepAlive = new KeepAlive(_this);
 		_facebookConnector = new FacebookConnector(this);
 		_gcm = new GCMClientManager(this);
 		Firebase.setAndroidContext(this);
@@ -50,13 +51,6 @@ public class AndroidLauncher extends AndroidApplication {
 		_view = initializeForView(new PTGame(), config);
 		_textFieldFix = new TextFieldFix(this, (EditText) findViewById(R.id.dummyText), _view);
 		lg.addView(_view);
-
-		Broadcaster.getInstance().subscribe(BroadcastEvent.DESTROY_ROOM, new BroadcastListener() {
-			@Override
-			public void onCallback(Object obj, Status st) {
-				GcmMessageHandler.destroyRoom(_this);
-			}
-		});
 
 		subscribeLoadGameRequest();
 
@@ -81,8 +75,7 @@ public class AndroidLauncher extends AndroidApplication {
 
 	private void reset(){
 		Broadcaster.getInstance().dispose();
-		GcmMessageHandler.destroyRoom(_this);
-		if(_keepAlive != null) _keepAlive.release();
+		RoomAliveHelper.getInstance().dispose();
 	}
 
 	@Override
@@ -114,8 +107,6 @@ public class AndroidLauncher extends AndroidApplication {
 		super.onDestroy();
 		reset();
 	}
-
-
 
 	@Override
 	protected void onStart() {

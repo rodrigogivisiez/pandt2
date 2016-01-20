@@ -7,6 +7,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.absintflis.recorder.RecordListener;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
+import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.Status;
 
 import java.nio.ByteBuffer;
@@ -77,14 +78,18 @@ public class Recorder {
         _recording = false;
     }
 
-    public void playBack(final FileHandle fileHandle){
+    public void playBack(final FileHandle fileHandle, final Runnable onFinish){
         Threadings.runInBackground(new Runnable() {
             @Override
             public void run() {
-                short[] data = getAudioDataFromFile(fileHandle);
-                final AudioDevice player = Gdx.audio.newAudioDevice(_samples, _isMono);
-                player.writeSamples(data, 0, data.length);
-                player.dispose();
+                if(Global.ENABLE_SOUND){
+                    short[] data = getAudioDataFromFile(fileHandle);
+                    final AudioDevice player = Gdx.audio.newAudioDevice(_samples, _isMono);
+                    player.setVolume(1);
+                    player.writeSamples(data, 0, data.length);
+                    player.dispose();
+                }
+                onFinish.run();
             }
         });
     }

@@ -16,6 +16,7 @@ import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
+import com.mygdx.potatoandtomato.helpers.services.Sounds;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
@@ -229,6 +230,8 @@ public class PTScreen implements Screen {
 
         _rootIn.setPosition(toRight ? Positions.getWidth() : -Positions.getWidth(), 0);
         _rootOut.setPosition(0, 0);
+
+        _services.getSounds().playSoundEffect(Sounds.Name.SLIDING);
 
         _rootIn.addAction(moveTo(0, 0, duration));
         _rootOut.addAction(sequence(moveBy(toRight ? -Positions.getWidth() : Positions.getWidth(), 0, duration), new Action() {

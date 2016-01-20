@@ -211,6 +211,10 @@ public class GameListScene extends SceneAbstract {
         else _joinGameButton.setEnabled(false);
     }
 
+    public boolean alreadyContainsRoom(Room room){
+        return _gameRowsTableMap.containsKey(room.getId());
+    }
+
     public Actor updatedRoom(Room room){
         boolean isInvited = (room.getInvitedUserByUserId(_services.getProfile().getUserId()) != null);
         if(!_gameRowsTableMap.containsKey(room.getId())){

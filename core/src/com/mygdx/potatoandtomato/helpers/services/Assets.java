@@ -14,7 +14,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
-import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.absintflis.assets.MyFreetypeFontLoader;
 
@@ -48,9 +47,6 @@ public class Assets {
             whiteBold3GrayS, topBarFont, whitePizza3BlackS, orangePizza2White, whiteNormal3GrayS, whiteNormal2GrayS,
             whiteNormal2, whitePizza2BlackS, greenNormal2, grayBold2, redBold2, blueBold2, whiteNormal2Black,
             whiteBold2GrayS, redBold2WhiteS, blueBold2WhiteS;
-
-    private Music themeMusic;
-    private Sound clickWaterSound;
 
 
     public Assets() {
@@ -101,23 +97,18 @@ public class Assets {
         if(onFinish != null) onFinish.run();
     }
 
-    private void loadAllSounds(){
-        _manager.load("sounds/theme.mp3", Music.class);
-        _manager.load("sounds/click_water.ogg", Sound.class);
-    }
 
-    private void soundsLoaded(){
-        themeMusic = _manager.get("sounds/theme.mp3", Music.class);
-        clickWaterSound = _manager.get("sounds/click_water.ogg", Sound.class);
-    }
 
-    public Sound getClickWaterSound() {
-        return clickWaterSound;
-    }
 
-    public Music getThemeMusic() {
-        return themeMusic;
-    }
+
+
+
+
+
+
+
+
+
 
     private void loadOneFont(String path, String name, Color color, int size){
         loadOneFont(path, name, color, size, 0, Color.BLACK, 0, Color.BLACK);
@@ -656,6 +647,94 @@ public class Assets {
             _loadingAnimation = null;
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private Music themeMusic;
+    private Sound clickWaterSound,
+            togetherCheersSound, openSlideSound,
+            gameCreatedSound, countDownSound, messagingSound, micSound ;
+
+    private void loadAllSounds(){
+        _manager.load("sounds/theme.mp3", Music.class);
+        _manager.load("sounds/click_water.ogg", Sound.class);
+        _manager.load("sounds/together_cheer.ogg", Sound.class);
+        _manager.load("sounds/open_slide.ogg", Sound.class);
+        _manager.load("sounds/game_created.ogg", Sound.class);
+        _manager.load("sounds/count_down.ogg", Sound.class);
+        _manager.load("sounds/send_message.ogg", Sound.class);
+        _manager.load("sounds/mic.ogg", Sound.class);
+    }
+
+    private void soundsLoaded(){
+        themeMusic = _manager.get("sounds/theme.mp3", Music.class);
+        clickWaterSound = _manager.get("sounds/click_water.ogg", Sound.class);
+        togetherCheersSound = _manager.get("sounds/together_cheer.ogg", Sound.class);
+        openSlideSound = _manager.get("sounds/open_slide.ogg", Sound.class);
+        gameCreatedSound = _manager.get("sounds/game_created.ogg", Sound.class);
+        countDownSound = _manager.get("sounds/count_down.ogg", Sound.class);
+        messagingSound = _manager.get("sounds/send_message.ogg", Sound.class);
+        micSound = _manager.get("sounds/mic.ogg", Sound.class);
+    }
+
+    public Sound getMicSound() {
+        return micSound;
+    }
+
+    public Sound getMessagingSound() {
+        return messagingSound;
+    }
+
+    public Sound getCountDownSound() {
+        return countDownSound;
+    }
+
+    public Sound getGameCreatedSound() {
+        return gameCreatedSound;
+    }
+
+    public Sound getOpenSlideSound() {
+        return openSlideSound;
+    }
+
+    public Sound getTogetherCheersSound() {
+        return togetherCheersSound;
+    }
+
+    public Sound getClickWaterSound() {
+        return clickWaterSound;
+    }
+
+    public Music getThemeMusic() {
+        return themeMusic;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }

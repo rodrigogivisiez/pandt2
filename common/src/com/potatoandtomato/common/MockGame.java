@@ -46,7 +46,7 @@ public abstract class MockGame extends Game implements IPTGame {
             public void userAbandoned() {
 
             }
-        },  _ref.child("gameBelongData").child(gameId), "1");
+        },  _ref.child("gameBelongData").child(gameId), "1", new MockSoundManager());
     }
 
     public void initiateMockGamingKit(int expectedTeamCount, int eachTeamExpectedPlayers){

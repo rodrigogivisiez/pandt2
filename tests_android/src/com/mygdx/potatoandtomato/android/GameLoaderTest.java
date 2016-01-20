@@ -53,7 +53,7 @@ public class GameLoaderTest extends ActivityInstrumentationTestCase2<AndroidLaun
             public void getGameByAbbr(String abbr, DatabaseListener<Game> listener) {
                 listener.onCallback(game, Status.SUCCESS);
             }
-        }, new GameFileCheckerListener() {
+        }, new VersionControl(), new GameFileCheckerListener() {
 
             @Override
             public void onCallback(GameFileChecker.GameFileResult result, Status st) {
@@ -107,7 +107,7 @@ public class GameLoaderTest extends ActivityInstrumentationTestCase2<AndroidLaun
 
         return new Services(assets, new Texts(), preferences,
                 new Profile(), null, new Shaders(), null, new Downloader(), new Chat(null, null, null, null, null, null, null),
-                new Socials(preferences), new GCMSender(), null, null, null, null);
+                new Socials(preferences), new GCMSender(), null, null, null, null, null, null);
     }
 
 }

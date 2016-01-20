@@ -20,6 +20,7 @@ import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
 import com.mygdx.potatoandtomato.absintflis.uploader.UploadListener;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.services.Recorder;
+import com.mygdx.potatoandtomato.helpers.services.Sounds;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
 import com.mygdx.potatoandtomato.helpers.utils.Colors;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
@@ -69,6 +70,7 @@ public class Chat {
     private String _recordsPath;
     private String _userId;
     private boolean _fading;
+    private Sounds _sounds;
 
     public void setRoom(Room _room) {
         this._room = _room;
@@ -80,8 +82,9 @@ public class Chat {
     }
 
     public Chat(GamingKit gamingKit, Texts texts, Assets assets, SpriteBatch batch,
-                IPTGame game, Recorder recorder, IUploader uploader) {
+                IPTGame game, Recorder recorder, IUploader uploader, Sounds sounds) {
         this._gamingKit = gamingKit;
+        this._sounds = sounds;
         this._texts = texts;
         this._assets = assets;
         this._batch = batch;
@@ -371,6 +374,13 @@ public class Chat {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 _recorder.stopRecording();
+                Threadings.delay(1000, new Runnable() {
+                    @Override
+                    public void run() {
+                        _sounds.setVolume(1);
+                    }
+                });
+
                 _bigMicTable.setVisible(false);
                 _bigMicTable.clearActions();
                 super.touchUp(event, x, y, pointer, button);
@@ -378,18 +388,28 @@ public class Chat {
 
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                _sounds.playSoundEffect(Sounds.Name.MIC);
                 _bigMicTable.addAction(sequence(fadeOut(0f), forever(sequence(fadeOut(0.6f), fadeIn(0.6f)))));
                 _bigMicTable.setVisible(true);
                 final String fileName =  System.currentTimeMillis() + "_" + MathUtils.random(0, 10000) + ".bin";
                 final FileHandle file = Gdx.files.local(_recordsPath + fileName);
-                _recorder.recordToFile(file, new RecordListener(){
+
+                Threadings.delay(500, new Runnable() {
                     @Override
-                    public void onFinishedRecord(FileHandle resultFile, Status status) {
-                        if(status == Status.SUCCESS){
-                            sendVoiceMessage(file);
-                        }
+                    public void run() {
+                        _sounds.setVolume(0);
+                        _recorder.recordToFile(file, new RecordListener(){
+                            @Override
+                            public void onFinishedRecord(FileHandle resultFile, Status status) {
+                                if(status == Status.SUCCESS){
+                                    sendVoiceMessage(file);
+                                }
+                            }
+                        });
                     }
                 });
+
+
                 return true;
             }
         });
@@ -403,13 +423,23 @@ public class Chat {
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 if(fileHandle.exists()){
-                    _recorder.playBack(fileHandle);
+                    playVoiceMessage(fileHandle);
                 }
             }
         });
         if(autoPlay){
-            _recorder.playBack(fileHandle);
+            playVoiceMessage(fileHandle);
         }
+    }
+
+    public void playVoiceMessage(FileHandle fileHandle){
+        _sounds.setVolume(0);
+        _recorder.playBack(fileHandle, new Runnable() {
+            @Override
+            public void run() {
+                _sounds.setVolume(1);
+            }
+        });
     }
 
     public void setMessage(String msg){
@@ -449,8 +479,10 @@ public class Chat {
             @Override
             public void run() {
                 if((msg.getFromType() == ChatMessage.FromType.USER_VOICE && !msg.getSenderId().equals(_userId))){
-                    _recorder.playBack(Gdx.files.local(_recordsPath + msg.getMessage()));
+                    playVoiceMessage(Gdx.files.local(_recordsPath + msg.getMessage()));
                 }
+
+                _sounds.playSoundEffect(Sounds.Name.MESSAGING);
 
                 if(_mode == 1){
                     Table chatTable = new Table();

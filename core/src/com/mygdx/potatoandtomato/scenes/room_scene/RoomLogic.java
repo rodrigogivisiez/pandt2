@@ -18,6 +18,7 @@ import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
+import com.mygdx.potatoandtomato.helpers.services.Sounds;
 import com.mygdx.potatoandtomato.helpers.services.VersionControl;
 import com.mygdx.potatoandtomato.helpers.utils.SafeThread;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
@@ -67,7 +68,6 @@ public class RoomLogic extends LogicAbstract {
         super.onInit();
 
         _services.getChat().resetChat();
-        Broadcaster.getInstance().broadcast(BroadcastEvent.KEEP_APPS_ALIVE);
         _scene.populateGameDetails(_room.getGame());
         _room.addRoomUser(_services.getProfile(), true);
         userJustJoinedRoom(_services.getProfile());
@@ -141,7 +141,7 @@ public class RoomLogic extends LogicAbstract {
                     new GameFileCheckerListener() {
                 @Override
                 public void onCallback(GameFileChecker.GameFileResult result, Status st) {
-                    if(st == Status.FAILED){
+                    if(st == Status.FAILED && !_quiting){
                         switch (result){
                             case FAILED_RETRIEVE:
                                 errorOccured(_texts.failedRetriveGameData());
@@ -533,6 +533,7 @@ public class RoomLogic extends LogicAbstract {
                 _services.getChat().show();
                 _services.getChat().expanded();
                 while(i > 0){
+                    _services.getSounds().playSoundEffect(Sounds.Name.COUNT_DOWN);
                     _services.getChat().add(new ChatMessage(String.format(_texts.gameStartingIn(), i), ChatMessage.FromType.IMPORTANT, null), false);
                     Threadings.sleep(1500);
                     i--;
@@ -624,7 +625,6 @@ public class RoomLogic extends LogicAbstract {
         _room.getRoomUsers().remove(_services.getProfile().getUserId());
         _services.getGamingKit().leaveRoom();
         Broadcaster.getInstance().broadcast(BroadcastEvent.DESTROY_ROOM);
-        Broadcaster.getInstance().broadcast(BroadcastEvent.REMOVE_APPS_ALIVE);
         flushRoom(true, true, null);
     }
 
@@ -636,5 +636,6 @@ public class RoomLogic extends LogicAbstract {
         _checkReadyThread.kill();
         _services.getChat().hide();
         _services.getChat().resetChat();
+        if(_gameFileChecker != null) _gameFileChecker.dispose();
     }
 }

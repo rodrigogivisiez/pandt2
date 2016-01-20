@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.firebase.client.Firebase;
-import com.sun.org.apache.bcel.internal.generic.IDIV;
 
 import java.util.ArrayList;
 
@@ -29,7 +28,8 @@ public class GameCoordinator implements Disposable {
     private IGameSandBox gameSandBox;
     private UserStateListener userStateListener;
     private Object database;
-    private String id;
+    private String roomId;
+    private ISounds soundManager;
 
     private ArrayList<String> _subscribedIds;
     private Array<InputProcessor> _processors;
@@ -44,7 +44,8 @@ public class GameCoordinator implements Disposable {
                            float gameWidth, float gameHeight,
                            IPTGame game, SpriteBatch batch,
                            String userId, IGameSandBox gameSandBox,
-                           Object database, String id) {
+                           Object database, String roomId,
+                           ISounds sounds) {
         this.jarPath = jarPath;
         this.assetsPath = assetsPath;
         this.basePath = basePath;
@@ -56,7 +57,8 @@ public class GameCoordinator implements Disposable {
         this.userId = userId;
         this.gameSandBox = gameSandBox;
         this.database = database;
-        this.id = id;
+        this.roomId = roomId;
+        this.soundManager = sounds;
 
         _subscribedIds = new ArrayList<String>();
         _processors = new Array<InputProcessor>();
@@ -246,8 +248,12 @@ public class GameCoordinator implements Disposable {
         return (Firebase) database;
     }
 
-    public String getId() {
-        return id;
+    public String getRoomId() {
+        return roomId;
+    }
+
+    public ISounds getSoundManager() {
+        return soundManager;
     }
 
     @Override

@@ -12,6 +12,7 @@ import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
+import com.mygdx.potatoandtomato.helpers.services.Sounds;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.models.UserPlayingState;
@@ -89,7 +90,7 @@ public class GameListLogic extends LogicAbstract {
             public void onCallbackTypeOne(ArrayList<Room> obj, Status st) {
                 if(st == Status.SUCCESS){
                     for(Room r : obj){
-                        roomDataChanged(r);
+                        roomDataChanged(r, false);
                     }
                 }
             }
@@ -97,7 +98,7 @@ public class GameListLogic extends LogicAbstract {
             @Override
             public void onCallbackTypeTwo(Room obj, Status st) {
                 if(st == Status.SUCCESS){
-                    roomDataChanged(obj);
+                    roomDataChanged(obj, true);
                 }
             }
         });
@@ -154,7 +155,7 @@ public class GameListLogic extends LogicAbstract {
         }
     }
 
-    public void roomDataChanged(final Room room){
+    public void roomDataChanged(final Room room, final boolean playSound){
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -166,6 +167,9 @@ public class GameListLogic extends LogicAbstract {
                         }
                     }
                     else{
+                        if(!_scene.alreadyContainsRoom(room) && playSound){
+                            _services.getSounds().playSoundEffect(Sounds.Name.GAME_CREATED);
+                        }
                         final Actor clicked = _scene.updatedRoom(room);
                         if(clicked != null){
                             clicked.addListener(new ClickListener() {

@@ -14,9 +14,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import com.mygdx.potatoandtomato.absintflis.sounds.ISounds;
 import com.mygdx.potatoandtomato.helpers.services.Shaders;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
+import com.mygdx.potatoandtomato.helpers.services.Sounds;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 
@@ -35,13 +35,13 @@ public class BtnEggDownward extends Table {
     Shaders _shaders;
     ShaderProgram _shader;
     boolean _enabled;
-    ISounds _sounds;
+    Sounds _sounds;
 
-    public BtnEggDownward(Assets assets, ISounds sounds) {
+    public BtnEggDownward(Assets assets, Sounds sounds) {
         this(assets, sounds, null);
     }
 
-    public BtnEggDownward(Assets assets, ISounds sounds, Shaders shaders) {
+    public BtnEggDownward(Assets assets, Sounds sounds, Shaders shaders) {
         this._sounds = sounds;
         this._assets = assets;
         this._shaders = shaders;
@@ -56,7 +56,7 @@ public class BtnEggDownward extends Table {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 animate();
-                _sounds.playButtonClicked();
+                _sounds.playSoundEffect(Sounds.Name.BUTTON_CLICKED);
                 return super.touchDown(event, x, y, pointer, button);
             }
         });

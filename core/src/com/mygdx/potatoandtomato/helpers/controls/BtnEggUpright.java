@@ -10,7 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.mygdx.potatoandtomato.absintflis.sounds.ISounds;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.services.Sounds;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
@@ -27,9 +26,9 @@ public class BtnEggUpright extends Table {
     Assets _assets;
     Vector2 _size;
     Image _contentImg;
-    ISounds _sounds;
+    Sounds _sounds;
 
-    public BtnEggUpright(Assets assets, ISounds sounds) {
+    public BtnEggUpright(Assets assets, Sounds sounds) {
         this._assets = assets;
         this._sounds = sounds;
         this._button = new Button(new TextureRegionDrawable(_assets.getEmpty()));
@@ -42,7 +41,7 @@ public class BtnEggUpright extends Table {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 animate();
-                _sounds.playButtonClicked();
+                _sounds.playSoundEffect(Sounds.Name.BUTTON_CLICKED);
                 return super.touchDown(event, x, y, pointer, button);
             }
         });

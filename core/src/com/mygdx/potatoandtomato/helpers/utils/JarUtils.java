@@ -13,7 +13,7 @@ public class JarUtils {
     public static GameCoordinator fillGameEntrance(Class<?> loadedClass, GameCoordinator gameCoordinator){
         GameEntrance instance = null;
         try {
-            Class[] cArg = new Class[1]; //Our constructor has 3 arguments
+            Class[] cArg = new Class[1]; //Our constructor has 1 arguments
             cArg[0] = GameCoordinator.class;
             instance = (GameEntrance) loadedClass.getDeclaredConstructor(cArg)
                     .newInstance(gameCoordinator);

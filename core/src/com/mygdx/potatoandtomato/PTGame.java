@@ -5,21 +5,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
-import com.mygdx.potatoandtomato.absintflis.sounds.ISounds;
 import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.controls.Chat;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.helpers.controls.Notification;
 import com.mygdx.potatoandtomato.helpers.services.*;
-import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
-import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
 import com.potatoandtomato.common.BroadcastEvent;
@@ -45,7 +41,7 @@ public class PTGame extends Game implements IPTGame {
 	Recorder _recorder;
 	IUploader _uploader;
 	IDownloader _downloader;
-	ISounds _sounds;
+	Sounds _sounds;
 
 	@Override
 	public void create () {
@@ -66,10 +62,11 @@ public class PTGame extends Game implements IPTGame {
 				_recorder = new Recorder();
 				_downloader = new Downloader();
 				_uploader = new App42Uploader(_downloader);
-				_chat = new Chat(_gamingKit, _texts, _assets, _batch, _game, _recorder, _uploader);
+				_sounds = new Sounds(_assets);
+				_chat = new Chat(_gamingKit, _texts, _assets, _batch, _game, _recorder, _uploader, _sounds);
 				_confirm = new Confirm(_batch, _game, _assets);
 				_notification = new Notification(_batch, _assets, _game);
-				_sounds = new Sounds(_assets);
+
 
 				Preferences preferences = new Preferences();
 				_services = new Services(_assets, _texts,
@@ -90,7 +87,6 @@ public class PTGame extends Game implements IPTGame {
 	@Override
 	public void dispose() {
 		super.dispose();
-		Broadcaster.getInstance().broadcast(BroadcastEvent.REMOVE_APPS_ALIVE);
 		Broadcaster.getInstance().broadcast(BroadcastEvent.DESTROY_ROOM);
 	}
 

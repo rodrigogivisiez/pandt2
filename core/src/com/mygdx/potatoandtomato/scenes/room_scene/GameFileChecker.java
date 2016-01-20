@@ -2,6 +2,7 @@ package com.mygdx.potatoandtomato.scenes.room_scene;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Disposable;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.game_file_checker.GameFileCheckerListener;
@@ -21,7 +22,7 @@ import java.io.File;
 /**
  * Created by SiongLeng on 17/12/2015.
  */
-public class GameFileChecker {
+public class GameFileChecker implements Disposable {
 
     public enum GameFileResult {
         FAILED_RETRIEVE, CLIENT_OUTDATED, GAME_OUTDATED
@@ -163,4 +164,8 @@ public class GameFileChecker {
 
     }
 
+    @Override
+    public void dispose() {
+        killDownloads();
+    }
 }
