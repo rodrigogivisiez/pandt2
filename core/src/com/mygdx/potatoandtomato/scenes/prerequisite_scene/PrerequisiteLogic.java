@@ -10,6 +10,7 @@ import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
+import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
@@ -142,42 +143,58 @@ public class PrerequisiteLogic extends LogicAbstract {
         });
     }
 
-    public void joinRoomFailed(int reason){
+    public void joinRoomFailed(final int reason){
         System.out.println("REASONCODE: " + reason);
-        if(reason == 0){    //general msg
-            _scene.failedMessage(_texts.joinRoomFailed());
-        }
-       else if(reason == 1){    //full room
-            _scene.failedMessage(_texts.roomIsFull());
-        }
-        else if(reason == 2){    //room is not open
-            _scene.failedMessage(_texts.roomStarted());
-        }
-        else if(reason == 3){   //cannot continue game
-            _scene.failedMessage(_texts.cannotContinue());
-        }
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(reason == 0){    //general msg
+                    _scene.failedMessage(_texts.joinRoomFailed());
+                }
+                else if(reason == 1){    //full room
+                    _scene.failedMessage(_texts.roomIsFull());
+                }
+                else if(reason == 2){    //room is not open
+                    _scene.failedMessage(_texts.roomStarted());
+                }
+                else if(reason == 3){   //cannot continue game
+                    _scene.failedMessage(_texts.cannotContinue());
+                }
+            }
+        });
+
     }
 
-    public void createRoomSuccess(String roomId){
-        _scene.changeMessage(_texts.joiningRoom());
-        _joiningRoom = new Room();
-        _joiningRoom.setRoomId(roomId);
-        _joiningRoom.setGame(_game);
-        _joiningRoom.setOpen(true);
-        _joiningRoom.setHost(_services.getProfile());
-        _joiningRoom.setPlaying(false);
-        _joiningRoom.setRoundCounter(0);
-        _services.getDatabase().saveRoom(_joiningRoom, true, new DatabaseListener<String>() {
+    public void createRoomSuccess(final String roomId){
+        Threadings.postRunnable(new Runnable() {
             @Override
-            public void onCallback(String obj, Status st) {
-                _screen.toScene(SceneEnum.ROOM, _joiningRoom, false);
+            public void run() {
+                _scene.changeMessage(_texts.joiningRoom());
+                _joiningRoom = new Room();
+                _joiningRoom.setRoomId(roomId);
+                _joiningRoom.setGame(_game);
+                _joiningRoom.setOpen(true);
+                _joiningRoom.setHost(_services.getProfile());
+                _joiningRoom.setPlaying(false);
+                _joiningRoom.setRoundCounter(0);
+                _services.getDatabase().saveRoom(_joiningRoom, true, new DatabaseListener<String>() {
+                    @Override
+                    public void onCallback(String obj, Status st) {
+                        _screen.toScene(SceneEnum.ROOM, _joiningRoom, false);
+                    }
+                });
             }
         });
     }
 
     public void joinRoomSuccess(){
-        _scene.changeMessage(_texts.joiningRoom());
-        _screen.toScene(SceneEnum.ROOM, _joiningRoom, _joinType == JoinType.CONTINUING);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _scene.changeMessage(_texts.joiningRoom());
+                _screen.toScene(SceneEnum.ROOM, _joiningRoom, _joinType == JoinType.CONTINUING);
+            }
+        });
     }
 
     @Override

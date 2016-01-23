@@ -3,6 +3,8 @@ package com.potatoandtomato.games.helpers;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
@@ -32,7 +34,7 @@ public class Assets {
     private NinePatch nameTag;
 
     public Assets(GameCoordinator coordinator) {
-        _manager = coordinator.getAssetManagerInstance();
+        _manager = coordinator.getAssetManager();
     }
 
     public void loadAll(Runnable onFinish){
@@ -42,8 +44,11 @@ public class Assets {
         _manager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
 
         _manager.load(_packPath, TextureAtlas.class);
+        loadAllSounds();
+
         _manager.finishLoading();
 
+        soundsLoaded();
         loadAllFonts();
         loadAllTextures();
         //basicNinePatchLoaded();
@@ -259,6 +264,82 @@ public class Assets {
         }
         _manager.load(name, BitmapFont.class, size2Params);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private Music themeMusic;
+    private Sound jiangjunSound, moveSound,
+            lossSound, winSound;
+
+
+    private void loadAllSounds(){
+        _manager.load("sounds/theme.mp3", Music.class);
+        _manager.load("sounds/jiangjun.ogg", Sound.class);
+        _manager.load("sounds/lose.ogg", Sound.class);
+        _manager.load("sounds/move.ogg", Sound.class);
+        _manager.load("sounds/win.ogg", Sound.class);
+    }
+
+
+    private void soundsLoaded(){
+        themeMusic = _manager.get("sounds/theme.mp3", Music.class);
+        lossSound = _manager.get("sounds/lose.ogg", Sound.class);
+        moveSound = _manager.get("sounds/move.ogg", Sound.class);
+        jiangjunSound = _manager.get("sounds/jiangjun.ogg", Sound.class);
+        winSound = _manager.get("sounds/win.ogg", Sound.class);
+    }
+
+    public Sound getWinSound() {
+        return winSound;
+    }
+
+    public Sound getJiangjunSound() {
+        return jiangjunSound;
+    }
+
+    public Sound getMoveSound() {
+        return moveSound;
+    }
+
+    public Sound getLossSound() {
+        return lossSound;
+    }
+
+
+    public Music getThemeMusic() {
+        return themeMusic;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

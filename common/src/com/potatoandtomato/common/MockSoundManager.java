@@ -9,10 +9,13 @@ import com.badlogic.gdx.utils.Array;
  */
 public class MockSoundManager implements ISounds {
 
+    private float _volume;
+
     public Array<Music> _musicList;
 
     public MockSoundManager() {
         _musicList = new Array<Music>();
+        setVolume(1f);
     }
 
     @Override
@@ -36,11 +39,23 @@ public class MockSoundManager implements ISounds {
             System.out.println("Please add the music using addMusic() method first before playing.");
             return;
         }
+        music.setVolume(_volume);
         music.play();
     }
 
     @Override
     public void playSound(Sound sound) {
-        sound.play();
+        sound.play(_volume);
+    }
+
+    @Override
+    public void setVolume(float _volume) {
+        this._volume = _volume;
+
+        if(_volume > 0.1f) _volume = 0.1f;
+
+        for(Music music : _musicList){
+            music.setVolume(_volume);
+        }
     }
 }

@@ -106,7 +106,7 @@ public class RoomLogic extends LogicAbstract {
                             refreshRoomDesign();
                             checkHostInRoom();
                             if(justJoinedUsers.size() > 0 || justLeftUsers.size() > 0){
-                                if(!_isContinue) hostSendUpdateRoomStatePush();
+                                if(!_isContinue) selfUpdateRoomStatePush();
                             }
                         }
                         else{
@@ -235,7 +235,7 @@ public class RoomLogic extends LogicAbstract {
         if(!_isContinue) {
             openRoom(false);
             checkHostInRoom();
-            hostSendUpdateRoomStatePush();
+            selfUpdateRoomStatePush();
         }
 
         _services.getChat().setRoom(_room);
@@ -349,7 +349,12 @@ public class RoomLogic extends LogicAbstract {
             });
         }
         else if(code == UpdateRoomMatesCode.START_GAME){
-            startGame();
+           Threadings.postRunnable(new Runnable() {
+               @Override
+               public void run() {
+                   startGame();
+               }
+           });
         }
         else if(code == UpdateRoomMatesCode.UPDATE_USER_READY){
             if(isHost()){           //only host can update db table
@@ -364,7 +369,7 @@ public class RoomLogic extends LogicAbstract {
         }
         else if(code == UpdateRoomMatesCode.GAME_STARTED){
             if(_countDownThread != null) _countDownThread.kill();
-            gameStarted();
+            if(!_gameStarted) gameStarted();
         }
         else if(code == UpdateRoomMatesCode.PLAYER_CANCEL_START_GAME){
             stopGameStartCountDown(_room.getProfileByUserId(msg));
@@ -432,30 +437,30 @@ public class RoomLogic extends LogicAbstract {
         }
     }
 
-    public void hostSendUpdateRoomStatePush(){
-        if(isHost() && !_gameStarted){       //only host can send push notification to update room state
-            boolean canStart = (startGameCheck(false) == 0);
-            PushNotification push = new PushNotification();
-            push.setId(PushCode.UPDATE_ROOM);
-            push.setSticky(true);
-            push.setTitle(_texts.PUSHRoomUpdateTitle());
-            push.setMessage(String.format(_texts.PUSHRoomUpdateContent(), _room.getRoomUsersCount(), _room.getGame().getMaxPlayers()));
-            push.setSilentNotification(true);
-            push.setSilentIfInGame(false);
+    public void selfUpdateRoomStatePush(){
 
-            for(RoomUser roomUser : _room.getRoomUsers().values()){
-                if(!roomUser.getProfile().equals(_services.getProfile())){  //not host
-                    _services.getGcmSender().send(roomUser.getProfile(), push);
-                }
-            }
+        boolean canStart = (startGameCheck(false) == 0);
+        PushNotification push = new PushNotification();
+        push.setId(PushCode.UPDATE_ROOM);
+        push.setSticky(true);
+        push.setTitle(_texts.PUSHRoomUpdateTitle());
+        push.setMessage(String.format(_texts.PUSHRoomUpdateContent(), _room.getRoomUsersCount(), _room.getGame().getMaxPlayers()));
+        push.setSilentNotification(true);
+        push.setSilentIfInGame(false);
 
-            if(canStart){
-                push.setTitle(_texts.PUSHRoomUpdateGameReadyTitle());
-                push.setSilentIfInGame(true);
-                push.setSilentNotification(false);
-            }
-            _services.getGcmSender().send(_services.getProfile(), push);
+//            for(RoomUser roomUser : _room.getRoomUsers().values()){
+//                if(!roomUser.getProfile().equals(_services.getProfile())){  //not host
+//                    _services.getGcmSender().send(roomUser.getProfile(), push);
+//                }
+//            }
+
+        if(canStart && !_gameStarted && isHost() && !_isContinue){
+            push.setTitle(_texts.PUSHRoomUpdateGameReadyTitle());
+            push.setSilentIfInGame(true);
+            push.setSilentNotification(false);
         }
+        _services.getGcmSender().send(_services.getProfile(), push);
+
     }
 
     public void hostSendGameStartedPush(){
@@ -537,7 +542,7 @@ public class RoomLogic extends LogicAbstract {
                     _services.getChat().add(new ChatMessage(String.format(_texts.gameStartingIn(), i), ChatMessage.FromType.IMPORTANT, null), false);
                     Threadings.sleep(1500);
                     i--;
-                    if(_countDownThread.isKilled()){
+                    if(_countDownThread == null || _countDownThread.isKilled()){
                         _countDownThread = null;
                         _starting = false;
                         _scene.getTeamsRoot().setTouchable(Touchable.enabled);
@@ -567,8 +572,6 @@ public class RoomLogic extends LogicAbstract {
 
 
     public void gameStarted(){
-        if(_gameStarted) return;
-
         hostSendGameStartedPush();
         _gameStarted = true;
         _room.setOpen(false);
@@ -592,6 +595,7 @@ public class RoomLogic extends LogicAbstract {
     }
 
     public void continueGame(){
+        selfUpdateRoomStatePush();
         _services.getChat().hide();
         _screen.toScene(SceneEnum.GAME_SANDBOX, _room, true);
         _gameStarted = true;
@@ -624,7 +628,7 @@ public class RoomLogic extends LogicAbstract {
 
         _room.getRoomUsers().remove(_services.getProfile().getUserId());
         _services.getGamingKit().leaveRoom();
-        Broadcaster.getInstance().broadcast(BroadcastEvent.DESTROY_ROOM);
+        publishBroadcast(BroadcastEvent.DESTROY_ROOM);
         flushRoom(true, true, null);
     }
 

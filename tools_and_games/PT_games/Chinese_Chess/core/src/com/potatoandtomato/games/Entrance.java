@@ -5,6 +5,7 @@ import com.potatoandtomato.common.GameEntrance;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.GameScreen;
 import com.potatoandtomato.games.helpers.Assets;
+import com.potatoandtomato.games.helpers.Sounds;
 import com.potatoandtomato.games.helpers.Texts;
 import com.potatoandtomato.games.models.Services;
 import com.potatoandtomato.games.screens.MainScreenLogic;
@@ -22,7 +23,7 @@ public class Entrance extends GameEntrance {
 
         Assets assets = new Assets(gameCoordinator);
         assets.loadAll(null);
-        _services =  new Services(assets, new Texts());
+        _services =  new Services(assets, new Texts(), new Sounds(assets, gameCoordinator));
 
     }
 
@@ -40,6 +41,7 @@ public class Entrance extends GameEntrance {
 
     @Override
     public void dispose() {
+        _services.getSounds().dispose();
     }
 
 }

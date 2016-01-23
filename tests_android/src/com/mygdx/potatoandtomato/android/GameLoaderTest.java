@@ -19,13 +19,16 @@ import java.util.ArrayList;
  */
 public class GameLoaderTest extends ActivityInstrumentationTestCase2<AndroidLauncher> {
 
+    private Broadcaster broadcaster;
+
     public GameLoaderTest() {
         super(AndroidLauncher.class);
     }
 
     @Override
     protected void setUp() throws Exception {
-        getActivity();
+        AndroidLauncher launcher = getActivity();
+        broadcaster = launcher.getBroadcaster();
     }
 
 
@@ -69,9 +72,7 @@ public class GameLoaderTest extends ActivityInstrumentationTestCase2<AndroidLaun
 
         waiting[0] = true;
 
-        AndroidLauncher androidLauncher = new AndroidLauncher();
-
-        Broadcaster.getInstance().subscribe(BroadcastEvent.LOAD_GAME_RESPONSE, new BroadcastListener<GameCoordinator>() {
+        broadcaster.subscribe(BroadcastEvent.LOAD_GAME_RESPONSE, new BroadcastListener<GameCoordinator>() {
             @Override
             public void onCallback(GameCoordinator obj, Status st) {
                 Assert.assertEquals(Status.SUCCESS, st);
@@ -91,8 +92,8 @@ public class GameLoaderTest extends ActivityInstrumentationTestCase2<AndroidLaun
             public void userAbandoned() {
 
             }
-        }, null, "1");
-        Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_GAME_REQUEST, gameCoordinator);
+        }, null, "1", null, broadcaster);
+        broadcaster.broadcast(BroadcastEvent.LOAD_GAME_REQUEST, gameCoordinator);
 
         while (waiting[0]) {
             Threadings.sleep(100);
@@ -106,8 +107,8 @@ public class GameLoaderTest extends ActivityInstrumentationTestCase2<AndroidLaun
         //assets.loadBasic(null);
 
         return new Services(assets, new Texts(), preferences,
-                new Profile(), null, new Shaders(), null, new Downloader(), new Chat(null, null, null, null, null, null, null),
-                new Socials(preferences), new GCMSender(), null, null, null, null, null, null);
+                new Profile(), null, new Shaders(), null, new Downloader(), new Chat(null, null, null, null, null, null, null, null, broadcaster),
+                new Socials(preferences, broadcaster), new GCMSender(), null, null, null, null, null, null, broadcaster);
     }
 
 }

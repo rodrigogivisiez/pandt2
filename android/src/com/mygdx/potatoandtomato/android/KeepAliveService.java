@@ -15,6 +15,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import com.mygdx.potatoandtomato.absintflis.push_notifications.PushCode;
 import com.mygdx.potatoandtomato.models.PushNotification;
+import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 
 public class KeepAliveService extends Service {
 
@@ -23,11 +24,10 @@ public class KeepAliveService extends Service {
         super.onCreate();
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(intent == null || intent.getAction() == null){
-            RoomAliveHelper.getInstance().dispose();
+            stopRoomAlive();
             return START_NOT_STICKY;
         }
 
@@ -71,7 +71,7 @@ public class KeepAliveService extends Service {
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        RoomAliveHelper.getInstance().dispose();
+        stopRoomAlive();
         super.onTaskRemoved(rootIntent);
     }
 
@@ -79,6 +79,13 @@ public class KeepAliveService extends Service {
     public IBinder onBind(Intent intent) {
         // Used only in case of bound services.
         return null;
+    }
+
+    private void stopRoomAlive(){
+        Intent i = new Intent();
+        i.setClass(this, RoomAliveReceiver.class);
+        i.setAction("STOP");
+        this.sendBroadcast(i);
     }
 
 }

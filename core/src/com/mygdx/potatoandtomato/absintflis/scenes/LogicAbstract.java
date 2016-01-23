@@ -29,6 +29,7 @@ public abstract class LogicAbstract implements Disposable {
     protected Confirm _confirm;
     private String _classTag;
     private boolean _isVisible;
+    private Broadcaster _broadcaster;
 
     public LogicAbstract(PTScreen screen, Services services, Object... objs) {
         setClassTag();
@@ -36,12 +37,30 @@ public abstract class LogicAbstract implements Disposable {
         this._services = services;
         _texts = _services.getTexts();
         _confirm = _services.getConfirm();
+        _broadcaster = _services.getBroadcaster();
         setSaveToStack(true);
         _broadcastSubscribes = new ArrayList();
     }
 
     public void subscribeBroadcast(int event, BroadcastListener listener){
-        _broadcastSubscribes.add(Broadcaster.getInstance().subscribe(event, listener));
+        _broadcastSubscribes.add(_broadcaster.subscribe(event, listener));
+    }
+
+    public void subscribeBroadcastOnceWithTimeout(int event, long timeoutInMil, BroadcastListener listener){
+        _broadcaster.subscribeOnceWithTimeout(event, timeoutInMil, listener);
+    }
+
+
+    public void publishBroadcast(int event){
+        _broadcaster.broadcast(event);
+    }
+
+    public void publishBroadcast(int event, Object object){
+        _broadcaster.broadcast(event, object);
+    }
+
+    public Broadcaster getBroadcaster() {
+        return _broadcaster;
     }
 
     public void setClassTag(){
@@ -127,7 +146,7 @@ public abstract class LogicAbstract implements Disposable {
         _services.getDatabase().clearListenersByClassTag(getClassTag());
         _alive = false;
         for(String id : _broadcastSubscribes){
-            Broadcaster.getInstance().unsubscribe(id);
+            _broadcaster.unsubscribe(id);
         }
         _broadcastSubscribes.clear();
     }

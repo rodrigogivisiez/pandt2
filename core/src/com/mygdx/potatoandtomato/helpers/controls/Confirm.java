@@ -102,45 +102,52 @@ public class Confirm {
         attachEvent();
     }
 
-    public void show(String msg, Type type, ConfirmResultListener _listener){
-        setListener(_listener);
-
-        if(_previousTime !=0 && System.currentTimeMillis() - _previousTime < 500){
-            return;
-        }
-        _previousTime = System.currentTimeMillis();
-
-        _msgTable.getColor().a = 0;
-        _messageLabel.setText(msg);
-        _buttonsTable.clear();
-
-        if(type == Type.YESNO){
-            _buttonsTable.add(_buttonYesTable).uniformX().space(20);
-            _buttonsTable.add(_buttonNoTable).uniformX().space(20);
-        }
-        else if(type == Type.YES){
-            _buttonsTable.add(_buttonYesTable).center().expandX();
-        }
-
-        Threadings.renderFor(5f);
-
-        _confirmRoot.addAction(sequence(fadeOut(0f), fadeIn(0.3f), new Action() {
+    public void show(final String msg, final Type type, final ConfirmResultListener _listener){
+        Threadings.postRunnable(new Runnable() {
             @Override
-            public boolean act(float delta) {
-                _msgTable.addAction(sequence(moveBy(-50, 0), fadeOut(0f), parallel(moveBy(50, 0, 0.1f), fadeIn(0.1f)), new Action() {
+            public void run() {
+                setListener(_listener);
+
+                if(_previousTime !=0 && System.currentTimeMillis() - _previousTime < 500){
+                    return;
+                }
+                _previousTime = System.currentTimeMillis();
+
+                _msgTable.getColor().a = 0;
+                _messageLabel.setText(msg);
+                _buttonsTable.clear();
+
+                if(type == Type.YESNO){
+                    _buttonsTable.add(_buttonYesTable).uniformX().space(20);
+                    _buttonsTable.add(_buttonNoTable).uniformX().space(20);
+                }
+                else if(type == Type.YES){
+                    _buttonsTable.add(_buttonYesTable).center().expandX();
+                }
+
+                Threadings.renderFor(5f);
+
+                _confirmRoot.addAction(sequence(fadeOut(0f), fadeIn(0.3f), new Action() {
                     @Override
                     public boolean act(float delta) {
+                        _msgTable.addAction(sequence(moveBy(-50, 0), fadeOut(0f), parallel(moveBy(50, 0, 0.1f), fadeIn(0.1f)), new Action() {
+                            @Override
+                            public boolean act(float delta) {
+                                return true;
+                            }
+                        }));
+                        if(_stateChangedListener != null) _stateChangedListener.onShow();
                         return true;
                     }
                 }));
-                if(_stateChangedListener != null) _stateChangedListener.onShow();
-                return true;
+
+                _visible = true;
+
+                _game.addInputProcessor(_stage, 5);
             }
-        }));
+        });
 
-        _visible = true;
 
-        _game.addInputProcessor(_stage, 5);
     }
 
 
@@ -201,15 +208,20 @@ public class Confirm {
     }
 
     public void close(){
-        _confirmRoot.addAction(sequence(fadeOut(0.2f), new Action() {
+        Threadings.postRunnable(new Runnable() {
             @Override
-            public boolean act(float delta) {
-                _visible = false;
-                _game.removeInputProcessor(_stage);
-                if(_stateChangedListener != null) _stateChangedListener.onHide();
-                return true;
+            public void run() {
+                _confirmRoot.addAction(sequence(fadeOut(0.2f), new Action() {
+                    @Override
+                    public boolean act(float delta) {
+                        _visible = false;
+                        _game.removeInputProcessor(_stage);
+                        if(_stateChangedListener != null) _stateChangedListener.onHide();
+                        return true;
+                    }
+                }));
             }
-        }));
+        });
     }
 
     public boolean isVisible() {

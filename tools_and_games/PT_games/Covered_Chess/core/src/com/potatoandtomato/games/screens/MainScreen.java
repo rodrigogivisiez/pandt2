@@ -44,7 +44,7 @@ public class MainScreen extends GameScreen {
     private Table _root;
     private Table _overlayTable;
     private Table _transitionTable;
-    private Table _endGameTable;
+    private Table _endGameTable, _endGameRootTable;
     private Table _preStartTable;
     private Table _topInfoTable, _yellowGraveTable, _redGraveTable;
     private Table _chessesTable;
@@ -387,8 +387,12 @@ public class MainScreen extends GameScreen {
     }
 
     public void populateEndGameTable(){
+        _endGameRootTable = new Table();
+        _endGameRootTable.setFillParent(true);
+        new DummyButton(_endGameRootTable, _assets);
         _endGameTable = new Table();
-        _stage.addActor(_endGameTable);
+        _endGameRootTable.addActor(_endGameTable);
+        _stage.addActor(_endGameRootTable);
     }
 
     public void showEndGameTable(final boolean won){
@@ -413,17 +417,21 @@ public class MainScreen extends GameScreen {
 
     }
 
-    public void setPaused(boolean paused){
+    public void setPaused(boolean paused, final boolean isMyTurn){
         _paused = paused;
-        if(_paused){
-            _overlayTable.setVisible(true);
-            setCanTouchChessTable(false);
-        }
-        else{
-            _overlayTable.setVisible(false);
-            setCanTouchChessTable(true);
-        }
-
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(_paused){
+                    _overlayTable.setVisible(true);
+                    setCanTouchChessTable(false);
+                }
+                else{
+                    _overlayTable.setVisible(false);
+                    setCanTouchChessTable(isMyTurn);
+                }
+            }
+        });
     }
 
     @Override
@@ -447,9 +455,11 @@ public class MainScreen extends GameScreen {
         return _topInfoTable;
     }
 
-    public Table getEndGameTable() {
-        return _endGameTable;
+    public Table getEndGameRootTable() {
+        return _endGameRootTable;
     }
+
+
 
     @Override
     public void resize(int width, int height) {

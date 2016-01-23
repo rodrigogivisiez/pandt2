@@ -43,7 +43,7 @@ public class Assets {
             orangePizza5BlackS, greyPizza5BlackS, whitePizza2BlackS;
 
     public Assets(GameCoordinator coordinator) {
-        _manager = coordinator.getAssetManagerInstance();
+        _manager = coordinator.getAssetManager();
     }
 
     public void loadAll(Runnable onFinish){

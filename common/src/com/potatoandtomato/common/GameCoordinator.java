@@ -30,6 +30,8 @@ public class GameCoordinator implements Disposable {
     private Object database;
     private String roomId;
     private ISounds soundManager;
+    private AssetsWrapper assetsWrapper;
+    private Broadcaster broadcaster;
 
     private ArrayList<String> _subscribedIds;
     private Array<InputProcessor> _processors;
@@ -45,7 +47,7 @@ public class GameCoordinator implements Disposable {
                            IPTGame game, SpriteBatch batch,
                            String userId, IGameSandBox gameSandBox,
                            Object database, String roomId,
-                           ISounds sounds) {
+                           ISounds sounds, Broadcaster broadcaster) {
         this.jarPath = jarPath;
         this.assetsPath = assetsPath;
         this.basePath = basePath;
@@ -59,6 +61,7 @@ public class GameCoordinator implements Disposable {
         this.database = database;
         this.roomId = roomId;
         this.soundManager = sounds;
+        this.broadcaster = broadcaster;
 
         _subscribedIds = new ArrayList<String>();
         _processors = new Array<InputProcessor>();
@@ -135,11 +138,11 @@ public class GameCoordinator implements Disposable {
     }
 
     public FileHandle getFileH(String path){
-        if(Gdx.files.internal(path).exists()){
-            return Gdx.files.internal(path);
+        if(Gdx.files.local(basePath + "/" + path).exists()){
+            return Gdx.files.local(basePath + "/" + path);
         }
         else{
-            return Gdx.files.local(basePath + "/" + path);
+            return Gdx.files.internal(path);
         }
     }
 
@@ -149,13 +152,13 @@ public class GameCoordinator implements Disposable {
 
     public void endGame(){
         for(String id : _subscribedIds){
-            Broadcaster.getInstance().unsubscribe(id);
+            broadcaster.unsubscribe(id);
         }
         for(InputProcessor p : _processors){
             getGame().removeInputProcessor(p);
         }
 
-        Broadcaster.getInstance().broadcast(BroadcastEvent.GAME_END);
+        broadcaster.broadcast(BroadcastEvent.GAME_END);
     }
 
     public void abandon(){
@@ -199,7 +202,7 @@ public class GameCoordinator implements Disposable {
     }
 
     public void sendRoomUpdate(String msg){
-        Broadcaster.getInstance().broadcast(BroadcastEvent.INGAME_UPDATE_REQUEST, msg);
+        broadcaster.broadcast(BroadcastEvent.INGAME_UPDATE_REQUEST, msg);
     }
 
     public void addInGameUpdateListener(InGameUpdateListener listener){
@@ -211,7 +214,7 @@ public class GameCoordinator implements Disposable {
     }
 
     private void subscribeListeners(){
-        _broadcastSubscribedId = Broadcaster.getInstance().subscribe(BroadcastEvent.INGAME_UPDATE_RESPONSE, new BroadcastListener<InGameUpdateMessage>() {
+        _broadcastSubscribedId = broadcaster.subscribe(BroadcastEvent.INGAME_UPDATE_RESPONSE, new BroadcastListener<InGameUpdateMessage>() {
             @Override
             public void onCallback(InGameUpdateMessage obj, Status st) {
                 for (InGameUpdateListener listener : _inGameUpdateListeners) {
@@ -221,8 +224,10 @@ public class GameCoordinator implements Disposable {
         });
     }
 
-    public AssetManager getAssetManagerInstance(){
-        return new AssetManager(new MyFileResolver(this));
+    public AssetManager getAssetManager(){
+        if(assetsWrapper == null) assetsWrapper = new AssetsWrapper(new MyFileResolver(this));
+
+        return assetsWrapper.getAssetManager();
     }
 
     public void setUserStateListener(UserStateListener userStateListener){
@@ -256,10 +261,15 @@ public class GameCoordinator implements Disposable {
         return soundManager;
     }
 
+    public void requestVibrate(double periodInMili){
+        broadcaster.broadcast(BroadcastEvent.VIBRATE_DEVICE, periodInMili);
+    }
+
     @Override
     public void dispose() {
-        Broadcaster.getInstance().unsubscribe(_broadcastSubscribedId);
+        broadcaster.unsubscribe(_broadcastSubscribedId);
         userStateListener = null;
         _inGameUpdateListeners.clear();
+        if(assetsWrapper != null) assetsWrapper.dispose();
     }
 }

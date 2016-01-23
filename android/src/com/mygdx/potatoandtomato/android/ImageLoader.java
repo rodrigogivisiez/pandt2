@@ -29,13 +29,15 @@ public class ImageLoader {
     private HashMap<String, Target> _requestMap;
     private ArrayList<String> _retriedUrl;
     private Activity _activity;
+    private Broadcaster _broadcaster;
 
-    public ImageLoader(Activity activity) {
+    public ImageLoader(Activity activity, Broadcaster broadcaster) {
+        this._broadcaster = broadcaster;
         this._activity = activity;
         _requestMap = new HashMap();
         _retriedUrl = new ArrayList();
 
-        Broadcaster.getInstance().subscribe(BroadcastEvent.LOAD_IMAGE_REQUEST, new BroadcastListener<String>() {
+        _broadcaster.subscribe(BroadcastEvent.LOAD_IMAGE_REQUEST, new BroadcastListener<String>() {
             @Override
             public void onCallback(String url, Status st) {
                 load(url);
@@ -104,7 +106,7 @@ public class ImageLoader {
                 GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
                 //bitmap.recycle();
                 Pair<String, Texture> pair = new Pair(url, tex);
-                Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_IMAGE_RESPONSE, pair, Status.SUCCESS);
+                _broadcaster.broadcast(BroadcastEvent.LOAD_IMAGE_RESPONSE, pair, Status.SUCCESS);
             }
         });
 
@@ -115,7 +117,7 @@ public class ImageLoader {
             @Override
             public void run() {
                 Pair<String, Texture> pair = new Pair(url, null);
-                Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_IMAGE_RESPONSE, pair, Status.FAILED);
+                _broadcaster.broadcast(BroadcastEvent.LOAD_IMAGE_RESPONSE, pair, Status.FAILED);
             }
         });
     }

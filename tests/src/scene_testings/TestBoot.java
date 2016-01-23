@@ -115,10 +115,10 @@ public class TestBoot extends TestAbstract {
 
     @Test
     public void testUpdateGCMId(){
-        Broadcaster.getInstance().subscribe(BroadcastEvent.LOGIN_GCM_REQUEST, new BroadcastListener() {
+        _services.getBroadcaster().subscribe(BroadcastEvent.LOGIN_GCM_REQUEST, new BroadcastListener() {
             @Override
             public void onCallback(Object obj, Status st) {
-                Broadcaster.getInstance().broadcast(BroadcastEvent.LOGIN_GCM_CALLBACK, "gcmid1", Status.SUCCESS);
+                _services.getBroadcaster().broadcast(BroadcastEvent.LOGIN_GCM_CALLBACK, "gcmid1", Status.SUCCESS);
             }
         });
         BootLogic logic = new BootLogic(mock(PTScreen.class), _services);

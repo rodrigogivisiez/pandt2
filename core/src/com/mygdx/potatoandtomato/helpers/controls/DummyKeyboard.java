@@ -8,8 +8,15 @@ import com.potatoandtomato.common.Broadcaster;
  * Created by SiongLeng on 18/1/2016.
  */
 public class DummyKeyboard implements TextField.OnscreenKeyboard {
+
+    private Broadcaster _broadcaster;
+
+    public DummyKeyboard(Broadcaster broadcaster) {
+        _broadcaster = broadcaster;
+    }
+
     @Override
     public void show(boolean visible) {
-        Broadcaster.getInstance().broadcast(BroadcastEvent.SHOW_NATIVE_KEYBOARD);
+        _broadcaster.broadcast(BroadcastEvent.SHOW_NATIVE_KEYBOARD);
     }
 }

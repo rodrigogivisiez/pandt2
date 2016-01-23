@@ -2,7 +2,9 @@ package com.potatoandtomato.common;
 
 import com.sun.istack.internal.Nullable;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Set;
 
@@ -11,15 +13,8 @@ import java.util.Set;
  */
 public class Broadcaster {
 
-    private static Broadcaster instance;
-
     private Hashtable<Integer, ArrayList<BroadcastListener>> callbacks;
     private ArrayList<String> subScribeOnceArr;
-
-    public static Broadcaster getInstance(){
-        if(instance == null) instance = new Broadcaster();
-        return instance;
-    }
 
     public Broadcaster() {
         callbacks = new Hashtable<Integer, ArrayList<BroadcastListener>>();
@@ -131,7 +126,7 @@ public class Broadcaster {
     public void dispose(){
         callbacks.clear();
         subScribeOnceArr.clear();
-        instance = null;
     }
+
 
 }

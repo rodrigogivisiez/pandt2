@@ -68,7 +68,7 @@ public class TestChat extends TestAbstract{
             Threadings.sleep(1000);
         }
 
-        Assert.assertEquals(1, Broadcaster.getInstance().getEventCallbacksSize(BroadcastEvent.SCREEN_LAYOUT_CHANGED));
+        Assert.assertEquals(1, services.getBroadcaster().getEventCallbacksSize(BroadcastEvent.SCREEN_LAYOUT_CHANGED));
 
     }
 
@@ -79,6 +79,7 @@ public class TestChat extends TestAbstract{
         Services services = T_Services.mockServices();
         Chat _chat = services.getChat();
         _chat.setMode(2);
+        _chat.setRoom(MockModel.mockRoom("1"));
         _chat.add(new ChatMessage("test", ChatMessage.FromType.USER, MockModel.mockProfile().getUserId()), true);
 
     }

@@ -16,11 +16,10 @@ import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.helpers.controls.BtnEggDownward;
 import com.mygdx.potatoandtomato.helpers.controls.TopBar;
 import com.mygdx.potatoandtomato.helpers.controls.WebImage;
-import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
-import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.models.Game;
+import com.mygdx.potatoandtomato.models.Services;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -88,7 +87,7 @@ public class CreateGameScene extends SceneAbstract {
 
     public Actor populateGame(Game game){
 
-        Actor gameIcon = game != null ? new WebImage(game.getIconUrl(), _assets) : new Image(_assets.getComingSoon());
+        Actor gameIcon = game != null ? new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster()) : new Image(_assets.getComingSoon());
         _gameList.add(gameIcon).size(90).right().expandX().fillX().padBottom(7);
         _gameList.row();
         return gameIcon;
@@ -122,7 +121,7 @@ public class CreateGameScene extends SceneAbstract {
         Label.LabelStyle contentStyle2 = new Label.LabelStyle();
         contentStyle2.font = _assets.getWhiteNormal2GrayS();
 
-        WebImage gameLogo = new WebImage(game.getIconUrl(), _assets);
+        WebImage gameLogo = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster());
         Label detailsTitleLabel = new Label(_texts.details(), titleStyle);
 
         Table detailsTable = new Table();
@@ -147,7 +146,7 @@ public class CreateGameScene extends SceneAbstract {
 
         if(game.getScreenShots() != null){
             for(String ssUrl : game.getScreenShots()){
-                WebImage screenShotImage = new WebImage(ssUrl, _assets);
+                WebImage screenShotImage = new WebImage(ssUrl, _assets, _services.getBroadcaster());
                 screenShotsTable.add(screenShotImage).size(100).padRight(10);
             }
         }

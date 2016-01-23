@@ -1,6 +1,7 @@
 package com.potatoandtomato.games;
 
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.potatoandtomato.common.GameEntrance;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.GameScreen;
@@ -11,11 +12,15 @@ import com.potatoandtomato.common.GameScreen;
 public class Entrance extends GameEntrance {
 
     SampleScreen _screen;
+    Assets _assets;
 
     public Entrance(GameCoordinator gameCoordinator) {
         super(gameCoordinator);
 
-        _screen = new SampleScreen(gameCoordinator);
+        _assets = new Assets(gameCoordinator);
+        _assets.load();
+
+        _screen = new SampleScreen(gameCoordinator, _assets);
 
     }
 
@@ -31,6 +36,7 @@ public class Entrance extends GameEntrance {
 
     @Override
     public void dispose() {
+        _assets.dispose();
         _screen.dispose();
     }
 

@@ -41,6 +41,7 @@ public class MainScreenLogic {
     private int _randomFirstInfo;
     private boolean _initialized;
     private boolean _isContinue;
+    private boolean _gameEnded;
 
     public MainScreenLogic(Services _services, final GameCoordinator _coordinator, boolean isContinue) {
         this._services = _services;
@@ -69,8 +70,7 @@ public class MainScreenLogic {
             @Override
             public void userAbandoned(String s) {
                 if(!s.equals(_coordinator.getUserId())){
-                    _mainScreen.showWinLose(true);
-                    endGame();
+                    endGame(true);
                 }
             }
 
@@ -97,6 +97,8 @@ public class MainScreenLogic {
             sendContinueRequest();
         }
 
+        _services.getSounds().playTheme();
+
     }
 
     public void sendContinueRequest(){
@@ -104,7 +106,8 @@ public class MainScreenLogic {
     }
 
     public void sendContinueReply(){
-        _mainScreen.getBlockingOverlay().setVisible(true);
+        setBlockingOverlayVisibility(true);
+
         JSONObject jsonObject = new JSONObject();
         String result = "";
         for(int row = 0; row < 10; row++){
@@ -142,11 +145,12 @@ public class MainScreenLogic {
                 }
             }
 
+            _coordinator.sendRoomUpdate(UpdateHelper.toJson(UpdateCode.CONTINUE_REPLY_RECEIVED, ""));
+
             Gdx.app.postRunnable(new Runnable() {
                 @Override
                 public void run() {
                     onContinue();
-                    _coordinator.sendRoomUpdate(UpdateHelper.toJson(UpdateCode.CONTINUE_REPLY_RECEIVED, ""));
                 }
             });
 
@@ -194,7 +198,7 @@ public class MainScreenLogic {
             }
         }
         else if(code == UpdateCode.CONTINUE_REPLY_RECEIVED){
-            _mainScreen.getBlockingOverlay().setVisible(false);
+            setBlockingOverlayVisibility(false);
         }
         else if(code == UpdateCode.REQUEST_FIRST_TIME_INFO){
             if(_coordinator.isHost()){
@@ -253,6 +257,15 @@ public class MainScreenLogic {
         }
     }
 
+    public void setBlockingOverlayVisibility(final boolean visible){
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _mainScreen.getBlockingOverlay().setVisible(visible);
+            }
+        });
+    }
+
     public void sendMove(int fromCol, int fromRow, int toCol, int toRow){
         _coordinator.sendRoomUpdate(UpdateHelper.toJson(UpdateCode.SEND_MOVE, fromCol + "," + fromRow + "-" + toCol + "," + toRow));
     }
@@ -266,23 +279,32 @@ public class MainScreenLogic {
         String[] from = temp[0].split(",");
         String[] to = temp[1].split(",");
 
-        int fromCol = reflectCol(Integer.valueOf(from[0]));
-        int fromRow = reflectRow(Integer.valueOf(from[1]));
-        int toCol = reflectCol(Integer.valueOf(to[0]));
-        int toRow = reflectRow(Integer.valueOf(to[1]));
+        final int fromCol = reflectCol(Integer.valueOf(from[0]));
+        final int fromRow = reflectRow(Integer.valueOf(from[1]));
+        final int toCol = reflectCol(Integer.valueOf(to[0]));
+        final int toRow = reflectRow(Integer.valueOf(to[1]));
 
-        moveChess(fromCol, fromRow, toCol, toRow, true);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                moveChess(fromCol, fromRow, toCol, toRow, true);
+            }
+        });
     }
 
-    public void receiveSelectChess(String coord){
-        clearAllChessSelection();
-        String[] temp = coord.split(",");
-        int col = reflectCol(Integer.valueOf(temp[0]));
-        int row = reflectRow(Integer.valueOf(temp[1]));
-        if(_plates[col][row].findActor("chessActor") != null){
-            ((ChessActor) _plates[col][row].findActor("chessActor")).setSelected(true);
-        }
-
+    public void receiveSelectChess(final String coord){
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                clearAllChessSelection();
+                String[] temp = coord.split(",");
+                int col = reflectCol(Integer.valueOf(temp[0]));
+                int row = reflectRow(Integer.valueOf(temp[1]));
+                if(_plates[col][row].findActor("chessActor") != null){
+                    ((ChessActor) _plates[col][row].findActor("chessActor")).setSelected(true);
+                }
+            }
+        });
     }
 
     public void init(){
@@ -502,19 +524,30 @@ public class MainScreenLogic {
             public void run() {
                 boolean redKingImitated = isKingIntimitated(_chessTypes, true);
                 boolean blackKingImitated = isKingIntimitated(_chessTypes, false);
+                boolean playSound = false;
 
                 if(_meIsRed && redKingImitated && !finalIsMyTurn){
                     _mainScreen.showJiangJun(false);
+                    playSound = true;
                 }
                 else if(!_meIsRed && blackKingImitated && !finalIsMyTurn){
                     _mainScreen.showJiangJun(true);
+                    playSound = true;
                 }
                 else if(_meIsRed && blackKingImitated && finalIsMyTurn){
                     _mainScreen.showJiangJun(true);
+                    playSound = true;
                 }
                 else if(!_meIsRed && redKingImitated && finalIsMyTurn){
                     _mainScreen.showJiangJun(false);
+                    playSound = true;
                 }
+
+                if(playSound) _services.getSounds().playSounds(Sounds.Name.JIANG_JUN);
+                else{
+                    _services.getSounds().playSounds(Sounds.Name.MOVE_CHESS);
+                }
+
             }
         };
 
@@ -544,19 +577,22 @@ public class MainScreenLogic {
 
         if(toChessActor != null){
             boolean endGame = false;
+            boolean won = false;
             if(toChessActor.getType() == ChessType.BLACK_SHUAI){
                 endGame = true;
-                if(_meIsRed) _mainScreen.showWinLose(true);
-                else _mainScreen.showWinLose(false);
+                if(_meIsRed){
+                    won = true;
+                }
             }
             else if(toChessActor.getType() == ChessType.RED_SHUAI){
                 endGame = true;
-                if(_meIsRed) _mainScreen.showWinLose(false);
-                else _mainScreen.showWinLose(true);
+                if(!_meIsRed){
+                    won = true;
+                }
             }
 
             if(endGame){
-                endGame();
+                endGame(won);
                 return;
             }
         }
@@ -564,8 +600,15 @@ public class MainScreenLogic {
         switchTurn(!_isMyTurn);
     }
 
-    public void endGame(){
+    public void endGame(boolean won){
+        if(_gameEnded) return;
+
+        _gameEnded = true;
+
+        _mainScreen.showWinLose(won);
         _mainScreen.setRootCanTouch(false);
+        _services.getSounds().stopTheme();
+        _services.getSounds().playSounds(won ? Sounds.Name.WIN : Sounds.Name.LOSE);
         Threadings.delay(2000, new Runnable() {
             @Override
             public void run() {

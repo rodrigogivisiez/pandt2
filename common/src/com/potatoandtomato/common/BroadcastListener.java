@@ -1,11 +1,12 @@
 package com.potatoandtomato.common;
 
+import java.io.Serializable;
 import java.util.Random;
 
 /**
  * Created by SiongLeng on 20/9/2015.
  */
-public abstract class BroadcastListener<T> {
+public abstract class BroadcastListener<T> implements Serializable {
     
     private String id;
 

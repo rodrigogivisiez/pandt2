@@ -21,18 +21,20 @@ public class TextFieldFix {
     private Activity _activity;
     private EditText _editText;
     private View _gameView;
+    private Broadcaster _broadcaster;
 
-    public TextFieldFix(Activity activity, final EditText editText, View gameView) {
+    public TextFieldFix(Activity activity, final EditText editText, View gameView, Broadcaster broadcaster) {
         _activity = activity;
         _editText = editText;
         _gameView = gameView;
+        _broadcaster = broadcaster;
 
         _editText.addTextChangedListener(new TextWatcher() {
 
             @Override
             public void afterTextChanged(Editable s) {
                 String s1 = s.toString();
-                Broadcaster.getInstance().broadcast(BroadcastEvent.NATIVE_TEXT_CHANGED, new NativeLibgdxTextInfo(s1, _editText.getSelectionStart()));
+                _broadcaster.broadcast(BroadcastEvent.NATIVE_TEXT_CHANGED, new NativeLibgdxTextInfo(s1, _editText.getSelectionStart()));
             }
 
             @Override
@@ -47,7 +49,7 @@ public class TextFieldFix {
             }
         });
 
-        Broadcaster.getInstance().subscribe(BroadcastEvent.LIBGDX_TEXT_CHANGED, new BroadcastListener<NativeLibgdxTextInfo>() {
+        _broadcaster.subscribe(BroadcastEvent.LIBGDX_TEXT_CHANGED, new BroadcastListener<NativeLibgdxTextInfo>() {
             @Override
             public void onCallback(final NativeLibgdxTextInfo obj, Status st) {
                 _activity.runOnUiThread(new Runnable() {
@@ -64,7 +66,7 @@ public class TextFieldFix {
             }
         });
 
-        Broadcaster.getInstance().subscribe(BroadcastEvent.SHOW_NATIVE_KEYBOARD, new BroadcastListener() {
+        _broadcaster.subscribe(BroadcastEvent.SHOW_NATIVE_KEYBOARD, new BroadcastListener() {
             @Override
             public void onCallback(Object obj, Status st) {
                 _activity.runOnUiThread(new Runnable() {
@@ -78,10 +80,10 @@ public class TextFieldFix {
             }
         });
 
-        Broadcaster.getInstance().subscribe(BroadcastEvent.SCREEN_LAYOUT_CHANGED, new BroadcastListener<Float>() {
+        _broadcaster.subscribe(BroadcastEvent.SCREEN_LAYOUT_CHANGED, new BroadcastListener<Float>() {
             @Override
             public void onCallback(Float obj, Status st) {
-                if(obj == 0){
+                if (obj == 0) {
                     _activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -95,7 +97,6 @@ public class TextFieldFix {
 
 
     }
-
 
 
 }

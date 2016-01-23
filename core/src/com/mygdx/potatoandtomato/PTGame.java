@@ -42,6 +42,11 @@ public class PTGame extends Game implements IPTGame {
 	IUploader _uploader;
 	IDownloader _downloader;
 	Sounds _sounds;
+	Broadcaster _broadcaster;
+
+	public PTGame(Broadcaster broadcaster) {
+		_broadcaster = broadcaster;
+	}
 
 	@Override
 	public void create () {
@@ -63,7 +68,7 @@ public class PTGame extends Game implements IPTGame {
 				_downloader = new Downloader();
 				_uploader = new App42Uploader(_downloader);
 				_sounds = new Sounds(_assets);
-				_chat = new Chat(_gamingKit, _texts, _assets, _batch, _game, _recorder, _uploader, _sounds);
+				_chat = new Chat(_gamingKit, _texts, _assets, _batch, _game, _recorder, _uploader, _sounds, _broadcaster);
 				_confirm = new Confirm(_batch, _game, _assets);
 				_notification = new Notification(_batch, _assets, _game);
 
@@ -72,8 +77,8 @@ public class PTGame extends Game implements IPTGame {
 				_services = new Services(_assets, _texts,
 						preferences, new Profile(), new FirebaseDB(Terms.FIREBASE_URL),
 						new Shaders(), _gamingKit, _downloader, _chat,
-						new Socials(preferences), new GCMSender(), _confirm, _notification,
-						_recorder, _uploader, _sounds, new VersionControl());
+						new Socials(preferences, _broadcaster), new GCMSender(), _confirm, _notification,
+						_recorder, _uploader, _sounds, new VersionControl(), _broadcaster);
 				_screen = new PTScreen(_game, _services);
 
 				setScreen(_screen);
@@ -87,7 +92,7 @@ public class PTGame extends Game implements IPTGame {
 	@Override
 	public void dispose() {
 		super.dispose();
-		Broadcaster.getInstance().broadcast(BroadcastEvent.DESTROY_ROOM);
+		_broadcaster.broadcast(BroadcastEvent.DESTROY_ROOM);
 	}
 
 	public SpriteBatch getSpriteBatch() {

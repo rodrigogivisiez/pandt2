@@ -40,7 +40,7 @@ public class TestGameList extends TestAbstract {
         room.addInvitedUser(MockModel.mockProfile());
         room.setOpen(true);
         for(int i = 0; i<20; i++){
-            logic.roomDataChanged(room);
+            logic.roomDataChanged(room, false);
         }
 
         Threadings.sleep(100);
@@ -49,7 +49,7 @@ public class TestGameList extends TestAbstract {
         Assert.assertEquals(1, scene.getGameRowsCount());
 
         room.setOpen(false);
-        logic.roomDataChanged(room);
+        logic.roomDataChanged(room, false);
 
         Threadings.sleep(100);
         Assert.assertEquals(0, scene.getGameRowsCount());

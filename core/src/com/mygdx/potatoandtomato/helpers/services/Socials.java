@@ -15,21 +15,23 @@ import com.potatoandtomato.common.Status;
 public class Socials {
 
     Preferences _pref;
+    Broadcaster _broadcaster;
 
-    public Socials(Preferences _pref) {
+    public Socials(Preferences _pref, Broadcaster _broadcaster) {
+        this._broadcaster = _broadcaster;
         this._pref = _pref;
     }
 
     public void loginFacebook(final FacebookListener listener){
-        Broadcaster.getInstance().subscribeOnceWithTimeout(BroadcastEvent.LOGIN_FACEBOOK_CALLBACK, 10000, new BroadcastListener<JsonObj>() {
+        _broadcaster.subscribeOnceWithTimeout(BroadcastEvent.LOGIN_FACEBOOK_CALLBACK, 10000, new BroadcastListener<JsonObj>() {
             @Override
             public void onCallback(JsonObj obj, Status st) {
                 //login success
-                if(st == Status.SUCCESS){
-                    if(obj != null){
+                if (st == Status.SUCCESS) {
+                    if (obj != null) {
                         String fbUserId = obj.getString(Terms.FACEBOOK_USERID);
                         String fbUsername = obj.getString(Terms.FACEBOOK_USERNAME);
-                        if(fbUserId != null){
+                        if (fbUserId != null) {
                             _pref.put(Terms.FACEBOOK_USERID, fbUserId);
                             _pref.put(Terms.FACEBOOK_USERNAME, fbUsername);
                             listener.onLoginComplete(FacebookListener.Result.SUCCESS);
@@ -42,15 +44,15 @@ public class Socials {
                 listener.onLoginComplete(FacebookListener.Result.FAILED);
             }
         });
-        Broadcaster.getInstance().broadcast(BroadcastEvent.LOGIN_FACEBOOK_REQUEST);
+        _broadcaster.broadcast(BroadcastEvent.LOGIN_FACEBOOK_REQUEST);
     }
 
     public void logoutFacebook(final FacebookListener listener){
-        Broadcaster.getInstance().subscribeOnceWithTimeout(BroadcastEvent.LOGOUT_FACEBOOK_REQUEST, 10000, new BroadcastListener<JsonObj>() {
+        _broadcaster.subscribeOnceWithTimeout(BroadcastEvent.LOGOUT_FACEBOOK_REQUEST, 10000, new BroadcastListener<JsonObj>() {
             @Override
             public void onCallback(JsonObj obj, Status st) {
                 //logout success success
-                if(st == Status.SUCCESS){
+                if (st == Status.SUCCESS) {
                     _pref.delete(Terms.FACEBOOK_USERID);
                     _pref.delete(Terms.FACEBOOK_USERNAME);
                     listener.onLogoutComplete(FacebookListener.Result.SUCCESS);
@@ -60,7 +62,7 @@ public class Socials {
                 listener.onLogoutComplete(FacebookListener.Result.FAILED);
             }
         });
-        Broadcaster.getInstance().broadcast(BroadcastEvent.LOGOUT_FACEBOOK_REQUEST);
+        _broadcaster.broadcast(BroadcastEvent.LOGOUT_FACEBOOK_REQUEST);
     }
 
     public boolean isFacebookLogon(){

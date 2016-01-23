@@ -18,6 +18,7 @@ import com.potatoandtomato.common.UserStateListener;
 import com.potatoandtomato.games.absint.MainScreenListener;
 import com.potatoandtomato.games.actors.chesses.enums.ChessType;
 import com.potatoandtomato.games.actors.plates.PlateLogic;
+import com.potatoandtomato.games.helpers.Sounds;
 import com.potatoandtomato.games.helpers.Threadings;
 import com.potatoandtomato.games.helpers.UpdateCode;
 import com.potatoandtomato.games.helpers.UpdateRoomHelper;
@@ -54,6 +55,7 @@ public class MainScreenLogic {
     boolean _isContinue;
     boolean _initialized;
     ArrayList<ChessType> _graveyard;
+    boolean _gameEnded;
 
     public MainScreenLogic(Services services, GameCoordinator coordinator, boolean isContinue) {
         this._services = services;
@@ -132,7 +134,7 @@ public class MainScreenLogic {
         final String firstPlayerUsername = _coordinator.getTeams().get(0).getPlayers().get(0).getName();
         final String secondPlayerUsername = _coordinator.getTeams().get(1).getPlayers().get(0).getName();
 
-        _services.getSounds().playTheme();
+        _services.getSounds().playSounds(Sounds.Name.START_GAME);
 
         _screen.fadeInScreen(0.5f, new Runnable() {
             @Override
@@ -152,7 +154,6 @@ public class MainScreenLogic {
                                         _screen.populateChessTable(_plateLogics, new Runnable() {
                                             @Override
                                             public void run() {
-                                                _screen.populateEndGameTable();
                                                 _screen.populateTopInfoTable();
                                                 setTopInfoListener();
                                                 _screen.populateTransitionTable();
@@ -167,11 +168,10 @@ public class MainScreenLogic {
                                                     }
                                                     _isContinue = false;
                                                     _initialized = true;
-                                                    _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.SUCCESS_CONTINUE, ""));
                                                 }
                                                 //only for continue game
 
-
+                                                _services.getSounds().playTheme();
                                             }
                                         });
                                     }
@@ -190,6 +190,7 @@ public class MainScreenLogic {
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 _screen.toggleTopInfo();
+                _services.getSounds().playSounds(Sounds.Name.OPEN_SLIDE);
             }
         });
     }
@@ -264,8 +265,8 @@ public class MainScreenLogic {
         try {
             JSONObject jsonObject = new JSONObject(msg);
             int code = jsonObject.getInt("code");
-            String receivedMsg = jsonObject.getString("msg");
-            String[] arr;
+            final String receivedMsg = jsonObject.getString("msg");
+            final String[] arr;
             switch (code){
                 case UpdateCode.REQUEST_GAME_INFO:
                     if(_gameInfo != null && _coordinator.getHostUserId().equals(_coordinator.getUserId())){
@@ -274,38 +275,59 @@ public class MainScreenLogic {
                     break;
                 case UpdateCode.GAME_INFO:
                     if(!_initialized){
-                        gameInfoInitialized(receivedMsg);
+                        Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                gameInfoInitialized(receivedMsg);
+                            }
+                        });
                         _initialized = true;
                     }
                     break;
                 case UpdateCode.CHESS_SELECTED:
                     if(!senderId.equals(_coordinator.getUserId()) && _initialized){
                         arr = receivedMsg.split(",");
-                        _plateLogics[Integer.valueOf(arr[0])][Integer.valueOf(arr[1])].clearAllSelectedExceptSelf();
-                        _plateLogics[Integer.valueOf(arr[0])][Integer.valueOf(arr[1])].setSelected(true);
+                        Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                _plateLogics[Integer.valueOf(arr[0])][Integer.valueOf(arr[1])].clearAllSelectedExceptSelf();
+                                _plateLogics[Integer.valueOf(arr[0])][Integer.valueOf(arr[1])].setSelected(true);
+                            }
+                        });
+
                     }
                     break;
                 case UpdateCode.CHESS_OPEN_FULL:
                     if(!senderId.equals(_coordinator.getUserId()) && _initialized) {
                         arr = receivedMsg.split(",");
-                        _plateLogics[Integer.valueOf(arr[0])][Integer.valueOf(arr[1])].openChess();
+                        Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                _plateLogics[Integer.valueOf(arr[0])][Integer.valueOf(arr[1])].openChess(false);
+                            }
+                        });
                     }
                     break;
                 case UpdateCode.CHESS_MOVE:
                     if(!senderId.equals(_coordinator.getUserId()) && _initialized) {
                         arr = receivedMsg.split("\\|");
-                        String[] from = arr[0].split(",");
-                        String[] to = arr[1].split(",");
-                        String winner = arr[2];
+                        final String[] from = arr[0].split(",");
+                        final String[] to = arr[1].split(",");
+                        final String winner = arr[2];
+                        Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                _plateLogics[Integer.valueOf(to[0])][Integer.valueOf(to[1])].moveChessToThis(
+                                        _plateLogics[Integer.valueOf(from[0])][Integer.valueOf(from[1])], true, Integer.valueOf(winner), false
+                                );
+                            }
+                        });
 
-                        _plateLogics[Integer.valueOf(to[0])][Integer.valueOf(to[1])].moveChessToThis(
-                                _plateLogics[Integer.valueOf(from[0])][Integer.valueOf(from[1])], true, Integer.valueOf(winner), false
-                        );
                     }
                     break;
                 case UpdateCode.REQUEST_GAME_DATA:
                     if(!_isContinue){
-                        _screen.setPaused(true);
+                        _screen.setPaused(true, _isMyTurn);
                         saveGameDataToJson(new Runnable() {
                             @Override
                             public void run() {
@@ -316,11 +338,18 @@ public class MainScreenLogic {
                     break;
                 case UpdateCode.SAVED_GAME_DATA:
                     if(_isContinue){
-                        continueGame();
+                        Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                continueGame();
+                            }
+                        });
+                        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.SUCCESS_CONTINUE, ""));
+
                     }
                     break;
                 case UpdateCode.SUCCESS_CONTINUE:
-                    _screen.setPaused(false);
+                    _screen.setPaused(false, _isMyTurn);
                     break;
             }
 
@@ -360,7 +389,7 @@ public class MainScreenLogic {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        _coordinator.getFirebase().child(_coordinator.getId()).child("info").setValue(jsonObject.toString(), new Firebase.CompletionListener() {
+        _coordinator.getFirebase().child(_coordinator.getRoomId()).child("info").setValue(jsonObject.toString(), new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 onFinish.run();
@@ -369,7 +398,7 @@ public class MainScreenLogic {
     }
 
     private void continueGame(){
-        Firebase ref = _coordinator.getFirebase().child(_coordinator.getId()).child("info");
+        Firebase ref = _coordinator.getFirebase().child(_coordinator.getRoomId()).child("info");
 
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -397,7 +426,7 @@ public class MainScreenLogic {
                                         PlateSimple plateSimple = platesSimple[col][row];
                                         PlateLogic plateLogic = new PlateLogic(_plateLogics, col, row,
                                                 _services.getAssets(), _services.getBattleReference(), _coordinator,
-                                                plateSimple.getChessType(), meIsYellow(), _mainScreenListener);
+                                                plateSimple.getChessType(), meIsYellow(), _services.getSounds(), _mainScreenListener);
                                         if(plateSimple.isOpen()){
                                             plateLogic.setOpened(true);
                                             plateLogic.getChessActor().openChess(false);
@@ -448,7 +477,7 @@ public class MainScreenLogic {
                 ChessType chessType = chessTypes.get(i);
                 PlateLogic plateLogic = new PlateLogic(_plateLogics, col, row,
                         _services.getAssets(), _services.getBattleReference(), _coordinator, chessType, meIsYellow(),
-                        _mainScreenListener);
+                        _services.getSounds(), _mainScreenListener);
                 _plateLogics[col][row] = plateLogic;
                 i++;
             }
@@ -487,14 +516,26 @@ public class MainScreenLogic {
     }
 
     public void showEndGameOverlay(final boolean won){
+        if(_gameEnded) return;
+
+        _gameEnded = true;
+        _screen.populateEndGameTable();
         Threadings.delay(1000, new Runnable() {
             @Override
             public void run() {
                 _screen.showEndGameTable(won);
-                Threadings.delay(5000, new Runnable() {
+                _services.getSounds().stopTheme();
+                _services.getSounds().playSounds(won ? Sounds.Name.WIN : Sounds.Name.LOSE);
+                Threadings.delay(2000, new Runnable() {
                     @Override
                     public void run() {
-                        _coordinator.endGame();
+                        _screen.getEndGameRootTable().addListener(new ClickListener(){
+                            @Override
+                            public void clicked(InputEvent event, float x, float y) {
+                                super.clicked(event, x, y);
+                                _coordinator.endGame();
+                            }
+                        });
                     }
                 });
 

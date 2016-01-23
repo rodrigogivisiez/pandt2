@@ -20,12 +20,14 @@ import com.potatoandtomato.common.Status;
 public class ImageLoader {
 
     private Downloader _downloader;
+    private Broadcaster _broadcaster;
 
-    public ImageLoader() {
+    public ImageLoader(Broadcaster broadcaster) {
 
+        _broadcaster = broadcaster;
         _downloader = new Downloader();
 
-        Broadcaster.getInstance().subscribe(BroadcastEvent.LOAD_IMAGE_REQUEST, new BroadcastListener<String>() {
+        _broadcaster.subscribe(BroadcastEvent.LOAD_IMAGE_REQUEST, new BroadcastListener<String>() {
             @Override
             public void onCallback(String url, Status st) {
                 downloadImage(url);
@@ -68,7 +70,7 @@ public class ImageLoader {
             @Override
             public void run() {
                 Pair<String, Texture> pair = new Pair(url, image);
-                Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_IMAGE_RESPONSE, pair, Status.SUCCESS);
+                _broadcaster.broadcast(BroadcastEvent.LOAD_IMAGE_RESPONSE, pair, Status.SUCCESS);
             }
         });
     }
@@ -78,7 +80,7 @@ public class ImageLoader {
             @Override
             public void run() {
                 Pair<String, Texture> pair = new Pair(url, null);
-                Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_IMAGE_RESPONSE, pair, Status.FAILED);
+                _broadcaster.broadcast(BroadcastEvent.LOAD_IMAGE_RESPONSE, pair, Status.FAILED);
             }
         });
     }

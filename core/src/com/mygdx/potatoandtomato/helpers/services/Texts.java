@@ -15,7 +15,7 @@ public class Texts {
     public String socialLoginProcessing() { return "Logging in...";}
     public String socialLoginFailed() { return "Login with Facebook failed... \nTry again?";}
     public String creatingUser() { return "Creating new user profile..."; }
-    public String failedRetrieveProfile() { return "Failed to retrieve user profile, try again?"; }
+    public String failedRetrieveProfile() { return "Failed to retrieve data from server, please check your connection and try again."; }
     public String loginProcessing() { return "Logging in..."; }
 
     public String build() {return "Build %s";}
@@ -104,7 +104,10 @@ public class Texts {
 
     public String confirmQuit() { return "Are you sure you want to quit Potato and Tomato?";}
 
-    public String loadGameFailed() { return "Some players failed to load the game.";}
+    public String loadGameFailed() { return "Other players have failed to load the game.";}
+    public String youLoadGameFailed() { return "You have failed to load the game.";}
+    public String playerLeftCauseGameCancel() { return "Game has cancelled because of players left room.";}
+
     public String gameStarted() { return "Game started.";}
     public String gameEnded() { return "Game ended.";}
     public String waitingHost() { return "Waiting For Host";}

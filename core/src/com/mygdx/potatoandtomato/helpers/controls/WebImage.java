@@ -29,9 +29,10 @@ public class WebImage extends Table implements Disposable {
     private Assets _assets;
     private Image _image;
     private Table _root;
+    private Broadcaster _broadcaster;
 
-    public WebImage(String url, Assets assets) {
-
+    public WebImage(String url, Assets assets, Broadcaster broadcaster) {
+        _broadcaster = broadcaster;
         _assets = assets;
         this._url = url;
 
@@ -42,23 +43,22 @@ public class WebImage extends Table implements Disposable {
 
         new DummyButton(this, _assets);
 
-        Broadcaster.getInstance().subscribe(BroadcastEvent.LOAD_IMAGE_RESPONSE, new BroadcastListener<Pair<String, Texture>>() {
+        _broadcaster.subscribe(BroadcastEvent.LOAD_IMAGE_RESPONSE, new BroadcastListener<Pair<String, Texture>>() {
             @Override
             public void onCallback(Pair<String, Texture> obj, Status st) {
-                if(obj.getFirst().equals(_url)){
-                    if(st == Status.SUCCESS){
+                if (obj.getFirst().equals(_url)) {
+                    if (st == Status.SUCCESS) {
                         _tempTexture = obj.getSecond();
                         requestReceived();
-                    }
-                    else{
+                    } else {
                         requestFailed();
                     }
-                    Broadcaster.getInstance().unsubscribe(this.getId());
+                    _broadcaster.unsubscribe(this.getId());
                 }
             }
         });
 
-        Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_IMAGE_REQUEST, url);
+        _broadcaster.broadcast(BroadcastEvent.LOAD_IMAGE_REQUEST, url);
 
     }
 

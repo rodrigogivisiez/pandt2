@@ -48,59 +48,34 @@ public abstract class GamingKit {
     }
 
 
-    public void onConnectionChanged(final boolean connected){
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                for(ConnectionChangedListener listener : _connectionChangedListeners.values()){
-                    listener.onChanged(connected ? ConnectionChangedListener.ConnectStatus.CONNECTED : ConnectionChangedListener.ConnectStatus.DISCONNECTED);
-                }
-            }
-        });
+    public void onConnectionChanged(boolean connected){
+        for(ConnectionChangedListener listener : _connectionChangedListeners.values()){
+            listener.onChanged(connected ? ConnectionChangedListener.ConnectStatus.CONNECTED : ConnectionChangedListener.ConnectStatus.DISCONNECTED);
+        }
     }
 
     public void onRoomJoined(final String roomId){
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                for(JoinRoomListener listener : _joinRoomListeners.values()){
-                    listener.onRoomJoined(roomId);
-                }
-            }
-        });
+        for(JoinRoomListener listener : _joinRoomListeners.values()){
+            listener.onRoomJoined(roomId);
+        }
     }
 
     public void onJoinRoomFail(){
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                for(JoinRoomListener listener : _joinRoomListeners.values()){
-                    listener.onJoinRoomFailed();
-                }
-            }
-        });
+        for(JoinRoomListener listener : _joinRoomListeners.values()){
+            listener.onJoinRoomFailed();
+        }
     }
 
     public void onUpdateRoomMatesReceived(final int code, final String msg, final String senderId){
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                for(UpdateRoomMatesListener listener : _updateRoomMatesListeners.values()){
-                    listener.onUpdateRoomMatesReceived(code, msg, senderId);
-                }
-            }
-        });
+        for(UpdateRoomMatesListener listener : _updateRoomMatesListeners.values()){
+            listener.onUpdateRoomMatesReceived(code, msg, senderId);
+        }
     }
 
     public void onRoomMessageReceived(final ChatMessage msg, final String senderId){
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                for(MessagingListener listener : _messagingListeners.values()){
-                    listener.onRoomMessageReceived(msg, senderId);
-                }
-            }
-        });
+        for(MessagingListener listener : _messagingListeners.values()) {
+            listener.onRoomMessageReceived(msg, senderId);
+        }
     }
 
     public HashMap<String, ConnectionChangedListener> getConnectionChangedListeners() {

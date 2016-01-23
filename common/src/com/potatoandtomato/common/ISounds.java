@@ -13,4 +13,6 @@ public interface ISounds {
 
     void playMusic(Music music);
     void playSound(Sound sound);
+
+    void setVolume(float volume);
 }

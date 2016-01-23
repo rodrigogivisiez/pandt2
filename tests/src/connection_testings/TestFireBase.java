@@ -271,39 +271,6 @@ public class TestFireBase extends TestAbstract {
     }
 
     @Test
-    public void TestSaveRoomNotification(){
-        final boolean[] waiting = {true};
-        final Room r = MockModel.mockRoom(null);
-        r.setOpen(true);
-
-        databases.saveRoom(r, true,  new DatabaseListener<String>() {
-            @Override
-            public void onCallback(String obj, Status st) {
-                waiting[0] = false;
-            }
-        });
-
-
-
-
-        while (waiting[0]){
-            Threadings.sleep(100);
-        }
-
-        Threadings.delay(15000, new Runnable() {
-            @Override
-            public void run() {
-                databases.offline();
-            }
-        });
-
-
-        while (true){}
-
-    }
-
-
-    @Test
     public void TestMonitorAllRoomOnDisconnected() {
 
         final boolean[] waiting = {true};
@@ -500,7 +467,7 @@ public class TestFireBase extends TestAbstract {
         }
         Threadings.sleep(1000);
 
-        Assert.assertEquals(2, trigger[0]);
+        Assert.assertEquals(1, trigger[0]);
 
     }
 
@@ -577,7 +544,6 @@ public class TestFireBase extends TestAbstract {
                 Assert.assertEquals(1, obj.size());
                 GameHistory history = obj.get(0);
                 Assert.assertEquals(false, history.getCreationDateLong() == null);
-                Assert.assertEquals(anotherProfile.getGameName(), history.getPlayedWith().getGameName());
                 Assert.assertEquals(true, Integer.valueOf(history.getCreationDateAgo().replace("s ago", "")) < 30);
                 waiting[0] = false;
             }

@@ -12,6 +12,9 @@ import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.potatoandtomato.common.*;
 import javafx.geometry.Pos;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -19,19 +22,21 @@ import java.net.URLClassLoader;
 public class DesktopLauncher {
 
 	private static ImageLoader _imageLoader;
+	public static Broadcaster _broadcaster;
 
 	public static void main (String[] arg) {
 
-		_imageLoader = new ImageLoader();
+		_broadcaster = new Broadcaster();
+		_imageLoader = new ImageLoader(_broadcaster);
 
 		if(arg.length > 0){
 			Terms.PREF_NAME = arg[0];
 		}
 
-		Broadcaster.getInstance().subscribe(BroadcastEvent.LOGIN_GCM_REQUEST, new BroadcastListener() {
+		_broadcaster.subscribe(BroadcastEvent.LOGIN_GCM_REQUEST, new BroadcastListener() {
 			@Override
 			public void onCallback(Object obj, Status st) {
-				Broadcaster.getInstance().broadcast(BroadcastEvent.LOGIN_GCM_CALLBACK, null, Status.SUCCESS);
+				_broadcaster.broadcast(BroadcastEvent.LOGIN_GCM_CALLBACK, null, Status.SUCCESS);
 			}
 		});
 
@@ -47,13 +52,13 @@ public class DesktopLauncher {
 		settings.filterMin = Texture.TextureFilter.Linear;
 		//TexturePacker.process(settings, "../../images/ui", "../../android/assets", "ui_pack");
 
-		new LwjglApplication(new PTGame(), config);
+		new LwjglApplication(new PTGame(_broadcaster), config);
 
 		subscribeLoadGameRequest();
 	}
 
 	public static void subscribeLoadGameRequest(){
-		Broadcaster.getInstance().subscribe(BroadcastEvent.LOAD_GAME_REQUEST, new BroadcastListener<GameCoordinator>() {
+		_broadcaster.subscribe(BroadcastEvent.LOAD_GAME_REQUEST, new BroadcastListener<GameCoordinator>() {
 			@Override
 			public void onCallback(GameCoordinator obj, Status st) {
 				String jarPath = "file:///" + obj.getJarPath();
@@ -72,10 +77,10 @@ public class DesktopLauncher {
 				}
 
 				if(success){
-					Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_GAME_RESPONSE, obj, Status.SUCCESS);
+					_broadcaster.broadcast(BroadcastEvent.LOAD_GAME_RESPONSE, obj, Status.SUCCESS);
 				}
 				else{
-					Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_GAME_RESPONSE, null, Status.FAILED);
+					_broadcaster.broadcast(BroadcastEvent.LOAD_GAME_RESPONSE, null, Status.FAILED);
 				}
 
 			}

@@ -21,8 +21,11 @@ public abstract class MockGame extends Game implements IPTGame {
     SpriteBatch _spriteBatch;
     MockGamingKit _mockGamingKit;
     GameCoordinator _gameCoordinator;
+    Broadcaster _broadcaster;
 
     public MockGame(String gameId) {
+
+        _broadcaster = new Broadcaster();
 
         try {
             PrintWriter out = new PrintWriter("common_version.txt");
@@ -46,11 +49,11 @@ public abstract class MockGame extends Game implements IPTGame {
             public void userAbandoned() {
 
             }
-        },  _ref.child("gameBelongData").child(gameId), "1", new MockSoundManager());
+        },  _ref.child("gameBelongData").child(gameId), "1", new MockSoundManager(), _broadcaster);
     }
 
     public void initiateMockGamingKit(int expectedTeamCount, int eachTeamExpectedPlayers){
-        _mockGamingKit = new MockGamingKit(_gameCoordinator, expectedTeamCount, eachTeamExpectedPlayers, new Runnable() {
+        _mockGamingKit = new MockGamingKit(_gameCoordinator, expectedTeamCount, eachTeamExpectedPlayers, _broadcaster, new Runnable() {
             @Override
             public void run() {
                 onReady();

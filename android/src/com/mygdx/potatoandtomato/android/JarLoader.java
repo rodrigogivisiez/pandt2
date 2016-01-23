@@ -29,7 +29,7 @@ public class JarLoader {
     }
 
 
-    private Class<?> loadClassDynamically(String fullClassName, String fullPathToApk, Context context) throws ClassNotFoundException {
+    private Class<?> loadClassDynamically(String fullClassName, String fullPathToApk, Context context) throws ClassNotFoundException, NullPointerException {
 
         if(!new File(fullPathToApk).exists()){
             throw new NullPointerException();

@@ -8,6 +8,7 @@ import com.mygdx.potatoandtomato.helpers.controls.Chat;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.helpers.controls.Notification;
 import com.mygdx.potatoandtomato.helpers.services.*;
+import com.potatoandtomato.common.Broadcaster;
 
 /**
  * Created by SiongLeng on 6/12/2015.
@@ -31,11 +32,12 @@ public class Services {
     IUploader _uploader;
     Sounds _sounds;
     VersionControl _versionControl;
+    Broadcaster _broadcaster;
 
     public Services(Assets assets, Texts texts, Preferences preferences,
                     Profile profile, IDatabase database, Shaders shaders, GamingKit gamingKit, IDownloader downloader,
                     Chat chat, Socials socials, GCMSender gcmSender, Confirm confirm, Notification notification,
-                    Recorder recorder, IUploader uploader, Sounds sounds, VersionControl versionControl) {
+                    Recorder recorder, IUploader uploader, Sounds sounds, VersionControl versionControl, Broadcaster broadcaster) {
         _texts = texts;
         _assets = assets;
         _preferences = preferences;
@@ -53,6 +55,15 @@ public class Services {
         _uploader = uploader;
         _sounds = sounds;
         _versionControl = versionControl;
+        _broadcaster = broadcaster;
+    }
+
+    public Broadcaster getBroadcaster() {
+        return _broadcaster;
+    }
+
+    public void setBroadcaster(Broadcaster _broadcaster) {
+        this._broadcaster = _broadcaster;
     }
 
     public VersionControl getVersionControl() {

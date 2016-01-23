@@ -19,6 +19,8 @@ import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Broadcaster;
 import com.potatoandtomato.common.Status;
+import com.shaded.fasterxml.jackson.core.JsonProcessingException;
+import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 import org.shaded.apache.http.conn.routing.BasicRouteDirector;
 
 public class GcmMessageHandler extends GcmListenerService {
@@ -31,17 +33,28 @@ public class GcmMessageHandler extends GcmListenerService {
         String message = data.getString("message");
         PushNotification pushNotification = new PushNotification(message);
         if(pushNotification.getId() == PushCode.DESTROY_ROOM){
-            RoomAliveHelper.getInstance().dispose();
+            Intent i = new Intent();
+            i.setClass(this, RoomAliveReceiver.class);
+            i.setAction("RELEASE");
+            this.sendBroadcast(i);
         }
-        else if(pushNotification.getId() == PushCode.UPDATE_ROOM && !RoomAliveHelper.getInstance().isActivated()){
-            RoomAliveHelper.getInstance().activate(pushNotification);
+        else if(pushNotification.getId() == PushCode.UPDATE_ROOM && !RoomAliveHelper.isActivated()){
+            try {
+                Intent i = new Intent();
+                i.setClass(this, RoomAliveReceiver.class);
+                i.setAction("KEEP");
+                ObjectMapper mapper = new ObjectMapper();
+                i.putExtra("push", mapper.writeValueAsString(pushNotification));
+                this.sendBroadcast(i);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
         }
         else{
             showNotification(this, new PushNotification(message));
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void showNotification(Context context, PushNotification pushNotification){
         Intent intent = new Intent(context, HandleNotificationBroadcastReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,

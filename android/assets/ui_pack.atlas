@@ -544,6 +544,15 @@ wood_bg_small
   orig: 140, 119
   offset: 0, 0
   index: -1
+wood_bg_small_patch
+  rotate: false
+  xy: 1682, 199
+  size: 140, 119
+  split: 30, 21, 17, 17
+  pad: 13, 14, 0, 13
+  orig: 140, 119
+  offset: 0, 0
+  index: -1
 wood_bg_tall
   rotate: false
   xy: 1530, 344

@@ -31,6 +31,7 @@ public class GCMClientManager {
     private String regid;
     private final String projectNumber = "171699917132";
     private Activity activity;
+    private Broadcaster broadcaster;
 
     public static abstract class RegistrationCompletedHandler {
         public abstract void onSuccess(String registrationId, boolean isNewRegistration);
@@ -42,25 +43,27 @@ public class GCMClientManager {
         }
     }
 
-    public GCMClientManager(Activity activity) {
-        this.activity = activity;;
+    public GCMClientManager(Activity activity, Broadcaster broadcaster) {
+        this.activity = activity;
+        this.broadcaster = broadcaster;
         this.gcm = GoogleCloudMessaging.getInstance(activity);
         registerBroadcastListener();
     }
 
     private void registerBroadcastListener(){
-        Broadcaster.getInstance().subscribe(BroadcastEvent.LOGIN_GCM_REQUEST, new BroadcastListener() {
+        broadcaster.subscribe(BroadcastEvent.LOGIN_GCM_REQUEST, new BroadcastListener() {
             @Override
             public void onCallback(Object obj, Status st) {
                 registerIfNeeded(new RegistrationCompletedHandler() {
                     @Override
                     public void onSuccess(String registrationId, boolean isNewRegistration) {
-                        Broadcaster.getInstance().broadcast(BroadcastEvent.LOGIN_GCM_CALLBACK, registrationId, Status.SUCCESS);
+                        broadcaster.broadcast(BroadcastEvent.LOGIN_GCM_CALLBACK, registrationId, Status.SUCCESS);
                     }
+
                     @Override
                     public void onFailure(String ex) {
                         super.onFailure(ex);
-                        Broadcaster.getInstance().broadcast(BroadcastEvent.LOGIN_GCM_CALLBACK, null, Status.FAILED);
+                        broadcaster.broadcast(BroadcastEvent.LOGIN_GCM_CALLBACK, null, Status.FAILED);
                     }
                 });
             }

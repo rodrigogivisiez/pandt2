@@ -30,5 +30,5 @@ public class BroadcastEvent {
     public static final int SHOW_NATIVE_KEYBOARD = 27; //show native keepboard
     public static final int NATIVE_TEXT_CHANGED = 28; //native text change notify libgdx
     public static final int LIBGDX_TEXT_CHANGED = 29; //libgdx text change notify native
-
+    public static final int VIBRATE_DEVICE = 30; //request to vibrate device
 }

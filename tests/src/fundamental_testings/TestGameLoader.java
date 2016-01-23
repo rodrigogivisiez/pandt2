@@ -78,8 +78,11 @@ public class TestGameLoader extends TestAbstract{
 
         waiting[0] = true;
 
+        Broadcaster broadcaster = new Broadcaster();
+
+        DesktopLauncher._broadcaster = broadcaster;
         DesktopLauncher.subscribeLoadGameRequest();
-        Broadcaster.getInstance().subscribe(BroadcastEvent.LOAD_GAME_RESPONSE, new BroadcastListener<GameCoordinator>() {
+        broadcaster.subscribe(BroadcastEvent.LOAD_GAME_RESPONSE, new BroadcastListener<GameCoordinator>() {
             @Override
             public void onCallback(GameCoordinator obj, Status st) {
                 //Assert.assertEquals(false, obj == null);
@@ -90,8 +93,8 @@ public class TestGameLoader extends TestAbstract{
 
         GameCoordinator gameCoordinator = new GameCoordinator(game.getFullLocalJarPath(),
                                         game.getLocalAssetsPath(), game.getBasePath(), new ArrayList<Team>(), Positions.getWidth(),
-                                        Positions.getHeight(), null, null, "123", mock(IGameSandBox.class), null, "1");
-        Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_GAME_REQUEST, gameCoordinator);
+                                        Positions.getHeight(), null, null, "123", mock(IGameSandBox.class), null, "1", mock(ISounds.class), broadcaster);
+        broadcaster.broadcast(BroadcastEvent.LOAD_GAME_REQUEST, gameCoordinator);
 
         while (waiting[0]){
             Threadings.sleep(100);

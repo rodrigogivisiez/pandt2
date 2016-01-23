@@ -23,7 +23,7 @@ public class Entrance extends GameEntrance {
 
         Assets assets = new Assets(gameCoordinator);
         assets.loadAll(null);
-        _services =  new Services(assets, new Texts(), new Sounds(assets), new BattleReference());
+        _services =  new Services(assets, new Texts(), new Sounds(assets, gameCoordinator), new BattleReference());
 
     }
 
@@ -43,7 +43,7 @@ public class Entrance extends GameEntrance {
 
     @Override
     public void dispose() {
-
+        _services.getSounds().dispose();
     }
 
 

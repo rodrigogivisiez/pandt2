@@ -1,5 +1,6 @@
 package scene_testings;
 
+import abstracts.MockGamingKit;
 import abstracts.TestAbstract;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.mygdx.potatoandtomato.PTScreen;
@@ -36,9 +37,16 @@ public class TestInvite extends TestAbstract {
 
     @Test
     public void testToggleUsersAndSendInvitations(){
-        Services services = T_Services.mockServices();
+        final Services services = T_Services.mockServices();
         services.setGcmSender(mock(GCMSender.class));
         services.setChat(mock(Chat.class));
+        services.setGamingKit(new MockGamingKit(){
+            @Override
+            public void sendRoomMessage(ChatMessage msg) {
+                super.sendRoomMessage(msg);
+                services.getChat().add(msg, false);
+            }
+        });
 
         InviteLogic logic = new InviteLogic(mock(PTScreen.class), services, MockModel.mockRoom("1"));
         logic.onInit();

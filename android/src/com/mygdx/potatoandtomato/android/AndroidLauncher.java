@@ -1,21 +1,19 @@
 package com.mygdx.potatoandtomato.android;
 
-import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.firebase.client.Firebase;
 import com.mygdx.potatoandtomato.PTGame;
-import com.mygdx.potatoandtomato.models.NativeLibgdxTextInfo;
 import com.potatoandtomato.common.*;
+
+import java.io.Serializable;
 
 public class AndroidLauncher extends AndroidApplication {
 
@@ -26,7 +24,9 @@ public class AndroidLauncher extends AndroidApplication {
 	private ImageLoader _imageLoader;
 	private LayoutChangedFix _layoutChangedFix;
 	private TextFieldFix _textFieldFix;
+	private VibrateManager _vibrator;
 	private View _view;
+	private Broadcaster _broadcaster;
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
@@ -37,36 +37,49 @@ public class AndroidLauncher extends AndroidApplication {
 		_this = this;
 		reset();
 
-		RoomAliveHelper.getInstance().setContext(this);
-		RoomAliveHelper.getInstance().dispose();
-
-		_imageLoader = new ImageLoader(_this);
-		_facebookConnector = new FacebookConnector(this);
-		_gcm = new GCMClientManager(this);
+		_broadcaster = new Broadcaster();
+		_vibrator = new VibrateManager(_this, _broadcaster);
+		_imageLoader = new ImageLoader(_this, _broadcaster);
+		_facebookConnector = new FacebookConnector(this, _broadcaster);
+		_gcm = new GCMClientManager(this, _broadcaster);
 		Firebase.setAndroidContext(this);
-		_layoutChangedFix = new LayoutChangedFix(this.getWindow().getDecorView().getRootView());
+		_layoutChangedFix = new LayoutChangedFix(this.getWindow().getDecorView().getRootView(), _broadcaster);
 
 
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-		_view = initializeForView(new PTGame(), config);
-		_textFieldFix = new TextFieldFix(this, (EditText) findViewById(R.id.dummyText), _view);
+		_view = initializeForView(new PTGame(_broadcaster), config);
+		_textFieldFix = new TextFieldFix(this, (EditText) findViewById(R.id.dummyText), _view, _broadcaster);
 		lg.addView(_view);
 
 		subscribeLoadGameRequest();
+		roomAliveRelated();
 
 	}
 
+	private void roomAliveRelated(){
+		_broadcaster.subscribe(BroadcastEvent.DESTROY_ROOM, new BroadcastListener() {
+			@Override
+			public void onCallback(Object obj, Status st) {
+				RoomAliveHelper.dispose(_this);
+			}
+		});
+	}
+
+
 	public void subscribeLoadGameRequest(){
-		Broadcaster.getInstance().subscribe(BroadcastEvent.LOAD_GAME_REQUEST, new BroadcastListener<GameCoordinator>() {
+		_broadcaster.subscribe(BroadcastEvent.LOAD_GAME_REQUEST, new BroadcastListener<GameCoordinator>() {
 			@Override
 			public void onCallback(GameCoordinator obj, Status st) {
 				JarLoader loader = new JarLoader(_this);
 				try {
 					obj = loader.load(obj);
-					Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_GAME_RESPONSE, obj, Status.SUCCESS);
+					_broadcaster.broadcast(BroadcastEvent.LOAD_GAME_RESPONSE, obj, Status.SUCCESS);
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
-					Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_GAME_RESPONSE, null, Status.FAILED);
+					_broadcaster.broadcast(BroadcastEvent.LOAD_GAME_RESPONSE, null, Status.FAILED);
+				}catch (NullPointerException e){
+					e.printStackTrace();
+					_broadcaster.broadcast(BroadcastEvent.LOAD_GAME_RESPONSE, null, Status.FAILED);
 				}
 
 			}
@@ -74,8 +87,7 @@ public class AndroidLauncher extends AndroidApplication {
 	}
 
 	private void reset(){
-		Broadcaster.getInstance().dispose();
-		RoomAliveHelper.getInstance().dispose();
+		RoomAliveHelper.dispose(_this);
 	}
 
 	@Override
@@ -83,6 +95,21 @@ public class AndroidLauncher extends AndroidApplication {
 		super.onActivityResult(requestCode, resultCode, data);
 		_facebookConnector.getCallbackManager().onActivityResult(requestCode,
 				resultCode, data);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+
+		RoomAliveHelper.save(outState);
+
+	}
+
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+
+		RoomAliveHelper.restore(savedInstanceState);
 	}
 
 	@Override
@@ -127,6 +154,7 @@ public class AndroidLauncher extends AndroidApplication {
 		return _isVisible;
 	}
 
-
-
+	public Broadcaster getBroadcaster() {
+		return _broadcaster;
+	}
 }

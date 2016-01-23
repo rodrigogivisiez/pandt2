@@ -3,60 +3,77 @@ package com.potatoandtomato.games;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.potatoandtomato.common.*;
+import com.sun.xml.internal.ws.api.ha.StickyFeature;
+
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.delay;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 /**
  * Created by SiongLeng on 25/12/2015.
  */
 public class SampleScreen extends GameScreen {
 
-    private Image _image;
-    private Image _image2;
-    private Image _surrenderImg;
+    private Table _imgTable;
+    private Image _surrenderImg, _exitImg;
     private Stage _stage;
-    Texture _texture1, _texture2, _surrenderTexture;
-    Music _themeMusic;
+    Texture _surrenderTexture, _exitTexture;
+    private int _index;
+    private Assets _assets;
+    private Music _currentMusic;
+    private Label _label;
 
-    public SampleScreen(GameCoordinator gameCoordinator) {
+    public SampleScreen(GameCoordinator gameCoordinator, Assets assets) {
         super(gameCoordinator);
+
+        _assets = assets;
+        _index = 1;
 
         _stage = new Stage(new StretchViewport(getCoordinator().getGameWidth(), getCoordinator().getGameHeight()),
                 gameCoordinator.getSpriteBatch());
 
-        _texture1 = new Texture(getCoordinator().getFileH("test.png"));
-        _texture2 = new Texture(getCoordinator().getFileH("test2.png"));
         _surrenderTexture = new Texture(getCoordinator().getFileH("surrender.png"));
-        _image = new Image(_texture1);
-        _image2 = new Image(_texture2);
+        _exitTexture = new Texture(getCoordinator().getFileH("exit.png"));
         _surrenderImg = new Image(_surrenderTexture);
-        _themeMusic = Gdx.audio.newMusic(getCoordinator().getFileH("theme.mp3"));
-        _themeMusic.isLooping();
-        gameCoordinator.getSoundManager().addMusic(_themeMusic);
-        gameCoordinator.getSoundManager().playMusic(_themeMusic);
+        _exitImg = new Image(_exitTexture);
 
-        _image.addListener(new ClickListener(){
+        Table table = new Table();
+        table.padBottom(70);
+        table.setFillParent(true);
+        _imgTable = new Table();
+
+        table.add(_imgTable).expand().fill();
+        table.row();
+        table.add(_surrenderImg).padTop(30).size(100, 30);
+        table.row();
+        table.add(_exitImg).padTop(30).size(100, 30);
+
+        _stage.addActor(table);
+        getCoordinator().addInputProcessor(_stage);
+
+
+        table.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                getCoordinator().endGame();
-            }
-        });
-
-        _image2.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                getCoordinator().sendRoomUpdate("2");
+                next();
             }
         });
 
@@ -68,37 +85,61 @@ public class SampleScreen extends GameScreen {
             }
         });
 
+        _exitImg.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                getCoordinator().endGame();
+            }
+        });
+
         gameCoordinator.addInGameUpdateListener(new InGameUpdateListener() {
             @Override
             public void onUpdateReceived(String msg, String userId) {
-                switchImage(msg);
+                goTo(Integer.valueOf(msg));
+            }
+        });
+
+        goTo(_index);
+
+    }
+
+    private void next(){
+        _index++;
+        if(_index > 14) _index = 1;
+        getCoordinator().sendRoomUpdate(String.valueOf(_index));
+    }
+
+    private void goTo(final int i){
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _index = i;
+                _imgTable.clear();
+
+                if(_currentMusic != null){
+                    _currentMusic.stop();
+                }
+
+                _currentMusic = _assets.getMusic(i);
+                _currentMusic.setLooping(true);
+                getCoordinator().getSoundManager().addMusic(_currentMusic);
+                getCoordinator().getSoundManager().playMusic(_currentMusic);
+
+                Image image = new Image(_assets.getTexture(i));
+                image.getColor().a = 0;
+                _imgTable.add(image).expandX().fillX();
+
+                image.addAction(sequence(delay(15f), fadeIn(3f)));
             }
         });
 
     }
 
-    private void switchImage(String shownImage){
-        if(shownImage.equals("1")){
-            _image.getColor().a = 1;
-            _image2.getColor().a = 0;
-        }
-        else if(shownImage.equals("2")){
-            _image.getColor().a = 0;
-            _image2.getColor().a = 1;
-        }
-    }
 
     @Override
     public void show() {
-        Table table = new Table();
-        table.setFillParent(true);
-        table.add(_image).expandX().fillX().height(300);
-        table.add(_image2).expandX().fillX().height(300);
-        switchImage("2");
-        table.row();
-        table.add(_surrenderImg).colspan(2).padTop(30);
-        _stage.addActor(table);
-        getCoordinator().addInputProcessor(_stage);
+
     }
 
     @Override
@@ -135,9 +176,6 @@ public class SampleScreen extends GameScreen {
     @Override
     public void dispose() {
         _stage.dispose();
-        _texture2.dispose();
-        _texture1.dispose();
         _surrenderTexture.dispose();
-        getCoordinator().getSoundManager().disposeMusic(_themeMusic);
     }
 }

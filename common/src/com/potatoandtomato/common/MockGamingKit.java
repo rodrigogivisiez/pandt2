@@ -26,11 +26,13 @@ public class MockGamingKit {
     private int _expectedTeamCount, _eachTeamExpectedPlayers;
     private Runnable _onReady;
     private GameCoordinator _coordinator;
+    private Broadcaster _broadcaster;
 
 
     public MockGamingKit(GameCoordinator coordinator, int expectedTeamCount,
-                         int eachTeamExpectedPlayers, Runnable onReady) {
+                         int eachTeamExpectedPlayers, Broadcaster broadcaster, Runnable onReady) {
         this._onReady = onReady;
+        this._broadcaster = broadcaster;
         this._expectedTeamCount = expectedTeamCount;
         this._eachTeamExpectedPlayers = eachTeamExpectedPlayers;
         this._coordinator = coordinator;
@@ -65,7 +67,7 @@ public class MockGamingKit {
         _userId = String.valueOf(unixTime);
         _warpInstance.connectWithUserName(_userId);
 
-        Broadcaster.getInstance().subscribe(BroadcastEvent.INGAME_UPDATE_REQUEST, new BroadcastListener<String>() {
+        _broadcaster.subscribe(BroadcastEvent.INGAME_UPDATE_REQUEST, new BroadcastListener<String>() {
             @Override
             public void onCallback(String msg, Status st) {
                 JSONObject jsonObject = new JSONObject();
@@ -127,7 +129,7 @@ public class MockGamingKit {
             String update = new String(updateEvent.getUpdate());
             try {
                 JSONObject updateJson = new JSONObject(update);
-                Broadcaster.getInstance().broadcast(BroadcastEvent.INGAME_UPDATE_RESPONSE,
+                _broadcaster.broadcast(BroadcastEvent.INGAME_UPDATE_RESPONSE,
                         new InGameUpdateMessage(updateJson.getString("userId"), updateJson.getString("msg")));
             } catch (JSONException e) {
                 e.printStackTrace();

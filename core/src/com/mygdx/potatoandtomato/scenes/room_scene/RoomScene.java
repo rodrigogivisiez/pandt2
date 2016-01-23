@@ -100,7 +100,7 @@ public class RoomScene extends SceneAbstract {
     }
 
     public void populateGameDetails(Game game){
-        WebImage gameImg = new WebImage(game.getIconUrl(), _assets);
+        WebImage gameImg = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster());
 
         Label.LabelStyle titleStyle = new Label.LabelStyle();
         titleStyle.font = _assets.getWhitePizza2BlackS();
@@ -141,10 +141,10 @@ public class RoomScene extends SceneAbstract {
 
             Table teamTable = new Table();
             new DummyButton(teamTable, _assets);
-            teamTable.setBackground(new TextureRegionDrawable(_assets.getWoodBgSmall()));
+            teamTable.setBackground(totalTeams == 1 ? new NinePatchDrawable(_assets.getWoodBgSmallPatch()) : new TextureRegionDrawable(_assets.getWoodBgSmall()));
             teamTable.align(Align.top);
             teamTable.padBottom(20);
-            teamTable.add(getWoodBoardTitleTable(1, _texts.team() + " " + (i+1))).padTop(-7);
+            teamTable.add(getWoodBoardTitleTable(1, _texts.team() + " " + (i+1))).padTop(-7).colspan(totalTeams == 1 ? 2 : 1);
             teamTable.row();
 
 
@@ -166,8 +166,15 @@ public class RoomScene extends SceneAbstract {
                     playerTable = getPlayerTable(null, null, false);
                 }
 
-                teamTable.add(playerTable).expandX().fillX().padLeft(10).padRight(10).padTop(10);
-                teamTable.row();
+                if(totalTeams == 1){
+                    if(q % 2 == 0 && q != 0) teamTable.row();
+                    teamTable.add(playerTable).width(150).space(10);
+                }
+                else{
+                    teamTable.add(playerTable).expandX().fillX().padLeft(10).padRight(10).padTop(10);
+                    teamTable.row();
+                }
+
 
                 accIndex++;
             }

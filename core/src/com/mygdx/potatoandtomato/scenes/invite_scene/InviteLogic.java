@@ -50,20 +50,19 @@ public class InviteLogic extends LogicAbstract {
                 _scene.getFacebookFriendsTable());
 
         if(_services.getSocials().isFacebookLogon()){
-            Broadcaster.getInstance().subscribeOnceWithTimeout(BroadcastEvent.FACEBOOK_GET_FRIENDS_RESPONSE, 10000, new BroadcastListener<ArrayList<FacebookProfile>>() {
+            subscribeBroadcastOnceWithTimeout(BroadcastEvent.FACEBOOK_GET_FRIENDS_RESPONSE, 10000, new BroadcastListener<ArrayList<FacebookProfile>>() {
                 @Override
                 public void onCallback(ArrayList<FacebookProfile> obj, Status st) {
                     if (st == Status.SUCCESS) {
-                        if(obj.size() == 0){
+                        if (obj.size() == 0) {
                             _scene.putMessageToTable(_texts.noRecords(), _scene.getFacebookFriendsTable());
-                        }
-                        else{
-                            for(final FacebookProfile facebookProfile : obj){
+                        } else {
+                            for (final FacebookProfile facebookProfile : obj) {
                                 _services.getDatabase().getProfileByFacebookUserId(facebookProfile.getUserId(), new DatabaseListener<Profile>(Profile.class) {
                                     @Override
                                     public void onCallback(Profile profile, Status st) {
-                                        if(st == Status.SUCCESS){
-                                            if(!facebookProfile.getName().equals(profile.getDisplayName(0))){
+                                        if (st == Status.SUCCESS) {
+                                            if (!facebookProfile.getName().equals(profile.getDisplayName(0))) {
                                                 profile.setGameName(facebookProfile.getName() + " / " + profile.getDisplayName(0));
                                             }
                                             putProfileToTable(profile, _scene.getFacebookFriendsTable());
@@ -77,7 +76,7 @@ public class InviteLogic extends LogicAbstract {
                     }
                 }
             });
-            Broadcaster.getInstance().broadcast(BroadcastEvent.FACEBOOK_GET_FRIENDS_REQUEST);
+            publishBroadcast(BroadcastEvent.FACEBOOK_GET_FRIENDS_REQUEST);
         }
 
         _services.getDatabase().getPlayedHistories(_services.getProfile(), new DatabaseListener<ArrayList<GameHistory>>(GameHistory.class) {

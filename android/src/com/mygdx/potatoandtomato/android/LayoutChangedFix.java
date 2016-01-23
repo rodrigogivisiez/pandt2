@@ -18,9 +18,11 @@ public class LayoutChangedFix {
     private int width, _height;
     private SafeThread _safeThread;
     private int count;
+    private Broadcaster _broadcaster;
 
-    public LayoutChangedFix(View rootView) {
+    public LayoutChangedFix(View rootView, Broadcaster broadcaster) {
         this._rootView = rootView;
+        this._broadcaster = broadcaster;
 
         Rect rect = new Rect();
         _rootView.getWindowVisibleDisplayFrame(rect);
@@ -50,7 +52,7 @@ public class LayoutChangedFix {
 
 
     private void broadcastLayoutChanged(final float gdxHeight, final float screenHeight){
-        Broadcaster.getInstance().broadcast(BroadcastEvent.SCREEN_LAYOUT_CHANGED,
+        _broadcaster.broadcast(BroadcastEvent.SCREEN_LAYOUT_CHANGED,
                 Positions.screenYToGdxY(gdxHeight, screenHeight));
     }
 

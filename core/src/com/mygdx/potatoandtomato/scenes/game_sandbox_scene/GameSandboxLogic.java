@@ -32,6 +32,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     boolean _isContinue;
     boolean _isReady;
     boolean _gameStarted;
+    boolean _forceQuit;
 
     public GameSandboxLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
@@ -45,7 +46,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
 
     @Override
     public void onQuit(final OnQuitListener listener) {
-        listener.onResult(_gameStarted ? OnQuitListener.Result.YES : OnQuitListener.Result.NO);
+        listener.onResult(_gameStarted || _forceQuit ? OnQuitListener.Result.YES : OnQuitListener.Result.NO);
     }
 
     @Override
@@ -67,7 +68,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                 ArrayList<RoomUser> leftUsers = _room.getJustLeftUsers(obj);
                 if(leftUsers.size() > 0){
                     if(!_gameCanStart){
-                        failLoad(leftUsers);
+                        userLeftRoom();
                     }
                 }
             }
@@ -88,7 +89,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                     }
 
                 } else {
-                    failLoad(_services.getProfile());
+                    failLoad();
                 }
             }
         });
@@ -110,11 +111,11 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         Threadings.delay(1000, new Runnable() {
             @Override
             public void run() {
-                Broadcaster.getInstance().broadcast(BroadcastEvent.LOAD_GAME_REQUEST, new GameCoordinator(_room.getGame().getFullLocalJarPath(),
+                publishBroadcast(BroadcastEvent.LOAD_GAME_REQUEST, new GameCoordinator(_room.getGame().getFullLocalJarPath(),
                         _room.getGame().getLocalAssetsPath(), _room.getGame().getBasePath(), _room.convertRoomUsersToTeams(_services.getProfile()),
                         Positions.getWidth(), Positions.getHeight(), _screen.getGame(), _screen.getGame().getSpriteBatch(),
                         _services.getProfile().getUserId(), _me, _services.getDatabase().getGameBelongDatabase(_room.getGame().getAbbr()),
-                        _room.getId(), _services.getSounds()));
+                        _room.getId(), _services.getSounds(), getBroadcaster()));
             }
         });
 
@@ -129,6 +130,8 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                     public void run() {
                         while (true){
                             Threadings.sleep(3000);
+                            if(_forceQuit) return;
+
                             if(_readyUserIds.size() < _room.getRoomUsersCount() && !_gameCanStart){
                                 askForUserIsReady();
                             }
@@ -146,8 +149,10 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             Threadings.delay(60 * 1000, new Runnable() {
                 @Override
                 public void run() {
-                    if(_readyUserIds.size() < _room.getRoomUsersCount() && !_gameCanStart){
-                        failLoad(getNotReadyUsers(), false);
+                    if(_forceQuit) return;
+
+                    if(!_gameCanStart){
+                        failLoad();
                     }
                 }
             });
@@ -240,29 +245,19 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         });
     }
 
-    public void failLoad(ArrayList<RoomUser> roomUsers){
-        ArrayList<Profile> profiles = new ArrayList<Profile>();
-        for(RoomUser user : roomUsers){
-            profiles.add(user.getProfile());
-        }
-        failLoad(profiles, false);
+    public void userLeftRoom(){
+        _forceQuit = true;
+        _services.getChat().add(new ChatMessage(_texts.playerLeftCauseGameCancel(),
+                ChatMessage.FromType.IMPORTANT, null), false);
+
+        exitSandbox();
     }
 
-    public void failLoad(Profile profile){
-        ArrayList<Profile> profiles = new ArrayList<Profile>();
-        profiles.add(profile);
-        failLoad(profiles, false);
-    }
+    public void failLoad(){
+        _forceQuit = true;
+        _services.getChat().add(new ChatMessage(_isReady ? _texts.loadGameFailed() : _texts.youLoadGameFailed(),
+                ChatMessage.FromType.IMPORTANT, null), false);
 
-    public void failLoad(ArrayList<Profile> profiles, boolean dummy){
-        ArrayList<String> names = new ArrayList<String>();
-        for(Profile profile : profiles){
-            names.add(profile.getDisplayName(0));
-        }
-        if(names.size() > 0){
-            _services.getChat().add(new ChatMessage(_texts.loadGameFailed(),
-                                        ChatMessage.FromType.IMPORTANT, null), false);
-        }
        exitSandbox();
     }
 
@@ -276,7 +271,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             }
         }
         else if(code == UpdateRoomMatesCode.IN_GAME_UPDATE){
-            Broadcaster.getInstance().broadcast(BroadcastEvent.INGAME_UPDATE_RESPONSE, new InGameUpdateMessage(senderId, msg));
+            publishBroadcast(BroadcastEvent.INGAME_UPDATE_RESPONSE, new InGameUpdateMessage(senderId, msg));
         }
         else if(code == UpdateRoomMatesCode.ALL_PLAYERS_LOADED_GAME_SUCCESS){
             gameStart();
@@ -351,7 +346,10 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     public void dispose() {
         super.dispose();
         _screen.switchToPTScreen();
-        if(_coordinator.getGameEntrance() != null) _coordinator.getGameEntrance().dispose();
-        _coordinator.dispose();
+        if(_coordinator != null){
+            if(_coordinator.getGameEntrance() != null) _coordinator.getGameEntrance().dispose();
+            _coordinator.dispose();
+        }
+
     }
 }

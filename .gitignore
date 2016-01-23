@@ -63,5 +63,5 @@ build/
 ## OS Specific
 .DS_Store
 
-pt_downloads/
+.pt_downloads/
 logs/

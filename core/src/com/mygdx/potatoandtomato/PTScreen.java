@@ -31,6 +31,8 @@ import com.mygdx.potatoandtomato.scenes.game_sandbox_scene.GameSandboxLogic;
 import com.mygdx.potatoandtomato.scenes.prerequisite_scene.PrerequisiteLogic;
 import com.mygdx.potatoandtomato.scenes.room_scene.RoomLogic;
 import com.mygdx.potatoandtomato.scenes.settings_scene.SettingsLogic;
+import com.potatoandtomato.common.BroadcastEvent;
+import com.potatoandtomato.common.Broadcaster;
 
 import java.util.Stack;
 
@@ -131,8 +133,6 @@ public class PTScreen implements Screen {
                 _logicStacks.peek().getLogic().onQuit(new OnQuitListener() {
                     @Override
                     public void onResult(Result result) {
-
-                        System.out.println(_logicStacks.size());
                         if(result == Result.YES){
                             final LogicEnumPair current = _logicStacks.pop();
                             final LogicEnumPair previous = _logicStacks.peek();
@@ -175,8 +175,12 @@ public class PTScreen implements Screen {
             logicEnumPair.getLogic().onHide();
             logicEnumPair.getLogic().dispose();
         }
-        toScene(SceneEnum.BOOT);
-
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                toScene(SceneEnum.BOOT);
+            }
+        });
     }
 
     private LogicAbstract newSceneLogic(SceneEnum sceneEnum, Object... objs){
@@ -299,25 +303,35 @@ public class PTScreen implements Screen {
     }
 
     public void showRotateSunrise(){
-        Gdx.graphics.setContinuousRendering(true);
-        _sunrayImg.clearActions();
-        _sunrayImg.addAction(parallel(
-                fadeIn(1f),
-                forever(rotateBy(3, 0.15f))
-        ));
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Gdx.graphics.setContinuousRendering(true);
+                _sunrayImg.clearActions();
+                _sunrayImg.addAction(parallel(
+                        fadeIn(1f),
+                        forever(rotateBy(3, 0.15f))
+                ));
+            }
+        });
     }
 
     public void hideRotateSunrise(){
-        _sunrayImg.clearActions();
-        _sunrayImg.addAction(sequence(
-                fadeOut(1f), new Action() {
-                    @Override
-                    public boolean act(float delta) {
-                        Gdx.graphics.setContinuousRendering(false);
-                        return true;
-                    }
-                }
-        ));
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _sunrayImg.clearActions();
+                _sunrayImg.addAction(sequence(
+                        fadeOut(1f), new Action() {
+                            @Override
+                            public boolean act(float delta) {
+                                Gdx.graphics.setContinuousRendering(false);
+                                return true;
+                            }
+                        }
+                ));
+            }
+        });
     }
 
     public boolean isPTScreen() {

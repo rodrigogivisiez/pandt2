@@ -45,8 +45,8 @@ public class Downloader implements IDownloader{
                     File file = targetFile;
                     if (file.exists()) file.delete();
 
-                    if(!file.getParentFile().exists()){
-                        file.getParentFile().mkdirs();
+                    if(!file.getAbsoluteFile().getParentFile().exists()){
+                        file.getAbsoluteFile().getParentFile().mkdirs();
                     }
 
                     file.createNewFile();

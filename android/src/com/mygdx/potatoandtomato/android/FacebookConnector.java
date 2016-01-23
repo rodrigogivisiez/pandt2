@@ -29,13 +29,15 @@ public class FacebookConnector {
     Activity _activity;
     CallbackManager _callbackManager;
     AccessToken _accessToken;
+    Broadcaster _broadcaster;
 
-    public FacebookConnector(Activity activity) {
+    public FacebookConnector(Activity activity, Broadcaster broadcaster) {
         this._activity = activity;
+        this._broadcaster = broadcaster;
         FacebookSdk.sdkInitialize(_activity);
         _callbackManager = CallbackManager.Factory.create();
 
-        Broadcaster.getInstance().subscribe(BroadcastEvent.LOGIN_FACEBOOK_REQUEST, new BroadcastListener() {
+        _broadcaster.subscribe(BroadcastEvent.LOGIN_FACEBOOK_REQUEST, new BroadcastListener() {
             @Override
             public void onCallback(Object obj, Status st) {
                 registerCallBack();
@@ -45,15 +47,15 @@ public class FacebookConnector {
             }
         });
 
-        Broadcaster.getInstance().subscribe(BroadcastEvent.LOGOUT_FACEBOOK_REQUEST, new BroadcastListener() {
+        _broadcaster.subscribe(BroadcastEvent.LOGOUT_FACEBOOK_REQUEST, new BroadcastListener() {
             @Override
             public void onCallback(Object obj, Status st) {
                 LoginManager.getInstance().logOut();
-                Broadcaster.getInstance().broadcast(BroadcastEvent.LOGOUT_FACEBOOK_CALLBACK, null, Status.SUCCESS);
+                _broadcaster.broadcast(BroadcastEvent.LOGOUT_FACEBOOK_CALLBACK, null, Status.SUCCESS);
             }
         });
 
-        Broadcaster.getInstance().subscribe(BroadcastEvent.FACEBOOK_GET_FRIENDS_REQUEST, new BroadcastListener() {
+        _broadcaster.subscribe(BroadcastEvent.FACEBOOK_GET_FRIENDS_REQUEST, new BroadcastListener() {
             @Override
             public void onCallback(Object obj, Status st) {
                 getAllFriends();
@@ -82,7 +84,7 @@ public class FacebookConnector {
                                     }
                                 }
 
-                                Broadcaster.getInstance().broadcast(BroadcastEvent.FACEBOOK_GET_FRIENDS_RESPONSE,
+                                _broadcaster.broadcast(BroadcastEvent.FACEBOOK_GET_FRIENDS_RESPONSE,
                                         friendsList, Status.SUCCESS);
                             }
 
@@ -132,13 +134,13 @@ public class FacebookConnector {
                         JsonObj json = new JsonObj();
                         json.put(Terms.FACEBOOK_USERID, fbUserId);
                         json.put(Terms.FACEBOOK_USERNAME, fbUsername);
-                        Broadcaster.getInstance().broadcast(BroadcastEvent.LOGIN_FACEBOOK_CALLBACK,
+                        _broadcaster.broadcast(BroadcastEvent.LOGIN_FACEBOOK_CALLBACK,
                                 json, Status.SUCCESS);
                     }
 
                     @Override
                     public void onCancel() {
-                        Broadcaster.getInstance().broadcast(BroadcastEvent.LOGIN_FACEBOOK_CALLBACK, null, Status.SUCCESS);
+                        _broadcaster.broadcast(BroadcastEvent.LOGIN_FACEBOOK_CALLBACK, null, Status.SUCCESS);
                     }
 
                     @Override
@@ -147,11 +149,11 @@ public class FacebookConnector {
                         if (error instanceof FacebookAuthorizationException) {
                             if (AccessToken.getCurrentAccessToken() != null) {
                                 LoginManager.getInstance().logOut();
-                                Broadcaster.getInstance().broadcast(BroadcastEvent.LOGOUT_FACEBOOK_REQUEST);
+                                _broadcaster.broadcast(BroadcastEvent.LOGOUT_FACEBOOK_REQUEST);
                             }
                         }
                         else{
-                            Broadcaster.getInstance().broadcast(BroadcastEvent.LOGIN_FACEBOOK_CALLBACK, null, Status.FAILED);
+                            _broadcaster.broadcast(BroadcastEvent.LOGIN_FACEBOOK_CALLBACK, null, Status.FAILED);
                         }
 
                     }

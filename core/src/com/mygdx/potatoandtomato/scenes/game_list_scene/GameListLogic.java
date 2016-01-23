@@ -13,6 +13,7 @@ import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.helpers.services.Sounds;
+import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.models.UserPlayingState;
@@ -142,6 +143,7 @@ public class GameListLogic extends LogicAbstract {
                         if(obj.canContinue(_services.getProfile())){
                             _continueRoomId = obj.getId();
                             _scene.getContinueGameButton().setEnabled(true);
+                            Threadings.renderFor(3);
                         }
                         else{
                             _services.getProfile().getUserPlayingState().setAbandon(true);
@@ -167,7 +169,7 @@ public class GameListLogic extends LogicAbstract {
                         }
                     }
                     else{
-                        if(!_scene.alreadyContainsRoom(room) && playSound){
+                        if(!_scene.alreadyContainsRoom(room) && playSound && isSceneVisible()){
                             _services.getSounds().playSoundEffect(Sounds.Name.GAME_CREATED);
                         }
                         final Actor clicked = _scene.updatedRoom(room);

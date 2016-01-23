@@ -67,7 +67,7 @@ public class TestSettings extends TestAbstract {
         Services services = T_Services.mockServices();
 
         PTScreen ptScreen = Mockito.mock(PTScreen.class);
-        Socials socials = Mockito.spy(new Socials(services.getPreferences()));
+        Socials socials = Mockito.spy(new Socials(services.getPreferences(), services.getBroadcaster()));
         doAnswer(new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
@@ -90,7 +90,7 @@ public class TestSettings extends TestAbstract {
         services.getPreferences().put(Terms.FACEBOOK_USERNAME, "testing");
         services.getPreferences().put(Terms.FACEBOOK_USERID, "123");
         PTScreen ptScreen = Mockito.mock(PTScreen.class);
-        Socials socials = Mockito.spy(new Socials(services.getPreferences()));
+        Socials socials = Mockito.spy(new Socials(services.getPreferences(), services.getBroadcaster()));
         doAnswer(new Answer<Void>() {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {

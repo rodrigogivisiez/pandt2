@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.zip.ZipFile;
 
 /**
@@ -71,11 +72,14 @@ public class TestDownloader extends TestAbstract {
     public void testDownloadFile(){
         final double[] finalPercentage = new double[1];
         final boolean[] waiting = {true};
+        final ArrayList<Double> percents = new ArrayList<Double>();
+
         T_Services.mockServices(new Downloader()).getDownloader().downloadFileToPath("http://www.potato-and-tomato.com/covered_chess/assets.zip", new File("testdownload.zip"), new DownloaderListener() {
             @Override
             public void onCallback(byte[] bytes, Status st) {
                 Assert.assertEquals(Status.SUCCESS, st);
                 Assert.assertEquals(true, isZipFile(new File("testdownload.zip")));
+                new File("testdownload.zip").delete();
                 waiting[0] = false;
             }
 
@@ -83,6 +87,7 @@ public class TestDownloader extends TestAbstract {
             public void onStep(double percentage) {
                 super.onStep(percentage);
                 finalPercentage[0] = percentage;
+                percents.add(percentage);
             }
         });
 
@@ -91,6 +96,11 @@ public class TestDownloader extends TestAbstract {
         }
 
         Assert.assertEquals(100, finalPercentage[0], 0);
+        for(int i =0; i< percents.size();i++){
+            if(!(i == 0 || i == percents.size()-1)){
+                Assert.assertEquals(true, percents.get(i) <= percents.get(i+1));
+            }
+        }
     }
 
     @Test

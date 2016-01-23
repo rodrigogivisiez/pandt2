@@ -74,6 +74,10 @@ public class Main {
             e.printStackTrace();
             logs.writeFailed(e.getMessage());
         }
+        catch (Exception e){
+            e.printStackTrace();
+            logs.writeFailed(e.getMessage());
+        }
 
 
 

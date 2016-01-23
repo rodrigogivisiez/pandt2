@@ -2,6 +2,7 @@ package com.ptuploader;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.io.CopyStreamAdapter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -74,6 +75,8 @@ public class Ftp {
             FileInputStream fis = new FileInputStream(f.getAbsoluteFile());
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE, FTP.BINARY_FILE_TYPE);
             ftpClient.setFileTransferMode(FTP.BINARY_FILE_TYPE);
+            ftpClient.setBufferSize(1048576);
+
             ftpClient.storeFile(f.getName(), fis);
             fis.close();
 

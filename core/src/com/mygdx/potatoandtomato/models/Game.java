@@ -137,7 +137,7 @@ public class Game {
 
     @JsonIgnore
     public String getBasePath(){
-        return "pt_downloads/" + this.getAbbr();
+        return ".pt_downloads/" + this.getAbbr();
     }
 
     @JsonIgnore

@@ -71,6 +71,7 @@ public class Chat {
     private String _userId;
     private boolean _fading;
     private Sounds _sounds;
+    private Broadcaster _broadcaster;
 
     public void setRoom(Room _room) {
         this._room = _room;
@@ -82,7 +83,9 @@ public class Chat {
     }
 
     public Chat(GamingKit gamingKit, Texts texts, Assets assets, SpriteBatch batch,
-                IPTGame game, Recorder recorder, IUploader uploader, Sounds sounds) {
+                IPTGame game, Recorder recorder, IUploader uploader, Sounds sounds,
+                Broadcaster broadcaster) {
+        this._broadcaster = broadcaster;
         this._gamingKit = gamingKit;
         this._sounds = sounds;
         this._texts = texts;
@@ -159,12 +162,12 @@ public class Chat {
         textFieldStyle.fontColor = Color.BLACK;
         textFieldStyle.cursor = new TextureRegionDrawable(_assets.getTextCursor());
         _messageTextField = new TextField("", textFieldStyle);
-        _messageTextField.setOnscreenKeyboard(new DummyKeyboard());
+        _messageTextField.setOnscreenKeyboard(new DummyKeyboard(_broadcaster));
         _messageTextField.addListener(new InputListener(){
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 super.touchUp(event, x, y, pointer, button);
-                Broadcaster.getInstance().broadcast(BroadcastEvent.LIBGDX_TEXT_CHANGED, new NativeLibgdxTextInfo(_messageTextField.getText(),
+                _broadcaster.broadcast(BroadcastEvent.LIBGDX_TEXT_CHANGED, new NativeLibgdxTextInfo(_messageTextField.getText(),
                         _messageTextField.getCursorPosition()));
             }
 
@@ -175,7 +178,7 @@ public class Chat {
             }
         });
 
-        Broadcaster.getInstance().subscribe(BroadcastEvent.NATIVE_TEXT_CHANGED, new BroadcastListener<NativeLibgdxTextInfo>() {
+        _broadcaster.subscribe(BroadcastEvent.NATIVE_TEXT_CHANGED, new BroadcastListener<NativeLibgdxTextInfo>() {
             @Override
             public void onCallback(NativeLibgdxTextInfo obj, Status st) {
                 Threadings.renderFor(0.2f);
@@ -292,7 +295,7 @@ public class Chat {
 
     private void attachListeners(){
 
-        Broadcaster.getInstance().subscribe(BroadcastEvent.SCREEN_LAYOUT_CHANGED, new BroadcastListener<Float>() {
+        _broadcaster.subscribe(BroadcastEvent.SCREEN_LAYOUT_CHANGED, new BroadcastListener<Float>() {
             @Override
             public void onCallback(final Float obj, Status st) {
                 Gdx.app.postRunnable(new Runnable() {
@@ -692,7 +695,7 @@ public class Chat {
 
     public void clearMessageTextField(){
         _messageTextField.setText("");
-        Broadcaster.getInstance().broadcast(BroadcastEvent.LIBGDX_TEXT_CHANGED, new NativeLibgdxTextInfo("", 0));
+        _broadcaster.broadcast(BroadcastEvent.LIBGDX_TEXT_CHANGED, new NativeLibgdxTextInfo("", 0));
     }
 
 

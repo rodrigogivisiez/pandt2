@@ -9,7 +9,7 @@ public class VersionControl {
 
     //updating this will not cause external game having outdated client error
     public String getClientVersion(){
-        return "3";
+        return "6";
     }
 
     public String getCommonVersion() { return CommonVersion.VERSION; }

@@ -19,7 +19,6 @@ import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
-import com.potatoandtomato.common.Broadcaster;
 import com.potatoandtomato.common.Status;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
@@ -55,7 +54,7 @@ public class BootLogic extends LogicAbstract {
 
         _services.getSounds().playThemeMusic();
         _screen.showRotateSunrise();
-
+        publishBroadcast(BroadcastEvent.DESTROY_ROOM);
 
         _services.getDatabase().offline();
         _services.getGamingKit().disconnect();
@@ -76,7 +75,6 @@ public class BootLogic extends LogicAbstract {
         _services.getGamingKit().addListener(getClassTag(), new ConnectionChangedListener() {
             @Override
             public void onChanged(ConnectStatus st) {
-
                 if(!_logined){
                     if(st == ConnectStatus.CONNECTED){
                         _screen.hideRotateSunrise();
@@ -94,6 +92,7 @@ public class BootLogic extends LogicAbstract {
                 }
                 else{
                     if(st == ConnectStatus.DISCONNECTED){
+                        publishBroadcast(BroadcastEvent.DESTROY_ROOM);
                         _screen.backToBoot();
                         _confirm.show(_texts.noConnection(), Confirm.Type.YES, null);
                     }
@@ -212,19 +211,18 @@ public class BootLogic extends LogicAbstract {
     }
 
     public void loginGCM(){
-        Broadcaster.getInstance().subscribeOnceWithTimeout(BroadcastEvent.LOGIN_GCM_CALLBACK, 10000, new BroadcastListener<String>() {
+        subscribeBroadcastOnceWithTimeout(BroadcastEvent.LOGIN_GCM_CALLBACK, 10000, new BroadcastListener<String>() {
             @Override
             public void onCallback(String obj, Status st) {
-                if(st == Status.SUCCESS){
+                if (st == Status.SUCCESS) {
                     _services.getProfile().setGcmId(obj);
                     loginPTSuccess();
-                }
-                else{
+                } else {
                     retrieveUserFailed();
                 }
             }
         });
-        Broadcaster.getInstance().broadcast(BroadcastEvent.LOGIN_GCM_REQUEST);
+        publishBroadcast(BroadcastEvent.LOGIN_GCM_REQUEST);
     }
 
 

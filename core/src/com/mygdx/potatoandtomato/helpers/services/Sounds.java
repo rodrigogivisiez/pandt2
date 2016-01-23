@@ -91,10 +91,11 @@ public class Sounds implements ISounds {
         music.play();
     }
 
+    @Override
     public void setVolume(float volume){
         this._volume = volume;
 
-        if(this._volume > 0.1) this._volume = 0.1f;
+        if(this._volume > 0.4) this._volume = 0.4f;
 
         if(!Global.ENABLE_SOUND){
             this._volume = 0f;

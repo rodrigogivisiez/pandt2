@@ -87,6 +87,7 @@ public class ChessActor extends Table {
         float openPercentage = ((startX - (endX)) / this.getWidth());
         openPercentage = 1 - openPercentage;
         if(openPercentage > 1) openPercentage = 1;
+
         if(openPercentage > 0.25){
             _backChess.addAction(scaleTo(0, 1));
             _frontChess.addAction(Actions.scaleTo(openPercentage, 1, 0.1f));
@@ -97,10 +98,13 @@ public class ChessActor extends Table {
             openChess(true);
             return true;
         }
+    }
 
-       // System.out.println(1- openPercentage + ", " + (startX - endX));
-
-        //flipOnTable.addAction(sequence(delay(0.4f), scaleTo(0, 1), Actions.delay(duration / 2), Actions.scaleTo(1, 1, duration / 2)));
+    public void resetOpenChess(){
+        if(!isOpened()){
+            _backChess.addAction(scaleTo(0, 1));
+            _frontChess.addAction(Actions.scaleTo(1, 1, 0.1f));
+        }
     }
 
     public void setChessType(ChessType chessType){

@@ -2,6 +2,7 @@ package com.mygdx.potatoandtomato.android;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
@@ -30,7 +31,10 @@ public class MyApplication extends Application {
             @Override
             public void uncaughtException (Thread thread, Throwable e)
             {
-                RoomAliveHelper.getInstance().dispose();
+                Intent i = new Intent();
+                i.setClass(getApplicationContext(), RoomAliveReceiver.class);
+                i.setAction("STOP");
+                sendBroadcast(i);
                 e.printStackTrace();
                 System.exit(1);
             }

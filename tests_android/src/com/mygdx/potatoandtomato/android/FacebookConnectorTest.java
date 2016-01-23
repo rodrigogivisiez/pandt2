@@ -12,7 +12,7 @@ import com.potatoandtomato.common.Status;
  */
 public class FacebookConnectorTest extends ActivityInstrumentationTestCase2<AndroidLauncher> {
 
-    Activity _activity;
+    AndroidLauncher _activity;
 
     public FacebookConnectorTest() {
         super(AndroidLauncher.class);
@@ -26,7 +26,7 @@ public class FacebookConnectorTest extends ActivityInstrumentationTestCase2<Andr
     public void testLoginTimeout() {
         final boolean[] waiting = {true};
 
-        Broadcaster.getInstance().subscribeOnceWithTimeout(BroadcastEvent.LOGIN_FACEBOOK_CALLBACK, 500, new BroadcastListener() {
+        _activity.getBroadcaster().subscribeOnceWithTimeout(BroadcastEvent.LOGIN_FACEBOOK_CALLBACK, 500, new BroadcastListener() {
             @Override
             public void onCallback(Object obj, Status st) {
                 waiting[0] = false;
@@ -35,8 +35,8 @@ public class FacebookConnectorTest extends ActivityInstrumentationTestCase2<Andr
             }
         });
 
-        assertEquals(true, Broadcaster.getInstance().hasEventCallback(BroadcastEvent.LOGIN_FACEBOOK_REQUEST));
-        Broadcaster.getInstance().broadcast(BroadcastEvent.LOGIN_FACEBOOK_REQUEST);     //just to test facebook activity can be launched
+        assertEquals(true, _activity.getBroadcaster().hasEventCallback(BroadcastEvent.LOGIN_FACEBOOK_REQUEST));
+        _activity.getBroadcaster().broadcast(BroadcastEvent.LOGIN_FACEBOOK_REQUEST);     //just to test facebook activity can be launched
 
         while (waiting[0]) {
             try {

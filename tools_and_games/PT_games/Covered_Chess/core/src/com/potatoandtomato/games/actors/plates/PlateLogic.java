@@ -44,9 +44,11 @@ public class PlateLogic {
     private boolean _empty;
     private BattleReference _battleRefs;
     private MainScreenListener _mainScreenListener;
+    private Sounds _sounds;
 
     public PlateLogic(PlateLogic[][] plateLogics, int col, int row, Assets _assets, BattleReference _battleRefs,
-                      GameCoordinator _coordinator, ChessType chessType, boolean meIsYellow, MainScreenListener mainScreenListener) {
+                      GameCoordinator _coordinator, ChessType chessType,
+                      boolean meIsYellow, Sounds sounds, MainScreenListener mainScreenListener) {
         this._me = this;
         this._battleRefs = _battleRefs;
         this._plateLogics = plateLogics;
@@ -55,6 +57,7 @@ public class PlateLogic {
         this._assets = _assets;
         this._coordinator = _coordinator;
         this._mainScreenListener = mainScreenListener;
+        this._sounds = sounds;
 
         if((meIsYellow && chessType.toString().startsWith("YELLOW")) || (!meIsYellow && chessType.toString().startsWith("RED"))){
             _myChess = true;
@@ -111,10 +114,7 @@ public class PlateLogic {
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
                 if(!_chessActor.isOpened()){
                     if(_chessActor.openChess(_startDragX, x)){
-                        _opened = true;
-                        _mainScreenListener.onFinishAction(500);
-                        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.CHESS_OPEN_FULL,
-                                getCol() + "," + getRow()));
+                        openChess(true);
                     }
                 }
 
@@ -136,6 +136,7 @@ public class PlateLogic {
 //                if(!_chessActor.isOpened()){
 //                    _chessActor.openChess(0, 0);
 //                }
+                _chessActor.resetOpenChess();
                 super.touchUp(event, x, y, pointer, button);
             }
         });
@@ -182,10 +183,15 @@ public class PlateLogic {
         }
     }
 
-    public void openChess(){
+    public void openChess(boolean notify){
         _opened = true;
         _chessActor.openChess(true);
+        _sounds.playSounds(Sounds.Name.FLIP_CHESS);
         _mainScreenListener.onFinishAction(500);
+        if(notify){
+            _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.CHESS_OPEN_FULL,
+                    getCol() + "," + getRow()));
+        }
     }
 
     public void moveChessToThis(final PlateLogic fromLogic, boolean showMoveAnimation, final int knownWinner, final boolean sendUpdate){
@@ -201,7 +207,11 @@ public class PlateLogic {
                 int winner = -1;
 
                 if(!isEmpty()){
+
                     getPlateActor().showBattle();
+                    _sounds.playSounds(Sounds.Name.FIGHT_CHESS);
+                    _coordinator.requestVibrate(1500);
+
                     if(knownWinner != -1){
                         winner = knownWinner;
                     }
@@ -261,6 +271,8 @@ public class PlateLogic {
             }
         };
 
+        if(isEmpty()) _sounds.playSounds(Sounds.Name.MOVE_CHESS);
+
         if(showMoveAnimation){
             final Table clone = fromLogic.getChessActor().clone();
             Stage stage = fromLogic.getChessActor().getStage();
@@ -278,7 +290,6 @@ public class PlateLogic {
                                 return true;
                             }
                 }));
-
         }
         else{
             toRun.run();

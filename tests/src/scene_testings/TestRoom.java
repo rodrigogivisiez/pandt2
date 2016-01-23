@@ -3,7 +3,6 @@ package scene_testings;
 import abstracts.MockDB;
 import abstracts.MockGamingKit;
 import abstracts.TestAbstract;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.firebase.client.annotations.Nullable;
 import com.mygdx.potatoandtomato.PTScreen;
@@ -18,25 +17,21 @@ import com.mygdx.potatoandtomato.helpers.services.GCMSender;
 import com.mygdx.potatoandtomato.helpers.utils.SafeThread;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.*;
-import com.mygdx.potatoandtomato.scenes.boot_scene.BootLogic;
 import com.mygdx.potatoandtomato.scenes.room_scene.RoomLogic;
 import com.mygdx.potatoandtomato.scenes.room_scene.RoomScene;
 import com.potatoandtomato.common.Status;
 import com.potatoandtomato.common.Team;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import helpers.MockModel;
 import helpers.T_Services;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.stubbing.Answer;
 
 import java.io.File;
 import java.util.ArrayList;
 
 import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.atLeast;
@@ -206,21 +201,22 @@ public class TestRoom extends TestAbstract {
         _room.getGame().setTeamMinPlayers("1");
         _room.getGame().setTeamCount("2");
 
-        logic.gameStarted();
-        Threadings.sleep(3100);
+        logic.startGame();
+        Threadings.sleep(7100);
 
         Assert.assertEquals(true, _room.isPlaying());
         Assert.assertEquals(false, _room.isOpen());
         Assert.assertEquals(1, _room.getRoundCounter());
         verify(logic, times(1)).gameStarted();
-        verify(database, Mockito.times(2)).saveRoom(any(Room.class), true, any(DatabaseListener.class));
+        verify(database, Mockito.times(2)).saveRoom(any(Room.class), eq(true), any(DatabaseListener.class));
         verify(database, times(1)).savePlayedHistory(any(Profile.class), any(Room.class), any(DatabaseListener.class));
 
         logic.onShow();
         Assert.assertEquals(false, _room.isPlaying());
         Assert.assertEquals(true, _room.isOpen());
         Assert.assertEquals(1, _room.getRoundCounter());
-        verify(database, times(4)).saveRoom(any(Room.class), true, any(DatabaseListener.class));
+        verify(database, times(1)).saveRoom(any(Room.class), eq(false), any(DatabaseListener.class));
+        verify(database, times(3)).saveRoom(any(Room.class), eq(true), any(DatabaseListener.class));
     }
 
     @Test
@@ -232,8 +228,10 @@ public class TestRoom extends TestAbstract {
         logic.onInit();
         _room.addRoomUser(MockModel.mockProfile("another"), 1, true);
 
-        logic.hostSendUpdateRoomStatePush();
-        verify(gcmSender, times(1)).send(eq(_room.getProfileByUserId("another")), any(PushNotification.class));
+        _services.setProfile(_room.getProfileByUserId("123"));
+
+        logic.selfUpdateRoomStatePush();
+        verify(gcmSender, times(0)).send(eq(_room.getProfileByUserId("another")), any(PushNotification.class));
         verify(gcmSender, times(1)).send(eq(_room.getProfileByUserId("123")), any(PushNotification.class));
 
         gcmSender = mock(GCMSender.class);

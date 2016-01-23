@@ -2,6 +2,9 @@ package com.mygdx.potatoandtomato.android;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.os.PowerManager;
 import com.mygdx.potatoandtomato.models.PushNotification;
 import com.potatoandtomato.common.BroadcastEvent;
@@ -14,67 +17,60 @@ import com.potatoandtomato.common.Status;
  */
 public class RoomAliveHelper {
 
-    private Context _context;
 
-    private static RoomAliveHelper _instance;
+    private static PowerManager.WakeLock _wakeLock;
+    private static boolean activated;
 
-    public static RoomAliveHelper getInstance() {
-        if(_instance == null) _instance = new RoomAliveHelper();
-        return _instance;
-    }
 
-    private PowerManager.WakeLock _wakeLock;
-    private boolean activated;
-
-    public RoomAliveHelper() {
-        Broadcaster.getInstance().subscribe(BroadcastEvent.DESTROY_ROOM, new BroadcastListener() {
-            @Override
-            public void onCallback(Object obj, Status st) {
-                _instance.dispose();
-            }
-        });
-    }
-
-    public void setContext(Context context) {
-        _context = context;
-
-    }
-
-    public boolean isActivated() {
+    public static boolean isActivated() {
         return activated;
     }
 
-    public void activate(PushNotification pushNotification){
-        if(activated) dispose();
+    public static void setActivated(boolean activated) {
+        RoomAliveHelper.activated = activated;
+    }
+
+    public static void activate(Context context, PushNotification pushNotification){
+        if(activated) dispose(context);
 
         activated = true;
 
-        Intent intent = new Intent(_context, KeepAliveService.class);
+        Intent intent = new Intent(context, KeepAliveService.class);
         intent.putExtra("title", pushNotification.getTitle());
         intent.putExtra("content", pushNotification.getMessage());
         intent.setAction("START");
-        _context.startService(intent);
+        context.startService(intent);
 
-        PowerManager mgr = (PowerManager) _context.getSystemService(Context.POWER_SERVICE);
+        PowerManager mgr = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         _wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "roomWakeLock");
         _wakeLock.acquire();
+
     }
 
-    public void dispose(){
+    public static void dispose(Context context){
         activated = false;
 
-        if(_context != null){
-            Intent intent = new Intent(_context, KeepAliveService.class);
+        if(context != null){
+            Intent intent = new Intent(context, KeepAliveService.class);
             intent.setAction("STOP");
-            _context.startService(intent);
+            context.startService(intent);
         }
 
-
         if(_wakeLock != null) {
-            _wakeLock.release();
+            if(_wakeLock.isHeld()) _wakeLock.release();
             _wakeLock = null;
         }
 
+    }
+
+    public static void save(Bundle outState){
+        outState.putBoolean("roomAliveActivated", isActivated());
+    }
+
+    public static void restore(Bundle savedInstanceState){
+        if(savedInstanceState.containsKey("roomAliveActivated")){
+            setActivated(savedInstanceState.getBoolean("roomAliveActivated"));
+        }
     }
 
 }

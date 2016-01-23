@@ -16,13 +16,16 @@ import junit.framework.Assert;
  */
 public class AGCMTest extends ActivityInstrumentationTestCase2<AndroidLauncher> {
 
+    private Broadcaster broadcaster;
+
     public AGCMTest() {
         super(AndroidLauncher.class);
     }
 
     @Override
     protected void setUp() throws Exception {
-        getActivity();
+        AndroidLauncher launcher = getActivity();
+        broadcaster = launcher.getBroadcaster();
     }
 
     public void testSendAndReceiveGCM() {
@@ -31,7 +34,7 @@ public class AGCMTest extends ActivityInstrumentationTestCase2<AndroidLauncher> 
 
         final Profile p = new Profile();
 
-        Broadcaster.getInstance().subscribeOnceWithTimeout(BroadcastEvent.LOGIN_GCM_CALLBACK, 10000, new BroadcastListener<String>() {
+        broadcaster.subscribeOnceWithTimeout(BroadcastEvent.LOGIN_GCM_CALLBACK, 10000, new BroadcastListener<String>() {
             @Override
             public void onCallback(String obj, Status st) {
                 Assert.assertEquals(Status.SUCCESS, st);
@@ -39,7 +42,7 @@ public class AGCMTest extends ActivityInstrumentationTestCase2<AndroidLauncher> 
                 waiting[0] = false;
             }
         });
-        Broadcaster.getInstance().broadcast(BroadcastEvent.LOGIN_GCM_REQUEST);
+        broadcaster.broadcast(BroadcastEvent.LOGIN_GCM_REQUEST);
 
         while (waiting[0]) {
             Threadings.sleep(100);

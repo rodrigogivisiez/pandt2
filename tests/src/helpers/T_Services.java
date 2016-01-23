@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.potatoandtomato.PTGame;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
+import com.potatoandtomato.common.Broadcaster;
 import com.potatoandtomato.common.ISounds;
 import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
 import com.mygdx.potatoandtomato.helpers.controls.Chat;
@@ -42,13 +43,15 @@ public class T_Services {
         Assets assets = new Assets();
         assets.loadBasic(null);
         MockGamingKit gamingKit = new MockGamingKit();
+        Broadcaster broadcaster = new Broadcaster();
 
         return new Services(assets, new Texts(), preferences,
                 new Profile(), databases, new Shaders(), gamingKit, downloader,
-                new Chat(gamingKit, new Texts(), assets, mock(SpriteBatch.class), mock(IPTGame.class), mock(Recorder.class), mock(IUploader.class)),
-                new Socials(preferences), new GCMSender(), new Confirm(mock(SpriteBatch.class), mock(PTGame.class), assets),
+                new Chat(gamingKit, new Texts(), assets, mock(SpriteBatch.class), mock(IPTGame.class),
+                        mock(Recorder.class), mock(IUploader.class), mock(Sounds.class), broadcaster),
+                new Socials(preferences, broadcaster), new GCMSender(), new Confirm(mock(SpriteBatch.class), mock(PTGame.class), assets),
                 new Notification(mock(SpriteBatch.class), assets, mock(PTGame.class)), mock(Recorder.class), mock(IUploader.class),
-                mock(ISounds.class), mock(VersionControl.class));
+                mock(Sounds.class), mock(VersionControl.class), broadcaster);
     }
 
 }

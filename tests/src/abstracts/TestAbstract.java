@@ -35,12 +35,10 @@ public abstract class TestAbstract {
 
     @Before
     public void setUp() throws Exception {
-        Broadcaster.getInstance().clear();
     }
 
     @After
     public void tearDown() throws Exception {
-        Broadcaster.getInstance().clear();
     }
 
     protected String getClassTag(){

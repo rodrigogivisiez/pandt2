@@ -42,7 +42,8 @@ public class Assets {
             webImageLoading, invitedIcon, bulletIcon, micIcon, voiceIcon, micBig;
     private NinePatch popupBg, buttonRed, buttonGreen, buttonBlue, progressBarInner, progressBarBg, whiteRoundedBg,
             yellowRoundedBg,  greenRoundedBg,
-            blackRoundedBg, chatBox, yellowGradientBox, scrollVerticalHandle, irregularBg, expandTitleBg;
+            blackRoundedBg, chatBox, yellowGradientBox, scrollVerticalHandle, irregularBg, expandTitleBg,
+            woodBgSmallPatch;
     private BitmapFont blackNormal2, redNormal2, blueNormal2, blackBold2, blackNormal3, orangePizza3,
             whiteBold3GrayS, topBarFont, whitePizza3BlackS, orangePizza2White, whiteNormal3GrayS, whiteNormal2GrayS,
             whiteNormal2, whitePizza2BlackS, greenNormal2, grayBold2, redBold2, blueBold2, whiteNormal2Black,
@@ -300,6 +301,7 @@ public class Assets {
         scrollVerticalHandle =  _backgroundsPack .createPatch("scrollbar_handle");
         irregularBg =  _backgroundsPack .createPatch("irregular_bg");
         expandTitleBg = _backgroundsPack.createPatch("expandable_title_bg");
+        woodBgSmallPatch = _backgroundsPack.createPatch("wood_bg_small_patch");
     }
 
     public TextureRegion getMicBig() {
@@ -544,6 +546,10 @@ public class Assets {
 
     public TextureRegion getLoading() {
         return loading;
+    }
+
+    public NinePatch getWoodBgSmallPatch() {
+        return woodBgSmallPatch;
     }
 
     public NinePatch getExpandTitleBg() {

@@ -78,7 +78,8 @@ public class GameFileChecker implements Disposable {
     public void checkGameVersion(){
         String localVersion;
         localVersion = _preferences.get(_game.getAbbr());
-        if(localVersion == null || !localVersion.equals(_game.getVersion())){
+        if(localVersion == null || !localVersion.equals(_game.getVersion())
+                || !new FileHandle(_game.getLocalAssetsPath()).exists() || !new FileHandle(_game.getLocalJarPath()).exists()){
             downloadGame();
         }
         else{
