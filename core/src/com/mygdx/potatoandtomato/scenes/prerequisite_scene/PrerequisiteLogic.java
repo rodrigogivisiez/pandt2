@@ -177,10 +177,22 @@ public class PrerequisiteLogic extends LogicAbstract {
                 _joiningRoom.setHost(_services.getProfile());
                 _joiningRoom.setPlaying(false);
                 _joiningRoom.setRoundCounter(0);
+                _joiningRoom.addRoomUser(_services.getProfile(), true);
                 _services.getDatabase().saveRoom(_joiningRoom, true, new DatabaseListener<String>() {
                     @Override
                     public void onCallback(String obj, Status st) {
-                        _screen.toScene(SceneEnum.ROOM, _joiningRoom, false);
+                        if(st == Status.SUCCESS){
+                            _screen.toScene(SceneEnum.ROOM, _joiningRoom, false);
+                            _services.getDatabase().removeUserFromRoomOnDisconnect(_joiningRoom.getId(), _services.getProfile(), new DatabaseListener<String>() {
+                                @Override
+                                public void onCallback(String obj, Status st) {
+
+                                }
+                            });
+                        }
+                        else{
+                            joinRoomFailed(0);
+                        }
                     }
                 });
             }
@@ -192,7 +204,23 @@ public class PrerequisiteLogic extends LogicAbstract {
             @Override
             public void run() {
                 _scene.changeMessage(_texts.joiningRoom());
-                _screen.toScene(SceneEnum.ROOM, _joiningRoom, _joinType == JoinType.CONTINUING);
+                _services.getDatabase().addUserToRoom(_joiningRoom, _services.getProfile(), new DatabaseListener<String>() {
+                    @Override
+                    public void onCallback(String obj, Status st) {
+                        if (st == Status.SUCCESS) {
+                            _screen.toScene(SceneEnum.ROOM, _joiningRoom, _joinType == JoinType.CONTINUING);
+                            _services.getDatabase().removeUserFromRoomOnDisconnect(_joiningRoom.getId(), _services.getProfile(), new DatabaseListener<String>() {
+                                @Override
+                                public void onCallback(String obj, Status st) {
+
+                                }
+                            });
+                        } else {
+                            joinRoomFailed(0);
+                        }
+                    }
+                });
+
             }
         });
     }

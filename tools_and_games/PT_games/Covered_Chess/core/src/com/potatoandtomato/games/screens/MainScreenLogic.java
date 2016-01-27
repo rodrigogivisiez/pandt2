@@ -56,6 +56,8 @@ public class MainScreenLogic {
     boolean _initialized;
     ArrayList<ChessType> _graveyard;
     boolean _gameEnded;
+    ArrayList<Runnable> _messagesQueue;
+    boolean _gameScreenReady;
 
     public MainScreenLogic(Services services, GameCoordinator coordinator, boolean isContinue) {
         this._services = services;
@@ -64,6 +66,7 @@ public class MainScreenLogic {
         _redChessTotal = _yellowChessTotal = 16;
         _isContinue = isContinue;
         _graveyard = new ArrayList<ChessType>();
+        _messagesQueue = new ArrayList<Runnable>();
 
         _mainScreenListener = new MainScreenListener() {
             @Override
@@ -116,6 +119,7 @@ public class MainScreenLogic {
                     public void run() {
                         while (_gameInfo == null){
                             Threadings.sleep(10000);
+                            if(_gameInfo != null) break;
                             _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.REQUEST_GAME_INFO, ""));
                         }
                     }
@@ -148,6 +152,7 @@ public class MainScreenLogic {
                                 while(_gameInfo == null){
                                     Threadings.sleep(1000);
                                 }
+
                                 Gdx.app.postRunnable(new Runnable() {
                                     @Override
                                     public void run() {
@@ -161,17 +166,18 @@ public class MainScreenLogic {
                                                 _screen.setChessTotalCount(ChessType.YELLOW, String.valueOf(_yellowChessTotal));
                                                 switchTurn(_gameInfo.isYellowTurn());
 
-
                                                 if(_isContinue){
                                                     for(ChessType type : _graveyard){
                                                         chessIsKilled(getDrawableFromChessType(type), type.name().startsWith("YELLOW"));
                                                     }
                                                     _isContinue = false;
                                                     _initialized = true;
+                                                    _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.SUCCESS_CONTINUE, ""));
                                                 }
                                                 //only for continue game
 
                                                 _services.getSounds().playTheme();
+                                                onGameScreenReady();
                                             }
                                         });
                                     }
@@ -182,6 +188,14 @@ public class MainScreenLogic {
                 });
             }
         });
+    }
+
+    private void onGameScreenReady(){
+        _gameScreenReady = true;
+        for(Runnable runnable : _messagesQueue){
+            runnable.run();
+        }
+        _messagesQueue.clear();
     }
 
     private void setTopInfoListener(){
@@ -261,11 +275,25 @@ public class MainScreenLogic {
         _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.GAME_INFO, gameInfo.toJson()));
     }
 
-    private void receiveInGameUpdate(String msg, String senderId){
+    private void receiveInGameUpdate(final String msg, final String senderId){
         try {
             JSONObject jsonObject = new JSONObject(msg);
             int code = jsonObject.getInt("code");
             final String receivedMsg = jsonObject.getString("msg");
+
+            if(code == UpdateCode.CHESS_SELECTED || code == UpdateCode.CHESS_OPEN_FULL ||
+                    code == UpdateCode.CHESS_MOVE || code == UpdateCode.REQUEST_GAME_DATA){
+                if(!_gameScreenReady){
+                    _messagesQueue.add(new Runnable() {
+                        @Override
+                        public void run() {
+                            receiveInGameUpdate(msg, senderId);
+                        }
+                    });
+                    return;
+                }
+            }
+
             final String[] arr;
             switch (code){
                 case UpdateCode.REQUEST_GAME_INFO:
@@ -344,8 +372,6 @@ public class MainScreenLogic {
                                 continueGame();
                             }
                         });
-                        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.SUCCESS_CONTINUE, ""));
-
                     }
                     break;
                 case UpdateCode.SUCCESS_CONTINUE:
@@ -440,6 +466,7 @@ public class MainScreenLogic {
                                     }
                                 }
                                 init();
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             } catch (JsonMappingException e) {
@@ -545,7 +572,7 @@ public class MainScreenLogic {
 
 
     private boolean meIsYellow(){
-        return _coordinator.getTeams().get(0).getPlayers().get(0).isMe;
+        return _coordinator.getTeams().get(0).getPlayers().get(0).getUserId().equals(_coordinator.getUserId());
     }
 
     public MainScreen getScreen() {

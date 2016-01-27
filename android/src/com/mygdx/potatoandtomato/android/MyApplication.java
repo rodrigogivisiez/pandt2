@@ -3,8 +3,12 @@ package com.mygdx.potatoandtomato.android;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * Created by SiongLeng on 3/1/2016.
@@ -35,6 +39,10 @@ public class MyApplication extends Application {
                 i.setClass(getApplicationContext(), RoomAliveReceiver.class);
                 i.setAction("STOP");
                 sendBroadcast(i);
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                e.printStackTrace(pw);
+                Logs.writeToLog( sw.toString());
                 e.printStackTrace();
                 System.exit(1);
             }

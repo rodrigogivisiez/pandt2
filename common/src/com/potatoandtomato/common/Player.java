@@ -7,17 +7,18 @@ public class Player {
 
     public String name;
     public String userId;
-    public boolean isMe;
     public boolean isHost;
 
-    public Player(String name, String userId, boolean isMe, boolean isHost) {
+    public Player() {
+    }
+
+    public Player(String name, String userId, boolean isHost) {
         this.name = name;
         this.userId = userId;
-        this.isMe = isMe;
         this.isHost = isHost;
     }
 
-    public boolean isHost() {
+    public boolean getIsHost() {
         return isHost;
     }
 
@@ -39,9 +40,5 @@ public class Player {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public boolean isMe() {
-        return isMe;
     }
 }

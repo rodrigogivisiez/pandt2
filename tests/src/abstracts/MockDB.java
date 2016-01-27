@@ -89,6 +89,11 @@ public class MockDB implements IDatabase {
         if(listener!= null) listener.onCallback(null, Status.SUCCESS);
     }
 
+    @Override
+    public void addUserToRoom(Room room, Profile user, DatabaseListener<String> listener) {
+
+    }
+
 
     @Override
     public void monitorRoomById(String id, String classTag, DatabaseListener<Room> listener) {
@@ -116,10 +121,9 @@ public class MockDB implements IDatabase {
     }
 
     @Override
-    public void removeUserFromRoomOnDisconnect(Room room, Profile user, DatabaseListener<String> listener) {
+    public void removeUserFromRoomOnDisconnect(String roomId, Profile user, DatabaseListener<String> listener) {
 
     }
-
 
 
     @Override

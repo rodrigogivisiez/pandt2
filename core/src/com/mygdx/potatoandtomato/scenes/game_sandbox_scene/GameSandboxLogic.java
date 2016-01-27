@@ -112,7 +112,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             @Override
             public void run() {
                 publishBroadcast(BroadcastEvent.LOAD_GAME_REQUEST, new GameCoordinator(_room.getGame().getFullLocalJarPath(),
-                        _room.getGame().getLocalAssetsPath(), _room.getGame().getBasePath(), _room.convertRoomUsersToTeams(_services.getProfile()),
+                        _room.getGame().getLocalAssetsPath(), _room.getGame().getBasePath(), _room.getTeams(),
                         Positions.getWidth(), Positions.getHeight(), _screen.getGame(), _screen.getGame().getSpriteBatch(),
                         _services.getProfile().getUserId(), _me, _services.getDatabase().getGameBelongDatabase(_room.getGame().getAbbr()),
                         _room.getId(), _services.getSounds(), getBroadcaster()));

@@ -18,7 +18,7 @@ public class Logs {
         if(!theDir.exists()) theDir.mkdir();
     }
 
-    public void writeSuccess(Details details, int screenshotCount){
+    public void writeSuccess(Details details, int screenshotCount, String commonVersion){
         open();
         write("Upload success!");
         write("Name : " +details.name);
@@ -27,8 +27,11 @@ public class Logs {
         write("Current Version : " +details.version);
         write("Screenshot Counts : " +screenshotCount);
         write("Description : " +details.description);
+        write("Common Version : " + commonVersion);
         close();
         System.out.println("Upload Success!");
+        System.out.println("Game Version:" + details.version);
+        System.out.println("Common Version:" + commonVersion);
     }
 
     public void writeFailed(String msg){

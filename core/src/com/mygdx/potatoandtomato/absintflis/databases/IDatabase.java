@@ -36,6 +36,8 @@ public interface IDatabase {
 
      void saveRoom(Room room, boolean notify, @Nullable DatabaseListener<String> listener);    //except slot index
 
+     void addUserToRoom(Room room, Profile user, DatabaseListener<String> listener);
+
      void changeSlotIndex(Room room, Profile user, Integer newIndex, DatabaseListener<String> listener);
 
      void monitorRoomById(String id, String classTag, DatabaseListener<Room> listener);
@@ -46,7 +48,7 @@ public interface IDatabase {
 
      String notifyRoomChanged(Room room);
 
-     void removeUserFromRoomOnDisconnect(Room room, Profile user, DatabaseListener<String> listener);
+     void removeUserFromRoomOnDisconnect(String roomId, Profile user, DatabaseListener<String> listener);
 
      void offline();
 

@@ -218,7 +218,7 @@ public class GameListScene extends SceneAbstract {
     public Actor updatedRoom(Room room){
         boolean isInvited = (room.getInvitedUserByUserId(_services.getProfile().getUserId()) != null);
         if(!_gameRowsTableMap.containsKey(room.getId())){
-            return addNewRoomRow(room, false);
+            return addNewRoomRow(room, isInvited);
         }
         else{
             if(isInvited){

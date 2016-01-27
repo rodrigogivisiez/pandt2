@@ -49,7 +49,7 @@ public class Main {
             while (!db.isFinished()){Thread.sleep(500);}
             if(db.isSuccess()){
                 details.writeBackJson();
-                logs.writeSuccess(details, screenShots.getAllScreenShotsPath().size());
+                logs.writeSuccess(details, screenShots.getAllScreenShotsPath().size(), commonVersion);
             }
             else{
                 logs.writeFailed("Firebase failed to update.");

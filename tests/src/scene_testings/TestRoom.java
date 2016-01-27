@@ -165,10 +165,10 @@ public class TestRoom extends TestAbstract {
         _room.getGame().setTeamCount("2");
         _room.getGame().setTeamMaxPlayers("1");
         _room.getRoomUsers().get("another").setSlotIndex(1);
-        ArrayList<Team> teams = _room.convertRoomUsersToTeams(MockModel.mockProfile());
-        Assert.assertEquals(2, teams.size());
-        Assert.assertEquals(1, teams.get(0).getPlayers().size());
-        Assert.assertEquals(1, teams.get(1).getPlayers().size());
+        _room.convertRoomUsersToTeams();
+        Assert.assertEquals(2, _room.getTeams().size());
+        Assert.assertEquals(1, _room.getTeams().get(0).getPlayers().size());
+        Assert.assertEquals(1, _room.getTeams().get(1).getPlayers().size());
         RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room, false));
         logic.onInit();
         logic.hostSendStartGame();
@@ -189,7 +189,14 @@ public class TestRoom extends TestAbstract {
 
     @Test
     public void testGameStartOrEndParameters(){
-        IDatabase database = mock(MockDB.class);
+        IDatabase database = Mockito.spy(new MockDB(){
+            @Override
+            public void monitorRoomById(String id, String classTag, DatabaseListener<Room> listener) {
+                super.monitorRoomById(id, classTag, listener);
+                listener.onCallback(_room, Status.SUCCESS);
+            }
+        });
+
         _services.setDatabase(database);
         RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room, false));
         logic.onInit();
@@ -225,7 +232,6 @@ public class TestRoom extends TestAbstract {
         _services.setGcmSender(gcmSender);
         RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room, false));
         _room.getRoomUsers().remove("another");
-        logic.onInit();
         _room.addRoomUser(MockModel.mockProfile("another"), 1, true);
 
         _services.setProfile(_room.getProfileByUserId("123"));
@@ -293,8 +299,8 @@ public class TestRoom extends TestAbstract {
         logic.leaveRoom();
 
         verify(mockKit, times(1)).leaveRoom();
+        verify(mockKit, times(1)).updateRoomMates(eq(UpdateRoomMatesCode.LEFT_ROOM), eq(""));
         Assert.assertEquals(true, _room.isOpen());
-        Assert.assertEquals(-1, _room.getSlotIndexByUserId(_services.getProfile()));
     }
 
 

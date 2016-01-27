@@ -6,6 +6,6 @@ package com.potatoandtomato.common;
 public class CommonVersion {
 
     //updating this WILL cause external game having outdated client error
-    public static String VERSION = "4";
+    public static String VERSION = "5";
 
 }

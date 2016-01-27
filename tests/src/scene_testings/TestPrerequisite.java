@@ -7,10 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.models.Game;
-import com.mygdx.potatoandtomato.models.Room;
-import com.mygdx.potatoandtomato.models.Services;
-import com.mygdx.potatoandtomato.models.UserPlayingState;
+import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.scenes.prerequisite_scene.PrerequisiteLogic;
 import com.mygdx.potatoandtomato.scenes.prerequisite_scene.PrerequisiteScene;
 import com.potatoandtomato.common.Status;
@@ -55,12 +52,19 @@ public class TestPrerequisite extends TestAbstract {
 
     @Test
     public void testHostGame(){
+        final boolean[] isCalled = new boolean[1];
         Services _services = T_Services.mockServices();
         _services.setGamingKit(new MockGamingKit());
         _services.setDatabase(new MockDB(){
             @Override
             public void getGameByAbbr(String abbr, DatabaseListener<Game> listener) {
                 listener.onCallback(MockModel.mockGame(), Status.SUCCESS);
+            }
+
+            @Override
+            public void removeUserFromRoomOnDisconnect(String roomId, Profile user, DatabaseListener<String> listener) {
+                isCalled[0] = true;
+                listener.onCallback(null, Status.SUCCESS);
             }
         });
 
@@ -74,11 +78,13 @@ public class TestPrerequisite extends TestAbstract {
         verify(screen, times(1)).toScene(eq(SceneEnum.ROOM), any(Room.class), eq(false));
         Assert.assertEquals(true, logic.getJoiningRoom().isOpen());
         Assert.assertEquals(false, logic.getJoiningRoom().isPlaying());
+        Assert.assertEquals(true, isCalled[0]);
     }
 
 
     @Test
     public void testJoinGame(){
+        final int[] calledCount = {0};
         Services _services = T_Services.mockServices();
         _services.setGamingKit(new MockGamingKit());
 
@@ -94,6 +100,20 @@ public class TestPrerequisite extends TestAbstract {
             public void getGameByAbbr(String abbr, DatabaseListener<Game> listener) {
                 listener.onCallback(MockModel.mockGame(), Status.SUCCESS);
             }
+
+            @Override
+            public void addUserToRoom(Room room, Profile user, DatabaseListener<String> listener) {
+                super.addUserToRoom(room, user, listener);
+                calledCount[0]++;
+                listener.onCallback(null, Status.SUCCESS);
+            }
+
+            @Override
+            public void removeUserFromRoomOnDisconnect(String roomId, Profile user, DatabaseListener<String> listener) {
+                calledCount[0]++;
+                listener.onCallback(null, Status.SUCCESS);
+
+            }
         };
         _services.setDatabase(mockDB);
 
@@ -104,11 +124,13 @@ public class TestPrerequisite extends TestAbstract {
         verify(logic, times(1)).joinRoomSuccess();
         verify(logic, times(0)).createRoomSuccess(anyString());
         verify(screen, times(1)).toScene(eq(SceneEnum.ROOM), any(Room.class), eq(false));
+        Assert.assertEquals(2,  calledCount[0]);
     }
 
 
     @Test
     public void testContinueGame(){
+        final int[] calledCount = {0};
         Services _services = T_Services.mockServices();
         _services.setGamingKit(new MockGamingKit());
 
@@ -127,6 +149,21 @@ public class TestPrerequisite extends TestAbstract {
             public void getGameByAbbr(String abbr, DatabaseListener<Game> listener) {
                 listener.onCallback(MockModel.mockGame(), Status.SUCCESS);
             }
+            @Override
+            public void addUserToRoom(Room room, Profile user, DatabaseListener<String> listener) {
+                super.addUserToRoom(room, user, listener);
+                calledCount[0]++;
+                listener.onCallback(null, Status.SUCCESS);
+
+            }
+
+            @Override
+            public void removeUserFromRoomOnDisconnect(String roomId, Profile user, DatabaseListener<String> listener) {
+                calledCount[0]++;
+                listener.onCallback(null, Status.SUCCESS);
+
+            }
+
         };
         _services.setDatabase(mockDB);
 
@@ -137,6 +174,7 @@ public class TestPrerequisite extends TestAbstract {
         verify(logic, times(1)).joinRoomSuccess();
         verify(logic, times(0)).createRoomSuccess(anyString());
         verify(screen, times(1)).toScene(eq(SceneEnum.ROOM), any(Room.class), eq(true));
+        Assert.assertEquals(2,  calledCount[0]);
     }
 
 

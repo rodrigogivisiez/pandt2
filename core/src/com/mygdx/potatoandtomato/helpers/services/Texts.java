@@ -58,6 +58,11 @@ public class Texts {
     public String send() { return "Send"; }
     public String continueLastGame() { return "Continue"; }
     public String save() { return "Save"; }
+    public String profile() { return "Profile"; }
+    public String others() { return "Others"; }
+
+    public String showReport() { return "Show Report"; }
+
 
     public String loading() { return "Loading..."; }
 
@@ -115,7 +120,7 @@ public class Texts {
     public String cancel() { return "Cancel";}
 
     public String waitAllUsersReady() { return "Please wait for all users ready before start.";}
-
+    public String fairTeamNeeded() { return "All teams must have equal amount of players to start.";}
     public String confirmAbandon() { return "Are you sure you want to abandon this game?"; }
 
     public String notificationAbandon() { return "%s has abandoned the game!";}
@@ -125,9 +130,13 @@ public class Texts {
     public String noConnection() { return "You have been disconnected from the server, please check your connection."; }
 
     public String confirmNotContinueGame() { return "You still have an unfinished game! Are you sure you want to abandon it?" ;}
-    public String failedRetriveGameData() { return "Failed to retrive game data, please try again later.";}
+    public String failedRetriveGameData() { return "Failed to retrive game data, please check your connection and try again.";}
     public String gameClientOutdated() { return "This game required latest game client to run, please update your P&T game client.";}
     public String gameVersionOutdated() { return "This game has newer version, host need to recreate the room.";}
+
+    public String confirmKick() { return "Confirm kick %s from this room?";}
+    public String youAreKicked() { return "You are kicked from the room.";}
+    public String userKicked() { return "%s has been kicked from the room.";}
 
 
     //push notifications part

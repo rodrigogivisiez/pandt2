@@ -2,20 +2,31 @@ package com.mygdx.potatoandtomato.models;
 
 import com.badlogic.gdx.Gdx;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
+import com.shaded.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
 
 /**
  * Created by SiongLeng on 13/12/2015.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Game {
 
     String name, minPlayers, maxPlayers, teamMinPlayers, teamMaxPlayers, teamCount,
             iconUrl, gameUrl, assetUrl, abbr, description, version, commonVersion;
     ArrayList<String> screenShots;
+    boolean mustFairTeam;
 
 
     public Game() {
+    }
+
+    public boolean getMustFairTeam() {
+        return mustFairTeam;
+    }
+
+    public void setMustFairTeam(boolean mustFairTeam) {
+        this.mustFairTeam = mustFairTeam;
     }
 
     public String getCommonVersion() {

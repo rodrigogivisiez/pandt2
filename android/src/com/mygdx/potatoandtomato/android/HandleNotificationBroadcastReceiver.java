@@ -4,6 +4,8 @@ import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.view.Window;
+import android.view.WindowManager;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 
 /**
@@ -22,7 +24,7 @@ public class HandleNotificationBroadcastReceiver extends BroadcastReceiver {
                     while( myKM.inKeyguardRestrictedInputMode()) {
                         Thread.sleep(500);
                     }
-
+                    Thread.sleep(700);
 
                     Intent intent = new Intent(context, AndroidLauncher.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // You need this if starting
@@ -37,18 +39,5 @@ public class HandleNotificationBroadcastReceiver extends BroadcastReceiver {
             }
         });
         t.start();
-
-
-
-
-
-
-
-//
-//        Intent intent2 = new Intent(context, AndroidLauncher.class);
-//        intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//        context.startActivity(intent);
-
-        //System.out.println("receive");
     }
 }

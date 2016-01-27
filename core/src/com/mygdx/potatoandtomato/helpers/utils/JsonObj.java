@@ -64,4 +64,8 @@ public class JsonObj {
         return _jsonObject;
     }
 
+    @Override
+    public String toString() {
+        return _jsonObject.toString();
+    }
 }

@@ -15,6 +15,7 @@ public class Details {
 
     private String _path;
     public String name, version, min_players, max_players, description, abbr, team_min_players, team_max_players, team_count;
+    public boolean mustFairTeam;
 
     public Details(String _path) {
         this._path = _path;
@@ -28,7 +29,13 @@ public class Details {
         JSONObject jsonObject = (JSONObject) obj;
 
         name = (String) jsonObject.get("name");
-        version = (String) jsonObject.get("version");
+        if(!jsonObject.containsKey("version")){
+            version = "0.99";
+        }
+        else{
+            version = (String) jsonObject.get("version");
+        }
+
         min_players = (String) jsonObject.get("min_players");
         max_players = (String) jsonObject.get("max_players");
         description = (String) jsonObject.get("description");
@@ -36,6 +43,13 @@ public class Details {
         team_min_players = (String) jsonObject.get("team_min_players");
         team_count = (String) jsonObject.get("team_count");
         abbr = (String) jsonObject.get("abbr");
+        String mustFair = (String) jsonObject.get("must_fair_team");
+        if(mustFair.equals("false")){
+            mustFairTeam = false;
+        }
+        else{
+            mustFairTeam = true;
+        }
 
         if(!isNumberWith2Decimals(version) || !isInteger(min_players) || !isInteger(max_players)){
             throw new ParseException(0);
@@ -61,6 +75,7 @@ public class Details {
         obj.put("team_max_players", team_max_players);
         obj.put("team_count", team_count);
         obj.put("abbr", abbr);
+        obj.put("must_fair_team", mustFairTeam ? "true" : "false");
 
         File f = new File(_path);
         if(f.exists()) f.delete();

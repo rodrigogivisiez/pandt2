@@ -10,6 +10,7 @@ import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.absintflis.socials.FacebookListener;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
+import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
 import com.potatoandtomato.common.Status;
@@ -46,6 +47,14 @@ public class SettingsLogic extends LogicAbstract {
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 updateProfile();
+            }
+        });
+
+        _scene.getReportBtn().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                _confirm.show(Logs.getLogMsg(), Confirm.Type.YES, null);
             }
         });
 

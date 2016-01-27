@@ -2,15 +2,18 @@ package com.mygdx.potatoandtomato.scenes.room_scene;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.PTScreen;
+import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.helpers.controls.*;
 import com.mygdx.potatoandtomato.models.Game;
@@ -18,6 +21,8 @@ import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.RoomUser;
 import com.mygdx.potatoandtomato.models.Services;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
@@ -31,10 +36,19 @@ public class RoomScene extends SceneAbstract {
     Array<Table> _teamTables;
     Table _teamsRoot, _detailsRoot;
     HashMap<String, Table> _playerMaps;
+    Array<Table> _playersTable;
     Room _room;
 
     public Array<Table> getTeamTables() {
         return _teamTables;
+    }
+
+    public HashMap<String, Table> getPlayersMaps() {
+        return _playerMaps;
+    }
+
+    public Array<Table> getPlayersTable() {
+        return _playersTable;
     }
 
     public BtnEggDownward getStartButton() {
@@ -62,6 +76,7 @@ public class RoomScene extends SceneAbstract {
 
         _teamTables = new Array();
         _playerMaps = new HashMap();
+        _playersTable = new Array<Table>();
 
         Table buttonTable = new Table();
 
@@ -175,7 +190,7 @@ public class RoomScene extends SceneAbstract {
                     teamTable.row();
                 }
 
-
+                _playersTable.add(playerTable);
                 accIndex++;
             }
 
@@ -193,6 +208,8 @@ public class RoomScene extends SceneAbstract {
             i++;
         }
 
+
+
     }
 
     public void updateRoom(Room room){
@@ -201,8 +218,9 @@ public class RoomScene extends SceneAbstract {
         }
         for(Table t : _teamTables) t.remove();
         _teamTables.clear();
+        _playersTable.clear();
         populateTeamTables(Integer.valueOf(room.getGame().getTeamCount()),
-                                Integer.valueOf(room.getGame().getTeamMaxPlayers()), room.getRoomUsers());
+                Integer.valueOf(room.getGame().getTeamMaxPlayers()), room.getRoomUsers());
     }
 
     public void updateDownloadPercentage(String userId, int percent){
@@ -299,6 +317,8 @@ public class RoomScene extends SceneAbstract {
         playerTable.add(nameLabel).expandX().fillX().padLeft(5);
         playerTable.add(downloadImage).padRight(2);
         playerTable.add(progressLabel);
+        playerTable.setName("nolongtap," + ((userId != null) ? "disableclick" : ""));
+        new DummyButton(playerTable, _assets);
 
         if(userId != null) _playerMaps.put(userId, playerTable);
 

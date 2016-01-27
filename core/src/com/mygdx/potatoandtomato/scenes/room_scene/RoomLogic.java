@@ -1,9 +1,11 @@
 package com.mygdx.potatoandtomato.scenes.room_scene;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
@@ -20,11 +22,11 @@ import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.helpers.services.Sounds;
 import com.mygdx.potatoandtomato.helpers.services.VersionControl;
+import com.mygdx.potatoandtomato.helpers.utils.JsonObj;
 import com.mygdx.potatoandtomato.helpers.utils.SafeThread;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.BroadcastEvent;
-import com.potatoandtomato.common.Broadcaster;
 import com.potatoandtomato.common.Status;
 
 import java.util.ArrayList;
@@ -41,13 +43,15 @@ public class RoomLogic extends LogicAbstract {
     GameFileChecker _gameFileChecker;
     HashMap<String, String> _noGameClientUsers;
     int _currentPercentage, _previousSentPercentage;
-    SafeThread _downloadThread, _countDownThread, _checkReadyThread;
+    SafeThread _downloadThread, _countDownThread, _checkReadyThread, _checkMonitorSuccessThread;
+    boolean _roomMonitorSuccess;
     boolean _starting;
     boolean _forceQuit;
     boolean _gameStarted;
     boolean _isContinue;
     boolean _quiting;
     boolean _onScreen;
+    boolean _populatedPlayersListener;
 
 
     public Room getRoom() {
@@ -69,64 +73,11 @@ public class RoomLogic extends LogicAbstract {
 
         _services.getChat().resetChat();
         _scene.populateGameDetails(_room.getGame());
-        _room.addRoomUser(_services.getProfile(), true);
-        userJustJoinedRoom(_services.getProfile());
+        joinRoomInit();
 
         if(isHost()) _scene.setStartButtonText(_texts.startGame());
 
         refreshRoomDesign();
-
-        flushRoom(true, true, new DatabaseListener() {
-            @Override
-            public void onCallback(Object obj, Status st) {
-                _services.getDatabase().monitorRoomById(_room.getId(), getClassTag(), new DatabaseListener<Room>(Room.class) {
-                    @Override
-                    public void onCallback(Room obj, Status st) {
-                        if(st == Status.SUCCESS){
-                            if(_countDownThread != null) _countDownThread.kill();
-                            ArrayList<RoomUser> justJoinedUsers = _room.getJustJoinedUsers(obj);
-                            ArrayList<RoomUser> justLeftUsers = _room.getJustLeftUsers(obj);
-
-                            for(RoomUser u : justJoinedUsers){
-                                userJustJoinedRoom(u.getProfile());
-                            }
-                            for(RoomUser u : justLeftUsers){
-                                userJustLeftRoom(u.getProfile());
-                            }
-
-                            if(justJoinedUsers.size() > 0){
-                                stopGameStartCountDown(justJoinedUsers.get(0).getProfile());
-                            }
-                            else if(justLeftUsers.size() > 0){
-                                stopGameStartCountDown(justLeftUsers.get(0).getProfile());
-                            }
-
-                            _room = obj;
-                            _services.getChat().setRoom(_room);
-                            refreshRoomDesign();
-                            checkHostInRoom();
-                            if(justJoinedUsers.size() > 0 || justLeftUsers.size() > 0){
-                                if(!_isContinue) selfUpdateRoomStatePush();
-                            }
-                        }
-                        else{
-                            errorOccured(_texts.roomError());
-                        }
-                    }
-                });
-            }
-        });
-
-
-
-        _services.getDatabase().removeUserFromRoomOnDisconnect(_room, _services.getProfile(), new DatabaseListener<String>() {
-            @Override
-            public void onCallback(String obj, Status st) {
-                if(st == Status.FAILED){
-                    errorOccured(_texts.roomError());
-                }
-            }
-        });
 
         _services.getGamingKit().addListener(getClassTag(), new UpdateRoomMatesListener() {
             @Override
@@ -204,6 +155,10 @@ public class RoomLogic extends LogicAbstract {
                                 sendIsReadyUpdate(true);
                             }
                         }
+                        else{
+                            sendUpdateRoomMates(UpdateRoomMatesCode.JOIN_ROOM, "");
+                        }
+
                     }
                 }
             }
@@ -211,6 +166,87 @@ public class RoomLogic extends LogicAbstract {
 
     }
 
+    public void joinRoomInit(){
+
+        final Runnable monitorRunnable = new Runnable() {
+            @Override
+            public void run() {
+                _services.getDatabase().monitorRoomById(_room.getId(), getClassTag(), new DatabaseListener<Room>(Room.class) {
+                    @Override
+                    public void onCallback(Room roomObj, Status st) {
+                        if(st == Status.SUCCESS){
+                            if(_countDownThread != null) _countDownThread.kill();
+                            ArrayList<RoomUser> justJoinedUsers = _room.getJustJoinedUsers(roomObj);
+                            ArrayList<RoomUser> justLeftUsers = _room.getJustLeftUsers(roomObj);
+
+                            for(RoomUser u : justJoinedUsers){
+                                chatAddUserJustJoinedRoom(u.getProfile());
+                            }
+                            for(RoomUser u : justLeftUsers){
+                                chatAddUserJustLeftRoom(u.getProfile());
+                            }
+
+                            if(justJoinedUsers.size() > 0){
+                                stopGameStartCountDown(justJoinedUsers.get(0).getProfile());
+                            }
+                            else if(justLeftUsers.size() > 0){
+                                stopGameStartCountDown(justLeftUsers.get(0).getProfile());
+                            }
+
+                            _room = roomObj;
+                            _services.getChat().setRoom(_room);
+                            refreshRoomDesign();
+                            checkHostInRoom();
+                            if(justJoinedUsers.size() > 0 || justLeftUsers.size() > 0){
+                                if(!_isContinue) selfUpdateRoomStatePush();
+                            }
+                            _roomMonitorSuccess = true;
+
+                        }
+                        else{
+                            errorOccured(_texts.roomError());
+                        }
+                    }
+                });
+
+                if(!isHost()){
+                    Threadings.runInBackground(new Runnable() {
+                        @Override
+                        public void run() {
+                            _checkMonitorSuccessThread = new SafeThread();
+                            while (true){
+                                Threadings.sleep(100);
+                                if(_roomMonitorSuccess){
+                                    sendUpdateRoomMates(UpdateRoomMatesCode.JOIN_ROOM, "");
+                                    break;
+                                }
+                                else if(_checkMonitorSuccessThread.isKilled()){
+                                    break;
+                                }
+                            }
+                        }
+                    });
+                }
+
+
+            }
+        };
+
+        if(isHost()){
+            _room.addRoomUser(_services.getProfile(), true);
+            chatAddUserJustJoinedRoom(_services.getProfile());
+            selfUpdateRoomStatePush();
+            hostSaveRoom(true, new DatabaseListener() {
+                @Override
+                public void onCallback(Object obj, Status st) {
+                    monitorRunnable.run();
+                }
+            });
+        }
+        else{
+            monitorRunnable.run();
+        }
+    }
 
 
     @Override
@@ -232,7 +268,7 @@ public class RoomLogic extends LogicAbstract {
         _gameStarted = false;
         _onScreen = true;
 
-        if(!_isContinue) {
+        if(!_isContinue && _roomMonitorSuccess) {
             openRoom(false);
             checkHostInRoom();
             selfUpdateRoomStatePush();
@@ -243,7 +279,11 @@ public class RoomLogic extends LogicAbstract {
         _services.getChat().show();
         _services.getChat().scrollToBottom();
         _starting = false;
-        sendIsReadyUpdate(true);
+
+        if(_roomMonitorSuccess){
+            sendIsReadyUpdate(true);
+        }
+
 
         if(_isContinue) {
             continueGame();
@@ -257,12 +297,11 @@ public class RoomLogic extends LogicAbstract {
             _confirm.show(isHost() ? _texts.confirmHostLeaveRoom() : _texts.confirmLeaveRoom(), Confirm.Type.YESNO, new ConfirmResultListener() {
                 @Override
                 public void onResult(Result result) {
-                    if(result == Result.YES){
+                    if (result == Result.YES) {
                         _forceQuit = true;
                         _quiting = true;
                         listener.onResult(OnQuitListener.Result.YES);
-                    }
-                    else{
+                    } else {
                         listener.onResult(OnQuitListener.Result.NO);
                     }
                 }
@@ -279,20 +318,67 @@ public class RoomLogic extends LogicAbstract {
             @Override
             public void run() {
                 _scene.updateRoom(_room);
+
                 int i = 0;
-                for(Table t : _scene.getTeamTables()){
+                for(Table t : _scene.getPlayersTable()){
                     final int finalI = i;
-                    t.addListener(new ClickListener() {
-                        @Override
-                        public void clicked(InputEvent event, float x, float y) {
-                            super.clicked(event, x, y);
-                            if(_room.changeTeam(finalI, _services.getProfile())){
-                                refreshRoomDesign();
-                                flushRoom(true, false, null);
+                    if(!t.getName().contains("disableclick")){
+                        t.addListener(new ClickListener(){
+                            @Override
+                            public void clicked(InputEvent event, float x, float y) {
+                                super.clicked(event, x, y);
+                                if(_room.getRoomUserBySlotIndex(finalI) == null){
+                                    sendUpdateRoomMates(UpdateRoomMatesCode.MOVE_SLOT, String.valueOf(finalI));
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
+
                     i++;
+                }
+
+
+
+//                for(Table t : _scene.getTeamTables()){
+//                    final int finalI = i;
+//                    t.addListener(new ClickListener() {
+//                        @Override
+//                        public void clicked(InputEvent event, float x, float y) {
+//                            super.clicked(event, x, y);
+//                            if(_room.changeTeam(finalI, _services.getProfile())){
+//                                sendUpdateRoomMates(UpdateRoomMatesCode.MOVE_SLOT, String.valueOf(finalI));
+//                            }
+//                        }
+//                    });
+//                    i++;
+//                }
+
+                if(isHost()){
+                    for (Map.Entry<String, Table> entry : _scene.getPlayersMaps().entrySet()) {
+                        final String userId = entry.getKey();
+                        Table table = entry.getValue();
+                        if(table.getName().contains("nolongtap") && !userId.equals(_services.getProfile().getUserId())){
+                            table.addListener(new ActorGestureListener(){
+                                @Override
+                                public boolean longPress(Actor actor, float x, float y) {
+                                    _confirm.show(String.format(_texts.confirmKick(), _room.getProfileByUserId(userId).getDisplayName(0)),
+                                            Confirm.Type.YESNO, new ConfirmResultListener() {
+                                        @Override
+                                        public void onResult(Result result) {
+                                            if(result == Result.YES){
+                                                JsonObj jsonObj = new JsonObj();
+                                                jsonObj.put("userId", userId);
+                                                jsonObj.put("name", _room.getProfileByUserId(userId).getDisplayName(0));
+                                                sendUpdateRoomMates(UpdateRoomMatesCode.KICK_USER, jsonObj.toString());
+                                            }
+                                        }
+                                    });
+                                    return true;
+                                }
+                            });
+                            table.setName(table.getName().replace("nolongtap", "longtapattached"));
+                        }
+                    }
                 }
             }
         });
@@ -330,7 +416,72 @@ public class RoomLogic extends LogicAbstract {
     }
 
     public void receivedUpdateRoomMates(int code, final String msg, final String senderId){
-        if(code == UpdateRoomMatesCode.UPDATE_DOWNLOAD){
+
+        if(code == UpdateRoomMatesCode.JOIN_ROOM){
+            if(isHost()){
+
+                _services.getDatabase().getProfileByUserId(senderId, new DatabaseListener<Profile>(Profile.class) {
+                    @Override
+                    public void onCallback(Profile obj, Status st) {
+                        if (st == Status.SUCCESS && obj != null) {
+                            Room roomClone = _room.clone();
+                            roomClone.addRoomUser(obj, true);
+                            hostSaveRoom(roomClone, true, null);
+                        }
+                    }
+                });
+
+            }
+        }
+        else if(code == UpdateRoomMatesCode.LEFT_ROOM){
+            if(isHost()){
+                Room roomClone = _room.clone();
+                roomClone.getRoomUsers().remove(senderId);
+                hostSaveRoom(roomClone, true, null);
+            }
+        }
+        else if(code == UpdateRoomMatesCode.MOVE_SLOT){
+            if(isHost()){
+                int toSlot = Integer.valueOf(msg);
+                Profile profile = _room.getRoomUserByUserId(senderId).getProfile();
+                _room.changeSlotIndex(toSlot, profile);
+                hostSaveRoom(false, null);
+            }
+        }
+        else if(code == UpdateRoomMatesCode.KICK_USER){
+            JsonObj jsonObj = new JsonObj(msg);
+            String userId = jsonObj.getString("userId");
+            String name = jsonObj.getString("name");
+            if(isHost()){
+                _room.getRoomUsers().remove(userId);
+                hostSaveRoom(true, null);
+            }
+            _services.getChat().add(new ChatMessage(String.format(_texts.userKicked(), name), ChatMessage.FromType.SYSTEM, null), false);
+            if(userId.equals(_services.getProfile().getUserId())){
+                errorOccured(_texts.youAreKicked());
+            }
+        }
+        else if(code == UpdateRoomMatesCode.INVTE_USERS){
+            if(isHost()){
+                final String[] userIds = msg.split(",");
+                final int[] i = {0};
+                for(final String userId : userIds){
+                    _services.getDatabase().getProfileByUserId(userId, new DatabaseListener<Profile>(Profile.class) {
+                        @Override
+                        public void onCallback(Profile obj, Status st) {
+                            if(st == Status.SUCCESS){
+                                _room.addInvitedUser(obj);
+                            }
+                            i[0]++;
+                            if(i[0] == userIds.length){
+                                hostSaveRoom(true, null);
+                            }
+                        }
+                    });
+                }
+            }
+        }
+        else if(code == UpdateRoomMatesCode.UPDATE_DOWNLOAD){
             if(Integer.valueOf(msg) < 100){
                 _noGameClientUsers.put(senderId, msg);
             }
@@ -361,7 +512,7 @@ public class RoomLogic extends LogicAbstract {
                 boolean isReady = false;
                 if(msg.equals("1")) isReady = true;
                 _room.setRoomUserReady(senderId, isReady);
-                flushRoom(false, false, null);
+                hostSaveRoom(false, null);
             }
         }
         else if(code == UpdateRoomMatesCode.GAME_OUTDATED){
@@ -376,12 +527,12 @@ public class RoomLogic extends LogicAbstract {
         }
     }
 
-    public void userJustJoinedRoom(Profile user){
+    public void chatAddUserJustJoinedRoom(Profile user){
         _services.getChat().add(new ChatMessage(String.format(_services.getTexts().userHasJoinedRoom(), user.getDisplayName(0)),
                 ChatMessage.FromType.SYSTEM, null), false);
     }
 
-    public void userJustLeftRoom(Profile user){
+    public void chatAddUserJustLeftRoom(Profile user){
         _services.getChat().add(new ChatMessage(String.format(_services.getTexts().userHasLeftRoom(), user.getDisplayName(0)),
                 ChatMessage.FromType.SYSTEM, null), false);
     }
@@ -391,12 +542,16 @@ public class RoomLogic extends LogicAbstract {
 
         _room.setOpen(true);
         _room.setPlaying(false);
-        flushRoom(forceUpdate, true, null);
+        hostSaveRoom(true, null);
     }
 
-    public void flushRoom(boolean force, boolean notify, DatabaseListener listener){
-        if(isHost() || force){
-            _services.getDatabase().saveRoom(_room, notify, listener);      //only host can save room
+    public void hostSaveRoom(boolean notify, DatabaseListener listener){
+        hostSaveRoom(_room, notify, listener);
+    }
+
+    public void hostSaveRoom(Room room, boolean notify, DatabaseListener listener){
+        if(isHost()){
+            _services.getDatabase().saveRoom(room, notify, listener);      //only host can save room
         }
     }
 
@@ -482,10 +637,11 @@ public class RoomLogic extends LogicAbstract {
         if(_forceQuit) return;
         else{
             _forceQuit = true;
+            _screen.back();
             _confirm.show(message, Confirm.Type.YES, new ConfirmResultListener() {
                 @Override
                 public void onResult(Result result) {
-                    _screen.back();
+
                 }
             });
         }
@@ -509,6 +665,12 @@ public class RoomLogic extends LogicAbstract {
                 _confirm.show(_services.getTexts().waitAllUsersReady(), Confirm.Type.YES, null);
             }
             return 3;
+        }
+        else if(_room.getGame().getMustFairTeam() && !_room.checkAllFairTeam()){
+            if(showMessage){
+                _confirm.show(_services.getTexts().fairTeamNeeded(), Confirm.Type.YES, null);
+            }
+            return 4;
         }
         else{
             return 0;
@@ -578,7 +740,8 @@ public class RoomLogic extends LogicAbstract {
         _room.setPlaying(true);
         _room.setRoundCounter(_room.getRoundCounter()+1);
         _room.storeRoomUsersToOriginalRoomUserIds();
-        flushRoom(false, true, null);
+        _room.convertRoomUsersToTeams();
+        hostSaveRoom(true, null);
         _services.getDatabase().savePlayedHistory(_services.getProfile(), _room, null);
         _services.getChat().add(new ChatMessage(_texts.gameStarted(), ChatMessage.FromType.SYSTEM, null), false);
         _services.getGamingKit().updateRoomMates(UpdateRoomMatesCode.GAME_STARTED, "");
@@ -624,12 +787,13 @@ public class RoomLogic extends LogicAbstract {
     public void leaveRoom(){
         if(isHost()){
             _room.setOpen(false);
+            _room.getRoomUsers().remove(_services.getProfile().getUserId());
         }
 
-        _room.getRoomUsers().remove(_services.getProfile().getUserId());
+        sendUpdateRoomMates(UpdateRoomMatesCode.LEFT_ROOM, "");
         _services.getGamingKit().leaveRoom();
         publishBroadcast(BroadcastEvent.DESTROY_ROOM);
-        flushRoom(true, true, null);
+        hostSaveRoom(true, null);
     }
 
     @Override
@@ -637,9 +801,11 @@ public class RoomLogic extends LogicAbstract {
         leaveRoom();
         super.dispose();
         Gdx.files.local("records").deleteDirectory();
+        if(_checkMonitorSuccessThread != null) _checkMonitorSuccessThread.kill();
         _checkReadyThread.kill();
         _services.getChat().hide();
         _services.getChat().resetChat();
         if(_gameFileChecker != null) _gameFileChecker.dispose();
     }
+
 }

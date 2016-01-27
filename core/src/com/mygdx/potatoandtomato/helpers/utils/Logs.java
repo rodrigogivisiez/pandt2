@@ -1,6 +1,15 @@
 package com.mygdx.potatoandtomato.helpers.utils;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.FPSLogger;
+
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by SiongLeng on 4/12/2015.
@@ -66,5 +75,24 @@ public class Logs {
         return System.nanoTime() - _startTime;
     }
 
+    public static void writeToLog(String msg){
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        Date date = new Date();
+        System.out.println(dateFormat.format(date));
+        FileHandle handle = Gdx.files.local("pt_logs.txt");
+        msg = "Report date: " + dateFormat.format(date) + "\n" + msg;
+        handle.writeString(msg, false);
+    }
+
+    public static String getLogMsg(){
+        FileHandle logFile = Gdx.files.local("pt_logs.txt");
+        if(logFile.exists()){
+            return logFile.readString();
+        }
+       else{
+            return "Nothing here." ;
+        }
+
+    }
 
 }

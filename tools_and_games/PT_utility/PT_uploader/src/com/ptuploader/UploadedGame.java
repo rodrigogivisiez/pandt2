@@ -21,6 +21,7 @@ public class UploadedGame {
     public String abbr;
     public String commonVersion;
     public ArrayList<String> screenShots;
+    public boolean mustFairTeam;
 
 
 

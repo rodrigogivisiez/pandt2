@@ -27,7 +27,7 @@ public class KeepAliveService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(intent == null || intent.getAction() == null){
-            stopRoomAlive();
+            stopService();
             return START_NOT_STICKY;
         }
 
@@ -58,10 +58,17 @@ public class KeepAliveService extends Service {
 
             startForeground(PushCode.UPDATE_ROOM, n);
         } else if (intent.getAction().startsWith("STOP")) {
-            stopForeground(true);
-            stopSelf();
+            stopService();
         }
         return START_STICKY;
+    }
+
+    public void stopService(){
+        stopForeground(true);
+        stopSelf();
+        String ns = Context.NOTIFICATION_SERVICE;
+        NotificationManager nMgr = (NotificationManager) this.getSystemService(ns);
+        nMgr.cancel(PushCode.UPDATE_ROOM);
     }
 
     @Override

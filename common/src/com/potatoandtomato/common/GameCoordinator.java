@@ -237,7 +237,7 @@ public class GameCoordinator implements Disposable {
     public String getHostUserId(){
         for(Team team : getTeams()){
             for(Player player : team.getPlayers()){
-                if(player.isHost()){
+                if(player.getIsHost()){
                     return player.getUserId();
                 }
             }

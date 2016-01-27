@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
@@ -64,11 +65,16 @@ public class Confirm {
 
         _msgTable = new Table();
         _msgTable.setBackground(new NinePatchDrawable(_assets.getPopupBg()));
+
+
+
         Label.LabelStyle labelStyle = new Label.LabelStyle();
         labelStyle.font = _assets.getWhitePizza3BlackS();
         _messageLabel = new Label("", labelStyle);
         _messageLabel.setWrap(true);
         _messageLabel.setAlignment(Align.center);
+
+        ScrollPane scrollPane = new ScrollPane(_messageLabel);
 
         _closeButton = new Image(_assets.getCloseButton());
 
@@ -91,7 +97,7 @@ public class Confirm {
 
         _msgTable.add(_closeButton).expandX().right().padTop(-50).colspan(2);
         _msgTable.row();
-        _msgTable.add(_messageLabel).padTop(10).padBottom(20).colspan(2).expandX().fillX().padLeft(10).padRight(10);
+        _msgTable.add(scrollPane).padTop(10).padBottom(20).colspan(2).expandX().fillX().padLeft(10).padRight(10).maxHeight(300);
         _msgTable.row();
         _msgTable.add(_buttonsTable).expandX().fillX();
 

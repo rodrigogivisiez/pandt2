@@ -237,7 +237,7 @@ public class TestFireBase extends TestAbstract {
         T_Threadings.sleep(500);
         //disconnected
         waiting[0] = true;
-        databases.removeUserFromRoomOnDisconnect(r, r.getHost(), new DatabaseListener<String>() {
+        databases.removeUserFromRoomOnDisconnect(r.getId(), r.getHost(), new DatabaseListener<String>() {
             @Override
             public void onCallback(String obj, Status st) {
                 Assert.assertEquals(st, Status.SUCCESS);
@@ -273,6 +273,7 @@ public class TestFireBase extends TestAbstract {
     @Test
     public void TestMonitorAllRoomOnDisconnected() {
 
+        final boolean[] ended = {false};
         final boolean[] waiting = {true};
         final Room r = MockModel.mockRoom(null);
         final int[] monitorCount = {0};
@@ -300,9 +301,12 @@ public class TestFireBase extends TestAbstract {
 
             @Override
             public void onCallbackTypeTwo(Room obj, Status st) {
-                Assert.assertEquals(obj.getId(), r.getId());
-                monitorCount[0]++;
-                waiting[0] = false;
+                if(!ended[0]){
+                    Assert.assertEquals(obj.getId(), r.getId());
+                    monitorCount[0]++;
+                    waiting[0] = false;
+                }
+
             }
         });
 
@@ -322,6 +326,7 @@ public class TestFireBase extends TestAbstract {
         }
         Assert.assertEquals(1, monitorCount[0]);
 
+        ended[0] = true;
     }
 
 

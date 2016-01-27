@@ -5,17 +5,21 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
+import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.absintflis.push_notifications.PushCode;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.helpers.utils.Strings;
 import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Broadcaster;
 import com.potatoandtomato.common.Status;
+import com.sun.deploy.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by SiongLeng on 23/12/2015.
@@ -129,15 +133,14 @@ public class InviteLogic extends LogicAbstract {
     }
 
     public void sendInvitation(){
+        final ArrayList<String> invitedUserIds = new ArrayList<String>();
         if(_invitedUsers.size() > 0){
-            boolean added = false;
             for(Profile user : _invitedUsers){
-                boolean result = _room.addInvitedUser(user);
-                if(!added){
-                    added = result;
+                if(_room.getInvitedUserByUserId(user.getUserId()) == null){
+                    invitedUserIds.add(user.getUserId());
                 }
             }
-            if(added){
+            if(invitedUserIds.size() > 0){
                 keepAlive();
                 Threadings.runInBackground(new Runnable() {
                     @Override
@@ -181,12 +184,8 @@ public class InviteLogic extends LogicAbstract {
                             Threadings.sleep(1000);
                         }
 
-                        _services.getDatabase().saveRoom(_room, false, new DatabaseListener<String>() {
-                            @Override
-                            public void onCallback(String obj, Status st) {
-                                killKeepAlive();
-                            }
-                        });
+                        _services.getGamingKit().updateRoomMates(UpdateRoomMatesCode.INVTE_USERS, Strings.joinArr(invitedUserIds, ","));
+                        killKeepAlive();
                     }
                 });
             }

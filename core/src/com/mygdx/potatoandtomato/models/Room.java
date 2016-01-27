@@ -4,8 +4,11 @@ import com.mygdx.potatoandtomato.helpers.serializings.IntProfileMapDeserializer;
 import com.potatoandtomato.common.Player;
 import com.potatoandtomato.common.Team;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
+import com.shaded.fasterxml.jackson.core.JsonProcessingException;
+import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 import com.shaded.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,6 +28,7 @@ public class Room {
 
     ArrayList<Profile> invitedUsers;
     ArrayList<String> originalRoomUserIds;
+    ArrayList<Team> teams;
 
     @JsonDeserialize(using = IntProfileMapDeserializer.class)
     HashMap<String, RoomUser> roomUsers;
@@ -118,6 +122,14 @@ public class Room {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public ArrayList<Team> getTeams() {
+        return teams;
+    }
+
+    public void setTeams(ArrayList<Team> teams) {
+        this.teams = teams;
     }
 
     @JsonIgnore
@@ -223,6 +235,15 @@ public class Room {
     }
 
     @JsonIgnore
+    public void changeSlotIndex(int toIndex, Profile user){
+        if(getRoomUserBySlotIndex(toIndex) == null){
+            if(getRoomUserByUserId(user.getUserId()) != null){
+                getRoomUsers().get(user.getUserId()).setSlotIndex(toIndex);
+            }
+        }
+    }
+
+    @JsonIgnore
     public boolean changeTeam(int toTeam, Profile user){
         int startIndex = toTeam * Integer.valueOf(this.getGame().getTeamMaxPlayers());
         boolean changed = false;
@@ -310,7 +331,7 @@ public class Room {
     }
 
     @JsonIgnore
-    public ArrayList<Team> convertRoomUsersToTeams(Profile selfProfile) {
+    public void convertRoomUsersToTeams() {
         ArrayList<Team> teams = new ArrayList();
         for (int i = 0; i < Integer.valueOf(this.getGame().getTeamCount()); i++) {
             teams.add(new Team());
@@ -319,10 +340,25 @@ public class Room {
             int index = convertSlotIndexToTeamNumber(user.getSlotIndex());
             boolean isHost = false;
             if(user.getProfile().equals(this.getHost())) isHost = true;
-            teams.get(index).addPlayer(new Player(user.getProfile().getDisplayName(15), user.getProfile().getUserId(),
-                    user.getProfile().equals(selfProfile), isHost));
+            teams.get(index).addPlayer(new Player(user.getProfile().getDisplayName(15), user.getProfile().getUserId(), isHost));
         }
-        return teams;
+        this.teams = teams;
+    }
+
+    @JsonIgnore
+    public boolean checkAllFairTeam(){
+        convertRoomUsersToTeams();
+        int lastCount = 0;
+        for(Team team : teams){
+            if(team.getPlayers().size() != 0){
+                if(lastCount == 0) lastCount = team.getPlayers().size();
+
+                if(team.getPlayers().size() != lastCount && team.getPlayers().size() !=0){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
 
@@ -357,6 +393,21 @@ public class Room {
             return true;
         }
         return false;
+    }
+
+    @JsonIgnore
+    public Room clone(){
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            String json = mapper.writeValueAsString(this);
+            ObjectMapper mapper2 = new ObjectMapper();
+            return mapper2.readValue(json, Room.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

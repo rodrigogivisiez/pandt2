@@ -9,7 +9,6 @@ import org.json.JSONObject;
 public class UpdateHelper {
 
     public static String toJson(int code, String msg){
-        System.out.println("SEND MSG CODE: "+ code);
 
         JSONObject jsonObject = new JSONObject();
         try {

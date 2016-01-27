@@ -1,1 +1,1 @@
-call java -jar "PT_uploader.jar" parameter /wait
+call java -jar "C:\Users\SiongLeng\Desktop\Potato Tomato 2\pandt2\tools_and_games\PT_utility\PT_uploader\out\artifacts\PT_uploader_jar\PT_uploader.jar" parameter /wait
