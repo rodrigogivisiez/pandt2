@@ -146,6 +146,12 @@ public class GameCoordinator implements Disposable {
         }
     }
 
+    public void setLandscape(){
+        float originalHeight = this.gameHeight;
+        this.gameHeight = this.gameWidth;
+        this.gameWidth = originalHeight;
+    }
+
     public void subscribedBroadcastListener(String id){
         _subscribedIds.add(id);
     }
