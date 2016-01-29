@@ -1,0 +1,1 @@
+call java -jar "PT_uploader.jar" parameter /wait
