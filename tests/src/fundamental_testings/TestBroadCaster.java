@@ -1,10 +1,8 @@
 package fundamental_testings;
 
 import abstracts.TestAbstract;
-import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Status;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.helpers.controls.Chat;
 import com.mygdx.potatoandtomato.helpers.services.GCMSender;
-import com.mygdx.potatoandtomato.helpers.utils.Threadings;
+import com.potatoandtomato.common.Threadings;
 import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.PushNotification;

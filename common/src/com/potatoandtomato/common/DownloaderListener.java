@@ -1,4 +1,4 @@
-package com.mygdx.potatoandtomato.absintflis.downloader;
+package com.potatoandtomato.common;
 
 import com.potatoandtomato.common.Status;
 

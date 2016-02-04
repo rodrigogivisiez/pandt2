@@ -66,6 +66,11 @@ public class MockDB implements IDatabase {
     }
 
     @Override
+    public void addUserToRoom(Room room, Profile user, DatabaseListener<String> listener) {
+
+    }
+
+    @Override
     public void changeSlotIndex(Room room, Profile user, Integer newIndex, DatabaseListener<String> listener) {
 
     }
@@ -91,9 +96,10 @@ public class MockDB implements IDatabase {
     }
 
     @Override
-    public void removeUserFromRoomOnDisconnect(Room room, Profile user, DatabaseListener<String> listener) {
+    public void removeUserFromRoomOnDisconnect(String roomId, Profile user, DatabaseListener<String> listener) {
 
     }
+
 
     @Override
     public void offline() {

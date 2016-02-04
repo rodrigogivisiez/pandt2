@@ -3,8 +3,8 @@ package com.mygdx.potatoandtomato.android;
 import android.graphics.Rect;
 import android.view.View;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
-import com.mygdx.potatoandtomato.helpers.utils.SafeThread;
-import com.mygdx.potatoandtomato.helpers.utils.Threadings;
+import com.mygdx.potatoandtomato.statics.Global;
+import com.potatoandtomato.common.SafeThread;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.Broadcaster;
 
@@ -14,7 +14,7 @@ import com.potatoandtomato.common.Broadcaster;
 public class LayoutChangedFix {
 
     private View _rootView;
-    private int _screenHeight;
+    private int _screenHeightPotrait, _screenHeightLandscape;
     private int width, _height;
     private SafeThread _safeThread;
     private int count;
@@ -26,7 +26,7 @@ public class LayoutChangedFix {
 
         Rect rect = new Rect();
         _rootView.getWindowVisibleDisplayFrame(rect);
-        _screenHeight = rect.height();
+        _screenHeightPotrait = rect.height();
         addLayoutChangedListener();
 
     }
@@ -37,13 +37,20 @@ public class LayoutChangedFix {
             @Override
             public void onLayoutChange(View v, int left, int top, int right,
                                        int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                boolean isPotrait = Global.IS_POTRAIT;
                 Rect rect = new Rect();
                 _rootView.getWindowVisibleDisplayFrame(rect);
+
+                if(!isPotrait && _screenHeightLandscape == 0){
+                    _screenHeightLandscape = rect.height();
+                }
+
+                int usingScreenHeight = isPotrait ? _screenHeightPotrait :_screenHeightLandscape;
 
                 if (!(width == rect.width() && _height == rect.height())) {
                     width = rect.width();
                     _height = rect.height();
-                    broadcastLayoutChanged(_screenHeight - _height, _screenHeight);
+                    broadcastLayoutChanged(usingScreenHeight - _height, usingScreenHeight);
 
                 }
             }

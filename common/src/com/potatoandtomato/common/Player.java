@@ -8,14 +8,24 @@ public class Player {
     public String name;
     public String userId;
     public boolean isHost;
+    public boolean isConnected;
 
     public Player() {
     }
 
-    public Player(String name, String userId, boolean isHost) {
+    public Player(String name, String userId, boolean isHost, boolean isConnected) {
         this.name = name;
         this.userId = userId;
         this.isHost = isHost;
+        this.isConnected = isConnected;
+    }
+
+    public boolean getIsConnected() {
+        return isConnected;
+    }
+
+    public void setIsConnected(boolean isConnected) {
+        this.isConnected = isConnected;
     }
 
     public boolean getIsHost() {

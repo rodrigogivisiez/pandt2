@@ -1,8 +1,8 @@
 package fundamental_testings;
 
 import abstracts.TestAbstract;
-import com.mygdx.potatoandtomato.absintflis.downloader.DownloaderListener;
-import com.mygdx.potatoandtomato.helpers.services.Downloader;
+import com.potatoandtomato.common.DownloaderListener;
+import com.potatoandtomato.common.Downloader;
 import com.potatoandtomato.common.Status;
 import helpers.T_Services;
 import helpers.T_Threadings;

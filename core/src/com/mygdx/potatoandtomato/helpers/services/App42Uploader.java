@@ -1,19 +1,17 @@
 package com.mygdx.potatoandtomato.helpers.services;
 
 import com.badlogic.gdx.files.FileHandle;
-import com.mygdx.potatoandtomato.absintflis.downloader.DownloaderListener;
-import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
+import com.potatoandtomato.common.DownloaderListener;
+import com.potatoandtomato.common.IDownloader;
 import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
 import com.mygdx.potatoandtomato.absintflis.uploader.UploadListener;
-import com.mygdx.potatoandtomato.helpers.utils.Threadings;
+import com.potatoandtomato.common.Threadings;
 import com.potatoandtomato.common.Status;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.ServiceAPI;
 import com.shephertz.app42.paas.sdk.android.upload.Upload;
 import com.shephertz.app42.paas.sdk.android.upload.UploadFileType;
 import com.shephertz.app42.paas.sdk.android.upload.UploadService;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Created by SiongLeng on 13/1/2016.

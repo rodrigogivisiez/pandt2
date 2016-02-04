@@ -6,7 +6,7 @@ import com.mygdx.potatoandtomato.absintflis.game_file_checker.GameFileCheckerLis
 import com.mygdx.potatoandtomato.helpers.controls.Chat;
 import com.mygdx.potatoandtomato.helpers.services.*;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
-import com.mygdx.potatoandtomato.helpers.utils.Threadings;
+import com.potatoandtomato.common.Threadings;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.scenes.room_scene.GameFileChecker;
 import com.potatoandtomato.common.*;
@@ -92,7 +92,7 @@ public class GameLoaderTest extends ActivityInstrumentationTestCase2<AndroidLaun
             public void userAbandoned() {
 
             }
-        }, null, "1", null, broadcaster);
+        }, null, "1", null, broadcaster, new Downloader());
         broadcaster.broadcast(BroadcastEvent.LOAD_GAME_REQUEST, gameCoordinator);
 
         while (waiting[0]) {

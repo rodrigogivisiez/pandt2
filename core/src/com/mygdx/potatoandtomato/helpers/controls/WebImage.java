@@ -1,18 +1,11 @@
 package com.mygdx.potatoandtomato.helpers.controls;
 
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Disposable;
-import com.mygdx.potatoandtomato.absintflis.downloader.DownloaderListener;
-import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
-import com.mygdx.potatoandtomato.helpers.utils.Caches;
 import com.mygdx.potatoandtomato.helpers.utils.Pair;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;

@@ -1,5 +1,7 @@
 package com.mygdx.potatoandtomato.helpers.utils;
 
+import com.mygdx.potatoandtomato.statics.Global;
+
 /**
  * Created by SiongLeng on 4/12/2015.
  */
@@ -7,8 +9,12 @@ public class Positions {
 
     private static int _height = 640;
     private static int _width = 360;
-    public static int getHeight() { return _height; }
-    public static int getWidth() { return _width; }
+    public static int getHeight() {
+        return Global.IS_POTRAIT ? _height : _width;
+    }
+    public static int getWidth() {
+        return Global.IS_POTRAIT ? _width : _height;
+    }
     public static void setWidth(int _width) { Positions._width = _width; }
     public static void setHeight(int _height) { Positions._height = _height; }
 

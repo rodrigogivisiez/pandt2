@@ -24,13 +24,14 @@ public class Entrance extends GameEntrance {
         Assets assets = new Assets(gameCoordinator);
         assets.loadAll(null);
         _services =  new Services(assets, new Texts(), new Sounds(assets, gameCoordinator));
-
+        getGameCoordinator().finishLoading();
     }
 
     @Override
     public void init() {
         _logic = new MainScreenLogic(_services, getGameCoordinator(), false);
         getGameCoordinator().getGame().setScreen(_logic.getMainScreen());
+
     }
 
     @Override

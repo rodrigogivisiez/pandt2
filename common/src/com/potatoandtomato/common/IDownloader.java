@@ -1,6 +1,4 @@
-package com.mygdx.potatoandtomato.absintflis.downloader;
-
-import com.mygdx.potatoandtomato.helpers.utils.SafeThread;
+package com.potatoandtomato.common;
 
 import java.io.File;
 

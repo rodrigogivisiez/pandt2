@@ -159,7 +159,7 @@ public class MockGamingKit {
                 Collections.sort(users);
 
                 for(String user : users) {
-                    team.addPlayer(new Player(user, user, isHost));
+                    team.addPlayer(new Player(user, user, isHost, true));
                     isHost = false;
                     i++;
                     if(i == _eachTeamExpectedPlayers){

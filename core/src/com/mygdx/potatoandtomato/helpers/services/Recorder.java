@@ -6,13 +6,12 @@ import com.badlogic.gdx.audio.AudioRecorder;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.absintflis.recorder.RecordListener;
-import com.mygdx.potatoandtomato.helpers.utils.Threadings;
+import com.potatoandtomato.common.Threadings;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.Status;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Arrays;
 
 /**
  * Created by SiongLeng on 11/1/2016.

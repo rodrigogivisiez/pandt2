@@ -3,10 +3,9 @@ package com.mygdx.potatoandtomato.helpers.utils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.FPSLogger;
+import com.potatoandtomato.common.SafeThread;
+import com.potatoandtomato.common.Threadings;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -35,8 +34,8 @@ public class Logs {
             Threadings.runInBackground(new Runnable() {
                 @Override
                 public void run() {
-                    while (true){
-                        if(_fpsThread.isKilled()) return;
+                    while (true) {
+                        if (_fpsThread.isKilled()) return;
                         _fps.log();
                         Threadings.sleep(1000);
                     }

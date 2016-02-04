@@ -31,4 +31,6 @@ public class BroadcastEvent {
     public static final int NATIVE_TEXT_CHANGED = 28; //native text change notify libgdx
     public static final int LIBGDX_TEXT_CHANGED = 29; //libgdx text change notify native
     public static final int VIBRATE_DEVICE = 30; //request to vibrate device
+    public static final int DEVICE_ORIENTATION = 31;    //0 to potrait, 1 to landscape
+
 }

@@ -3,7 +3,7 @@ package connection_testings;
 import abstracts.TestAbstract;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.*;
 import com.mygdx.potatoandtomato.helpers.services.Appwarp;
-import com.mygdx.potatoandtomato.helpers.utils.Threadings;
+import com.potatoandtomato.common.Threadings;
 import com.mygdx.potatoandtomato.models.ChatMessage;
 import helpers.MockModel;
 import helpers.T_Threadings;

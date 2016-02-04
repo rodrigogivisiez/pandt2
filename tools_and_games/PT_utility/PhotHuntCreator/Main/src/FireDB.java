@@ -1,12 +1,14 @@
 import com.firebase.client.*;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by SiongLeng on 13/12/2015.
  */
 public class FireDB {
 
+    private static long totalImageCount = 0;
     Firebase _ref;
     boolean finished = false;
     boolean success = false;
@@ -21,18 +23,40 @@ public class FireDB {
         return r.push().getKey();
     }
 
-    public String saveNew(String key, String meta){
-        final Firebase r = _ref.child("images").child(key);
-        r.setValue(meta);
+
+    public String saveNew(final String key, final String meta, final Runnable onFinish){
+        getImagesCount(new Runnable() {
+            @Override
+            public void run() {
+                final Firebase r = _ref.child("images").child(key);
+                ImageData imageData = new ImageData(meta, totalImageCount, key);
+                r.setValue(imageData, new Firebase.CompletionListener() {
+                    @Override
+                    public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                        if(onFinish!= null) onFinish.run();
+                    }
+                });
+            }
+        });
         return key;
     }
 
-    public void getImagesCount(){
-        final Firebase r = _ref.child("images");
+    public void getImagesCount(final Runnable onFinish){
+        final Query r = _ref.child("images").orderByChild("index").limitToLast(1);
         r.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                MainForm.updateImageCount(snapshot.getChildrenCount());
+                long count = 0;
+                if(snapshot.exists()){
+                    for(DataSnapshot snapshot1 : snapshot.getChildren()){
+                        ImageData imageData = snapshot1.getValue(ImageData.class);
+                        count = imageData.getIndex() + 1;
+                        break;
+                    }
+                }
+                totalImageCount = count;
+                MainForm.updateImageCount(count);
+                if(onFinish != null) onFinish.run();
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {

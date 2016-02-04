@@ -2,9 +2,8 @@ package com.mygdx.potatoandtomato.android;
 
 import android.test.ActivityInstrumentationTestCase2;
 import com.badlogic.gdx.graphics.Texture;
-import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.helpers.utils.Pair;
-import com.mygdx.potatoandtomato.helpers.utils.Threadings;
+import com.potatoandtomato.common.Threadings;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Broadcaster;

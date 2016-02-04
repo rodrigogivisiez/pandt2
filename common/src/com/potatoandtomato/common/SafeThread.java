@@ -1,4 +1,4 @@
-package com.mygdx.potatoandtomato.helpers.utils;
+package com.potatoandtomato.common;
 
 /**
  * Created by SiongLeng on 15/12/2015.

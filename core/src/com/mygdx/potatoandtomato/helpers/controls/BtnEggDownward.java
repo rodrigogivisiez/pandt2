@@ -18,7 +18,7 @@ import com.mygdx.potatoandtomato.helpers.services.Shaders;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.services.Sounds;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
-import com.mygdx.potatoandtomato.helpers.utils.Threadings;
+import com.potatoandtomato.common.Threadings;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 

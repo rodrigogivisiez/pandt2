@@ -19,7 +19,7 @@ import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.helpers.services.Sounds;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
-import com.mygdx.potatoandtomato.helpers.utils.Threadings;
+import com.potatoandtomato.common.Threadings;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.scenes.boot_scene.BootLogic;
@@ -31,8 +31,6 @@ import com.mygdx.potatoandtomato.scenes.game_sandbox_scene.GameSandboxLogic;
 import com.mygdx.potatoandtomato.scenes.prerequisite_scene.PrerequisiteLogic;
 import com.mygdx.potatoandtomato.scenes.room_scene.RoomLogic;
 import com.mygdx.potatoandtomato.scenes.settings_scene.SettingsLogic;
-import com.potatoandtomato.common.BroadcastEvent;
-import com.potatoandtomato.common.Broadcaster;
 
 import java.util.Stack;
 

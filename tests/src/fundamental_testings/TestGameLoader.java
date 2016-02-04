@@ -5,10 +5,10 @@ import abstracts.TestAbstract;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.game_file_checker.GameFileCheckerListener;
 import com.mygdx.potatoandtomato.desktop.DesktopLauncher;
-import com.mygdx.potatoandtomato.helpers.services.Downloader;
+import com.potatoandtomato.common.Downloader;
 import com.mygdx.potatoandtomato.helpers.services.VersionControl;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
-import com.mygdx.potatoandtomato.helpers.utils.Threadings;
+import com.potatoandtomato.common.Threadings;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.scenes.room_scene.GameFileChecker;
@@ -93,7 +93,8 @@ public class TestGameLoader extends TestAbstract{
 
         GameCoordinator gameCoordinator = new GameCoordinator(game.getFullLocalJarPath(),
                                         game.getLocalAssetsPath(), game.getBasePath(), new ArrayList<Team>(), Positions.getWidth(),
-                                        Positions.getHeight(), null, null, "123", mock(IGameSandBox.class), null, "1", mock(ISounds.class), broadcaster);
+                                        Positions.getHeight(), null, null, "123", mock(IGameSandBox.class), null, "1", mock(ISounds.class), broadcaster,
+                                        mock(IDownloader.class));
         broadcaster.broadcast(BroadcastEvent.LOAD_GAME_REQUEST, gameCoordinator);
 
         while (waiting[0]){

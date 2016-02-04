@@ -1,7 +1,7 @@
 package com.mygdx.potatoandtomato.models;
 
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
-import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
+import com.potatoandtomato.common.IDownloader;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
 import com.mygdx.potatoandtomato.helpers.controls.Chat;

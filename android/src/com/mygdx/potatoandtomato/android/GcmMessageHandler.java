@@ -1,27 +1,17 @@
 package com.mygdx.potatoandtomato.android;
 
-import android.annotation.TargetApi;
-import android.app.ActivityManager;
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Build;
+import android.os.Bundle;
 import android.os.PowerManager;
 import com.google.android.gms.gcm.GcmListenerService;
-import android.app.NotificationManager;
-import android.content.Context;
-import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 import com.mygdx.potatoandtomato.absintflis.push_notifications.PushCode;
 import com.mygdx.potatoandtomato.models.PushNotification;
-import com.potatoandtomato.common.BroadcastEvent;
-import com.potatoandtomato.common.BroadcastListener;
-import com.potatoandtomato.common.Broadcaster;
-import com.potatoandtomato.common.Status;
 import com.shaded.fasterxml.jackson.core.JsonProcessingException;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
-import org.shaded.apache.http.conn.routing.BasicRouteDirector;
 
 public class GcmMessageHandler extends GcmListenerService {
     public static final int MESSAGE_NOTIFICATION_ID = 435345;

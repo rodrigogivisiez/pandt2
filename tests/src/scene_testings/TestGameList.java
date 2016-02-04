@@ -5,7 +5,7 @@ import abstracts.TestAbstract;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
-import com.mygdx.potatoandtomato.helpers.utils.Threadings;
+import com.potatoandtomato.common.Threadings;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.models.UserPlayingState;

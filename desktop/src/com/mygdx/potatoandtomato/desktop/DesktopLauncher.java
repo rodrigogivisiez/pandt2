@@ -9,6 +9,7 @@ import com.mygdx.potatoandtomato.PTGame;
 import com.mygdx.potatoandtomato.helpers.utils.JarUtils;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
+import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.*;
 import javafx.geometry.Pos;
 
@@ -21,6 +22,7 @@ import java.net.URLClassLoader;
 
 public class DesktopLauncher {
 
+	private static LwjglApplication application;
 	private static ImageLoader _imageLoader;
 	public static Broadcaster _broadcaster;
 
@@ -41,8 +43,9 @@ public class DesktopLauncher {
 		});
 
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.height = 800;
-		config.width = 480;
+		config.height = Positions.getHeight();
+		config.width = Positions.getWidth();
+		config.resizable = true;
 
 
 		TexturePacker.Settings settings = new TexturePacker.Settings();
@@ -52,9 +55,20 @@ public class DesktopLauncher {
 		settings.filterMin = Texture.TextureFilter.Linear;
 		//TexturePacker.process(settings, "../../images/ui", "../../android/assets", "ui_pack");
 
-		new LwjglApplication(new PTGame(_broadcaster), config);
+		application = new LwjglApplication(new PTGame(_broadcaster), config);
 
 		subscribeLoadGameRequest();
+		subscribeOrientationChanged();
+	}
+
+	public static void subscribeOrientationChanged(){
+		_broadcaster.subscribe(BroadcastEvent.DEVICE_ORIENTATION, new BroadcastListener<Integer>() {
+			@Override
+			public void onCallback(Integer obj, Status st) {
+				Global.IS_POTRAIT = (obj == 0);
+				application.getGraphics().setDisplayMode(Positions.getWidth(), Positions.getHeight(), false);
+			}
+		});
 	}
 
 	public static void subscribeLoadGameRequest(){

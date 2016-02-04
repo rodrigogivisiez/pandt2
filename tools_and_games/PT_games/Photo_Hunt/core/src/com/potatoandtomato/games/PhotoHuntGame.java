@@ -17,7 +17,7 @@ public class PhotoHuntGame extends MockGame {
 	@Override
 	public void create() {
 		super.create();
-		initiateMockGamingKit(0, 0);
+		initiateMockGamingKit(1, 1);
 	}
 
 	@Override

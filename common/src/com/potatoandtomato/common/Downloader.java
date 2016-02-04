@@ -1,12 +1,12 @@
-package com.mygdx.potatoandtomato.helpers.services;
+package com.potatoandtomato.common;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.net.HttpStatus;
-import com.mygdx.potatoandtomato.absintflis.downloader.DownloaderListener;
-import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
-import com.mygdx.potatoandtomato.helpers.utils.SafeThread;
-import com.mygdx.potatoandtomato.helpers.utils.Threadings;
+import com.potatoandtomato.common.DownloaderListener;
+import com.potatoandtomato.common.IDownloader;
+import com.potatoandtomato.common.SafeThread;
+import com.potatoandtomato.common.Threadings;
 import com.potatoandtomato.common.Status;
 
 import java.io.*;

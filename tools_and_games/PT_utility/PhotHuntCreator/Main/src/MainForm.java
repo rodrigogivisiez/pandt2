@@ -38,7 +38,7 @@ public class MainForm extends JFrame {
     public MainForm() {
         super("Loading...");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1205,430);
+        setSize(1215,430);
         setResizable(false);
         pane = getContentPane();
         pane.setLayout(null);
@@ -126,10 +126,18 @@ public class MainForm extends JFrame {
                     f2.delete();
 
                     if(!cancel[0]){
-                        fireDB.saveNew(key, jsonObject.toJSONString());
+                        fireDB.saveNew(key, jsonObject.toJSONString(), new Runnable() {
+                            @Override
+                            public void run() {
+                                dlg.dispose();
+                            }
+                        });
+                    }
+                    else{
+                        dlg.dispose();
                     }
 
-                    dlg.dispose();
+
                 }
             }
         });
@@ -157,7 +165,7 @@ public class MainForm extends JFrame {
 
     public static void refreshImageCount(){
         _this.setTitle("Loading...");
-        fireDB.getImagesCount();
+        fireDB.getImagesCount(null);
     }
 
     public static void updateImageCount(long newCount){
@@ -243,7 +251,7 @@ public class MainForm extends JFrame {
         pic2 = new ImageIcon(pic2.getImage().getScaledInstance(IMAGE_WIDTH, IMAGE_HEIGHT, Image.SCALE_DEFAULT));
         JLabel label2 = new JLabel(pic2);
         label2.setSize(IMAGE_WIDTH, IMAGE_HEIGHT);
-        label2.setLocation(IMAGE_WIDTH, 0);
+        label2.setLocation(IMAGE_WIDTH + 10, 0);
         pane.add(label2);
 
         label.addMouseMotionListener(new MouseMotionListener() {
@@ -372,7 +380,7 @@ public class MainForm extends JFrame {
         if(canvas != null){
             if(canvas.getMyWidth() <= 10 || canvas.getMyHeight() <= 10) return false;
 
-            if(canvas.getFinalX() >= IMAGE_WIDTH || canvas.getFinalY() >= IMAGE_HEIGHT){
+            if(canvas.getFinalX() >= IMAGE_WIDTH || canvas.getFinalY() >= IMAGE_HEIGHT || canvas.getStartX() < 0 || canvas.getStartY() < 0){
                 return false;
             }
 
@@ -435,7 +443,7 @@ public class MainForm extends JFrame {
     public static void setMirrorCanvasPosition(int startX, int startY, int finalX, int finalY){
         if(mirrorCanvas != null) pane.remove(mirrorCanvas);
 
-        mirrorCanvas = new MyCanvas(startX, startY, finalX, finalY);
+        mirrorCanvas = new MyCanvas(startX + 10, startY, finalX + 10, finalY);
         mirrorCanvas.setSize(2000, 2000);
         pane.add(mirrorCanvas, 0);
         pane.repaint();

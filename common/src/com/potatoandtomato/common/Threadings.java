@@ -1,4 +1,4 @@
-package com.mygdx.potatoandtomato.helpers.utils;
+package com.potatoandtomato.common;
 
 import com.badlogic.gdx.Gdx;
 

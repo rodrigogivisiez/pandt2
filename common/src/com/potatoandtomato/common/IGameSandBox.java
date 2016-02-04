@@ -7,5 +7,7 @@ public interface IGameSandBox {
 
     void useConfirm(String msg, Runnable yesRunnable, Runnable noRunnable);
     void userAbandoned();
+    void onGameLoaded();
+
 
 }

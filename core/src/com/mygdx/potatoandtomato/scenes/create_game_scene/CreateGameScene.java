@@ -17,7 +17,7 @@ import com.mygdx.potatoandtomato.helpers.controls.BtnEggDownward;
 import com.mygdx.potatoandtomato.helpers.controls.TopBar;
 import com.mygdx.potatoandtomato.helpers.controls.WebImage;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
-import com.mygdx.potatoandtomato.helpers.utils.Threadings;
+import com.potatoandtomato.common.Threadings;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Services;
 

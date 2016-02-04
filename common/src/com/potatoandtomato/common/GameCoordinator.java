@@ -32,6 +32,8 @@ public class GameCoordinator implements Disposable {
     private ISounds soundManager;
     private AssetsWrapper assetsWrapper;
     private Broadcaster broadcaster;
+    private DecisionsMaker decisionsMaker;
+    private IDownloader downloader;
 
     private ArrayList<String> _subscribedIds;
     private Array<InputProcessor> _processors;
@@ -47,7 +49,8 @@ public class GameCoordinator implements Disposable {
                            IPTGame game, SpriteBatch batch,
                            String userId, IGameSandBox gameSandBox,
                            Object database, String roomId,
-                           ISounds sounds, Broadcaster broadcaster) {
+                           ISounds sounds, Broadcaster broadcaster,
+                           IDownloader downloader) {
         this.jarPath = jarPath;
         this.assetsPath = assetsPath;
         this.basePath = basePath;
@@ -62,11 +65,21 @@ public class GameCoordinator implements Disposable {
         this.roomId = roomId;
         this.soundManager = sounds;
         this.broadcaster = broadcaster;
+        this.downloader = downloader;
+        this.decisionsMaker = new DecisionsMaker(this.teams);
 
         _subscribedIds = new ArrayList<String>();
         _processors = new Array<InputProcessor>();
         _inGameUpdateListeners = new ArrayList<InGameUpdateListener>();
         subscribeListeners();
+    }
+
+    public IDownloader getDownloader() {
+        return downloader;
+    }
+
+    public void setDownloader(IDownloader downloader) {
+        this.downloader = downloader;
     }
 
     public IGameSandBox getGameSandBox() {
@@ -111,6 +124,7 @@ public class GameCoordinator implements Disposable {
 
     public void setTeams(ArrayList<Team> teams) {
         this.teams = teams;
+        decisionsMaker.teamsChanged(teams);
     }
 
     public String getJarPath() {
@@ -150,6 +164,7 @@ public class GameCoordinator implements Disposable {
         float originalHeight = this.gameHeight;
         this.gameHeight = this.gameWidth;
         this.gameWidth = originalHeight;
+        broadcaster.broadcast(BroadcastEvent.DEVICE_ORIENTATION, 1);
     }
 
     public void subscribedBroadcastListener(String id){
@@ -184,6 +199,7 @@ public class GameCoordinator implements Disposable {
 
     public void userAbandon(String userId){
         if(this.userStateListener != null) userStateListener.userAbandoned(userId);
+        setPlayerConnectionChanged(userId, false);
     }
 
     public void userConnectionChanged(String userId, boolean connected){
@@ -195,6 +211,34 @@ public class GameCoordinator implements Disposable {
                 userStateListener.userDisconnected(userId);
             }
         }
+        setPlayerConnectionChanged(userId, connected);
+    }
+
+    private void setPlayerConnectionChanged(String userId, boolean connected){
+        for(Team team : teams){
+            if(team.getPlayerByUserId(userId) != null){
+                team.getPlayerByUserId(userId).setIsConnected(connected);
+                decisionsMaker.teamsChanged(teams);
+                return;
+            }
+        }
+    }
+
+    public boolean meIsDecisionMaker(){
+        return decisionsMaker.checkIsDecisionMaker(this.getUserId());
+    }
+
+    public int getMyUniqueIndex(){
+        int i = 0;
+        for(Team team : teams){
+            for(Player player : team.getPlayers()){
+                if(player.getUserId().equals(getUserId())){
+                    return i;
+                }
+                i++;
+            }
+        }
+        return -1;
     }
 
     public void addInputProcessor(InputProcessor processor){
@@ -271,11 +315,20 @@ public class GameCoordinator implements Disposable {
         broadcaster.broadcast(BroadcastEvent.VIBRATE_DEVICE, periodInMili);
     }
 
+    public void finishLoading(){
+        this.getGameSandBox().onGameLoaded();
+    }
+
+    public ArrayList<InGameUpdateListener> getInGameUpdateListeners() {
+        return _inGameUpdateListeners;
+    }
+
     @Override
     public void dispose() {
         broadcaster.unsubscribe(_broadcastSubscribedId);
         userStateListener = null;
         _inGameUpdateListeners.clear();
         if(assetsWrapper != null) assetsWrapper.dispose();
+        broadcaster.broadcast(BroadcastEvent.DEVICE_ORIENTATION, 0);
     }
 }

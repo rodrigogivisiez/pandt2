@@ -11,7 +11,7 @@ import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.helpers.controls.Notification;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
-import com.mygdx.potatoandtomato.helpers.utils.Threadings;
+import com.potatoandtomato.common.Threadings;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.*;
 
@@ -80,13 +80,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             public void onCallback(GameCoordinator obj, Status st) {
                 if (st == Status.SUCCESS) {
                     _coordinator = obj;
-                    if(!_isContinue){
-                        _isReady = true;
-                        _services.getGamingKit().updateRoomMates(UpdateRoomMatesCode.USER_IS_READY, "");
-                    }
-                    else{
-                        gameStart();
-                    }
+                    //coordinator will call gameLoaded of sandbox
 
                 } else {
                     failLoad();
@@ -115,7 +109,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                         _room.getGame().getLocalAssetsPath(), _room.getGame().getBasePath(), _room.getTeams(),
                         Positions.getWidth(), Positions.getHeight(), _screen.getGame(), _screen.getGame().getSpriteBatch(),
                         _services.getProfile().getUserId(), _me, _services.getDatabase().getGameBelongDatabase(_room.getGame().getAbbr()),
-                        _room.getId(), _services.getSounds(), getBroadcaster()));
+                        _room.getId(), _services.getSounds(), getBroadcaster(), _services.getDownloader()));
             }
         });
 
@@ -259,6 +253,17 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                 ChatMessage.FromType.IMPORTANT, null), false);
 
        exitSandbox();
+    }
+
+    @Override
+    public void onGameLoaded() {
+        if(!_isContinue){
+            _isReady = true;
+            _services.getGamingKit().updateRoomMates(UpdateRoomMatesCode.USER_IS_READY, "");
+        }
+        else{
+            gameStart();
+        }
     }
 
     public void updateReceived(int code, String msg, String senderId){

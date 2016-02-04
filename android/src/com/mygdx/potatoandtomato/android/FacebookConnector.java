@@ -1,14 +1,12 @@
 package com.mygdx.potatoandtomato.android;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import com.badlogic.gdx.utils.Json;
 import com.facebook.*;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.mygdx.potatoandtomato.helpers.utils.JsonObj;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
-import com.mygdx.potatoandtomato.helpers.utils.Threadings;
+import com.potatoandtomato.common.Threadings;
 import com.mygdx.potatoandtomato.models.FacebookProfile;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;

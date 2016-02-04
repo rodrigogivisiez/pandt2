@@ -34,7 +34,7 @@ public class Main {
             ScreenShots screenShots = new ScreenShots(paths.screenshots);
             screenShots.run();
 
-            if(zippings.hasModified() || dx.hasModified()){
+            if(zippings.hasModified() || dx.hasModified() || details.version.equals("0.99")){
                 details.addVersion();
             }
 

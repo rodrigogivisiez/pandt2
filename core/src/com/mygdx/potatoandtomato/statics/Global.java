@@ -5,6 +5,7 @@ package com.mygdx.potatoandtomato.statics;
  */
 public class Global {
 
-    public static boolean ENABLE_SOUND = true;
+    public static boolean ENABLE_SOUND = false;
+    public static boolean IS_POTRAIT = true;
 
 }

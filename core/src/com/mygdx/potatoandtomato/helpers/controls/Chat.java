@@ -24,13 +24,13 @@ import com.mygdx.potatoandtomato.helpers.services.Sounds;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
 import com.mygdx.potatoandtomato.helpers.utils.Colors;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
-import com.mygdx.potatoandtomato.helpers.utils.Threadings;
+import com.mygdx.potatoandtomato.statics.Global;
+import com.potatoandtomato.common.Threadings;
 import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.models.NativeLibgdxTextInfo;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Room;
 import com.potatoandtomato.common.*;
-import javafx.geometry.Pos;
 
 import java.util.HashMap;
 
@@ -99,15 +99,10 @@ public class Chat {
 
         if(batch == null) return;
 
-        StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
-        _stage = new Stage(viewPort, _batch);
-
         //////////////////////////////
         //Big Mic Table
         /////////////////////////////
         _bigMicTable = new Table();
-        _bigMicTable.setSize(Positions.getWidth(), Positions.getHeight());
-        _bigMicTable.setPosition(0, 0);
         Image bigMicImage = new Image(_assets.getMicBig());
         _bigMicTable.add(bigMicImage).width(150).height(300);
         _bigMicTable.setVisible(false);
@@ -125,10 +120,7 @@ public class Chat {
         _mode1MessagesContentTable.align(Align.top);
         _mode1ChatScroll = new ScrollPane(_mode1MessagesContentTable);
         _mode1ChatScroll.setScrollingDisabled(true, false);
-
-        //_dummyCloseButton = new Image(_assets.getEmpty());
         _mode1AllMessagesTable.add(_mode1ChatScroll).expand().fill().padLeft(20).padTop(3);
-        //_mode1AllMessagesTable.add(_dummyCloseButton).width(35).height(35).top();
 
         /////////////////////////////
         //All Messages Table Mode 2
@@ -136,7 +128,6 @@ public class Chat {
         _mode2AllMessagesTable = new Table();
         _mode2AllMessagesTable.setTouchable(Touchable.disabled);
         _mode2AllMessagesTable.setPosition(0, 70);
-        _mode2AllMessagesTable.setSize(Positions.getWidth(), 90);
 
         _mode2MessagesContentTable = new Table();
         _mode2MessagesContentTable.align(Align.bottomLeft);
@@ -203,32 +194,74 @@ public class Chat {
         _boxChildTable.add(_messageTextField).expandX().fillX().padLeft(15).padRight(40).padTop(5).padBottom(5);
         _boxChildTable.add(_sendTable).width(70).expandY().fillY();
 
-        _textFieldFocusImage.setWidth(_boxChildTable.getPrefWidth() - 30);
-        _textFieldFocusImage.setHeight(1);
-        _textFieldFocusImage.setPosition(10, 5);
-        _boxChildTable.addActor(_textFieldFocusImage);
-        _textFieldNotFocusImage.setWidth(_boxChildTable.getPrefWidth() - 30);
-        _textFieldNotFocusImage.setHeight(1);
-        _textFieldNotFocusImage.setPosition(10, 5);
-        _boxChildTable.addActor(_textFieldNotFocusImage);
-        _micImage.setSize(25, 30);
-        _micImage.setPosition(227, 13);
-        _boxChildTable.addActor(_micImage);
 
         //////////////////////////////////////
         //populating
         /////////////////////////////////////
         _chatRoot.add(_mode1AllMessagesTable).expandX().fillX().height(130).padLeft(15).padRight(15);
         _chatRoot.row();
-        _chatRoot.addActor(_mode2AllMessagesTable);
         _chatRoot.add(_messageBoxTable).expandX().fillX().height(60);
 
         _chatRoot.setBounds(0, 0, Positions.getWidth(), _chatRoot.getPrefHeight());
 
-        _chatRoot.addActor(_bigMicTable);
-        _stage.addActor(_chatRoot);
+        invalidate();
 
         attachListeners();
+
+        broadcaster.subscribe(BroadcastEvent.DEVICE_ORIENTATION, new BroadcastListener<Integer>() {
+            @Override
+            public void onCallback(Integer obj, Status st) {
+                invalidate();
+            }
+        });
+
+    }
+
+    public void invalidate(){
+        boolean isShowing = isVisible();
+
+        if(_stage != null){
+            if(isShowing) hide();
+            _stage.dispose();
+            _chatRoot.remove();
+            _textFieldFocusImage.remove();
+            _textFieldNotFocusImage.remove();
+            _bigMicTable.remove();
+            _micImage.remove();
+            _mode2AllMessagesTable.remove();
+        }
+
+        final StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
+        _stage = new Stage(viewPort, _batch);
+
+        _bigMicTable.setSize(Positions.getWidth(), Positions.getHeight());
+        _bigMicTable.setPosition(0, 0);
+
+        _textFieldFocusImage.setWidth(Global.IS_POTRAIT ? 246 : 520);
+        _textFieldFocusImage.setHeight(1);
+        _textFieldFocusImage.setPosition(10, 5);
+        _boxChildTable.addActor(_textFieldFocusImage);
+        _textFieldNotFocusImage.setWidth(Global.IS_POTRAIT ? 246 : 520);
+        _textFieldNotFocusImage.setHeight(1);
+        _textFieldNotFocusImage.setPosition(10, 5);
+        _boxChildTable.addActor(_textFieldNotFocusImage);
+        _micImage.setSize(25, 30);
+        _micImage.setPosition(Global.IS_POTRAIT ? 227 : 510, 13);
+        _boxChildTable.addActor(_micImage);
+
+        _mode2AllMessagesTable.setSize(Positions.getWidth(), Global.IS_POTRAIT ? 90 : 50);
+        _chatRoot.addActor(_mode2AllMessagesTable);
+
+        _chatRoot.setPosition(0, 0);
+        _chatRoot.setSize(Positions.getWidth(), _chatRoot.getPrefHeight());
+        _chatRoot.addActor(_bigMicTable);
+
+        _stage.addActor(_chatRoot);
+
+        if(isShowing) {
+            show();
+            scrollToBottom();
+        }
     }
 
     public void setMode(int mode){
@@ -708,6 +741,8 @@ public class Chat {
         }
     }
 
-
+    public void resize(int width, int height){
+        _stage.getViewport().update(width, height);
+    }
 
 }

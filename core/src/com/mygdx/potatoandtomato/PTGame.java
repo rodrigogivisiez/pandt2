@@ -6,7 +6,9 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
-import com.mygdx.potatoandtomato.absintflis.downloader.IDownloader;
+import com.mygdx.potatoandtomato.models.ChatMessage;
+import com.mygdx.potatoandtomato.statics.Global;
+import com.potatoandtomato.common.*;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
@@ -15,12 +17,8 @@ import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.helpers.controls.Notification;
 import com.mygdx.potatoandtomato.helpers.services.*;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
-import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
-import com.potatoandtomato.common.BroadcastEvent;
-import com.potatoandtomato.common.Broadcaster;
-import com.potatoandtomato.common.IPTGame;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -69,8 +67,8 @@ public class PTGame extends Game implements IPTGame {
 				_uploader = new App42Uploader(_downloader);
 				_sounds = new Sounds(_assets);
 				_chat = new Chat(_gamingKit, _texts, _assets, _batch, _game, _recorder, _uploader, _sounds, _broadcaster);
-				_confirm = new Confirm(_batch, _game, _assets);
-				_notification = new Notification(_batch, _assets, _game);
+				_confirm = new Confirm(_batch, _game, _assets, _broadcaster);
+				_notification = new Notification(_batch, _assets, _game, _broadcaster);
 
 
 				Preferences preferences = new Preferences();
@@ -85,8 +83,16 @@ public class PTGame extends Game implements IPTGame {
 
 
 				_screen.toScene(SceneEnum.BOOT);
-				}
+			}
 		});
+	}
+
+	@Override
+	public void resize(int width, int height) {
+		super.resize(width, height);
+		_confirm.resize(width, height);
+		_chat.resize(width, height);
+		_notification.resize(width, height);
 	}
 
 	@Override
@@ -94,6 +100,7 @@ public class PTGame extends Game implements IPTGame {
 		super.dispose();
 		_broadcaster.broadcast(BroadcastEvent.DESTROY_ROOM);
 	}
+
 
 	public SpriteBatch getSpriteBatch() {
 		return _batch;
@@ -105,15 +112,20 @@ public class PTGame extends Game implements IPTGame {
 
 	@Override
 	public void render() {
-		super.render();
-		if(Gdx.input.justTouched())
-		{
-			_chat.screenTouched(Gdx.input.getX(), Gdx.input.getY());
-		}
+		try{
+			super.render();
+			if(Gdx.input.justTouched())
+			{
+				_chat.screenTouched(Gdx.input.getX(), Gdx.input.getY());
+			}
 
-		_confirm.render(Gdx.graphics.getDeltaTime());
-		_chat.render(Gdx.graphics.getDeltaTime());
-		_notification.render(Gdx.graphics.getDeltaTime());
+			_confirm.render(Gdx.graphics.getDeltaTime());
+			_chat.render(Gdx.graphics.getDeltaTime());
+			_notification.render(Gdx.graphics.getDeltaTime());
+		}
+		catch (IllegalStateException ex){
+
+		}
 	}
 
 	@Override

@@ -4,9 +4,6 @@ import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.view.Window;
-import android.view.WindowManager;
-import com.mygdx.potatoandtomato.helpers.utils.Threadings;
 
 /**
  * Created by SiongLeng on 5/1/2016.

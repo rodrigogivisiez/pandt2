@@ -1,6 +1,5 @@
 package com.mygdx.potatoandtomato.helpers.controls;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
@@ -20,10 +19,7 @@ import com.mygdx.potatoandtomato.absintflis.controls.ConfirmStateChangedListener
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
-import com.mygdx.potatoandtomato.helpers.utils.Threadings;
-import com.potatoandtomato.common.IPTGame;
-
-import javax.swing.plaf.synth.SynthGraphicsUtils;
+import com.potatoandtomato.common.*;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -48,25 +44,43 @@ public class Confirm {
     IPTGame _game;
     ConfirmStateChangedListener _stateChangedListener;
     long _previousTime;
+    Broadcaster _broadcaster;
 
-    public Confirm(SpriteBatch spriteBatch, IPTGame game, Assets assets) {
+    public Confirm(SpriteBatch spriteBatch, IPTGame game, Assets assets, Broadcaster broadcaster) {
         _batch = spriteBatch;
         _assets = assets;
         _game = game;
         _previousTime = 0;
+        _broadcaster = broadcaster;
+
+        _confirmRoot = new Table();
+        invalidate();
+
+        _broadcaster.subscribe(BroadcastEvent.DEVICE_ORIENTATION, new BroadcastListener() {
+            @Override
+            public void onCallback(Object obj, Status st) {
+                invalidate();
+            }
+        });
+    }
+
+    public void invalidate(){
+        if(_stage != null){
+            _stage.dispose();
+            _confirmRoot.remove();
+            _confirmRoot.clear();
+        }
+
 
         StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
         _stage = new Stage(viewPort, _batch);
 
-        _confirmRoot = new Table();
         _confirmRoot.setBackground(new TextureRegionDrawable(_assets.getBlackBg()));
         _confirmRoot.setFillParent(true);
         new DummyButton(_confirmRoot, _assets);
 
         _msgTable = new Table();
         _msgTable.setBackground(new NinePatchDrawable(_assets.getPopupBg()));
-
-
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
         labelStyle.font = _assets.getWhitePizza3BlackS();
@@ -103,9 +117,13 @@ public class Confirm {
 
 
         _confirmRoot.add(_msgTable).expandX().fillX();
+        _confirmRoot.invalidate();
+
         _stage.addActor(_confirmRoot);
+        close();
 
         attachEvent();
+
     }
 
     public void show(final String msg, final Type type, final ConfirmResultListener _listener){
@@ -132,7 +150,7 @@ public class Confirm {
                 }
 
                 Threadings.renderFor(5f);
-
+                _confirmRoot.clearActions();
                 _confirmRoot.addAction(sequence(fadeOut(0f), fadeIn(0.3f), new Action() {
                     @Override
                     public boolean act(float delta) {
@@ -156,16 +174,11 @@ public class Confirm {
 
     }
 
-
+    public void resize(int width, int height){
+        _stage.getViewport().update(width, height);
+    }
 
     private void attachEvent(){
-
-        _confirmRoot.addListener(new ClickListener(){
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                return true;
-            }
-        });
 
         _buttonYes.addListener(new ClickListener() {
             @Override
@@ -217,6 +230,7 @@ public class Confirm {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
+                _confirmRoot.clearActions();
                 _confirmRoot.addAction(sequence(fadeOut(0.2f), new Action() {
                     @Override
                     public boolean act(float delta) {

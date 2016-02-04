@@ -2,6 +2,7 @@ package com.mygdx.potatoandtomato.android;
 
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
 import android.view.View;
@@ -11,6 +12,7 @@ import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.firebase.client.Firebase;
 import com.mygdx.potatoandtomato.PTGame;
+import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.*;
 
 import java.io.Serializable;
@@ -53,7 +55,7 @@ public class AndroidLauncher extends AndroidApplication {
 
 		subscribeLoadGameRequest();
 		roomAliveRelated();
-
+		subscribeOrientationChanged();
 	}
 
 	private void roomAliveRelated(){
@@ -65,6 +67,21 @@ public class AndroidLauncher extends AndroidApplication {
 		});
 	}
 
+
+	public void subscribeOrientationChanged(){
+		_broadcaster.subscribe(BroadcastEvent.DEVICE_ORIENTATION, new BroadcastListener<Integer>() {
+			@Override
+			public void onCallback(Integer obj, Status st) {
+				Global.IS_POTRAIT = (obj == 0);
+				if(obj == 0){		//potrait
+					setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+				}
+				else{
+					setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+				}
+			}
+		});
+	}
 
 	public void subscribeLoadGameRequest(){
 		_broadcaster.subscribe(BroadcastEvent.LOAD_GAME_REQUEST, new BroadcastListener<GameCoordinator>() {

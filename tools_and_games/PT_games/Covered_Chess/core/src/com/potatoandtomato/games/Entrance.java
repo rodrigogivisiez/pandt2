@@ -24,7 +24,7 @@ public class Entrance extends GameEntrance {
         Assets assets = new Assets(gameCoordinator);
         assets.loadAll(null);
         _services =  new Services(assets, new Texts(), new Sounds(assets, gameCoordinator), new BattleReference());
-
+        getGameCoordinator().finishLoading();
     }
 
     @Override

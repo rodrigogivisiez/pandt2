@@ -1,11 +1,1 @@
-{
-	"team_max_players": "1",
-	"team_min_players": "1",
-	"name": "Chinese Chess",
-	"description": "Chinese  Chess!",
-	"max_players": "2",
-	"abbr": "chinese_chess",
-	"must_fair_team": "true",
-	"min_players": "2",
-	"team_count": "2"
-}
+{"team_max_players":"1","team_min_players":"1","name":"Chinese Chess","description":"Chinese  Chess!","max_players":"2","abbr":"chinese_chess","must_fair_team":"true","version":"1.01","min_players":"2","team_count":"2"}

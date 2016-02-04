@@ -22,6 +22,7 @@ public class UploadedGame {
     public String commonVersion;
     public ArrayList<String> screenShots;
     public boolean mustFairTeam;
+    public String createTimestamp;
 
 
 

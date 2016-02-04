@@ -22,10 +22,12 @@ public abstract class MockGame extends Game implements IPTGame {
     MockGamingKit _mockGamingKit;
     GameCoordinator _gameCoordinator;
     Broadcaster _broadcaster;
+    Downloader _downloader;
 
     public MockGame(String gameId) {
 
         _broadcaster = new Broadcaster();
+        _downloader = new Downloader();
 
         try {
             PrintWriter out = new PrintWriter("common_version.txt");
@@ -35,7 +37,7 @@ public abstract class MockGame extends Game implements IPTGame {
             e.printStackTrace();
         }
 
-        Firebase _ref = new Firebase("https://forunittest.firebaseio.com");
+        Firebase _ref = new Firebase("https://pttestgame.firebaseio.com");
 
 
         _processors = new Array<InputProcessor>();
@@ -49,7 +51,13 @@ public abstract class MockGame extends Game implements IPTGame {
             public void userAbandoned() {
 
             }
-        },  _ref.child("gameBelongData").child(gameId), "1", new MockSoundManager(), _broadcaster);
+
+            @Override
+            public void onGameLoaded() {
+
+            }
+        },  _ref.child("gameBelongData").child(gameId), "1", new MockSoundManager(),
+                _broadcaster, _downloader);
     }
 
     public void initiateMockGamingKit(int expectedTeamCount, int eachTeamExpectedPlayers){

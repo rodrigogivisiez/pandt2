@@ -340,7 +340,7 @@ public class Room {
             int index = convertSlotIndexToTeamNumber(user.getSlotIndex());
             boolean isHost = false;
             if(user.getProfile().equals(this.getHost())) isHost = true;
-            teams.get(index).addPlayer(new Player(user.getProfile().getDisplayName(15), user.getProfile().getUserId(), isHost));
+            teams.get(index).addPlayer(new Player(user.getProfile().getDisplayName(15), user.getProfile().getUserId(), isHost, true));
         }
         this.teams = teams;
     }

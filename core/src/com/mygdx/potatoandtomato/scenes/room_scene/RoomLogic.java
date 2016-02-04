@@ -23,8 +23,8 @@ import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.helpers.services.Sounds;
 import com.mygdx.potatoandtomato.helpers.services.VersionControl;
 import com.mygdx.potatoandtomato.helpers.utils.JsonObj;
-import com.mygdx.potatoandtomato.helpers.utils.SafeThread;
-import com.mygdx.potatoandtomato.helpers.utils.Threadings;
+import com.potatoandtomato.common.SafeThread;
+import com.potatoandtomato.common.Threadings;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.Status;
@@ -423,7 +423,7 @@ public class RoomLogic extends LogicAbstract {
                 _services.getDatabase().getProfileByUserId(senderId, new DatabaseListener<Profile>(Profile.class) {
                     @Override
                     public void onCallback(Profile obj, Status st) {
-                        if (st == Status.SUCCESS && obj != null) {
+                        if (st == Status.SUCCESS && obj != null && _room != null) {
                             Room roomClone = _room.clone();
                             roomClone.addRoomUser(obj, true);
                             hostSaveRoom(roomClone, true, null);
