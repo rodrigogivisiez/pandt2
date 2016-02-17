@@ -35,6 +35,7 @@ public class GameCoordinator implements Disposable {
     private DecisionsMaker decisionsMaker;
     private IDownloader downloader;
 
+    private boolean _landscape;
     private ArrayList<String> _subscribedIds;
     private Array<InputProcessor> _processors;
     private ArrayList<InGameUpdateListener> _inGameUpdateListeners;
@@ -152,6 +153,8 @@ public class GameCoordinator implements Disposable {
     }
 
     public FileHandle getFileH(String path){
+        if(path.contains(".gen")) path = path.replace(".gen", "");
+
         if(Gdx.files.local(basePath + "/" + path).exists()){
             return Gdx.files.local(basePath + "/" + path);
         }
@@ -164,7 +167,11 @@ public class GameCoordinator implements Disposable {
         float originalHeight = this.gameHeight;
         this.gameHeight = this.gameWidth;
         this.gameWidth = originalHeight;
-        broadcaster.broadcast(BroadcastEvent.DEVICE_ORIENTATION, 1);
+        _landscape = true;
+    }
+
+    public boolean isLandscape() {
+        return _landscape;
     }
 
     public void subscribedBroadcastListener(String id){

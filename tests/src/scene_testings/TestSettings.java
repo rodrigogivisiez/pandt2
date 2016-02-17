@@ -14,17 +14,14 @@ import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.scenes.settings_scene.SettingsLogic;
 import com.mygdx.potatoandtomato.scenes.settings_scene.SettingsScene;
 import com.potatoandtomato.common.Status;
-import helpers.MockModel;
 import helpers.T_Services;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;

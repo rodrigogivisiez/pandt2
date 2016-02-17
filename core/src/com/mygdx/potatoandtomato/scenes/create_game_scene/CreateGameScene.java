@@ -10,12 +10,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.helpers.controls.BtnEggDownward;
 import com.mygdx.potatoandtomato.helpers.controls.TopBar;
 import com.mygdx.potatoandtomato.helpers.controls.WebImage;
+import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 import com.potatoandtomato.common.Threadings;
 import com.mygdx.potatoandtomato.models.Game;
@@ -45,32 +48,39 @@ public class CreateGameScene extends SceneAbstract {
     @Override
     public void populateRoot() {
         new TopBar(_root, _texts.createGameTitle(), false, _assets, _screen);
-        _root.align(Align.topLeft);
+        Table clippedRoot = new Table();
+        clippedRoot.align(Align.topLeft);
+        clippedRoot.setClip(true);
+        clippedRoot.setPosition(0, 0);
+        clippedRoot.setWidth(Positions.getWidth());
+        clippedRoot.setHeight(Positions.getHeight() - _root.getPadTop());
+        _root.addActor(clippedRoot);
+
 
         //left game list START
         _gameList = new Table();
-        _gameList.setBackground(new NinePatchDrawable(_assets.getIrregularBg()));
         _gameList.align(Align.top);
         _gameList.padRight(10).padTop(10);
         //left game list END
 
         //right side game details START
         _gameDetailsParent = new Table();
-        _gameDetailsParent.setBackground(new NinePatchDrawable(_assets.getIrregularBg()));
+        _gameDetailsParent.setBackground(new TextureRegionDrawable(_assets.getTextures().getWoodBgTall()));
         _gameDetailsParent.align(Align.topLeft);
-        _gameDetailsParent.padRight(15).padLeft(10).padTop(10).padBottom(15);
+        _gameDetailsParent.padRight(75).padLeft(10).padTop(10).padBottom(15);
         _gameDetails = new Table();
         _gameDetailsScroll = new ScrollPane(_gameDetails);
         _gameDetailsScroll.setScrollingDisabled(true, false);
-        _gameDetailsParent.add(_gameDetailsScroll).expand().fill();
+        _gameDetailsParent.add(_gameDetailsScroll).expand().fill().padBottom(20);
 
-        Image pointLeftImage = new Image(_assets.getPointLeftIcon());
-        Vector2 sizes = Sizes.resize(100, _assets.getPointLeftIcon());
-        Label pickAGameLabel = new Label(_texts.pickAGame(), new Label.LabelStyle(_assets.getWhitePizza3BlackS(), Color.WHITE));
+        Image pointLeftImage = new Image(_assets.getTextures().getPointLeftIcon());
+        Vector2 sizes = Sizes.resize(140, _assets.getTextures().getPointLeftIcon());
+        Label pickAGameLabel = new Label(_texts.pickAGame(), new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.XXL, Fonts.FontColor.DARK_BROWN,
+                                                                                                        Fonts.FontStyle.CONDENSED, Fonts.FontShadowColor.DARK_ORANGE), null));
         pointLeftImage.addAction(forever(sequence(moveBy(-10, 0, 1f), moveBy(10, 0, 1f))));
         _gameDetails.add(pointLeftImage).size(sizes.x, sizes.y);
         _gameDetails.row();
-        _gameDetails.add(pickAGameLabel);
+        _gameDetails.add(pickAGameLabel).padTop(10);
 
         _createButton = new BtnEggDownward(_assets, _services.getSounds());
         _createButton.setText(_texts.create());
@@ -80,16 +90,27 @@ public class CreateGameScene extends SceneAbstract {
 
         //right side game details END
 
-        _root.add(_gameList).width(120).expandY().fillY().padTop(25).padBottom(100).padLeft(-5).padRight(20);
-        _root.add(_gameDetailsParent).width(230).expandY().fillY().padTop(25).padBottom(100).padRight(-5);
+        clippedRoot.add(_gameList).width(120).expandY().fillY().padTop(25).padBottom(100).padRight(20);
+        clippedRoot.add(_gameDetailsParent).width(310).expandY().fillY().padTop(25).padBottom(100).padRight(-5);
 
     }
 
     public Actor populateGame(Game game){
 
-        Actor gameIcon = game != null ? new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster()) : new Image(_assets.getComingSoon());
-        _gameList.add(gameIcon).size(90).right().expandX().fillX().padBottom(7);
+        final Table gameTable = new Table();
+        gameTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getWoodBgFat()));
+
+        Actor gameIcon = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster());
+        gameTable.add(gameIcon).size(90).right().expandX().fillX().padLeft(150).padTop(5).padBottom(10).padRight(15);
+        gameTable.getColor().a = 0;
+
+        _gameList.add(gameTable).width(210).padLeft(-100).padBottom(7);
         _gameList.row();
+
+        gameTable.addAction(sequence(delay(0.3f), moveBy(-200, 0), fadeIn(0f), moveBy(200, 0, 1f, Interpolation.bounceOut)));
+
+
+
         return gameIcon;
 
     }
@@ -108,35 +129,53 @@ public class CreateGameScene extends SceneAbstract {
 
     }
 
+    public void hideAllElements(){
+        _gameList.setVisible(false);
+        _gameDetailsParent.setVisible(false);
+    }
+
+    public void showAllElements(){
+        _gameList.setVisible(true);
+        _gameDetailsParent.setVisible(true);
+    }
+
     public void changeGameDetails(Game game){
         _gameDetails.clear();
 
 
         Label.LabelStyle titleStyle = new Label.LabelStyle();
-        titleStyle.font = _assets.getOrangePizza2White();
+        titleStyle.font = _assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.XXL, Fonts.FontColor.DARK_BROWN,
+                                Fonts.FontStyle.CONDENSED, Fonts.FontShadowColor.DARK_ORANGE);
 
         Label.LabelStyle contentStyle1 = new Label.LabelStyle();
-        contentStyle1.font = _assets.getWhiteNormal3GrayS();
+        contentStyle1.font = _assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.M, Fonts.FontColor.WHITE, Fonts.FontStyle.BOLD);
 
         Label.LabelStyle contentStyle2 = new Label.LabelStyle();
-        contentStyle2.font = _assets.getWhiteNormal2GrayS();
+        contentStyle2.font = _assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.S, Fonts.FontColor.WHITE);
 
         WebImage gameLogo = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster());
         Label detailsTitleLabel = new Label(_texts.details(), titleStyle);
 
         Table detailsTable = new Table();
         detailsTable.align(Align.left);
-        detailsTable.setBackground(new NinePatchDrawable(_assets.getBlackRoundedBg()));
-        Label nameLabel = new Label(String.format("- %s (v%s)", game.getName(), game.getVersion()), contentStyle1);
-        Label playersLabel = new Label(String.format("- From %s to %s players", game.getMinPlayers(), game.getMaxPlayers()), contentStyle1);
+        detailsTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getBlackBg()));
+        detailsTable.pad(10);
+        detailsTable.padRight(20);
+        Label nameLabel = new Label(game.getName(), contentStyle1);
+        Label playersLabel = new Label(String.format(_texts.xPlayers(), game.getMinPlayers(), game.getMaxPlayers()), contentStyle2);
+        Label versionLabel = new Label(String.format(_texts.version(), game.getVersion()), contentStyle2);
         detailsTable.add(nameLabel).left();
         detailsTable.row();
         detailsTable.add(playersLabel).left();
+        detailsTable.row();
+        detailsTable.add(versionLabel).left();
 
         Label screenShotsTitleLabel = new Label(_texts.screenShots(), titleStyle);
         Table screenShotsTableParent = new Table();
         screenShotsTableParent.align(Align.left);
-        screenShotsTableParent.setBackground(new NinePatchDrawable(_assets.getBlackRoundedBg()));
+        screenShotsTableParent.setBackground(new TextureRegionDrawable(_assets.getTextures().getBlackBg()));
+        screenShotsTableParent.pad(10);
+        screenShotsTableParent.padRight(20);
         Table screenShotsTable = new Table();
         screenShotsTable.align(Align.left);
         ScrollPane screenShotsScroll = new ScrollPane(screenShotsTable);
@@ -154,22 +193,25 @@ public class CreateGameScene extends SceneAbstract {
         Label descriptionTitleLabel = new Label(_texts.description(), titleStyle);
         Table descriptionTable = new Table();
         descriptionTable.align(Align.left);
-        descriptionTable.setBackground(new NinePatchDrawable(_assets.getBlackRoundedBg()));
+        descriptionTable.pad(10);
+        descriptionTable.padRight(20);
+        descriptionTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getBlackBg()));
         Label descriptionLabel = new Label(game.getDescription(), contentStyle2);
         descriptionLabel.setWrap(true);
         descriptionTable.add(descriptionLabel).fill().expand();
 
-        _gameDetails.add(gameLogo).size(120);
+        _gameDetails.padLeft(15).padBottom(25);
+        _gameDetails.add(gameLogo).size(120).padRight(20);
         _gameDetails.row();
-        _gameDetails.add(detailsTitleLabel).left().padTop(10);
+        _gameDetails.add(detailsTitleLabel).left().padTop(5);
         _gameDetails.row();
         _gameDetails.add(detailsTable).expandX().fillX();
         _gameDetails.row();
-        _gameDetails.add(screenShotsTitleLabel).left().padTop(10);
+        _gameDetails.add(screenShotsTitleLabel).left().padTop(5);
         _gameDetails.row();
         _gameDetails.add(screenShotsTableParent).expandX().fillX();
         _gameDetails.row();
-        _gameDetails.add(descriptionTitleLabel).left().padTop(10);
+        _gameDetails.add(descriptionTitleLabel).left().padTop(5);
         _gameDetails.row();
         _gameDetails.add(descriptionTable).expandX().fillX();
 

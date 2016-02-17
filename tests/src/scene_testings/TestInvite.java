@@ -12,7 +12,7 @@ import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.PushNotification;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.scenes.invite_scene.InviteLogic;
-import helpers.MockModel;
+import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import helpers.T_Services;
 import org.junit.Assert;
 import org.junit.Test;

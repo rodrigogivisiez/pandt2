@@ -31,7 +31,8 @@ public class WebImage extends Table implements Disposable {
 
         _root = new Table();
         _root.pad(5);
-        _root.setBackground(new TextureRegionDrawable(_assets.getWebImageLoading()));
+        Image loadingImage = new Image(_assets.getTextures().getWebImageLoading());
+        _root.add(loadingImage).expand().fill().pad(10);
         this.add(_root).expand().fill();
 
         new DummyButton(this, _assets);
@@ -57,11 +58,13 @@ public class WebImage extends Table implements Disposable {
 
     private void requestReceived(){
         _image = new Image(_tempTexture);
+        _root.clear();
         _root.add(_image).expand().fill();
     }
 
     private void requestFailed(){
-        _image = new Image(_assets.getNoImage());
+        _image = new Image(_assets.getTextures().getNoImage());
+        _root.clear();
         _root.add(_image).expand().fill();
     }
 

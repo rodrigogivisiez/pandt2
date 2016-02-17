@@ -9,6 +9,7 @@ import com.potatoandtomato.games.models.ImagePair;
 import com.potatoandtomato.games.models.Service;
 import com.potatoandtomato.games.models.TouchedData;
 import com.potatoandtomato.games.models.UpdateMsg;
+import com.potatoandtomato.games.screens.loading_screen.LoadingLogic;
 import com.potatoandtomato.games.screens.play_screen.PlayLogic;
 
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class MainController implements Disposable {
     private String _currentPlayingId;
     private ArrayList<TouchedData> _touchedQueue;
     private boolean _isStageReady;
+    private LoadingLogic _loadingLogic;
 
     public MainController(final GameCoordinator _coordinator, Service _service) {
         this._me = this;
@@ -45,6 +47,13 @@ public class MainController implements Disposable {
             }
         });
     }
+
+    public void init(){
+        _loadingLogic = new LoadingLogic(_me);
+        _coordinator.getGame().setScreen(_loadingLogic.getScreen());
+        sendNextStage();
+    }
+
 
     public void sendNextStage(){
         _isStageReady = false;

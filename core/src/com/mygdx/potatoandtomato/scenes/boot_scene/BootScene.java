@@ -1,6 +1,5 @@
 package com.mygdx.potatoandtomato.scenes.boot_scene;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
@@ -11,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.helpers.controls.BtnEggUpright;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
@@ -23,11 +23,9 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
  */
 public class BootScene extends SceneAbstract {
 
-    Image _logoImg, _tomatoWeaponImg, _potatoWeaponImg;
     BtnEggUpright _playButton;
-    Table _socialTable;
-    Label _socialLoginLabel;
-    Image _socialIcon, _tickIcon, _crossIcon;
+    Table _infoTable, _titleTable;
+    Image _tickIcon, _crossIcon;
 
     public BootScene(Services services, PTScreen screen) {
         super(services, screen);
@@ -44,26 +42,26 @@ public class BootScene extends SceneAbstract {
     @Override
     public void populateRoot() {
         //Logo Image START////////////////////////////////////////////////////
-        _logoImg = new Image(_assets.getLogoNoWeapon());
-        Vector2 logoSize = Sizes.resize(260, _assets.getLogoNoWeapon());
-        _logoImg.setSize(logoSize.x * 2.5f, logoSize.y * 2.5f);
-        _logoImg.setPosition(Positions.centerX(logoSize.x * 2.5f), 250);
-        _logoImg.getColor().a = 0;
+        Image logoImg = new Image(_assets.getTextures().getLogoNoWeapon());
+        Vector2 logoSize = Sizes.resize(260, _assets.getTextures().getLogoNoWeapon());
+        logoImg.setSize(logoSize.x * 2.5f, logoSize.y * 2.5f);
+        logoImg.setPosition(Positions.centerX(logoSize.x * 2.5f), 250);
+        logoImg.getColor().a = 0;
 
-        _tomatoWeaponImg = new Image(_assets.getLogoTomatoWeapon());
-        _potatoWeaponImg = new Image(_assets.getLogoPotatoWeapon());
-        _potatoWeaponImg.setOrigin(Align.bottomRight);
-        _tomatoWeaponImg.setPosition(230, 380);
-        _potatoWeaponImg.setPosition(150, 380);
-        _tomatoWeaponImg.setVisible(false);
-        _potatoWeaponImg.setVisible(false);
+        final Image tomatoWeaponImg = new Image(_assets.getTextures().getLogoTomatoWeapon());
+        final Image potatoWeaponImg = new Image(_assets.getTextures().getLogoPotatoWeapon());
+        potatoWeaponImg.setOrigin(Align.bottomRight);
+        tomatoWeaponImg.setPosition(230, 380);
+        potatoWeaponImg.setPosition(150, 380);
+        tomatoWeaponImg.setVisible(false);
+        potatoWeaponImg.setVisible(false);
 
         Action completeAction = new Action(){
             public boolean act( float delta ) {
-                _tomatoWeaponImg.setVisible(true);
-                _potatoWeaponImg.setVisible(true);
+                tomatoWeaponImg.setVisible(true);
+                potatoWeaponImg.setVisible(true);
 
-                _tomatoWeaponImg.addAction(parallel(
+                tomatoWeaponImg.addAction(parallel(
                         moveTo(260, 400, 0.4f),
                         forever(sequence(
                                 rotateBy(3, 1f),
@@ -71,7 +69,7 @@ public class BootScene extends SceneAbstract {
                         ))
                 ));
 
-                _potatoWeaponImg.addAction(parallel(
+                potatoWeaponImg.addAction(parallel(
                         moveTo(55, 400, 0.4f),
                         forever(sequence(
                                 rotateBy(-2, 1.3f),
@@ -92,7 +90,7 @@ public class BootScene extends SceneAbstract {
             }
         };
         float duration = 0.4f;
-        _logoImg.addAction(sequence(parallel(
+        logoImg.addAction(sequence(parallel(
                         fadeIn(duration),
                         sizeTo(logoSize.x, logoSize.y, duration, Interpolation.sineOut),
                         moveTo(Positions.centerX(logoSize.x), 290, duration, Interpolation.sineOut)
@@ -101,105 +99,182 @@ public class BootScene extends SceneAbstract {
         //Logo Image END////////////////////////////////////////////////////
 
         //Play Button START
-        _playButton = new BtnEggUpright(_assets, _services.getSounds());
-        _playButton.setPosition(Positions.centerX(_playButton.getWidth()), 160);
+        _playButton = new BtnEggUpright(_assets, _services.getSounds(), 140);
+        _playButton.setPosition(Positions.centerX(_playButton.getWidth()), 150);
         _playButton.getColor().a = 0;
-        _playButton.setContent(_assets.getPlayIcon());
+        _playButton.setContent(_assets.getTextures().getPlayIcon());
         //Play Button END
 
         //Game Version START
         Label.LabelStyle versionStyle = new Label.LabelStyle();
-        versionStyle.font = _assets.getWhiteNormal2GrayS();
+        versionStyle.font = _assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.XS,
+                Fonts.FontColor.WHITE, Fonts.FontStyle.REGULAR, Fonts.FontBorderColor.GRAY, Fonts.FontShadowColor.GRAY);
         Label versionLabel = new Label(String.format(_texts.build(), _services.getVersionControl().getClientVersion()), versionStyle);
         //Game Version END
 
-        _root.addActor(_potatoWeaponImg);
-        _root.addActor(_tomatoWeaponImg);
-        _root.addActor(_logoImg);
+        ///////////////////////////////////////
+        //Info table
+        ////////////////////////////////////////
+        _infoTable = new Table();
+        _infoTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getWoodBgNormal()));
+        _infoTable.setSize(300, 230);
+        _infoTable.setPosition(Positions.centerX(300), 40);
+        _infoTable.getColor().a = 0;
+
+
+        ///////////////////////////////////////////
+        //Populate root
+        ///////////////////////////////////////////
+        _root.addActor(potatoWeaponImg);
+        _root.addActor(tomatoWeaponImg);
+        _root.addActor(logoImg);
         _root.addActor(_playButton);
         _root.add(versionLabel).expand().bottom().right().padRight(10).padBottom(10);
+        _root.addActor(_infoTable);
     }
 
-    public void showLoginBox(){
-
+    public void showSocialLogin(){
         _playButton.addAction(sequence(fadeOut(0.3f), new Action() {
             @Override
             public boolean act(float delta) {
-                _socialTable.addAction(fadeIn(0.3f));
+                _infoTable.addAction(fadeIn(0.3f));
+                _playButton.setVisible(false);
                 return true;
             }
         }));
 
-        _socialTable = new Table();
-        _socialTable.setBackground(new TextureRegionDrawable(_assets.getWoodBgNormal()));
-        _socialTable.setSize(300, 230);
-        _socialTable.setPosition(Positions.centerX(300), 40);
-        _socialTable.getColor().a = 0;
+        _infoTable.clear();
+        _infoTable.padTop(10);
 
-        _socialIcon = new Image(_assets.getSocialIcon());
+        ///////////////////////////////
+        //Facebook title
+        //////////////////////////////
+        Image facebookImage = new Image(_assets.getTextures().getFacebookIcon());
+        Label.LabelStyle titleStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.L, Fonts.FontStyle.BOLD), null);
+        Label titleLabel = new Label(_texts.socialLogin(), titleStyle);
 
-        Label.LabelStyle socialLoginStyle = new Label.LabelStyle(_assets.getWhiteBold3GrayS(), Color.WHITE);
-        _socialLoginLabel = new Label(_texts.socialLogin(), socialLoginStyle);
-        _socialLoginLabel.setWrap(true);
+        _titleTable = new Table();
+        _titleTable.add(facebookImage);
+        _titleTable.add(titleLabel).padLeft(10);
 
-        _tickIcon = new Image(_assets.getTick());
-        _crossIcon = new Image(_assets.getCross());
-        Vector2 tickSize = Sizes.resizeByH(40, _assets.getTick());
-        Vector2 crossSize = Sizes.resizeByH(40, _assets.getCross());
+        ///////////////////////////////
+        //Content
+        ////////////////////////////////
+        Table contentTable = new Table();
+        contentTable.setName("contentTable");
+        contentTable.align(Align.topLeft);
+        Table tomatoTable = new Table();
+        tomatoTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getTransWhite()));
+        tomatoTable.pad(5);
 
-        _socialTable.add(_socialIcon).padLeft(20).padRight(10);
-        _socialTable.add(_socialLoginLabel).expandX().fillX().padRight(20).height(150);
-        _socialTable.row();
-        _socialTable.add(_tickIcon).size(tickSize.x, tickSize.y).uniformX();
-        _socialTable.add(_crossIcon).size(crossSize.x, crossSize.y).uniformX();
+        Label.LabelStyle contentStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontColor.DARK_BROWN, Fonts.FontStyle.SEMI_BOLD), null);
+        Label tomatoLabel = new Label(_texts.socialLoginTomato(), contentStyle);
+        tomatoLabel.setWrap(true);
+        Image tomatoHiImage = new Image(_assets.getTextures().getTomatoHi());
+        tomatoTable.add(tomatoLabel).expandX().fillX().padLeft(10);
+        tomatoTable.add(tomatoHiImage).height(40).width(50);
 
-        _root.addActor(_socialTable);
+        Table potatoTable = new Table();
+        potatoTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getTransWhite()));
+        potatoTable.pad(5);
+
+        Label potatoLabel = new Label(_texts.socialLoginPotato(), contentStyle);
+        potatoLabel.setWrap(true);
+        Image potatoHiImage = new Image(_assets.getTextures().getPotatoHi());
+        potatoTable.add(potatoHiImage).height(45).width(48).padRight(10);
+        potatoTable.add(potatoLabel).expandX().fillX();
+
+        contentTable.add(tomatoTable).expandX().fillX().padLeft(20).padRight(20);
+        contentTable.row();
+        contentTable.add(potatoTable).expandX().fillX().padLeft(20).padRight(20).padTop(5);
+
+        //////////////////////////////////
+        //Tick Cross Button
+        /////////////////////////////////
+        Table choicesTable = new Table();
+        choicesTable.setName("choicesTable");
+        _tickIcon = new Image(_assets.getTextures().getTick());
+        _crossIcon = new Image(_assets.getTextures().getCross());
+        choicesTable.add(_tickIcon).size(50, 50).padRight(20);
+        choicesTable.add(_crossIcon).size(50, 50).padLeft(20);
+
+        //////////////////////////////
+        //Populate info table
+        //////////////////////////////
+
+        _infoTable.add(_titleTable).expandX().fillX().height(37);
+        _infoTable.row();
+        _infoTable.add(contentTable).expand().fill();
+        _infoTable.row();
+        _infoTable.add(choicesTable).expandX().fillX().padBottom(15).padTop(5);
+
     }
 
-    public void showSocialLoginProcessing(){
-        _socialLoginLabel.addAction(forever(sequence(fadeOut(0.5f), fadeIn(0.5f))));
-        _socialLoginLabel.setText(_texts.socialLoginProcessing());
-        _socialLoginLabel.setAlignment(Align.center);
-        _tickIcon.setVisible(false);
-        _crossIcon.setVisible(false);
+    public void showSocialLoggingIn(){
+        setLoading(_texts.socialLoginProcessing());
     }
 
     public void showSocialLoginFailed(){
-        _socialLoginLabel.clearActions();
-        _socialLoginLabel.getColor().a = 1;
-        _socialLoginLabel.setText(_texts.socialLoginFailed());
-        _socialLoginLabel.setAlignment(Align.left);
-        _tickIcon.setVisible(true);
-        _crossIcon.setVisible(true);
+        _infoTable.findActor("choicesTable").setVisible(true);
+        setMessage(_texts.socialLoginFailed());
     }
 
-    public void showLoggingIn(){
-        _socialIcon.setDrawable(new TextureRegionDrawable(_assets.getLoginIcon()));
-        _socialLoginLabel.addAction(forever(sequence(fadeOut(0.5f), fadeIn(0.5f))));
-        _socialLoginLabel.setText(_texts.loginProcessing());
-        _socialLoginLabel.setAlignment(Align.center);
-        _tickIcon.setVisible(false);
-        _crossIcon.setVisible(false);
+    public void showPTLoggingIn(){
+        _titleTable.setVisible(false);
+        setLoading(_texts.loginProcessing());
     }
 
-    public void showCreatingUser(){
-        _socialIcon.setDrawable(new TextureRegionDrawable(_assets.getLoginIcon()));
-        _socialLoginLabel.addAction(forever(sequence(fadeOut(0.5f), fadeIn(0.5f))));
-        _socialLoginLabel.setText(_texts.creatingUser());
-        _socialLoginLabel.setAlignment(Align.center);
-        _tickIcon.setVisible(false);
-        _crossIcon.setVisible(false);
+    public void showPTCreatingUser(){
+        _titleTable.setVisible(false);
+        setLoading(_texts.creatingUser());
     }
 
-    public void showRetrieveUserFailed(){
-        _socialIcon.setDrawable(new TextureRegionDrawable(_assets.getLoginIcon()));
-        _socialLoginLabel.clearActions();
-        _socialLoginLabel.getColor().a = 1;
-        _socialLoginLabel.setText(_texts.failedRetrieveProfile());
-        _socialLoginLabel.setAlignment(Align.center);
-        _tickIcon.setVisible(true);
-        _crossIcon.setVisible(true);
+    public void showPTLogInFailed(){
+        _infoTable.findActor("choicesTable").setVisible(true);
+        setMessage(_texts.failedRetrieveProfile());
     }
+
+    private void setLoading(String msg){
+        _infoTable.findActor("choicesTable").setVisible(false);
+        Table contentTable = _infoTable.findActor("contentTable");
+        contentTable.setClip(true);
+        contentTable.align(Align.center);
+        contentTable.clear();
+
+        Table loadingTable = new Table();
+        loadingTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getTransWhite()));
+        loadingTable.pad(15);
+
+        Label.LabelStyle contentStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontColor.DARK_BROWN, Fonts.FontStyle.SEMI_BOLD), null);
+        Label loadingLabel = new Label(msg, contentStyle);
+        loadingTable.add(loadingLabel);
+
+        Image loginMascotsImage = new Image(_assets.getTextures().getLoggingInMascots());
+        Vector2 sizes = Sizes.resize(100, _assets.getTextures().getLoggingInMascots());
+        loginMascotsImage.setSize(sizes.x, sizes.y);
+        loginMascotsImage.setPosition(-100, 60);
+        loginMascotsImage.addAction(forever(sequence(moveBy(400, 0, 3f), moveTo(-100, 60))));
+
+        contentTable.add(loadingTable).expandX().fillX().padLeft(20).padRight(20).padTop(45);
+        contentTable.addActor(loginMascotsImage);
+    }
+
+    private void setMessage(String msg){
+        Table contentTable = _infoTable.findActor("contentTable");
+        contentTable.clear();
+
+        Table msgTable = new Table();
+        msgTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getTransWhite()));
+        msgTable.pad(15);
+
+        Label.LabelStyle contentStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontColor.DARK_BROWN, Fonts.FontStyle.SEMI_BOLD), null);
+        Label loadingLabel = new Label(msg, contentStyle);
+        msgTable.add(loadingLabel);
+
+        contentTable.add(msgTable).expandX().fillX().padLeft(20).padRight(20);
+    }
+
+
 
 
 

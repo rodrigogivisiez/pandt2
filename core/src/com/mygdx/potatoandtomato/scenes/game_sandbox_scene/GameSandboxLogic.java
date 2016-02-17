@@ -230,6 +230,15 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                         _services.getChat().setMode(2);
                         _services.getChat().resetChat();
                         _services.getChat().show();
+                        if(_coordinator.isLandscape()){
+                            _services.getBroadcaster().broadcast(BroadcastEvent.DEVICE_ORIENTATION, 1);
+                            Threadings.delay(500, new Runnable() {
+                                @Override
+                                public void run() {
+                                    _services.getChat().animateHideForMode2();
+                                }
+                            });
+                        }
                         _gameStarted = true;
                     }
                 });
@@ -353,6 +362,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         _screen.switchToPTScreen();
         if(_coordinator != null){
             if(_coordinator.getGameEntrance() != null) _coordinator.getGameEntrance().dispose();
+            _services.getBroadcaster().broadcast(BroadcastEvent.DEVICE_ORIENTATION, 0);
             _coordinator.dispose();
         }
 

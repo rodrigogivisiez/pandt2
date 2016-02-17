@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -18,6 +19,7 @@ import com.mygdx.potatoandtomato.absintflis.gamingkit.MessagingListener;
 import com.mygdx.potatoandtomato.absintflis.recorder.RecordListener;
 import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
 import com.mygdx.potatoandtomato.absintflis.uploader.UploadListener;
+import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.services.Recorder;
 import com.mygdx.potatoandtomato.helpers.services.Sounds;
@@ -31,6 +33,7 @@ import com.mygdx.potatoandtomato.models.NativeLibgdxTextInfo;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Room;
 import com.potatoandtomato.common.*;
+import javafx.geometry.Pos;
 
 import java.util.HashMap;
 
@@ -51,6 +54,7 @@ public class Chat {
     private GamingKit _gamingKit;
     private TextField _messageTextField;
     private Image _textFieldFocusImage, _textFieldNotFocusImage;
+    private Image _btnMic, _btnKeyboard;
     private boolean _expanded;
     private Table _boxChildTable, _mode1MessagesContentTable, _sendTable;
     private Table _mode2MessagesContentTable;
@@ -64,7 +68,7 @@ public class Chat {
     private IPTGame _game;
     private HashMap<String, Color> _userColors;
     private int _mode;
-    private Image _micImage;
+    private Image _micImage, _closeKeyboardImage;
     private Recorder _recorder;
     private IUploader _uploader;
     private String _recordsPath;
@@ -103,7 +107,7 @@ public class Chat {
         //Big Mic Table
         /////////////////////////////
         _bigMicTable = new Table();
-        Image bigMicImage = new Image(_assets.getMicBig());
+        Image bigMicImage = new Image(_assets.getTextures().getMicBig());
         _bigMicTable.add(bigMicImage).width(150).height(300);
         _bigMicTable.setVisible(false);
 
@@ -113,14 +117,14 @@ public class Chat {
         //All Messages Table Mode 1
         ///////////////////////
         _mode1AllMessagesTable = new Table();
-        _mode1AllMessagesTable.setBackground(new TextureRegionDrawable(_assets.getChatContainer()));
+        _mode1AllMessagesTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getChatContainer()));
         _mode1AllMessagesTable.align(Align.top);
 
         _mode1MessagesContentTable = new Table();
         _mode1MessagesContentTable.align(Align.top);
         _mode1ChatScroll = new ScrollPane(_mode1MessagesContentTable);
         _mode1ChatScroll.setScrollingDisabled(true, false);
-        _mode1AllMessagesTable.add(_mode1ChatScroll).expand().fill().padLeft(20).padTop(3);
+        _mode1AllMessagesTable.add(_mode1ChatScroll).expand().fill().padLeft(15).padRight(15).padTop(3);
 
         /////////////////////////////
         //All Messages Table Mode 2
@@ -138,20 +142,20 @@ public class Chat {
         //Bottom message box
         ///////////////////////////////////
         _messageBoxTable = new Table();
-        _messageBoxTable.setBackground(new NinePatchDrawable(_assets.getYellowGradientBox()));
+        _messageBoxTable.setBackground(new NinePatchDrawable(_assets.getPatches().getYellowGradientBox()));
         _boxChildTable = new Table();
-        _boxChildTable.setBackground(new NinePatchDrawable(_assets.getChatBox()));
+        _boxChildTable.setBackground(new NinePatchDrawable(_assets.getPatches().getChatBox()));
         new DummyButton(_boxChildTable, _assets);
         _messageBoxTable.add(_boxChildTable).expandX().fillX().padLeft(15).padRight(15).padTop(3).padBottom(3);
 
-        _textFieldFocusImage = new Image(_assets.getOrangeLine());
-        _textFieldNotFocusImage = new Image(_assets.getGreyLine());
+        _textFieldFocusImage = new Image(_assets.getTextures().getOrangeLine());
+        _textFieldNotFocusImage = new Image(_assets.getTextures().getGreyLine());
         _textFieldFocusImage.setVisible(false);
 
         TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle();
-        textFieldStyle.font = _assets.getBlackNormal3();
+        textFieldStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD);
         textFieldStyle.fontColor = Color.BLACK;
-        textFieldStyle.cursor = new TextureRegionDrawable(_assets.getTextCursor());
+        textFieldStyle.cursor = new TextureRegionDrawable(_assets.getTextures().getTextCursor());
         _messageTextField = new TextField("", textFieldStyle);
         _messageTextField.setOnscreenKeyboard(new DummyKeyboard(_broadcaster));
         _messageTextField.addListener(new InputListener(){
@@ -178,7 +182,8 @@ public class Chat {
             }
         });
 
-        _micImage = new Image(_assets.getMicIcon());
+        _micImage = new Image(_assets.getTextures().getMicIcon());
+        _closeKeyboardImage = new Image(_assets.getTextures().getCloseKeyboardIcon());
 
         ///////////////////////////////
         //Send Label
@@ -187,18 +192,30 @@ public class Chat {
         new DummyButton(_sendTable, _assets);
 
         Label.LabelStyle sendLabelStyle = new Label.LabelStyle();
-        sendLabelStyle.font = _assets.getOrangePizza3();
+        sendLabelStyle.font = _assets.getFonts().get(Fonts.FontName.PIZZA, Fonts.FontSize.XXXL, Fonts.FontColor.ORANGE);
         _sendLabel = new Label(_texts.send(), sendLabelStyle);
         _sendTable.add(_sendLabel);
 
         _boxChildTable.add(_messageTextField).expandX().fillX().padLeft(15).padRight(40).padTop(5).padBottom(5);
         _boxChildTable.add(_sendTable).width(70).expandY().fillY();
 
+        ////////////////////////////////////
+        //hidden micbutton/keyboard button
+        ////////////////////////////////////
+        Table hiddenTable = new Table();
+        _btnKeyboard = new Image(_assets.getTextures().getKeyboardButton());
+        _btnMic = new Image(_assets.getTextures().getMicButton());
+        hiddenTable.add(_btnKeyboard).size(35, 35).padLeft(5);
+        hiddenTable.add(_btnMic).size(35, 35);
+        hiddenTable.setPosition(Positions.getHeight(), 0);      //use height because it only appear in landscape mode
+        hiddenTable.setSize(75, 35);
+        _messageBoxTable.addActor(hiddenTable);
+
 
         //////////////////////////////////////
         //populating
         /////////////////////////////////////
-        _chatRoot.add(_mode1AllMessagesTable).expandX().fillX().height(130).padLeft(15).padRight(15);
+        _chatRoot.add(_mode1AllMessagesTable).expandX().fillX().height(130);
         _chatRoot.row();
         _chatRoot.add(_messageBoxTable).expandX().fillX().height(60);
 
@@ -228,6 +245,7 @@ public class Chat {
             _textFieldNotFocusImage.remove();
             _bigMicTable.remove();
             _micImage.remove();
+            _closeKeyboardImage.remove();
             _mode2AllMessagesTable.remove();
         }
 
@@ -245,12 +263,18 @@ public class Chat {
         _textFieldNotFocusImage.setHeight(1);
         _textFieldNotFocusImage.setPosition(10, 5);
         _boxChildTable.addActor(_textFieldNotFocusImage);
-        _micImage.setSize(25, 30);
+        _micImage.setSize(18, 30);
         _micImage.setPosition(Global.IS_POTRAIT ? 227 : 510, 13);
         _boxChildTable.addActor(_micImage);
+        if(!Global.IS_POTRAIT){
+            _closeKeyboardImage.setSize(40, 30);
+            _closeKeyboardImage.setPosition(460 ,13);
+            _boxChildTable.addActor(_closeKeyboardImage);
+        }
+
 
         _mode2AllMessagesTable.setSize(Positions.getWidth(), Global.IS_POTRAIT ? 90 : 50);
-        _chatRoot.addActor(_mode2AllMessagesTable);
+        _stage.addActor(_mode2AllMessagesTable);
 
         _chatRoot.setPosition(0, 0);
         _chatRoot.setSize(Positions.getWidth(), _chatRoot.getPrefHeight());
@@ -307,6 +331,28 @@ public class Chat {
         if(!_visible){
             _visible = true;
             _game.addInputProcessor(_stage, 10);
+        }
+    }
+
+    public void animateHideForMode2(){
+        if(_mode == 2){
+            _messageBoxTable.clearActions();
+            _messageBoxTable.addAction(sequence(moveTo(-Positions.getWidth(), 0, 1f, Interpolation.exp10Out), new Action() {
+                @Override
+                public boolean act(float delta) {
+                    collapsed();
+                    return true;
+                }
+            }));
+
+        }
+    }
+
+    public void animateShowForMode2(){
+        if(_mode == 2){
+            _messageBoxTable.clearActions();
+            _messageBoxTable.addAction(moveTo(0, 0, 0.3f));
+            expanded();
         }
     }
 
@@ -406,50 +452,86 @@ public class Chat {
             }
         });
 
-        _micImage.addListener(new InputListener(){
+        _btnKeyboard.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                animateShowForMode2();
+            }
+        });
+
+        _btnMic.addListener(new InputListener(){
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                _recorder.stopRecording();
-                Threadings.delay(1000, new Runnable() {
-                    @Override
-                    public void run() {
-                        _sounds.setVolume(1);
-                    }
-                });
-
-                _bigMicTable.setVisible(false);
-                _bigMicTable.clearActions();
+                micTouchUp();
                 super.touchUp(event, x, y, pointer, button);
             }
 
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                _sounds.playSoundEffect(Sounds.Name.MIC);
-                _bigMicTable.addAction(sequence(fadeOut(0f), forever(sequence(fadeOut(0.6f), fadeIn(0.6f)))));
-                _bigMicTable.setVisible(true);
-                final String fileName =  System.currentTimeMillis() + "_" + MathUtils.random(0, 10000) + ".bin";
-                final FileHandle file = Gdx.files.local(_recordsPath + fileName);
-
-                Threadings.delay(500, new Runnable() {
-                    @Override
-                    public void run() {
-                        _sounds.setVolume(0);
-                        _recorder.recordToFile(file, new RecordListener(){
-                            @Override
-                            public void onFinishedRecord(FileHandle resultFile, Status status) {
-                                if(status == Status.SUCCESS){
-                                    sendVoiceMessage(file);
-                                }
-                            }
-                        });
-                    }
-                });
-
-
+                micTouchDown();
                 return true;
             }
         });
 
+        _micImage.addListener(new InputListener(){
+            @Override
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                micTouchUp();
+                super.touchUp(event, x, y, pointer, button);
+            }
+
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                micTouchDown();
+                return true;
+            }
+        });
+
+        _closeKeyboardImage.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                animateHideForMode2();
+            }
+        });
+
+    }
+
+    private void micTouchUp(){
+        _recorder.stopRecording();
+        Threadings.delay(1000, new Runnable() {
+            @Override
+            public void run() {
+                _sounds.setVolume(1);
+            }
+        });
+
+        _bigMicTable.setVisible(false);
+        _bigMicTable.clearActions();
+    }
+
+    private void micTouchDown(){
+        _sounds.playSoundEffect(Sounds.Name.MIC);
+        _bigMicTable.addAction(sequence(fadeOut(0f), forever(sequence(fadeOut(0.6f), fadeIn(0.6f)))));
+        _bigMicTable.setVisible(true);
+        final String fileName =  System.currentTimeMillis() + "_" + MathUtils.random(0, 10000) + ".bin";
+        final FileHandle file = Gdx.files.local(_recordsPath + fileName);
+
+        Threadings.delay(500, new Runnable() {
+            @Override
+            public void run() {
+                _sounds.setVolume(0);
+                _recorder.recordToFile(file, new RecordListener(){
+                    @Override
+                    public void onFinishedRecord(FileHandle resultFile, Status status) {
+                        if(status == Status.SUCCESS){
+                            sendVoiceMessage(file);
+                        }
+                    }
+                });
+            }
+        });
     }
 
     private void setVoiceListener(Actor voice, final String fileName, boolean autoPlay){
@@ -531,23 +613,23 @@ public class Chat {
                     //Styles
                     ///////////////
                     Label.LabelStyle lblUsernameStyle = new Label.LabelStyle();
-                    lblUsernameStyle.font = _assets.getBlackBold2();
+                    lblUsernameStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.S, Fonts.FontColor.BLACK, Fonts.FontStyle.BOLD);
 
                     Label.LabelStyle lblMessageStyle = new Label.LabelStyle();
-                    lblMessageStyle.font = _assets.getBlackNormal2();
+                    lblMessageStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.S, Fonts.FontColor.BLACK);
 
                     Label.LabelStyle lblInfoStyle = new Label.LabelStyle();
-                    lblInfoStyle.font = _assets.getBlueNormal2();
+                    lblInfoStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.S, Fonts.FontColor.BLUE);
 
                     Label.LabelStyle lblImportantStyle = new Label.LabelStyle();
-                    lblImportantStyle.font = _assets.getRedNormal2();
+                    lblImportantStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.S, Fonts.FontColor.RED);
 
                     if (msg.getFromType() == ChatMessage.FromType.USER || msg.getFromType() == ChatMessage.FromType.USER_VOICE) {
                         Profile sender = _room.getProfileByUserId(msg.getSenderId());
                         if (sender == null) return;
 
                         Label lblUsername = new Label(sender.getDisplayName(30) + ": ", lblUsernameStyle);
-                        chatTable.add(lblUsername).minHeight(20).padRight(5);
+                        chatTable.add(lblUsername).minHeight(20).padRight(5).padLeft(5);
 
                         if(msg.getFromType() == ChatMessage.FromType.USER){
                             Label lblMessage = new Label(msg.getMessage(), lblMessageStyle);
@@ -556,7 +638,7 @@ public class Chat {
                             chatTable.row();
                         }
                         else if(msg.getFromType() == ChatMessage.FromType.USER_VOICE){
-                            Image imgVoice = new Image(_assets.getVoiceIcon());
+                            Image imgVoice = new Image(_assets.getTextures().getVoiceIcon());
                             chatTable.add(imgVoice).size(20, 20).expandX().left();
                             chatTable.row();
                             setVoiceListener(imgVoice, msg.getMessage(), !msg.getSenderId().equals(_userId));
@@ -566,11 +648,11 @@ public class Chat {
                         Label lblMessage = new Label(msg.getMessage(), msg.getFromType() == ChatMessage.FromType.SYSTEM ? lblInfoStyle : lblImportantStyle);
                         lblMessage.setWrap(true);
                         // chatTable.add(icon).size(20, 20).padRight(5).padLeft(5);
-                        chatTable.add(lblMessage).colspan(2).expandX().fillX().minHeight(20);
+                        chatTable.add(lblMessage).colspan(2).expandX().fillX().minHeight(20).padLeft(5).padRight(5);
                         chatTable.row();
                     }
 
-                    Image separator = new Image(_assets.getGreyLine());
+                    Image separator = new Image(_assets.getTextures().getGreyLine());
                     chatTable.add(separator).colspan(3).padTop(5).padBottom(5).expandX().fillX();
                     chatTable.row();
 
@@ -589,14 +671,17 @@ public class Chat {
                     }
 
                     Label.LabelStyle labelStyle = new Label.LabelStyle();
-                    labelStyle.font = _assets.getWhiteBold2GrayS();
+                    labelStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.S, Fonts.FontColor.WHITE,
+                                           Fonts.FontStyle.SEMI_BOLD, Fonts.FontBorderColor.BLACK, Fonts.FontShadowColor.NONE);
                     labelStyle.fontColor = getUserColor(msg.getSenderId());
 
                     Label.LabelStyle labelInfoStyle = new Label.LabelStyle();
-                    labelInfoStyle.font = _assets.getBlueBold2WhiteS();
+                    labelInfoStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.S, Fonts.FontColor.BLUE,
+                                                    Fonts.FontStyle.SEMI_BOLD, Fonts.FontBorderColor.WHITE, Fonts.FontShadowColor.NONE);
 
                     Label.LabelStyle labelImportantStyle = new Label.LabelStyle();
-                    labelImportantStyle.font = _assets.getRedBold2WhiteS();
+                    labelImportantStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.S, Fonts.FontColor.RED,
+                                                    Fonts.FontStyle.SEMI_BOLD, Fonts.FontBorderColor.WHITE, Fonts.FontShadowColor.NONE);
 
                     if(msg.getFromType() == ChatMessage.FromType.USER || msg.getFromType() == ChatMessage.FromType.USER_VOICE) {
                         Profile sender = _room.getProfileByUserId(msg.getSenderId());
@@ -608,7 +693,7 @@ public class Chat {
 
                     if(msg.getFromType() == ChatMessage.FromType.USER){
                         Label.LabelStyle labelStyle2 = new Label.LabelStyle();
-                        labelStyle2.font = _assets.getWhiteNormal2Black();
+                        labelStyle2.font = _assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.S, Fonts.FontColor.WHITE, Fonts.FontBorderColor.BLACK);
                         labelStyle2.fontColor = Color.WHITE;
                         Label messageLabel = new Label(msg.getMessage(), labelStyle2);
                         messageLabel.setWrap(true);
@@ -616,7 +701,7 @@ public class Chat {
                         chatTable.add(messageLabel).expandX().fillX();
                     }
                     else if(msg.getFromType() == ChatMessage.FromType.USER_VOICE){
-                        Image imgVoice = new Image(_assets.getVoiceIcon());
+                        Image imgVoice = new Image(_assets.getTextures().getVoiceIcon());
                         chatTable.add(imgVoice).size(15, 15).expandX().left();
                         chatTable.row();
                         setVoiceListener(imgVoice, msg.getMessage(), !msg.getSenderId().equals(_userId));

@@ -4,9 +4,15 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import com.mygdx.potatoandtomato.models.ChatMessage;
+import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.*;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
@@ -44,6 +50,7 @@ public class PTGame extends Game implements IPTGame {
 
 	public PTGame(Broadcaster broadcaster) {
 		_broadcaster = broadcaster;
+
 	}
 
 	@Override
@@ -81,18 +88,17 @@ public class PTGame extends Game implements IPTGame {
 
 				setScreen(_screen);
 
-
 				_screen.toScene(SceneEnum.BOOT);
-			}
+				}
 		});
 	}
 
 	@Override
 	public void resize(int width, int height) {
 		super.resize(width, height);
-		_confirm.resize(width, height);
 		_chat.resize(width, height);
 		_notification.resize(width, height);
+		_confirm.resize(width, height);
 	}
 
 	@Override
@@ -119,9 +125,10 @@ public class PTGame extends Game implements IPTGame {
 				_chat.screenTouched(Gdx.input.getX(), Gdx.input.getY());
 			}
 
-			_confirm.render(Gdx.graphics.getDeltaTime());
 			_chat.render(Gdx.graphics.getDeltaTime());
+			_confirm.render(Gdx.graphics.getDeltaTime());
 			_notification.render(Gdx.graphics.getDeltaTime());
+
 		}
 		catch (IllegalStateException ex){
 

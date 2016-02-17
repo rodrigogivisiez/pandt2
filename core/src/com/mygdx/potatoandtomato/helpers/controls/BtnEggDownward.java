@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.helpers.services.Shaders;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.services.Sounds;
@@ -45,11 +46,11 @@ public class BtnEggDownward extends Table {
         this._sounds = sounds;
         this._assets = assets;
         this._shaders = shaders;
-        this._button = new Button(new TextureRegionDrawable(_assets.getEmpty()));
+        this._button = new Button(new TextureRegionDrawable(_assets.getTextures().getEmpty()));
         this._enabled = true;
         _button.setFillParent(true);
-        this.setBackground(new TextureRegionDrawable(_assets.getDownwardEggButton()));
-        _size = Sizes.resize(100, _assets.getDownwardEggButton());
+        this.setBackground(new TextureRegionDrawable(_assets.getTextures().getDownwardEggButton()));
+        _size = Sizes.resize(100, _assets.getTextures().getDownwardEggButton());
         this.setSize(_size.x, _size.y);
 
         _button.addListener(new ClickListener(){
@@ -72,12 +73,9 @@ public class BtnEggDownward extends Table {
         this.clear();
         Label.LabelStyle textLabelStyle = new Label.LabelStyle();
 
-        if(text.length() > 12 || (text.length() > 7 && !text.contains(" "))){
-            textLabelStyle.font = _assets.getWhitePizza2BlackS();
-        }
-        else{
-            textLabelStyle.font = _assets.getWhitePizza3BlackS();
-        }
+        textLabelStyle.font = _assets.getFonts().get(Fonts.FontName.PIZZA, Fonts.FontSize.XL,
+                                            Fonts.FontColor.WHITE, Fonts.FontShadowColor.DARK_ORANGE);
+
         _textLabel = new Label(text, textLabelStyle);
         _textLabel.setWrap(true);
         _textLabel.setAlignment(Align.center);

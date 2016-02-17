@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.potatoandtomato.common.*;
@@ -79,17 +80,17 @@ public class Notification {
 
     private void showNotification(String msg, Color color){
         final Table childTable = new Table();
-        childTable.setBackground(new NinePatchDrawable(_assets.getWhiteRoundedBg()));
+        childTable.setBackground(new NinePatchDrawable(_assets.getPatches().getWhiteRoundedBg()));
         childTable.setSize(200, 40);
         childTable.pad(10);
         childTable.padRight(20);
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
         if(color == Color.RED){
-            labelStyle.font = _assets.getRedBold2();
+            labelStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.S, Fonts.FontColor.RED);
         }
         else if(color == Color.BLUE){
-            labelStyle.font = _assets.getBlueBold2();
+            labelStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.S, Fonts.FontColor.BLUE);
         }
 
         Label labelMsg = new Label(msg, labelStyle);

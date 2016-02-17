@@ -50,14 +50,6 @@ public class SettingsLogic extends LogicAbstract {
             }
         });
 
-        _scene.getReportBtn().addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                _confirm.show(Logs.getLogMsg(), Confirm.Type.YES, null);
-            }
-        });
-
     }
 
     public void facebookRequest(){

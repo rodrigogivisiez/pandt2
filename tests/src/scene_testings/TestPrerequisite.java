@@ -11,7 +11,7 @@ import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.scenes.prerequisite_scene.PrerequisiteLogic;
 import com.mygdx.potatoandtomato.scenes.prerequisite_scene.PrerequisiteScene;
 import com.potatoandtomato.common.Status;
-import helpers.MockModel;
+import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import helpers.T_Services;
 import helpers.T_Threadings;
 import org.junit.After;

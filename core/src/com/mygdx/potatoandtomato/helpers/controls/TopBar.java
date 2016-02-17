@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.potatoandtomato.PTScreen;
+import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
@@ -44,17 +45,18 @@ public class TopBar {
         _topBarTable = new Table();
         _topBarTable.setWidth(Positions.getWidth());
         _topBarTable.setHeight(_barHeight);
-        _topBarTable.setBackground(new TextureRegionDrawable(_assets.getTopBarBg()));
+        _topBarTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getTopBarBg()));
         _topBarTable.setPosition(0, Positions.getHeight() - _barHeight);
 
-        TextureRegion iconRegion = _noPreviousScene ? _assets.getQuitIcon() : _assets.getBackIcon();
+        TextureRegion iconRegion = _noPreviousScene ? _assets.getTextures().getQuitIcon() : _assets.getTextures().getBackIcon();
         Vector2 iconSize = Sizes.resize(45, iconRegion);
         _iconImg = new Image(iconRegion);
         _iconImg.setSize(iconSize.x, iconSize.y);
         _iconImg.setPosition(76f/2 - iconSize.x/2, _barHeight/2 - iconSize.y/2);
 
         Label.LabelStyle titleLabelStyle = new Label.LabelStyle();
-        titleLabelStyle.font = _assets.getTopBarFont();
+        titleLabelStyle.font = _assets.getFonts().get(Fonts.FontName.PIZZA, Fonts.FontSize.MAX,
+                            Fonts.FontColor.BLACK, Fonts.FontBorderColor.LIGHT_ORANGE);
         _titleLabel = new Label(_title, titleLabelStyle);
 
         _topBarTable.addActor(_iconImg);

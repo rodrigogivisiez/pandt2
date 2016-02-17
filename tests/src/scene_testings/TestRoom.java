@@ -20,7 +20,7 @@ import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.scenes.room_scene.RoomLogic;
 import com.mygdx.potatoandtomato.scenes.room_scene.RoomScene;
 import com.potatoandtomato.common.Status;
-import helpers.MockModel;
+import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import helpers.T_Services;
 import org.junit.Assert;
 import org.junit.Before;

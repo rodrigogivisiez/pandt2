@@ -29,7 +29,7 @@ public class Sounds implements ISounds {
 
     public void playThemeMusic() {
         if(_themeMusic == null){
-            _themeMusic = _assets.getThemeMusic();
+            _themeMusic = _assets.getSounds().getThemeMusic();
             _themeMusic.setLooping(true);
             addMusic(_themeMusic);
         }
@@ -44,25 +44,25 @@ public class Sounds implements ISounds {
         Sound sound = null;
         switch (soundName){
             case BUTTON_CLICKED:
-                sound =  _assets.getClickWaterSound();
+                sound =  _assets.getSounds().getClickWaterSound();
                 break;
             case TOGETHER_CHEERS:
-                sound = _assets.getTogetherCheersSound();
+                sound = _assets.getSounds().getTogetherCheersSound();
                 break;
             case SLIDING:
-                sound = _assets.getOpenSlideSound();
+                sound = _assets.getSounds().getOpenSlideSound();
                 break;
             case GAME_CREATED:
-                sound = _assets.getGameCreatedSound();
+                sound = _assets.getSounds().getGameCreatedSound();
                 break;
             case MIC:
-                sound = _assets.getMicSound();
+                sound = _assets.getSounds().getMicSound();
                 break;
             case COUNT_DOWN:
-                sound = _assets.getCountDownSound();
+                sound = _assets.getSounds().getCountDownSound();
                 break;
             case MESSAGING:
-                sound = _assets.getMessagingSound();
+                sound = _assets.getSounds().getMessagingSound();
                 break;
         }
 

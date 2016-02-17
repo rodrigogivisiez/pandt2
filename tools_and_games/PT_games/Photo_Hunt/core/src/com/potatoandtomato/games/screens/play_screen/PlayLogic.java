@@ -4,6 +4,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.potatoandtomato.common.GameScreen;
+import com.potatoandtomato.common.Status;
+import com.potatoandtomato.games.abs.database.DatabaseListener;
 import com.potatoandtomato.games.abs.screens.LogicAbstract;
 import com.potatoandtomato.games.helpers.ImageTouchVerifier;
 import com.potatoandtomato.games.helpers.MainController;
@@ -51,11 +53,77 @@ public class PlayLogic extends LogicAbstract {
             }
         });
 
+        _screen.getLabelDelete().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                if(_screen.getLabelDelete().getText().toString().equals("Confirm Del?")){
+                    getService().getDatabase().removeImageById(_imagePair.getId(), new DatabaseListener() {
+                        @Override
+                        public void onCallback(Object obj, Status st) {
+                            if(st == Status.SUCCESS){
+                                _screen.getLabelDelete().setText("Deleting...");
+                                getMainController().sendNextStage();
+                            }
+                        }
+                    });
+
+                }
+                else if(_screen.getLabelDelete().getText().toString().equals("Deleting...")){
+
+                }
+                else{
+                    _screen.getLabelDelete().setText("Confirm Del?");
+                }
+
+            }
+        });
+
+        _screen.getLabelNext().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                if(_screen.getLabelNext().getText().toString().equals("Next")){
+                    getMainController().sendNextStage();
+                    _screen.getLabelNext().setText("Processing...");
+                }
+
+            }
+        });
+
+        _screen.getLabelAbandon().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                getGameCoordinator().abandon();
+            }
+        });
+
+        getService().getDatabase().getTotalImagesCount(new DatabaseListener<Long>() {
+            @Override
+            public void onCallback(Long obj, Status st) {
+                _screen.getLabelItemsCount().setText(String.valueOf(obj + 1));
+            }
+        });
+
+        _screen.getLabelGo().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                if(_screen.getLabelGo().getText().toString().equals("Go")){
+                    getService().getImageGetter().goToIndex(Integer.valueOf(_screen.getTextNumber().getText()));
+                    _screen.getLabelGo().setText("Processing...");
+                    getMainController().sendNextStage();
+                }
+            }
+        });
+
     }
 
 
     public void setImages(ImagePair imagePair){
         _imagePair = imagePair;
+        _screen.getTextNumber().setText(String.valueOf(imagePair.getIndex()));
         _screen.setImageOne(imagePair.getImageOne());
         _screen.setImageTwo(imagePair.getImageTwo());
     }
@@ -97,7 +165,7 @@ public class PlayLogic extends LogicAbstract {
 
     private void checkGameEnded(){
         if(_handledCorrectAreas.size() == 5){
-            getMainController().sendNextStage();
+            //getMainController().sendNextStage();
         }
     }
 

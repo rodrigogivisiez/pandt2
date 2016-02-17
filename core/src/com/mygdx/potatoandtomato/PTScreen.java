@@ -5,6 +5,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -254,24 +256,24 @@ public class PTScreen implements Screen {
         _stage = new Stage(viewPort, _ptGame.getSpriteBatch());
 
         //Ground Texture START////////////////////////////////////////////
-        _greenGroundImg = new Image(_assets.getGreenGround());
-        _autumnGroundImg = new Image(_assets.getAutumnGround());
+        _greenGroundImg = new Image(_assets.getTextures().getGreenGround());
+        _autumnGroundImg = new Image(_assets.getTextures().getAutumnGround());
         _autumnGroundImg.getColor().a = 0;
         _autumnGroundImg.addAction(sequence(delay(0.4f), fadeIn(0.5f)));
         //Ground Texture END//////////////////////////////////////////////
 
         //Background Texture START
-        _bgBlueImg = new Image(_assets.getBlueBg());
+        _bgBlueImg = new Image(_assets.getTextures().getBlueBg());
         _bgBlueImg.setSize(Positions.getWidth(), Positions.getHeight());
 
-        _bgAutumnImg = new Image(_assets.getAutumnBg());
+        _bgAutumnImg = new Image(_assets.getTextures().getAutumnBg());
         _bgAutumnImg.setSize(Positions.getWidth(), Positions.getHeight());
         _bgAutumnImg.getColor().a = 0;
 
-        _sunriseImg = new Image(_assets.getSunrise());
+        _sunriseImg = new Image(_assets.getTextures().getSunrise());
         _sunriseImg.getColor().a = 0;
 
-        _sunrayImg = new Image(_assets.getSunray());
+        _sunrayImg = new Image(_assets.getTextures().getSunray());
         _sunrayImg.setPosition(Positions.centerX(1200), -470);
         _sunrayImg.setOrigin(599f, 601f);
         _sunrayImg.setSize(1200, 1200);
@@ -350,6 +352,7 @@ public class PTScreen implements Screen {
         Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
         _stage.act(delta);
         _stage.draw();
+
     }
 
     public PTGame getGame() {

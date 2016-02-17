@@ -12,7 +12,7 @@ import com.mygdx.potatoandtomato.models.UserPlayingState;
 import com.mygdx.potatoandtomato.scenes.game_list_scene.GameListLogic;
 import com.mygdx.potatoandtomato.scenes.game_list_scene.GameListScene;
 import com.potatoandtomato.common.Status;
-import helpers.MockModel;
+import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import helpers.T_Services;
 import org.junit.Assert;
 import org.junit.Test;

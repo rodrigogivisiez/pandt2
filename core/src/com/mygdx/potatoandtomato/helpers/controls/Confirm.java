@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
 import com.mygdx.potatoandtomato.absintflis.controls.ConfirmStateChangedListener;
+import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
@@ -33,11 +34,10 @@ public class Confirm {
     }
     Assets _assets;
     Table _confirmRoot;
-    Image _closeButton;
-    DummyButton _buttonYes, _buttonNo;
+    Image _yesImage, _noImage;
     ConfirmResultListener _listener;
     Label _messageLabel;
-    Table _buttonsTable, _msgTable, _buttonYesTable, _buttonNoTable;
+    Table _buttonsTable, _msgTable;
     boolean _visible;
     Stage _stage;
     SpriteBatch _batch;
@@ -75,45 +75,30 @@ public class Confirm {
         StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
         _stage = new Stage(viewPort, _batch);
 
-        _confirmRoot.setBackground(new TextureRegionDrawable(_assets.getBlackBg()));
+        _confirmRoot.setBackground(new TextureRegionDrawable(_assets.getTextures().getBlackBg()));
         _confirmRoot.setFillParent(true);
+        _confirmRoot.align(Align.bottom);
         new DummyButton(_confirmRoot, _assets);
 
         _msgTable = new Table();
-        _msgTable.setBackground(new NinePatchDrawable(_assets.getPopupBg()));
+        _msgTable.setBackground(new NinePatchDrawable(_assets.getPatches().getPopupBg()));
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = _assets.getWhitePizza3BlackS();
+        labelStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD);
         _messageLabel = new Label("", labelStyle);
         _messageLabel.setWrap(true);
         _messageLabel.setAlignment(Align.center);
 
         ScrollPane scrollPane = new ScrollPane(_messageLabel);
 
-        _closeButton = new Image(_assets.getCloseButton());
-
         _buttonsTable = new Table();
 
-        _buttonYesTable = new Table();
-        _buttonYesTable.setBackground(new NinePatchDrawable(_assets.getButtonGreen()));
-        Vector2 yesSize = Sizes.resize(30, _assets.getTick());
-        Image yesImage = new Image(_assets.getTick());
-        _buttonYesTable.add(yesImage).size(yesSize.x, yesSize.y);
-        _buttonYes = new DummyButton(_buttonYesTable, _assets);
+        _yesImage = new Image(_assets.getTextures().getTick());
+        _noImage = new Image(_assets.getTextures().getCross());
 
-        _buttonNoTable = new Table();
-        _buttonNoTable.setBackground(new NinePatchDrawable(_assets.getButtonRed()));
-        Vector2 noSize = Sizes.resize(30, _assets.getCross());
-        Image noImage = new Image(_assets.getCross());
-        _buttonNoTable.add(noImage).size(noSize.x, noSize.y);
-        _buttonNo = new DummyButton(_buttonNoTable, _assets);
-
-
-        _msgTable.add(_closeButton).expandX().right().padTop(-50).colspan(2);
+        _msgTable.add(scrollPane).padTop(20).padBottom(20).expand().fill().padLeft(10).padRight(10);
         _msgTable.row();
-        _msgTable.add(scrollPane).padTop(10).padBottom(20).colspan(2).expandX().fillX().padLeft(10).padRight(10).maxHeight(300);
-        _msgTable.row();
-        _msgTable.add(_buttonsTable).expandX().fillX();
+        _msgTable.add(_buttonsTable).expandX().fillX().padBottom(20);
 
 
         _confirmRoot.add(_msgTable).expandX().fillX();
@@ -137,24 +122,26 @@ public class Confirm {
                 }
                 _previousTime = System.currentTimeMillis();
 
-                _msgTable.getColor().a = 0;
                 _messageLabel.setText(msg);
                 _buttonsTable.clear();
 
+                int w = 70;
+
                 if(type == Type.YESNO){
-                    _buttonsTable.add(_buttonYesTable).uniformX().space(20);
-                    _buttonsTable.add(_buttonNoTable).uniformX().space(20);
+                    _buttonsTable.add(_yesImage).size(w, w).space(70);
+                    _buttonsTable.add(_noImage).size(w, w).space(70);
                 }
                 else if(type == Type.YES){
-                    _buttonsTable.add(_buttonYesTable).center().expandX();
+                    _buttonsTable.add(_yesImage).size(w, w);
                 }
 
+                _msgTable.getColor().a = 0;
                 Threadings.renderFor(5f);
                 _confirmRoot.clearActions();
                 _confirmRoot.addAction(sequence(fadeOut(0f), fadeIn(0.3f), new Action() {
                     @Override
                     public boolean act(float delta) {
-                        _msgTable.addAction(sequence(moveBy(-50, 0), fadeOut(0f), parallel(moveBy(50, 0, 0.1f), fadeIn(0.1f)), new Action() {
+                        _msgTable.addAction(sequence(moveBy(0, -400), fadeIn(0f), moveBy(0, 400, 0.3f), new Action() {
                             @Override
                             public boolean act(float delta) {
                                 return true;
@@ -167,7 +154,7 @@ public class Confirm {
 
                 _visible = true;
 
-                _game.addInputProcessor(_stage, 5);
+                _game.addInputProcessor(_stage, 11);
             }
         });
 
@@ -180,39 +167,26 @@ public class Confirm {
 
     private void attachEvent(){
 
-        _buttonYes.addListener(new ClickListener() {
+        _yesImage.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                if(_listener != null){
+                if (_listener != null) {
                     _listener.onResult(ConfirmResultListener.Result.YES);
                 }
                 close();
             }
         });
 
-        _buttonNo.addListener(new ClickListener() {
+        _noImage.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                if(_listener != null){
+                if (_listener != null) {
                     _listener.onResult(ConfirmResultListener.Result.NO);
                 }
                 close();
             }
-        });
-
-        _closeButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                if(_listener != null){
-                    _listener.onResult(ConfirmResultListener.Result.NO);
-                }
-                close();
-            }
-
-
         });
 
 

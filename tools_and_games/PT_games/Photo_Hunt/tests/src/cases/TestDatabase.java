@@ -1,13 +1,11 @@
 package cases;
 
-import abstracts.MockGameCoordinator;
 import abstracts.TestAbstract;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.MockGame;
 import com.potatoandtomato.common.Status;
 import com.potatoandtomato.games.PhotoHuntGame;
 import com.potatoandtomato.games.abs.database.DatabaseListener;
-import com.potatoandtomato.games.helpers.Assets;
 import com.potatoandtomato.games.helpers.Database;
 import com.potatoandtomato.games.models.ImageData;
 import helpers.WaitingTask;

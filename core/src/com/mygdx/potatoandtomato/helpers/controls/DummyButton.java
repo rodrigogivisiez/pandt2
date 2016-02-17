@@ -11,7 +11,7 @@ import com.mygdx.potatoandtomato.helpers.services.Assets;
 public class DummyButton extends Button {
 
     public DummyButton(Table table, Assets assets){
-        super(new TextureRegionDrawable(assets.getEmpty()));
+        super(new TextureRegionDrawable(assets.getTextures().getEmpty()));
         this.setFillParent(true);
         table.addActor(this);
     }

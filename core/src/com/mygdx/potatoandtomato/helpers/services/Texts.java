@@ -11,8 +11,11 @@ public class Texts {
     public String mascotQuestion() { return "Are you a Potato or \nTomato?";};
     public String mascotPotato() { return "Potatoes welcome \nYOU!";};
     public String mascotTomato() { return "Tomatoes welcome \nYOU!";};
-    public String socialLogin() { return "Login with facebook?\nTomato will help you find more friends to play with you. (Also Potato promises not to post anything on your behalf.)";}
-    public String socialLoginProcessing() { return "Logging in...";}
+    public String socialLogin() { return "Login with Facebook";};
+    public String socialLoginTomato() { return "Tomato will help you find more friends to play with you.";}
+    public String socialLoginPotato() { return "Potato promises not to post anything on your behalf.";}
+
+    public String socialLoginProcessing() { return "Facebook login processing...";}
     public String socialLoginFailed() { return "Login with Facebook failed... \nTry again?";}
     public String creatingUser() { return "Creating new user profile..."; }
     public String failedRetrieveProfile() { return "Failed to retrieve data from server, please check your connection and try again."; }
@@ -24,20 +27,24 @@ public class Texts {
     public String game() { return "GAME"; }
     public String players() { return "PLAYERS"; }
     public String host() { return "HOST"; }
-    public String newGame() { return "Create"; }
-    public String joinGame() { return "Join"; }
-    public String pickAGame() { return "Pick a game!"; }
+    public String newGame() { return "Create Game"; }
+    public String joinGame() { return "Join\nGame"; }
+    public String pickAGame() { return "Pick A Game"; }
 
     public String createGameTitle() { return "Create Game"; }
+    public String version() { return "Version %s";}
+    public String xPlayers() { return "From %s to %s players";}
+
     public String roomTitle() { return "Game Room"; }
     public String settingsTitle() { return "Settings"; }
     public String inviteTitle() { return "Invite Friends"; }
 
+    public String confirm() { return "Confirm"; }
     public String details() { return "Details"; }
     public String screenShots() { return "Screen Shots"; }
     public String description() { return "Description"; }
     public String create() { return "Create"; }
-    public String startGame() { return "Start Game"; }
+    public String startGame() { return "Start\nGame"; }
     public String invite() { return "Invite"; }
     public String displayName() { return "Display Name"; }
     public String facebook() { return "Facebook"; }

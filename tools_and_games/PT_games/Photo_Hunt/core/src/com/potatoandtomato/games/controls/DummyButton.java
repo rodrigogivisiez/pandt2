@@ -3,7 +3,7 @@ package com.potatoandtomato.games.controls;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.potatoandtomato.games.helpers.Assets;
+import com.potatoandtomato.games.assets.Assets;
 
 /**
  * Created by SiongLeng on 13/12/2015.

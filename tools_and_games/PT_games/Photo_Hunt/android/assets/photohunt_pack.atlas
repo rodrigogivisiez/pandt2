@@ -1,34 +1,48 @@
 
 photohunt_pack.png
-size: 1024,512
+size: 2048,512
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
 1
   rotate: false
-  xy: 2, 34
+  xy: 484, 139
   size: 450, 300
   orig: 450, 300
   offset: 0, 0
   index: -1
 2
   rotate: false
-  xy: 454, 34
+  xy: 936, 139
   size: 450, 300
   orig: 450, 300
   offset: 0, 0
   index: -1
-circle
+btn_white_round
   rotate: false
   xy: 2, 2
+  size: 73, 75
+  orig: 73, 75
+  offset: 0, 0
+  index: -1
+circle
+  rotate: false
+  xy: 484, 107
   size: 30, 30
   orig: 30, 30
   offset: 0, 0
   index: -1
 empty
   rotate: false
-  xy: 906, 333
+  xy: 1388, 438
   size: 1, 1
   orig: 1, 1
+  offset: 0, 0
+  index: -1
+loading
+  rotate: false
+  xy: 2, 79
+  size: 480, 360
+  orig: 480, 360
   offset: 0, 0
   index: -1

@@ -8,7 +8,7 @@ import com.mygdx.potatoandtomato.helpers.services.FirebaseDB;
 import com.potatoandtomato.common.Threadings;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.Status;
-import helpers.MockModel;
+import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import helpers.T_Threadings;
 import org.junit.After;
 import org.junit.Assert;
@@ -38,7 +38,7 @@ public class TestFireBase extends TestAbstract {
     @After
     public void tearDown() throws Exception {
         super.tearDown();
-        databases.clearListenersByClassTag(getClassTag());
+        databases.clearAllListeners();
     }
 
     @Test
@@ -57,6 +57,85 @@ public class TestFireBase extends TestAbstract {
             T_Threadings.sleep(100);
         }
     }
+
+    @Test
+    public void testRemoveListeners(){
+        final boolean[] waiting = {true};
+        final boolean[] cleared = {false};
+
+        final Room r = MockModel.mockRoom(null);
+        r.setRoundCounter(22);
+        r.setOpen(true);
+
+        databases.saveRoom(r, true,  new DatabaseListener<String>() {
+            @Override
+            public void onCallback(String obj, Status st) {
+                waiting[0] = false;
+            }
+        });
+
+        while (waiting[0]){
+            Threadings.sleep(100);
+        }
+
+        final int[] trigger = {0};
+        waiting[0] = true;
+
+        databases.monitorAllRooms(new ArrayList<Room>(), getClassTag(),  new SpecialDatabaseListener<ArrayList<Room>, Room>(Room.class) {
+            @Override
+            public void onCallbackTypeOne(ArrayList<Room> obj, Status st) {
+                waiting[0] = false;
+            }
+
+            @Override
+            public void onCallbackTypeTwo(Room obj, Status st) {
+                if(cleared[0]){
+                    trigger[0]++;
+                }
+
+            }
+        });
+
+        while (waiting[0]){
+            Threadings.sleep(100);
+        }
+
+        waiting[0] = true;
+
+        databases.monitorRoomById(r.getId(), getClassTag(),  new DatabaseListener<Room>(Room.class) {
+            @Override
+            public void onCallback(Room obj, Status st) {
+                waiting[0] = false;
+                trigger[0]++;
+            }
+        });
+
+        while (waiting[0]){
+            Threadings.sleep(100);
+        }
+
+        databases.clearListenersByClassTag(getClassTag());
+        cleared[0] = true;
+
+        waiting[0] = true;
+
+        r.setOpen(true);
+        databases.saveRoom(r, true,  new DatabaseListener<String>() {
+            @Override
+            public void onCallback(String obj, Status st) {
+                waiting[0] = false;
+            }
+        });
+
+        while (waiting[0]){
+            Threadings.sleep(100);
+        }
+        Threadings.sleep(1000);
+
+        Assert.assertEquals(0, trigger[0] - 1); //minus one for initial call of monitorRoomById
+
+    }
+
 
     @Test
     public void testCreateUserAndMonitorUser(){
@@ -271,66 +350,6 @@ public class TestFireBase extends TestAbstract {
     }
 
     @Test
-    public void TestMonitorAllRoomOnDisconnected() {
-
-        final boolean[] ended = {false};
-        final boolean[] waiting = {true};
-        final Room r = MockModel.mockRoom(null);
-        final int[] monitorCount = {0};
-        ArrayList<Room> rooms = new ArrayList();
-        r.setOpen(true);
-
-        databases.saveRoom(r, true, new DatabaseListener<String>() {
-            @Override
-            public void onCallback(String obj, Status st) {
-                waiting[0] = false;
-            }
-        });
-
-        while(waiting[0]){
-            T_Threadings.sleep(100);
-        }
-
-        waiting[0] = true;
-
-        databases.monitorAllRooms(rooms, getClassTag(),  new SpecialDatabaseListener<ArrayList<Room>, Room>() {
-            @Override
-            public void onCallbackTypeOne(ArrayList<Room> obj, Status st) {
-                waiting[0] = false;
-            }
-
-            @Override
-            public void onCallbackTypeTwo(Room obj, Status st) {
-                if(!ended[0]){
-                    Assert.assertEquals(obj.getId(), r.getId());
-                    monitorCount[0]++;
-                    waiting[0] = false;
-                }
-
-            }
-        });
-
-        while(waiting[0]){
-            T_Threadings.sleep(100);
-        }
-
-        waiting[0] = true;
-
-        Assert.assertEquals(0, monitorCount[0]);
-
-        databases.offline();
-        databases.online();
-
-        while(waiting[0]){
-            T_Threadings.sleep(100);
-        }
-        Assert.assertEquals(1, monitorCount[0]);
-
-        ended[0] = true;
-    }
-
-
-    @Test
     public void TestMonitorAllRoom(){
         final int[] monitorCount = {0};
         final boolean[] waiting = {true};
@@ -403,78 +422,7 @@ public class TestFireBase extends TestAbstract {
     }
 
 
-    @Test
-    public void testRemoveListeners(){
-        final boolean[] waiting = {true};
 
-        final Room r = MockModel.mockRoom(null);
-        r.setOpen(true);
-
-        databases.saveRoom(r, true,  new DatabaseListener<String>() {
-            @Override
-            public void onCallback(String obj, Status st) {
-                waiting[0] = false;
-            }
-        });
-
-        while (waiting[0]){
-            Threadings.sleep(100);
-        }
-
-        final int[] trigger = {0};
-        waiting[0] = true;
-
-        databases.monitorAllRooms(new ArrayList<Room>(), getClassTag(),  new SpecialDatabaseListener<ArrayList<Room>, Room>(Room.class) {
-            @Override
-            public void onCallbackTypeOne(ArrayList<Room> obj, Status st) {
-                waiting[0] = false;
-            }
-
-            @Override
-            public void onCallbackTypeTwo(Room obj, Status st) {
-                trigger[0]++;
-                waiting[0] = false;
-            }
-        });
-
-        while (waiting[0]){
-            Threadings.sleep(100);
-        }
-
-        waiting[0] = true;
-
-        databases.monitorRoomById(r.getId(), getClassTag(),  new DatabaseListener<Room>(Room.class) {
-            @Override
-            public void onCallback(Room obj, Status st) {
-                waiting[0] = false;
-                trigger[0]++;
-            }
-        });
-
-        while (waiting[0]){
-            Threadings.sleep(100);
-        }
-
-        databases.clearListenersByClassTag(getClassTag());
-
-        waiting[0] = true;
-
-        r.setOpen(true);
-        databases.saveRoom(r, true,  new DatabaseListener<String>() {
-            @Override
-            public void onCallback(String obj, Status st) {
-                waiting[0] = false;
-            }
-        });
-
-        while (waiting[0]){
-            Threadings.sleep(100);
-        }
-        Threadings.sleep(1000);
-
-        Assert.assertEquals(1, trigger[0]);
-
-    }
 
     @Test
     public void testOnDcSetGameStateDisconnected(){

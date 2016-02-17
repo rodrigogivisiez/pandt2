@@ -8,7 +8,7 @@ import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
 import com.potatoandtomato.common.BroadcastEvent;
-import helpers.MockModel;
+import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import helpers.T_Services;
 import org.junit.Assert;
 import org.junit.Test;

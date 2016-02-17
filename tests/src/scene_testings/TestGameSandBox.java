@@ -6,7 +6,7 @@ import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.scenes.game_sandbox_scene.GameSandboxLogic;
 import com.mygdx.potatoandtomato.scenes.game_sandbox_scene.GameSandboxScene;
-import helpers.MockModel;
+import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import helpers.T_Services;
 import org.junit.Assert;
 import org.junit.Test;

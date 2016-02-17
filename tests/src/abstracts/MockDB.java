@@ -9,7 +9,7 @@ import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Room;
 import com.potatoandtomato.common.Status;
-import helpers.MockModel;
+import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 
 import java.util.ArrayList;
 
@@ -138,6 +138,11 @@ public class MockDB implements IDatabase {
 
     @Override
     public void clearListenersByClassTag(String classTag) {
+
+    }
+
+    @Override
+    public void clearAllListeners() {
 
     }
 

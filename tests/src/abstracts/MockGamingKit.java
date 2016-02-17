@@ -2,12 +2,9 @@ package abstracts;
 
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
-import com.mygdx.potatoandtomato.helpers.services.Appwarp;
-import com.mygdx.potatoandtomato.helpers.utils.JsonObj;
 import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.models.Profile;
-import com.shephertz.app42.gaming.multiplayer.client.events.UpdateEvent;
-import helpers.MockModel;
+import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 
 /**
  * Created by SiongLeng on 15/12/2015.

@@ -13,12 +13,22 @@ public class ImagePair implements Disposable {
     private Texture imageTwo;
     private String metaJson;
     private String id;
+    private long index;
 
-    public ImagePair(Texture imageOne, Texture imageTwo, String metaJson, String id) {
+    public ImagePair(Texture imageOne, Texture imageTwo, String metaJson, String id, Long index) {
         this.imageOne = imageOne;
         this.imageTwo = imageTwo;
         this.metaJson = metaJson;
         this.id = id;
+        this.index = index;
+    }
+
+    public long getIndex() {
+        return index;
+    }
+
+    public void setIndex(long index) {
+        this.index = index;
     }
 
     public String getId() {
@@ -41,10 +51,15 @@ public class ImagePair implements Disposable {
         return imageOne;
     }
 
+    public boolean imagesReady(){
+        return (imageOne != null && imageTwo != null);
+    }
 
     @Override
     public void dispose() {
-        imageOne.dispose();
-        imageTwo.dispose();
+        if(imageOne != null) imageOne.dispose();
+        if(imageTwo != null) imageTwo.dispose();
+
+
     }
 }

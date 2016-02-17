@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 
@@ -42,7 +43,8 @@ public class BtnColor extends Table {
     }
 
     public void setText(String msg){
-        Label.LabelStyle labelStyle = new Label.LabelStyle(_assets.getWhiteBold3GrayS(), Color.WHITE);
+        Label.LabelStyle labelStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD,
+                                            Fonts.FontSize.XL, Fonts.FontColor.WHITE, Fonts.FontStyle.BOLD, Fonts.FontShadowColor.BLACK), null);
         Label lblMessage = new Label(msg, labelStyle);
         lblMessage.setAlignment(Align.center);
         lblMessage.setWrap(true);
@@ -52,13 +54,13 @@ public class BtnColor extends Table {
 
     private NinePatch getColorNinePatch(){
         if(_colorChoice == ColorChoice.GREEN){
-            return _assets.getButtonGreen();
+            return _assets.getPatches().getButtonGreen();
         }
         else if(_colorChoice == ColorChoice.BLUE){
-            return _assets.getButtonBlue();
+            return _assets.getPatches().getButtonBlue();
         }
         else{
-            return  _assets.getButtonRed();
+            return  _assets.getPatches().getButtonBlue();
         }
     }
 
@@ -66,8 +68,8 @@ public class BtnColor extends Table {
         if(!(_loadingTable == null)) _loadingTable.remove();
         _loadingTable = new Table();
         _loadingTable.setFillParent(true);
-        _loadingTable.setBackground(new TextureRegionDrawable(_assets.getBlackBg()));
-        Animator loadingAnimator = new Animator(0.1f, _assets.getLoadingAnimation());
+        _loadingTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getBlackBg()));
+        Animator loadingAnimator = new Animator(0.1f, _assets.getAnimations().getLoadingAnimation());
         _loadingTable.add(loadingAnimator).size(20, 20);
         this.addActor(_loadingTable);
     }

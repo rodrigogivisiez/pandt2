@@ -45,7 +45,13 @@ public class FirebaseDB implements IDatabase {
         Firebase.goOnline();
     }
 
-
+    @Override
+    public void clearAllListeners(){
+        for(ListenerModel listenerModel : _listenerModels){
+            removeListenerModel(listenerModel);
+        }
+        _listenerModels.clear();
+    }
 
     @Override
     public void clearListenersByClassTag(String classTag) {
@@ -59,16 +65,20 @@ public class FirebaseDB implements IDatabase {
         Collections.reverse(toRemove);
         for(Integer i : toRemove){
             ListenerModel listenerModel = _listenerModels.get(i);
-            if(listenerModel.getValue() == null && listenerModel.getChild() == null){
-                ((Firebase) listenerModel.getRef()).onDisconnect().cancel();
-            }
-            else if(listenerModel.getValue() != null){
-                listenerModel.getRef().removeEventListener(listenerModel.getValue());
-            }
-            else if(listenerModel.getChild() != null){
-                listenerModel.getRef().removeEventListener(listenerModel.getChild());
-            }
+            removeListenerModel(listenerModel);
             _listenerModels.removeIndex(i);
+        }
+    }
+
+    private void removeListenerModel(ListenerModel listenerModel){
+        if(listenerModel.getValue() == null && listenerModel.getChild() == null){
+            ((Firebase) listenerModel.getRef()).onDisconnect().cancel();
+        }
+        else if(listenerModel.getValue() != null){
+            listenerModel.getRef().removeEventListener(listenerModel.getValue());
+        }
+        else if(listenerModel.getChild() != null){
+            listenerModel.getRef().removeEventListener(listenerModel.getChild());
         }
     }
 
@@ -373,7 +383,8 @@ public class FirebaseDB implements IDatabase {
             @Override
             public void onCallback(Double result, Status st) {
                 getTable(_tableRoomNotifications).orderByChild("timestamp").startAt(result).addChildEventListener(childEventListener);
-                _listenerModels.add(new ListenerModel(getTable(_tableRoomNotifications), classTag, childEventListener));
+                _listenerModels.add(new ListenerModel(getTable(_tableRoomNotifications).orderByChild("timestamp").startAt(result),
+                                    classTag, childEventListener));
             }
         });
 

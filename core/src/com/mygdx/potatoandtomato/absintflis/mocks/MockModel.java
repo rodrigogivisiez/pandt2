@@ -1,4 +1,4 @@
-package helpers;
+package com.mygdx.potatoandtomato.absintflis.mocks;
 
 import com.mygdx.potatoandtomato.models.*;
 
@@ -11,10 +11,11 @@ public class MockModel {
 
     public static Game mockGame(){
         Game g = new Game();
-        g.setVersion("1");
+        g.setVersion("1.00");
         g.setAbbr("covered_chess");
         g.setGameUrl("http://www.potato-and-tomato.com/covered_chess/core.jar");
         g.setAssetUrl("http://www.potato-and-tomato.com/covered_chess/assets.zip");
+        g.setIconUrl("http://www.potato-and-tomato.com/covered_chess/icon.png");
         g.setMaxPlayers("100");
         g.setMinPlayers("1");
         g.setTeamMaxPlayers("10");
@@ -22,6 +23,7 @@ public class MockModel {
         g.setTeamCount("10");
         g.setName("Covered Chess");
         g.setCommonVersion("1");
+        g.setDescription("This is just a mock model of game.");
         return g;
     }
 
@@ -29,7 +31,7 @@ public class MockModel {
         Profile p = new Profile();
         p.setFacebookUserId("fb123");
         p.setUserId(userId);
-        p.setGameName("HeLlo");
+        p.setGameName("Jonjo Shelvey");
         return p;
     }
 

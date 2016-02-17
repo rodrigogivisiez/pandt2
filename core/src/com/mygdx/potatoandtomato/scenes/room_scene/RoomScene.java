@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.helpers.controls.*;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Room;
@@ -93,9 +94,8 @@ public class RoomScene extends SceneAbstract {
         _teamsRoot = new Table();
 
         _detailsRoot = new Table();
-        _detailsRoot.setBackground(new NinePatchDrawable(_assets.getIrregularBg()));
+        _detailsRoot.setBackground(new NinePatchDrawable(_assets.getPatches().getYellowGradientBoxRounded()));
         _detailsRoot.align(Align.top);
-        _detailsRoot.add(getWoodBoardTitleTable(0, _texts.details())).width(170).height(50).padTop(-10).padBottom(20).colspan(2);
         _detailsRoot.row();
 
         Table scrollableTable = new Table();
@@ -103,11 +103,11 @@ public class RoomScene extends SceneAbstract {
         scrollPane.setScrollingDisabled(true, false);
         scrollableTable.add(_teamsRoot).expandX().fillX().padTop(10);
         scrollableTable.row();
-        scrollableTable.add(_detailsRoot).expandX().fillX().padTop(20).padLeft(10).padRight(10).padBottom(200);
+        scrollableTable.add(_detailsRoot).expandX().fillX().padLeft(10).padRight(10).padBottom(200);
 
-        _root.add(buttonTable).height(110).right().expandX().padTop(-20);
+        _root.add(buttonTable).height(110).expandX();
         _root.row();
-        _root.add(scrollPane).expandX().fillX().padTop(10);
+        _root.add(scrollPane).expandX().fillX();
     }
 
     public void setStartButtonText(String text){
@@ -117,19 +117,21 @@ public class RoomScene extends SceneAbstract {
     public void populateGameDetails(Game game){
         WebImage gameImg = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster());
 
+        Image separatorImage = new Image(_assets.getTextures().getVerticalSeparator());
+
         Label.LabelStyle titleStyle = new Label.LabelStyle();
-        titleStyle.font = _assets.getWhitePizza2BlackS();
+        titleStyle.font = _assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.M, Fonts.FontColor.DARK_BROWN, Fonts.FontStyle.BOLD);
         Label.LabelStyle smallStyle = new Label.LabelStyle();
-        smallStyle.font = _assets.getWhiteNormal3GrayS();
+        smallStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.S, Fonts.FontColor.DARK_BROWN, Fonts.FontStyle.ITALIC);
         Label.LabelStyle contentStyle = new Label.LabelStyle();
-        contentStyle.font = _assets.getWhiteNormal2GrayS();
+        contentStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.S, Fonts.FontColor.DARK_BROWN);
 
         Table _subRoot = new Table();
         _subRoot.align(Align.topLeft);
 
         Label titleLabel = new Label(game.getName(), titleStyle);
-        Label playersLabel = new Label(String.format("From %s - %s players", game.getMinPlayers(), game.getMaxPlayers()), smallStyle);
-        Label versionLabel = new Label(String.format("Version %s", game.getVersion()), smallStyle);
+        Label playersLabel = new Label(String.format(_texts.xPlayers(), game.getMinPlayers(), game.getMaxPlayers()), smallStyle);
+        Label versionLabel = new Label(String.format(_texts.version(), game.getVersion()), smallStyle);
         Label descriptionLabel = new Label(game.getDescription(), contentStyle);
         descriptionLabel.setWrap(true);
 
@@ -144,11 +146,13 @@ public class RoomScene extends SceneAbstract {
         _subRoot.row();
         _subRoot.add(descriptionTable).left().expandX().fillX().padTop(5);
 
-        _detailsRoot.add(gameImg).size(120).padLeft(20).padRight(10).top().padBottom(20);
-        _detailsRoot.add(_subRoot).expandX().fillX().top().padRight(20).padBottom(20);
+        _detailsRoot.pad(10);
+        _detailsRoot.add(gameImg).size(120).top();
+        _detailsRoot.add(separatorImage).padLeft(5).padRight(10).expandY().fillY();
+        _detailsRoot.add(_subRoot).expandX().fillX().top();
     }
 
-    public void populateTeamTables(int totalTeams, int teamMaxPlayers, HashMap<String, RoomUser> roomUsers){
+    public void populateTeamTables(int totalTeams, int teamMaxPlayers, HashMap<String, RoomUser> roomUsers, boolean isHost){
         _teamsRoot.clear();
         int accIndex = 0;
 
@@ -156,10 +160,15 @@ public class RoomScene extends SceneAbstract {
 
             Table teamTable = new Table();
             new DummyButton(teamTable, _assets);
-            teamTable.setBackground(totalTeams == 1 ? new NinePatchDrawable(_assets.getWoodBgSmallPatch()) : new TextureRegionDrawable(_assets.getWoodBgSmall()));
+            if(totalTeams > 1){
+                teamTable.setBackground(teamMaxPlayers <= 2 ? new TextureRegionDrawable(_assets.getTextures().getWoodBgFat()) : new NinePatchDrawable(_assets.getPatches().getWoodBgFatPatch()));
+            }
+            else{
+                teamTable.setBackground(teamMaxPlayers <= 2 ? new TextureRegionDrawable(_assets.getTextures().getWoodBgFat()) : new NinePatchDrawable(_assets.getPatches().getWoodBgSmallPatch()));
+            }
             teamTable.align(Align.top);
             teamTable.padBottom(20);
-            teamTable.add(getWoodBoardTitleTable(1, _texts.team() + " " + (i+1))).padTop(-7).colspan(totalTeams == 1 ? 2 : 1);
+            teamTable.add(getWoodBoardTitleTable(_texts.team() + " " + (i+1))).padTop(-7).colspan(totalTeams == 1 ? 2 : 1);
             teamTable.row();
 
 
@@ -175,18 +184,18 @@ public class RoomScene extends SceneAbstract {
                 if(occupiedUser != null){
                     playerTable = getPlayerTable(occupiedUser.getProfile().getDisplayName(15),
                                                 occupiedUser.getProfile().getUserId(),
-                                                occupiedUser.getReady());
+                                                occupiedUser.getReady(), isHost);
                 }
                 else{
-                    playerTable = getPlayerTable(null, null, false);
+                    playerTable = getPlayerTable(null, null, false, false);
                 }
 
                 if(totalTeams == 1){
-                    if(q % 2 == 0 && q != 0) teamTable.row();
+                    if((q % 2 == 0 && q != 0) || (teamMaxPlayers <= 2)) teamTable.row();
                     teamTable.add(playerTable).width(150).space(10);
                 }
                 else{
-                    teamTable.add(playerTable).expandX().fillX().padLeft(10).padRight(10).padTop(10);
+                    teamTable.add(playerTable).expandX().fillX().padLeft(10).padRight(10).padTop(5);
                     teamTable.row();
                 }
 
@@ -194,14 +203,21 @@ public class RoomScene extends SceneAbstract {
                 accIndex++;
             }
 
-
             _teamTables.add(teamTable);
         }
 
-        _teamsRoot.padLeft(10).padRight(10);
+        _teamsRoot.padLeft(5).padRight(5);
         int i = 1;
         for(Table t : _teamTables){
-            _teamsRoot.add(t).expandX().fillX().center().uniformX().space(0);
+
+            if(totalTeams > 1){
+                _teamsRoot.add(t).expandX().fillX().center().uniformX().space(3).padBottom(10);
+            }
+            else{
+                _teamsRoot.add(t).padBottom(10);
+            }
+
+
             if(i % 2 == 0 && i!=0) {
                 _teamsRoot.row();
             }
@@ -220,7 +236,7 @@ public class RoomScene extends SceneAbstract {
         _teamTables.clear();
         _playersTable.clear();
         populateTeamTables(Integer.valueOf(room.getGame().getTeamCount()),
-                Integer.valueOf(room.getGame().getTeamMaxPlayers()), room.getRoomUsers());
+                Integer.valueOf(room.getGame().getTeamMaxPlayers()), room.getRoomUsers(), room.getHost().equals(_services.getProfile()));
     }
 
     public void updateDownloadPercentage(String userId, int percent){
@@ -250,12 +266,13 @@ public class RoomScene extends SceneAbstract {
         }
     }
 
-    private Table getWoodBoardTitleTable(int bigOrSmall, String title){
+    private Table getWoodBoardTitleTable( String title){
         Table detailsTitleTable = new Table();
-        detailsTitleTable.setBackground(new TextureRegionDrawable(_assets.getWoodBgTitle()));
+        detailsTitleTable.padTop(7).padBottom(7).padLeft(20).padRight(20);
+        detailsTitleTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getWoodBgTitle()));
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = bigOrSmall == 0 ? _assets.getWhitePizza3BlackS() : _assets.getWhitePizza2BlackS();
+        labelStyle.font = _assets.getFonts().get(Fonts.FontName.PIZZA, Fonts.FontColor.WHITE, Fonts.FontBorderColor.BLACK);
 
         Label labelTitle = new Label(title, labelStyle);
         labelTitle.setAlignment(Align.center);
@@ -263,7 +280,7 @@ public class RoomScene extends SceneAbstract {
         return detailsTitleTable;
     }
 
-    private Table getPlayerTable(String name, String userId, boolean isReady){
+    private Table getPlayerTable(String name, String userId, boolean isReady, boolean isHost){
 
         if(_playerMaps.containsKey(userId) && userId != null){
             Table playerTable = _playerMaps.get(userId);
@@ -271,29 +288,29 @@ public class RoomScene extends SceneAbstract {
             return _playerMaps.get(userId);
         }
 
-        BitmapFont font = _assets.getBlackBold2();
+        BitmapFont font = _assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.XS);
         if(name == null){
             name = _texts.open();
-            font = _assets.getGrayBold2();
+            font = _assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.XS, Fonts.FontColor.GRAY);
         }
 
         Table playerTable = new Table();
-        playerTable.padTop(5).padBottom(5).padLeft(7).padRight(7);
-        playerTable.setBackground(new NinePatchDrawable(_assets.getWhiteRoundedBg()));
+        playerTable.padTop(5).padBottom(5).padLeft(7).padRight(12);
+        playerTable.setBackground(new NinePatchDrawable(_assets.getPatches().getWhiteRoundedBg()));
 
         Table iconTable = new Table();
         iconTable.setName("iconTable");
-        Animator loadingAnimator = new Animator(0.2f, _assets.getLoadingAnimation());
+        Animator loadingAnimator = new Animator(0.2f, _assets.getAnimations().getLoadingAnimation());
         loadingAnimator.setName("loadingAnimator");
         loadingAnimator.setSize(16, 16);
-        Image unknownImage = new Image(_assets.getUnknownIcon());
+        Image unknownImage = new Image(_assets.getTextures().getUnknownIcon());
         unknownImage.setName("unknownImage");
-        unknownImage.setSize(10, 16);
-        unknownImage.setPosition(3, 0);
-        Image bulletIcon = new Image(_assets.getBulletIcon());
+        unknownImage.setSize(5, 8);
+        unknownImage.setPosition(5, 5);
+        Image bulletIcon = new Image(_assets.getTextures().getBulletIcon());
         bulletIcon.setName("bulletIcon");
-        bulletIcon.setSize(8, 8);
-        bulletIcon.setPosition(4, 4);
+        bulletIcon.setSize(4, 4);
+        bulletIcon.setPosition(6, 6);
         iconTable.addActor(loadingAnimator);
         iconTable.addActor(unknownImage);
         iconTable.addActor(bulletIcon);
@@ -304,20 +321,25 @@ public class RoomScene extends SceneAbstract {
         Label nameLabel = new Label(name, labelStyle);
 
         Label.LabelStyle progressLabelStyle = new Label.LabelStyle();
-        progressLabelStyle.font = _assets.getGreenNormal2();
-        Label progressLabel = new Label("", progressLabelStyle);
+        progressLabelStyle.font = _assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.XS, Fonts.FontColor.GREEN);
+        Label progressLabel = new Label("22", progressLabelStyle);
         progressLabel.setName("progress");
         progressLabel.setVisible(false);
 
-        Image downloadImage = new Image(_assets.getDownloadIconSmall());
+        Image downloadImage = new Image(_assets.getTextures().getDownloadIconSmall());
         downloadImage.setName("download");
         downloadImage.setVisible(false);
 
+        Image kickImage = new Image(_assets.getTextures().getKickIcon());
+        kickImage.setName("kickImage");
+
         playerTable.add(iconTable).size(16, 16).padRight(3);
-        playerTable.add(nameLabel).expandX().fillX().padLeft(5);
+        playerTable.add(nameLabel).expandX().fillX().padLeft(3).padBottom(2);
         playerTable.add(downloadImage).padRight(2);
         playerTable.add(progressLabel);
-        playerTable.setName("nolongtap," + ((userId != null) ? "disableclick" : ""));
+        if(isHost && !userId.equals(_services.getProfile().getUserId())) playerTable.add(kickImage).padLeft(5);
+
+        playerTable.setName("nokickattached," + ((userId != null) ? "disableclick" : ""));
         new DummyButton(playerTable, _assets);
 
         if(userId != null) _playerMaps.put(userId, playerTable);

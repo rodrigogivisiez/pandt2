@@ -28,13 +28,17 @@ public class BtnEggUpright extends Table {
     Image _contentImg;
     Sounds _sounds;
 
-    public BtnEggUpright(Assets assets, Sounds sounds) {
+    public BtnEggUpright(Assets assets, Sounds sounds){
+        this(assets, sounds, 120);
+    }
+
+    public BtnEggUpright(Assets assets, Sounds sounds, int width) {
         this._assets = assets;
         this._sounds = sounds;
-        this._button = new Button(new TextureRegionDrawable(_assets.getEmpty()));
+        this._button = new Button(new TextureRegionDrawable(_assets.getTextures().getEmpty()));
         _button.setFillParent(true);
-        this.setBackground(new TextureRegionDrawable(_assets.getUprightEggButton()));
-        _size = Sizes.resize(120, _assets.getUprightEggButton());
+        this.setBackground(new TextureRegionDrawable(_assets.getTextures().getUprightEggButton()));
+        _size = Sizes.resize(width, _assets.getTextures().getUprightEggButton());
         this.setSize(_size.x, _size.y);
 
         _button.addListener(new ClickListener(){

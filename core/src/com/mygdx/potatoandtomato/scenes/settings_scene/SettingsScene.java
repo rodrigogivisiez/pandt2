@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.helpers.controls.BtnColor;
 import com.mygdx.potatoandtomato.helpers.controls.TopBar;
 import com.mygdx.potatoandtomato.models.Services;
@@ -30,27 +31,25 @@ public class SettingsScene extends SceneAbstract {
     public void populateRoot() {
         new TopBar(_root, _texts.settingsTitle(), false, _assets, _screen);
 
-        Label.LabelStyle labelTitleStyle = new Label.LabelStyle(_assets.getOrangePizza3(), Color.WHITE);
+        Label.LabelStyle labelTitleStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.PIZZA,
+                            Fonts.FontSize.XXL, Fonts.FontColor.TEAL, Fonts.FontShadowColor.DARK_ORANGE), null);
 
         Table settingsTable = new Table();
-        settingsTable.setBackground(new NinePatchDrawable(_assets.getIrregularBg()));
-        settingsTable.pad(10);
+        settingsTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getWoodBgNormal()));
 
         ///////////////////
         //Display name
         ////////////////////
-        Label profileLabel = new Label(_texts.profile(), labelTitleStyle);
-
-        Label displayNameLabel = new Label(_texts.displayName(), new Label.LabelStyle(_assets.getWhitePizza2BlackS(), Color.WHITE));
+        Label displayNameLabel = new Label(_texts.displayName(), labelTitleStyle);
 
         Table displayNameFieldTable = new Table();
-        displayNameFieldTable.setBackground(new NinePatchDrawable(_assets.getWhiteRoundedBg()));
+        displayNameFieldTable.setBackground(new NinePatchDrawable(_assets.getPatches().getTextFieldBg()));
         TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle();
-        textFieldStyle.font = _assets.getBlackNormal3();
+        textFieldStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD);
         textFieldStyle.fontColor = Color.BLACK;
-        textFieldStyle.cursor = new TextureRegionDrawable(_assets.getTextCursor());
+        textFieldStyle.cursor = new TextureRegionDrawable(_assets.getTextures().getTextCursor());
         _displayNameTextField = new TextField(_services.getProfile().getDisplayName(15), textFieldStyle);
-        displayNameFieldTable.add(_displayNameTextField).expand().fill().pad(10);
+        displayNameFieldTable.add(_displayNameTextField).width(110).padTop(10).padBottom(10);
 
         //////////////////////////
         //Save Button
@@ -62,7 +61,7 @@ public class SettingsScene extends SceneAbstract {
         //////////////////////////
         //Separator
         //////////////////////////
-        Image separatorImage = new Image(_assets.getWhiteLine());
+        Image separatorImage = new Image(_assets.getTextures().getWoodSeparatorHorizontal());
 
         ///////////////////////////
         //Facebook status
@@ -72,44 +71,24 @@ public class SettingsScene extends SceneAbstract {
         _facebookBtn = new BtnColor(BtnColor.ColorChoice.BLUE, _assets);
         _facebookBtn.setText(_services.getSocials().isFacebookLogon() ? _texts.logout() : _texts.login());
 
-        //////////////////////////
-        //Separator
-        //////////////////////////
-        Image separatorImage2 = new Image(_assets.getWhiteLine());
-
-        ///////////////////////////
-        //Reporting
-        //////////////////////////
-        Label otherLabel = new Label(_texts.others(), labelTitleStyle);
-
-        _reportBtn = new BtnColor(BtnColor.ColorChoice.RED, _assets);
-        _reportBtn.setText(_texts.showReport());
-
 
         ////////////////////////
         //populations
         /////////////////////////
         settingsTable.align(Align.top);
-        settingsTable.add(profileLabel).colspan(2).center().padBottom(15);
+        settingsTable.padLeft(25).padRight(25).padTop(30).padBottom(30);
+        settingsTable.add(displayNameLabel).left();
+        settingsTable.add(displayNameFieldTable).right();
         settingsTable.row();
-        settingsTable.add(displayNameLabel).width(150);
-        settingsTable.add(displayNameFieldTable).expandX().fillX();
-        settingsTable.row();
-        settingsTable.add(_saveBtn).expandX().center().colspan(2).padTop(10).height(50);
+        settingsTable.add(_saveBtn).colspan(2).right().padTop(15);
         settingsTable.row();
         settingsTable.add(separatorImage).expandX().fillX().colspan(2).padTop(10).padBottom(10);
         settingsTable.row();
-        settingsTable.add(socialLabel).colspan(2).center().padBottom(15);
-        settingsTable.row();
-        settingsTable.add(_facebookBtn).expandX().center().height(50).colspan(2);
-        settingsTable.row();
-        settingsTable.add(separatorImage2).expandX().fillX().colspan(2).padTop(10).padBottom(10);
-        settingsTable.row();
-        settingsTable.add(otherLabel).colspan(2).center().padBottom(15);
-        settingsTable.row();
-        settingsTable.add(_reportBtn).expandX().center().height(50).colspan(2);
+        settingsTable.add(socialLabel).left();
+        settingsTable.add(_facebookBtn).right();
 
-        _root.add(settingsTable);
+
+        _root.add(settingsTable).width(350);
     }
 
     public TextField getDisplayNameTextField() {

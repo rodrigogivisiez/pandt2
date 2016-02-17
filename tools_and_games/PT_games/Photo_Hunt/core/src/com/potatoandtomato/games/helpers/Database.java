@@ -41,23 +41,47 @@ public class Database implements IDatabase {
 
     @Override
     public void getImageIdByIndex(int index, final DatabaseListener<String> listener) {
-        listener.onCallback("-K9SEdxYw717zb7IfmPB", Status.SUCCESS);
-//        getData(getTableImages().orderByChild("index").startAt(index).endAt(index), new DatabaseListener<ArrayList<ImageData>>(ImageData.class) {
-//            @Override
-//            public void onCallback(ArrayList<ImageData> obj, Status st) {
-//                if (obj != null && st == Status.SUCCESS && obj.size() > 0) {
-//                    int max = obj.size() - 1;
-//                    listener.onCallback(obj.get(MathUtils.random(0, max)).getId(), st);
-//                } else {
-//                    listener.onCallback(null, Status.FAILED);
-//                }
-//            }
-//        });
+        getData(getTableImages().orderByChild("index").startAt(index).endAt(index), new DatabaseListener<ArrayList<ImageData>>(ImageData.class) {
+            @Override
+            public void onCallback(ArrayList<ImageData> obj, Status st) {
+                if (obj != null && st == Status.SUCCESS && obj.size() > 0) {
+                    int max = obj.size() - 1;
+                    listener.onCallback(obj.get(MathUtils.random(0, max)).getId(), st);
+                } else {
+                    listener.onCallback(null, Status.FAILED);
+                }
+            }
+        });
     }
 
     @Override
     public void getImageDataById(String id, DatabaseListener<ImageData> listener) {
         getSingleData(getTableImages().child(id), listener);
+    }
+
+    @Override
+    public void removeImageById(String id, final DatabaseListener listener) {
+        getTableImages().child(id).removeValue(new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                if(firebaseError != null) listener.onCallback(null, Status.FAILED);
+                else{
+                    getData(getTableImages(), new DatabaseListener<ArrayList<ImageData>>(ImageData.class) {
+                        @Override
+                        public void onCallback(ArrayList<ImageData> obj, Status st) {
+                            int i = 0;
+                            for(ImageData data : obj){
+                                getTableImages().child(data.getId()).child("index").setValue(i);
+                                i++;
+                            }
+                            listener.onCallback(null, Status.SUCCESS);
+                        }
+                    });
+                }
+
+            }
+        });
+
     }
 
     public Firebase getTableImages(){

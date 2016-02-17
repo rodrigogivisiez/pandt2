@@ -56,6 +56,8 @@ public interface IDatabase {
 
      void clearListenersByClassTag(String classTag);
 
+     void clearAllListeners();
+
      void savePlayedHistory(Profile profile, Room room, DatabaseListener<String> listener);
 
      void getPlayedHistories(Profile profile, DatabaseListener<ArrayList<GameHistory>> listener);

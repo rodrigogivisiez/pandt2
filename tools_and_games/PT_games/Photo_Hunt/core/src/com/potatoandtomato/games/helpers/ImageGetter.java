@@ -26,6 +26,7 @@ public class ImageGetter implements Disposable {
     private IDatabase _database;
     private SafeThread _requestDownloadSafeTread;
     private final String _domain = "http://www.potato-and-tomato.com/photo_hunt_images/%s/%s";
+    public static int INDEX = 0;
 
     public ImageGetter(GameCoordinator gameCoordinator, IDatabase database) {
         this._coordinator = gameCoordinator;
@@ -64,6 +65,12 @@ public class ImageGetter implements Disposable {
             });
         }
 
+    }
+
+    public void goToIndex(int index){
+        _imagePairs.clear();
+        INDEX = index;
+        randomGetImages();
     }
 
     public ImagePair popImageById(final String id){
@@ -107,16 +114,19 @@ public class ImageGetter implements Disposable {
                         Threadings.sleep(100);
                     }
 
-                    _database.getImageDataById(id, new DatabaseListener<ImageData>(ImageData.class) {
-                        @Override
-                        public void onCallback(ImageData obj, Status st) {
-                            if (st == Status.SUCCESS) {
-                                addImagePairs(new ImagePair(image1[0], image2[0], obj.getJson(), obj.getId()));
+                    if(image1[0] == null || image2[0] == null){
+
+                    }
+                    else{
+                        _database.getImageDataById(id, new DatabaseListener<ImageData>(ImageData.class) {
+                            @Override
+                            public void onCallback(ImageData obj, Status st) {
+                                if (st == Status.SUCCESS && obj != null) {
+                                    addImagePairs(new ImagePair(image1[0], image2[0], obj.getJson(), obj.getId(), obj.getIndex()));
+                                }
                             }
-                        }
-                    });
-
-
+                        });
+                    }
                 }
             }
         });
@@ -165,24 +175,29 @@ public class ImageGetter implements Disposable {
             public void onCallback(final Long totalIndex, Status st) {
                 if (st == Status.SUCCESS) {
                     final ArrayList<String> ids = new ArrayList<String>();
+
                     for (int i = 0; i < 3; i++) {
-                        _database.getImageIdByIndex(MathUtils.random(0, safeLongToInt(totalIndex)), new DatabaseListener<String>() {
+                        //MathUtils.random(0, safeLongToInt(totalIndex))
+                        if(INDEX > totalIndex) return;
+                        _database.getImageIdByIndex(INDEX, new DatabaseListener<String>() {
                             @Override
                             public void onCallback(String obj, Status st) {
                                 if (_requestDownloadSafeTread.isKilled()) return;
                                 if (st == Status.SUCCESS) {
-                                    ids.add(obj);
+                                    if(obj == null){
+                                        randomGetImages();
+                                    }
+                                    else{
+                                        ids.add(obj);
+                                    }
                                 }
-                                if(ids.size() == 3){
+                                if(ids.size() == 3 || INDEX > totalIndex){
                                     _coordinator.sendRoomUpdate(new UpdateMsg(UpdateCode.DOWNLOAD_IMAGES, Strings.joinArr(ids)).toJson());
                                 }
                             }
                         });
+                        INDEX++;
                     }
-
-
-
-
                 }
             }
         });

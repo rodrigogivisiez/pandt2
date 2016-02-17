@@ -16,7 +16,7 @@ public class GameSandboxScene extends SceneAbstract {
 
     @Override
     public void populateRoot() {
-        Image loadingImage = new Image(_assets.getLoading());
+        Image loadingImage = new Image(_assets.getTextures().getLoading());
         _root.add(loadingImage).expand().fill();
     }
 

@@ -294,11 +294,13 @@ public class Room {
 
     @JsonIgnore
     public ArrayList<RoomUser> getJustLeftUsers(Room newRoom){
+        if(newRoom == null) return new ArrayList<RoomUser>();
         return getRoomUsersDifference(this.getRoomUsers().values(), newRoom.getRoomUsers().values());
     }
 
     @JsonIgnore
     public ArrayList<RoomUser>  getJustJoinedUsers(Room newRoom){
+        if(newRoom == null) return new ArrayList<RoomUser>();
         return getRoomUsersDifference(newRoom.getRoomUsers().values(), this.getRoomUsers().values());
     }
 

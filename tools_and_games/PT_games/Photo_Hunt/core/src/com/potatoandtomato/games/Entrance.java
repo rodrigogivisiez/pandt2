@@ -3,11 +3,12 @@ package com.potatoandtomato.games;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.GameEntrance;
 import com.potatoandtomato.games.abs.database.IDatabase;
-import com.potatoandtomato.games.helpers.Assets;
+import com.potatoandtomato.games.assets.Assets;
 import com.potatoandtomato.games.helpers.Database;
 import com.potatoandtomato.games.helpers.ImageGetter;
 import com.potatoandtomato.games.helpers.MainController;
 import com.potatoandtomato.games.models.Service;
+import com.potatoandtomato.games.screens.loading_screen.LoadingLogic;
 
 /**
  * Created by SiongLeng on 14/7/2015.
@@ -37,8 +38,7 @@ public class Entrance extends GameEntrance {
 
     @Override
     public void init() {
-
-        _controller.sendNextStage();
+        _controller.init();
     }
 
     @Override

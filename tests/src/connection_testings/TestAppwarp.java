@@ -5,7 +5,7 @@ import com.mygdx.potatoandtomato.absintflis.gamingkit.*;
 import com.mygdx.potatoandtomato.helpers.services.Appwarp;
 import com.potatoandtomato.common.Threadings;
 import com.mygdx.potatoandtomato.models.ChatMessage;
-import helpers.MockModel;
+import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import helpers.T_Threadings;
 import org.junit.*;
 

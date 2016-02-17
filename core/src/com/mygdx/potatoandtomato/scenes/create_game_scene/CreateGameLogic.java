@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
+import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
@@ -45,6 +46,18 @@ public class CreateGameLogic extends LogicAbstract {
         });
 
     }
+
+//    @Override
+//    public void onHide() {
+//        _scene.hideAllElements();
+//        super.onHide();
+//    }
+//
+//    @Override
+//    public void onShow() {
+//        _scene.showAllElements();
+//        super.onShow();
+//    }
 
     public void getAllGames(){
         _services.getDatabase().getAllGames(new DatabaseListener<ArrayList<Game>>(Game.class) {

@@ -14,12 +14,14 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.potatoandtomato.common.GameCoordinator;
+import com.potatoandtomato.common.MyFileResolver;
 
 /**
  * Created by SiongLeng on 29/12/2015.
  */
 public class Assets {
 
+    private GameCoordinator _coordinator;
     private AssetManager _manager;
     TextureAtlas _pack;
     private String _packPath = "pack.atlas";
@@ -43,11 +45,12 @@ public class Assets {
             orangePizza5BlackS, greyPizza5BlackS, whitePizza2BlackS;
 
     public Assets(GameCoordinator coordinator) {
+        _coordinator = coordinator;
         _manager = coordinator.getAssetManager();
     }
 
     public void loadAll(Runnable onFinish){
-        FileHandleResolver resolver = new InternalFileHandleResolver();
+        FileHandleResolver resolver = new MyFileResolver(_coordinator);
 
         _manager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
         _manager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));

@@ -3,7 +3,7 @@ package com.potatoandtomato.games.abs.screens;
 import com.badlogic.gdx.utils.Disposable;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.GameScreen;
-import com.potatoandtomato.games.helpers.Assets;
+import com.potatoandtomato.games.assets.Assets;
 import com.potatoandtomato.games.helpers.MainController;
 import com.potatoandtomato.games.models.Service;
 

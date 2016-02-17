@@ -30,23 +30,23 @@ public class MyApplication extends Application {
         built.setLoggingEnabled(true);
         Picasso.setSingletonInstance(built);
 
-        Thread.setDefaultUncaughtExceptionHandler (new Thread.UncaughtExceptionHandler()
-        {
-            @Override
-            public void uncaughtException (Thread thread, Throwable e)
-            {
-                Intent i = new Intent();
-                i.setClass(getApplicationContext(), RoomAliveReceiver.class);
-                i.setAction("STOP");
-                sendBroadcast(i);
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                e.printStackTrace(pw);
-                Logs.writeToLog( sw.toString());
-                e.printStackTrace();
-                System.exit(1);
-            }
-        });
+//        Thread.setDefaultUncaughtExceptionHandler (new Thread.UncaughtExceptionHandler()
+//        {
+//            @Override
+//            public void uncaughtException (Thread thread, Throwable e)
+//            {
+//                Intent i = new Intent();
+//                i.setClass(getApplicationContext(), RoomAliveReceiver.class);
+//                i.setAction("STOP");
+//                sendBroadcast(i);
+//                StringWriter sw = new StringWriter();
+//                PrintWriter pw = new PrintWriter(sw);
+//                e.printStackTrace(pw);
+//                Logs.writeToLog( sw.toString());
+//                e.printStackTrace();
+//                System.exit(1);
+//            }
+//        });
 
     }
 }

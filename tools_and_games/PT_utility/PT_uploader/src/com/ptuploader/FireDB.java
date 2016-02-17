@@ -30,7 +30,10 @@ public class FireDB {
                         uploadedGame.createTimestamp = timestamp;
                         saveUploadedGame(uploadedGame);
                     }
-
+                    else{
+                        uploadedGame.createTimestamp = String.valueOf(System.currentTimeMillis());
+                        saveUploadedGame(uploadedGame);
+                    }
                 }
 
                 @Override

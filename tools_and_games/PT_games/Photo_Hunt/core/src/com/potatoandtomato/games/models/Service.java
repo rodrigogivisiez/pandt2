@@ -1,7 +1,7 @@
 package com.potatoandtomato.games.models;
 
 import com.potatoandtomato.games.abs.database.IDatabase;
-import com.potatoandtomato.games.helpers.Assets;
+import com.potatoandtomato.games.assets.Assets;
 import com.potatoandtomato.games.helpers.ImageGetter;
 
 /**

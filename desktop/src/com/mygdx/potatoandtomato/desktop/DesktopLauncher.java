@@ -53,7 +53,7 @@ public class DesktopLauncher {
 		settings.maxHeight = 2048;
 		settings.filterMag = Texture.TextureFilter.Linear;
 		settings.filterMin = Texture.TextureFilter.Linear;
-		//TexturePacker.process(settings, "../../images/ui", "../../android/assets", "ui_pack");
+		if(Terms.PREF_NAME.equals("pack")) TexturePacker.process(settings, "../../images/ui", "../../android/assets", "ui_pack");
 
 		application = new LwjglApplication(new PTGame(_broadcaster), config);
 

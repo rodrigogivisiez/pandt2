@@ -13,4 +13,6 @@ public interface IDatabase {
 
     void getImageDataById(String id, DatabaseListener<ImageData> listener);
 
+    void removeImageById(String id, DatabaseListener listener);
+
 }

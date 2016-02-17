@@ -12,7 +12,6 @@ import com.mygdx.potatoandtomato.absintflis.socials.FacebookListener;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.helpers.services.Sounds;
-import com.potatoandtomato.common.Threadings;
 import com.mygdx.potatoandtomato.models.FacebookProfile;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
@@ -20,6 +19,7 @@ import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Status;
+import com.potatoandtomato.common.Threadings;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 
@@ -30,7 +30,6 @@ public class BootLogic extends LogicAbstract {
 
     BootScene _bootScene;
     boolean _fbStepPast;
-    String _fbUsername;
     boolean _logined;
 
     @Override
@@ -40,13 +39,6 @@ public class BootLogic extends LogicAbstract {
 
     public BootLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
-
-        Threadings.delay(3000, new Runnable() {
-            @Override
-            public void run() {
-                if(isSceneVisible()) _services.getSounds().playSoundEffect(Sounds.Name.TOGETHER_CHEERS);
-            }
-        });
     }
 
     @Override
@@ -68,6 +60,7 @@ public class BootLogic extends LogicAbstract {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
+                _services.getSounds().playSoundEffect(Sounds.Name.TOGETHER_CHEERS);
                 showLoginBox();
             }
         });
@@ -104,8 +97,16 @@ public class BootLogic extends LogicAbstract {
         super.onShow();
     }
 
+    public void showLoginBox(){
+        _bootScene.showSocialLogin();
+        attachClickListenerToSocial();
+        if(_services.getSocials().isFacebookLogon()){    //user already logged in facebook before, log in again now
+            loginFacebook();
+        }
+    }
+
     private void attachClickListenerToSocial(){
-        _bootScene.getTickIcon().addListener(new ClickListener(){
+        _bootScene.getTickIcon().addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
@@ -124,16 +125,9 @@ public class BootLogic extends LogicAbstract {
         });
     }
 
-    public void showLoginBox(){
-        _bootScene.showLoginBox();
-        attachClickListenerToSocial();
-        if(_services.getSocials().isFacebookLogon()){    //user already logged in facebook before, log in again now
-            loginFacebook();
-        }
-    }
 
-    public void loginFacebook(){
-        _bootScene.showSocialLoginProcessing();
+    public void loginFacebook() {
+        _bootScene.showSocialLoggingIn();
 
         _services.getSocials().loginFacebook(new FacebookListener() {
             @Override
@@ -160,7 +154,7 @@ public class BootLogic extends LogicAbstract {
     }
 
     public void loginPTWithExistingUser(String userId){
-        _bootScene.showLoggingIn();
+         _bootScene.showPTLoggingIn();
         _services.getDatabase().getProfileByUserId(userId, new DatabaseListener<Profile>(Profile.class) {
             @Override
             public void onCallback(Profile obj, Status st) {
@@ -180,7 +174,7 @@ public class BootLogic extends LogicAbstract {
     }
 
     public void createNewUser(){
-        _bootScene.showCreatingUser();
+        _bootScene.showPTCreatingUser();
         _services.getDatabase().loginAnonymous(new DatabaseListener<Profile>() {
             @Override
             public void onCallback(Profile obj, Status st) {
@@ -207,7 +201,7 @@ public class BootLogic extends LogicAbstract {
     }
 
     public void retrieveUserFailed(){
-        _bootScene.showRetrieveUserFailed();
+        _bootScene.showPTLogInFailed();
     }
 
     public void loginGCM(){

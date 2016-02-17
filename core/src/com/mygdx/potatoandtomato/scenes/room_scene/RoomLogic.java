@@ -357,26 +357,27 @@ public class RoomLogic extends LogicAbstract {
                     for (Map.Entry<String, Table> entry : _scene.getPlayersMaps().entrySet()) {
                         final String userId = entry.getKey();
                         Table table = entry.getValue();
-                        if(table.getName().contains("nolongtap") && !userId.equals(_services.getProfile().getUserId())){
-                            table.addListener(new ActorGestureListener(){
+                        Actor kickImage = table.findActor("kickImage");
+                        if(table.getName().contains("nokickattached") && kickImage != null && !userId.equals(_services.getProfile().getUserId())){
+                            kickImage.addListener(new ClickListener(){
                                 @Override
-                                public boolean longPress(Actor actor, float x, float y) {
+                                public void clicked(InputEvent event, float x, float y) {
+                                    super.clicked(event, x, y);
                                     _confirm.show(String.format(_texts.confirmKick(), _room.getProfileByUserId(userId).getDisplayName(0)),
                                             Confirm.Type.YESNO, new ConfirmResultListener() {
-                                        @Override
-                                        public void onResult(Result result) {
-                                            if(result == Result.YES){
-                                                JsonObj jsonObj = new JsonObj();
-                                                jsonObj.put("userId", userId);
-                                                jsonObj.put("name", _room.getProfileByUserId(userId).getDisplayName(0));
-                                                sendUpdateRoomMates(UpdateRoomMatesCode.KICK_USER, jsonObj.toString());
+                                                @Override
+                                                public void onResult(Result result) {
+                                                    if(result == Result.YES){
+                                                        JsonObj jsonObj = new JsonObj();
+                                                        jsonObj.put("userId", userId);
+                                                        jsonObj.put("name", _room.getProfileByUserId(userId).getDisplayName(0));
+                                                        sendUpdateRoomMates(UpdateRoomMatesCode.KICK_USER, jsonObj.toString());
+                                                    }
                                             }
-                                        }
                                     });
-                                    return true;
                                 }
                             });
-                            table.setName(table.getName().replace("nolongtap", "longtapattached"));
+                            table.setName(table.getName().replace("nokickattached", "kickattached"));
                         }
                     }
                 }
@@ -734,6 +735,8 @@ public class RoomLogic extends LogicAbstract {
 
 
     public void gameStarted(){
+        if(_gameStarted) return;
+
         hostSendGameStartedPush();
         _gameStarted = true;
         _room.setOpen(false);
@@ -758,6 +761,8 @@ public class RoomLogic extends LogicAbstract {
     }
 
     public void continueGame(){
+        if(_gameStarted) return;
+
         selfUpdateRoomStatePush();
         _services.getChat().hide();
         _screen.toScene(SceneEnum.GAME_SANDBOX, _room, true);
