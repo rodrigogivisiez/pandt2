@@ -3,120 +3,41 @@ package com.mygdx.potatoandtomato.assets;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.mygdx.potatoandtomato.absintflis.assets.IAssetFragment;
+
+import java.util.HashMap;
 
 /**
  * Created by SiongLeng on 9/2/2016.
  */
 public class Patches{
 
-    public Patches() {
+    private HashMap<String, NinePatch> _patches;
 
+    public Patches() {
+        _patches = new HashMap<String, NinePatch>();
     }
 
+    public NinePatch get(Name name){
+        return _patches.get(name.name());
+    }
 
     public void onLoaded(TextureAtlas UIPack) {
-        popupBg =  UIPack .createPatch("popup_bg");
-        buttonGreen =  UIPack .createPatch("btn_green");
-        buttonBlue = UIPack.createPatch("btn_blue");
-        progressBarInner =  UIPack .createPatch("progress_bar_inner");
-        progressBarBg =  UIPack .createPatch("progress_bar_bg");
-        whiteRoundedBg =  UIPack .createPatch("white_rounded_bg");
-        yellowRoundedBg =  UIPack .createPatch("yellow_rounded_bg");
-        greenRoundedBg =  UIPack .createPatch("green_rounded_bg");
-        blackRoundedBg =  UIPack .createPatch("black_rounded_bg");;
-        chatBox =  UIPack .createPatch("chat_box");
-        yellowGradientBox =  UIPack .createPatch("yellow_gradient_box");
-        yellowGradientBoxRounded =  UIPack .createPatch("yellow_gradient_box_rounded");
-        scrollVerticalHandle =  UIPack .createPatch("scrollbar_handle");
-        irregularBg =  UIPack .createPatch("irregular_bg");
-        expandTitleBg = UIPack.createPatch("expandable_title_bg");
-        woodBgSmallPatch = UIPack.createPatch("wood_bg_small_patch");
-        gameListBg = UIPack.createPatch("gamelist_bg");
-        textFieldBg = UIPack.createPatch("text_field_bg");
-        woodBgFatPatch = UIPack.createPatch("wood_bg_fat_nine");
-
+        for(TextureAtlas.AtlasRegion region : UIPack.getRegions()){
+            if(region.splits != null){
+                _patches.put(region.name, UIPack.createPatch(region.name));
+            }
+        }
     }
 
-    private NinePatch popupBg, buttonGreen, buttonBlue, progressBarInner, progressBarBg, whiteRoundedBg,
-            yellowRoundedBg,  greenRoundedBg,
-            blackRoundedBg, chatBox, yellowGradientBox, yellowGradientBoxRounded, scrollVerticalHandle, irregularBg, expandTitleBg,
-            woodBgSmallPatch, gameListBg, textFieldBg, woodBgFatPatch;
-
-    public NinePatch getYellowGradientBoxRounded() {
-        return yellowGradientBoxRounded;
-    }
-
-    public NinePatch getWoodBgFatPatch() {
-        return woodBgFatPatch;
-    }
-
-    public NinePatch getGameListBg() {
-        return gameListBg;
-    }
-
-    public NinePatch getTextFieldBg() {
-        return textFieldBg;
-    }
-
-    public NinePatch getWoodBgSmallPatch() {
-        return woodBgSmallPatch;
-    }
-
-    public NinePatch getExpandTitleBg() {
-        return expandTitleBg;
-    }
-
-    public NinePatch getPopupBg() {
-        return popupBg;
-    }
-
-    public NinePatch getButtonBlue() {
-        return buttonBlue;
-    }
-
-    public NinePatch getButtonGreen() {
-        return buttonGreen;
-    }
-
-    public NinePatch getProgressBarInner() {
-        return progressBarInner;
-    }
-
-    public NinePatch getProgressBarBg() {
-        return progressBarBg;
-    }
-
-    public NinePatch getGreenRoundedBg() {
-        return greenRoundedBg;
-    }
-
-    public NinePatch getYellowRoundedBg() {
-        return yellowRoundedBg;
-    }
-
-    public NinePatch getWhiteRoundedBg() {
-        return whiteRoundedBg;
-    }
-
-    public NinePatch getBlackRoundedBg() {
-        return blackRoundedBg;
-    }
-
-    public NinePatch getChatBox() {
-        return chatBox;
-    }
-
-    public NinePatch getYellowGradientBox() {
-        return yellowGradientBox;
-    }
-
-    public NinePatch getScrollVerticalHandle() {
-        return scrollVerticalHandle;
-    }
-
-    public NinePatch getIrregularBg() {
-        return irregularBg;
+    public enum Name{
+        CHAT_BOX, POPUP_BG,
+        BTN_GREEN, BTN_BLUE,
+        WHITE_ROUNDED_BG, TRANS_BLACK_ROUNDED_BG, EXPANDABLE_TITLE_BG,
+        YELLOW_GRADIENT_BOX, YELLOW_GRADIENT_BOX_ROUNDED,
+        SCROLLBAR_VERTICAL_HANDLE, WOOD_BG_SMALL_PATCH, WOOD_BG_FAT_PATCH,
+        GAMELIST_BG, TEXT_FIELD_BG
     }
 
 }

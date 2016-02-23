@@ -1,8 +1,7 @@
 package com.potatoandtomato.games.absint;
 
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.potatoandtomato.games.actors.chesses.ChessActor;
-import com.potatoandtomato.games.actors.chesses.enums.ChessType;
+import com.potatoandtomato.games.enums.ChessType;
 
 /**
  * Created by SiongLeng on 2/1/2016.

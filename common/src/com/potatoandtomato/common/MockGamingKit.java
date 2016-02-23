@@ -37,6 +37,9 @@ public class MockGamingKit {
         this._eachTeamExpectedPlayers = eachTeamExpectedPlayers;
         this._coordinator = coordinator;
 
+        long unixTime = System.currentTimeMillis() / 1000L;
+        _userId = String.valueOf(unixTime);
+
         if(eachTeamExpectedPlayers == 0){
             Gdx.app.postRunnable(new Runnable() {
                 @Override
@@ -63,23 +66,30 @@ public class MockGamingKit {
         _warpInstance.addNotificationListener(listeners);
         _warpInstance.addUpdateRequestListener(listeners);
 
-        long unixTime = System.currentTimeMillis() / 1000L;
-        _userId = String.valueOf(unixTime);
+
         _warpInstance.connectWithUserName(_userId);
 
-        _broadcaster.subscribe(BroadcastEvent.INGAME_UPDATE_REQUEST, new BroadcastListener<String>() {
-            @Override
-            public void onCallback(String msg, Status st) {
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put("userId", _userId);
-                    jsonObject.put("msg", msg);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                _warpInstance.sendUpdatePeers(jsonObject.toString().getBytes());
-            }
-        });
+
+
+    }
+
+    public void sendUpdate(String msg){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("userId", _userId);
+            jsonObject.put("msg", msg);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if(_eachTeamExpectedPlayers == 0 || _expectedTeamCount == 0){
+            _broadcaster.broadcast(BroadcastEvent.INGAME_UPDATE_RESPONSE,
+                    new InGameUpdateMessage(_userId, msg));
+        }
+        else{
+            _warpInstance.sendUpdatePeers(jsonObject.toString().getBytes());
+        }
+
 
     }
 
@@ -182,9 +192,16 @@ public class MockGamingKit {
         }
 
         @Override
-        public void onUserJoinedRoom(RoomData roomData, String s) {
+        public void onUserJoinedRoom(RoomData roomData, final String s) {
             System.out.println("onUserJoinedRoom");
             _warpInstance.getLiveRoomInfo(roomData.getId());
+            Threadings.delay(5000, new Runnable() {
+                @Override
+                public void run() {
+                    _coordinator.userConnectionChanged(s, true);
+                }
+            });
+
         }
 
         @Override
@@ -192,7 +209,10 @@ public class MockGamingKit {
             System.out.println("onSendUpdateDone:" + b);
         }
 
-
+        @Override
+        public void onUserLeftRoom(RoomData roomData, String s) {
+            _coordinator.userConnectionChanged(s, false);
+        }
 
 
 
@@ -284,11 +304,6 @@ public class MockGamingKit {
 
         @Override
         public void onRoomDestroyed(RoomData roomData) {
-
-        }
-
-        @Override
-        public void onUserLeftRoom(RoomData roomData, String s) {
 
         }
 

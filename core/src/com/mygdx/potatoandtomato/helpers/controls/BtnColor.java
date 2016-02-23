@@ -12,6 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.assets.Fonts;
+import com.mygdx.potatoandtomato.assets.Patches;
+import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 
@@ -54,13 +56,13 @@ public class BtnColor extends Table {
 
     private NinePatch getColorNinePatch(){
         if(_colorChoice == ColorChoice.GREEN){
-            return _assets.getPatches().getButtonGreen();
+            return _assets.getPatches().get(Patches.Name.BTN_GREEN);
         }
         else if(_colorChoice == ColorChoice.BLUE){
-            return _assets.getPatches().getButtonBlue();
+            return _assets.getPatches().get(Patches.Name.BTN_BLUE);
         }
         else{
-            return  _assets.getPatches().getButtonBlue();
+            return  _assets.getPatches().get(Patches.Name.BTN_BLUE);
         }
     }
 
@@ -68,7 +70,7 @@ public class BtnColor extends Table {
         if(!(_loadingTable == null)) _loadingTable.remove();
         _loadingTable = new Table();
         _loadingTable.setFillParent(true);
-        _loadingTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getBlackBg()));
+        _loadingTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
         Animator loadingAnimator = new Animator(0.1f, _assets.getAnimations().getLoadingAnimation());
         _loadingTable.add(loadingAnimator).size(20, 20);
         this.addActor(_loadingTable);

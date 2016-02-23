@@ -17,6 +17,8 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
 import com.mygdx.potatoandtomato.absintflis.controls.ConfirmStateChangedListener;
 import com.mygdx.potatoandtomato.assets.Fonts;
+import com.mygdx.potatoandtomato.assets.Patches;
+import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
@@ -75,13 +77,13 @@ public class Confirm {
         StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
         _stage = new Stage(viewPort, _batch);
 
-        _confirmRoot.setBackground(new TextureRegionDrawable(_assets.getTextures().getBlackBg()));
+        _confirmRoot.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
         _confirmRoot.setFillParent(true);
         _confirmRoot.align(Align.bottom);
         new DummyButton(_confirmRoot, _assets);
 
         _msgTable = new Table();
-        _msgTable.setBackground(new NinePatchDrawable(_assets.getPatches().getPopupBg()));
+        _msgTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.POPUP_BG)));
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
         labelStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD);
@@ -93,8 +95,8 @@ public class Confirm {
 
         _buttonsTable = new Table();
 
-        _yesImage = new Image(_assets.getTextures().getTick());
-        _noImage = new Image(_assets.getTextures().getCross());
+        _yesImage = new Image(_assets.getTextures().get(Textures.Name.TICK_ICON));
+        _noImage = new Image(_assets.getTextures().get(Textures.Name.CROSS_ICON));
 
         _msgTable.add(scrollPane).padTop(20).padBottom(20).expand().fill().padLeft(10).padRight(10);
         _msgTable.row();

@@ -13,6 +13,7 @@ import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.scenes.settings_scene.SettingsLogic;
 import com.mygdx.potatoandtomato.scenes.settings_scene.SettingsScene;
+import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.Status;
 import helpers.T_Services;
 import org.junit.Assert;
@@ -103,6 +104,20 @@ public class TestSettings extends TestAbstract {
         verify(ptScreen, times(1)).backToBoot();
         Assert.assertEquals(null, services.getPreferences().get(Terms.FACEBOOK_USERID));
         Assert.assertEquals(null, services.getPreferences().get(Terms.FACEBOOK_USERNAME));
+    }
+
+    @Test
+    public void testToggleSounds(){
+        Global.ENABLE_SOUND = false;
+        Services services = T_Services.mockServices();
+        services.getPreferences().put(Terms.SOUNDS_DISABLED, "true");
+        SettingsLogic logic = new SettingsLogic(mock(PTScreen.class), services);
+        logic.toggleSounds();
+        Assert.assertEquals(true, Global.ENABLE_SOUND);
+        Assert.assertEquals("false",  services.getPreferences().get(Terms.SOUNDS_DISABLED));
+        logic.toggleSounds();
+        Assert.assertEquals(false, Global.ENABLE_SOUND);
+        Assert.assertEquals("true",  services.getPreferences().get(Terms.SOUNDS_DISABLED));
     }
 
 

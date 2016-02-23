@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Disposable;
+import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Pair;
 import com.potatoandtomato.common.BroadcastEvent;
@@ -31,7 +32,7 @@ public class WebImage extends Table implements Disposable {
 
         _root = new Table();
         _root.pad(5);
-        Image loadingImage = new Image(_assets.getTextures().getWebImageLoading());
+        Image loadingImage = new Image(_assets.getTextures().get(Textures.Name.LOADING_IMAGE));
         _root.add(loadingImage).expand().fill().pad(10);
         this.add(_root).expand().fill();
 
@@ -63,7 +64,7 @@ public class WebImage extends Table implements Disposable {
     }
 
     private void requestFailed(){
-        _image = new Image(_assets.getTextures().getNoImage());
+        _image = new Image(_assets.getTextures().get(Textures.Name.NO_IMAGE));
         _root.clear();
         _root.add(_image).expand().fill();
     }

@@ -16,6 +16,7 @@ import javafx.geometry.Pos;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -87,6 +88,18 @@ public class DesktopLauncher {
 				} catch (MalformedURLException e) {
 					success = false;
 				} catch (ClassNotFoundException e) {
+					success = false;
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+					success = false;
+				} catch (NoSuchMethodException e) {
+					e.printStackTrace();
+					success = false;
+				} catch (InstantiationException e) {
+					e.printStackTrace();
+					success = false;
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
 					success = false;
 				}
 

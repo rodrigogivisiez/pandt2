@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.potatoandtomato.common.GameCoordinator;
+import com.potatoandtomato.common.Threadings;
 
 import java.util.HashMap;
 
@@ -30,7 +31,6 @@ public class Assets {
     }
 
     public void load(){
-
         _manager.load(_texturePackPath, TextureAtlas.class);
 
         _fonts.preLoad();

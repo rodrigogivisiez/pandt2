@@ -10,6 +10,8 @@ import com.badlogic.gdx.utils.SnapshotArray;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Fonts;
+import com.mygdx.potatoandtomato.assets.Patches;
+import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.helpers.controls.BtnEggDownward;
@@ -27,7 +29,6 @@ public class GameListScene extends SceneAbstract {
 
     Table _gameListTable, _gameTitleTable;
     Label _titleGameLabel, _titlePlayersLabel, _titleHostLabel;
-    Image _titleSeparator1, _titleSeparator2;
     HashMap<String, Table> _gameRowsTableMap;
     ScrollPane _gameListScrollPane;
     Table _scrollTable;
@@ -71,18 +72,16 @@ public class GameListScene extends SceneAbstract {
         //Game List Table START
         _gameListTable = new Table();
         _gameListTable.align(Align.top);
-        _gameListTable.setBackground(new NinePatchDrawable(_assets.getPatches().getGameListBg()));
+        _gameListTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.GAMELIST_BG)));
 
         _gameTitleTable = new Table();
         _gameTitleTable.align(Align.left);
-        _gameTitleTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getGameListTitleBg()));
+        _gameTitleTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.GAMELIST_TITLE_BG)));
         Label.LabelStyle titleLabelStyle = new Label.LabelStyle();
         titleLabelStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontColor.WHITE);
         _titleGameLabel = new Label(_texts.game(), titleLabelStyle);
         _titleHostLabel = new Label(_texts.host(), titleLabelStyle);
         _titlePlayersLabel = new Label(_texts.players(), titleLabelStyle);
-        _titleSeparator1 = new Image(_assets.getTextures().getGameListTitleSeparator());
-        _titleSeparator2 = new Image(_assets.getTextures().getGameListTitleSeparator());
 
         _gameTitleTable.add(_titleGameLabel).padLeft(20).padRight(10).width(100);
         _gameTitleTable.add(_titleHostLabel).padLeft(8).padRight(10).width(95);
@@ -91,7 +90,7 @@ public class GameListScene extends SceneAbstract {
         _scrollTable = new Table();
         _scrollTable.align(Align.top);
         ScrollPane.ScrollPaneStyle scrollPaneStyle = new ScrollPane.ScrollPaneStyle();
-        scrollPaneStyle.vScrollKnob = new NinePatchDrawable(_assets.getPatches().getScrollVerticalHandle());
+        scrollPaneStyle.vScrollKnob = new NinePatchDrawable(_assets.getPatches().get(Patches.Name.SCROLLBAR_VERTICAL_HANDLE));
         _gameListScrollPane = new ScrollPane(_scrollTable, scrollPaneStyle);
         _gameListScrollPane.setFadeScrollBars(false);
         //Game list Table END
@@ -118,7 +117,7 @@ public class GameListScene extends SceneAbstract {
 
         //User profile START
         _userProfileTable = new Table();
-        _userProfileTable.setBackground(new NinePatchDrawable(_assets.getPatches().getBlackRoundedBg()));
+        _userProfileTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.TRANS_BLACK_ROUNDED_BG)));
 
         Profile profile = _services.getProfile();
         _usernameLabel = new Label(profile.getDisplayName(15),
@@ -127,18 +126,18 @@ public class GameListScene extends SceneAbstract {
 
 
         _settingsTable = new Table();
-        _settingsTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getBtnWhiteRound()));
-        _settingsIconImg = new Image(_assets.getTextures().getSettingsIcon());
+        _settingsTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WHITE_ROUND_BUTTON_BG)));
+        _settingsIconImg = new Image(_assets.getTextures().get(Textures.Name.SETTINGS_ICON));
         _settingsTable.add(_settingsIconImg).expand().fill().pad(5);
-        _settingsButton = new Button(new TextureRegionDrawable(_assets.getTextures().getEmpty()));
+        _settingsButton = new Button(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
         _settingsButton.setFillParent(true);
         _settingsTable.addActor(_settingsButton);
 
         _ratingTable = new Table();
-        _ratingTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getBtnWhiteRound()));
-        _ratingIconImg = new Image(_assets.getTextures().getRatingIcon());
+        _ratingTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WHITE_ROUND_BUTTON_BG)));
+        _ratingIconImg = new Image(_assets.getTextures().get(Textures.Name.RATE_ICON));
         _ratingTable.add(_ratingIconImg).expand().fill().pad(5);
-        _ratingButtons = new Button(new TextureRegionDrawable(_assets.getTextures().getEmpty()));
+        _ratingButtons = new Button(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
         _ratingButtons.setFillParent(true);
         _ratingTable.addActor(_ratingButtons);
 
@@ -166,7 +165,7 @@ public class GameListScene extends SceneAbstract {
         Table gameNameInvitationTable = new Table();
         gameNameInvitationTable.align(Align.topLeft);
         gameNameInvitationTable.setName("gameNameInvitationTable");
-        Image invitedImage = new Image(_assets.getTextures().getInvitedIcon());
+        Image invitedImage = new Image(_assets.getTextures().get(Textures.Name.INVITED_ICON));
         gameNameInvitationTable.add(invitedImage).size(isInvited ? 12 : 0, 10).padRight(3);
         Label gameNameLabel = new Label(room.getGame().getName(), contentLabelStyle);
         gameNameLabel.setWrap(true);
@@ -179,7 +178,7 @@ public class GameListScene extends SceneAbstract {
         playersCountLabel.setWrap(true);
 
 
-        Button dummyButton = new Button(new TextureRegionDrawable(_assets.getTextures().getEmpty()));
+        Button dummyButton = new Button(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
         dummyButton.setFillParent(true);
 
         gameRowTable.add(gameNameInvitationTable).width(100).padLeft(18).padRight(10);
@@ -204,10 +203,10 @@ public class GameListScene extends SceneAbstract {
 
             if(String.valueOf(key).equals(tableName)){
                 found = true;
-                gameRowTable.background(new TextureRegionDrawable(_assets.getTextures().getGameListHighlight()));
+                gameRowTable.background(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.GAMELIST_HIGHLIGHT)));
             }
             else{
-                gameRowTable.background(new TextureRegionDrawable(_assets.getTextures().getEmpty()));
+                gameRowTable.background(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
             }
         }
 

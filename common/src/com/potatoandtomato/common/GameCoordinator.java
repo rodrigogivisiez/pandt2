@@ -186,7 +186,7 @@ public class GameCoordinator implements Disposable {
             getGame().removeInputProcessor(p);
         }
 
-        broadcaster.broadcast(BroadcastEvent.GAME_END);
+        getGameSandBox().endGame();
     }
 
     public void abandon(){
@@ -259,7 +259,7 @@ public class GameCoordinator implements Disposable {
     }
 
     public void sendRoomUpdate(String msg){
-        broadcaster.broadcast(BroadcastEvent.INGAME_UPDATE_REQUEST, msg);
+        getGameSandBox().inGameUpdateRequest(msg);
     }
 
     public void addInGameUpdateListener(InGameUpdateListener listener){

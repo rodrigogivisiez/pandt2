@@ -11,5 +11,7 @@ public class Texts {
     public String gameStart() { return "Game Start"; }
     public String youWin() { return "You Win"; }
     public String youLose() { return "You Lose"; }
+    public String you() { return "You"; }
+    public String enemy() { return "Enemy"; }
 
 }

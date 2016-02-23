@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Fonts;
+import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.controls.BtnColor;
 import com.mygdx.potatoandtomato.helpers.controls.TopBar;
 import com.mygdx.potatoandtomato.models.Services;
@@ -34,7 +35,7 @@ public class PrerequisiteScene extends SceneAbstract {
         new TopBar(_root, _texts.loading(), false, _assets, _screen);
 
         _loadingTable = new Table();
-        _loadingTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getWoodBgNormal()));
+        _loadingTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WOOD_BG_NORMAL)));
 
         Label.LabelStyle msgLabelStyle = new Label.LabelStyle();
         msgLabelStyle.font = _assets.getFonts().get(Fonts.FontName.PIZZA, Fonts.FontSize.XXL, Fonts.FontColor.TEAL, Fonts.FontShadowColor.DARK_ORANGE);

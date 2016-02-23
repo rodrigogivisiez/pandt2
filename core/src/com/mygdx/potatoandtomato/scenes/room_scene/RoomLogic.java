@@ -5,7 +5,6 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
@@ -504,7 +503,7 @@ public class RoomLogic extends LogicAbstract {
            Threadings.postRunnable(new Runnable() {
                @Override
                public void run() {
-                   startGame();
+                   startGameCountDown();
                }
            });
         }
@@ -604,12 +603,6 @@ public class RoomLogic extends LogicAbstract {
         push.setSilentNotification(true);
         push.setSilentIfInGame(false);
 
-//            for(RoomUser roomUser : _room.getRoomUsers().values()){
-//                if(!roomUser.getProfile().equals(_services.getProfile())){  //not host
-//                    _services.getGcmSender().send(roomUser.getProfile(), push);
-//                }
-//            }
-
         if(canStart && !_gameStarted && isHost() && !_isContinue){
             push.setTitle(_texts.PUSHRoomUpdateGameReadyTitle());
             push.setSilentIfInGame(true);
@@ -620,7 +613,7 @@ public class RoomLogic extends LogicAbstract {
     }
 
     public void hostSendGameStartedPush(){
-        if(isHost() && !_gameStarted){       //only host can send push notification to update room state
+        if(isHost()){       //only host can send push notification to update room state
             PushNotification push = new PushNotification();
             push.setId(PushCode.UPDATE_ROOM);
             push.setSticky(true);
@@ -689,7 +682,7 @@ public class RoomLogic extends LogicAbstract {
         }
     }
 
-    public void startGame(){
+    public void startGameCountDown(){
         _countDownThread = new SafeThread();
         _starting = true;
         _scene.getTeamsRoot().setTouchable(Touchable.disabled);
@@ -713,12 +706,9 @@ public class RoomLogic extends LogicAbstract {
                     }
                 }
                 _countDownThread = null;
-                Gdx.app.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        gameStarted();
-                    }
-                });
+                if(isHost()){
+                    sendUpdateRoomMates(UpdateRoomMatesCode.GAME_STARTED, "");
+                }
             }
         });
     }
@@ -737,8 +727,8 @@ public class RoomLogic extends LogicAbstract {
     public void gameStarted(){
         if(_gameStarted) return;
 
-        hostSendGameStartedPush();
         _gameStarted = true;
+        hostSendGameStartedPush();
         _room.setOpen(false);
         _room.setPlaying(true);
         _room.setRoundCounter(_room.getRoundCounter()+1);
@@ -747,10 +737,9 @@ public class RoomLogic extends LogicAbstract {
         hostSaveRoom(true, null);
         _services.getDatabase().savePlayedHistory(_services.getProfile(), _room, null);
         _services.getChat().add(new ChatMessage(_texts.gameStarted(), ChatMessage.FromType.SYSTEM, null), false);
-        _services.getGamingKit().updateRoomMates(UpdateRoomMatesCode.GAME_STARTED, "");
 
 
-        Threadings.delay(1000, new Runnable() {
+        Threadings.delayNoPost(1000, new Runnable() {
             @Override
             public void run() {
                 _services.getChat().hide();
@@ -760,8 +749,8 @@ public class RoomLogic extends LogicAbstract {
         });
     }
 
-    public void continueGame(){
-        if(_gameStarted) return;
+    public void continueGame() {
+        if (_gameStarted) return;
 
         selfUpdateRoomStatePush();
         _services.getChat().hide();

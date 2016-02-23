@@ -1,5 +1,6 @@
 package com.mygdx.potatoandtomato.helpers.controls;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.mygdx.potatoandtomato.assets.Fonts;
+import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.services.Shaders;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.services.Sounds;
@@ -46,11 +48,11 @@ public class BtnEggDownward extends Table {
         this._sounds = sounds;
         this._assets = assets;
         this._shaders = shaders;
-        this._button = new Button(new TextureRegionDrawable(_assets.getTextures().getEmpty()));
+        this._button = new Button(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
         this._enabled = true;
         _button.setFillParent(true);
-        this.setBackground(new TextureRegionDrawable(_assets.getTextures().getDownwardEggButton()));
-        _size = Sizes.resize(100, _assets.getTextures().getDownwardEggButton());
+        this.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.DOWNWARD_EGG_BUTTON)));
+        _size = Sizes.resize(100, _assets.getTextures().get(Textures.Name.DOWNWARD_EGG_BUTTON));
         this.setSize(_size.x, _size.y);
 
         _button.addListener(new ClickListener(){
@@ -83,9 +85,15 @@ public class BtnEggDownward extends Table {
         this.addActor(_button);
     }
 
-    public void setEnabled(boolean enabled){
-        _shader = enabled ? null : _shaders.getBlackOverlay();
-        this._enabled = enabled;
+    public void setEnabled(final boolean enabled){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _shader = enabled ? null : _shaders.getBlackOverlay();
+            }
+        });
+        _enabled = enabled;
+
     }
 
     public void animate(){

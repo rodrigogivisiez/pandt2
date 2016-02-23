@@ -20,6 +20,8 @@ import com.mygdx.potatoandtomato.absintflis.recorder.RecordListener;
 import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
 import com.mygdx.potatoandtomato.absintflis.uploader.UploadListener;
 import com.mygdx.potatoandtomato.assets.Fonts;
+import com.mygdx.potatoandtomato.assets.Patches;
+import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.services.Recorder;
 import com.mygdx.potatoandtomato.helpers.services.Sounds;
@@ -107,7 +109,7 @@ public class Chat {
         //Big Mic Table
         /////////////////////////////
         _bigMicTable = new Table();
-        Image bigMicImage = new Image(_assets.getTextures().getMicBig());
+        Image bigMicImage = new Image(_assets.getTextures().get(Textures.Name.MIC_BIG_ICON));
         _bigMicTable.add(bigMicImage).width(150).height(300);
         _bigMicTable.setVisible(false);
 
@@ -117,7 +119,7 @@ public class Chat {
         //All Messages Table Mode 1
         ///////////////////////
         _mode1AllMessagesTable = new Table();
-        _mode1AllMessagesTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getChatContainer()));
+        _mode1AllMessagesTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.CHAT_CONTAINER)));
         _mode1AllMessagesTable.align(Align.top);
 
         _mode1MessagesContentTable = new Table();
@@ -142,20 +144,20 @@ public class Chat {
         //Bottom message box
         ///////////////////////////////////
         _messageBoxTable = new Table();
-        _messageBoxTable.setBackground(new NinePatchDrawable(_assets.getPatches().getYellowGradientBox()));
+        _messageBoxTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.YELLOW_GRADIENT_BOX)));
         _boxChildTable = new Table();
-        _boxChildTable.setBackground(new NinePatchDrawable(_assets.getPatches().getChatBox()));
+        _boxChildTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.CHAT_BOX)));
         new DummyButton(_boxChildTable, _assets);
         _messageBoxTable.add(_boxChildTable).expandX().fillX().padLeft(15).padRight(15).padTop(3).padBottom(3);
 
-        _textFieldFocusImage = new Image(_assets.getTextures().getOrangeLine());
-        _textFieldNotFocusImage = new Image(_assets.getTextures().getGreyLine());
+        _textFieldFocusImage = new Image(_assets.getTextures().get(Textures.Name.ORANGE_HORIZONTAL_LINE));
+        _textFieldNotFocusImage = new Image(_assets.getTextures().get(Textures.Name.GREY_HORIZONTAL_LINE));
         _textFieldFocusImage.setVisible(false);
 
         TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle();
         textFieldStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD);
         textFieldStyle.fontColor = Color.BLACK;
-        textFieldStyle.cursor = new TextureRegionDrawable(_assets.getTextures().getTextCursor());
+        textFieldStyle.cursor = new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.CURSOR_BLACK));
         _messageTextField = new TextField("", textFieldStyle);
         _messageTextField.setOnscreenKeyboard(new DummyKeyboard(_broadcaster));
         _messageTextField.addListener(new InputListener(){
@@ -182,8 +184,8 @@ public class Chat {
             }
         });
 
-        _micImage = new Image(_assets.getTextures().getMicIcon());
-        _closeKeyboardImage = new Image(_assets.getTextures().getCloseKeyboardIcon());
+        _micImage = new Image(_assets.getTextures().get(Textures.Name.MIC_ICON));
+        _closeKeyboardImage = new Image(_assets.getTextures().get(Textures.Name.CLOSE_KEYBOARD_ICON));
 
         ///////////////////////////////
         //Send Label
@@ -203,8 +205,8 @@ public class Chat {
         //hidden micbutton/keyboard button
         ////////////////////////////////////
         Table hiddenTable = new Table();
-        _btnKeyboard = new Image(_assets.getTextures().getKeyboardButton());
-        _btnMic = new Image(_assets.getTextures().getMicButton());
+        _btnKeyboard = new Image(_assets.getTextures().get(Textures.Name.KEYBOARD_BUTTON));
+        _btnMic = new Image(_assets.getTextures().get(Textures.Name.MIC_BUTTON));
         hiddenTable.add(_btnKeyboard).size(35, 35).padLeft(5);
         hiddenTable.add(_btnMic).size(35, 35);
         hiddenTable.setPosition(Positions.getHeight(), 0);      //use height because it only appear in landscape mode
@@ -273,7 +275,7 @@ public class Chat {
         }
 
 
-        _mode2AllMessagesTable.setSize(Positions.getWidth(), Global.IS_POTRAIT ? 90 : 50);
+        _mode2AllMessagesTable.setSize(Positions.getWidth(), Global.IS_POTRAIT ? 80 : 70);
         _stage.addActor(_mode2AllMessagesTable);
 
         _chatRoot.setPosition(0, 0);
@@ -363,6 +365,7 @@ public class Chat {
 
     private void moveChatPosition(float newY){
         _chatRoot.setPosition(0, newY);
+        _mode2AllMessagesTable.setPosition(0, Global.IS_POTRAIT ? 80 + newY : 50 + newY);
         if(newY > 0){
             expanded();
         }
@@ -638,7 +641,7 @@ public class Chat {
                             chatTable.row();
                         }
                         else if(msg.getFromType() == ChatMessage.FromType.USER_VOICE){
-                            Image imgVoice = new Image(_assets.getTextures().getVoiceIcon());
+                            Image imgVoice = new Image(_assets.getTextures().get(Textures.Name.VOICE_ICON));
                             chatTable.add(imgVoice).size(20, 20).expandX().left();
                             chatTable.row();
                             setVoiceListener(imgVoice, msg.getMessage(), !msg.getSenderId().equals(_userId));
@@ -652,7 +655,7 @@ public class Chat {
                         chatTable.row();
                     }
 
-                    Image separator = new Image(_assets.getTextures().getGreyLine());
+                    Image separator = new Image(_assets.getTextures().get(Textures.Name.GREY_HORIZONTAL_LINE));
                     chatTable.add(separator).colspan(3).padTop(5).padBottom(5).expandX().fillX();
                     chatTable.row();
 
@@ -701,7 +704,7 @@ public class Chat {
                         chatTable.add(messageLabel).expandX().fillX();
                     }
                     else if(msg.getFromType() == ChatMessage.FromType.USER_VOICE){
-                        Image imgVoice = new Image(_assets.getTextures().getVoiceIcon());
+                        Image imgVoice = new Image(_assets.getTextures().get(Textures.Name.VOICE_ICON));
                         chatTable.add(imgVoice).size(15, 15).expandX().left();
                         chatTable.row();
                         setVoiceListener(imgVoice, msg.getMessage(), !msg.getSenderId().equals(_userId));
@@ -776,7 +779,7 @@ public class Chat {
         }
     }
 
-    private Color getUserColor(String userId){
+    public Color getUserColor(String userId){
         if(!_userColors.containsKey(userId)){
             _userColors.put(userId, Colors.generatePleasingColor());
         }

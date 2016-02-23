@@ -20,5 +20,6 @@ public class UpdateRoomMatesCode {
     public final static int GAME_OUTDATED = 6;
     public final static int GAME_STARTED = 7;
     public final static int ALL_PLAYERS_LOADED_GAME_SUCCESS = 8;
+    public final static int LOAD_FAILED = 15;
 
 }

@@ -47,6 +47,7 @@ public class PTGame extends Game implements IPTGame {
 	IDownloader _downloader;
 	Sounds _sounds;
 	Broadcaster _broadcaster;
+	Preferences _preferences;
 
 	public PTGame(Broadcaster broadcaster) {
 		_broadcaster = broadcaster;
@@ -58,8 +59,10 @@ public class PTGame extends Game implements IPTGame {
 
 		_game = this;
 		_assets = new Assets();
+		_preferences = new Preferences();
 		_processors = new HashMap();
 		Threadings.setMainTreadId();
+		Global.init(_preferences);
 
 		//run when assets done loading
 		_assets.loadBasic(new Runnable() {
@@ -72,24 +75,22 @@ public class PTGame extends Game implements IPTGame {
 				_recorder = new Recorder();
 				_downloader = new Downloader();
 				_uploader = new App42Uploader(_downloader);
-				_sounds = new Sounds(_assets);
+				_sounds = new Sounds(_assets, _broadcaster);
 				_chat = new Chat(_gamingKit, _texts, _assets, _batch, _game, _recorder, _uploader, _sounds, _broadcaster);
 				_confirm = new Confirm(_batch, _game, _assets, _broadcaster);
 				_notification = new Notification(_batch, _assets, _game, _broadcaster);
 
-
-				Preferences preferences = new Preferences();
 				_services = new Services(_assets, _texts,
-						preferences, new Profile(), new FirebaseDB(Terms.FIREBASE_URL),
+						_preferences, new Profile(), new FirebaseDB(Terms.FIREBASE_URL),
 						new Shaders(), _gamingKit, _downloader, _chat,
-						new Socials(preferences, _broadcaster), new GCMSender(), _confirm, _notification,
+						new Socials(_preferences, _broadcaster), new GCMSender(), _confirm, _notification,
 						_recorder, _uploader, _sounds, new VersionControl(), _broadcaster);
 				_screen = new PTScreen(_game, _services);
 
 				setScreen(_screen);
 
 				_screen.toScene(SceneEnum.BOOT);
-				}
+			}
 		});
 	}
 

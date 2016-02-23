@@ -1,6 +1,7 @@
 package com.potatoandtomato.games;
 
 import com.potatoandtomato.common.MockGame;
+import com.potatoandtomato.games.statics.Global;
 
 public class CoveredChessGame extends MockGame {
 
@@ -15,7 +16,7 @@ public class CoveredChessGame extends MockGame {
 	@Override
 	public void create() {
 		super.create();
-		initiateMockGamingKit(2, 1);
+		initiateMockGamingKit(Global.DEBUG ? 0 : 2, Global.DEBUG ? 0 : 1);
 	}
 
 	@Override

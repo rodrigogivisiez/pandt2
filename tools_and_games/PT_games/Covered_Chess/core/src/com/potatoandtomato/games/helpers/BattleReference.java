@@ -1,9 +1,8 @@
 package com.potatoandtomato.games.helpers;
 
 import com.badlogic.gdx.math.MathUtils;
-import com.potatoandtomato.games.actors.chesses.enums.ChessType;
+import com.potatoandtomato.games.enums.ChessType;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -114,19 +113,24 @@ public class BattleReference {
 
     public int getWinPercent(ChessType from, ChessType to){
         String fromAnimal = from.name().split("_")[1];
-        String toAnimal = to.name().split("_")[1];
-        return refs.get(fromAnimal).get(toAnimal);
+        if(to == ChessType.NONE){
+            return 100;
+        }
+        else{
+            String toAnimal = to.name().split("_")[1];
+            return refs.get(fromAnimal).get(toAnimal);
+        }
     }
 
-    //return 1(winner is from) or 2(winner is to)
-    public int getWinner(ChessType from, ChessType to){
+    //return true(winner is from) or false(winner is to)
+    public boolean getFromIsWinner(ChessType from, ChessType to){
         int percent = getWinPercent(from, to);
         int random = MathUtils.random(0, 100);
         if(random < percent){
-            return 1;
+            return true;
         }
         else{
-            return 2;
+            return false;
         }
     }
 

@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.mygdx.potatoandtomato.assets.Fonts;
+import com.mygdx.potatoandtomato.assets.Patches;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.potatoandtomato.common.*;
@@ -80,7 +81,7 @@ public class Notification {
 
     private void showNotification(String msg, Color color){
         final Table childTable = new Table();
-        childTable.setBackground(new NinePatchDrawable(_assets.getPatches().getWhiteRoundedBg()));
+        childTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.WHITE_ROUNDED_BG)));
         childTable.setSize(200, 40);
         childTable.pad(10);
         childTable.padRight(20);

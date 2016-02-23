@@ -10,6 +10,8 @@ import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Fonts;
+import com.mygdx.potatoandtomato.assets.Patches;
+import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.controls.BtnColor;
 import com.mygdx.potatoandtomato.models.Services;
 
@@ -39,7 +41,7 @@ public class InputNameScene extends SceneAbstract {
         _root.pad(20);
 
         Table questionTable = new Table();
-        questionTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getWoodBgNormal()));
+        questionTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WOOD_BG_NORMAL)));
         questionTable.pad(15);
 
         Label.LabelStyle questionLabelStyle = new Label.LabelStyle();
@@ -49,11 +51,11 @@ public class InputNameScene extends SceneAbstract {
         questionLabel.setAlignment(Align.center);
 
         Table displayNameFieldTable = new Table();
-        displayNameFieldTable.setBackground(new NinePatchDrawable(_assets.getPatches().getTextFieldBg()));
+        displayNameFieldTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.TEXT_FIELD_BG)));
         TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle();
         textFieldStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD);
         textFieldStyle.fontColor = Color.BLACK;
-        textFieldStyle.cursor = new TextureRegionDrawable(_assets.getTextures().getTextCursor());
+        textFieldStyle.cursor = new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.CURSOR_BLACK));
         _displayNameTextField = new TextField(_services.getProfile().getGameName(), textFieldStyle);
         displayNameFieldTable.add(_displayNameTextField).expand().fill().pad(10);
 

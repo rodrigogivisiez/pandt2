@@ -13,6 +13,8 @@ import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Fonts;
+import com.mygdx.potatoandtomato.assets.Patches;
+import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.controls.BtnEggDownward;
 import com.mygdx.potatoandtomato.helpers.controls.DummyButton;
 import com.mygdx.potatoandtomato.helpers.controls.TopBar;
@@ -55,7 +57,7 @@ public class InviteScene extends SceneAbstract {
 
 
         Table _invitesRootTable = new Table();
-        _invitesRootTable.setBackground(new NinePatchDrawable(_assets.getPatches().getGameListBg()));
+        _invitesRootTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.GAMELIST_BG)));
         _invitesRootTable.align(Align.top);
 
         Table invitesTable = new Table();
@@ -93,11 +95,11 @@ public class InviteScene extends SceneAbstract {
         contentTable.setName("content");
 
         expandableTitle.pad(10);
-        expandableTitle.setBackground(new NinePatchDrawable(_assets.getPatches().getExpandTitleBg()));
+        expandableTitle.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.EXPANDABLE_TITLE_BG)));
         new DummyButton(expandableTitle, _assets);
 
         Label titleLabel = new Label(title, new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.L, Fonts.FontColor.WHITE, Fonts.FontStyle.BOLD), null));
-        final Image icon = new Image(_assets.getTextures().getExpandIcon());
+        final Image icon = new Image(_assets.getTextures().get(Textures.Name.EXPANDED_ICON));
 
         expandableTitle.add(titleLabel).expandX().fillX();
         expandableTitle.add(icon).size(10, 10).right();
@@ -120,12 +122,12 @@ public class InviteScene extends SceneAbstract {
                 super.clicked(event, x, y);
                 if(expandableTitle.getName().equals("expanded")){
                     expandableTitle.setName("collapsed");
-                    icon.setDrawable(new TextureRegionDrawable(_assets.getTextures().getCollapsedIcon()));
+                    icon.setDrawable(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.COLLAPSED_ICON)));
                     contentRoot.remove();
                 }
                 else{
                     expandableTitle.setName("expanded");
-                    icon.setDrawable(new TextureRegionDrawable(_assets.getTextures().getExpandIcon()));
+                    icon.setDrawable(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EXPANDED_ICON)));
                     expandableRoot.add(contentRoot).expandX().fillX();
                     expandableRoot.row();
                 }
@@ -151,9 +153,9 @@ public class InviteScene extends SceneAbstract {
         Label nameLabel = new Label(profile.getDisplayName(30),
                     new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontColor.WHITE, Fonts.FontStyle.SEMI_BOLD), null));
 
-        Image selectBoxImage = new Image(_assets.getTextures().getUnselectBox());
+        Image selectBoxImage = new Image(_assets.getTextures().get(Textures.Name.UNSELECT_BOX));
         selectBoxImage.setName("selectbox");
-        Image separator = new Image(_assets.getTextures().getWhiteLine());
+        Image separator = new Image(_assets.getTextures().get(Textures.Name.WHITE_HORIZONTAL_LINE));
 
         userTable.add(nameLabel).expandX().fillX();
         userTable.add(selectBoxImage).size(35, 35).padRight(10);
@@ -175,12 +177,12 @@ public class InviteScene extends SceneAbstract {
             Image selectBox =  userTable.findActor("selectbox");
             if(userTable.getName().equals("selected")){
                 userTable.setName("unselected");
-                selectBox.setDrawable(new TextureRegionDrawable(_assets.getTextures().getUnselectBox()));
+                selectBox.setDrawable(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.UNSELECT_BOX)));
                 result = false;
             }
             else{
                 userTable.setName("selected");
-                selectBox.setDrawable(new TextureRegionDrawable(_assets.getTextures().getSelectBox()));
+                selectBox.setDrawable(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.SELECT_BOX)));
                 result = true;
             }
         }

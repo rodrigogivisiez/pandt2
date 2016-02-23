@@ -56,19 +56,36 @@ public abstract class MockGame extends Game implements IPTGame {
             public void onGameLoaded() {
 
             }
+
+            @Override
+            public void endGame() {
+
+            }
+
+            @Override
+            public void inGameUpdateRequest(String msg) {
+                _mockGamingKit.sendUpdate(msg);
+            }
         },  _ref.child("gameBelongData").child(gameId), "1", new MockSoundManager(),
                 _broadcaster, _downloader);
     }
 
-    public void initiateMockGamingKit(int expectedTeamCount, int eachTeamExpectedPlayers){
+    public void initiateMockGamingKit(final int expectedTeamCount, final int eachTeamExpectedPlayers){
         _mockGamingKit = new MockGamingKit(_gameCoordinator, expectedTeamCount, eachTeamExpectedPlayers, _broadcaster, new Runnable() {
             @Override
             public void run() {
-                onReady();
                 _gameCoordinator.setUserId(_mockGamingKit.getUserId());
+                if(expectedTeamCount == 0 || eachTeamExpectedPlayers == 0){
+                    ArrayList<Team> teams = new ArrayList<Team>();
+                    Team team = new Team();
+                    team.addPlayer(new Player("test", "1", true, true));
+                    teams.add(team);
+                    _gameCoordinator.setTeams(teams);
+                }
+
+                onReady();
             }
         });
-
     }
 
     @Override

@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Fonts;
+import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.controls.BtnEggDownward;
 import com.mygdx.potatoandtomato.helpers.controls.TopBar;
 import com.mygdx.potatoandtomato.helpers.controls.WebImage;
@@ -65,7 +66,7 @@ public class CreateGameScene extends SceneAbstract {
 
         //right side game details START
         _gameDetailsParent = new Table();
-        _gameDetailsParent.setBackground(new TextureRegionDrawable(_assets.getTextures().getWoodBgTall()));
+        _gameDetailsParent.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WOOD_BG_TALL)));
         _gameDetailsParent.align(Align.topLeft);
         _gameDetailsParent.padRight(75).padLeft(10).padTop(10).padBottom(15);
         _gameDetails = new Table();
@@ -73,8 +74,8 @@ public class CreateGameScene extends SceneAbstract {
         _gameDetailsScroll.setScrollingDisabled(true, false);
         _gameDetailsParent.add(_gameDetailsScroll).expand().fill().padBottom(20);
 
-        Image pointLeftImage = new Image(_assets.getTextures().getPointLeftIcon());
-        Vector2 sizes = Sizes.resize(140, _assets.getTextures().getPointLeftIcon());
+        Image pointLeftImage = new Image(_assets.getTextures().get(Textures.Name.POINT_LEFT_ICON));
+        Vector2 sizes = Sizes.resize(140, _assets.getTextures().get(Textures.Name.POINT_LEFT_ICON));
         Label pickAGameLabel = new Label(_texts.pickAGame(), new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.XXL, Fonts.FontColor.DARK_BROWN,
                                                                                                         Fonts.FontStyle.CONDENSED, Fonts.FontShadowColor.DARK_ORANGE), null));
         pointLeftImage.addAction(forever(sequence(moveBy(-10, 0, 1f), moveBy(10, 0, 1f))));
@@ -98,18 +99,19 @@ public class CreateGameScene extends SceneAbstract {
     public Actor populateGame(Game game){
 
         final Table gameTable = new Table();
-        gameTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getWoodBgFat()));
+        Table innerTable = new Table();
+        innerTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WOOD_BG_FAT)));
 
         Actor gameIcon = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster());
-        gameTable.add(gameIcon).size(90).right().expandX().fillX().padLeft(150).padTop(5).padBottom(10).padRight(15);
-        gameTable.getColor().a = 0;
-
-        _gameList.add(gameTable).width(210).padLeft(-100).padBottom(7);
+        innerTable.add(gameIcon).size(90).right().expandX().fillX().padLeft(150).padTop(5).padBottom(10).padRight(15);
+        innerTable.getColor().a = 0;
+        innerTable.setSize(210, 110);
+        innerTable.setPosition(-200, 0);
+        gameTable.addActor(innerTable);
+        _gameList.add(gameTable).width(innerTable.getWidth()).height(innerTable.getHeight()).padLeft(-100).padBottom(7);
         _gameList.row();
 
-        gameTable.addAction(sequence(delay(0.3f), moveBy(-200, 0), fadeIn(0f), moveBy(200, 0, 1f, Interpolation.bounceOut)));
-
-
+        innerTable.addAction(sequence(fadeIn(0f), moveBy(200, 0, 1f, Interpolation.bounceOut)));
 
         return gameIcon;
 
@@ -127,16 +129,6 @@ public class CreateGameScene extends SceneAbstract {
                 }
         ));
 
-    }
-
-    public void hideAllElements(){
-        _gameList.setVisible(false);
-        _gameDetailsParent.setVisible(false);
-    }
-
-    public void showAllElements(){
-        _gameList.setVisible(true);
-        _gameDetailsParent.setVisible(true);
     }
 
     public void changeGameDetails(Game game){
@@ -158,7 +150,7 @@ public class CreateGameScene extends SceneAbstract {
 
         Table detailsTable = new Table();
         detailsTable.align(Align.left);
-        detailsTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getBlackBg()));
+        detailsTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
         detailsTable.pad(10);
         detailsTable.padRight(20);
         Label nameLabel = new Label(game.getName(), contentStyle1);
@@ -173,7 +165,7 @@ public class CreateGameScene extends SceneAbstract {
         Label screenShotsTitleLabel = new Label(_texts.screenShots(), titleStyle);
         Table screenShotsTableParent = new Table();
         screenShotsTableParent.align(Align.left);
-        screenShotsTableParent.setBackground(new TextureRegionDrawable(_assets.getTextures().getBlackBg()));
+        screenShotsTableParent.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
         screenShotsTableParent.pad(10);
         screenShotsTableParent.padRight(20);
         Table screenShotsTable = new Table();
@@ -195,7 +187,7 @@ public class CreateGameScene extends SceneAbstract {
         descriptionTable.align(Align.left);
         descriptionTable.pad(10);
         descriptionTable.padRight(20);
-        descriptionTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getBlackBg()));
+        descriptionTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
         Label descriptionLabel = new Label(game.getDescription(), contentStyle2);
         descriptionLabel.setWrap(true);
         descriptionTable.add(descriptionLabel).fill().expand();

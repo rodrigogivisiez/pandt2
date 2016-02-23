@@ -32,7 +32,7 @@ public class DecisionsMaker {
         if(_userIDs.size() > 0){
             return _userIDs.get(0).equals(userId);
         }
-        return false;
+        return true;
     }
 
 }

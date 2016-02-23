@@ -55,6 +55,8 @@ public class Fonts implements IAssetFragment {
         _preloadFonts.add(new Font(FontName.MYRIAD, FontSize.S, FontColor.RED, FontStyle.SEMI_BOLD,
                 FontBorderColor.WHITE, FontShadowColor.NONE));
         _preloadFonts.add(new Font(FontName.MYRIAD, FontSize.S, FontColor.WHITE, FontStyle.SEMI_BOLD,
+                FontBorderColor.NONE, FontShadowColor.NONE));
+        _preloadFonts.add(new Font(FontName.MYRIAD, FontSize.S, FontColor.WHITE, FontStyle.SEMI_BOLD,
                 FontBorderColor.BLACK, FontShadowColor.NONE));
         _preloadFonts.add(new Font(FontName.MYRIAD, FontSize.S, FontColor.WHITE, FontStyle.BOLD,
                 FontBorderColor.NONE, FontShadowColor.NONE));

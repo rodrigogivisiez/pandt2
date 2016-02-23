@@ -44,6 +44,20 @@ public class Threadings {
         });
     }
 
+    public static void delayNoPost(final long timeInMs, final Runnable toRun){
+        runInBackground(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(timeInMs);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                toRun.run();
+            }
+        });
+    }
+
     public static void sleep(long time){
         try {
             Thread.sleep(time);

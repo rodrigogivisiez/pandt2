@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.assets.Fonts;
+import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
@@ -45,10 +46,10 @@ public class TopBar {
         _topBarTable = new Table();
         _topBarTable.setWidth(Positions.getWidth());
         _topBarTable.setHeight(_barHeight);
-        _topBarTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getTopBarBg()));
+        _topBarTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TOP_BAR_BG)));
         _topBarTable.setPosition(0, Positions.getHeight() - _barHeight);
 
-        TextureRegion iconRegion = _noPreviousScene ? _assets.getTextures().getQuitIcon() : _assets.getTextures().getBackIcon();
+        TextureRegion iconRegion = _noPreviousScene ? _assets.getTextures().get(Textures.Name.QUIT_ICON) : _assets.getTextures().get(Textures.Name.BACK_ICON);
         Vector2 iconSize = Sizes.resize(45, iconRegion);
         _iconImg = new Image(iconRegion);
         _iconImg.setSize(iconSize.x, iconSize.y);

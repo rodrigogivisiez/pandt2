@@ -16,6 +16,8 @@ import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Fonts;
+import com.mygdx.potatoandtomato.assets.Patches;
+import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.controls.*;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Room;
@@ -94,7 +96,7 @@ public class RoomScene extends SceneAbstract {
         _teamsRoot = new Table();
 
         _detailsRoot = new Table();
-        _detailsRoot.setBackground(new NinePatchDrawable(_assets.getPatches().getYellowGradientBoxRounded()));
+        _detailsRoot.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.YELLOW_GRADIENT_BOX_ROUNDED)));
         _detailsRoot.align(Align.top);
         _detailsRoot.row();
 
@@ -117,7 +119,7 @@ public class RoomScene extends SceneAbstract {
     public void populateGameDetails(Game game){
         WebImage gameImg = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster());
 
-        Image separatorImage = new Image(_assets.getTextures().getVerticalSeparator());
+        Image separatorImage = new Image(_assets.getTextures().get(Textures.Name.WHITE_VERTICAL_LINE));
 
         Label.LabelStyle titleStyle = new Label.LabelStyle();
         titleStyle.font = _assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.M, Fonts.FontColor.DARK_BROWN, Fonts.FontStyle.BOLD);
@@ -161,10 +163,12 @@ public class RoomScene extends SceneAbstract {
             Table teamTable = new Table();
             new DummyButton(teamTable, _assets);
             if(totalTeams > 1){
-                teamTable.setBackground(teamMaxPlayers <= 2 ? new TextureRegionDrawable(_assets.getTextures().getWoodBgFat()) : new NinePatchDrawable(_assets.getPatches().getWoodBgFatPatch()));
+                teamTable.setBackground(teamMaxPlayers <= 2 ? new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WOOD_BG_FAT)) :
+                        new NinePatchDrawable(_assets.getPatches().get(Patches.Name.WOOD_BG_FAT_PATCH)));
             }
             else{
-                teamTable.setBackground(teamMaxPlayers <= 2 ? new TextureRegionDrawable(_assets.getTextures().getWoodBgFat()) : new NinePatchDrawable(_assets.getPatches().getWoodBgSmallPatch()));
+                teamTable.setBackground(teamMaxPlayers <= 2 ? new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WOOD_BG_FAT)) :
+                        new NinePatchDrawable(_assets.getPatches().get(Patches.Name.WOOD_BG_SMALL_PATCH)));
             }
             teamTable.align(Align.top);
             teamTable.padBottom(20);
@@ -269,7 +273,7 @@ public class RoomScene extends SceneAbstract {
     private Table getWoodBoardTitleTable( String title){
         Table detailsTitleTable = new Table();
         detailsTitleTable.padTop(7).padBottom(7).padLeft(20).padRight(20);
-        detailsTitleTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getWoodBgTitle()));
+        detailsTitleTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WOOD_BG_TITLE)));
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
         labelStyle.font = _assets.getFonts().get(Fonts.FontName.PIZZA, Fonts.FontColor.WHITE, Fonts.FontBorderColor.BLACK);
@@ -296,18 +300,18 @@ public class RoomScene extends SceneAbstract {
 
         Table playerTable = new Table();
         playerTable.padTop(5).padBottom(5).padLeft(7).padRight(12);
-        playerTable.setBackground(new NinePatchDrawable(_assets.getPatches().getWhiteRoundedBg()));
+        playerTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.WHITE_ROUNDED_BG)));
 
         Table iconTable = new Table();
         iconTable.setName("iconTable");
         Animator loadingAnimator = new Animator(0.2f, _assets.getAnimations().getLoadingAnimation());
         loadingAnimator.setName("loadingAnimator");
         loadingAnimator.setSize(16, 16);
-        Image unknownImage = new Image(_assets.getTextures().getUnknownIcon());
+        Image unknownImage = new Image(_assets.getTextures().get(Textures.Name.UNKNOWN_ICON));
         unknownImage.setName("unknownImage");
         unknownImage.setSize(5, 8);
         unknownImage.setPosition(5, 5);
-        Image bulletIcon = new Image(_assets.getTextures().getBulletIcon());
+        Image bulletIcon = new Image(_assets.getTextures().get(Textures.Name.BULLET_ICON));
         bulletIcon.setName("bulletIcon");
         bulletIcon.setSize(4, 4);
         bulletIcon.setPosition(6, 6);
@@ -326,11 +330,11 @@ public class RoomScene extends SceneAbstract {
         progressLabel.setName("progress");
         progressLabel.setVisible(false);
 
-        Image downloadImage = new Image(_assets.getTextures().getDownloadIconSmall());
+        Image downloadImage = new Image(_assets.getTextures().get(Textures.Name.DOWNLOAD_ICON));
         downloadImage.setName("download");
         downloadImage.setVisible(false);
 
-        Image kickImage = new Image(_assets.getTextures().getKickIcon());
+        Image kickImage = new Image(_assets.getTextures().get(Textures.Name.KICK_ICON));
         kickImage.setName("kickImage");
 
         playerTable.add(iconTable).size(16, 16).padRight(3);

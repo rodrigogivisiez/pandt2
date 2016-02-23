@@ -7,6 +7,7 @@ import com.potatoandtomato.common.GameCoordinator;
 import dalvik.system.DexClassLoader;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by SiongLeng on 25/12/2015.
@@ -19,7 +20,7 @@ public class JarLoader {
         this.context = context;
     }
 
-    public GameCoordinator load(GameCoordinator gameCoordinator) throws ClassNotFoundException {
+    public GameCoordinator load(GameCoordinator gameCoordinator) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         Class<?> loadedClass = null;
 
         loadedClass = loadClassDynamically(Terms.GAME_ENTRANCE,

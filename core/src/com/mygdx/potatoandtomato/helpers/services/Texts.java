@@ -47,6 +47,7 @@ public class Texts {
     public String startGame() { return "Start\nGame"; }
     public String invite() { return "Invite"; }
     public String displayName() { return "Display Name"; }
+    public String sounds() { return "Sounds"; }
     public String facebook() { return "Facebook"; }
     public String login() { return "Login"; }
     public String logout() { return "Logout"; }
@@ -132,7 +133,7 @@ public class Texts {
 
     public String notificationAbandon() { return "%s has abandoned the game!";}
     public String notificationConnected() { return "%s has connected to the game.";}
-    public String notificationDisconnected() { return "%s has disconnected from the game.";}
+    public String notificationDisconnected() { return "%s has disconnected from the game, please wait for them to reconnect.";}
 
     public String noConnection() { return "You have been disconnected from the server, please check your connection."; }
 
@@ -145,6 +146,9 @@ public class Texts {
     public String youAreKicked() { return "You are kicked from the room.";}
     public String userKicked() { return "%s has been kicked from the room.";}
 
+    public String ready() { return "Ready";}
+    public String failed() { return "Failed";}
+    public String remainingTime() { return "Remaining Time: ";}
 
     //push notifications part
     public String PUSHGameInvitationsTitle() { return "P&T Game Invitations"; }

@@ -16,6 +16,7 @@ import com.potatoandtomato.common.Threadings;
 import com.mygdx.potatoandtomato.helpers.utils.Zippings;
 import com.mygdx.potatoandtomato.models.Game;
 import com.potatoandtomato.common.Status;
+import net.lingala.zip4j.exception.ZipException;
 
 import java.io.File;
 
@@ -118,7 +119,13 @@ public class GameFileChecker implements Disposable {
                     if (_downloadAssetThread.isKilled() || _downloadJarThread.isKilled()) return;
                 }
 
-                Zippings.unZipIt(zipDownloadPath.file().getAbsolutePath(), _game.getFullBasePath());
+                try {
+                    Zippings.unZipIt(zipDownloadPath.file().getAbsolutePath(), _game.getFullBasePath());
+                } catch (ZipException e) {
+                    e.printStackTrace();
+                    _listener.onCallback(null, Status.FAILED);
+                    return;
+                }
 
                 _preferences.put(_game.getAbbr(), _game.getVersion());
                 zipDownloadPath.delete();

@@ -10,26 +10,14 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class JarUtils {
 
-    public static GameCoordinator fillGameEntrance(Class<?> loadedClass, GameCoordinator gameCoordinator){
+    public static GameCoordinator fillGameEntrance(Class<?> loadedClass, GameCoordinator gameCoordinator) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         GameEntrance instance = null;
-        try {
-            Class[] cArg = new Class[1]; //Our constructor has 1 arguments
-            cArg[0] = GameCoordinator.class;
-            instance = (GameEntrance) loadedClass.getDeclaredConstructor(cArg)
-                    .newInstance(gameCoordinator);
-            gameCoordinator.setGameEntrance(instance);
-            return gameCoordinator;
-
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        return null;
+        Class[] cArg = new Class[1]; //Our constructor has 1 arguments
+        cArg[0] = GameCoordinator.class;
+        instance = (GameEntrance) loadedClass.getDeclaredConstructor(cArg)
+                .newInstance(gameCoordinator);
+        gameCoordinator.setGameEntrance(instance);
+        return gameCoordinator;
     }
 
 

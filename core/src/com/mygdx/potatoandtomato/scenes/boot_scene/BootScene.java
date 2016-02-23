@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Fonts;
+import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.controls.BtnEggUpright;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
@@ -42,14 +43,14 @@ public class BootScene extends SceneAbstract {
     @Override
     public void populateRoot() {
         //Logo Image START////////////////////////////////////////////////////
-        Image logoImg = new Image(_assets.getTextures().getLogoNoWeapon());
-        Vector2 logoSize = Sizes.resize(260, _assets.getTextures().getLogoNoWeapon());
+        Image logoImg = new Image(_assets.getTextures().get(Textures.Name.LOGO_NO_WEAPON));
+        Vector2 logoSize = Sizes.resize(260, _assets.getTextures().get(Textures.Name.LOGO_NO_WEAPON));
         logoImg.setSize(logoSize.x * 2.5f, logoSize.y * 2.5f);
         logoImg.setPosition(Positions.centerX(logoSize.x * 2.5f), 250);
         logoImg.getColor().a = 0;
 
-        final Image tomatoWeaponImg = new Image(_assets.getTextures().getLogoTomatoWeapon());
-        final Image potatoWeaponImg = new Image(_assets.getTextures().getLogoPotatoWeapon());
+        final Image tomatoWeaponImg = new Image(_assets.getTextures().get(Textures.Name.LOGO_TOMATO_WEAPON));
+        final Image potatoWeaponImg = new Image(_assets.getTextures().get(Textures.Name.LOGO_POTATO_WEAPON));
         potatoWeaponImg.setOrigin(Align.bottomRight);
         tomatoWeaponImg.setPosition(230, 380);
         potatoWeaponImg.setPosition(150, 380);
@@ -102,7 +103,7 @@ public class BootScene extends SceneAbstract {
         _playButton = new BtnEggUpright(_assets, _services.getSounds(), 140);
         _playButton.setPosition(Positions.centerX(_playButton.getWidth()), 150);
         _playButton.getColor().a = 0;
-        _playButton.setContent(_assets.getTextures().getPlayIcon());
+        _playButton.setContent(_assets.getTextures().get(Textures.Name.PLAY_ICON));
         //Play Button END
 
         //Game Version START
@@ -116,7 +117,7 @@ public class BootScene extends SceneAbstract {
         //Info table
         ////////////////////////////////////////
         _infoTable = new Table();
-        _infoTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getWoodBgNormal()));
+        _infoTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WOOD_BG_NORMAL)));
         _infoTable.setSize(300, 230);
         _infoTable.setPosition(Positions.centerX(300), 40);
         _infoTable.getColor().a = 0;
@@ -149,7 +150,7 @@ public class BootScene extends SceneAbstract {
         ///////////////////////////////
         //Facebook title
         //////////////////////////////
-        Image facebookImage = new Image(_assets.getTextures().getFacebookIcon());
+        Image facebookImage = new Image(_assets.getTextures().get(Textures.Name.FACEBOOK_ICON));
         Label.LabelStyle titleStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.L, Fonts.FontStyle.BOLD), null);
         Label titleLabel = new Label(_texts.socialLogin(), titleStyle);
 
@@ -164,23 +165,23 @@ public class BootScene extends SceneAbstract {
         contentTable.setName("contentTable");
         contentTable.align(Align.topLeft);
         Table tomatoTable = new Table();
-        tomatoTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getTransWhite()));
+        tomatoTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_WHITE_BG)));
         tomatoTable.pad(5);
 
         Label.LabelStyle contentStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontColor.DARK_BROWN, Fonts.FontStyle.SEMI_BOLD), null);
         Label tomatoLabel = new Label(_texts.socialLoginTomato(), contentStyle);
         tomatoLabel.setWrap(true);
-        Image tomatoHiImage = new Image(_assets.getTextures().getTomatoHi());
+        Image tomatoHiImage = new Image(_assets.getTextures().get(Textures.Name.TOMATO_HI));
         tomatoTable.add(tomatoLabel).expandX().fillX().padLeft(10);
         tomatoTable.add(tomatoHiImage).height(40).width(50);
 
         Table potatoTable = new Table();
-        potatoTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getTransWhite()));
+        potatoTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_WHITE_BG)));
         potatoTable.pad(5);
 
         Label potatoLabel = new Label(_texts.socialLoginPotato(), contentStyle);
         potatoLabel.setWrap(true);
-        Image potatoHiImage = new Image(_assets.getTextures().getPotatoHi());
+        Image potatoHiImage = new Image(_assets.getTextures().get(Textures.Name.POTATO_HI));
         potatoTable.add(potatoHiImage).height(45).width(48).padRight(10);
         potatoTable.add(potatoLabel).expandX().fillX();
 
@@ -193,8 +194,8 @@ public class BootScene extends SceneAbstract {
         /////////////////////////////////
         Table choicesTable = new Table();
         choicesTable.setName("choicesTable");
-        _tickIcon = new Image(_assets.getTextures().getTick());
-        _crossIcon = new Image(_assets.getTextures().getCross());
+        _tickIcon = new Image(_assets.getTextures().get(Textures.Name.TICK_ICON));
+        _crossIcon = new Image(_assets.getTextures().get(Textures.Name.CROSS_ICON));
         choicesTable.add(_tickIcon).size(50, 50).padRight(20);
         choicesTable.add(_crossIcon).size(50, 50).padLeft(20);
 
@@ -242,15 +243,15 @@ public class BootScene extends SceneAbstract {
         contentTable.clear();
 
         Table loadingTable = new Table();
-        loadingTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getTransWhite()));
+        loadingTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_WHITE_BG)));
         loadingTable.pad(15);
 
         Label.LabelStyle contentStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontColor.DARK_BROWN, Fonts.FontStyle.SEMI_BOLD), null);
         Label loadingLabel = new Label(msg, contentStyle);
         loadingTable.add(loadingLabel);
 
-        Image loginMascotsImage = new Image(_assets.getTextures().getLoggingInMascots());
-        Vector2 sizes = Sizes.resize(100, _assets.getTextures().getLoggingInMascots());
+        Image loginMascotsImage = new Image(_assets.getTextures().get(Textures.Name.LOGGING_IN_MASCOTS));
+        Vector2 sizes = Sizes.resize(100, _assets.getTextures().get(Textures.Name.LOGGING_IN_MASCOTS));
         loginMascotsImage.setSize(sizes.x, sizes.y);
         loginMascotsImage.setPosition(-100, 60);
         loginMascotsImage.addAction(forever(sequence(moveBy(400, 0, 3f), moveTo(-100, 60))));
@@ -264,7 +265,7 @@ public class BootScene extends SceneAbstract {
         contentTable.clear();
 
         Table msgTable = new Table();
-        msgTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getTransWhite()));
+        msgTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_WHITE_BG)));
         msgTable.pad(15);
 
         Label.LabelStyle contentStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontColor.DARK_BROWN, Fonts.FontStyle.SEMI_BOLD), null);

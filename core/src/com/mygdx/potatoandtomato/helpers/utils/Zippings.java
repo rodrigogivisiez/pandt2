@@ -8,19 +8,16 @@ import java.io.File;
 
 public class Zippings
 {
-    public static boolean unZipIt(String source, String destination){
+    public static boolean unZipIt(String source, String destination) throws ZipException {
 
-        try {
-            if(new File(source).exists()){
-                ZipFile zipFile = new ZipFile(source);
-                if (zipFile.isEncrypted()) {
-                }
-                zipFile.extractAll(destination);
-                return true;
+        if(new File(source).exists()){
+            ZipFile zipFile = new ZipFile(source);
+            if (zipFile.isEncrypted()) {
             }
-        } catch (ZipException e) {
-            e.printStackTrace();
+            zipFile.extractAll(destination);
+            return true;
         }
+
         return false;
     }
 }

@@ -3,7 +3,7 @@ package com.mygdx.potatoandtomato.helpers.services;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Array;
-import com.potatoandtomato.common.ISounds;
+import com.potatoandtomato.common.*;
 import com.mygdx.potatoandtomato.statics.Global;
 
 /**
@@ -20,12 +20,23 @@ public class Sounds implements ISounds {
     private Music _themeMusic;
     private float _volume;
     private Array<Music> _musicList;
+    private Broadcaster _broadcaster;
 
-    public Sounds(Assets assets) {
+    public Sounds(Assets assets, Broadcaster broadcaster) {
         this._assets = assets;
+        this._broadcaster = broadcaster;
         _musicList = new Array<Music>();
         setVolume(1);
+
+        _broadcaster.subscribe(BroadcastEvent.SOUNDS_CHANGED, new BroadcastListener() {
+            @Override
+            public void onCallback(Object obj, Status st) {
+                setVolume(1);
+            }
+        });
+
     }
+
 
     public void playThemeMusic() {
         if(_themeMusic == null){
@@ -77,18 +88,30 @@ public class Sounds implements ISounds {
     }
 
     @Override
-    public void playSound(Sound sound) {
-        sound.play(_volume);
+    public void playSound(final Sound sound) {
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                sound.play(_volume);
+            }
+        });
+
     }
 
     @Override
-    public void playMusic(Music music) {
+    public void playMusic(final Music music) {
         if(!_musicList.contains(music, true)) {
             System.out.println("Please add the music using addMusic() method first before playing.");
             return;
         }
         music.setVolume(_volume);
-        music.play();
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                music.play();
+            }
+        });
+
     }
 
     @Override

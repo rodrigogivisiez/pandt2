@@ -5,6 +5,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Disposable;
 import com.potatoandtomato.common.GameCoordinator;
+import com.potatoandtomato.games.statics.Global;
 
 /**
  * Created by SiongLeng on 18/1/2016.
@@ -25,42 +26,44 @@ public class Sounds implements Disposable {
         this._assets = _assets;
         this._coordinator = coordinator;
 
-        _themeMusic = _assets.getThemeMusic();
+        _themeMusic = _assets.getSounds().getThemeMusic();
         _themeMusic.setLooping(true);
     }
 
     public void playTheme(){
-        _coordinator.getSoundManager().addMusic(_themeMusic);
-        _coordinator.getSoundManager().playMusic(_themeMusic);
+        if(!Global.DEBUG){
+            _coordinator.getSoundManager().addMusic(_themeMusic);
+            _coordinator.getSoundManager().playMusic(_themeMusic);
+        }
     }
 
     public void stopTheme(){
-        _assets.getThemeMusic().stop();
+        _assets.getSounds().getThemeMusic().stop();
     }
 
     public void playSounds(Name name){
         Sound sound = null;
         switch (name){
             case START_GAME:
-                sound = _assets.getStartGameSound();
+                sound = _assets.getSounds().getStartGameSound();
                 break;
             case OPEN_SLIDE:
-                sound = _assets.getOpenSlideSound();
+                sound = _assets.getSounds().getOpenSlideSound();
                 break;
             case FLIP_CHESS:
-                sound = _assets.getFlipChessSound();
+                sound = _assets.getSounds().getFlipChessSound();
                 break;
             case MOVE_CHESS:
-                sound = _assets.getMoveSound();
+                sound = _assets.getSounds().getMoveSound();
                 break;
             case FIGHT_CHESS:
-                sound = _assets.getFightChessSound();
+                sound = _assets.getSounds().getFightChessSound();
                 break;
             case WIN:
-                sound = _assets.getWinSound();
+                sound = _assets.getSounds().getWinSound();
                 break;
             case LOSE:
-                sound = _assets.getLossSound();
+                sound = _assets.getSounds().getLossSound();
                 break;
         }
 

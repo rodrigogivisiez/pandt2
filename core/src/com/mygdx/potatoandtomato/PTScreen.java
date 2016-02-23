@@ -16,6 +16,7 @@ import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
 import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.helpers.services.Sounds;
@@ -81,11 +82,11 @@ public class PTScreen implements Screen {
 
     //call this function to change scene
     public void toScene(final SceneEnum sceneEnum, final Object... objs){
+        final LogicAbstract logic = newSceneLogic(sceneEnum, objs);
+        logic.onInit();
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                final LogicAbstract logic = newSceneLogic(sceneEnum, objs);
-                logic.onInit();
                 if(_logicStacks.size() == 0){
                     logic.onShow();
                     _stage.addActor(logic.getScene().getRoot());
@@ -256,24 +257,24 @@ public class PTScreen implements Screen {
         _stage = new Stage(viewPort, _ptGame.getSpriteBatch());
 
         //Ground Texture START////////////////////////////////////////////
-        _greenGroundImg = new Image(_assets.getTextures().getGreenGround());
-        _autumnGroundImg = new Image(_assets.getTextures().getAutumnGround());
+        _greenGroundImg = new Image(_assets.getTextures().get(Textures.Name.GREEN_GROUND));
+        _autumnGroundImg = new Image(_assets.getTextures().get(Textures.Name.AUTUMN_GROUND));
         _autumnGroundImg.getColor().a = 0;
         _autumnGroundImg.addAction(sequence(delay(0.4f), fadeIn(0.5f)));
         //Ground Texture END//////////////////////////////////////////////
 
         //Background Texture START
-        _bgBlueImg = new Image(_assets.getTextures().getBlueBg());
+        _bgBlueImg = new Image(_assets.getTextures().get(Textures.Name.BLUE_BG));
         _bgBlueImg.setSize(Positions.getWidth(), Positions.getHeight());
 
-        _bgAutumnImg = new Image(_assets.getTextures().getAutumnBg());
+        _bgAutumnImg = new Image(_assets.getTextures().get(Textures.Name.AUTUMN_BG));
         _bgAutumnImg.setSize(Positions.getWidth(), Positions.getHeight());
         _bgAutumnImg.getColor().a = 0;
 
-        _sunriseImg = new Image(_assets.getTextures().getSunrise());
+        _sunriseImg = new Image(_assets.getTextures().get(Textures.Name.SUNRISE));
         _sunriseImg.getColor().a = 0;
 
-        _sunrayImg = new Image(_assets.getTextures().getSunray());
+        _sunrayImg = new Image(_assets.getTextures().get(Textures.Name.SUNRAY));
         _sunrayImg.setPosition(Positions.centerX(1200), -470);
         _sunrayImg.setOrigin(599f, 601f);
         _sunrayImg.setSize(1200, 1200);

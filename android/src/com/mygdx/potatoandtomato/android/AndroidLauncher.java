@@ -3,6 +3,8 @@ package com.mygdx.potatoandtomato.android;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import android.view.View;
@@ -16,6 +18,7 @@ import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.*;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 
 public class AndroidLauncher extends AndroidApplication {
 
@@ -34,6 +37,7 @@ public class AndroidLauncher extends AndroidApplication {
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		setBuildNumber();
 		setContentView(R.layout.main_activity);
 		RelativeLayout lg=(RelativeLayout)findViewById(R.id.root);
 		_this = this;
@@ -56,6 +60,17 @@ public class AndroidLauncher extends AndroidApplication {
 		subscribeLoadGameRequest();
 		roomAliveRelated();
 		subscribeOrientationChanged();
+	}
+
+	private void setBuildNumber(){
+		PackageInfo pInfo = null;
+		try {
+			pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+			Global.CLIENT_VERSION =  pInfo.versionCode;
+		} catch (PackageManager.NameNotFoundException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	private void roomAliveRelated(){
@@ -87,15 +102,33 @@ public class AndroidLauncher extends AndroidApplication {
 		_broadcaster.subscribe(BroadcastEvent.LOAD_GAME_REQUEST, new BroadcastListener<GameCoordinator>() {
 			@Override
 			public void onCallback(GameCoordinator obj, Status st) {
+				boolean errored = false;
 				JarLoader loader = new JarLoader(_this);
 				try {
 					obj = loader.load(obj);
-					_broadcaster.broadcast(BroadcastEvent.LOAD_GAME_RESPONSE, obj, Status.SUCCESS);
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
-					_broadcaster.broadcast(BroadcastEvent.LOAD_GAME_RESPONSE, null, Status.FAILED);
+					errored = true;
 				}catch (NullPointerException e){
 					e.printStackTrace();
+					errored = true;
+				} catch (NoSuchMethodException e) {
+					e.printStackTrace();
+					errored = true;
+				} catch (InstantiationException e) {
+					e.printStackTrace();
+					errored = true;
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+					errored = true;
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+					errored = true;
+				}
+				if(!errored){
+					_broadcaster.broadcast(BroadcastEvent.LOAD_GAME_RESPONSE, obj, Status.SUCCESS);
+				}
+				else{
 					_broadcaster.broadcast(BroadcastEvent.LOAD_GAME_RESPONSE, null, Status.FAILED);
 				}
 

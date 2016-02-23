@@ -18,7 +18,7 @@ public class DesktopLauncher {
 		settings.maxHeight = 2048;
 		settings.filterMag = Texture.TextureFilter.Linear;
 		settings.filterMin = Texture.TextureFilter.Linear;
-		//TexturePacker.process(settings, "../../images", "../../android/assets", "pack");
+		if(arg.length > 0 && arg[0].equals("pack")) TexturePacker.process(settings, "../../images", "../../android/assets", "pack");
 
 		CoveredChessGame coveredChessGame = new CoveredChessGame("covered_chess");
 		if(arg.length > 0 && arg[0].equals("continue")) coveredChessGame.isContinue = true;

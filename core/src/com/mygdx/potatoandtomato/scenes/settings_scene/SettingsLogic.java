@@ -11,8 +11,11 @@ import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.absintflis.socials.FacebookListener;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.helpers.utils.Logs;
+import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
+import com.mygdx.potatoandtomato.statics.Global;
+import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.Status;
 
 /**
@@ -50,6 +53,14 @@ public class SettingsLogic extends LogicAbstract {
             }
         });
 
+        _scene.getSoundsEnabledImage().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                toggleSounds();
+            }
+        });
+
     }
 
     public void facebookRequest(){
@@ -78,6 +89,12 @@ public class SettingsLogic extends LogicAbstract {
         }
     }
 
+    public void toggleSounds(){
+        Global.ENABLE_SOUND = !Global.ENABLE_SOUND;
+        _services.getPreferences().put(Terms.SOUNDS_DISABLED, Global.ENABLE_SOUND ? "false" : "true");
+        _scene.changeSoundEnabledImage();
+        _services.getBroadcaster().broadcast(BroadcastEvent.SOUNDS_CHANGED, Global.ENABLE_SOUND);
+    }
 
     public void updateProfile(){
         final String newName = _scene.getDisplayNameTextField().getText().trim();

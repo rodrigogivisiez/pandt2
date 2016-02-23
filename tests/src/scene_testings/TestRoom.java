@@ -174,13 +174,17 @@ public class TestRoom extends TestAbstract {
         verify(gamingKit, times(1)).updateRoomMates(eq(UpdateRoomMatesCode.START_GAME), anyString());
 
         logic.receivedUpdateRoomMates(UpdateRoomMatesCode.START_GAME, "", "");
-
         logic.stopGameStartCountDown(_room.getRoomUsers().get("another").getProfile());
         Threadings.sleep(1600);
         verify(logic, times(0)).gameStarted();
 
         logic.receivedUpdateRoomMates(UpdateRoomMatesCode.START_GAME, "", "");
         Threadings.sleep(5000);
+        verify(logic, times(0)).gameStarted();
+        verify(logic, times(1)).sendUpdateRoomMates(eq(UpdateRoomMatesCode.GAME_STARTED), anyString());
+
+        logic.receivedUpdateRoomMates(UpdateRoomMatesCode.GAME_STARTED, "", "");
+        Threadings.sleep(1000);
         verify(logic, times(1)).gameStarted();
 
     }
@@ -206,7 +210,7 @@ public class TestRoom extends TestAbstract {
         _room.getGame().setTeamMinPlayers("1");
         _room.getGame().setTeamCount("2");
 
-        logic.startGame();
+        logic.startGameCountDown();
         Threadings.sleep(7100);
 
         Assert.assertEquals(true, _room.isPlaying());
