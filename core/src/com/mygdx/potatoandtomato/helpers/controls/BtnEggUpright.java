@@ -10,9 +10,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
-import com.mygdx.potatoandtomato.helpers.services.Sounds;
+import com.mygdx.potatoandtomato.helpers.services.SoundsWrapper;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 import com.potatoandtomato.common.Threadings;
 
@@ -27,15 +28,15 @@ public class BtnEggUpright extends Table {
     Assets _assets;
     Vector2 _size;
     Image _contentImg;
-    Sounds _sounds;
+    SoundsWrapper _soundsWrapper;
 
-    public BtnEggUpright(Assets assets, Sounds sounds){
-        this(assets, sounds, 120);
+    public BtnEggUpright(Assets assets, SoundsWrapper soundsWrapper){
+        this(assets, soundsWrapper, 120);
     }
 
-    public BtnEggUpright(Assets assets, Sounds sounds, int width) {
+    public BtnEggUpright(Assets assets, SoundsWrapper soundsWrapper, int width) {
         this._assets = assets;
-        this._sounds = sounds;
+        this._soundsWrapper = soundsWrapper;
         this._button = new Button(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
         _button.setFillParent(true);
         this.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.UPRIGHT_EGG_BUTTON)));
@@ -46,7 +47,7 @@ public class BtnEggUpright extends Table {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 animate();
-                _sounds.playSoundEffect(Sounds.Name.BUTTON_CLICKED);
+                _soundsWrapper.playSoundEffect(Sounds.Name.BUTTON_CLICKED);
                 return super.touchDown(event, x, y, pointer, button);
             }
         });

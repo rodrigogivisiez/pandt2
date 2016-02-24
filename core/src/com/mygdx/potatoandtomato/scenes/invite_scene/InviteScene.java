@@ -1,6 +1,5 @@
 package com.mygdx.potatoandtomato.scenes.invite_scene;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -75,7 +74,7 @@ public class InviteScene extends SceneAbstract {
         invitesTable.padBottom(10);
 
 
-        _inviteButton = new BtnEggDownward(_assets, _services.getSounds());
+        _inviteButton = new BtnEggDownward(_assets, _services.getSoundsWrapper());
         _inviteButton.setText("Invite");
 
 

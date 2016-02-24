@@ -13,5 +13,6 @@ public class Texts {
     public String youLose() { return "You Lose"; }
     public String you() { return "You"; }
     public String enemy() { return "Enemy"; }
+    public String vs() { return "vs"; }
 
 }

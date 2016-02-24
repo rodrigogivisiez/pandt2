@@ -1,12 +1,10 @@
 package com.mygdx.potatoandtomato.scenes.game_list_scene;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.SnapshotArray;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Fonts;
@@ -96,14 +94,14 @@ public class GameListScene extends SceneAbstract {
         //Game list Table END
 
         //Buttons START
-        _newGameButton = new BtnEggDownward(_assets, _services.getSounds());
+        _newGameButton = new BtnEggDownward(_assets, _services.getSoundsWrapper());
         _newGameButton.setText(_texts.newGame());
 
-        _joinGameButton = new BtnEggDownward(_assets, _services.getSounds(), _services.getShaders());
+        _joinGameButton = new BtnEggDownward(_assets, _services.getSoundsWrapper(), _services.getShaders());
         _joinGameButton.setText(_texts.joinGame());
         _joinGameButton.setEnabled(false);
 
-        _continueGameButton = new BtnEggDownward(_assets, _services.getSounds(), _services.getShaders());
+        _continueGameButton = new BtnEggDownward(_assets, _services.getSoundsWrapper(), _services.getShaders());
         _continueGameButton.setText(_texts.continueLastGame());
         _continueGameButton.setEnabled(false);
 

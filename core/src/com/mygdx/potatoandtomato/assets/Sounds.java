@@ -1,31 +1,52 @@
 package com.mygdx.potatoandtomato.assets;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
 import com.mygdx.potatoandtomato.absintflis.assets.IAssetFragment;
+import com.potatoandtomato.common.GameCoordinator;
+
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.HashMap;
 
 /**
- * Created by SiongLeng on 9/2/2016.
+ * Created by SiongLeng on 19/2/2016.
  */
 public class Sounds implements IAssetFragment {
 
     private AssetManager _manager;
 
+    FileHandle _soundsDirectory;
+    private HashMap<String, Sound> _soundsMap;
+    private HashMap<String, Music> _musicsMap;
+
     public Sounds(AssetManager _manager) {
         this._manager = _manager;
+        _soundsMap = new HashMap<String, Sound>();
+        _musicsMap = new HashMap<String, Music>();
+        _soundsDirectory = Gdx.files.internal("sounds");
     }
 
     @Override
     public void load() {
-        _manager.load("sounds/theme.mp3", Music.class);
-        _manager.load("sounds/click_water.ogg", Sound.class);
-        _manager.load("sounds/together_cheer.ogg", Sound.class);
-        _manager.load("sounds/open_slide.ogg", Sound.class);
-        _manager.load("sounds/game_created.ogg", Sound.class);
-        _manager.load("sounds/count_down.ogg", Sound.class);
-        _manager.load("sounds/send_message.ogg", Sound.class);
-        _manager.load("sounds/mic.ogg", Sound.class);
+
+        for(FileHandle soundFile : _soundsDirectory.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File file, String s) {
+                return s.contains(".ogg") || s.contains(".mp3");
+            }
+        })){
+            if(soundFile.name().contains(".mp3")){
+                _manager.load("sounds/" + soundFile.name(), Music.class);
+            }
+            else{
+                _manager.load("sounds/" + soundFile.name(), Sound.class);
+            }
+
+        }
     }
 
     @Override
@@ -35,51 +56,32 @@ public class Sounds implements IAssetFragment {
 
     @Override
     public void onLoaded() {
-        themeMusic = _manager.get("sounds/theme.mp3", Music.class);
-        clickWaterSound = _manager.get("sounds/click_water.ogg", Sound.class);
-        togetherCheersSound = _manager.get("sounds/together_cheer.ogg", Sound.class);
-        openSlideSound = _manager.get("sounds/open_slide.ogg", Sound.class);
-        gameCreatedSound = _manager.get("sounds/game_created.ogg", Sound.class);
-        countDownSound = _manager.get("sounds/count_down.ogg", Sound.class);
-        messagingSound = _manager.get("sounds/send_message.ogg", Sound.class);
-        micSound = _manager.get("sounds/mic.ogg", Sound.class);
+
+        for(FileHandle soundFile : _soundsDirectory.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File file, String s) {
+                return s.contains(".ogg") || s.contains(".mp3");
+            }
+        })){
+            if(soundFile.name().contains(".mp3")){
+                _musicsMap.put(soundFile.nameWithoutExtension(), _manager.get("sounds/" + soundFile.name(), Music.class));
+            }
+            else{
+                _soundsMap.put(soundFile.nameWithoutExtension(), _manager.get("sounds/" + soundFile.name(), Sound.class));
+            }
+
+        }
     }
 
-    private Music themeMusic;
-    private Sound clickWaterSound,
-            togetherCheersSound, openSlideSound,
-            gameCreatedSound, countDownSound, messagingSound, micSound ;
-
-    public Sound getMicSound() {
-        return micSound;
+    public Sound getSound(Name name){
+        return _soundsMap.get(name.name());
     }
 
-    public Sound getMessagingSound() {
-        return messagingSound;
-    }
+    public Music getMusic(Name name) { return _musicsMap.get(name.name()); }
 
-    public Sound getCountDownSound() {
-        return countDownSound;
+    public enum Name{
+        BUTTON_CLICKED, TOGETHER_CHEERS,
+        SLIDING, GAME_CREATED, MIC, COUNT_DOWN, MESSAGING,
+        THEME
     }
-
-    public Sound getGameCreatedSound() {
-        return gameCreatedSound;
-    }
-
-    public Sound getOpenSlideSound() {
-        return openSlideSound;
-    }
-
-    public Sound getTogetherCheersSound() {
-        return togetherCheersSound;
-    }
-
-    public Sound getClickWaterSound() {
-        return clickWaterSound;
-    }
-
-    public Music getThemeMusic() {
-        return themeMusic;
-    }
-
 }

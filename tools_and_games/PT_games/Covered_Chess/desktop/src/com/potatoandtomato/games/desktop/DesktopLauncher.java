@@ -5,6 +5,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import com.potatoandtomato.games.CoveredChessGame;
+import com.potatoandtomato.games.statics.Global;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
@@ -22,6 +23,10 @@ public class DesktopLauncher {
 
 		CoveredChessGame coveredChessGame = new CoveredChessGame("covered_chess");
 		if(arg.length > 0 && arg[0].equals("continue")) coveredChessGame.isContinue = true;
+
+		if(arg.length > 0 && (arg[0].equals("debug") || arg[0].equals("pack"))) Global.DEBUG = true;
+
+		if(arg.length > 1 && (arg[1].equals("noentrance"))) Global.NO_ENTRANCE = true;
 
 		new LwjglApplication(coveredChessGame, config);
 

@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.potatoandtomato.games.assets.Textures;
 import com.potatoandtomato.games.controls.CloneableTable;
 import com.potatoandtomato.games.controls.DummyButton;
 import com.potatoandtomato.games.enums.ChessType;
@@ -43,7 +44,7 @@ public class ChessActor extends Table {
         _coverChess = new Table();
 
         _coverChess.setTransform(true);
-        _coverChess.setBackground(new TextureRegionDrawable(_assets.getTextures().getUnknownPawn()));
+        _coverChess.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.UNKNOWN_CHESS)));
         new DummyButton(_coverChess, _assets);
 
         _animalChess = new CloneableTable();
@@ -53,7 +54,7 @@ public class ChessActor extends Table {
 
         setAnimal(ChessType.UNKNOWN);
 
-        _glowChess = new Image(_assets.getTextures().getGlowChess());
+        _glowChess = new Image(_assets.getTextures().get(Textures.Name.GLOW_CHESS));
         _glowChess.setVisible(false);
 
         this.addActor(_glowChess);
@@ -125,10 +126,10 @@ public class ChessActor extends Table {
             String chessTypeString = chessType.name();
 
             TextureRegion animalChessRegion;
-            if(selected) animalChessRegion = chessTypeString.startsWith("RED") ? _assets.getTextures().getRedPawnSelected() : _assets.getTextures().getYellowPawnSelected();
-            else animalChessRegion = chessTypeString.startsWith("RED") ? _assets.getTextures().getRedPawn() : _assets.getTextures().getYellowPawn();
+            if(selected) animalChessRegion = chessTypeString.startsWith("RED") ? _assets.getTextures().get(Textures.Name.RED_CHESS_SELECTED) : _assets.getTextures().get(Textures.Name.YELLOW_CHESS_SELECTED);
+            else animalChessRegion = chessTypeString.startsWith("RED") ? _assets.getTextures().get(Textures.Name.RED_CHESS) : _assets.getTextures().get(Textures.Name.YELLOW_CHESS);
 
-            TextureRegion coverChessRegion = selected ? _assets.getTextures().getUnknownPawnSelected() : _assets.getTextures().getUnknownPawn();
+            TextureRegion coverChessRegion = selected ? _assets.getTextures().get(Textures.Name.UNKNOWN_CHESS_SELECTED) : _assets.getTextures().get(Textures.Name.UNKNOWN_CHESS);
 
             _animalChess.setBackground(new TextureRegionDrawable(animalChessRegion));
             _coverChess.setBackground(new TextureRegionDrawable(coverChessRegion));
@@ -141,7 +142,7 @@ public class ChessActor extends Table {
         }
 
         if(chessType == ChessType.NONE){
-            _animalChess.setBackground(new TextureRegionDrawable(_assets.getTextures().getEmpty()));
+            _animalChess.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
         }
     }
 

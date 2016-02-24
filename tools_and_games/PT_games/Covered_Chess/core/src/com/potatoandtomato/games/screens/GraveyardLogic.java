@@ -3,10 +3,10 @@ package com.potatoandtomato.games.screens;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.potatoandtomato.common.GameCoordinator;
-import com.potatoandtomato.games.enums.ChessColor;
+import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.enums.ChessType;
 import com.potatoandtomato.games.helpers.Assets;
-import com.potatoandtomato.games.helpers.Sounds;
+import com.potatoandtomato.games.helpers.SoundsWrapper;
 import com.potatoandtomato.games.helpers.Texts;
 import com.potatoandtomato.games.models.GraveModel;
 
@@ -17,12 +17,12 @@ public class GraveyardLogic {
 
     private GraveModel _graveModel;
     private GraveyardActor _graveyardActor;
-    private Sounds _sounds;
+    private SoundsWrapper _soundsWrapper;
     private boolean _showed;
 
-    public GraveyardLogic(GraveModel graveModel, GameCoordinator gameCoordinator, Texts texts, Assets assets, Sounds sounds) {
+    public GraveyardLogic(GraveModel graveModel, GameCoordinator gameCoordinator, Texts texts, Assets assets, SoundsWrapper soundsWrapper) {
         this._graveModel = graveModel;
-        this._sounds = sounds;
+        this._soundsWrapper = soundsWrapper;
         this._graveyardActor = new GraveyardActor(gameCoordinator, texts, assets);
         setListener();
     }
@@ -70,7 +70,7 @@ public class GraveyardLogic {
                     _graveyardActor.expand();
                 }
                 _showed = !_showed;
-                _sounds.playSounds(Sounds.Name.OPEN_SLIDE);
+                _soundsWrapper.playSounds(Sounds.Name.OPEN_SLIDE);
             }
         });
     }

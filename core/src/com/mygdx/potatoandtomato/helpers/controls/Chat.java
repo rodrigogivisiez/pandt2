@@ -21,10 +21,11 @@ import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
 import com.mygdx.potatoandtomato.absintflis.uploader.UploadListener;
 import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.assets.Patches;
+import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.services.Recorder;
-import com.mygdx.potatoandtomato.helpers.services.Sounds;
+import com.mygdx.potatoandtomato.helpers.services.SoundsWrapper;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
 import com.mygdx.potatoandtomato.helpers.utils.Colors;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
@@ -35,7 +36,6 @@ import com.mygdx.potatoandtomato.models.NativeLibgdxTextInfo;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Room;
 import com.potatoandtomato.common.*;
-import javafx.geometry.Pos;
 
 import java.util.HashMap;
 
@@ -76,7 +76,7 @@ public class Chat {
     private String _recordsPath;
     private String _userId;
     private boolean _fading;
-    private Sounds _sounds;
+    private SoundsWrapper _soundsWrapper;
     private Broadcaster _broadcaster;
 
     public void setRoom(Room _room) {
@@ -89,11 +89,11 @@ public class Chat {
     }
 
     public Chat(GamingKit gamingKit, Texts texts, Assets assets, SpriteBatch batch,
-                IPTGame game, Recorder recorder, IUploader uploader, Sounds sounds,
+                IPTGame game, Recorder recorder, IUploader uploader, SoundsWrapper soundsWrapper,
                 Broadcaster broadcaster) {
         this._broadcaster = broadcaster;
         this._gamingKit = gamingKit;
-        this._sounds = sounds;
+        this._soundsWrapper = soundsWrapper;
         this._texts = texts;
         this._assets = assets;
         this._batch = batch;
@@ -506,7 +506,7 @@ public class Chat {
         Threadings.delay(1000, new Runnable() {
             @Override
             public void run() {
-                _sounds.setVolume(1);
+                _soundsWrapper.setVolume(1);
             }
         });
 
@@ -515,7 +515,7 @@ public class Chat {
     }
 
     private void micTouchDown(){
-        _sounds.playSoundEffect(Sounds.Name.MIC);
+        _soundsWrapper.playSoundEffect(Sounds.Name.MIC);
         _bigMicTable.addAction(sequence(fadeOut(0f), forever(sequence(fadeOut(0.6f), fadeIn(0.6f)))));
         _bigMicTable.setVisible(true);
         final String fileName =  System.currentTimeMillis() + "_" + MathUtils.random(0, 10000) + ".bin";
@@ -524,7 +524,7 @@ public class Chat {
         Threadings.delay(500, new Runnable() {
             @Override
             public void run() {
-                _sounds.setVolume(0);
+                _soundsWrapper.setVolume(0);
                 _recorder.recordToFile(file, new RecordListener(){
                     @Override
                     public void onFinishedRecord(FileHandle resultFile, Status status) {
@@ -554,11 +554,11 @@ public class Chat {
     }
 
     public void playVoiceMessage(FileHandle fileHandle){
-        _sounds.setVolume(0);
+        _soundsWrapper.setVolume(0);
         _recorder.playBack(fileHandle, new Runnable() {
             @Override
             public void run() {
-                _sounds.setVolume(1);
+                _soundsWrapper.setVolume(1);
             }
         });
     }
@@ -603,7 +603,7 @@ public class Chat {
                     playVoiceMessage(Gdx.files.local(_recordsPath + msg.getMessage()));
                 }
 
-                _sounds.playSoundEffect(Sounds.Name.MESSAGING);
+                _soundsWrapper.playSoundEffect(Sounds.Name.MESSAGING);
 
                 if(_mode == 1){
                     Table chatTable = new Table();

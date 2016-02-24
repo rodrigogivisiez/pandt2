@@ -7,6 +7,5 @@ public interface IAssetFragment {
 
     void load();
     void onLoaded();
-    void dispose();
 
 }

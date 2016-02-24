@@ -17,6 +17,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.potatoandtomato.common.*;
 import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.games.assets.Fonts;
+import com.potatoandtomato.games.assets.Textures;
 import com.potatoandtomato.games.controls.AnimateLabel;
 import com.potatoandtomato.games.controls.DummyButton;
 import com.potatoandtomato.games.enums.ChessType;
@@ -44,7 +46,8 @@ public class BoardScreen extends GameScreen {
     private Assets _assets;
     private boolean _paused;
 
-    public BoardScreen(GameCoordinator gameCoordinator, Services services){
+    public BoardScreen(GameCoordinator gameCoordinator, Services services,
+                       SplashActor splashActor, GraveyardActor graveyardActor){
         super(gameCoordinator);
         this._services = services;
         this._texts = _services.getTexts();
@@ -55,23 +58,24 @@ public class BoardScreen extends GameScreen {
 
         _root = new Table();
         _root.setFillParent(true);
-        _root.setBackground(new TextureRegionDrawable(_assets.getTextures().getBackground()));
+        _root.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.GAME_BG)));
         _root.align(Align.top);
 
         _overlayTable = new Table();
         _overlayTable.setFillParent(true);
-        _overlayTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getBlackBgTrans()));
+        _overlayTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
         _overlayTable.setVisible(false);
 
+        splashActor.populate();
+        splashActor.setFillParent(true);
+
         _stage.addActor(_root);
+        _stage.addActor(graveyardActor);
         _stage.addActor(_overlayTable);
+        _stage.addActor(splashActor);
 
         getCoordinator().addInputProcessor(_stage);
 
-    }
-
-    public void setGraveActor(GraveyardActor graveActor){
-        _stage.addActor(graveActor);
     }
 
 
@@ -87,64 +91,6 @@ public class BoardScreen extends GameScreen {
             }
             _chessesTable.row();
         }
-    }
-
-
-    public void populatePreStartTable(float duration, String yellowName, String redName, final Runnable onFinish){
-        _preStartTable = new Table();
-        _preStartTable.setFillParent(true);
-
-        AnimateLabel gameStartLabel = new AnimateLabel(_texts.gameStart(), _assets.getFonts().getOrangePizza5BlackS());
-        gameStartLabel.setTransform(true);
-        gameStartLabel.setOrigin(Align.center);
-        gameStartLabel.getColor().a = 0;
-        gameStartLabel.addAction(sequence(delay(0.5f), fadeIn(0.3f)));
-        _preStartTable.add(gameStartLabel).expand().fill().padBottom(100);
-
-        Label.LabelStyle nameLabelStyle = new Label.LabelStyle();
-        nameLabelStyle.font = _assets.getFonts().getWhiteBold2BlackS();
-
-        Table _yellowSideTable = new Table();
-        _yellowSideTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getYellowSide()));
-        _yellowSideTable.setSize(130, 110);
-        _yellowSideTable.setPosition(-130, Positions.centerY(getCoordinator().getGameHeight(), 110));
-        _yellowSideTable.addAction(moveBy(140, 0, 0.3f));
-
-        Label yellowNameLabel = new Label(yellowName, nameLabelStyle);
-        yellowNameLabel.setAlignment(Align.center);
-        _yellowSideTable.add(yellowNameLabel).expandX().fillX().padTop(60);
-
-        _preStartTable.addActor(_yellowSideTable);
-
-        Table _redSideTable = new Table();
-        _redSideTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getRedSide()));
-        _redSideTable.setSize(130, 110);
-        _redSideTable.setPosition(getCoordinator().getGameWidth(), Positions.centerY(getCoordinator().getGameHeight(), 110));
-        _redSideTable.addAction(sequence(moveBy(-140, 0, 0.3f)));
-
-        Label redNameLabel = new Label(redName, nameLabelStyle);
-        redNameLabel.setAlignment(Align.center);
-        _redSideTable.add(redNameLabel).expandX().fillX().padTop(60);
-
-        _preStartTable.addActor(_redSideTable);
-
-        Image vsImage = new Image(_assets.getTextures().getVs());
-        vsImage.setSize(60, 62);
-        vsImage.setPosition(Positions.centerX(getCoordinator().getGameWidth(), 60), Positions.centerY(getCoordinator().getGameHeight(), 62));
-
-        _preStartTable.addActor(vsImage);
-
-
-        _preStartTable.addAction(sequence(delay(duration), fadeOut(0.3f), new Action() {
-            @Override
-            public boolean act(float delta) {
-                _preStartTable.remove();
-                onFinish.run();
-                return true;
-            }
-        }));
-
-        _stage.addActor(_preStartTable);
     }
 
     public void setCanTouchChessTable(boolean canTouch){
@@ -167,11 +113,12 @@ public class BoardScreen extends GameScreen {
 
     public void showEndGameTable(final boolean won){
         _endGameTable.getColor().a = 0;
-        _endGameTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getBlackBg()));
+        _endGameTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.BLACK_BG)));
         _endGameTable.setSize(getCoordinator().getGameWidth(), 150);
         _endGameTable.setPosition(0, Positions.centerY(getCoordinator().getGameHeight(), 150));
         AnimateLabel label = new AnimateLabel(won ? _texts.youWin() : _texts.youLose(),
-                                    won ? _assets.getFonts().getOrangePizza5BlackS() : _assets.getFonts().getGreyPizza5BlackS());
+                                                _assets.getFonts().get(Fonts.FontName.PIZZA, Fonts.FontSize.XXXL, Fonts.FontColor.BLACK,
+                                                        Fonts.FontBorderColor.WHITE));
         _endGameTable.add(label).expand().fill().center();
 
         _endGameTable.addAction(sequence(fadeOut(0f), parallel(fadeIn(0.3f))));

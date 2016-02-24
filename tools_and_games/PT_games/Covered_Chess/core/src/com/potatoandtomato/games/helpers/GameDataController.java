@@ -27,7 +27,7 @@ public class GameDataController {
             Random random = new Random();
             firstTurnIndex = random.nextBoolean() ? 0 : 1;
         }
-       return firstTurnIndex;
+        return firstTurnIndex;
     }
 
     public ArrayList<ChessModel> getGameData(){

@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.utils.Align;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.games.absint.ActionListener;
+import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
 import com.potatoandtomato.games.helpers.*;
@@ -35,21 +36,21 @@ public class TerrainLogic {
     private GameCoordinator _coordinator;
     private BattleReference _battleRefs;
     private GameDataController _gameDataController;
-    private Sounds _sounds;
+    private SoundsWrapper _soundsWrapper;
 
     public TerrainLogic(TerrainModel _terrainModel, Assets _assets,
                         GameCoordinator _coordinator, ChessModel chessModel,
-                        Sounds sounds, GameDataController gameDataController,
+                        SoundsWrapper soundsWrapper, GameDataController gameDataController,
                         BattleReference battleReference) {
         this._me = this;
         this._terrainModel = _terrainModel;
         this._assets = _assets;
         this._coordinator = _coordinator;
-        this._sounds = sounds;
+        this._soundsWrapper = soundsWrapper;
         this._gameDataController = gameDataController;
         this._battleRefs = battleReference;
 
-        chessLogic = new ChessLogic(chessModel, _assets, sounds, gameDataController);
+        chessLogic = new ChessLogic(chessModel, _assets, soundsWrapper, gameDataController);
         terrainActor = new TerrainActor(_assets, chessLogic.getChessActor());
 
         setListeners();
@@ -65,14 +66,14 @@ public class TerrainLogic {
             public void run() {
 
                 if(isEmpty()){
-                    _sounds.playSounds(Sounds.Name.MOVE_CHESS);
+                    _soundsWrapper.playSounds(Sounds.Name.MOVE_CHESS);
                     fromChessModel.setDragging(false);
                     chessLogic.setChessModel(fromChessModel);
                     actionListener.changeTurnReady();
                 }
                 else {
                     getTerrainActor().showBattle();
-                    _sounds.playSounds(Sounds.Name.FIGHT_CHESS);
+                    _soundsWrapper.playSounds(Sounds.Name.FIGHT_CHESS);
                     _coordinator.requestVibrate(1500);
 
                     ChessModel winnerChessModel;

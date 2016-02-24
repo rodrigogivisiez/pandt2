@@ -1,6 +1,7 @@
 package com.potatoandtomato.games.helpers;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.utils.Disposable;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.games.assets.*;
 import com.potatoandtomato.games.assets.Sounds;
@@ -22,7 +23,7 @@ public class Assets {
         _manager = coordinator.getAssetManager();
 
         _fonts = new Fonts(_manager, _coordinator);
-        _sounds = new Sounds(_manager);
+        _sounds = new Sounds(_manager, _coordinator);
         _textures = new Textures(_manager);
         _patches = new Patches();
 
@@ -62,4 +63,6 @@ public class Assets {
     public Fonts getFonts() {
         return _fonts;
     }
+
+
 }

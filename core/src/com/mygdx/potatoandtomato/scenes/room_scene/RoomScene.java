@@ -2,18 +2,15 @@ package com.mygdx.potatoandtomato.scenes.room_scene;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.PTScreen;
-import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.assets.Patches;
@@ -24,8 +21,6 @@ import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.RoomUser;
 import com.mygdx.potatoandtomato.models.Services;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
@@ -83,11 +78,11 @@ public class RoomScene extends SceneAbstract {
 
         Table buttonTable = new Table();
 
-        _startButton = new BtnEggDownward(_assets, _services.getSounds(), _services.getShaders());
+        _startButton = new BtnEggDownward(_assets, _services.getSoundsWrapper(), _services.getShaders());
         _startButton.setEnabled(false);
         _startButton.setText(_texts.waitingHost());
 
-        _inviteButton = new BtnEggDownward(_assets, _services.getSounds());
+        _inviteButton = new BtnEggDownward(_assets, _services.getSoundsWrapper());
         _inviteButton.setText(_texts.invite());
 
         buttonTable.add(_startButton).padRight(10);

@@ -3,18 +3,14 @@ package com.mygdx.potatoandtomato.helpers.services;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.potatoandtomato.assets.Sounds;
 import com.potatoandtomato.common.*;
 import com.mygdx.potatoandtomato.statics.Global;
 
 /**
  * Created by SiongLeng on 18/1/2016.
  */
-public class Sounds implements ISounds {
-
-    public enum Name{
-        BUTTON_CLICKED, TOGETHER_CHEERS,
-        SLIDING, GAME_CREATED, MIC, COUNT_DOWN, MESSAGING
-    }
+public class SoundsWrapper implements ISounds {
 
     private Assets _assets;
     private Music _themeMusic;
@@ -22,7 +18,7 @@ public class Sounds implements ISounds {
     private Array<Music> _musicList;
     private Broadcaster _broadcaster;
 
-    public Sounds(Assets assets, Broadcaster broadcaster) {
+    public SoundsWrapper(Assets assets, Broadcaster broadcaster) {
         this._assets = assets;
         this._broadcaster = broadcaster;
         _musicList = new Array<Music>();
@@ -40,7 +36,7 @@ public class Sounds implements ISounds {
 
     public void playThemeMusic() {
         if(_themeMusic == null){
-            _themeMusic = _assets.getSounds().getThemeMusic();
+            _themeMusic = _assets.getSounds().getMusic(Sounds.Name.THEME);
             _themeMusic.setLooping(true);
             addMusic(_themeMusic);
         }
@@ -51,32 +47,8 @@ public class Sounds implements ISounds {
         _themeMusic.stop();
     }
 
-    public void playSoundEffect(Name soundName){
-        Sound sound = null;
-        switch (soundName){
-            case BUTTON_CLICKED:
-                sound =  _assets.getSounds().getClickWaterSound();
-                break;
-            case TOGETHER_CHEERS:
-                sound = _assets.getSounds().getTogetherCheersSound();
-                break;
-            case SLIDING:
-                sound = _assets.getSounds().getOpenSlideSound();
-                break;
-            case GAME_CREATED:
-                sound = _assets.getSounds().getGameCreatedSound();
-                break;
-            case MIC:
-                sound = _assets.getSounds().getMicSound();
-                break;
-            case COUNT_DOWN:
-                sound = _assets.getSounds().getCountDownSound();
-                break;
-            case MESSAGING:
-                sound = _assets.getSounds().getMessagingSound();
-                break;
-        }
-
+    public void playSoundEffect(Sounds.Name soundName){
+        Sound sound = _assets.getSounds().getSound(soundName);
         playSound(sound);
     }
 

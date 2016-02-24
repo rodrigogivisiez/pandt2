@@ -30,14 +30,14 @@ public class Services {
     Notification _notification;
     Recorder _recorder;
     IUploader _uploader;
-    Sounds _sounds;
+    SoundsWrapper _soundsWrapper;
     VersionControl _versionControl;
     Broadcaster _broadcaster;
 
     public Services(Assets assets, Texts texts, Preferences preferences,
                     Profile profile, IDatabase database, Shaders shaders, GamingKit gamingKit, IDownloader downloader,
                     Chat chat, Socials socials, GCMSender gcmSender, Confirm confirm, Notification notification,
-                    Recorder recorder, IUploader uploader, Sounds sounds, VersionControl versionControl, Broadcaster broadcaster) {
+                    Recorder recorder, IUploader uploader, SoundsWrapper soundsWrapper, VersionControl versionControl, Broadcaster broadcaster) {
         _texts = texts;
         _assets = assets;
         _preferences = preferences;
@@ -53,7 +53,7 @@ public class Services {
         _notification = notification;
         _recorder = recorder;
         _uploader = uploader;
-        _sounds = sounds;
+        _soundsWrapper = soundsWrapper;
         _versionControl = versionControl;
         _broadcaster = broadcaster;
     }
@@ -70,12 +70,12 @@ public class Services {
         return _versionControl;
     }
 
-    public Sounds getSounds() {
-        return _sounds;
+    public SoundsWrapper getSoundsWrapper() {
+        return _soundsWrapper;
     }
 
-    public void setSounds(Sounds _sounds) {
-        this._sounds = _sounds;
+    public void setSoundsWrapper(SoundsWrapper _soundsWrapper) {
+        this._soundsWrapper = _soundsWrapper;
     }
 
     public IUploader getUploader() {
@@ -175,6 +175,13 @@ public class Services {
     public void setGcmSender(GCMSender _gcmSender) {
         this._gcmSender = _gcmSender;
     }
+
+    public Assets getAssets() {
+        return _assets;
+    }
+
+
+
 }
 
 

@@ -9,9 +9,9 @@ import com.mygdx.potatoandtomato.absintflis.gamingkit.ConnectionChangedListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.absintflis.socials.FacebookListener;
+import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
-import com.mygdx.potatoandtomato.helpers.services.Sounds;
 import com.mygdx.potatoandtomato.models.FacebookProfile;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
@@ -19,7 +19,6 @@ import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.potatoandtomato.common.BroadcastEvent;
 import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Status;
-import com.potatoandtomato.common.Threadings;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 
@@ -44,7 +43,7 @@ public class BootLogic extends LogicAbstract {
     @Override
     public void onShow() {
 
-        _services.getSounds().playThemeMusic();
+        _services.getSoundsWrapper().playThemeMusic();
         _screen.showRotateSunrise();
         publishBroadcast(BroadcastEvent.DESTROY_ROOM);
 
@@ -60,7 +59,7 @@ public class BootLogic extends LogicAbstract {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                _services.getSounds().playSoundEffect(Sounds.Name.TOGETHER_CHEERS);
+                _services.getSoundsWrapper().playSoundEffect(Sounds.Name.TOGETHER_CHEERS);
                 showLoginBox();
             }
         });

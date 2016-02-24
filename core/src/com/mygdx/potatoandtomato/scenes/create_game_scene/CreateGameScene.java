@@ -1,6 +1,5 @@
 package com.mygdx.potatoandtomato.scenes.create_game_scene;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
@@ -9,7 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.PTScreen;
@@ -83,7 +81,7 @@ public class CreateGameScene extends SceneAbstract {
         _gameDetails.row();
         _gameDetails.add(pickAGameLabel).padTop(10);
 
-        _createButton = new BtnEggDownward(_assets, _services.getSounds());
+        _createButton = new BtnEggDownward(_assets, _services.getSoundsWrapper());
         _createButton.setText(_texts.create());
         _createButton.setPosition(60, -80);
         _createButton.setVisible(false);

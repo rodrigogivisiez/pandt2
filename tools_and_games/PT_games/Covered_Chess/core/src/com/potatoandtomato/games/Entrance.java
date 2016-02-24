@@ -20,14 +20,14 @@ public class Entrance extends GameEntrance {
 
         Assets assets = new Assets(gameCoordinator);
         assets.loadAll(null);
-        _services =  new Services(assets, new Texts(), new Sounds(assets, gameCoordinator), new BattleReference(),
+        _services =  new Services(assets, new Texts(), new SoundsWrapper(assets, gameCoordinator), new BattleReference(),
                 new Database(gameCoordinator));
         getGameCoordinator().finishLoading();
     }
 
     @Override
     public void init() {
-        _logic = new BoardLogic(_services, getGameCoordinator(), false);
+        _logic = new BoardLogic(_services, getGameCoordinator());
         _logic.init();
         getGameCoordinator().getGame().setScreen((_logic.getScreen()));
         Firebase db = getGameCoordinator().getFirebase();
@@ -35,14 +35,14 @@ public class Entrance extends GameEntrance {
 
     @Override
     public void onContinue() {
-        _logic = new BoardLogic(_services, getGameCoordinator(), true);
+        _logic = new BoardLogic(_services, getGameCoordinator());
         getGameCoordinator().getGame().setScreen((_logic.getScreen()));
         _logic.continueGame();
     }
 
     @Override
     public void dispose() {
-        _services.getSounds().dispose();
+        _services.getSoundsWrapper().dispose();
     }
 
 

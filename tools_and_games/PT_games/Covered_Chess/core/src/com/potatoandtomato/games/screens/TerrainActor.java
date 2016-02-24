@@ -10,6 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.potatoandtomato.games.assets.Fonts;
+import com.potatoandtomato.games.assets.Textures;
 import com.potatoandtomato.games.controls.DummyButton;
 import com.potatoandtomato.games.helpers.Assets;
 import com.potatoandtomato.games.helpers.Positions;
@@ -36,10 +38,10 @@ public class TerrainActor extends Table {
 
     public TerrainActor(Assets _assets, ChessActor chessActor) {
         this._assets = _assets;
-        this.setBackground(new TextureRegionDrawable(_assets.getTextures().getBlackBgTrans()));
+        this.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
         new DummyButton(this, _assets);
 
-        _glowingTile = new Image(_assets.getTextures().getGlowingTile());
+        _glowingTile = new Image(_assets.getTextures().get(Textures.Name.GLOWING_TILE));
         _glowingTile.setVisible(false);
         _glowingTile.setTouchable(Touchable.disabled);
         this.addActor(_glowingTile);
@@ -49,19 +51,19 @@ public class TerrainActor extends Table {
         setChessActor(chessActor);
 
         _greenTile = new Table();
-        _greenTile.setBackground(new TextureRegionDrawable(_assets.getTextures().getGreenTile()));
+        _greenTile.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.GREEN_TILE)));
         _greenTile.setFillParent(true);
         _greenTile.getColor().a = 0;
         this.addActor(_greenTile);
 
         _redTile = new Table();
-        _redTile.setBackground(new TextureRegionDrawable(_assets.getTextures().getRedTile()));
+        _redTile.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.RED_TILE)));
         _redTile.setFillParent(true);
         _redTile.setVisible(false);
         this.addActor(_redTile);
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = _assets.getFonts().getBlackNormal1Green();
+        labelStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontColor.BLACK, Fonts.FontBorderColor.DARK_GREEN);
         _percentLabel = new Label("", labelStyle);
         _percentLabel.setTouchable(Touchable.disabled);
         _greenTile.add(_percentLabel);
@@ -144,12 +146,12 @@ public class TerrainActor extends Table {
     }
 
     public void showBattle(){
-        Image battleCloud = new Image(_assets.getTextures().getBattleCloud());
+        Image battleCloud = new Image(_assets.getTextures().get(Textures.Name.BATTLE_CLOUD));
         _battleTable.add(battleCloud).size(65, 65);
         battleCloud.setOrigin(Align.center);
         battleCloud.addAction(forever(sequence(Actions.rotateBy(-5, 0.1f), Actions.rotateBy(5, 0.1f))));
 
-        Image battleEffect = new Image(_assets.getTextures().getBattleEffect());
+        Image battleEffect = new Image(_assets.getTextures().get(Textures.Name.BATTLE_EFFECT));
         battleEffect.setFillParent(true);
         battleEffect.setOrigin(Align.center);
         _battleTable.addActor(battleEffect);
@@ -175,7 +177,7 @@ public class TerrainActor extends Table {
         float height = 20;
 
         Vector2 coords = Positions.actorLocalToStageCoord(this);
-        _arrowLeft = new Image(_assets.getTextures().getArrowRight());
+        _arrowLeft = new Image(_assets.getTextures().get(Textures.Name.ARROW_RIGHT));
         _arrowLeft.setSize(width, height);
         _arrowLeft.setTouchable(Touchable.disabled);
         _arrowLeft.setPosition(coords.x + Positions.centerX(this.getWidth(), _arrowLeft.getWidth()) - this.getWidth()/2 + _arrowLeft.getWidth()/ 2 ,
@@ -184,7 +186,7 @@ public class TerrainActor extends Table {
         _arrowLeft.addAction(forever(sequence(Actions.moveBy(-3, 0, 0.3f), Actions.moveBy(3, 0, 0.3f))));
         this.getStage().addActor(_arrowLeft);
 
-        _arrowRight = new Image(_assets.getTextures().getArrowLeft());
+        _arrowRight = new Image(_assets.getTextures().get(Textures.Name.ARROW_LEFT));
         _arrowRight.setSize(width, height);
         _arrowRight.setTouchable(Touchable.disabled);
         _arrowRight.setPosition(coords.x + Positions.centerX(this.getWidth(), _arrowRight.getWidth()) + this.getWidth()/2 - _arrowRight.getWidth()/ 2 ,
@@ -193,7 +195,7 @@ public class TerrainActor extends Table {
         _arrowRight.addAction(forever(sequence(Actions.moveBy(3, 0, 0.3f), Actions.moveBy(-3, 0, 0.3f))));
         this.getStage().addActor(_arrowRight);
 
-        _arrowUp = new Image(_assets.getTextures().getArrowDown());
+        _arrowUp = new Image(_assets.getTextures().get(Textures.Name.ARROW_DOWN));
         _arrowUp.setSize(width, height);
         _arrowUp.setTouchable(Touchable.disabled);
         _arrowUp.setPosition(coords.x + Positions.centerX(this.getWidth(), _arrowUp.getWidth()) ,
@@ -202,7 +204,7 @@ public class TerrainActor extends Table {
         _arrowUp.addAction(forever(sequence(Actions.moveBy(0, 3, 0.3f), Actions.moveBy(0, -3, 0.3f))));
         this.getStage().addActor(_arrowUp);
 
-        _arrowDown = new Image(_assets.getTextures().getArrowUp());
+        _arrowDown = new Image(_assets.getTextures().get(Textures.Name.ARROW_UP));
         _arrowDown.setSize(width, height);
         _arrowDown.setTouchable(Touchable.disabled);
         _arrowDown.setPosition(coords.x + Positions.centerX(this.getWidth(), _arrowDown.getWidth()) ,

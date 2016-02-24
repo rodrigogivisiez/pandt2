@@ -6,6 +6,7 @@ import com.potatoandtomato.common.*;
 import com.potatoandtomato.common.Threadings;
 import com.potatoandtomato.games.absint.ActionListener;
 import com.potatoandtomato.games.absint.DatabaseListener;
+import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
 import com.potatoandtomato.games.helpers.*;
@@ -38,103 +39,39 @@ public class BoardLogic {
     BoardScreen _screen;
     GameDataController _gameDataController;
     TerrainLogic _lastActiveTerrainLogic;
+    SplashLogic _splashLogic;
     RoomMsgHandler _roomMsgHandler;
     SafeThread _getGameDataSafeThread;
 
-    public BoardLogic(Services services, GameCoordinator coordinator, boolean isContinue) {
+    public BoardLogic(Services services, GameCoordinator coordinator) {
         this._services = services;
         this._coordinator = coordinator;
         _terrains = new ArrayList<TerrainLogic>();
         _gameDataController = new GameDataController(coordinator);
-        _graveyard = new GraveyardLogic(new GraveModel(_gameDataController.getFirstTurnIndex()),
-                coordinator, services.getTexts(), services.getAssets(), services.getSounds());
+        _graveyard = new GraveyardLogic(new GraveModel(-1),
+                coordinator, services.getTexts(), services.getAssets(), services.getSoundsWrapper());
         _roomMsgHandler = new RoomMsgHandler(this, _coordinator);
+        _splashLogic = new SplashLogic(coordinator, _services);
 
-        _screen = new BoardScreen(coordinator, services);
-
-        Threadings.delay(200, new Runnable() {
-            @Override
-            public void run() {
-                _screen.setGraveActor(_graveyard.getGraveyardActor());
-                _graveyard.invalidate();
-            }
-        });
+        _screen = new BoardScreen(coordinator, services, _splashLogic.getSplashActor(), _graveyard.getGraveyardActor());
 
         setListeners();
     }
 
     //call when new game
     public void init(){
-
         if(_coordinator.meIsDecisionMaker()){
+            _graveyard.getGraveModel().setCurrentTurnIndex(_gameDataController.getFirstTurnIndex());
             gameDataReady(_gameDataController.getGameData(), _graveyard.getGraveModel());
             saveGameDataToDB();
         }
         else{
            getGameDataFromDB();
         }
-
-        _services.getSounds().playTheme();
-
-
-//        final String firstPlayerUsername = _coordinator.getTeams().get(0).getPlayers().get(0).getName();
-//        final String secondPlayerUsername = _coordinator.getTeams().get(1).getPlayers().get(0).getName();
-//
-//        _services.getSounds().playSounds(Sounds.Name.START_GAME);
-//
-//        _screen.fadeInScreen(0.5f, new Runnable() {
-//            @Override
-//            public void run() {
-//                _screen.populatePreStartTable(5f, firstPlayerUsername, secondPlayerUsername, new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        Threadings.runInBackground(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                while(_gameInfo == null){
-//                                    Threadings.sleep(1000);
-//                                }
-//
-//                                Gdx.app.postRunnable(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        _screen.populateChessTable(_terrains, new Runnable() {
-//                                            @Override
-//                                            public void run() {
-//                                                _screen.populateTopInfoTable();
-//                                                setTopInfoListener();
-//                                                _screen.populateTransitionTable();
-//                                                _screen.setChessTotalCount(ChessType.RED, String.valueOf(_redChessTotal));
-//                                                _screen.setChessTotalCount(ChessType.YELLOW, String.valueOf(_yellowChessTotal));
-//                                                switchTurn(_gameInfo.isYellowTurn());
-//
-//                                                if(_isContinue){
-//                                                    for(ChessType type : _graveyard){
-//                                                        chessIsKilled(getDrawableFromChessType(type), type.name().startsWith("YELLOW"));
-//                                                    }
-//                                                    _isContinue = false;
-//                                                    _initialized = true;
-//                                                    _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.SUCCESS_CONTINUE, ""));
-//                                                }
-//                                                //only for continue game
-//
-//                                                _services.getSounds().playTheme();
-//                                                onGameScreenReady();
-//                                            }
-//                                        });
-//                                    }
-//                                });
-//                            }
-//                        });
-//                    }
-//                });
-//            }
-//        });
     }
 
     public void continueGame(){
         getGameDataFromDB();
-        _services.getSounds().playTheme();
     }
 
     private void saveGameDataToDB(){
@@ -218,7 +155,7 @@ public class BoardLogic {
                 final ChessModel chessModel = chessModels.get(i);
                 TerrainLogic terrainLogic = new TerrainLogic(new TerrainModel(col, row),
                         _services.getAssets(), _coordinator, chessModel,
-                        _services.getSounds(), _gameDataController, _services.getBattleReference());
+                        _services.getSoundsWrapper(), _gameDataController, _services.getBattleReference());
                 terrainLogic.setActionListener(new ActionListener() {
                     @Override
                     public void onSelected() {
@@ -260,6 +197,7 @@ public class BoardLogic {
         }
 
         _screen.populateTerrains(_terrains);
+        setTurnTouchable();
         _roomMsgHandler.onGameReady();
 
     }
@@ -295,6 +233,10 @@ public class BoardLogic {
         }
         _graveyard.switchTurn();
 
+        setTurnTouchable();
+    }
+
+    private void setTurnTouchable(){
         _screen.setCanTouchChessTable(_graveyard.getGraveModel().getCurrentTurnIndex() == _coordinator.getMyUniqueIndex());
     }
 
@@ -378,8 +320,8 @@ public class BoardLogic {
             @Override
             public void run() {
                 _screen.showEndGameTable(won);
-                _services.getSounds().stopTheme();
-                _services.getSounds().playSounds(won ? Sounds.Name.WIN : Sounds.Name.LOSE);
+                _services.getSoundsWrapper().stopTheme();
+                _services.getSoundsWrapper().playSounds(won ? Sounds.Name.WIN : Sounds.Name.LOSE);
                 Threadings.delay(2000, new Runnable() {
                     @Override
                     public void run() {

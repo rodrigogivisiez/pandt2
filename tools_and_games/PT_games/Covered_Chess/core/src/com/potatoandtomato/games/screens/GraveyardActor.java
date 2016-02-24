@@ -9,6 +9,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.potatoandtomato.common.GameCoordinator;
+import com.potatoandtomato.games.assets.Fonts;
+import com.potatoandtomato.games.assets.Patches;
+import com.potatoandtomato.games.assets.Textures;
 import com.potatoandtomato.games.controls.DummyButton;
 import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
@@ -40,17 +43,19 @@ public class GraveyardActor extends Table {
     public void populate(){
         new DummyButton(this, _assets);
 
-        Label.LabelStyle labelTotalStyle = new Label.LabelStyle(_assets.getFonts().getBlackNormal1(), Color.BLACK);
-        Label.LabelStyle labelSmallStyle = new Label.LabelStyle(_assets.getFonts().getWhiteNormal1(), Color.WHITE);
+        Label.LabelStyle labelTotalStyle = new Label.LabelStyle(_assets.getFonts().get(
+                                                                    Fonts.FontName.MYRIAD), null);
+        Label.LabelStyle labelSmallStyle = new Label.LabelStyle(_assets.getFonts().get(
+                                                                    Fonts.FontName.MYRIAD, Fonts.FontSize.S, Fonts.FontColor.WHITE), null);
         /////////////////////////
         //yellow total label
         ////////////////////////
         _yellowTotalRootTable = new Table();
         _yellowTotalRootTable.padLeft(10).padRight(10);
-        _yellowTotalRootTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getDarkBrownBgRounded()));
+        _yellowTotalRootTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_DARK_BROWN_ROUNDED_BG)));
 
         Table yellowTotalTable = new Table();
-        yellowTotalTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getYellowChessTotal()));
+        yellowTotalTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.YELLOW_CHESS_TOTAL)));
         _yellowTotalLabel = new Label("", labelTotalStyle);
         yellowTotalTable.add(_yellowTotalLabel).padLeft(1).padBottom(2);
 
@@ -64,11 +69,11 @@ public class GraveyardActor extends Table {
         //red total label
         ////////////////////////
         _redTotalRootTable = new Table();
-        _redTotalRootTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getDarkBrownBgRounded()));
+        _redTotalRootTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_DARK_BROWN_ROUNDED_BG)));
         _redTotalRootTable.padLeft(10).padRight(10);
 
         Table redTotalTable = new Table();
-        redTotalTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getRedChessTotal()));
+        redTotalTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.RED_CHESS_TOTAL)));
         _redTotalLabel = new Label("", labelTotalStyle);
         redTotalTable.add(_redTotalLabel).padLeft(1).padBottom(2);
 
@@ -81,14 +86,15 @@ public class GraveyardActor extends Table {
         /////////////////////////
         //turn icons
         ////////////////////////
-        _turnLabel = new Label("", new Label.LabelStyle(_assets.getFonts().getDarkBrownHeavy3(), Color.WHITE));
+        _turnLabel = new Label("", new Label.LabelStyle(_assets.getFonts().get(
+                                Fonts.FontName.HELVETICA, Fonts.FontSize.XXL, Fonts.FontColor.DARK_BROWN, Fonts.FontStyle.HEAVY), null));
         _turnLabel.setAlignment(Align.center);
 
         /////////////////////////
         //pointing icons
         ////////////////////////
-        _pointLeftImage = new Image(_assets.getTextures().getPointLeft());
-        _pointRightImage = new Image(_assets.getTextures().getPointRight());
+        _pointLeftImage = new Image(_assets.getTextures().get(Textures.Name.POINT_LEFT_ICON));
+        _pointRightImage = new Image(_assets.getTextures().get(Textures.Name.POINT_RIGHT_ICON));
 
         Table turnTable = new Table();
         turnTable.add(_turnLabel).expandX().fillX().colspan(2);
@@ -100,11 +106,11 @@ public class GraveyardActor extends Table {
         //top info
         //////////////////////////
         Table topInfoTable = new Table();
-        topInfoTable.add(_yellowTotalRootTable).padLeft(10);
+        topInfoTable.add(_yellowTotalRootTable).padLeft(10).expandY().fillY().padTop(5).padBottom(2);
         topInfoTable.add(turnTable).expand().fill();
-        topInfoTable.add(_redTotalRootTable).padRight(10);
+        topInfoTable.add(_redTotalRootTable).padRight(10).expandY().fillY().padTop(5).padBottom(2);
         topInfoTable.pad(2);
-        topInfoTable.setBackground(new NinePatchDrawable(_assets.getPatches().getYellowBox()));
+        topInfoTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.YELLOW_GRADIENT_BOX)));
 
         /////////////////////////
         //yellow grave table
@@ -112,7 +118,7 @@ public class GraveyardActor extends Table {
         _yellowGraveTable = new Table();
         _yellowGraveTable.align(Align.top);
         _yellowGraveTable.pad(10);
-        _yellowGraveTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getGreyBg()));
+        _yellowGraveTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.GRAVE_BG)));
 
         /////////////////////////
         //red grave table
@@ -120,10 +126,11 @@ public class GraveyardActor extends Table {
         _redGraveTable = new Table();
         _redGraveTable.align(Align.top);
         _redGraveTable.pad(10);
-        _redGraveTable.setBackground(new TextureRegionDrawable(_assets.getTextures().getGreyBg()));
+        _redGraveTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.GRAVE_BG)));
 
         Label.LabelStyle graveLabelStyle = new Label.LabelStyle();
-        graveLabelStyle.font = _assets.getFonts().getGreyPizza4BlackS();
+        graveLabelStyle.font = _assets.getFonts().get(Fonts.FontName.PIZZA,
+                                    Fonts.FontSize.XXXL, Fonts.FontColor.BLACK, Fonts.FontBorderColor.WHITE);
         Label graveLabel = new Label(_texts.graveYard(), graveLabelStyle);
         graveLabel.setAlignment(Align.center);
 
@@ -133,7 +140,7 @@ public class GraveyardActor extends Table {
         graveTable.row();
         graveTable.add(_yellowGraveTable).expand().fill().space(3);
         graveTable.add(_redGraveTable).expand().fill().space(3);
-        graveTable.setBackground(new NinePatchDrawable(_assets.getPatches().getYellowBox()));
+        graveTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.YELLOW_GRADIENT_BOX)));
 
         /////////////////////////
         //population
@@ -161,14 +168,14 @@ public class GraveyardActor extends Table {
         if(_gameCoordinator.getMyUniqueIndex() == graveModel.getCurrentTurnIndex()){
             _turnLabel.setText(_texts.yourTurn());
         }
-        else{
+        else if(graveModel.getCurrentTurnIndex() != -1){
             _turnLabel.setText(_texts.enemyTurn());
         }
 
-        _yellowTotalRootTable.setBackground(new TextureRegionDrawable(graveModel.getCurrentTurnIndex() == 1 ?_assets.getTextures().getEmpty() : _assets.getTextures().getDarkBrownBgRounded()));
+        _yellowTotalRootTable.setBackground(new TextureRegionDrawable(graveModel.getCurrentTurnIndex() == 1 ?_assets.getTextures().get(Textures.Name.EMPTY) : _assets.getTextures().get(Textures.Name.TRANS_DARK_BROWN_ROUNDED_BG)));
         _yellowPlayerLabel.setVisible(graveModel.getCurrentTurnIndex() == 0);
         _pointLeftImage.getColor().a = graveModel.getCurrentTurnIndex() == 0 ? 1 : 0.2f;
-        _redTotalRootTable.setBackground(new TextureRegionDrawable(graveModel.getCurrentTurnIndex() == 0 ?_assets.getTextures().getEmpty() : _assets.getTextures().getDarkBrownBgRounded()));
+        _redTotalRootTable.setBackground(new TextureRegionDrawable(graveModel.getCurrentTurnIndex() == 0 ?_assets.getTextures().get(Textures.Name.EMPTY) : _assets.getTextures().get(Textures.Name.TRANS_DARK_BROWN_ROUNDED_BG)));
         _redPlayerLabel.setVisible(graveModel.getCurrentTurnIndex() == 1);
         _pointRightImage.getColor().a = graveModel.getCurrentTurnIndex() == 1 ? 1 : 0.2f;
 

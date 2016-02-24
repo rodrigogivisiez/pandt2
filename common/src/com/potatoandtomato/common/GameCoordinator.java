@@ -248,6 +248,20 @@ public class GameCoordinator implements Disposable {
         return -1;
     }
 
+    public Player getPlayerByUniqueIndex(int index){
+        int i = 0;
+        for(Team team : teams){
+            for(Player player : team.getPlayers()){
+                if(index == i){
+                    return player;
+                }
+                i++;
+            }
+        }
+        return new Player("", "", false, true);
+    }
+
+
     public void addInputProcessor(InputProcessor processor){
         _processors.add(processor);
         getGame().addInputProcessor(processor);

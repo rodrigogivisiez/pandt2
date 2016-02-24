@@ -4,15 +4,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.potatoandtomato.games.absint.ActionListener;
+import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.enums.ChessType;
 import com.potatoandtomato.games.helpers.Assets;
 import com.potatoandtomato.games.helpers.GameDataController;
 import com.potatoandtomato.games.helpers.Positions;
-import com.potatoandtomato.games.helpers.Sounds;
+import com.potatoandtomato.games.helpers.SoundsWrapper;
 import com.potatoandtomato.games.models.ChessModel;
 
 import java.util.ArrayList;
@@ -28,14 +28,14 @@ public class ChessLogic {
     ChessModel _chessModel;
     ChessActor _chessActor;
     ActionListener _actionListener;
-    Sounds _sounds;
+    SoundsWrapper _soundsWrapper;
     private DragAndDrop _dragAndDrop;
     ArrayList<DragAndDrop.Target> _dragDropTargets;
     GameDataController _gameDataController;
 
-    public ChessLogic(ChessModel chessModel, Assets assets, Sounds sounds, GameDataController gameDataController) {
+    public ChessLogic(ChessModel chessModel, Assets assets, SoundsWrapper soundsWrapper, GameDataController gameDataController) {
         this._chessModel = chessModel;
-        this._sounds = sounds;
+        this._soundsWrapper = soundsWrapper;
         this._gameDataController = gameDataController;
         this._dragDropTargets = new ArrayList<DragAndDrop.Target>();
 
@@ -55,7 +55,7 @@ public class ChessLogic {
                 _actionListener.changeTurnReady();
             }
         });
-        _sounds.playSounds(Sounds.Name.FLIP_CHESS);
+        _soundsWrapper.playSounds(Sounds.Name.FLIP_CHESS);
 
         if(_chessModel.getChessColor() == _gameDataController.getMyChessColor()){
             setDragDrop();

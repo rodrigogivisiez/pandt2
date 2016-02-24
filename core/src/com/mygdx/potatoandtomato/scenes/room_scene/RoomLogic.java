@@ -17,9 +17,9 @@ import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
 import com.mygdx.potatoandtomato.absintflis.push_notifications.PushCode;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
-import com.mygdx.potatoandtomato.helpers.services.Sounds;
 import com.mygdx.potatoandtomato.helpers.services.VersionControl;
 import com.mygdx.potatoandtomato.helpers.utils.JsonObj;
 import com.potatoandtomato.common.SafeThread;
@@ -631,11 +631,10 @@ public class RoomLogic extends LogicAbstract {
         if(_forceQuit) return;
         else{
             _forceQuit = true;
-            _screen.back();
             _confirm.show(message, Confirm.Type.YES, new ConfirmResultListener() {
                 @Override
                 public void onResult(Result result) {
-
+                    _screen.back();
                 }
             });
         }
@@ -694,7 +693,7 @@ public class RoomLogic extends LogicAbstract {
                 _services.getChat().show();
                 _services.getChat().expanded();
                 while(i > 0){
-                    _services.getSounds().playSoundEffect(Sounds.Name.COUNT_DOWN);
+                    _services.getSoundsWrapper().playSoundEffect(Sounds.Name.COUNT_DOWN);
                     _services.getChat().add(new ChatMessage(String.format(_texts.gameStartingIn(), i), ChatMessage.FromType.IMPORTANT, null), false);
                     Threadings.sleep(1500);
                     i--;

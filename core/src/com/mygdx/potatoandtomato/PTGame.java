@@ -4,15 +4,8 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.Array;
-import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
-import com.mygdx.potatoandtomato.models.ChatMessage;
-import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.*;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
@@ -45,7 +38,7 @@ public class PTGame extends Game implements IPTGame {
 	Recorder _recorder;
 	IUploader _uploader;
 	IDownloader _downloader;
-	Sounds _sounds;
+	SoundsWrapper _soundsWrapper;
 	Broadcaster _broadcaster;
 	Preferences _preferences;
 
@@ -75,8 +68,8 @@ public class PTGame extends Game implements IPTGame {
 				_recorder = new Recorder();
 				_downloader = new Downloader();
 				_uploader = new App42Uploader(_downloader);
-				_sounds = new Sounds(_assets, _broadcaster);
-				_chat = new Chat(_gamingKit, _texts, _assets, _batch, _game, _recorder, _uploader, _sounds, _broadcaster);
+				_soundsWrapper = new SoundsWrapper(_assets, _broadcaster);
+				_chat = new Chat(_gamingKit, _texts, _assets, _batch, _game, _recorder, _uploader, _soundsWrapper, _broadcaster);
 				_confirm = new Confirm(_batch, _game, _assets, _broadcaster);
 				_notification = new Notification(_batch, _assets, _game, _broadcaster);
 
@@ -84,7 +77,7 @@ public class PTGame extends Game implements IPTGame {
 						_preferences, new Profile(), new FirebaseDB(Terms.FIREBASE_URL),
 						new Shaders(), _gamingKit, _downloader, _chat,
 						new Socials(_preferences, _broadcaster), new GCMSender(), _confirm, _notification,
-						_recorder, _uploader, _sounds, new VersionControl(), _broadcaster);
+						_recorder, _uploader, _soundsWrapper, new VersionControl(), _broadcaster);
 				_screen = new PTScreen(_game, _services);
 
 				setScreen(_screen);
@@ -106,6 +99,7 @@ public class PTGame extends Game implements IPTGame {
 	public void dispose() {
 		super.dispose();
 		_broadcaster.broadcast(BroadcastEvent.DESTROY_ROOM);
+		_services.getAssets().dispose();
 	}
 
 

@@ -3,7 +3,14 @@ package com.potatoandtomato.games.assets;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
+import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.games.absint.IAssetFragment;
+import com.potatoandtomato.games.helpers.SoundsWrapper;
+
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.HashMap;
 
 /**
  * Created by SiongLeng on 19/2/2016.
@@ -12,71 +19,66 @@ public class Sounds implements IAssetFragment {
 
     private AssetManager _manager;
 
-    private Music themeMusic;
-    private Sound fightChessSound, flipChessSound, lossSound, moveSound, openSlideSound, startGameSound, winSound;
+    FileHandle _soundsDirectory;
+    private HashMap<String, Sound> _soundsMap;
+    private HashMap<String, Music> _musicsMap;
 
-    public Sounds(AssetManager _manager) {
+    public Sounds(AssetManager _manager, GameCoordinator coordinator) {
         this._manager = _manager;
+        _soundsDirectory = coordinator.getFileH("sounds");
+        _soundsMap = new HashMap<String, Sound>();
+        _musicsMap = new HashMap<String, Music>();
     }
 
     @Override
     public void load() {
-        _manager.load("sounds/theme.mp3", Music.class);
-        _manager.load("sounds/fight_chess.ogg", Sound.class);
-        _manager.load("sounds/flip_chess.ogg", Sound.class);
-        _manager.load("sounds/lose.ogg", Sound.class);
-        _manager.load("sounds/move.ogg", Sound.class);
-        _manager.load("sounds/open_slide.ogg", Sound.class);
-        _manager.load("sounds/start_game.ogg", Sound.class);
-        _manager.load("sounds/win.ogg", Sound.class);
+
+        for(FileHandle soundFile : _soundsDirectory.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File file, String s) {
+                return s.contains(".ogg") || s.contains(".mp3");
+            }
+        })){
+            if(soundFile.name().contains(".mp3")){
+                _manager.load("sounds/" + soundFile.name(), Music.class);
+            }
+            else{
+                _manager.load("sounds/" + soundFile.name(), Sound.class);
+            }
+
+        }
     }
 
     @Override
     public void onLoaded() {
-        themeMusic = _manager.get("sounds/theme.mp3", Music.class);
-        fightChessSound  = _manager.get("sounds/fight_chess.ogg", Sound.class);
-        flipChessSound = _manager.get("sounds/flip_chess.ogg", Sound.class);
-        lossSound = _manager.get("sounds/lose.ogg", Sound.class);
-        moveSound = _manager.get("sounds/move.ogg", Sound.class);
-        openSlideSound = _manager.get("sounds/open_slide.ogg", Sound.class);
-        startGameSound = _manager.get("sounds/start_game.ogg", Sound.class);
-        winSound = _manager.get("sounds/win.ogg", Sound.class);
+
+        for(FileHandle soundFile : _soundsDirectory.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File file, String s) {
+                return s.contains(".ogg") || s.contains(".mp3");
+            }
+        })){
+            if(soundFile.name().contains(".mp3")){
+                _musicsMap.put(soundFile.nameWithoutExtension(), _manager.get("sounds/" + soundFile.name(), Music.class));
+            }
+            else{
+                _soundsMap.put(soundFile.nameWithoutExtension(), _manager.get("sounds/" + soundFile.name(), Sound.class));
+            }
+
+        }
     }
 
-    public Sound getWinSound() {
-        return winSound;
+    public Sound getSound(Name name){
+        return _soundsMap.get(name.name());
     }
 
-    public Sound getStartGameSound() {
-        return startGameSound;
+    public Music getMusic(Name name) { return _musicsMap.get(name.name()); }
+
+    public enum Name{
+        START_GAME, OPEN_SLIDE,
+        FLIP_CHESS, MOVE_CHESS,
+        FIGHT_CHESS, WIN, LOSE,
+        THEME
     }
 
-    public Sound getOpenSlideSound() {
-        return openSlideSound;
-    }
-
-    public Sound getMoveSound() {
-        return moveSound;
-    }
-
-    public Sound getLossSound() {
-        return lossSound;
-    }
-
-    public Sound getFlipChessSound() {
-        return flipChessSound;
-    }
-
-    public Sound getFightChessSound() {
-        return fightChessSound;
-    }
-
-    public Music getThemeMusic() {
-        return themeMusic;
-    }
-
-    @Override
-    public void dispose() {
-
-    }
 }

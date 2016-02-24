@@ -6,6 +6,6 @@ package com.potatoandtomato.games.statics;
 public class Global {
 
     public static boolean DEBUG = false;         //default false
-
+    public static boolean NO_ENTRANCE = false;
 
 }

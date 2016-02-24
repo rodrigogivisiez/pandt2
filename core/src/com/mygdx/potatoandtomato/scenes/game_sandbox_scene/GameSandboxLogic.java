@@ -95,7 +95,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                         _room.getGame().getLocalAssetsPath(), _room.getGame().getBasePath(), _room.getTeams(),
                         Positions.getWidth(), Positions.getHeight(), _screen.getGame(), _screen.getGame().getSpriteBatch(),
                         _services.getProfile().getUserId(), _me, _services.getDatabase().getGameBelongDatabase(_room.getGame().getAbbr()),
-                        _room.getId(), _services.getSounds(), getBroadcaster(), _services.getDownloader()));
+                        _room.getId(), _services.getSoundsWrapper(), getBroadcaster(), _services.getDownloader()));
             }
         });
 
@@ -237,7 +237,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             @Override
             public void run() {
 
-                _services.getSounds().stopThemeMusic();
+                _services.getSoundsWrapper().stopThemeMusic();
                 Threadings.setContinuousRenderLock(true);
                 _screen.switchToGameScreen();
                 if(!_isContinue){
@@ -375,7 +375,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         _services.getChat().add(new ChatMessage(_texts.gameEnded(),
                 ChatMessage.FromType.SYSTEM, null), false);
         Threadings.setContinuousRenderLock(false);
-        _services.getSounds().playThemeMusic();
+        _services.getSoundsWrapper().playThemeMusic();
     }
 
     @Override

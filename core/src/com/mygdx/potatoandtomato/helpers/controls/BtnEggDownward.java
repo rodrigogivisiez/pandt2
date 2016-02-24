@@ -1,6 +1,5 @@
 package com.mygdx.potatoandtomato.helpers.controls;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -16,10 +15,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.mygdx.potatoandtomato.assets.Fonts;
+import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.services.Shaders;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
-import com.mygdx.potatoandtomato.helpers.services.Sounds;
+import com.mygdx.potatoandtomato.helpers.services.SoundsWrapper;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 import com.potatoandtomato.common.Threadings;
 
@@ -38,14 +38,14 @@ public class BtnEggDownward extends Table {
     Shaders _shaders;
     ShaderProgram _shader;
     boolean _enabled;
-    Sounds _sounds;
+    SoundsWrapper _soundsWrapper;
 
-    public BtnEggDownward(Assets assets, Sounds sounds) {
-        this(assets, sounds, null);
+    public BtnEggDownward(Assets assets, SoundsWrapper soundsWrapper) {
+        this(assets, soundsWrapper, null);
     }
 
-    public BtnEggDownward(Assets assets, Sounds sounds, Shaders shaders) {
-        this._sounds = sounds;
+    public BtnEggDownward(Assets assets, SoundsWrapper soundsWrapper, Shaders shaders) {
+        this._soundsWrapper = soundsWrapper;
         this._assets = assets;
         this._shaders = shaders;
         this._button = new Button(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
@@ -59,7 +59,7 @@ public class BtnEggDownward extends Table {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 animate();
-                _sounds.playSoundEffect(Sounds.Name.BUTTON_CLICKED);
+                _soundsWrapper.playSoundEffect(Sounds.Name.BUTTON_CLICKED);
                 return super.touchDown(event, x, y, pointer, button);
             }
         });

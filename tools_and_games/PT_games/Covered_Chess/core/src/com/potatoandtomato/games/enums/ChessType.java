@@ -20,8 +20,6 @@ public enum  ChessType {
     YELLOW_TIGER,
     YELLOW_LION,
     YELLOW_ELEPHANT,
-    RED,
-    YELLOW,
     NONE
 
 

@@ -9,14 +9,14 @@ public class Services {
 
     private Assets assets;
     private Texts texts;
-    private Sounds sounds;
+    private SoundsWrapper soundsWrapper;
     private BattleReference battleReference;
     private Database database;
 
-    public Services(Assets assets, Texts texts, Sounds sounds, BattleReference battleReference, Database database) {
+    public Services(Assets assets, Texts texts, SoundsWrapper soundsWrapper, BattleReference battleReference, Database database) {
         this.texts = texts;
         this.assets = assets;
-        this.sounds = sounds;
+        this.soundsWrapper = soundsWrapper;
         this.battleReference = battleReference;
         this.database = database;
     }
@@ -25,8 +25,8 @@ public class Services {
         return database;
     }
 
-    public Sounds getSounds() {
-        return sounds;
+    public SoundsWrapper getSoundsWrapper() {
+        return soundsWrapper;
     }
 
     public Texts getTexts() {

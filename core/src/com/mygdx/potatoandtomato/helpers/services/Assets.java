@@ -1,28 +1,13 @@
 package com.mygdx.potatoandtomato.helpers.services;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.FileHandleResolver;
-import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.NinePatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
-import com.badlogic.gdx.utils.Array;
-import com.mygdx.potatoandtomato.absintflis.assets.MyFreetypeFontLoader;
+import com.badlogic.gdx.utils.Disposable;
 import com.mygdx.potatoandtomato.assets.*;
-import com.mygdx.potatoandtomato.assets.Sounds;
 
 /**
  * Created by SiongLeng on 2/12/2015.
  */
-public class Assets {
+public class Assets implements Disposable {
 
     AssetManager _manager;
     Fonts _fonts;
@@ -77,5 +62,10 @@ public class Assets {
 
     public Animations getAnimations() {
         return _animations;
+    }
+
+    @Override
+    public void dispose() {
+        _manager.dispose();
     }
 }

@@ -47,10 +47,10 @@ public class T_Services {
         return new Services(assets, new Texts(), preferences,
                 new Profile(), databases, new Shaders(), gamingKit, downloader,
                 new Chat(gamingKit, new Texts(), assets, mock(SpriteBatch.class), mock(IPTGame.class),
-                        mock(Recorder.class), mock(IUploader.class), mock(Sounds.class), broadcaster),
+                        mock(Recorder.class), mock(IUploader.class), mock(SoundsWrapper.class), broadcaster),
                 new Socials(preferences, broadcaster), new GCMSender(), new Confirm(mock(SpriteBatch.class), mock(PTGame.class), assets, broadcaster),
                 new Notification(mock(SpriteBatch.class), assets, mock(PTGame.class), broadcaster), mock(Recorder.class), mock(IUploader.class),
-                mock(Sounds.class), mock(VersionControl.class), broadcaster);
+                mock(SoundsWrapper.class), mock(VersionControl.class), broadcaster);
     }
 
 }

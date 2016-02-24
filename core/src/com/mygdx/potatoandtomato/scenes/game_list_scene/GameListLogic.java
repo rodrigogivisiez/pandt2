@@ -6,15 +6,13 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
-import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
-import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
-import com.mygdx.potatoandtomato.helpers.services.Sounds;
 import com.potatoandtomato.common.Threadings;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
@@ -174,7 +172,7 @@ public class GameListLogic extends LogicAbstract {
                     }
                     else{
                         if(!_scene.alreadyContainsRoom(room) && playSound && isSceneVisible()){
-                            _services.getSounds().playSoundEffect(Sounds.Name.GAME_CREATED);
+                            _services.getSoundsWrapper().playSoundEffect(Sounds.Name.GAME_CREATED);
                         }
                         final Actor clicked = _scene.updatedRoom(room);
                         if(clicked != null){
