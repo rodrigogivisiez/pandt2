@@ -1,6 +1,7 @@
 package com.potatoandtomato.games.models;
 
 import com.potatoandtomato.games.helpers.*;
+import com.potatoandtomato.games.references.BattleRef;
 
 /**
  * Created by SiongLeng on 29/12/2015.
@@ -10,14 +11,12 @@ public class Services {
     private Assets assets;
     private Texts texts;
     private SoundsWrapper soundsWrapper;
-    private BattleReference battleReference;
     private Database database;
 
-    public Services(Assets assets, Texts texts, SoundsWrapper soundsWrapper, BattleReference battleReference, Database database) {
+    public Services(Assets assets, Texts texts, SoundsWrapper soundsWrapper, Database database) {
         this.texts = texts;
         this.assets = assets;
         this.soundsWrapper = soundsWrapper;
-        this.battleReference = battleReference;
         this.database = database;
     }
 
@@ -41,11 +40,4 @@ public class Services {
         this.assets = assets;
     }
 
-    public BattleReference getBattleReference() {
-        return battleReference;
-    }
-
-    public void setBattleReference(BattleReference battleReference) {
-        this.battleReference = battleReference;
-    }
 }

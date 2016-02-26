@@ -20,7 +20,18 @@ public enum  ChessType {
     YELLOW_TIGER,
     YELLOW_LION,
     YELLOW_ELEPHANT,
-    NONE
+    NONE;
 
 
+
+    public ChessAnimal toChessAnimal(){
+        String name = this.name();
+        String[] splitted = name.split("_");
+        if(splitted.length > 1){
+            return ChessAnimal.valueOf(splitted[1]);
+        }
+        else{
+            return ChessAnimal.NONE;
+        }
+    }
 }

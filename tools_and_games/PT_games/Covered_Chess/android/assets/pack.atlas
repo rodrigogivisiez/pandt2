@@ -4,30 +4,58 @@ size: 1024,1024
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
+ARROW_BOTTOM_LEFT
+  rotate: false
+  xy: 348, 147
+  size: 20, 20
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
+ARROW_BOTTOM_RIGHT
+  rotate: false
+  xy: 348, 125
+  size: 20, 20
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
 ARROW_DOWN
   rotate: false
-  xy: 827, 721
+  xy: 798, 350
   size: 20, 17
   orig: 20, 17
   offset: 0, 0
   index: -1
 ARROW_LEFT
   rotate: false
-  xy: 348, 147
+  xy: 364, 25
   size: 17, 20
   orig: 17, 20
   offset: 0, 0
   index: -1
 ARROW_RIGHT
   rotate: false
-  xy: 849, 799
+  xy: 951, 901
   size: 17, 20
   orig: 17, 20
   offset: 0, 0
   index: -1
+ARROW_TOP_LEFT
+  rotate: false
+  xy: 951, 879
+  size: 20, 20
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
+ARROW_TOP_RIGHT
+  rotate: false
+  xy: 951, 857
+  size: 20, 20
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
 ARROW_UP
   rotate: false
-  xy: 827, 702
+  xy: 798, 331
   size: 20, 17
   orig: 20, 17
   offset: 0, 0
@@ -97,16 +125,30 @@ GREEN_TILE
   index: -1
 POINT_LEFT_ICON
   rotate: false
-  xy: 323, 43
+  xy: 486, 315
   size: 34, 18
   orig: 34, 18
   offset: 0, 0
   index: -1
 POINT_RIGHT_ICON
   rotate: false
-  xy: 319, 23
+  xy: 522, 315
   size: 34, 18
   orig: 34, 18
+  offset: 0, 0
+  index: -1
+PREVIEW_CHESS
+  rotate: false
+  xy: 640, 322
+  size: 58, 58
+  orig: 58, 58
+  offset: 0, 0
+  index: -1
+PREVIEW_ICON
+  rotate: false
+  xy: 829, 521
+  size: 24, 35
+  orig: 24, 35
   offset: 0, 0
   index: -1
 RED_CAT
@@ -118,7 +160,7 @@ RED_CAT
   index: -1
 RED_CHESS
   rotate: false
-  xy: 640, 322
+  xy: 700, 322
   size: 58, 58
   orig: 58, 58
   offset: 0, 0
@@ -139,7 +181,7 @@ RED_CHESS_TOTAL
   index: -1
 RED_DOG
   rotate: false
-  xy: 421, 288
+  xy: 827, 627
   size: 43, 31
   orig: 43, 31
   offset: 0, 0
@@ -167,7 +209,7 @@ RED_LION_SPLASH
   index: -1
 RED_MOUSE
   rotate: false
-  xy: 323, 63
+  xy: 760, 325
   size: 36, 42
   orig: 36, 42
   offset: 0, 0
@@ -195,7 +237,7 @@ RED_TILE
   index: -1
 RED_WOLF
   rotate: false
-  xy: 280, 7
+  xy: 827, 700
   size: 37, 38
   orig: 37, 38
   offset: 0, 0
@@ -214,6 +256,55 @@ SPLASH_BG
   orig: 361, 640
   offset: 0, 0
   index: -1
+STATUS_ANGRY
+  rotate: false
+  xy: 829, 457
+  size: 29, 29
+  orig: 29, 29
+  offset: 0, 0
+  index: -1
+STATUS_DECREASE
+  rotate: false
+  xy: 829, 428
+  size: 29, 27
+  orig: 29, 27
+  offset: 0, 0
+  index: -1
+STATUS_INCREASE
+  rotate: false
+  xy: 382, 253
+  size: 28, 27
+  orig: 28, 27
+  offset: 0, 0
+  index: -1
+STATUS_INJURED
+  rotate: false
+  xy: 382, 224
+  size: 28, 27
+  orig: 28, 27
+  offset: 0, 0
+  index: -1
+STATUS_KING
+  rotate: false
+  xy: 829, 401
+  size: 32, 25
+  orig: 32, 25
+  offset: 0, 0
+  index: -1
+STATUS_PARALYZED
+  rotate: false
+  xy: 829, 488
+  size: 28, 31
+  orig: 28, 31
+  offset: 0, 0
+  index: -1
+STATUS_POISON
+  rotate: false
+  xy: 382, 282
+  size: 27, 28
+  orig: 27, 28
+  offset: 0, 0
+  index: -1
 TRANS_BLACK_BG
   rotate: false
   xy: 767, 592
@@ -230,7 +321,7 @@ TRANS_DARK_BROWN_ROUNDED_BG
   index: -1
 UNKNOWN_CHESS
   rotate: false
-  xy: 700, 322
+  xy: 263, 47
   size: 58, 58
   orig: 58, 58
   offset: 0, 0
@@ -251,7 +342,7 @@ YELLOW_CAT
   index: -1
 YELLOW_CHESS
   rotate: false
-  xy: 263, 47
+  xy: 323, 47
   size: 58, 58
   orig: 58, 58
   offset: 0, 0
@@ -265,21 +356,21 @@ YELLOW_CHESS_SELECTED
   index: -1
 YELLOW_CHESS_TOTAL
   rotate: false
-  xy: 531, 299
+  xy: 829, 558
   size: 34, 34
   orig: 34, 34
   offset: 0, 0
   index: -1
 YELLOW_DOG
   rotate: false
-  xy: 486, 302
+  xy: 827, 594
   size: 43, 31
   orig: 43, 31
   offset: 0, 0
   index: -1
 YELLOW_ELEPHANT
   rotate: false
-  xy: 382, 238
+  xy: 318, 13
   size: 44, 32
   orig: 44, 32
   offset: 0, 0
@@ -309,7 +400,7 @@ YELLOW_LION_SPLASH
   index: -1
 YELLOW_MOUSE
   rotate: false
-  xy: 760, 325
+  xy: 280, 3
   size: 36, 42
   orig: 36, 42
   offset: 0, 0
@@ -330,7 +421,7 @@ YELLOW_TIGER_SPLASH
   index: -1
 YELLOW_WOLF
   rotate: false
-  xy: 382, 272
+  xy: 827, 660
   size: 37, 38
   orig: 37, 38
   offset: 0, 0

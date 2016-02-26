@@ -1,5 +1,6 @@
 package com.potatoandtomato.games.absint;
 
+import com.potatoandtomato.games.enums.ActionType;
 import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
 import com.potatoandtomato.games.screens.TerrainLogic;
@@ -25,7 +26,7 @@ public abstract class ActionListener {
 
     public abstract void onMoved(int fromCol, int fromRow, int toCol, int toRow, boolean isFromWon);
 
-    public abstract void changeTurnReady();
+    public abstract void changeTurnReady(ActionType actionType, ChessType winnerChessType, ChessType loserChessType, boolean random);
 
     public abstract void onChessKilled(ChessType chessType);
 

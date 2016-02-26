@@ -8,6 +8,7 @@ import com.potatoandtomato.games.enums.ChessType;
 import com.potatoandtomato.games.helpers.Assets;
 import com.potatoandtomato.games.helpers.SoundsWrapper;
 import com.potatoandtomato.games.helpers.Texts;
+import com.potatoandtomato.games.models.BoardModel;
 import com.potatoandtomato.games.models.GraveModel;
 
 /**
@@ -36,9 +37,8 @@ public class GraveyardLogic {
         invalidate();
     }
 
-    public void switchTurn(){
-        _graveModel.setCurrentTurnIndex(_graveModel.getCurrentTurnIndex() == 0 ? 1 : 0);
-        invalidate();
+    public void onBoardModelChanged(BoardModel boardModel){
+        _graveyardActor.onBoardModelChanged(boardModel);
     }
 
     public GraveModel getGraveModel() {

@@ -78,7 +78,7 @@ public abstract class MockGame extends Game implements IPTGame {
                 if(expectedTeamCount == 0 || eachTeamExpectedPlayers == 0){
                     ArrayList<Team> teams = new ArrayList<Team>();
                     Team team = new Team();
-                    team.addPlayer(new Player("test", "1", true, true));
+                    team.addPlayer(new Player("test", _mockGamingKit.getUserId(), true, true));
                     teams.add(team);
                     _gameCoordinator.setTeams(teams);
                 }

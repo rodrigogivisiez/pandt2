@@ -39,7 +39,7 @@ public class ChessLogic {
         this._gameDataController = gameDataController;
         this._dragDropTargets = new ArrayList<DragAndDrop.Target>();
 
-        _chessActor = new ChessActor(assets);
+        _chessActor = new ChessActor(assets, soundsWrapper);
 
         setListeners();
         invalidate();
@@ -47,15 +47,14 @@ public class ChessLogic {
 
 
 
-    public void openChess(){
+    public void openChess(final Runnable onFinish){
         _chessModel.setOpened(true);
         _chessActor.openChess(new Runnable() {
             @Override
             public void run() {
-                _actionListener.changeTurnReady();
+                onFinish.run();
             }
         });
-        _soundsWrapper.playSounds(Sounds.Name.FLIP_CHESS);
 
         if(_chessModel.getChessColor() == _gameDataController.getMyChessColor()){
             setDragDrop();

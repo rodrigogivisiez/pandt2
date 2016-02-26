@@ -2,20 +2,28 @@ package com.potatoandtomato.games.screens;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.assets.Textures;
 import com.potatoandtomato.games.controls.CloneableTable;
 import com.potatoandtomato.games.controls.DummyButton;
 import com.potatoandtomato.games.enums.ChessType;
+import com.potatoandtomato.games.enums.Status;
 import com.potatoandtomato.games.helpers.Assets;
 import com.potatoandtomato.games.helpers.Positions;
+import com.potatoandtomato.games.helpers.Sizes;
+import com.potatoandtomato.games.helpers.SoundsWrapper;
 import com.potatoandtomato.games.models.ChessModel;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
@@ -25,21 +33,24 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
  */
 public class ChessActor extends Table {
 
-    private Table _coverChess;
+    private ChessActor _me;
+    private Table _coverChess, _previewChess;
     private CloneableTable _animalChess;
     private Assets _assets;
-    private Label _msgLabel;
     private boolean _expanded;
     private boolean _initialized;
     private Image _animalImage;
     private Image _glowChess;
     private boolean _alreadySetAnimalChessBg;
+    private SoundsWrapper _soundsWrapper;
 
     public Table getCoverChess() {
         return _coverChess;
     }
 
-    public ChessActor(Assets assets) {
+    public ChessActor(Assets assets, SoundsWrapper soundsWrapper) {
+        _me = this;
+        _soundsWrapper = soundsWrapper;
         _assets = assets;
         _coverChess = new Table();
 
@@ -47,9 +58,16 @@ public class ChessActor extends Table {
         _coverChess.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.UNKNOWN_CHESS)));
         new DummyButton(_coverChess, _assets);
 
+        _previewChess = new Table();
+        _previewChess.setVisible(false);
+        _previewChess.setTransform(true);
+        _previewChess.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.PREVIEW_CHESS)));
+        Image previewImage = new Image(_assets.getTextures().get(Textures.Name.PREVIEW_ICON));
+        _previewChess.add(previewImage).pad(5);
+
         _animalChess = new CloneableTable();
+        _animalChess.setVisible(false);
         _animalChess.setTransform(true);
-        _animalChess.setOrigin(Align.center);
         new DummyButton(_animalChess, _assets);
 
         setAnimal(ChessType.UNKNOWN);
@@ -59,19 +77,42 @@ public class ChessActor extends Table {
 
         this.addActor(_glowChess);
         this.addActor(_animalChess);
+        this.addActor(_previewChess);
         this.addActor(_coverChess);
+
     }
 
+    public void previewChess(final boolean revealChess, final Runnable toRun){
+        flipChessAnimation(_coverChess, revealChess ? _animalChess : _previewChess, new Runnable() {
+            @Override
+            public void run() {
+                Threadings.delay(2000, new Runnable() {
+                    @Override
+                    public void run() {
+                        flipChessAnimation(revealChess ? _animalChess : _previewChess, _coverChess, toRun);
+                    }
+                });
+            }
+        });
+    }
+
+
     public void openChess(final Runnable toRun){
-        if(_animalImage != null) _animalImage.setVisible(true);
+        flipChessAnimation(_coverChess, _animalChess, toRun);
+    }
+
+    private void flipChessAnimation(final Actor hidingChess, final Actor showingChess, final Runnable toRun){
+        showingChess.setVisible(true);
+
+        _soundsWrapper.playSounds(Sounds.Name.FLIP_CHESS);
 
         float duration = 0.2f;
-        _coverChess.addAction(sequence(Actions.scaleTo(0, 1, duration / 2)));
-        _animalChess.addAction(sequence(scaleTo(0, 1), Actions.delay(duration / 2), Actions.scaleTo(1, 1, duration / 2), new Action() {
+        hidingChess.addAction(sequence(Actions.scaleTo(0, 1, duration / 2)));
+        showingChess.clearActions();
+        showingChess.addAction(sequence(scaleTo(0, 1), Actions.delay(duration / 2), Actions.scaleTo(1, 1, duration / 2), new Action(){
             @Override
             public boolean act(float delta) {
-                _animalChess.clearActions();
-                _animalChess.setScale(1, 1);
+                showingChess.setScale(1, 1);
                 if(toRun != null) toRun.run();
                 return true;
             }
@@ -161,21 +202,19 @@ public class ChessActor extends Table {
         super.draw(batch, parentAlpha);
 
         if(!_initialized){
-            _coverChess.setSize(this.getWidth(), this.getHeight());
-            _coverChess.setPosition(Positions.centerX(this.getWidth(), this.getWidth()),
-                    Positions.centerY(this.getHeight(), this.getHeight()));
-            _coverChess.setOrigin(Align.center);
-            _animalChess.setSize(this.getWidth(), this.getHeight());
-            _animalChess.setPosition(Positions.centerX(this.getWidth(), this.getWidth()),
-                    Positions.centerY(this.getHeight(), this.getHeight()));
-            _animalChess.setOrigin(Align.center);
-
-            int glowSize = 25;
-            _glowChess.setSize(this.getWidth()+ glowSize, this.getHeight()+ glowSize);
-            _glowChess.setPosition(Positions.centerX(this.getWidth(), this.getWidth()+ glowSize),
-                    Positions.centerY(this.getHeight(), this.getHeight()+ glowSize));
+            fixChessSizePosition(_coverChess, 0);
+            fixChessSizePosition(_animalChess, 0);
+            fixChessSizePosition(_previewChess, 0);
+            fixChessSizePosition(_glowChess, 25);
             _initialized = true;
         }
+    }
+
+    private void fixChessSizePosition(Actor chessTable, int offsetSize){
+        chessTable.setSize(this.getWidth() + offsetSize, this.getHeight() + offsetSize);
+        chessTable.setPosition(Positions.centerX(this.getWidth(), this.getWidth() + offsetSize),
+                Positions.centerY(this.getHeight(), this.getHeight() + offsetSize));
+        chessTable.setOrigin(Align.center);
     }
 
     public Actor clone(){
@@ -191,9 +230,92 @@ public class ChessActor extends Table {
         if(chessModel.getOpened()){
             _coverChess.setVisible(false);
         }
+        setStatusIcon(chessModel.getStatus(), false, null);
+    }
+
+    public void showAbilityTriggered(final ChessType chessType, final boolean hideChessAnimal, final Runnable onFinish){
+        Threadings.delay(300, new Runnable() {
+            @Override
+            public void run() {
+                final Image fadeOutAnimalImage = new Image(_assets.getTextures().getAnimalByType(chessType));
+                fadeOutAnimalImage.setOrigin(Align.center);
+
+                Vector2 size = new Vector2(_animalImage.getWidth(),
+                        Sizes.resize(_animalImage.getWidth(), _assets.getTextures().getAnimalByType(chessType)).y);
+
+                fadeOutAnimalImage.setSize(size.x, size.y);
+                Vector2 locationAtStage = Positions.actorLocalToStageCoord(_me);
+                fadeOutAnimalImage.setPosition(locationAtStage.x + Positions.centerX(_me.getWidth(), size.x),
+                        locationAtStage.y + Positions.centerY(_me.getHeight(), size.y));
+
+                if(hideChessAnimal) _animalImage.setVisible(false);
+
+                fadeOutAnimalImage.addAction(sequence(parallel(scaleTo(3.5f, 3.5f, 0.6f), fadeOut(0.6f)), new Action() {
+                    @Override
+                    public boolean act(float delta) {
+                        fadeOutAnimalImage.remove();
+                        _animalImage.setVisible(true);
+                        onFinish.run();
+                        return true;
+                    }
+                }));
+
+                _me.getStage().addActor(fadeOutAnimalImage);
+            }
+        });
+    }
+
+    public void setStatusIcon(Status status, boolean animate, final Runnable onFinish){
+
+        Table statusTable;
+        statusTable = _animalChess.findActor("statusTable");
+        if(statusTable == null){
+            statusTable = new Table();
+            _animalChess.addActor(statusTable);
+        }
+
+        if(status == Status.NONE){
+            if(animate){
+                statusTable.addAction(sequence(fadeOut(0.3f), new Action() {
+                    @Override
+                    public boolean act(float delta) {
+                        if(onFinish!= null) onFinish.run();
+                        return true;
+                    }
+                }));
+            }
+            else{
+                statusTable.clear();
+                if(onFinish!= null) onFinish.run();
+            }
+        }
+        else{
+            Image imageStatus = new Image(_assets.getTextures().getStatus(status));
+            imageStatus.setOrigin(Align.center);
+
+            statusTable.clear();
+            statusTable.getColor().a = 1;
+            statusTable.setName("statusTable");
+            statusTable.setSize(30, 30);
+            statusTable.setPosition(0, 30);
+            statusTable.add(imageStatus);
+
+            if(animate){
+                imageStatus.getColor().a = 0f;
+                imageStatus.addAction(sequence(scaleTo(0, 0), fadeIn(0f), scaleTo(1, 1, 0.2f, Interpolation.bounce), new Action() {
+                    @Override
+                    public boolean act(float delta) {
+                        if(onFinish!= null) onFinish.run();
+                        return true;
+                    }
+                }));
+            }
+            else{
+                if(onFinish!= null) onFinish.run();
+            }
+        }
 
 
     }
-
 }
 

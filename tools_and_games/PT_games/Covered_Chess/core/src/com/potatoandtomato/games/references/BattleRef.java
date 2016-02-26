@@ -1,18 +1,19 @@
-package com.potatoandtomato.games.helpers;
+package com.potatoandtomato.games.references;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.potatoandtomato.games.enums.ChessType;
+import com.potatoandtomato.games.models.ChessModel;
 
 import java.util.HashMap;
 
 /**
  * Created by SiongLeng on 1/1/2016.
  */
-public class BattleReference {
+public class BattleRef {
 
     private HashMap<String, HashMap<String, Integer>> refs;
 
-    public BattleReference() {
+    public BattleRef() {
         refs = new HashMap<String, HashMap<String, Integer>>();
         populateAll();
     }
@@ -111,19 +112,19 @@ public class BattleReference {
         return result;
     }
 
-    public int getWinPercent(ChessType from, ChessType to){
-        String fromAnimal = from.name().split("_")[1];
-        if(to == ChessType.NONE){
+    public int getWinPercent(ChessModel from, ChessModel to){
+        String fromAnimal = from.getChessType().name().split("_")[1];
+        if(to.getChessType() == ChessType.NONE){
             return 100;
         }
         else{
-            String toAnimal = to.name().split("_")[1];
+            String toAnimal = to.getChessType().name().split("_")[1];
             return refs.get(fromAnimal).get(toAnimal);
         }
     }
 
     //return true(winner is from) or false(winner is to)
-    public boolean getFromIsWinner(ChessType from, ChessType to){
+    public boolean getFromIsWinner(ChessModel from, ChessModel to){
         int percent = getWinPercent(from, to);
         int random = MathUtils.random(0, 100);
         if(random < percent){

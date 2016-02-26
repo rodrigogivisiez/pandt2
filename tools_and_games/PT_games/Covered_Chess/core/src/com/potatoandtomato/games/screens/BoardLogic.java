@@ -7,13 +7,14 @@ import com.potatoandtomato.common.Threadings;
 import com.potatoandtomato.games.absint.ActionListener;
 import com.potatoandtomato.games.absint.DatabaseListener;
 import com.potatoandtomato.games.assets.Sounds;
+import com.potatoandtomato.games.enums.ActionType;
 import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
 import com.potatoandtomato.games.helpers.*;
-import com.potatoandtomato.games.models.ChessModel;
-import com.potatoandtomato.games.models.GraveModel;
-import com.potatoandtomato.games.models.Services;
-import com.potatoandtomato.games.models.TerrainModel;
+import com.potatoandtomato.games.models.*;
+import com.potatoandtomato.games.references.StatusRef;
+import com.potatoandtomato.games.references.BattleRef;
+import com.potatoandtomato.games.references.MovementRef;
 import com.shaded.fasterxml.jackson.core.JsonParseException;
 import com.shaded.fasterxml.jackson.databind.JsonMappingException;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +23,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
@@ -35,6 +37,10 @@ public class BoardLogic {
     GameCoordinator _coordinator;
     ArrayList<TerrainLogic> _terrains;
     GraveyardLogic _graveyard;
+    BoardModel _boardModel;
+    BattleRef _battleRef;
+    MovementRef _movementRef;
+    StatusRef _statusRef;
 
     BoardScreen _screen;
     GameDataController _gameDataController;
@@ -46,9 +52,14 @@ public class BoardLogic {
     public BoardLogic(Services services, GameCoordinator coordinator) {
         this._services = services;
         this._coordinator = coordinator;
+        _battleRef = new BattleRef();
+        _movementRef = new MovementRef();
+        _statusRef = new StatusRef(services.getSoundsWrapper());
+
+        _boardModel = new BoardModel(-1);
         _terrains = new ArrayList<TerrainLogic>();
         _gameDataController = new GameDataController(coordinator);
-        _graveyard = new GraveyardLogic(new GraveModel(-1),
+        _graveyard = new GraveyardLogic(new GraveModel(),
                 coordinator, services.getTexts(), services.getAssets(), services.getSoundsWrapper());
         _roomMsgHandler = new RoomMsgHandler(this, _coordinator);
         _splashLogic = new SplashLogic(coordinator, _services);
@@ -61,8 +72,8 @@ public class BoardLogic {
     //call when new game
     public void init(){
         if(_coordinator.meIsDecisionMaker()){
-            _graveyard.getGraveModel().setCurrentTurnIndex(_gameDataController.getFirstTurnIndex());
-            gameDataReady(_gameDataController.getGameData(), _graveyard.getGraveModel());
+            _boardModel.setCurrentTurnIndex(_gameDataController.getFirstTurnIndex());
+            gameDataReady(_boardModel, _gameDataController.getGameData(), _graveyard.getGraveModel());
             saveGameDataToDB();
         }
         else{
@@ -83,6 +94,7 @@ public class BoardLogic {
                 i++;
             }
             jsonObject.put("graveModel", _graveyard.getGraveModel().toJson());
+            jsonObject.put("boardModel", _boardModel.toJson());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -124,8 +136,9 @@ public class BoardLogic {
                                 chessModels.add(mapper1.readValue(jsonObject.getString(String.valueOf(i)), ChessModel.class));
                             }
                             GraveModel graveModel = mapper1.readValue(jsonObject.getString("graveModel"), GraveModel.class);
+                            BoardModel boardModel = mapper1.readValue(jsonObject.getString("boardModel"), BoardModel.class);
 
-                            gameDataReady(chessModels, graveModel);
+                            gameDataReady(boardModel, chessModels, graveModel);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -145,8 +158,10 @@ public class BoardLogic {
     }
 
 
-    private void gameDataReady(ArrayList<ChessModel> chessModels, GraveModel graveModel){
+    private void gameDataReady(final BoardModel boardModel, ArrayList<ChessModel> chessModels, GraveModel graveModel){
 
+        _boardModel = boardModel;
+        invalidate();
         _graveyard.setGraveModel(graveModel);
 
         int i = 0;
@@ -155,7 +170,7 @@ public class BoardLogic {
                 final ChessModel chessModel = chessModels.get(i);
                 TerrainLogic terrainLogic = new TerrainLogic(new TerrainModel(col, row),
                         _services.getAssets(), _coordinator, chessModel,
-                        _services.getSoundsWrapper(), _gameDataController, _services.getBattleReference());
+                        _services.getSoundsWrapper(), _gameDataController, _battleRef);
                 terrainLogic.setActionListener(new ActionListener() {
                     @Override
                     public void onSelected() {
@@ -177,13 +192,14 @@ public class BoardLogic {
 
                     @Override
                     public void onMoved(int fromCol, int fromRow, int toCol, int toRow, boolean isFromWon) {
-                        chessMoved(fromCol, fromRow, toCol, toRow, isFromWon, false);
-                        _roomMsgHandler.sendMoveChess(fromCol, fromRow, toCol, toRow, isFromWon);
+                        boolean random = (new Random()).nextBoolean();
+                        chessMoved(fromCol, fromRow, toCol, toRow, isFromWon, false, random);
+                        _roomMsgHandler.sendMoveChess(fromCol, fromRow, toCol, toRow, isFromWon, random);
                     }
 
                     @Override
-                    public void changeTurnReady() {
-                        switchTurn();
+                    public void changeTurnReady(ActionType actionType, ChessType winnerChessType, ChessType loserChessType, boolean random) {
+                        preTurnSwitched(actionType, this.getTerrainLogic(), winnerChessType, loserChessType, random);
                     }
 
                     @Override
@@ -213,16 +229,46 @@ public class BoardLogic {
     }
 
     public void openChess(int col, int row){
-        TerrainLogic openLogic =  getTerrainByPosition(col, row);
+        TerrainLogic openLogic =  Terrains.getTerrainLogicByPosition(_terrains, col, row);
         _lastActiveTerrainLogic = openLogic;
-        openLogic.getChessLogic().openChess();
+        openLogic.openTerrainChess();
     }
 
-    public void chessMoved(int fromCol, int fromRow, int toCol, int toRow, boolean isFromWon, boolean showMovement){
-        TerrainLogic fromLogic = getTerrainByPosition(fromCol, fromRow);
-        TerrainLogic toLogic = getTerrainByPosition(toCol, toRow);
+    //random variable is for decision making(eg, injured/king)
+    public void chessMoved(int fromCol, int fromRow, int toCol, int toRow, boolean isFromWon, boolean showMovement, boolean random){
+        TerrainLogic fromLogic = Terrains.getTerrainLogicByPosition(_terrains, fromCol, fromRow);
+        TerrainLogic toLogic = Terrains.getTerrainLogicByPosition(_terrains, toCol, toRow);
         _lastActiveTerrainLogic = toLogic;
-        toLogic.moveChessToThis(fromLogic, showMovement, isFromWon);
+        toLogic.moveChessToThis(fromLogic, showMovement, isFromWon, random);
+        hideAllTerrainPercentTile();
+    }
+
+    private void preTurnSwitched(ActionType actionType, TerrainLogic terrainLogic,
+                                       ChessType winnerChessType, ChessType loserChessType, boolean random){
+        disableTouchable();
+
+        if(_boardModel.getAccTurnCount() >= 20){
+            _boardModel.setSuddenDeath(true);
+        }
+
+        if(actionType == ActionType.OPEN){
+            _statusRef.chessOpened(_terrains, terrainLogic, isMyTurn(), new Runnable() {
+                @Override
+                public void run() {
+                    switchTurn();
+                }
+            });
+        }
+        else if(actionType == ActionType.MOVE){
+            _statusRef.chessMoved(_terrains, terrainLogic, winnerChessType, loserChessType, random, new Runnable() {
+                @Override
+                public void run() {
+                    switchTurn();
+                }
+            });
+        }
+
+
     }
 
     private void switchTurn(){
@@ -231,17 +277,31 @@ public class BoardLogic {
             _lastActiveTerrainLogic.getChessLogic().getChessModel().setFocusing(true);
             _lastActiveTerrainLogic.getChessLogic().invalidate();
         }
-        _graveyard.switchTurn();
 
+        _boardModel.switchTurnIndex();
+        _statusRef.turnOver(_terrains);
+        invalidate();
+    }
+
+    private void invalidate(){
+        _graveyard.onBoardModelChanged(_boardModel);
         setTurnTouchable();
     }
 
+    private void disableTouchable(){
+        _screen.setCanTouchChessTable(false);
+    }
+
     private void setTurnTouchable(){
-        _screen.setCanTouchChessTable(_graveyard.getGraveModel().getCurrentTurnIndex() == _coordinator.getMyUniqueIndex());
+        _screen.setCanTouchChessTable(isMyTurn());
+    }
+
+    private boolean isMyTurn(){
+        return _boardModel.getCurrentTurnIndex() == _coordinator.getMyUniqueIndex();
     }
 
     public void terrainSelected(int col, int row){
-        TerrainLogic clickedLogic = getTerrainByPosition(col, row);
+        TerrainLogic clickedLogic = Terrains.getTerrainLogicByPosition(_terrains, col, row);
         if(!clickedLogic.isSelected()){
             clearAllTerrainsHighlights();
 
@@ -249,6 +309,12 @@ public class BoardLogic {
             if(clickedLogic.isOpened()){
                 showPossibleMoves(clickedLogic);
             }
+        }
+    }
+
+    private void hideAllTerrainPercentTile(){
+        for(TerrainLogic terrainLogic : _terrains){
+            terrainLogic.hidePercentTile();
         }
     }
 
@@ -261,57 +327,11 @@ public class BoardLogic {
     }
 
     public void showPossibleMoves(TerrainLogic logic){
-        ArrayList<TerrainLogic> possibleMoveLogics = getPossibleValidMoves(logic);
+        ArrayList<TerrainLogic> possibleMoveLogics = _movementRef.getPossibleValidMoves(_terrains, logic);
         for(final TerrainLogic terrainLogic : possibleMoveLogics){
             terrainLogic.showPercentTile(logic);
         }
         logic.setDragAndDrop(possibleMoveLogics);
-    }
-
-    public ArrayList<TerrainLogic> getPossibleValidMoves(TerrainLogic logic){
-        ArrayList<TerrainLogic> possibleMoveLogics = new ArrayList<TerrainLogic>();
-        TerrainModel model = logic.getTerrainModel();
-        if(model.getRow() -1 >= 0){
-            possibleMoveLogics.add(getTerrainByPosition(model.getCol(), model.getRow()-1));
-        }
-        if(model.getRow() + 1 <= 7){
-            possibleMoveLogics.add(getTerrainByPosition(model.getCol(), model.getRow()+1));
-        }
-        if(model.getCol() - 1 >= 0){
-            possibleMoveLogics.add(getTerrainByPosition(model.getCol() - 1, model.getRow()));
-        }
-        if(model.getCol() + 1 <= 3){
-            possibleMoveLogics.add(getTerrainByPosition(model.getCol() + 1, model.getRow()));
-        }
-        ArrayList<TerrainLogic> validMoveLogics = new ArrayList<TerrainLogic>();
-        for(TerrainLogic terrainLogic : possibleMoveLogics){
-            if(isValidMove(logic, terrainLogic)){
-                validMoveLogics.add(terrainLogic);
-            }
-        }
-        return validMoveLogics;
-    }
-
-    private TerrainLogic getTerrainByPosition(int col, int row){
-        for(TerrainLogic terrainLogic : _terrains){
-            if(terrainLogic.getTerrainModel().getCol() == col && terrainLogic.getTerrainModel().getRow() == row){
-                return terrainLogic;
-            }
-        }
-        return null;
-    }
-
-    private boolean isValidMove(TerrainLogic from, TerrainLogic to){
-
-        if(to.isEmpty()) return true;
-
-        if(from.getChessLogic().getChessModel().isRed() ==  to.getChessLogic().getChessModel().isRed()) return false;
-
-        if(from.getChessLogic().getChessModel().isYellow() == to.getChessLogic().getChessModel().isYellow()) return false;
-
-        if(!from.isOpened() || !to.isOpened()) return false;
-
-        return true;
     }
 
     private void endGame(final boolean won){
@@ -358,13 +378,13 @@ public class BoardLogic {
 
             @Override
             public void userConnected(String s) {
-                _screen.setPaused(false, _graveyard.getGraveModel().getCurrentTurnIndex() == _coordinator.getMyUniqueIndex());
+                _screen.setPaused(false, _boardModel.getCurrentTurnIndex() == _coordinator.getMyUniqueIndex());
             }
 
             @Override
             public void userDisconnected(String s) {
                 clearAllTerrainsHighlights();
-                _screen.setPaused(true, _graveyard.getGraveModel().getCurrentTurnIndex() == _coordinator.getMyUniqueIndex());
+                _screen.setPaused(true, _boardModel.getCurrentTurnIndex() == _coordinator.getMyUniqueIndex());
                 saveGameDataToDB();
             }
         });

@@ -17,6 +17,7 @@ import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
 import com.potatoandtomato.games.helpers.Assets;
 import com.potatoandtomato.games.helpers.Texts;
+import com.potatoandtomato.games.models.BoardModel;
 import com.potatoandtomato.games.models.GraveModel;
 
 /**
@@ -164,21 +165,22 @@ public class GraveyardActor extends Table {
         for(ChessType chessType : graveModel.getGraveChesses()){
             addToGraveyard(chessType, chessType.name().startsWith("RED") ? _redGraveTable : _yellowGraveTable);
         }
+    }
 
-        if(_gameCoordinator.getMyUniqueIndex() == graveModel.getCurrentTurnIndex()){
+    public void onBoardModelChanged(BoardModel boardModel){
+        if(_gameCoordinator.getMyUniqueIndex() == boardModel.getCurrentTurnIndex()){
             _turnLabel.setText(_texts.yourTurn());
         }
-        else if(graveModel.getCurrentTurnIndex() != -1){
+        else if(boardModel.getCurrentTurnIndex() != -1){
             _turnLabel.setText(_texts.enemyTurn());
         }
 
-        _yellowTotalRootTable.setBackground(new TextureRegionDrawable(graveModel.getCurrentTurnIndex() == 1 ?_assets.getTextures().get(Textures.Name.EMPTY) : _assets.getTextures().get(Textures.Name.TRANS_DARK_BROWN_ROUNDED_BG)));
-        _yellowPlayerLabel.setVisible(graveModel.getCurrentTurnIndex() == 0);
-        _pointLeftImage.getColor().a = graveModel.getCurrentTurnIndex() == 0 ? 1 : 0.2f;
-        _redTotalRootTable.setBackground(new TextureRegionDrawable(graveModel.getCurrentTurnIndex() == 0 ?_assets.getTextures().get(Textures.Name.EMPTY) : _assets.getTextures().get(Textures.Name.TRANS_DARK_BROWN_ROUNDED_BG)));
-        _redPlayerLabel.setVisible(graveModel.getCurrentTurnIndex() == 1);
-        _pointRightImage.getColor().a = graveModel.getCurrentTurnIndex() == 1 ? 1 : 0.2f;
-
+        _yellowTotalRootTable.setBackground(new TextureRegionDrawable(boardModel.getCurrentTurnIndex() == 1 ?_assets.getTextures().get(Textures.Name.EMPTY) : _assets.getTextures().get(Textures.Name.TRANS_DARK_BROWN_ROUNDED_BG)));
+        _yellowPlayerLabel.setVisible(boardModel.getCurrentTurnIndex() == 0);
+        _pointLeftImage.getColor().a = boardModel.getCurrentTurnIndex() == 0 ? 1 : 0.2f;
+        _redTotalRootTable.setBackground(new TextureRegionDrawable(boardModel.getCurrentTurnIndex() == 0 ?_assets.getTextures().get(Textures.Name.EMPTY) : _assets.getTextures().get(Textures.Name.TRANS_DARK_BROWN_ROUNDED_BG)));
+        _redPlayerLabel.setVisible(boardModel.getCurrentTurnIndex() == 1);
+        _pointRightImage.getColor().a = boardModel.getCurrentTurnIndex() == 1 ? 1 : 0.2f;
     }
 
     public void addToGraveyard(ChessType chessType, Table grave){

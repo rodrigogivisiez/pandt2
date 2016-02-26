@@ -77,11 +77,12 @@ public class RoomMsgHandler {
                     final String[] from = arr[0].split(",");
                     final String[] to = arr[1].split(",");
                     final boolean isFromWon = arr[2].equals("1");
+                    final boolean random = arr[3].equals("1");
                     Gdx.app.postRunnable(new Runnable() {
                         @Override
                         public void run() {
                             _boardLogic.chessMoved(Integer.valueOf(from[0]), Integer.valueOf(from[1]),
-                                    Integer.valueOf(to[0]), Integer.valueOf(to[1]), isFromWon, true);
+                                    Integer.valueOf(to[0]), Integer.valueOf(to[1]), isFromWon, true, random);
                         }
                     });
 
@@ -100,9 +101,9 @@ public class RoomMsgHandler {
         _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.CHESS_OPEN_FULL, col + "," + row));
     }
 
-    public void sendMoveChess(int fromCol, int fromRow, int toCol, int toRow, boolean isFromWon){
+    public void sendMoveChess(int fromCol, int fromRow, int toCol, int toRow, boolean isFromWon, boolean random){
         _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.CHESS_MOVE,
-                fromCol +"," + fromRow + "|" + toCol + "," + toRow + "|" + (isFromWon ? "1" : "0")));
+                fromCol +"," + fromRow + "|" + toCol + "," + toRow + "|" + (isFromWon ? "1" : "0") + "|" + (random ? "1" : "0")));
     }
 
     public void onGameReady(){

@@ -5,6 +5,7 @@ import com.potatoandtomato.common.GameEntrance;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.games.helpers.*;
 import com.potatoandtomato.games.models.Services;
+import com.potatoandtomato.games.references.BattleRef;
 import com.potatoandtomato.games.screens.BoardLogic;
 
 /**
@@ -20,7 +21,7 @@ public class Entrance extends GameEntrance {
 
         Assets assets = new Assets(gameCoordinator);
         assets.loadAll(null);
-        _services =  new Services(assets, new Texts(), new SoundsWrapper(assets, gameCoordinator), new BattleReference(),
+        _services =  new Services(assets, new Texts(), new SoundsWrapper(assets, gameCoordinator),
                 new Database(gameCoordinator));
         getGameCoordinator().finishLoading();
     }

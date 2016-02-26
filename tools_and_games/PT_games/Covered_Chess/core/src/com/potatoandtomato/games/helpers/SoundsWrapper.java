@@ -6,6 +6,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Disposable;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.games.assets.Sounds;
+import com.potatoandtomato.games.enums.ChessAnimal;
 import com.potatoandtomato.games.statics.Global;
 
 /**
@@ -26,10 +27,8 @@ public class SoundsWrapper implements Disposable {
     }
 
     public void playTheme(){
-        if(!Global.DEBUG){
-            _coordinator.getSoundManager().addMusic(_themeMusic);
-            _coordinator.getSoundManager().playMusic(_themeMusic);
-        }
+        _coordinator.getSoundManager().addMusic(_themeMusic);
+        _coordinator.getSoundManager().playMusic(_themeMusic);
     }
 
     public void stopTheme(){
@@ -38,6 +37,11 @@ public class SoundsWrapper implements Disposable {
 
     public void playSounds(Sounds.Name name){
         Sound sound =  _assets.getSounds().getSound(name);
+        _coordinator.getSoundManager().playSound(sound);
+    }
+
+    public void playAnimalSound(ChessAnimal animal){
+        Sound sound = _assets.getSounds().getSound(animal.name());
         _coordinator.getSoundManager().playSound(sound);
     }
 

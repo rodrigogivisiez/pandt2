@@ -11,11 +11,14 @@ import com.badlogic.gdx.utils.Align;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.games.absint.ActionListener;
 import com.potatoandtomato.games.assets.Sounds;
+import com.potatoandtomato.games.enums.ActionType;
 import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
+import com.potatoandtomato.games.enums.Direction;
 import com.potatoandtomato.games.helpers.*;
 import com.potatoandtomato.games.models.ChessModel;
 import com.potatoandtomato.games.models.TerrainModel;
+import com.potatoandtomato.games.references.BattleRef;
 
 import java.util.ArrayList;
 
@@ -34,32 +37,33 @@ public class TerrainLogic {
     private ActionListener actionListener;
 
     private GameCoordinator _coordinator;
-    private BattleReference _battleRefs;
+    private BattleRef _battleRefs;
     private GameDataController _gameDataController;
     private SoundsWrapper _soundsWrapper;
 
     public TerrainLogic(TerrainModel _terrainModel, Assets _assets,
                         GameCoordinator _coordinator, ChessModel chessModel,
                         SoundsWrapper soundsWrapper, GameDataController gameDataController,
-                        BattleReference battleReference) {
+                        BattleRef battleRef) {
         this._me = this;
         this._terrainModel = _terrainModel;
         this._assets = _assets;
         this._coordinator = _coordinator;
         this._soundsWrapper = soundsWrapper;
         this._gameDataController = gameDataController;
-        this._battleRefs = battleReference;
+        this._battleRefs = battleRef;
 
         chessLogic = new ChessLogic(chessModel, _assets, soundsWrapper, gameDataController);
-        terrainActor = new TerrainActor(_assets, chessLogic.getChessActor());
+        terrainActor = new TerrainActor(_assets, chessLogic.getChessActor(), _soundsWrapper);
 
         setListeners();
     }
 
-    public void moveChessToThis(final TerrainLogic fromLogic, boolean showMoveAnimation, final boolean isFromWon){
+    public void moveChessToThis(final TerrainLogic fromLogic, boolean showMoveAnimation, final boolean isFromWon, final boolean random){
 
-        final ChessModel fromChessModel = fromLogic.getChessLogic().getChessModel().clone();
-        final Actor fromChessClone = fromLogic.getChessLogic().cloneActor();
+        final ChessModel originalFromChessModel = fromLogic.getChessLogic().getChessModel().clone();
+        final Actor originalFromChessClone = fromLogic.getChessLogic().cloneActor();
+        final ChessModel originalToChessModel = getChessLogic().getChessModel().clone();
 
         final Runnable afterMove = new Runnable() {
             @Override
@@ -67,9 +71,9 @@ public class TerrainLogic {
 
                 if(isEmpty()){
                     _soundsWrapper.playSounds(Sounds.Name.MOVE_CHESS);
-                    fromChessModel.setDragging(false);
-                    chessLogic.setChessModel(fromChessModel);
-                    actionListener.changeTurnReady();
+                    originalFromChessModel.setDragging(false);
+                    chessLogic.setChessModel(originalFromChessModel);
+                    actionListener.changeTurnReady(ActionType.MOVE, originalFromChessModel.getChessType(), originalToChessModel.getChessType(), random);
                 }
                 else {
                     getTerrainActor().showBattle();
@@ -77,21 +81,23 @@ public class TerrainLogic {
                     _coordinator.requestVibrate(1500);
 
                     ChessModel winnerChessModel;
-                    final ChessType loserChessType;
+                    final ChessType winnerChessType, loserChessType;
                     final boolean loserIsYellow;
                     final Actor clone;
 
                     if(isFromWon){
-                        winnerChessModel = fromChessModel;
+                        winnerChessModel = originalFromChessModel;
+                        winnerChessType = winnerChessModel.getChessType();
                         loserChessType = _me.getChessLogic().getChessModel().getChessType();
                         loserIsYellow = _me.getChessLogic().getChessModel().getChessColor() == ChessColor.YELLOW;
                         clone = _me.getChessLogic().cloneActor();
                     }
                     else{
                         winnerChessModel = _me.getChessLogic().getChessModel();
-                        loserChessType = fromChessModel.getChessType();
-                        loserIsYellow = fromChessModel.getChessColor() == ChessColor.YELLOW;
-                        clone = fromChessClone;
+                        winnerChessType = winnerChessModel.getChessType();
+                        loserChessType = originalFromChessModel.getChessType();
+                        loserIsYellow = originalFromChessModel.getChessColor() == ChessColor.YELLOW;
+                        clone = originalFromChessClone;
                     }
 
                     final Stage _stage = _me.getTerrainActor().getStage();
@@ -115,7 +121,7 @@ public class TerrainLogic {
                                 @Override
                                 public void run() {
                                     getTerrainActor().hideBattle();
-                                    actionListener.changeTurnReady();
+                                    actionListener.changeTurnReady(ActionType.MOVE, winnerChessType, loserChessType, random);
                                     actionListener.onChessKilled(loserChessType);
                                 }
                             });
@@ -155,21 +161,56 @@ public class TerrainLogic {
 
     }
 
+    public void openTerrainChess(){
+        this.chessLogic.openChess(new Runnable() {
+            @Override
+            public void run() {
+                actionListener.changeTurnReady(ActionType.OPEN, null, null, false);
+            }
+        });
+    }
+
+    //col and row start from top left of board
     public void showPercentTile(TerrainLogic fromLogic){
-        int leftTopRightBottom = 0;
-        if(fromLogic.getTerrainModel().getCol() > this.getTerrainModel().getCol()) leftTopRightBottom = 2;
-        if(fromLogic.getTerrainModel().getRow() > this.getTerrainModel().getRow()) leftTopRightBottom = 3;
-        if(fromLogic.getTerrainModel().getCol() < this.getTerrainModel().getCol()) leftTopRightBottom = 0;
-        if(fromLogic.getTerrainModel().getRow() < this.getTerrainModel().getRow()) leftTopRightBottom = 1;
+
+        Direction direction = Direction.NONE;
+
+        if(Math.abs(fromLogic.getTerrainModel().getCol() - this.getTerrainModel().getCol()) == 2 ||
+                Math.abs(fromLogic.getTerrainModel().getRow() - this.getTerrainModel().getRow()) == 2){
+            direction = Direction.NONE;
+        }
+        else{
+            if(fromLogic.getTerrainModel().getCol() == this.getTerrainModel().getCol()
+                    && fromLogic.getTerrainModel().getRow() != this.getTerrainModel().getRow()){
+                if(fromLogic.getTerrainModel().getRow() > this.getTerrainModel().getRow()) direction = Direction.BOTTOM;
+                else if(fromLogic.getTerrainModel().getRow() < this.getTerrainModel().getRow()) direction = Direction.TOP;
+            }
+            else if(fromLogic.getTerrainModel().getRow() == this.getTerrainModel().getRow()
+                    && fromLogic.getTerrainModel().getCol() != this.getTerrainModel().getCol()){
+                if(fromLogic.getTerrainModel().getCol() > this.getTerrainModel().getCol()) direction = Direction.RIGHT;
+                else if(fromLogic.getTerrainModel().getCol() < this.getTerrainModel().getCol()) direction = Direction.LEFT;
+            }
+            else if(fromLogic.getTerrainModel().getRow() != this.getTerrainModel().getRow()
+                    && fromLogic.getTerrainModel().getCol() != this.getTerrainModel().getCol()){
+                if(fromLogic.getTerrainModel().getCol() > this.getTerrainModel().getCol() &&
+                        fromLogic.getTerrainModel().getRow() > this.getTerrainModel().getRow()) direction = Direction.BOTTOM_RIGHT;
+                else if(fromLogic.getTerrainModel().getCol() > this.getTerrainModel().getCol() &&
+                        fromLogic.getTerrainModel().getRow() < this.getTerrainModel().getRow()) direction = Direction.TOP_RIGHT;
+                else if(fromLogic.getTerrainModel().getCol() < this.getTerrainModel().getCol() &&
+                        fromLogic.getTerrainModel().getRow() > this.getTerrainModel().getRow()) direction = Direction.BOTTOM_LEFT;
+                else if(fromLogic.getTerrainModel().getCol() < this.getTerrainModel().getCol() &&
+                        fromLogic.getTerrainModel().getRow() < this.getTerrainModel().getRow()) direction = Direction.TOP_LEFT;
+            }
+        }
 
         int percent = 0;
         if(this.isEmpty()) percent = -1;
         else{
-             percent = _battleRefs.getWinPercent(fromLogic.getChessLogic().getChessModel().getChessType(),
-                                                    this.getChessLogic().getChessModel().getChessType());
+             percent = _battleRefs.getWinPercent(fromLogic.getChessLogic().getChessModel(),
+                                                    this.getChessLogic().getChessModel());
         }
 
-        terrainActor.showPercent(percent, leftTopRightBottom);
+        terrainActor.showPercent(percent, direction);
 
     }
 
@@ -207,8 +248,8 @@ public class TerrainLogic {
                     terrainLogic.hideCanMoveTo();
                     actionListener.onMoved(_me.getTerrainModel().getCol(), _me.getTerrainModel().getRow(),
                             terrainLogic.getTerrainModel().getCol(), terrainLogic.getTerrainModel().getRow(),
-                            _battleRefs.getFromIsWinner(_me.getChessLogic().getChessModel().getChessType(),
-                                    terrainLogic.getChessLogic().getChessModel().getChessType()));
+                            _battleRefs.getFromIsWinner(_me.getChessLogic().getChessModel(),
+                                    terrainLogic.getChessLogic().getChessModel()));
                 }
             };
             chessLogic.addDragDropTarget(target);

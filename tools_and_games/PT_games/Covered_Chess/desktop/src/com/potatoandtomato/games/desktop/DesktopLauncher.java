@@ -24,9 +24,11 @@ public class DesktopLauncher {
 		CoveredChessGame coveredChessGame = new CoveredChessGame("covered_chess");
 		if(arg.length > 0 && arg[0].equals("continue")) coveredChessGame.isContinue = true;
 
-		if(arg.length > 0 && (arg[0].equals("debug") || arg[0].equals("pack"))) Global.DEBUG = true;
+		if(arg.length > 0 && (arg[0].equals("debug"))) Global.DEBUG = true;
 
 		if(arg.length > 1 && (arg[1].equals("noentrance"))) Global.NO_ENTRANCE = true;
+
+		if(arg.length > 0 && arg[0].equals("pack")) return;
 
 		new LwjglApplication(coveredChessGame, config);
 

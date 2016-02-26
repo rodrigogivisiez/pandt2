@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.potatoandtomato.games.absint.IAssetFragment;
 import com.potatoandtomato.games.enums.ChessType;
+import com.potatoandtomato.games.enums.Status;
 
 import java.util.HashMap;
 
@@ -51,20 +52,27 @@ public class Textures implements IAssetFragment {
         return _regions.get(chessTypeString);
     }
 
+    public TextureRegion getStatus(Status status){
+        return _regions.get("STATUS_" + status.name());
+    }
+
+
+
     public TextureAtlas getPack() {
         return _pack;
     }
 
     public enum Name{
-        ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP,
+        ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP, ARROW_BOTTOM_LEFT, ARROW_TOP_LEFT, ARROW_BOTTOM_RIGHT, ARROW_TOP_RIGHT,
         GREEN_TILE, RED_TILE, GLOWING_TILE,
         GAME_BG, TRANS_DARK_BROWN_ROUNDED_BG, GRAVE_BG, TRANS_BLACK_BG, BLACK_BG, SPLASH_BG,
-        POINT_LEFT_ICON, POINT_RIGHT_ICON,
+        POINT_LEFT_ICON, POINT_RIGHT_ICON, PREVIEW_ICON,
         GLOW_CHESS, RED_CHESS_TOTAL, YELLOW_CHESS_TOTAL,
         BATTLE_EFFECT, BATTLE_CLOUD,
         EMPTY,
         YELLOW_CHESS, RED_CHESS, UNKNOWN_CHESS, YELLOW_CHESS_SELECTED, RED_CHESS_SELECTED, UNKNOWN_CHESS_SELECTED,
-        YELLOW_LION_SPLASH, RED_LION_SPLASH, YELLOW_TIGER_SPLASH, RED_TIGER_SPLASH, YELLOW_WOLF_SPLASH, RED_WOLF_SPLASH
+        PREVIEW_CHESS,
+        YELLOW_LION_SPLASH, RED_LION_SPLASH, YELLOW_TIGER_SPLASH, RED_TIGER_SPLASH, YELLOW_WOLF_SPLASH, RED_WOLF_SPLASH,
     }
 
 

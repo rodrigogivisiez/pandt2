@@ -1,8 +1,10 @@
 package com.potatoandtomato.games.models;
 
 import com.potatoandtomato.games.absint.Model;
+import com.potatoandtomato.games.enums.ChessAnimal;
 import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
+import com.potatoandtomato.games.enums.Status;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
@@ -16,12 +18,54 @@ public class ChessModel extends Model {
     public boolean selected;
     public boolean dragging;
     public boolean focusing;
+    public Status status;
+    public int statusTurn;
+    public int killCount;
 
     public ChessModel() {
+        this.status = Status.NONE;
     }
 
     public ChessModel(ChessType chessType) {
         this.chessType = chessType;
+        this.status = Status.NONE;
+    }
+
+    public int getKillCount() {
+        return killCount;
+    }
+
+    public void setKillCount(int killCount) {
+        this.killCount = killCount;
+    }
+
+    public void addKillCount(){
+        this.killCount++;
+    }
+
+    public boolean canTransform(){
+        return this.killCount == 3;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+        this.statusTurn = 0;
+    }
+
+    public int getStatusTurn() {
+        return statusTurn;
+    }
+
+    public void setStatusTurn(int statusTurn) {
+        this.statusTurn = statusTurn;
+    }
+
+    public void addStatusTurn(){
+        this.statusTurn++;
     }
 
     public ChessType getChessType() {
@@ -73,12 +117,22 @@ public class ChessModel extends Model {
         this.focusing = focusing;
     }
 
+    public ChessAnimal getChessAnimal(){
+        if(this.getChessType() != null){
+            return this.getChessType().toChessAnimal();
+        }
+        return ChessAnimal.NONE;
+    }
+
     public ChessModel clone(){
         ChessModel chessModel = new ChessModel(this.chessType);
         chessModel.setDragging(this.getDragging());
         chessModel.setSelected(this.getSelected());
         chessModel.setOpened(this.getOpened());
         chessModel.setFocusing(this.getFocusing());
+        chessModel.setStatus(this.getStatus());
+        chessModel.setStatusTurn(this.getStatusTurn());
+        chessModel.setKillCount(this.getKillCount());
         return chessModel;
     }
 

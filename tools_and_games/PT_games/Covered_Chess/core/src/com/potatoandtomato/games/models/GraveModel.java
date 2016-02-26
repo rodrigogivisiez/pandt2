@@ -15,19 +15,14 @@ import java.util.Collections;
 public class GraveModel extends Model {
 
     private ArrayList<ChessType> graveChesses;
-    private int currentTurnIndex;
+
 
     public GraveModel() {
-    }
-
-    public GraveModel(ArrayList<ChessType> graveChesses, int currentTurnIndex) {
-        this.graveChesses = graveChesses;
-        this.currentTurnIndex = currentTurnIndex;
-    }
-
-    public GraveModel(int currentTurnIndex) {
         this.graveChesses = new ArrayList<ChessType>();
-        this.currentTurnIndex = currentTurnIndex;
+    }
+
+    public GraveModel(ArrayList<ChessType> graveChesses) {
+        this.graveChesses = graveChesses;
     }
 
     public ArrayList<ChessType> getGraveChesses() {
@@ -36,14 +31,6 @@ public class GraveModel extends Model {
 
     public void setGraveChesses(ArrayList<ChessType> graveChesses) {
         this.graveChesses = graveChesses;
-    }
-
-    public int getCurrentTurnIndex() {
-        return currentTurnIndex;
-    }
-
-    public void setCurrentTurnIndex(int currentTurnIndex) {
-        this.currentTurnIndex = currentTurnIndex;
     }
 
     public void addToGrave(ChessType chessType){

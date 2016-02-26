@@ -72,6 +72,8 @@ public class Sounds implements IAssetFragment {
         return _soundsMap.get(name.name());
     }
 
+    public Sound getSound(String name) { return _soundsMap.get(name); }
+
     public Music getMusic(Name name) { return _musicsMap.get(name.name()); }
 
     public enum Name{
