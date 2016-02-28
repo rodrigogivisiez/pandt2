@@ -2,6 +2,7 @@ package com.potatoandtomato.games.screens;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -20,6 +21,8 @@ import com.potatoandtomato.games.helpers.Texts;
 import com.potatoandtomato.games.models.BoardModel;
 import com.potatoandtomato.games.models.GraveModel;
 
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
+
 /**
  * Created by SiongLeng on 19/2/2016.
  */
@@ -27,11 +30,13 @@ public class GraveyardActor extends Table {
 
     private Table _yellowGraveTable, _redGraveTable;
     private Table _yellowTotalRootTable, _redTotalRootTable;
-    private Label _yellowTotalLabel, _redTotalLabel, _turnLabel, _yellowPlayerLabel, _redPlayerLabel;
+    private Label _yellowTotalLabel, _redTotalLabel, _turnLabel, _turnCountLabel, _yellowPlayerLabel, _redPlayerLabel;
+    private Label _yellowTimer, _redTimer;
     private Assets _assets;
     private Texts _texts;
     private GameCoordinator _gameCoordinator;
     private Image _pointLeftImage, _pointRightImage;
+    private Container _turnCountContainer;
 
     public GraveyardActor(GameCoordinator gameCoordinator, Texts texts, Assets assets) {
         this._assets = assets;
@@ -48,6 +53,8 @@ public class GraveyardActor extends Table {
                                                                     Fonts.FontName.MYRIAD), null);
         Label.LabelStyle labelSmallStyle = new Label.LabelStyle(_assets.getFonts().get(
                                                                     Fonts.FontName.MYRIAD, Fonts.FontSize.S, Fonts.FontColor.WHITE), null);
+        Label.LabelStyle labelXSmallStyle = new Label.LabelStyle(_assets.getFonts().get(
+                                                      Fonts.FontName.HELVETICA, Fonts.FontSize.XS, Fonts.FontColor.WHITE, Fonts.FontStyle.BlACK_CONDENSED_ITALIC), null);
         /////////////////////////
         //yellow total label
         ////////////////////////
@@ -60,11 +67,18 @@ public class GraveyardActor extends Table {
         _yellowTotalLabel = new Label("", labelTotalStyle);
         yellowTotalTable.add(_yellowTotalLabel).padLeft(1).padBottom(2);
 
+        Table yellowPlayerTable = new Table();
         _yellowPlayerLabel = new Label(_gameCoordinator.getMyUniqueIndex() == 0 ? _texts.you() : _texts.enemy(), labelSmallStyle);
         _yellowPlayerLabel.setAlignment(Align.center);
 
+        _yellowTimer = new Label("15:00", labelXSmallStyle);
+        _yellowTimer.setAlignment(Align.center);
+        yellowPlayerTable.add(_yellowPlayerLabel).expandX().fillX();
+        yellowPlayerTable.row();
+        yellowPlayerTable.add(_yellowTimer).expandX().fillX();
+
         _yellowTotalRootTable.add(yellowTotalTable);
-        _yellowTotalRootTable.add(_yellowPlayerLabel).expandX().fillX().padLeft(10);
+        _yellowTotalRootTable.add(yellowPlayerTable).expandX().fillX().padLeft(10);
 
         /////////////////////////
         //red total label
@@ -78,10 +92,17 @@ public class GraveyardActor extends Table {
         _redTotalLabel = new Label("", labelTotalStyle);
         redTotalTable.add(_redTotalLabel).padLeft(1).padBottom(2);
 
+        Table redPlayerTable = new Table();
         _redPlayerLabel = new Label(_gameCoordinator.getMyUniqueIndex() == 1 ? _texts.you() : _texts.enemy(), labelSmallStyle);
         _redPlayerLabel.setAlignment(Align.center);
 
-        _redTotalRootTable.add(_redPlayerLabel).expandX().fillX().padRight(10);
+        _redTimer = new Label("15:00", labelXSmallStyle);
+        _redTimer.setAlignment(Align.center);
+        redPlayerTable.add(_redPlayerLabel).expandX().fillX();
+        redPlayerTable.row();
+        redPlayerTable.add(_redTimer).expandX().fillX();
+
+        _redTotalRootTable.add(redPlayerTable).expandX().fillX().padRight(10);
         _redTotalRootTable.add(redTotalTable);
 
         /////////////////////////
@@ -91,6 +112,16 @@ public class GraveyardActor extends Table {
                                 Fonts.FontName.HELVETICA, Fonts.FontSize.XXL, Fonts.FontColor.DARK_BROWN, Fonts.FontStyle.HEAVY), null));
         _turnLabel.setAlignment(Align.center);
 
+        _turnCountLabel = new Label("", new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.HELVETICA,
+                Fonts.FontSize.XXL, Fonts.FontColor.WHITE, Fonts.FontStyle.BlACK_CONDENSED_ITALIC,
+                Fonts.FontBorderColor.DARK_BROWN, Fonts.FontShadowColor.NONE), null));
+        _turnCountLabel.setOrigin(Align.center);
+        _turnCountLabel.setSize(30, 20);
+        _turnCountLabel.setPosition(0, 0);
+        _turnCountContainer = new Container(_turnCountLabel);
+        _turnCountContainer.setTransform(true);
+        _turnCountContainer.setOrigin(Align.center);
+
         /////////////////////////
         //pointing icons
         ////////////////////////
@@ -98,10 +129,11 @@ public class GraveyardActor extends Table {
         _pointRightImage = new Image(_assets.getTextures().get(Textures.Name.POINT_RIGHT_ICON));
 
         Table turnTable = new Table();
-        turnTable.add(_turnLabel).expandX().fillX().colspan(2);
+        turnTable.add(_turnLabel).expandX().fillX().colspan(3);
         turnTable.row();
-        turnTable.add(_pointLeftImage).uniformX().right().space(0, 10, 0, 10);
-        turnTable.add(_pointRightImage).uniformX().left().space(0, 10, 0, 10);
+        turnTable.add(_pointLeftImage).expandX().right().space(0, 10, 0, 10).height(20);
+        turnTable.add(_turnCountContainer).height(20);
+        turnTable.add(_pointRightImage).expandX().left().space(0, 10, 0, 10).height(20);
 
         ///////////////////////////
         //top info
@@ -167,6 +199,11 @@ public class GraveyardActor extends Table {
         }
     }
 
+    public void setCountDownTime(ChessColor chessColor, String time){
+        Label labelTime = chessColor == ChessColor.YELLOW ? _yellowTimer : _redTimer;
+        labelTime.setText(time);
+    }
+
     public void onBoardModelChanged(BoardModel boardModel){
         if(_gameCoordinator.getMyUniqueIndex() == boardModel.getCurrentTurnIndex()){
             _turnLabel.setText(_texts.yourTurn());
@@ -176,11 +213,20 @@ public class GraveyardActor extends Table {
         }
 
         _yellowTotalRootTable.setBackground(new TextureRegionDrawable(boardModel.getCurrentTurnIndex() == 1 ?_assets.getTextures().get(Textures.Name.EMPTY) : _assets.getTextures().get(Textures.Name.TRANS_DARK_BROWN_ROUNDED_BG)));
-        _yellowPlayerLabel.setVisible(boardModel.getCurrentTurnIndex() == 0);
+        //_yellowPlayerLabel.setVisible(boardModel.getCurrentTurnIndex() == 0);
         _pointLeftImage.getColor().a = boardModel.getCurrentTurnIndex() == 0 ? 1 : 0.2f;
         _redTotalRootTable.setBackground(new TextureRegionDrawable(boardModel.getCurrentTurnIndex() == 0 ?_assets.getTextures().get(Textures.Name.EMPTY) : _assets.getTextures().get(Textures.Name.TRANS_DARK_BROWN_ROUNDED_BG)));
-        _redPlayerLabel.setVisible(boardModel.getCurrentTurnIndex() == 1);
+       // _redPlayerLabel.setVisible(boardModel.getCurrentTurnIndex() == 1);
         _pointRightImage.getColor().a = boardModel.getCurrentTurnIndex() == 1 ? 1 : 0.2f;
+
+        if(!_turnCountLabel.getText().toString().equals(String.format("%02d", boardModel.getAccTurnCount()))){
+            _turnCountContainer.getColor().a = 0f;
+            _turnCountContainer.addAction(sequence(Actions.scaleTo(1.5f, 1.5f), parallel(fadeIn(0.3f), Actions.scaleTo(1, 1, 0.3f))));
+            _turnCountLabel.setText(String.format("%02d", boardModel.getAccTurnCount()));
+            if(boardModel.isSuddenDeath()){
+                _turnCountLabel.getStyle().fontColor = Color.valueOf("ff0d0d");
+            }
+        }
     }
 
     public void addToGraveyard(ChessType chessType, Table grave){

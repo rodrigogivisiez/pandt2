@@ -80,7 +80,8 @@ public class Sounds implements IAssetFragment {
         START_GAME, OPEN_SLIDE,
         FLIP_CHESS, MOVE_CHESS,
         FIGHT_CHESS, WIN, LOSE,
-        THEME
+        GLASS_CRACKING, GLASS_BROKEN,
+        DROPPING, THEME
     }
 
 }

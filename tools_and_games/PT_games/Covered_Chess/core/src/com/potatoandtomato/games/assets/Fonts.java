@@ -48,6 +48,12 @@ public class Fonts implements IAssetFragment {
         _preloadFonts.add(new Font(FontName.MYRIAD, FontSize.M, FontColor.BLACK,
                 FontStyle.REGULAR, FontBorderColor.NONE, FontShadowColor.NONE));
 
+        _preloadFonts.add(new Font(FontName.HELVETICA, FontSize.XS, FontColor.WHITE,
+                FontStyle.BlACK_CONDENSED_ITALIC, FontBorderColor.NONE, FontShadowColor.NONE));
+
+        _preloadFonts.add(new Font(FontName.HELVETICA, FontSize.XXL, FontColor.WHITE,
+                FontStyle.BlACK_CONDENSED_ITALIC, FontBorderColor.DARK_BROWN, FontShadowColor.NONE));
+
         _preloadFonts.add(new Font(FontName.HELVETICA, FontSize.XXL, FontColor.DARK_BROWN,
                 FontStyle.HEAVY, FontBorderColor.NONE, FontShadowColor.NONE));
 
@@ -217,7 +223,8 @@ public class Fonts implements IAssetFragment {
     }
 
     public enum FontBorderColor{
-        WHITE, GRAY, BLACK, LIGHT_ORANGE, DARK_GREEN, ORANGE, RED, NONE
+        WHITE, GRAY, BLACK, LIGHT_ORANGE, DARK_GREEN, ORANGE, RED,
+        DARK_BROWN, NONE
     }
 
     private class Font{
@@ -340,6 +347,8 @@ public class Fonts implements IAssetFragment {
                     return Color.valueOf("f0c266");
                 case RED:
                     return Color.valueOf("f46767");
+                case DARK_BROWN:
+                    return Color.valueOf("56380a");
             }
             return null;
         }

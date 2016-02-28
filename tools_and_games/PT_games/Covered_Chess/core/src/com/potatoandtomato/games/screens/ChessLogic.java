@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.potatoandtomato.games.absint.ActionListener;
 import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.enums.ChessType;
+import com.potatoandtomato.games.enums.Status;
 import com.potatoandtomato.games.helpers.Assets;
 import com.potatoandtomato.games.helpers.GameDataController;
 import com.potatoandtomato.games.helpers.Positions;
@@ -88,6 +89,7 @@ public class ChessLogic {
     public void setChessModel(ChessModel chessModel){
         if(chessModel == null){
             _chessModel.setChessType(ChessType.NONE);
+            _chessModel.setStatus(Status.NONE);
         }
         else{
             _chessModel = chessModel;

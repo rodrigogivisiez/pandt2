@@ -44,6 +44,7 @@ public class Entrance extends GameEntrance {
     @Override
     public void dispose() {
         _services.getSoundsWrapper().dispose();
+        if(_logic != null) _logic.dispose();
     }
 
 

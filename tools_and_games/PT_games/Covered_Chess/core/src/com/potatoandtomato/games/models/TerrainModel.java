@@ -6,6 +6,7 @@ package com.potatoandtomato.games.models;
 public class TerrainModel {
 
     public int col, row;
+    public boolean breaking, broken;
 
     public TerrainModel(int col, int row) {
         this.col = col;
@@ -18,5 +19,21 @@ public class TerrainModel {
 
     public int getCol() {
         return col;
+    }
+
+    public boolean isBroken() {
+        return broken;
+    }
+
+    public void setBroken(boolean broken) {
+        this.broken = broken;
+    }
+
+    public boolean isBreaking() {
+        return breaking;
+    }
+
+    public void setBreaking(boolean breaking) {
+        this.breaking = breaking;
     }
 }

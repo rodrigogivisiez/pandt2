@@ -52,6 +52,8 @@ public class ChessActor extends Table {
         _me = this;
         _soundsWrapper = soundsWrapper;
         _assets = assets;
+        this.setTransform(true);
+
         _coverChess = new Table();
 
         _coverChess.setTransform(true);
@@ -206,6 +208,7 @@ public class ChessActor extends Table {
             fixChessSizePosition(_animalChess, 0);
             fixChessSizePosition(_previewChess, 0);
             fixChessSizePosition(_glowChess, 25);
+            this.setOrigin(this.getWidth()/2 , this.getHeight()/2);
             _initialized = true;
         }
     }
@@ -229,6 +232,7 @@ public class ChessActor extends Table {
         _glowChess.setVisible(chessModel.getFocusing());
         if(chessModel.getOpened()){
             _coverChess.setVisible(false);
+            _animalChess.setVisible(true);
         }
         setStatusIcon(chessModel.getStatus(), false, null);
     }
@@ -297,7 +301,7 @@ public class ChessActor extends Table {
             statusTable.getColor().a = 1;
             statusTable.setName("statusTable");
             statusTable.setSize(30, 30);
-            statusTable.setPosition(0, 30);
+            statusTable.setPosition(-5, 37);
             statusTable.add(imageStatus);
 
             if(animate){

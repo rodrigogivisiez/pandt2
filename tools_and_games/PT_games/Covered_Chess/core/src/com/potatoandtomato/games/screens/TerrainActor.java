@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -13,10 +14,12 @@ import com.badlogic.gdx.utils.Align;
 import com.potatoandtomato.games.assets.Fonts;
 import com.potatoandtomato.games.assets.Textures;
 import com.potatoandtomato.games.controls.DummyButton;
+import com.potatoandtomato.games.enums.ChessAnimal;
 import com.potatoandtomato.games.enums.Direction;
 import com.potatoandtomato.games.helpers.Assets;
 import com.potatoandtomato.games.helpers.Positions;
 import com.potatoandtomato.games.helpers.SoundsWrapper;
+import com.potatoandtomato.games.models.TerrainModel;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
@@ -29,21 +32,32 @@ public class TerrainActor extends Table {
 
     private Assets _assets;
     private Image _glowingTile;
+    private Image _backgroundImage;
     private boolean _selected;
     private Table _chessTable;
     private Table _greenTile, _redTile;
     private Label _percentLabel;
     private boolean _initialized;
     private Image _arrowLeft, _arrowRight, _arrowUp, _arrowDown, _arrowTopLeft,
-            _arrowTopRight, _arrowBottomLeft, _arrowBottomRight;
+            _arrowTopRight, _arrowBottomLeft, _arrowBottomRight, _crackImage;
     private Table _battleTable;
     private SoundsWrapper _soundsWrapper;
+    private ChessActor _chessActor;
 
     public TerrainActor(Assets _assets, ChessActor chessActor, SoundsWrapper soundsWrapper) {
         this._soundsWrapper = soundsWrapper;
         this._assets = _assets;
-        this.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
         new DummyButton(this, _assets);
+
+        _backgroundImage = new Image(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG));
+        _backgroundImage.setFillParent(true);
+        this.addActor(_backgroundImage);
+
+        _crackImage = new Image(_assets.getTextures().get(Textures.Name.CRACK));
+        _crackImage.setTouchable(Touchable.disabled);
+        _crackImage.setPosition(-10, -10);
+        _crackImage.setVisible(false);
+        this.addActor(_crackImage);
 
         _glowingTile = new Image(_assets.getTextures().get(Textures.Name.GLOWING_TILE));
         _glowingTile.setVisible(false);
@@ -80,6 +94,7 @@ public class TerrainActor extends Table {
     public void setChessActor(ChessActor chessActor){
         _chessTable.clear();
         _chessTable.add(chessActor).size(55);
+        _chessActor = chessActor;
     }
 
     public void setSelected(boolean selected){
@@ -188,6 +203,7 @@ public class TerrainActor extends Table {
         if(!_initialized){
             _initialized = true;
             initializeArrows();
+            initializeCrack();
         }
 
     }
@@ -269,6 +285,32 @@ public class TerrainActor extends Table {
         _arrowTopLeft.addAction(forever(sequence(Actions.moveBy(3, -3, 0.3f), Actions.moveBy(-3, 3, 0.3f))));
         this.getStage().addActor(_arrowTopLeft);
 
+    }
+
+    private void initializeCrack(){
+        _crackImage.setSize(this.getWidth() + 20, this.getHeight() + 10);
+    }
+
+    public void animateBroken(){
+        _crackImage.addAction(fadeOut(0.3f));
+        _backgroundImage.addAction(sequence(fadeOut(0.3f), new RunnableAction(){
+            @Override
+            public void run() {
+                _chessActor.addAction(sequence(delay(0.5f), parallel(forever(Actions.rotateBy(360, 3f)), Actions.scaleBy(-1, -1, 3f))));
+            }
+        }));
+
+    }
+
+    public void invalidate(TerrainModel model){
+        if(model.isBroken()){
+            _backgroundImage.setVisible(false);
+            _chessTable.setVisible(false);
+            _crackImage.setVisible(false);
+        }
+        else if(model.isBreaking()){
+            _crackImage.setVisible(true);
+        }
     }
 
 

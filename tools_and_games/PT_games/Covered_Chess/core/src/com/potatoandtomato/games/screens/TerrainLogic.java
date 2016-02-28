@@ -59,7 +59,7 @@ public class TerrainLogic {
         setListeners();
     }
 
-    public void moveChessToThis(final TerrainLogic fromLogic, boolean showMoveAnimation, final boolean isFromWon, final boolean random){
+    public void moveChessToThis(final TerrainLogic fromLogic, boolean showMoveAnimation, final boolean isFromWon, final String random){
 
         final ChessModel originalFromChessModel = fromLogic.getChessLogic().getChessModel().clone();
         final Actor originalFromChessClone = fromLogic.getChessLogic().cloneActor();
@@ -161,11 +161,11 @@ public class TerrainLogic {
 
     }
 
-    public void openTerrainChess(){
+    public void openTerrainChess(final String random){
         this.chessLogic.openChess(new Runnable() {
             @Override
             public void run() {
-                actionListener.changeTurnReady(ActionType.OPEN, null, null, false);
+                actionListener.changeTurnReady(ActionType.OPEN, null, null, random);
             }
         });
     }
@@ -279,7 +279,7 @@ public class TerrainLogic {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 if((!getChessLogic().getChessModel().getOpened() ||
                         _gameDataController.getMyChessColor() == getChessLogic().getChessModel().getChessColor()) &&
-                        (!isEmpty())){
+                        (!isEmpty()) && (!_terrainModel.isBroken())){
                     actionListener.onSelected();
                 }
 
@@ -301,6 +301,10 @@ public class TerrainLogic {
         this.actionListener = actionListener;
         this.actionListener.setTerrainLogic(this);
         chessLogic.setActionListener(this.actionListener);
+    }
+
+    public void invalidate(){
+        this.getTerrainActor().invalidate(_terrainModel);
     }
 
 }

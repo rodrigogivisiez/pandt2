@@ -2,6 +2,7 @@ package com.potatoandtomato.games.references;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.potatoandtomato.games.enums.ChessType;
+import com.potatoandtomato.games.enums.Status;
 import com.potatoandtomato.games.models.ChessModel;
 
 import java.util.HashMap;
@@ -119,7 +120,7 @@ public class BattleRef {
         }
         else{
             String toAnimal = to.getChessType().name().split("_")[1];
-            return refs.get(fromAnimal).get(toAnimal);
+            return processStatusPoint(refs.get(fromAnimal).get(toAnimal), from, to);
         }
     }
 
@@ -135,6 +136,59 @@ public class BattleRef {
         }
     }
 
+
+    public int processStatusPoint(int original, ChessModel attacker, ChessModel defender){
+        Status attackerStatus = attacker.getStatus();
+        Status defenderStatus = defender.getStatus();
+
+        int atkAdd = 0;
+        int atkMinus = 0;
+
+        if(attackerStatus == Status.ANGRY){
+            atkAdd = 25;
+        }
+        else if(attackerStatus == Status.POISON){
+            atkAdd = -30;
+        }
+        else if(attackerStatus == Status.INCREASE){
+            atkAdd = 35;
+        }
+        else if(attackerStatus == Status.KING){
+            atkAdd = 30;
+        }
+        else if(attackerStatus == Status.DECREASE){
+            atkAdd = -12;
+        }
+        else if(attackerStatus == Status.INJURED){
+            atkAdd = -40;
+        }
+
+
+        if(defenderStatus == Status.ANGRY){
+            atkMinus = 0;
+        }
+        else if(defenderStatus == Status.POISON){
+            atkMinus = 30;
+        }
+        else if(defenderStatus == Status.INCREASE){
+            atkMinus = 0;
+        }
+        else if(defenderStatus == Status.KING){
+            atkMinus = -30;
+        }
+        else if(defenderStatus == Status.DECREASE){
+            atkMinus = 5;
+        }
+        else if(defenderStatus == Status.INJURED){
+            atkMinus = 40;
+        }
+
+
+        original = original + atkAdd + atkMinus;
+        if(original < 0) original = 0;
+        if(original > 100) original = 100;
+        return original;
+    }
 
 
 }

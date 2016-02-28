@@ -35,13 +35,7 @@ public class MovementRef {
 
     private boolean isValidMove(ArrayList<TerrainLogic> _terrains, TerrainLogic from, TerrainLogic to){
 
-        if(to.isEmpty()) return true;
-
-        if(from.getChessLogic().getChessModel().isRed() ==  to.getChessLogic().getChessModel().isRed()) return false;
-
-        if(from.getChessLogic().getChessModel().isYellow() == to.getChessLogic().getChessModel().isYellow()) return false;
-
-        if(!from.isOpened() || !to.isOpened()) return false;
+        if(to.getTerrainModel().isBroken()) return false;
 
         if(from.getTerrainModel().getCol() - 2 == to.getTerrainModel().getCol()){
             if(checkHasChess(_terrains, from.getTerrainModel().getCol() -1, from.getTerrainModel().getRow())){
@@ -63,6 +57,14 @@ public class MovementRef {
                 return false;
             }
         }
+
+        if(to.isEmpty()) return true;
+
+        if(from.getChessLogic().getChessModel().isRed() ==  to.getChessLogic().getChessModel().isRed()) return false;
+
+        if(from.getChessLogic().getChessModel().isYellow() == to.getChessLogic().getChessModel().isYellow()) return false;
+
+        if(!from.isOpened() || !to.isOpened()) return false;
 
         return true;
     }

@@ -26,7 +26,7 @@ public abstract class ActionListener {
 
     public abstract void onMoved(int fromCol, int fromRow, int toCol, int toRow, boolean isFromWon);
 
-    public abstract void changeTurnReady(ActionType actionType, ChessType winnerChessType, ChessType loserChessType, boolean random);
+    public abstract void changeTurnReady(ActionType actionType, ChessType winnerChessType, ChessType loserChessType, String random);
 
     public abstract void onChessKilled(ChessType chessType);
 

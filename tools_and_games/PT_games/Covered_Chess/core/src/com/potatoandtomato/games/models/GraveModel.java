@@ -15,10 +15,52 @@ import java.util.Collections;
 public class GraveModel extends Model {
 
     private ArrayList<ChessType> graveChesses;
-
+    private int yellowLeftTime;
+    private int redLeftTime;
 
     public GraveModel() {
         this.graveChesses = new ArrayList<ChessType>();
+        this.redLeftTime = this.yellowLeftTime = 900;
+    }
+
+    public int getRedLeftTime() {
+        return redLeftTime;
+    }
+
+    public void setRedLeftTime(int redLeftTime) {
+        this.redLeftTime = redLeftTime;
+    }
+
+    public int getYellowLeftTime() {
+        return yellowLeftTime;
+    }
+
+    public void setYellowLeftTime(int yellowLeftTime) {
+        this.yellowLeftTime = yellowLeftTime;
+    }
+
+    public void minusTimeLeft(ChessColor chessColor){
+        if(chessColor == ChessColor.YELLOW){
+            yellowLeftTime--;
+        }
+        if(chessColor == ChessColor.RED){
+            redLeftTime--;
+        }
+        if(yellowLeftTime < 0) yellowLeftTime = 0;
+        if(redLeftTime < 0) redLeftTime = 0;
+    }
+
+    public Integer getLeftTimeInt(ChessColor chessColor){
+        int sec = chessColor == ChessColor.YELLOW ? yellowLeftTime : redLeftTime;
+        return sec;
+    }
+
+    public String getLeftTime(ChessColor chessColor){
+        int sec = chessColor == ChessColor.YELLOW ? yellowLeftTime : redLeftTime;
+
+        int minutes = sec / 60;
+        int seconds = sec % 60;
+        return minutes + ":" + String.format("%02d", seconds);
     }
 
     public GraveModel(ArrayList<ChessType> graveChesses) {

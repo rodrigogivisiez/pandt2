@@ -1,5 +1,7 @@
 package com.potatoandtomato.games.helpers;
 
+import java.util.ArrayList;
+
 /**
  * Created by SiongLeng on 25/2/2016.
  */
@@ -11,5 +13,16 @@ public class Strings {
         }
         return input;
     }
+
+    public static String join(ArrayList<String> input){
+        StringBuilder sb = new StringBuilder();
+        for (String s : input)
+        {
+            sb.append(s);
+            sb.append(",");
+        }
+        return sb.toString();
+    }
+
 
 }

@@ -1,6 +1,7 @@
 package com.potatoandtomato.games.models;
 
 import com.potatoandtomato.games.absint.Model;
+import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.screens.TerrainLogic;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -15,6 +16,7 @@ public class BoardModel extends Model {
     private int currentTurnIndex;
     private int accTurnCount;
     private boolean suddenDeath;
+
 
     public BoardModel() {
     }
@@ -41,11 +43,23 @@ public class BoardModel extends Model {
     }
 
     public boolean isSuddenDeath() {
-        return suddenDeath;
+        return getAccTurnCount() >= 50;
     }
 
     public void setSuddenDeath(boolean suddenDeath) {
         this.suddenDeath = suddenDeath;
+    }
+
+    public boolean isCrackStarting(){
+        return getAccTurnCount() >= 55;
+    }
+
+    public boolean isCrackHappened(){
+        return getAccTurnCount() >= 65;
+    }
+
+    public ChessColor getCurrentTurnChessColor(){
+        return currentTurnIndex == 0 ? ChessColor.YELLOW : ChessColor.RED;
     }
 
     public void switchTurnIndex(){

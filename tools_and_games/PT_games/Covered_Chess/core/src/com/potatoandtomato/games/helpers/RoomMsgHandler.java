@@ -41,6 +41,9 @@ public class RoomMsgHandler {
             JSONObject jsonObject = new JSONObject(msg);
             int code = jsonObject.getInt("code");
             final String receivedMsg = jsonObject.getString("msg");
+            String[] tmp = receivedMsg.split("@");
+            String enemyLeftTime = tmp[0];
+            String realMsg = tmp[1];
 
             if(!_gameScreenReady){
                 _messagesQueue.add(new Runnable() {
@@ -52,10 +55,12 @@ public class RoomMsgHandler {
                 return;
             }
 
+            _boardLogic.updateEnemyLeftTime(enemyLeftTime);
+
             final String[] arr;
             switch (code){
                 case UpdateCode.TERRAIN_SELECTED:
-                    arr = receivedMsg.split(",");
+                    arr = realMsg.split(",");
                     Gdx.app.postRunnable(new Runnable() {
                         @Override
                         public void run() {
@@ -64,20 +69,22 @@ public class RoomMsgHandler {
                     });
                     break;
                 case UpdateCode.CHESS_OPEN_FULL:
-                    arr = receivedMsg.split(",");
+                    String[] tmp2 = realMsg.split("\\|");
+                    arr = tmp2[0].split(",");
+                    final String randomString = tmp2[1];
                     Gdx.app.postRunnable(new Runnable() {
                         @Override
                         public void run() {
-                            _boardLogic.openChess(Integer.valueOf(arr[0]), Integer.valueOf(arr[1]));
+                            _boardLogic.openChess(Integer.valueOf(arr[0]), Integer.valueOf(arr[1]), randomString);
                         }
                     });
                     break;
                 case UpdateCode.CHESS_MOVE:
-                    arr = receivedMsg.split("\\|");
+                    arr = realMsg.split("\\|");
                     final String[] from = arr[0].split(",");
                     final String[] to = arr[1].split(",");
                     final boolean isFromWon = arr[2].equals("1");
-                    final boolean random = arr[3].equals("1");
+                    final String random = arr[3];
                     Gdx.app.postRunnable(new Runnable() {
                         @Override
                         public void run() {
@@ -93,17 +100,17 @@ public class RoomMsgHandler {
         }
     }
 
-    public void sendTerrainSelected(int col, int row){
-        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.TERRAIN_SELECTED, col + "," + row));
+    public void sendTerrainSelected(int col, int row, int myLeftTime){
+        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.TERRAIN_SELECTED, myLeftTime + "@" + col + "," + row));
     }
 
-    public void sendChessOpenFull(int col, int row){
-        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.CHESS_OPEN_FULL, col + "," + row));
+    public void sendChessOpenFull(int col, int row, String random, int myLeftTime){
+        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.CHESS_OPEN_FULL, myLeftTime + "@" + col + "," + row + "|" + random));
     }
 
-    public void sendMoveChess(int fromCol, int fromRow, int toCol, int toRow, boolean isFromWon, boolean random){
-        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.CHESS_MOVE,
-                fromCol +"," + fromRow + "|" + toCol + "," + toRow + "|" + (isFromWon ? "1" : "0") + "|" + (random ? "1" : "0")));
+    public void sendMoveChess(int fromCol, int fromRow, int toCol, int toRow, boolean isFromWon, String random, int myLeftTime){
+        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.CHESS_MOVE, myLeftTime + "@" +
+                fromCol +"," + fromRow + "|" + toCol + "," + toRow + "|" + (isFromWon ? "1" : "0") + "|" + random));
     }
 
     public void onGameReady(){

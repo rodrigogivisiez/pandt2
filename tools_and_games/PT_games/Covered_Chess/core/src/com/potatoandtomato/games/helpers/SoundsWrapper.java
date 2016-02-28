@@ -17,6 +17,7 @@ public class SoundsWrapper implements Disposable {
     private Assets _assets;
     private GameCoordinator _coordinator;
     private Music _themeMusic;
+    private int _currentMusic;
 
     public SoundsWrapper(Assets _assets, GameCoordinator coordinator) {
         this._assets = _assets;
@@ -27,12 +28,16 @@ public class SoundsWrapper implements Disposable {
     }
 
     public void playTheme(){
-        _coordinator.getSoundManager().addMusic(_themeMusic);
-        _coordinator.getSoundManager().playMusic(_themeMusic);
+        if(_currentMusic != 1){
+            _coordinator.getSoundManager().addMusic(_themeMusic);
+            _coordinator.getSoundManager().playMusic(_themeMusic);
+            _currentMusic = 1;
+        }
     }
 
     public void stopTheme(){
         _themeMusic.stop();
+        _currentMusic = 0;
     }
 
     public void playSounds(Sounds.Name name){
