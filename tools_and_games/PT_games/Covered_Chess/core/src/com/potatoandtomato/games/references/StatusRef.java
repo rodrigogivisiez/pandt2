@@ -114,7 +114,7 @@ public class StatusRef {
             public void run() {
                 ChessColor lionChessColor = lionLogic.getChessLogic().getChessModel().getChessColor();
                 for(TerrainLogic terrainLogic : terrains){
-                    if(terrainLogic.getChessLogic().getChessModel().getChessColor() != lionChessColor && terrainLogic.isOpened()){
+                    if(terrainLogic.getChessLogic().getChessModel().getChessColor() != lionChessColor && terrainLogic.isOpened() && !terrainLogic.isEmpty()){
                         setStatus(terrainLogic, Status.DECREASE, null);
                     }
                 }
@@ -128,12 +128,12 @@ public class StatusRef {
             @Override
             public void run() {
                 ChessColor tigerChessColor = tigerLogic.getChessLogic().getChessModel().getChessColor();
-                for(TerrainLogic terrainLogic : terrains){
-                    if(terrainLogic.getChessLogic().getChessModel().getChessColor() != tigerChessColor && terrainLogic.isOpened()){
+                for (TerrainLogic terrainLogic : terrains) {
+                    if (terrainLogic.getChessLogic().getChessModel().getChessColor() != tigerChessColor && terrainLogic.isOpened() && !terrainLogic.isEmpty()){
                         setStatus(terrainLogic, Status.PARALYZED, null);
                     }
                 }
-                if(onFinish != null) onFinish.run();
+                if (onFinish != null) onFinish.run();
             }
         });
     }
@@ -356,16 +356,11 @@ public class StatusRef {
     }
 
     private void setStatus( final TerrainLogic logic, final Status status, final Runnable onFinish){
-        Threadings.postRunnable(new Runnable() {
+        logic.getChessLogic().getChessModel().setStatus(status);
+        logic.getChessLogic().getChessActor().setStatusIcon(status, true, new Runnable() {
             @Override
             public void run() {
-                logic.getChessLogic().getChessActor().setStatusIcon(status, true, new Runnable() {
-                    @Override
-                    public void run() {
-                        logic.getChessLogic().getChessModel().setStatus(status);
-                        if (onFinish != null) onFinish.run();
-                    }
-                });
+                if (onFinish != null) onFinish.run();
             }
         });
 
@@ -390,7 +385,7 @@ public class StatusRef {
 
     private void transformAnimalIfNeeded(TerrainLogic animalLogic, String random, Runnable onFinish){
         if(animalLogic.getChessLogic().getChessModel().canTransform()){
-            setStatus(animalLogic, random == "0" ? Status.INJURED : Status.KING, onFinish);
+            setStatus(animalLogic, random.equals("0") ? Status.INJURED : Status.KING, onFinish);
         }
         else{
             if(onFinish != null) onFinish.run();

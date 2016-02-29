@@ -43,6 +43,8 @@ public class ChessActor extends Table {
     private Image _glowChess;
     private boolean _alreadySetAnimalChessBg;
     private SoundsWrapper _soundsWrapper;
+    private Table _statusTable;
+    private Status _currentStatus;
 
     public Table getCoverChess() {
         return _coverChess;
@@ -77,10 +79,16 @@ public class ChessActor extends Table {
         _glowChess = new Image(_assets.getTextures().get(Textures.Name.GLOW_CHESS));
         _glowChess.setVisible(false);
 
+        _statusTable = new Table();
+        _statusTable.setSize(30, 30);
+        _statusTable.setPosition(-5, 37);
+        _statusTable.setVisible(false);
+
         this.addActor(_glowChess);
         this.addActor(_animalChess);
         this.addActor(_previewChess);
         this.addActor(_coverChess);
+        this.addActor(_statusTable);
 
     }
 
@@ -233,8 +241,12 @@ public class ChessActor extends Table {
         if(chessModel.getOpened()){
             _coverChess.setVisible(false);
             _animalChess.setVisible(true);
+            _statusTable.setVisible(true);
         }
-        setStatusIcon(chessModel.getStatus(), false, null);
+        if(_currentStatus != chessModel.getStatus()){
+            setStatusIcon(chessModel.getStatus(), false, null);
+        }
+
     }
 
     public void showAbilityTriggered(final ChessType chessType, final boolean hideChessAnimal, final Runnable onFinish){
@@ -271,54 +283,46 @@ public class ChessActor extends Table {
 
     public void setStatusIcon(Status status, boolean animate, final Runnable onFinish){
 
-        Table statusTable;
-        statusTable = _animalChess.findActor("statusTable");
-        if(statusTable == null){
-            statusTable = new Table();
-            _animalChess.addActor(statusTable);
-        }
-
         if(status == Status.NONE){
             if(animate){
-                statusTable.addAction(sequence(fadeOut(0.3f), new Action() {
+                _statusTable.addAction(sequence(fadeOut(0.3f), new Action() {
                     @Override
                     public boolean act(float delta) {
                         if(onFinish!= null) onFinish.run();
+                        _statusTable.clear();
+                        _statusTable.getColor().a = 1;
                         return true;
                     }
                 }));
             }
             else{
-                statusTable.clear();
+                _statusTable.clear();
                 if(onFinish!= null) onFinish.run();
             }
         }
         else{
-            Image imageStatus = new Image(_assets.getTextures().getStatus(status));
+            final Image imageStatus = new Image(_assets.getTextures().getStatus(status));
             imageStatus.setOrigin(Align.center);
 
-            statusTable.clear();
-            statusTable.getColor().a = 1;
-            statusTable.setName("statusTable");
-            statusTable.setSize(30, 30);
-            statusTable.setPosition(-5, 37);
-            statusTable.add(imageStatus);
+            _statusTable.clear();
+            _statusTable.add(imageStatus);
 
             if(animate){
                 imageStatus.getColor().a = 0f;
-                imageStatus.addAction(sequence(scaleTo(0, 0), fadeIn(0f), scaleTo(1, 1, 0.2f, Interpolation.bounce), new Action() {
+                imageStatus.addAction(sequence(scaleTo(0, 0), fadeIn(0f), scaleTo(1, 1, 0.2f, Interpolation.bounce), Actions.run(new Runnable() {
                     @Override
-                    public boolean act(float delta) {
+                    public void run() {
                         if(onFinish!= null) onFinish.run();
-                        return true;
                     }
-                }));
+                })));
+
+
             }
             else{
                 if(onFinish!= null) onFinish.run();
             }
         }
-
+        _currentStatus = status;
 
     }
 }

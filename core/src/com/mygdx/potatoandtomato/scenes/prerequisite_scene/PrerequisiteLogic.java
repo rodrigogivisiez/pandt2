@@ -144,7 +144,6 @@ public class PrerequisiteLogic extends LogicAbstract {
     }
 
     public void joinRoomFailed(final int reason){
-        System.out.println("REASONCODE: " + reason);
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {

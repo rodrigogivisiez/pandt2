@@ -164,7 +164,7 @@ public class GameListLogic extends LogicAbstract {
             @Override
             public void run() {
                 if(room.isOpen()){
-                    if(room.getHost().equals(_services.getProfile())){
+                    if(room.getHost().equals(_services.getProfile()) || room.getRoomUsersCount() == 0){      //orphan room fix
                         if(isSceneVisible()){
                             room.setOpen(false);
                             _services.getDatabase().saveRoom(room, true, null);

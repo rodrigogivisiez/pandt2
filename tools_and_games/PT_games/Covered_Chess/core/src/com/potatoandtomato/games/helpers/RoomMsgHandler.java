@@ -92,12 +92,23 @@ public class RoomMsgHandler {
                                     Integer.valueOf(to[0]), Integer.valueOf(to[1]), isFromWon, true, random);
                         }
                     });
-
+                    break;
+                case UpdateCode.SKIP_TURN:
+                    Gdx.app.postRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            _boardLogic.skipTurn();
+                        }
+                    });
                     break;
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public void skipTurn(int myLeftTime){
+        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.SKIP_TURN, myLeftTime + "@0"));
     }
 
     public void sendTerrainSelected(int col, int row, int myLeftTime){

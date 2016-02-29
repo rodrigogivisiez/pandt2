@@ -5,6 +5,6 @@ package com.potatoandtomato.games.enums;
  */
 public enum  ActionType {
 
-    OPEN, MOVE
+    OPEN, MOVE, SKIP
 
 }

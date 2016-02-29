@@ -5,13 +5,12 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.potatoandtomato.common.*;
+import com.potatoandtomato.common.Status;
 import com.potatoandtomato.common.Threadings;
 import com.potatoandtomato.games.absint.ActionListener;
 import com.potatoandtomato.games.absint.DatabaseListener;
 import com.potatoandtomato.games.assets.Sounds;
-import com.potatoandtomato.games.enums.ActionType;
-import com.potatoandtomato.games.enums.ChessColor;
-import com.potatoandtomato.games.enums.ChessType;
+import com.potatoandtomato.games.enums.*;
 import com.potatoandtomato.games.helpers.*;
 import com.potatoandtomato.games.models.*;
 import com.potatoandtomato.games.references.StatusRef;
@@ -25,7 +24,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
@@ -191,7 +189,7 @@ public class BoardLogic implements Disposable{
                                     this.getTerrainLogic().getTerrainModel().getRow());
                             _roomMsgHandler.sendTerrainSelected(this.getTerrainLogic().getTerrainModel().getCol(),
                                     this.getTerrainLogic().getTerrainModel().getRow(),
-                                    _graveyard.getGraveModel().getLeftTimeInt(_gameDataController.getMyChessColor()));
+                                    getMyTimeLeft());
                         }
                     }
 
@@ -202,7 +200,7 @@ public class BoardLogic implements Disposable{
                                 this.getTerrainLogic().getTerrainModel().getRow(), random);
                         _roomMsgHandler.sendChessOpenFull(this.getTerrainLogic().getTerrainModel().getCol(),
                                 this.getTerrainLogic().getTerrainModel().getRow(), random,
-                                _graveyard.getGraveModel().getLeftTimeInt(_gameDataController.getMyChessColor()));
+                                getMyTimeLeft());
                     }
 
                     @Override
@@ -210,12 +208,12 @@ public class BoardLogic implements Disposable{
                         int random = MathUtils.random(0, 1);
                         chessMoved(fromCol, fromRow, toCol, toRow, isFromWon, false, String.valueOf(random));
                         _roomMsgHandler.sendMoveChess(fromCol, fromRow, toCol, toRow, isFromWon, String.valueOf(random),
-                                _graveyard.getGraveModel().getLeftTimeInt(_gameDataController.getMyChessColor()));
+                               getMyTimeLeft());
                     }
 
                     @Override
                     public void changeTurnReady(ActionType actionType, ChessType winnerChessType, ChessType loserChessType, String random) {
-                        preTurnSwitched(actionType, this.getTerrainLogic(), winnerChessType, loserChessType, random);
+                        beforeTurnSwitched(actionType, this.getTerrainLogic(), winnerChessType, loserChessType, random);
                     }
 
                     @Override
@@ -259,11 +257,11 @@ public class BoardLogic implements Disposable{
         hideAllTerrainPercentTile();
     }
 
-    private void preTurnSwitched(ActionType actionType, TerrainLogic terrainLogic,
-                                       ChessType winnerChessType, ChessType loserChessType, String random){
+    private void beforeTurnSwitched(ActionType actionType, TerrainLogic terrainLogic,
+                                    ChessType winnerChessType, ChessType loserChessType, String random){
         disableTouchable();
 
-        if(_boardModel.isSuddenDeath()){
+        if(_boardModel.nextTurnIsSuddenDeath()){
             _statusRef.suddenDeathStatus(_terrains, new Runnable() {
                 @Override
                 public void run() {
@@ -288,6 +286,9 @@ public class BoardLogic implements Disposable{
                     }
                 });
             }
+            else if(actionType == ActionType.SKIP){
+                switchTurn();
+            }
         }
     }
 
@@ -310,9 +311,26 @@ public class BoardLogic implements Disposable{
 
     }
 
+    public void skipTurn(){
+        beforeTurnSwitched(ActionType.SKIP, null, null, null, null);
+    }
+
     private void invalidate(){
         _graveyard.onBoardModelChanged(_boardModel);
         setTurnTouchable();
+
+        if(_boardModel.getCurrentTurnChessColor() == _gameDataController.getMyChessColor()){        //is my turn, if no available move, jz skip
+            if(!checkHaveMove()){
+                Threadings.delay(1000, new Runnable() {
+                    @Override
+                    public void run() {
+                        _roomMsgHandler.skipTurn(getMyTimeLeft());
+                        skipTurn();
+                    }
+                });
+            }
+        }
+
     }
 
     private void disableTouchable(){
@@ -487,6 +505,28 @@ public class BoardLogic implements Disposable{
             }
         });
 
+    }
+
+    private int getMyTimeLeft(){
+        return _graveyard.getGraveModel().getLeftTimeInt(_gameDataController.getMyChessColor());
+    }
+
+    private boolean checkHaveMove(){
+        if(_terrains.size() == 0) return true;  //gamedata not ready yet
+
+        for(TerrainLogic terrainLogic : _terrains){
+            if(!terrainLogic.isOpened()){
+                return true;
+            }
+            else{
+                if(terrainLogic.getChessLogic().getChessModel().getChessColor() == _gameDataController.getMyChessColor() &&
+                        terrainLogic.getChessLogic().getChessModel().getStatus() != com.potatoandtomato.games.enums.Status.PARALYZED){
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private void setCountDownCheckingThread(){

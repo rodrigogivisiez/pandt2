@@ -42,8 +42,16 @@ public class BoardModel extends Model {
         this.currentTurnIndex = currentTurnIndex;
     }
 
+    private boolean checkExceedSuddenDeathNumber(int count){
+        return count >=50;
+    }
+
     public boolean isSuddenDeath() {
-        return getAccTurnCount() >= 50;
+        return checkExceedSuddenDeathNumber(getAccTurnCount());
+    }
+
+    public boolean nextTurnIsSuddenDeath(){
+        return checkExceedSuddenDeathNumber(getAccTurnCount() + 1);
     }
 
     public void setSuddenDeath(boolean suddenDeath) {
@@ -55,7 +63,7 @@ public class BoardModel extends Model {
     }
 
     public boolean isCrackHappened(){
-        return getAccTurnCount() >= 65;
+        return getAccTurnCount() >= 70;
     }
 
     public ChessColor getCurrentTurnChessColor(){

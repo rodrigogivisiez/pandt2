@@ -2,12 +2,12 @@ package com.mygdx.potatoandtomato;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
@@ -40,7 +40,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 /**
  * Created by SiongLeng on 5/12/2015.
  */
-public class PTScreen implements Screen {
+public class PTScreen implements Screen, InputProcessor {
 
     PTGame _ptGame;
     Image _bgBlueImg, _bgAutumnImg, _sunriseImg, _sunrayImg, _greenGroundImg, _autumnGroundImg;
@@ -67,6 +67,7 @@ public class PTScreen implements Screen {
 
     public void switchToGameScreen(){
         _ptGame.removeInputProcessor(_stage);
+        _ptGame.removeInputProcessor(this);
         _isPTScreen = false;
     }
 
@@ -74,6 +75,7 @@ public class PTScreen implements Screen {
         if(!_isPTScreen){
             _isPTScreen = true;
             _ptGame.addInputProcessor(_stage);
+            _ptGame.addInputProcessor(this);
             _ptGame.setScreen(this);
         }
     }
@@ -142,12 +144,10 @@ public class PTScreen implements Screen {
                                     previous.getLogic().getScene(), false, new Runnable() {
                                 @Override
                                 public void run() {
-                                    //_backRunning = false;
                                 }
                             });
                         }
                         else{
-                           // _backRunning = false;
                         }
                     }
                 });
@@ -162,7 +162,6 @@ public class PTScreen implements Screen {
                 if(result == Result.YES){
                     Gdx.app.exit();
                 }
-                _backRunning = false;
             }
         });
     }
@@ -217,7 +216,6 @@ public class PTScreen implements Screen {
     }
 
     private void sceneTransition(Actor _rootIn, final Actor _rootOut, SceneAbstract sceneToShow, boolean toRight, final Runnable onFinish){
-
         float duration = 0.5f;
         Threadings.renderFor(10f);
 
@@ -236,7 +234,7 @@ public class PTScreen implements Screen {
 
         _services.getSoundsWrapper().playSoundEffect(Sounds.Name.SLIDING);
 
-        _rootIn.addAction(moveTo(0, 0, duration));
+        _rootIn.addAction(sequence(moveTo(0, 0, duration)));
         _rootOut.addAction(sequence(moveBy(toRight ? -Positions.getWidth() : Positions.getWidth(), 0, duration), new Action() {
             @Override
             public boolean act(float delta) {
@@ -245,6 +243,8 @@ public class PTScreen implements Screen {
                 return false;
             }
         }));
+
+
 
     }
 
@@ -297,7 +297,9 @@ public class PTScreen implements Screen {
         _stage.addActor(_sunriseImg);
         _stage.addActor(_greenGroundImg);
         _stage.addActor(_autumnGroundImg);
+
         _ptGame.addInputProcessor(_stage);
+        _ptGame.addInputProcessor(this);
         Gdx.input.setCatchBackKey(true);
     }
 
@@ -344,9 +346,6 @@ public class PTScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        if (Gdx.input.isKeyPressed(Input.Keys.BACK)){
-            back();
-        }
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.gl.glClearColor(1f, 1f, 1f, 1f);
         _stage.act(delta);
@@ -387,6 +386,50 @@ public class PTScreen implements Screen {
 
     }
 
+    @Override
+    public boolean keyDown(int keycode) {
+        if(keycode == Input.Keys.BACK) _backRunning = true;
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        if (_backRunning){
+            back();
+        }
+        _backRunning = false;
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return false;
+    }
 
 
     private class LogicEnumPair{
