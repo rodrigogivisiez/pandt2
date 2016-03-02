@@ -42,11 +42,10 @@ public class TestGameLoader extends TestAbstract{
 
         final boolean[] waiting = {true};
         final Game game = new Game();
-        game.setGameUrl("http://www.potato-and-tomato.com/sample/game.jar");
-        game.setAssetUrl("http://www.potato-and-tomato.com/sample/assets.zip");
+        game.setGameUrl("http://cdn.shephertz.com/repository/files/c7236c0f55a51bcdde0415e639f2e87f73178a02cdd5d41485e19ad15334c56f/c238e0226a2cce97981606b3e0fce18589e9d196/covered_chess_game.zip");
         game.setName("Sample");
         game.setAbbr("sample");
-        game.setIconUrl("http://www.potato-and-tomato.com/sample/icon.png");
+        game.setIconUrl("http://cdn.shephertz.com/repository/files/c7236c0f55a51bcdde0415e639f2e87f73178a02cdd5d41485e19ad15334c56f/2eaf058c6f2fae2024fb5745fae57d745bcb050a/covered_chess_icon.png");
         game.setMinPlayers("2");
         game.setMaxPlayers("2");
         game.setTeamCount("2");

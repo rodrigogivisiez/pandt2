@@ -35,7 +35,6 @@ public class TestPrerequisite extends TestAbstract {
         _game = new Game();
         _game.setVersion("1");
         _game.setAbbr("test_game");
-        _game.setAssetUrl("");
         _game.setGameUrl("");
     }
 

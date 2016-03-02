@@ -95,7 +95,7 @@ public class Notification {
         labelMsg.setWrap(true);
         labelMsg.setWidth(_root.getWidth());
         labelMsg.layout();
-        float tableHeight = labelMsg.getPrefHeight() + 30;
+        float tableHeight = labelMsg.getPrefHeight() + 15;
 
         final Table childTable = new Table();
         childTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.WHITE_ROUNDED_BG)));

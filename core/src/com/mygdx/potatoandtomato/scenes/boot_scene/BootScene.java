@@ -16,6 +16,9 @@ import com.mygdx.potatoandtomato.helpers.controls.BtnEggUpright;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
+import com.mygdx.potatoandtomato.statics.Global;
+
+import javax.xml.bind.annotation.XmlElementDecl;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -110,7 +113,8 @@ public class BootScene extends SceneAbstract {
         Label.LabelStyle versionStyle = new Label.LabelStyle();
         versionStyle.font = _assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.XS,
                 Fonts.FontColor.WHITE, Fonts.FontStyle.REGULAR, Fonts.FontBorderColor.GRAY, Fonts.FontShadowColor.GRAY);
-        Label versionLabel = new Label(String.format(_texts.build(), _services.getVersionControl().getClientVersion()), versionStyle);
+        Label versionLabel = new Label(String.format(_texts.build(), _services.getVersionControl().getClientVersion())
+                            + (Global.DEBUG ? " " + _texts.debug() : ""), versionStyle);
         //Game Version END
 
         ///////////////////////////////////////
@@ -270,7 +274,8 @@ public class BootScene extends SceneAbstract {
 
         Label.LabelStyle contentStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontColor.DARK_BROWN, Fonts.FontStyle.SEMI_BOLD), null);
         Label loadingLabel = new Label(msg, contentStyle);
-        msgTable.add(loadingLabel);
+        loadingLabel.setWrap(true);
+        msgTable.add(loadingLabel).expand().fill();
 
         contentTable.add(msgTable).expandX().fillX().padLeft(20).padRight(20);
     }

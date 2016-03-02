@@ -22,6 +22,7 @@ public class Texts {
     public String loginProcessing() { return "Logging in..."; }
 
     public String build() {return "Build %s";}
+    public String debug() {return "DEBUG";}
 
     public String gamesList() { return "Games List"; }
     public String game() { return "GAME"; }
@@ -33,6 +34,7 @@ public class Texts {
 
     public String createGameTitle() { return "Create Game"; }
     public String version() { return "Version %s";}
+    public String xMb() { return "%sMb";}
     public String xPlayers() { return "From %s to %s players";}
 
     public String roomTitle() { return "Game Room"; }

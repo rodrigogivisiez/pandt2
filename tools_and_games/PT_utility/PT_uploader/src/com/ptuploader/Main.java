@@ -1,104 +1,94 @@
 package com.ptuploader;
 
-import net.lingala.zip4j.exception.ZipException;
-import org.json.simple.parser.ParseException;
+import com.ptuploader.process.*;
+import com.ptuploader.utils.Logs;
 
 import java.io.*;
-import java.nio.file.InvalidPathException;
 
 public class Main {
 
+    public static void main(String[] args) throws InterruptedException {
 
+        Logs logs = new Logs();
+        boolean testing = askForIsTest(logs);
 
-    public static void main(String[] args) {
-        Logs logs = null;
+        Thread.sleep(2000);
+
+        Paths paths = new Paths(logs);
+        if(!paths.checkAll()) return;
+
+        Dx dxRunner = new Dx(paths, logs);
+        if(!dxRunner.run()) return;
+
+        Zippings zippings = new Zippings(paths, logs);
+        if(!zippings.run()) return;
+
+        Details details = new Details(paths, logs);
+        if(!details.extract(zippings.hasModified(), testing)) return;
+        details.setGameSize(zippings.getNewFileSize());
+
+        final int[] uploadCount = {0};
+
+        Uploads uploads = new Uploads(paths, logs, testing);
+        uploads.uploadIcon(details, new Runnable() {
+            @Override
+            public void run() {
+                uploadCount[0]++;
+            }
+        });
+        uploads.uploadGame(details, new Runnable() {
+            @Override
+            public void run() {
+                uploadCount[0]++;
+            }
+        });
+
+        while (uploadCount[0] < 2){
+            Thread.sleep(500);
+        }
+
+        details.print();
+
+        final boolean[] fireDBEnded = new boolean[1];
+
+        FireDB fireDB = new FireDB(testing, logs);
+        fireDB.save(details, new Runnable() {
+            @Override
+            public void run() {
+                fireDBEnded[0] = true;
+            }
+        });
+
+        while (!fireDBEnded[0]){
+            Thread.sleep(500);
+        }
+
         try {
-            System.out.println("Potato and Tomato upload game processing...");
-            logs = new Logs();
-
-            Paths paths = new Paths();
-            paths.getAll();
-            paths.checkAllPathsExist();
-
-            String commonVersion = readFile(paths.commonVersion).trim();
-
-            Zippings zippings = new Zippings(paths.assets);
-            zippings.run();
-
-            Dx dx = new Dx(paths.dx, paths.jar);
-            dx.run();
-
-            Details details = new Details(paths.details);
-            details.run();
-
-            ScreenShots screenShots = new ScreenShots(paths.screenshots);
-            screenShots.run();
-
-            if(zippings.hasModified() || dx.hasModified() || details.version.equals("0.99")){
-                details.addVersion();
-            }
-
-            Ftp ftp = new Ftp();
-            UploadedGame uploadedGame = ftp.uploadEverything(details, paths, screenShots);
-            uploadedGame.commonVersion = commonVersion;
-
-
-            FireDB db = new FireDB();
-            db.save(uploadedGame);
-
-            while (!db.isFinished()){Thread.sleep(500);}
-            if(db.isSuccess()){
-                details.writeBackJson();
-                logs.writeSuccess(details, screenShots.getAllScreenShotsPath().size(), commonVersion);
-            }
-            else{
-                logs.writeFailed("Firebase failed to update.");
-            }
-
-        } catch (InvalidPathException e) {
-            e.printStackTrace();
-            logs.writeFailed(e.getMessage());
+            logs.write("You may close the PTUploader now.");
+            System.in.read();
         } catch (IOException e) {
             e.printStackTrace();
-            logs.writeFailed(e.getMessage());
-        } catch (ZipException e) {
-            e.printStackTrace();
-            logs.writeFailed(e.getMessage());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            logs.writeFailed(e.getMessage());
-        } catch (IllegalThreadStateException e) {
-            e.printStackTrace();
-            logs.writeFailed(e.getMessage());
-        } catch (ParseException e) {
-            e.printStackTrace();
-            logs.writeFailed(e.getMessage());
         }
-        catch (Exception e){
-            e.printStackTrace();
-            logs.writeFailed(e.getMessage());
-        }
-
-
-
     }
 
-
-    private static String readFile(String fileName) throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader(fileName));
+    private static boolean askForIsTest(Logs logs){
+        logs.write("Upload to production/test client?");
+        logs.write("1: production, 2: test");
         try {
-            StringBuilder sb = new StringBuilder();
-            String line = br.readLine();
-
-            while (line != null) {
-                sb.append(line);
-                sb.append("\n");
-                line = br.readLine();
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            String input = br.readLine();
+            if(input.equals("1")){
+                logs.write("Uploading to production client....");
+                return false;
             }
-            return sb.toString();
-        } finally {
-            br.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        logs.write("Uploading to test client....");
+        return true;
     }
+
+
 
 }

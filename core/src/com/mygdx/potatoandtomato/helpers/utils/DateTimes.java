@@ -5,7 +5,7 @@ package com.mygdx.potatoandtomato.helpers.utils;
  */
 public class DateTimes {
 
-    public static String caluculateTimeAgo(long timeStamp) {
+    public static String calculateTimeAgo(long timeStamp) {
 
         long timeDiffernce;
         long unixTime = System.currentTimeMillis() / 1000L;  //get current time in seconds.

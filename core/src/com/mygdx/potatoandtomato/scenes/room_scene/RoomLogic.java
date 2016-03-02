@@ -738,7 +738,7 @@ public class RoomLogic extends LogicAbstract {
         _services.getChat().add(new ChatMessage(_texts.gameStarted(), ChatMessage.FromType.SYSTEM, null), false);
 
 
-        Threadings.delayNoPost(1000, new Runnable() {
+        Threadings.delay(1000, new Runnable() {
             @Override
             public void run() {
                 _services.getChat().hide();
@@ -773,7 +773,7 @@ public class RoomLogic extends LogicAbstract {
         super.onHide();
         _confirm.setStateChangedListener(null);
         _onScreen = false;
-        if(!_quiting)  sendIsReadyUpdate(false);
+        if(!_quiting && !_starting)  sendIsReadyUpdate(false);
 
     }
 

@@ -443,7 +443,7 @@ public class BoardLogic implements Disposable{
                     @Override
                     public void run() {
                         if (!terrainLogic.isEmpty()) {
-                            _graveyard.addChessToGrave(terrainLogic.getChessLogic().getChessModel().getChessType());
+                            chessKilled(terrainLogic.getChessLogic().getChessModel().getChessType());
                         }
                         terrainLogic.getTerrainModel().setBroken(true);
                         terrainLogic.invalidate();

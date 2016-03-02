@@ -1,6 +1,5 @@
 package com.mygdx.potatoandtomato.models;
 
-import com.firebase.client.ServerValue;
 import com.mygdx.potatoandtomato.helpers.utils.DateTimes;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -33,7 +32,7 @@ public class GameHistory {
 
     @JsonIgnore
     public String getCreationDateAgo() {
-        return DateTimes.caluculateTimeAgo(creationDate);
+        return DateTimes.calculateTimeAgo(creationDate);
     }
 
 

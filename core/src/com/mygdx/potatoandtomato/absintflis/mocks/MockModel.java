@@ -14,7 +14,6 @@ public class MockModel {
         g.setVersion("1.00");
         g.setAbbr("covered_chess");
         g.setGameUrl("http://www.potato-and-tomato.com/covered_chess/core.jar");
-        g.setAssetUrl("http://www.potato-and-tomato.com/covered_chess/assets.zip");
         g.setIconUrl("http://www.potato-and-tomato.com/covered_chess/icon.png");
         g.setMaxPlayers("100");
         g.setMinPlayers("1");

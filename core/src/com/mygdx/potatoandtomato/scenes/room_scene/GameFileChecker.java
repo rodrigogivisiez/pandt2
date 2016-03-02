@@ -31,9 +31,9 @@ public class GameFileChecker implements Disposable {
 
     private GameFileCheckerListener _listener;
     double _currentPercent = 0;
-    double _downloadGameWeight = 20, _downloadAssetsWeight = 79, _unzipWeight = 1;     //total must be 100;
+    double _downloadGameWeight = 99, _unzipWeight = 2;     //total must be > 100;
     Thread _downloadThread;
-    SafeThread _downloadAssetThread, _downloadJarThread;
+    SafeThread _downloadGameThread;
     Preferences _preferences;
     IDownloader _downloader;
     Game _game;
@@ -93,34 +93,25 @@ public class GameFileChecker implements Disposable {
             @Override
             public void run() {
 
-                final FileHandle jarDownloadPath, zipDownloadPath;
-                final boolean[] completeJar = new boolean[1];
+                final FileHandle jarDownloadPath, gameDownloadPath;
+                final boolean[] completeGame = new boolean[1];
                 ;
-                final boolean[] completeAssets = new boolean[1];
+                gameDownloadPath = Files.createIfNotExist(Gdx.files.local(_game.getLocalAssetsPath()));
 
-                jarDownloadPath = Files.createIfNotExist(Gdx.files.local(_game.getLocalJarPath()));
-                zipDownloadPath = Files.createIfNotExist(Gdx.files.local(_game.getLocalAssetsPath()));
-
-                _downloadJarThread = downloadFile(_game.getGameUrl(), jarDownloadPath.file(), _downloadGameWeight, new Runnable() {
+                _downloadGameThread = downloadFile(_game.getGameUrl(), gameDownloadPath.file(), _downloadGameWeight, new Runnable() {
                     @Override
                     public void run() {
-                        completeJar[0] = true;
-                    }
-                });
-                _downloadAssetThread = downloadFile(_game.getAssetUrl(), zipDownloadPath.file(), _downloadAssetsWeight, new Runnable() {
-                    @Override
-                    public void run() {
-                        completeAssets[0] = true;
+                        completeGame[0] = true;
                     }
                 });
 
-                while (!completeAssets[0] || !completeJar[0]) {
+                while (!completeGame[0]) {
                     Threadings.sleep(1000);
-                    if (_downloadAssetThread.isKilled() || _downloadJarThread.isKilled()) return;
+                    if (_downloadGameThread.isKilled()) return;
                 }
 
                 try {
-                    Zippings.unZipIt(zipDownloadPath.file().getAbsolutePath(), _game.getFullBasePath());
+                    Zippings.unZipIt(gameDownloadPath.file().getAbsolutePath(), _game.getFullBasePath());
                 } catch (ZipException e) {
                     e.printStackTrace();
                     _listener.onCallback(null, Status.FAILED);
@@ -128,7 +119,7 @@ public class GameFileChecker implements Disposable {
                 }
 
                 _preferences.put(_game.getAbbr(), _game.getVersion());
-                zipDownloadPath.delete();
+                gameDownloadPath.delete();
 
                 updatePercent(_unzipWeight);
 
@@ -162,12 +153,12 @@ public class GameFileChecker implements Disposable {
 
     public void updatePercent(final double added){
         _currentPercent += added;
+        if(_currentPercent > 100) _currentPercent = 100;
         _listener.onStep(_currentPercent);
     }
 
     public void killDownloads(){
-        if(_downloadJarThread != null) _downloadJarThread.kill();
-        if(_downloadAssetThread != null) _downloadAssetThread.kill();
+        if(_downloadGameThread != null) _downloadGameThread.kill();
         _listener.onCallback(GameFileResult.FAILED_RETRIEVE, Status.FAILED);
 
     }

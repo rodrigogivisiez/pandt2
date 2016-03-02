@@ -2,6 +2,7 @@ package com.mygdx.potatoandtomato.helpers.services;
 
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.helpers.utils.JsonObj;
+import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.shaded.fasterxml.jackson.core.JsonProcessingException;
@@ -26,8 +27,8 @@ import java.util.Set;
 public class Appwarp extends GamingKit implements ConnectionRequestListener, ZoneRequestListener, RoomRequestListener, NotifyListener {
 
     private WarpClient _warpInstance;
-    private String _appKey = "08e25748189dccf0d82070e17c87225350614c754e8e0d511128d65da9d27956";
-    private String _secretKey = "ed573d5aa22d343d8b187e610007f299c9811bd3594c94d8ffe3f789a69de960";
+    private String _appKey = Terms.WARP_API_KEY;
+    private String _secretKey = Terms.WARP_SECRET_KEY;
     private String _username, _realUsername, _roomId;
 
     public Appwarp(String appKey, String secretKey){

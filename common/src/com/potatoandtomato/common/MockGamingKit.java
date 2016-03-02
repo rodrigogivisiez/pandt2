@@ -19,8 +19,8 @@ import java.util.HashMap;
  */
 public class MockGamingKit {
 
-    private final String _appKey = "34d20eca11ae247b144d561dce54d4f86b69690375469ed4c8700067bea1f6c2";
-    private final String _secretKey = "bc419f9ac2c9c098375f4ad01f2a1758ce88a4fd14ff210fb188fb8bfe88606d";
+    private final String _appKey = "9d6c174f8ea9985f9b4be630845bd8e57a91f9df73a27d65d64f6e00d2ed4202";
+    private final String _secretKey = "e8d0cda539241037828634e01504aa017b28bfb0519b8884f6ebfafc0062fc96";
     private WarpClient _warpInstance;
     private String _userId;
     private int _expectedTeamCount, _eachTeamExpectedPlayers;

@@ -128,7 +128,8 @@ public class RoomScene extends SceneAbstract {
 
         Label titleLabel = new Label(game.getName(), titleStyle);
         Label playersLabel = new Label(String.format(_texts.xPlayers(), game.getMinPlayers(), game.getMaxPlayers()), smallStyle);
-        Label versionLabel = new Label(String.format(_texts.version(), game.getVersion()), smallStyle);
+        Label versionAndLastUpdatedLabel = new Label(String.format(_texts.version(), game.getVersion()) + " (" + game.getLastUpdatedAgo() + ")", smallStyle);
+        Label gameSizeLabel = new Label(String.format(_texts.xMb(), game.getGameSizeInMb()), smallStyle);
         Label descriptionLabel = new Label(game.getDescription(), contentStyle);
         descriptionLabel.setWrap(true);
 
@@ -139,7 +140,9 @@ public class RoomScene extends SceneAbstract {
         _subRoot.row();
         _subRoot.add(playersLabel).left();
         _subRoot.row();
-        _subRoot.add(versionLabel).left();
+        _subRoot.add(versionAndLastUpdatedLabel).left();
+        _subRoot.row();
+        _subRoot.add(gameSizeLabel).left();
         _subRoot.row();
         _subRoot.add(descriptionTable).left().expandX().fillX().padTop(5);
 

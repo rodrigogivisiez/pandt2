@@ -80,7 +80,7 @@ public class StatusRef {
 
     public void suddenDeathStatus(final ArrayList<TerrainLogic> terrains, final Runnable onFinish){
         for(TerrainLogic terrainLogic : terrains){
-            if(terrainLogic.getChessLogic().getChessModel().getStatus() != Status.ANGRY){
+            if(terrainLogic.getChessLogic().getChessModel().getStatus() != Status.ANGRY && !terrainLogic.isEmpty()){
                 setStatus(terrainLogic, Status.ANGRY, null);
             }
         }

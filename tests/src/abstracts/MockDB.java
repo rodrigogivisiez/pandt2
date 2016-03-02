@@ -72,12 +72,10 @@ public class MockDB implements IDatabase {
         Game game = new Game();
         game.setVersion("1");
         game.setName("Test");
-        game.setAssetUrl("");
         game.setDescription("d");
         game.setMaxPlayers("2");
         game.setMinPlayers("2");
         game.setAbbr("abb");
-        game.setScreenShots(null);
         game.setGameUrl("");
         game.setIconUrl("http://www.potato-and-tomato.com/covered_chess/icon.png");
         gameList.add(game);

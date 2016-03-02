@@ -131,7 +131,7 @@ public class CreateGameScene extends SceneAbstract {
 
     public void changeGameDetails(Game game){
         _gameDetails.clear();
-
+        _gameDetails.align(Align.top);
 
         Label.LabelStyle titleStyle = new Label.LabelStyle();
         titleStyle.font = _assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.XXL, Fonts.FontColor.DARK_BROWN,
@@ -153,32 +153,16 @@ public class CreateGameScene extends SceneAbstract {
         detailsTable.padRight(20);
         Label nameLabel = new Label(game.getName(), contentStyle1);
         Label playersLabel = new Label(String.format(_texts.xPlayers(), game.getMinPlayers(), game.getMaxPlayers()), contentStyle2);
-        Label versionLabel = new Label(String.format(_texts.version(), game.getVersion()), contentStyle2);
+        Label versionAndUpdatedLabel = new Label(String.format(_texts.version(), game.getVersion()) +
+                                        " (" + game.getLastUpdatedAgo() + ")", contentStyle2);
+        Label gameSizeLabel = new Label(String.format(_texts.xMb(), game.getGameSizeInMb()), contentStyle2);
         detailsTable.add(nameLabel).left();
         detailsTable.row();
         detailsTable.add(playersLabel).left();
         detailsTable.row();
-        detailsTable.add(versionLabel).left();
-
-        Label screenShotsTitleLabel = new Label(_texts.screenShots(), titleStyle);
-        Table screenShotsTableParent = new Table();
-        screenShotsTableParent.align(Align.left);
-        screenShotsTableParent.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
-        screenShotsTableParent.pad(10);
-        screenShotsTableParent.padRight(20);
-        Table screenShotsTable = new Table();
-        screenShotsTable.align(Align.left);
-        ScrollPane screenShotsScroll = new ScrollPane(screenShotsTable);
-        screenShotsScroll.setCancelTouchFocus(false);
-        screenShotsScroll.setScrollingDisabled(false, true);
-        screenShotsTableParent.add(screenShotsScroll).expand().fill();
-
-        if(game.getScreenShots() != null){
-            for(String ssUrl : game.getScreenShots()){
-                WebImage screenShotImage = new WebImage(ssUrl, _assets, _services.getBroadcaster());
-                screenShotsTable.add(screenShotImage).size(100).padRight(10);
-            }
-        }
+        detailsTable.add(versionAndUpdatedLabel).left();
+        detailsTable.row();
+        detailsTable.add(gameSizeLabel).left();
 
         Label descriptionTitleLabel = new Label(_texts.description(), titleStyle);
         Table descriptionTable = new Table();
@@ -196,10 +180,6 @@ public class CreateGameScene extends SceneAbstract {
         _gameDetails.add(detailsTitleLabel).left().padTop(5);
         _gameDetails.row();
         _gameDetails.add(detailsTable).expandX().fillX();
-        _gameDetails.row();
-        _gameDetails.add(screenShotsTitleLabel).left().padTop(5);
-        _gameDetails.row();
-        _gameDetails.add(screenShotsTableParent).expandX().fillX();
         _gameDetails.row();
         _gameDetails.add(descriptionTitleLabel).left().padTop(5);
         _gameDetails.row();

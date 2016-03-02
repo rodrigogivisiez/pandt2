@@ -1,6 +1,8 @@
 package com.mygdx.potatoandtomato.models;
 
 import com.badlogic.gdx.Gdx;
+import com.mygdx.potatoandtomato.helpers.utils.DateTimes;
+import com.mygdx.potatoandtomato.helpers.utils.Strings;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -13,8 +15,8 @@ import java.util.ArrayList;
 public class Game {
 
     String name, minPlayers, maxPlayers, teamMinPlayers, teamMaxPlayers, teamCount,
-            iconUrl, gameUrl, assetUrl, abbr, description, version, commonVersion;
-    ArrayList<String> screenShots;
+            iconUrl, gameUrl, abbr, description, version, commonVersion;
+    long createTimestamp, lastUpdatedTimestamp, gameSize;
     boolean mustFairTeam;
 
 
@@ -101,14 +103,6 @@ public class Game {
         this.gameUrl = gameUrl;
     }
 
-    public String getAssetUrl() {
-        return assetUrl;
-    }
-
-    public void setAssetUrl(String assetUrl) {
-        this.assetUrl = assetUrl;
-    }
-
     public String getAbbr() {
         return abbr;
     }
@@ -133,13 +127,38 @@ public class Game {
         this.version = version;
     }
 
-    public ArrayList<String> getScreenShots() {
-        return screenShots;
+    public long getLastUpdatedTimestamp() {
+        return lastUpdatedTimestamp;
     }
 
-    public void setScreenShots(ArrayList<String> screenShots) {
-        this.screenShots = screenShots;
+    public void setLastUpdatedTimestamp(long lastUpdatedTimestamp) {
+        this.lastUpdatedTimestamp = lastUpdatedTimestamp;
     }
+
+    public String getLastUpdatedAgo(){
+        return DateTimes.calculateTimeAgo(lastUpdatedTimestamp);
+    }
+
+    public long getCreateTimestamp() {
+        return createTimestamp;
+    }
+
+    public void setCreateTimestamp(long createTimestamp) {
+        this.createTimestamp = createTimestamp;
+    }
+
+    public long getGameSize() {
+        return gameSize;
+    }
+
+    public void setGameSize(long gameSize) {
+        this.gameSize = gameSize;
+    }
+
+    public String getGameSizeInMb() {
+        return Strings.byteToMb(gameSize);
+    }
+
 
     @JsonIgnore
     public String getFullBasePath(){

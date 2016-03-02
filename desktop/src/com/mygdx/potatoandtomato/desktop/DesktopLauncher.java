@@ -32,6 +32,8 @@ public class DesktopLauncher {
 		_broadcaster = new Broadcaster();
 		_imageLoader = new ImageLoader(_broadcaster);
 
+		Global.DEBUG = true;
+
 		if(arg.length > 0){
 			Terms.PREF_NAME = arg[0];
 		}

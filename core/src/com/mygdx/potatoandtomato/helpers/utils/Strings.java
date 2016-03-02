@@ -17,4 +17,12 @@ public class Strings {
         return sbStr.toString();
     }
 
+    public static String formatToTwoDec(float f){
+        return String.format("%.2f", f);
+    }
+
+    public static String byteToMb(long b){
+        return formatToTwoDec((float) b / 1024f / 1024f);
+    }
+
 }
