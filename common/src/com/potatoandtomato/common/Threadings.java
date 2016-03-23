@@ -2,6 +2,8 @@ package com.potatoandtomato.common;
 
 import com.badlogic.gdx.Gdx;
 
+import java.util.ArrayList;
+
 /**
  * Created by SiongLeng on 9/12/2015.
  */
@@ -24,8 +26,8 @@ public class Threadings {
     }
 
 
-
-    public static void delay(final long timeInMs, final Runnable toRun){
+    public static ThreadFragment delay(final long timeInMs, final Runnable toRun){
+        final ThreadFragment delayFrag = new ThreadFragment();
         runInBackground(new Runnable() {
             @Override
             public void run() {
@@ -38,10 +40,12 @@ public class Threadings {
                     @Override
                     public void run() {
                         toRun.run();
+                        delayFrag.setFinished(true);
                     }
                 });
             }
         });
+        return delayFrag;
     }
 
     public static void delayNoPost(final long timeInMs, final Runnable toRun){
@@ -117,6 +121,24 @@ public class Threadings {
             }
         }
     }
+
+
+
+    public static class ThreadFragment{
+
+        boolean finished;
+
+        public boolean isFinished() {
+            return finished;
+        }
+
+        public void setFinished(boolean finished) {
+            this.finished = finished;
+        }
+    }
+
+
+
 }
 
 

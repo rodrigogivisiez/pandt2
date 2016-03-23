@@ -86,6 +86,13 @@ public class ChessLogic {
         invalidate();
     }
 
+    public void setFocusing(boolean focusing){
+        if(_chessModel.getFocusing() != focusing){
+            _chessModel.setFocusing(focusing);
+            invalidate();
+        }
+    }
+
     public void setChessModel(ChessModel chessModel){
         if(chessModel == null){
             _chessModel.setChessType(ChessType.NONE);

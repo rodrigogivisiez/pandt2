@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.assets.Animations;
 import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.assets.Patches;
 import com.mygdx.potatoandtomato.assets.Textures;
@@ -34,8 +35,9 @@ public class RoomScene extends SceneAbstract {
     Array<Table> _teamTables;
     Table _teamsRoot, _detailsRoot;
     HashMap<String, Table> _playerMaps;
-    Array<Table> _playersTable;
+    Array<Table> _slotsTable;
     Room _room;
+    Image _leaderboardImage;
 
     public Array<Table> getTeamTables() {
         return _teamTables;
@@ -45,8 +47,8 @@ public class RoomScene extends SceneAbstract {
         return _playerMaps;
     }
 
-    public Array<Table> getPlayersTable() {
-        return _playersTable;
+    public Array<Table> getSlotsTable() {
+        return _slotsTable;
     }
 
     public BtnEggDownward getStartButton() {
@@ -55,6 +57,10 @@ public class RoomScene extends SceneAbstract {
 
     public BtnEggDownward getInviteButton() {
         return _inviteButton;
+    }
+
+    public Image getLeaderboardImage() {
+        return _leaderboardImage;
     }
 
     public Table getTeamsRoot() {
@@ -74,7 +80,7 @@ public class RoomScene extends SceneAbstract {
 
         _teamTables = new Array();
         _playerMaps = new HashMap();
-        _playersTable = new Array<Table>();
+        _slotsTable = new Array<Table>();
 
         Table buttonTable = new Table();
 
@@ -86,7 +92,7 @@ public class RoomScene extends SceneAbstract {
         _inviteButton.setText(_texts.invite());
 
         buttonTable.add(_startButton).padRight(10);
-        buttonTable.add(_inviteButton);
+        buttonTable.add(_inviteButton).padRight(10);
 
         _teamsRoot = new Table();
 
@@ -114,7 +120,7 @@ public class RoomScene extends SceneAbstract {
     public void populateGameDetails(Game game){
         WebImage gameImg = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster());
 
-        Image separatorImage = new Image(_assets.getTextures().get(Textures.Name.WHITE_VERTICAL_LINE));
+        Image separatorImage = new Image(_assets.getTextures().get(Textures.Name.ORANGE_VERTICAL_LINE));
 
         Label.LabelStyle titleStyle = new Label.LabelStyle();
         titleStyle.font = _assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.M, Fonts.FontColor.DARK_BROWN, Fonts.FontStyle.BOLD);
@@ -127,6 +133,13 @@ public class RoomScene extends SceneAbstract {
         _subRoot.align(Align.topLeft);
 
         Label titleLabel = new Label(game.getName(), titleStyle);
+        _leaderboardImage = new Image(_assets.getTextures().get(Textures.Name.LEADERBOARD_ICON));
+
+        Table titleTable = new Table();
+        titleTable.add(titleLabel).expandX().fillX().padRight(10);
+        titleTable.add(_leaderboardImage);
+        _leaderboardImage.setVisible(game.hasLeaderboard());
+
         Label playersLabel = new Label(String.format(_texts.xPlayers(), game.getMinPlayers(), game.getMaxPlayers()), smallStyle);
         Label versionAndLastUpdatedLabel = new Label(String.format(_texts.version(), game.getVersion()) + " (" + game.getLastUpdatedAgo() + ")", smallStyle);
         Label gameSizeLabel = new Label(String.format(_texts.xMb(), game.getGameSizeInMb()), smallStyle);
@@ -136,7 +149,7 @@ public class RoomScene extends SceneAbstract {
         Table descriptionTable = new Table();
         descriptionTable.add(descriptionLabel).expand().fill();
 
-        _subRoot.add(titleLabel).expandX().fillX();
+        _subRoot.add(titleTable).expandX().fillX();
         _subRoot.row();
         _subRoot.add(playersLabel).left();
         _subRoot.row();
@@ -201,7 +214,7 @@ public class RoomScene extends SceneAbstract {
                     teamTable.row();
                 }
 
-                _playersTable.add(playerTable);
+                _slotsTable.add(playerTable);
                 accIndex++;
             }
 
@@ -236,7 +249,7 @@ public class RoomScene extends SceneAbstract {
         }
         for(Table t : _teamTables) t.remove();
         _teamTables.clear();
-        _playersTable.clear();
+        _slotsTable.clear();
         populateTeamTables(Integer.valueOf(room.getGame().getTeamCount()),
                 Integer.valueOf(room.getGame().getTeamMaxPlayers()), room.getRoomUsers(), room.getHost().equals(_services.getProfile()));
     }
@@ -302,20 +315,21 @@ public class RoomScene extends SceneAbstract {
 
         Table iconTable = new Table();
         iconTable.setName("iconTable");
-        Animator loadingAnimator = new Animator(0.2f, _assets.getAnimations().getLoadingAnimation());
+        Animator loadingAnimator = new Animator(0.2f, _assets.getAnimations().get(Animations.Name.LOADING));
         loadingAnimator.setName("loadingAnimator");
-        loadingAnimator.setSize(16, 16);
+        loadingAnimator.overrideSize(16, 16);
         Image unknownImage = new Image(_assets.getTextures().get(Textures.Name.UNKNOWN_ICON));
         unknownImage.setName("unknownImage");
         unknownImage.setSize(5, 8);
         unknownImage.setPosition(5, 5);
-        Image bulletIcon = new Image(_assets.getTextures().get(Textures.Name.BULLET_ICON));
-        bulletIcon.setName("bulletIcon");
-        bulletIcon.setSize(4, 4);
-        bulletIcon.setPosition(6, 6);
+
+        Table badgeTable = new Table();
+        badgeTable.setFillParent(true);
+        badgeTable.setName("badgeTable");
+
         iconTable.addActor(loadingAnimator);
         iconTable.addActor(unknownImage);
-        iconTable.addActor(bulletIcon);
+        iconTable.addActor(badgeTable);
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
         labelStyle.font = font;
@@ -335,16 +349,18 @@ public class RoomScene extends SceneAbstract {
         Image kickImage = new Image(_assets.getTextures().get(Textures.Name.KICK_ICON));
         kickImage.setName("kickImage");
 
+        new DummyButton(playerTable, _assets);
         playerTable.add(iconTable).size(16, 16).padRight(3);
         playerTable.add(nameLabel).expandX().fillX().padLeft(3).padBottom(2);
         playerTable.add(downloadImage).padRight(2);
         playerTable.add(progressLabel);
         if(isHost && !userId.equals(_services.getProfile().getUserId())) playerTable.add(kickImage).padLeft(5);
 
-        playerTable.setName("nokickattached," + ((userId != null) ? "disableclick" : ""));
-        new DummyButton(playerTable, _assets);
+        playerTable.setName(((userId != null) ? "disableclick" : ""));
 
         if(userId != null) _playerMaps.put(userId, playerTable);
+
+        setPlayerBadge(userId, BadgeType.Normal, 0);
 
         swapIsReadyIcon(iconTable, userId, isReady);
 
@@ -354,10 +370,10 @@ public class RoomScene extends SceneAbstract {
     private void swapIsReadyIcon(Table table, String userId, boolean isReady){
         Actor loadingAnimator = table.findActor("loadingAnimator");
         Actor unknownImage = table.findActor("unknownImage");
-        Actor bulletIcon = table.findActor("bulletIcon");
+        Actor badgeTable = table.findActor("badgeTable");
         loadingAnimator.setVisible(false);
         unknownImage.setVisible(false);
-        bulletIcon.setVisible(false);
+        badgeTable.setVisible(false);
 
         if(userId == null){
             unknownImage.setVisible(true);
@@ -367,11 +383,52 @@ public class RoomScene extends SceneAbstract {
                 loadingAnimator.setVisible(true);
             }
             else{
-                bulletIcon.setVisible(true);
+                badgeTable.setVisible(true);
             }
         }
-
-
     }
+
+    public boolean setPlayerBadge(String playerId, BadgeType badgeType, int num){
+        if(playerId != null && _playerMaps.containsKey(playerId)){
+            Table table = _playerMaps.get(playerId);
+            Table badgeTable = table.findActor("badgeTable");
+
+            badgeTable.clear();
+            if(badgeType == BadgeType.Normal){
+                Image bulletIcon = new Image(_assets.getTextures().get(Textures.Name.BULLET_ICON));
+                badgeTable.add(bulletIcon).size(4, 4);
+            }
+            else if(badgeType == BadgeType.Rank){
+                Table rankTable = new Table();
+                rankTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.RANK_ICON)));
+                Label.LabelStyle rankStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.XS,
+                        Fonts.FontColor.WHITE, Fonts.FontStyle.SEMI_BOLD, Fonts.FontBorderColor.BLACK, Fonts.FontShadowColor.NONE), null);
+                Label rankLabel = new Label(String.valueOf(num), rankStyle);
+                rankTable.add(rankLabel);
+                badgeTable.add(rankTable).size(18, 20);
+            }
+            else if(badgeType == BadgeType.Streak){
+                Table streakTable = new Table();
+                streakTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.STREAK_ICON)));
+                Label.LabelStyle streakStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.XS,
+                        Fonts.FontColor.WHITE, Fonts.FontStyle.SEMI_BOLD, Fonts.FontBorderColor.BLACK, Fonts.FontShadowColor.NONE), null);
+                Label streakLabel = new Label(String.valueOf(num), streakStyle);
+                streakTable.add(streakLabel);
+                badgeTable.add(streakTable);
+            }
+
+            if(badgeTable.isVisible()){
+                badgeTable.clearActions();
+                badgeTable.addAction(sequence(fadeOut(0f), fadeIn(0.2f)));
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public enum BadgeType{
+        Normal, Rank, Streak
+    }
+
 
 }

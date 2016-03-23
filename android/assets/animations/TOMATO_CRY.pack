@@ -1,0 +1,75 @@
+
+TOMATO_CRY.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+tomato_cry
+  rotate: false
+  xy: 1, 1
+  size: 116, 92
+  orig: 116, 92
+  offset: 0, 0
+  index: 0
+tomato_cry
+  rotate: false
+  xy: 1, 1
+  size: 116, 92
+  orig: 116, 92
+  offset: 0, 0
+  index: 1
+tomato_cry
+  rotate: false
+  xy: 1, 1
+  size: 116, 92
+  orig: 116, 92
+  offset: 0, 0
+  index: 2
+tomato_cry
+  rotate: false
+  xy: 119, 1
+  size: 116, 92
+  orig: 116, 92
+  offset: 0, 0
+  index: 3
+tomato_cry
+  rotate: false
+  xy: 237, 1
+  size: 116, 92
+  orig: 116, 92
+  offset: 0, 0
+  index: 4
+tomato_cry
+  rotate: false
+  xy: 355, 1
+  size: 116, 92
+  orig: 116, 92
+  offset: 0, 0
+  index: 5
+tomato_cry
+  rotate: false
+  xy: 473, 1
+  size: 116, 92
+  orig: 116, 92
+  offset: 0, 0
+  index: 6
+tomato_cry
+  rotate: false
+  xy: 591, 1
+  size: 116, 92
+  orig: 116, 92
+  offset: 0, 0
+  index: 7
+tomato_cry
+  rotate: false
+  xy: 709, 1
+  size: 116, 92
+  orig: 116, 92
+  offset: 0, 0
+  index: 8
+tomato_cry
+  rotate: false
+  xy: 827, 1
+  size: 116, 92
+  orig: 116, 92
+  offset: 0, 0
+  index: 9

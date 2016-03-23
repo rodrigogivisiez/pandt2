@@ -7,10 +7,12 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.firebase.client.Firebase;
+import com.potatoandtomato.common.models.ScoreDetails;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by SiongLeng on 27/12/2015.
@@ -66,6 +68,11 @@ public abstract class MockGame extends Game implements IPTGame {
             public void inGameUpdateRequest(String msg) {
                 _mockGamingKit.sendUpdate(msg);
             }
+
+            @Override
+            public void updateScores(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers) {
+
+            }
         },  _ref.child("gameBelongData").child(gameId), "1", new MockSoundManager(),
                 _broadcaster, _downloader);
     }
@@ -74,7 +81,7 @@ public abstract class MockGame extends Game implements IPTGame {
         _mockGamingKit = new MockGamingKit(_gameCoordinator, expectedTeamCount, eachTeamExpectedPlayers, _broadcaster, new Runnable() {
             @Override
             public void run() {
-                _gameCoordinator.setUserId(_mockGamingKit.getUserId());
+                _gameCoordinator.setMyUserId(_mockGamingKit.getUserId());
                 if(expectedTeamCount == 0 || eachTeamExpectedPlayers == 0){
                     ArrayList<Team> teams = new ArrayList<Team>();
                     Team team = new Team();

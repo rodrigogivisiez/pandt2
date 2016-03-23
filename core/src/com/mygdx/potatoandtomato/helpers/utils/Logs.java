@@ -3,6 +3,7 @@ package com.mygdx.potatoandtomato.helpers.utils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.FPSLogger;
+import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.SafeThread;
 import com.potatoandtomato.common.Threadings;
 
@@ -20,10 +21,12 @@ public class Logs {
     private static SafeThread _fpsThread;
 
     public static void show(String msg){
+        if(Global.DEBUG)
         System.out.println(msg);
     }
 
     public static void show(float msg){
+        if(Global.DEBUG)
         System.out.println(msg);
     }
 

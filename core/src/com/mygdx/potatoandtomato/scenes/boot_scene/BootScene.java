@@ -1,5 +1,6 @@
 package com.mygdx.potatoandtomato.scenes.boot_scene;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
@@ -155,7 +156,7 @@ public class BootScene extends SceneAbstract {
         //Facebook title
         //////////////////////////////
         Image facebookImage = new Image(_assets.getTextures().get(Textures.Name.FACEBOOK_ICON));
-        Label.LabelStyle titleStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.L, Fonts.FontStyle.BOLD), null);
+        Label.LabelStyle titleStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.L, Fonts.FontStyle.BOLD), Color.BLACK);
         Label titleLabel = new Label(_texts.socialLogin(), titleStyle);
 
         _titleTable = new Table();

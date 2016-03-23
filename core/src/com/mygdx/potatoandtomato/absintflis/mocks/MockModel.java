@@ -1,7 +1,12 @@
 package com.mygdx.potatoandtomato.absintflis.mocks;
 
+import com.mygdx.potatoandtomato.enums.LeaderboardType;
 import com.mygdx.potatoandtomato.models.*;
+import com.potatoandtomato.common.models.EndGameResult;
+import com.potatoandtomato.common.Player;
+import com.potatoandtomato.common.models.ScoreDetails;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -23,6 +28,7 @@ public class MockModel {
         g.setName("Covered Chess");
         g.setCommonVersion("1");
         g.setDescription("This is just a mock model of game.");
+        g.setLeaderbordTypeEnum(LeaderboardType.Accumulate);
         return g;
     }
 
@@ -75,6 +81,24 @@ public class MockModel {
         return gameHistory;
     }
 
+    public static EndGameData mockEndGameData(){
+        ArrayList<ScoreDetails> scoreDetails = new ArrayList<ScoreDetails>();
+        scoreDetails.add(new ScoreDetails(100, "5 win", true, true));
+
+        ArrayList<Player> myTeams = new ArrayList<Player>();
+        myTeams.add(new Player("abc", "1", true, true));
+
+        EndGameResult endGameResult = new EndGameResult();
+        endGameResult.setScoreDetails(scoreDetails);
+        endGameResult.setWon(true);
+        endGameResult.setStreakEnabled(true);
+        endGameResult.setMyTeam(myTeams);
+
+        EndGameData endGameData = new EndGameData(MockModel.mockRoom("1"), "1");
+        endGameData.setEndGameResult(endGameResult);
+
+        return endGameData;
+    }
 
 
 }

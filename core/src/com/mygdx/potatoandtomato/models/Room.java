@@ -132,6 +132,15 @@ public class Room {
         this.teams = teams;
     }
 
+    public Team getUserTeam(String userId){
+        for(Team team : getTeams()){
+            if(team.hasUser(userId)){
+                return team;
+            }
+        }
+        return null;
+    }
+
     @JsonIgnore
     public void storeRoomUsersToOriginalRoomUserIds(){
         ArrayList<String> result = new ArrayList();

@@ -8,8 +8,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.firebase.client.Firebase;
+import com.potatoandtomato.common.models.EndGameResult;
+import com.potatoandtomato.common.models.ScoreDetails;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by SiongLeng on 25/12/2015.
@@ -24,7 +27,7 @@ public class GameCoordinator implements Disposable {
     private float gameWidth, gameHeight;
     private IPTGame game;
     private SpriteBatch spriteBatch;
-    private String userId;
+    private String myUserId;
     private IGameSandBox gameSandBox;
     private UserStateListener userStateListener;
     private Object database;
@@ -40,15 +43,15 @@ public class GameCoordinator implements Disposable {
     private Array<InputProcessor> _processors;
     private ArrayList<InGameUpdateListener> _inGameUpdateListeners;
 
-
     private String _broadcastSubscribedId;
 
+    private EndGameResult _endGameResult;
 
     public GameCoordinator(String jarPath, String assetsPath,
                            String basePath, ArrayList<Team> teams,
                            float gameWidth, float gameHeight,
                            IPTGame game, SpriteBatch batch,
-                           String userId, IGameSandBox gameSandBox,
+                           String myUserId, IGameSandBox gameSandBox,
                            Object database, String roomId,
                            ISounds sounds, Broadcaster broadcaster,
                            IDownloader downloader) {
@@ -60,7 +63,7 @@ public class GameCoordinator implements Disposable {
         this.gameHeight = gameHeight;
         this.game = game;
         this.spriteBatch = batch;
-        this.userId = userId;
+        this.myUserId = myUserId;
         this.gameSandBox = gameSandBox;
         this.database = database;
         this.roomId = roomId;
@@ -91,12 +94,12 @@ public class GameCoordinator implements Disposable {
         this.gameSandBox = gameSandBox;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getMyUserId() {
+        return myUserId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setMyUserId(String myUserId) {
+        this.myUserId = myUserId;
     }
 
     public SpriteBatch getSpriteBatch() {
@@ -126,6 +129,35 @@ public class GameCoordinator implements Disposable {
     public void setTeams(ArrayList<Team> teams) {
         this.teams = teams;
         decisionsMaker.teamsChanged(teams);
+    }
+
+    public Team getMyTeam(){
+        for(Team team : teams){
+            if(team.hasUser(getMyUserId())){
+                return team;
+            }
+        }
+        return null;
+    }
+
+
+    public ArrayList<Player> getMyTeamPlayers(){
+        for(Team team : teams){
+            if(team.hasUser(getMyUserId())){
+                return team.getPlayers();
+            }
+        }
+        return new ArrayList<Player>();
+    }
+
+    public ArrayList<Team> getEnemyTeams(){
+        ArrayList<Team> result = new ArrayList<Team>();
+        for(Team team : teams){
+            if(!team.hasUser(getMyUserId())){
+                result.add(team);
+            }
+        }
+        return result;
     }
 
     public String getJarPath() {
@@ -179,6 +211,11 @@ public class GameCoordinator implements Disposable {
     }
 
     public void endGame(){
+        if(_endGameResult == null){
+            System.out.println("Error: please call beforeEndGame() function before end game!!!!!");
+            return;
+        }
+
         for(String id : _subscribedIds){
             broadcaster.unsubscribe(id);
         }
@@ -189,11 +226,14 @@ public class GameCoordinator implements Disposable {
         getGameSandBox().endGame();
     }
 
-    public void abandon(){
+    public void abandon(final boolean streakEnabled){
         getGameSandBox().useConfirm("PTTEXT_ABANDON", new Runnable() {
             @Override
             public void run() {     //yes
                 getGameSandBox().userAbandoned();
+                ArrayList<Team> losersTeam = new ArrayList<Team>();
+                losersTeam.add(getMyTeam());
+                beforeEndGame(new HashMap<Team, ArrayList<ScoreDetails>>(), losersTeam, streakEnabled);
                 endGame();
             }
         }, new Runnable() {
@@ -205,11 +245,12 @@ public class GameCoordinator implements Disposable {
     }
 
     public void userAbandon(String userId){
-        if(this.userStateListener != null) userStateListener.userAbandoned(userId);
         setPlayerConnectionChanged(userId, false);
+        if(this.userStateListener != null) userStateListener.userAbandoned(userId);
     }
 
     public void userConnectionChanged(String userId, boolean connected){
+        setPlayerConnectionChanged(userId, connected);
         if(this.userStateListener != null) {
             if(connected){
                 userStateListener.userConnected(userId);
@@ -218,7 +259,6 @@ public class GameCoordinator implements Disposable {
                 userStateListener.userDisconnected(userId);
             }
         }
-        setPlayerConnectionChanged(userId, connected);
     }
 
     private void setPlayerConnectionChanged(String userId, boolean connected){
@@ -232,14 +272,14 @@ public class GameCoordinator implements Disposable {
     }
 
     public boolean meIsDecisionMaker(){
-        return decisionsMaker.checkIsDecisionMaker(this.getUserId());
+        return decisionsMaker.checkIsDecisionMaker(this.getMyUserId());
     }
 
     public int getMyUniqueIndex(){
         int i = 0;
         for(Team team : teams){
             for(Player player : team.getPlayers()){
-                if(player.getUserId().equals(getUserId())){
+                if(player.getUserId().equals(getMyUserId())){
                     return i;
                 }
                 i++;
@@ -317,7 +357,7 @@ public class GameCoordinator implements Disposable {
     }
 
     public boolean isHost(){
-        return getHostUserId().equals(getUserId());
+        return getHostUserId().equals(getMyUserId());
     }
 
     public Firebase getFirebase(){
@@ -343,6 +383,42 @@ public class GameCoordinator implements Disposable {
     public ArrayList<InGameUpdateListener> getInGameUpdateListeners() {
         return _inGameUpdateListeners;
     }
+
+    public EndGameResult getEndGameResult() {
+        return _endGameResult;
+    }
+
+    public void beforeEndGame(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers, boolean streakEnabled){
+        if(winners == null && losers == null){
+            this._endGameResult = new EndGameResult();
+            return;
+        }
+
+        if(winners == null) winners = new HashMap<Team, ArrayList<ScoreDetails>>();
+        if(losers == null) losers = new ArrayList<Team>();
+
+        if(meIsDecisionMaker()){
+            gameSandBox.updateScores(winners, losers);
+        }
+
+        this._endGameResult = new EndGameResult();
+        this._endGameResult.setMyTeam(getMyTeamPlayers());
+        this._endGameResult.setStreakEnabled(streakEnabled);
+
+        for(Team loserTeam : losers){
+            if(loserTeam.hasUser(getMyUserId())){
+                this._endGameResult.setWon(false);
+            }
+        }
+
+        for(Team winnerTeam : winners.keySet()){
+            if(winnerTeam.hasUser(getMyUserId())){
+                this._endGameResult.setWon(true);
+                this._endGameResult.setScoreDetails(winners.get(winnerTeam));
+            }
+        }
+    }
+
 
     @Override
     public void dispose() {

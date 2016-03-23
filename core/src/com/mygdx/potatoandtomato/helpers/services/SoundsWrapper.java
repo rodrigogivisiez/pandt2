@@ -7,6 +7,8 @@ import com.mygdx.potatoandtomato.assets.Sounds;
 import com.potatoandtomato.common.*;
 import com.mygdx.potatoandtomato.statics.Global;
 
+import java.util.HashMap;
+
 /**
  * Created by SiongLeng on 18/1/2016.
  */
@@ -17,11 +19,13 @@ public class SoundsWrapper implements ISounds {
     private float _volume;
     private Array<Music> _musicList;
     private Broadcaster _broadcaster;
+    private HashMap<Sounds.Name, Long> _soundIdsMap;
 
     public SoundsWrapper(Assets assets, Broadcaster broadcaster) {
         this._assets = assets;
         this._broadcaster = broadcaster;
         _musicList = new Array<Music>();
+        _soundIdsMap = new HashMap<Sounds.Name, Long>();
         setVolume(1);
 
         _broadcaster.subscribe(BroadcastEvent.SOUNDS_CHANGED, new BroadcastListener() {
@@ -50,6 +54,27 @@ public class SoundsWrapper implements ISounds {
     public void playSoundEffect(Sounds.Name soundName){
         Sound sound = _assets.getSounds().getSound(soundName);
         playSound(sound);
+    }
+
+    public void playSoundEffectLoop(final Sounds.Name soundName){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Sound sound = _assets.getSounds().getSound(soundName);
+                long id = sound.play(_volume);
+                sound.setLooping(id, true);
+                _soundIdsMap.put(soundName, id);
+            }
+        });
+    }
+
+    public void stopSoundEffectLoop(final Sounds.Name soundName){
+        if(_soundIdsMap.containsKey(soundName)){
+            Sound sound = _assets.getSounds().getSound(soundName);
+            sound.setLooping(_soundIdsMap.get(soundName), false);
+            _soundIdsMap.remove(soundName);
+        }
+
     }
 
     @Override

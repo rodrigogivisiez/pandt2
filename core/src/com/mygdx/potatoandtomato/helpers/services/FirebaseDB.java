@@ -2,17 +2,19 @@ package com.mygdx.potatoandtomato.helpers.services;
 
 import com.badlogic.gdx.utils.Array;
 import com.firebase.client.*;
-import com.firebase.client.snapshot.DoubleNode;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
+import com.mygdx.potatoandtomato.enums.LeaderboardType;
+import com.potatoandtomato.common.utils.Strings;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.Status;
-import com.shaded.fasterxml.jackson.databind.DeserializationFeature;
-import com.shaded.fasterxml.jackson.databind.ObjectMapper;
+import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.ThreadsPool;
+import com.potatoandtomato.common.models.LeaderboardRecord;
+import com.potatoandtomato.common.models.Streak;
 
 import java.util.*;
-import java.util.concurrent.SynchronousQueue;
 
 /**
  * Created by SiongLeng on 9/12/2015.
@@ -27,6 +29,9 @@ public class FirebaseDB implements IDatabase {
     private String _tableHistories = "histories";
     private String _tableRoomNotifications = "roomNotifications";
     private String _tableGameBelongData = "gameBelongData";
+    private String _tableLeaderboard = "leaderboard";
+    private String _tableStreak = "streaks";
+    private String _tableStreakReviveHistories = "streakReviveHistories";
     private String _tableServerTimeInfo = ".info/serverTimeOffset";
     private Array<ListenerModel> _listenerModels;
 
@@ -184,6 +189,31 @@ public class FirebaseDB implements IDatabase {
     }
 
     @Override
+    public void getUsernameByUserId(String userId, DatabaseListener<String> listener) {
+        getSingleData(getTable(_tableUsers).child(userId).child("gameName"), listener);
+    }
+
+    @Override
+    public void getUsernamesByUserIds(final ArrayList<String> userIds, final DatabaseListener<HashMap<String, String>> listener) {
+        final HashMap<String, String> result = new HashMap<String, String>();
+        final int[] count = {0};
+        for(final String userId : userIds){
+            getUsernameByUserId(userId, new DatabaseListener<String>(String.class) {
+                @Override
+                public void onCallback(String name, Status st) {
+                    if(st == Status.SUCCESS){
+                        result.put(userId, name);
+                    }
+                    count[0]++;
+                    if(count[0] == userIds.size()){
+                        listener.onCallback(result, Status.SUCCESS);
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
     public void getProfileByFacebookUserId(String facebookUserId, final DatabaseListener<Profile> listener) {
         Query queryRef = getTable(_tableUsers).orderByChild("facebookUserId").equalTo(facebookUserId);
         DatabaseListener<ArrayList<Profile>> intermediate = new DatabaseListener<ArrayList<Profile>>(Profile.class) {
@@ -283,6 +313,240 @@ public class FirebaseDB implements IDatabase {
     @Override
     public Object getGameBelongDatabase(String abbr) {
         return getTable(_tableGameBelongData).child(abbr);
+    }
+
+    @Override
+    public void getLeaderBoardAndStreak(final Game game, int expectedCount, final DatabaseListener<ArrayList<LeaderboardRecord>> listener) {
+        getData(getTable(_tableLeaderboard).child(game.getAbbr()).limitToLast(expectedCount).orderByPriority(), new DatabaseListener<ArrayList<LeaderboardRecord>>(LeaderboardRecord.class) {
+            @Override
+            public void onCallback(final ArrayList<LeaderboardRecord> leaderboardRecords, Status st) {
+                if(st == Status.SUCCESS){
+
+                    if(leaderboardRecords.size() == 0){
+                        listener.onCallback(new ArrayList<LeaderboardRecord>(), Status.SUCCESS);
+                        return;
+                    }
+
+                    for(LeaderboardRecord record : leaderboardRecords){
+                        if(record.getScore() == 0){
+                            leaderboardRecords.remove(record);
+                        }
+                    }
+
+                    Collections.reverse(leaderboardRecords);
+
+                    final int[] count = {0};
+                    final ThreadsPool threadsPool = new ThreadsPool();
+
+                    for(final LeaderboardRecord record : leaderboardRecords){
+
+                        final Threadings.ThreadFragment fragment1 = new Threadings.ThreadFragment();
+                        Threadings.runInBackground(new Runnable() {
+                            @Override
+                            public void run() {
+                                getUsernamesByUserIds(record.getUserIds(), new DatabaseListener<HashMap<String, String>>(String.class) {
+                                    @Override
+                                    public void onCallback(HashMap<String, String> obj, Status st) {
+                                        if (st == Status.SUCCESS) {
+                                            record.setUserIdToNameMap(obj);
+                                        }
+                                        fragment1.setFinished(true);
+                                    }
+                                });
+                            }
+                        });
+
+//                        final Threadings.ThreadFragment fragment2 = new Threadings.ThreadFragment();
+//                        Threadings.runInBackground(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                getUsersStreak(record.getUserIds(), game, new DatabaseListener<Streak>(Streak.class) {
+//                                    @Override
+//                                    public void onCallback(Streak streak, Status st) {
+//                                        if (st == Status.SUCCESS && streak != null) {
+//                                            record.setStreak(streak);
+//                                        }
+//                                        fragment2.setFinished(true);
+//                                    }
+//                                });
+//                            }
+//                        });
+
+                        threadsPool.addFragment(fragment1);
+                        //threadsPool.addFragment(fragment2);
+
+                    }
+
+
+
+                    Threadings.runInBackground(new Runnable() {
+                        @Override
+                        public void run() {
+                            while (!threadsPool.allFinished()){
+                                Threadings.sleep(300);
+                            }
+                            listener.onCallback(leaderboardRecords, Status.SUCCESS);
+                        }
+                    });
+
+                }
+                else{
+                    listener.onCallback(null, st);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void getUserStreak(Game game, String userId, DatabaseListener<Streak> listener) {
+        getSingleData(getTable(_tableStreak).child(game.getAbbr()).child(userId), listener);
+    }
+
+    @Override
+    public void saveLeaderBoardRecord(final Room room, final LeaderboardRecord record, final DatabaseListener listener) {
+        final String key = getLeaderboardRecordKey(room, record.getUserIds());
+
+        isStreakRevived(record.getUserIds(), room, new DatabaseListener<Boolean>() {
+            @Override
+            public void onCallback(Boolean isRevived, Status st) {
+                if (isRevived){
+                    record.getStreak().setLastReviveRoomId(room.getId());
+                    record.getStreak().setLastReviveRoundNumber(room.getRoundCounter());
+                }
+
+                for(String userId : record.getUserIds()){
+                    getTable(_tableStreak).child(room.getGame().getAbbr()).child(userId).setValue(record.getStreak());
+                }
+
+                getTable(_tableLeaderboard).child(room.getGame().getAbbr()).child(key).setValue(record, record.getScore(), new Firebase.CompletionListener() {
+                    @Override
+                    public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                        if(firebaseError == null){
+                            if(listener != null) listener.onCallback(null, Status.SUCCESS);
+                        }
+                        else{
+                            if(listener != null) listener.onCallback(null, Status.FAILED);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+
+    @Override
+    public void getAccLeaderBoardRecordAndStreak(final Room room, final ArrayList<String> userIds, final DatabaseListener<LeaderboardRecord> listener) {
+        if(room.getGame().getLeaderboardTypeEnum() == LeaderboardType.Accumulate){
+            String key = getLeaderboardRecordKey(room, userIds);
+            getSingleData(getTable(_tableLeaderboard).child(room.getGame().getAbbr()).child(key), new DatabaseListener<LeaderboardRecord>(LeaderboardRecord.class) {
+                @Override
+                public void onCallback(final LeaderboardRecord record, Status st) {
+                    if(st == Status.SUCCESS && record != null){
+                        getUsernamesByUserIds(record.getUserIds(), new DatabaseListener<HashMap<String, String>>(String.class) {
+                            @Override
+                            public void onCallback(HashMap<String, String> obj, Status st) {
+                                if (st == Status.SUCCESS) {
+                                    record.setUserIdToNameMap(obj);
+                                }
+                                listener.onCallback(record, st);
+                            }
+                        });
+                    }
+                    else{
+                        listener.onCallback(record, st);
+                    }
+
+                }
+            });
+        }
+    }
+
+    private String getLeaderboardRecordKey(Room room, ArrayList<String> userIds){
+        String key = "";
+        if(room.getGame().getLeaderboardTypeEnum() == LeaderboardType.Accumulate){
+            key = userIdsToKey(userIds);
+        }
+        else if(room.getGame().getLeaderboardTypeEnum() == LeaderboardType.Normal){
+            key = roomToKey(room);
+        }
+        return key;
+    }
+
+    private String userIdsToKey(ArrayList<String> userIds){
+        ArrayList<String> userIdsClone = (ArrayList<String>) userIds.clone();
+        Collections.sort(userIdsClone);
+        String key = Strings.joinArr(userIdsClone, ",");
+        return key;
+    }
+
+    private String roomToKey(Room room){
+        return room.getId() + "_" + room.getRoundCounter();
+    }
+
+    private String roomAndUsersToKey(Room room, ArrayList<String> userIds){
+        return roomToKey(room) + "_" + userIdsToKey(userIds);
+    }
+
+    @Override
+    public void deleteLeaderBoard(Game game, final DatabaseListener listener) {
+        getTable(_tableLeaderboard).child(game.getAbbr()).removeValue(new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                if(firebaseError == null){
+                    if(listener != null)  listener.onCallback(null, Status.SUCCESS);
+                }
+                else{
+                    if(listener != null)  listener.onCallback(null, Status.FAILED);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void streakRevive(final ArrayList<String> userIds, final Room room, final DatabaseListener listener) {
+
+        getTable(_tableStreakReviveHistories).child(roomAndUsersToKey(room, userIds)).setValue(1, new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                if(firebaseError == null){
+                    HashMap<String, Object> map = new HashMap<String, Object>();
+                    map.put("lastReviveRoomId", room.getId());
+                    map.put("lastReviveRoundNumber", room.getRoundCounter());
+
+                    getTable(_tableLeaderboard).child(room.getGame().getAbbr()).child(userIdsToKey(userIds)).child("streak").updateChildren(map, new Firebase.CompletionListener() {
+                        @Override
+                        public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                            if(firebaseError != null){
+                                if(listener != null) listener.onCallback(null, Status.FAILED);
+                            }
+                            else{
+                                if(listener != null) listener.onCallback(null, Status.SUCCESS);
+                            }
+                        }
+                    });
+
+                    for(String userId : userIds){
+                        getTable(_tableStreak).child(room.getGame().getAbbr()).child(userId).updateChildren(map);
+                    }
+
+                }
+            }
+        });
+    }
+
+    @Override
+    public void isStreakRevived(ArrayList<String> userIds, Room room, final DatabaseListener<Boolean> listener) {
+        getSingleData(getTable(_tableStreakReviveHistories).child(roomAndUsersToKey(room, userIds)), new DatabaseListener(String.class) {
+            @Override
+            public void onCallback(Object obj, Status st) {
+                if(st == Status.SUCCESS && obj != null){
+                    listener.onCallback(true, Status.SUCCESS);
+                }
+                else{
+                    listener.onCallback(false, Status.SUCCESS);
+                }
+            }
+        });
     }
 
     @Override

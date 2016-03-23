@@ -32,6 +32,7 @@ public class GraveyardActor extends Table {
     private Table _yellowTotalRootTable, _redTotalRootTable;
     private Label _yellowTotalLabel, _redTotalLabel, _turnLabel, _turnCountLabel, _yellowPlayerLabel, _redPlayerLabel;
     private Label _yellowTimer, _redTimer;
+    private Label _graveLabel;
     private Assets _assets;
     private Texts _texts;
     private GameCoordinator _gameCoordinator;
@@ -164,12 +165,12 @@ public class GraveyardActor extends Table {
         Label.LabelStyle graveLabelStyle = new Label.LabelStyle();
         graveLabelStyle.font = _assets.getFonts().get(Fonts.FontName.PIZZA,
                                     Fonts.FontSize.XXXL, Fonts.FontColor.BLACK, Fonts.FontBorderColor.WHITE);
-        Label graveLabel = new Label(_texts.graveYard(), graveLabelStyle);
-        graveLabel.setAlignment(Align.center);
+        _graveLabel = new Label(_texts.graveYard(), graveLabelStyle);
+        _graveLabel.setAlignment(Align.center);
 
         Table graveTable = new Table();
         graveTable.pad(10);
-        graveTable.add(graveLabel).expandX().fillX().colspan(2);
+        graveTable.add(_graveLabel).expandX().fillX().colspan(2);
         graveTable.row();
         graveTable.add(_yellowGraveTable).expand().fill().space(3);
         graveTable.add(_redGraveTable).expand().fill().space(3);
@@ -245,5 +246,7 @@ public class GraveyardActor extends Table {
         this.addAction(Actions.moveBy(0, (400 - 55), 0.5f));
     }
 
-
+    public Label getGraveLabel() {
+        return _graveLabel;
+    }
 }

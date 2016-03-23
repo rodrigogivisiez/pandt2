@@ -4,14 +4,14 @@ import com.firebase.client.annotations.Nullable;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
-import com.mygdx.potatoandtomato.models.GameHistory;
-import com.mygdx.potatoandtomato.models.Profile;
-import com.mygdx.potatoandtomato.models.Game;
-import com.mygdx.potatoandtomato.models.Room;
+import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.Status;
 import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
+import com.potatoandtomato.common.models.LeaderboardRecord;
+import com.potatoandtomato.common.models.Streak;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by SiongLeng on 9/12/2015.
@@ -45,6 +45,16 @@ public class MockDB implements IDatabase {
         Profile p = new Profile();
         p.setUserId(userId);
         listener.onCallback(p, Status.SUCCESS);
+    }
+
+    @Override
+    public void getUsernameByUserId(String userId, DatabaseListener<String> listener) {
+
+    }
+
+    @Override
+    public void getUsernamesByUserIds(ArrayList<String> userIds, DatabaseListener<HashMap<String, String>> listener) {
+
     }
 
     @Override
@@ -176,6 +186,46 @@ public class MockDB implements IDatabase {
     public Object getGameBelongDatabase(String abbr) {
         return null;
     }
+
+    @Override
+    public void getUserStreak(Game game, String userId, DatabaseListener<Streak> listener) {
+
+    }
+
+    @Override
+    public void getLeaderBoardAndStreak(Game game, int expectedCount, DatabaseListener<ArrayList<LeaderboardRecord>> listener) {
+
+    }
+
+    @Override
+    public void saveLeaderBoardRecord(Room room, LeaderboardRecord record, DatabaseListener listener) {
+
+    }
+
+    @Override
+    public void getAccLeaderBoardRecordAndStreak(Room room, ArrayList<String> userIds, DatabaseListener<LeaderboardRecord> listener) {
+
+    }
+
+
+    @Override
+    public void deleteLeaderBoard(Game game, DatabaseListener listener) {
+
+    }
+
+
+
+    @Override
+    public void streakRevive(ArrayList<String> userIds, Room room, DatabaseListener listener) {
+
+    }
+
+    @Override
+    public void isStreakRevived(ArrayList<String> userIds, Room room, DatabaseListener<Boolean> listener) {
+
+    }
+
+
 
 
 }

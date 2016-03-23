@@ -1,11 +1,9 @@
 package com.mygdx.potatoandtomato.scenes.invite_scene;
 
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
@@ -18,8 +16,12 @@ import com.mygdx.potatoandtomato.helpers.controls.BtnEggDownward;
 import com.mygdx.potatoandtomato.helpers.controls.DummyButton;
 import com.mygdx.potatoandtomato.helpers.controls.TopBar;
 import com.mygdx.potatoandtomato.helpers.utils.MultiHashMap;
+import com.mygdx.potatoandtomato.models.GameHistory;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
+import com.potatoandtomato.common.models.Streak;
+
+import java.util.HashMap;
 
 
 /**
@@ -29,134 +31,244 @@ public class InviteScene extends SceneAbstract {
 
     BtnEggDownward _inviteButton;
     MultiHashMap<String, Table> _usersHashMap;
+    HashMap<InviteType, Table> _containersMap;
     Table _recentPlayedTable;
     Table _facebookFriendsTable;
+    Table _invitesTable;
+    Table _recentTabTable, _facebookTabTable, _leaderboardTabTable;
 
     public InviteScene(Services services, PTScreen screen) {
         super(services, screen);
-    }
-
-    public Table getRecentPlayedTable() {
-        return _recentPlayedTable;
-    }
-
-    public Table getFacebookFriendsTable() {
-        return _facebookFriendsTable;
     }
 
     public BtnEggDownward getInviteButton() {
         return _inviteButton;
     }
 
+    public Table getLeaderboardTabTable() {
+        return _leaderboardTabTable;
+    }
+
+    public Table getFacebookTabTable() {
+        return _facebookTabTable;
+    }
+
+    public Table getRecentTabTable() {
+        return _recentTabTable;
+    }
+
     @Override
     public void populateRoot() {
         _usersHashMap = new MultiHashMap();
+        _containersMap = new HashMap<InviteType, Table>();
         new TopBar(_root, _texts.inviteTitle(), false, _assets, _screen);
 
-
-
         Table _invitesRootTable = new Table();
-        _invitesRootTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.GAMELIST_BG)));
+        _invitesRootTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.INVITE_BG)));
         _invitesRootTable.align(Align.top);
 
-        Table invitesTable = new Table();
-        invitesTable.align(Align.top);
-        ScrollPane scrollPane = new ScrollPane(invitesTable);
-        _invitesRootTable.add(scrollPane).expand().fill();
+        _invitesTable = new Table();
 
-        _recentPlayedTable = getExpandableTitleTable(_texts.recentlyPlay());
-        _facebookFriendsTable = getExpandableTitleTable(_texts.faebookFriends());
+        //////////////////////////
+        //Tabs tables
+        ////////////////////////
+        Table tabsTable = new Table();
+        tabsTable.align(Align.left);
 
+        /////////////////////////
+        //Recent tab
+        /////////////////////////
+        _recentTabTable = new Table();
+        Image recentImage = new Image(_assets.getTextures().get(Textures.Name.RECENT_ICON));
+        _recentTabTable.add(recentImage).pad(5).size(19, 19);
+        new DummyButton(_recentTabTable, _assets);
 
-        invitesTable.add(_recentPlayedTable).expandX().fillX();
-        invitesTable.row();
-        invitesTable.add(_facebookFriendsTable).expandX().fillX();
-        invitesTable.padBottom(10);
+        Image separator1 = new Image(_assets.getTextures().get(Textures.Name.WHITE_VERTICAL_LINE));
 
+        ////////////////////////////
+        //Facebook Tab
+        /////////////////////////////
+        _facebookTabTable = new Table();
+        Image facebookImage = new Image(_assets.getTextures().get(Textures.Name.FACEBOOK_INVITE_ICON));
+        _facebookTabTable.add(facebookImage).pad(5).size(27, 19);
+        new DummyButton(_facebookTabTable, _assets);
 
+        Image separator2 = new Image(_assets.getTextures().get(Textures.Name.WHITE_VERTICAL_LINE));
+
+        /////////////////////////////////
+        //Leaderboard tab
+        ////////////////////////////////
+        _leaderboardTabTable = new Table();
+        Image leaderboardImage = new Image(_assets.getTextures().get(Textures.Name.LEADERBOARD_INVITE_ICON));
+        _leaderboardTabTable.add(leaderboardImage).pad(5).size(26, 19);
+        new DummyButton(_leaderboardTabTable, _assets);
+
+        //////////////////////////////////
+        //Tabs table population
+        /////////////////////////////////
+        tabsTable.add(_recentTabTable).expand().fill().uniformX();
+        tabsTable.add(separator1).width(1).expandY().fillY();
+        tabsTable.add(_facebookTabTable).expand().fill().uniformX();
+        tabsTable.add(separator2).width(1).expandY().fillY();
+        tabsTable.add(_leaderboardTabTable).expand().fill().uniformX();
+
+        //////////////////////////////////
+        //Invite root population
+        ////////////////////////////////////
+        _invitesRootTable.add(tabsTable).expandX().fillX();
+        _invitesRootTable.row();
+        _invitesRootTable.add(_invitesTable).expand().fill();
+
+        /////////////////////////////////////
+        //Invite btnEggDownward button
+        /////////////////////////////////////
         _inviteButton = new BtnEggDownward(_assets, _services.getSoundsWrapper());
-        _inviteButton.setText("Invite");
+        _inviteButton.setText(_texts.invite());
 
-
-        _root.add(_invitesRootTable).padLeft(15).padRight(15).expandX().fillX().height(400);
+        ///////////////////////////////////
+        //root population
+        ///////////////////////////////////
+        _root.add(_invitesRootTable).padLeft(15).padRight(15).expandX().fillX().height(450);
         _root.row();
         _root.add(_inviteButton).expandX().padTop(-10);
     }
 
-    private Table getExpandableTitleTable(String title){
-        final Table expandableRoot = new Table();
-        final Table expandableTitle = new Table();
-        final Table contentRoot = new Table();
+    public void changeTab(InviteType inviteType){
+        _invitesTable.clear();
+        _invitesTable.add(getContainer(inviteType)).expand().fill();
 
-        Table messageTable = new Table();
-        final Table contentTable = new Table();
-        messageTable.setName("msg");
-        contentTable.setName("content");
+        _recentTabTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
+        _facebookTabTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
+        _leaderboardTabTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
 
-        expandableTitle.pad(10);
-        expandableTitle.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.EXPANDABLE_TITLE_BG)));
-        new DummyButton(expandableTitle, _assets);
-
-        Label titleLabel = new Label(title, new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.L, Fonts.FontColor.WHITE, Fonts.FontStyle.BOLD), null));
-        final Image icon = new Image(_assets.getTextures().get(Textures.Name.EXPANDED_ICON));
-
-        expandableTitle.add(titleLabel).expandX().fillX();
-        expandableTitle.add(icon).size(10, 10).right();
-        expandableTitle.setName("expanded");
-
-        contentRoot.add(messageTable).expandX().fillX();
-        contentRoot.row();
-        contentRoot.add(contentTable).expandX().fillX();
-        contentRoot.row();
-
-        expandableRoot.add(expandableTitle).expandX().fillX();
-        expandableRoot.row();
-        expandableRoot.add(contentRoot).expandX().fillX();
-        expandableRoot.row();
-
-
-        expandableTitle.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                if(expandableTitle.getName().equals("expanded")){
-                    expandableTitle.setName("collapsed");
-                    icon.setDrawable(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.COLLAPSED_ICON)));
-                    contentRoot.remove();
-                }
-                else{
-                    expandableTitle.setName("expanded");
-                    icon.setDrawable(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EXPANDED_ICON)));
-                    expandableRoot.add(contentRoot).expandX().fillX();
-                    expandableRoot.row();
-                }
-            }
-        });
-
-
-
-        return expandableRoot;
+        switch (inviteType){
+            case Recent:
+                _recentTabTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.INVITE_TAB_LEFT)));
+                break;
+            case Facebook:
+                _facebookTabTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.INVITE_TAB_CENTER)));
+                break;
+            case Leaderboard:
+                _leaderboardTabTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.INVITE_TAB_RIGHT)));
+                break;
+        }
     }
 
-    public Table putUserToTable(final Profile profile, Table targetTable){
+    private Table getContainer(InviteType inviteType){
+        if(!_containersMap.containsKey(inviteType)){
+            Table rootTable = new Table();
+            rootTable.align(Align.top);
+            rootTable.setName("rootTable");
+            Table titleTable = new Table();
+            titleTable.setName("titleTable");
 
-        Table messageTable = targetTable.findActor("msg");
-        messageTable.clear();
-        Table contentTable = targetTable.findActor("content");
+            Table contentTable = new Table();
+            contentTable.setName("contentTable");
+            contentTable.align(Align.top);
+
+            ScrollPane scrollPane = new ScrollPane(contentTable);
+
+            rootTable.add(titleTable).expandX().fillX();
+            rootTable.row();
+            rootTable.add(scrollPane).expand().fill();
+
+            _containersMap.put(inviteType, rootTable);
+        }
+        return _containersMap.get(inviteType);
+    }
+
+    private Table getContainerTitleTable(InviteType inviteType){
+        return getContainer(inviteType).findActor("titleTable");
+    }
+
+    private Table getContainerContentTable(InviteType inviteType){
+        return getContainer(inviteType).findActor("contentTable");
+    }
+
+    public void addTitleToContainer(String title, InviteType inviteType){
+        Table containerTable = getContainerTitleTable(inviteType);
+
+        final Table titleTable = new Table();
+
+        titleTable.padLeft(10).padRight(10).padBottom(10).padTop(5);
+        titleTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.EXPANDABLE_TITLE_BG)));
+
+        Label titleLabel = new Label(title, new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD,
+                                    Fonts.FontSize.L, Fonts.FontColor.WHITE, Fonts.FontStyle.BOLD), null));
+        titleTable.add(titleLabel).expandX().fillX();
+
+        containerTable.add(titleTable).expandX().fillX();
+    }
+
+    public Table putUserToTable(final Profile profile, InviteScene.InviteType inviteType, Object... objs){
+
+        Label.LabelStyle normalStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD,
+                                                            Fonts.FontColor.WHITE, Fonts.FontStyle.SEMI_BOLD), null);
+        Label.LabelStyle smallItalicStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD,
+                                                            Fonts.FontSize.S, Fonts.FontColor.WHITE, Fonts.FontStyle.ITALIC), null);
+
+        Label.LabelStyle badgeStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.XS,
+                            Fonts.FontColor.WHITE, Fonts.FontStyle.SEMI_BOLD, Fonts.FontBorderColor.BLACK, Fonts.FontShadowColor.NONE), null);
+
+        Table contentTable = getContainerContentTable(inviteType);
 
         Table userTable = new Table();
         userTable.setName("unselected");
         userTable.padLeft(10).padRight(10).padTop(5);
         new DummyButton(userTable, _assets);
 
-        Label nameLabel = new Label(profile.getDisplayName(30),
-                    new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontColor.WHITE, Fonts.FontStyle.SEMI_BOLD), null));
+        Table detailsTable = new Table();
+
+        switch (inviteType){
+            case Recent:
+
+                GameHistory history = (GameHistory) objs[0];
+                Label nameLabel = new Label(profile.getDisplayName(30), normalStyle);
+                Label historyLabel = new Label(String.format(_texts.playedXAgo(), history.getNameOfGame(), history.getCreationDateAgo()),
+                                                                    smallItalicStyle);
+
+                detailsTable.add(nameLabel).expandX().fillX();
+                detailsTable.row();
+                detailsTable.add(historyLabel).expandX().fillX();
+                break;
+
+            case Leaderboard:
+                Integer rankNumber = (Integer) objs[0];
+                long score = (Long) objs[1];
+                Streak streak = (Streak) objs[2];
+
+                Table rankTable = new Table();
+                rankTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.RANK_ICON)));
+                Label rankLabel = new Label(String.valueOf(rankNumber), badgeStyle);
+                rankTable.add(rankLabel);
+
+                Label nameLabel2 = new Label(profile.getDisplayName(30), normalStyle);
+                Label scoreLabel = new Label(String.valueOf(score), smallItalicStyle);
+                Table nameScoreTable = new Table();
+                nameScoreTable.add(nameLabel2).expandX().fillX();
+                nameScoreTable.row();
+                nameScoreTable.add(scoreLabel).expandX().fillX();
+
+                detailsTable.add(rankTable).padRight(5);
+                if(streak.hasValidStreak()){
+                    Table streakTable = new Table();
+                    streakTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.STREAK_ICON)));
+                    Label streakLabel = new Label(String.valueOf(streak.getStreakCount()), badgeStyle);
+                    streakTable.add(streakLabel);
+                    detailsTable.add(streakTable).padRight(5);
+                }
+                detailsTable.add(nameScoreTable).expandX().fillX();
+
+                break;
+
+        }
+
 
         Image selectBoxImage = new Image(_assets.getTextures().get(Textures.Name.UNSELECT_BOX));
         selectBoxImage.setName("selectbox");
         Image separator = new Image(_assets.getTextures().get(Textures.Name.WHITE_HORIZONTAL_LINE));
 
-        userTable.add(nameLabel).expandX().fillX();
+        userTable.add(detailsTable).expandX().fillX().padLeft(10);
         userTable.add(selectBoxImage).size(35, 35).padRight(10);
         userTable.row();
         userTable.add(separator).expandX().fillX().padTop(5).colspan(2);
@@ -188,17 +300,23 @@ public class InviteScene extends SceneAbstract {
         return result;
     }
 
-    public void putMessageToTable(String msg, Table targetTable){
+    public void putMessageToTable(String msg, InviteType type){
 
-        Table messageTable = targetTable.findActor("msg");
+        Table messageTable = getContainerContentTable(type);
         messageTable.clear();
 
         Label msgLabel = new Label(msg, new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontColor.WHITE), null));
         msgLabel.setWrap(true);
-        msgLabel.setName("msg");
         messageTable.add(msgLabel).expandX().fillX().pad(10);
     }
 
+    public void clearTableContent(InviteType type){
+        getContainerContentTable(type).clear();
+    }
+
+    public enum InviteType {
+        Recent, Facebook, Leaderboard
+    }
 
 
 }

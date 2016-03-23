@@ -21,8 +21,10 @@ public class Entrance extends GameEntrance {
 
         Assets assets = new Assets(gameCoordinator);
         assets.loadAll(null);
+        Database database = new Database(gameCoordinator);
+
         _services =  new Services(assets, new Texts(), new SoundsWrapper(assets, gameCoordinator),
-                new Database(gameCoordinator));
+                database, new ScoresHelper(gameCoordinator, database));
         getGameCoordinator().finishLoading();
     }
 

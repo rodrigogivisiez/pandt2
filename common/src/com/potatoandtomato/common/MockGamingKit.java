@@ -1,8 +1,6 @@
 package com.potatoandtomato.common;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.MathUtils;
-import com.potatoandtomato.common.*;
 import com.shephertz.app42.gaming.multiplayer.client.WarpClient;
 import com.shephertz.app42.gaming.multiplayer.client.command.WarpResponseResultCode;
 import com.shephertz.app42.gaming.multiplayer.client.events.*;
@@ -178,7 +176,7 @@ public class MockGamingKit {
                         i=0;
                     }
                 }
-                _coordinator.setUserId(_userId);
+                _coordinator.setMyUserId(_userId);
                 _coordinator.setTeams(teams);
                 Gdx.app.postRunnable(new Runnable() {
                     @Override

@@ -3,6 +3,7 @@ package com.potatoandtomato.games.references;
 import com.badlogic.gdx.math.MathUtils;
 import com.potatoandtomato.games.enums.ChessType;
 import com.potatoandtomato.games.enums.Status;
+import com.potatoandtomato.games.helpers.Logs;
 import com.potatoandtomato.games.models.ChessModel;
 
 import java.util.HashMap;
@@ -31,37 +32,37 @@ public class BattleRef {
 
     private HashMap<String, Integer> mouse(){
         HashMap<String, Integer> result = new HashMap<String, Integer>();
-        result.put("MOUSE", 50);
+        result.put("MOUSE", 52);
         result.put("CAT", 0);
-        result.put("DOG", 0);
-        result.put("WOLF", 0);
-        result.put("TIGER", 0);
-        result.put("LION", 0);
-        result.put("ELEPHANT", 90);
+        result.put("DOG", 4);
+        result.put("WOLF", 1);
+        result.put("TIGER", 1);
+        result.put("LION", 1);
+        result.put("ELEPHANT", 95);
         return result;
     }
 
     private HashMap<String, Integer> cat(){
         HashMap<String, Integer> result = new HashMap<String, Integer>();
         result.put("MOUSE", 100);
-        result.put("CAT", 55);
-        result.put("DOG", 45);
+        result.put("CAT", 52);
+        result.put("DOG", 40);
         result.put("WOLF", 10);
-        result.put("TIGER", 0);
-        result.put("LION", 0);
-        result.put("ELEPHANT", 0);
+        result.put("TIGER", 1);
+        result.put("LION", 1);
+        result.put("ELEPHANT", 1);
         return result;
     }
 
     private HashMap<String, Integer> dog(){
         HashMap<String, Integer> result = new HashMap<String, Integer>();
         result.put("MOUSE", 100);
-        result.put("CAT", 55);
-        result.put("DOG", 50);
+        result.put("CAT", 60);
+        result.put("DOG", 52);
         result.put("WOLF", 20);
         result.put("TIGER", 3);
-        result.put("LION", 0);
-        result.put("ELEPHANT", 0);
+        result.put("LION", 1);
+        result.put("ELEPHANT", 1);
         return result;
     }
 
@@ -70,10 +71,10 @@ public class BattleRef {
         result.put("MOUSE", 100);
         result.put("CAT", 100);
         result.put("DOG", 80);
-        result.put("WOLF", 60);
+        result.put("WOLF", 52);
         result.put("TIGER", 10);
         result.put("LION", 5);
-        result.put("ELEPHANT", 0);
+        result.put("ELEPHANT", 1);
         return result;
     }
 
@@ -83,7 +84,7 @@ public class BattleRef {
         result.put("CAT", 100);
         result.put("DOG", 100);
         result.put("WOLF", 90);
-        result.put("TIGER", 60);
+        result.put("TIGER", 52);
         result.put("LION", 30);
         result.put("ELEPHANT", 1);
         return result;
@@ -96,7 +97,7 @@ public class BattleRef {
         result.put("DOG", 100);
         result.put("WOLF", 95);
         result.put("TIGER", 70);
-        result.put("LION", 50);
+        result.put("LION", 52);
         result.put("ELEPHANT", 3);
         return result;
     }
@@ -107,9 +108,9 @@ public class BattleRef {
         result.put("CAT", 100);
         result.put("DOG", 100);
         result.put("WOLF", 100);
-        result.put("TIGER", 99);
-        result.put("LION", 97);
-        result.put("ELEPHANT", 70);
+        result.put("TIGER", 94);
+        result.put("LION", 90);
+        result.put("ELEPHANT", 52);
         return result;
     }
 
@@ -128,6 +129,10 @@ public class BattleRef {
     public boolean getFromIsWinner(ChessModel from, ChessModel to){
         int percent = getWinPercent(from, to);
         int random = MathUtils.random(0, 100);
+
+        Logs.show("Winning percent is: " + percent);
+        Logs.show("Calculated random is: " + random);
+
         if(random < percent){
             return true;
         }
@@ -145,7 +150,7 @@ public class BattleRef {
         int atkMinus = 0;
 
         if(attackerStatus == Status.ANGRY){
-            atkAdd = 25;
+            atkAdd = 10;
         }
         else if(attackerStatus == Status.POISON){
             atkAdd = -30;
@@ -154,7 +159,7 @@ public class BattleRef {
             atkAdd = 35;
         }
         else if(attackerStatus == Status.KING){
-            atkAdd = 30;
+            atkAdd = 20;
         }
         else if(attackerStatus == Status.DECREASE){
             atkAdd = -12;
@@ -171,10 +176,10 @@ public class BattleRef {
             atkMinus = 30;
         }
         else if(defenderStatus == Status.INCREASE){
-            atkMinus = 0;
+            atkMinus = -20;
         }
         else if(defenderStatus == Status.KING){
-            atkMinus = -30;
+            atkMinus = -20;
         }
         else if(defenderStatus == Status.DECREASE){
             atkMinus = 5;

@@ -20,10 +20,7 @@ import com.potatoandtomato.games.controls.CloneableTable;
 import com.potatoandtomato.games.controls.DummyButton;
 import com.potatoandtomato.games.enums.ChessType;
 import com.potatoandtomato.games.enums.Status;
-import com.potatoandtomato.games.helpers.Assets;
-import com.potatoandtomato.games.helpers.Positions;
-import com.potatoandtomato.games.helpers.Sizes;
-import com.potatoandtomato.games.helpers.SoundsWrapper;
+import com.potatoandtomato.games.helpers.*;
 import com.potatoandtomato.games.models.ChessModel;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
@@ -82,6 +79,8 @@ public class ChessActor extends Table {
         _statusTable = new Table();
         _statusTable.setSize(30, 30);
         _statusTable.setPosition(-5, 37);
+        _statusTable.setOrigin(Align.center);
+        _statusTable.setTransform(true);
         _statusTable.setVisible(false);
 
         this.addActor(_glowChess);
@@ -173,7 +172,10 @@ public class ChessActor extends Table {
 
 
     public void setSurface(boolean selected, ChessType chessType){
-        if(_expanded != selected && chessType != ChessType.NONE || !_alreadySetAnimalChessBg){
+        if(chessType == ChessType.NONE){
+            _animalChess.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
+        }
+        else{
             String chessTypeString = chessType.name();
 
             TextureRegion animalChessRegion;
@@ -185,15 +187,15 @@ public class ChessActor extends Table {
             _animalChess.setBackground(new TextureRegionDrawable(animalChessRegion));
             _coverChess.setBackground(new TextureRegionDrawable(coverChessRegion));
 
-            if(selected)  moving(2, 2, -1, -1);
-            else moving(-2, -2, 1, 1);
+            if(selected && !_expanded){
+                moving(2, 2, -1, -1);
+                _expanded = true;
+            }
 
-            _expanded = selected;
-            _alreadySetAnimalChessBg = true;
-        }
-
-        if(chessType == ChessType.NONE){
-            _animalChess.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
+            if(!selected && _expanded){
+                moving(-2, -2, 1, 1);
+                _expanded = false;
+            }
         }
     }
 
@@ -244,12 +246,14 @@ public class ChessActor extends Table {
             _statusTable.setVisible(true);
         }
         if(_currentStatus != chessModel.getStatus()){
-            setStatusIcon(chessModel.getStatus(), false, null);
+            setStatusIcon(chessModel.getStatus(), false);
         }
 
+        Logs.show("Invalidating chess: " + chessModel.getChessType());
     }
 
-    public void showAbilityTriggered(final ChessType chessType, final boolean hideChessAnimal, final Runnable onFinish){
+    public void showAbilityTriggered(final ChessType chessType, final boolean hideChessAnimal){
+
         Threadings.delay(300, new Runnable() {
             @Override
             public void run() {
@@ -271,7 +275,6 @@ public class ChessActor extends Table {
                     public boolean act(float delta) {
                         fadeOutAnimalImage.remove();
                         _animalImage.setVisible(true);
-                        onFinish.run();
                         return true;
                     }
                 }));
@@ -281,14 +284,14 @@ public class ChessActor extends Table {
         });
     }
 
-    public void setStatusIcon(Status status, boolean animate, final Runnable onFinish){
+    public void setStatusIcon(Status status, boolean animate){
+        _statusTable.setScale(1, 1);
 
         if(status == Status.NONE){
             if(animate){
-                _statusTable.addAction(sequence(fadeOut(0.3f), new Action() {
+                _statusTable.addAction(sequence(Actions.scaleTo(0, 0, 0.3f, Interpolation.bounceOut), new Action() {
                     @Override
                     public boolean act(float delta) {
-                        if(onFinish!= null) onFinish.run();
                         _statusTable.clear();
                         _statusTable.getColor().a = 1;
                         return true;
@@ -297,7 +300,6 @@ public class ChessActor extends Table {
             }
             else{
                 _statusTable.clear();
-                if(onFinish!= null) onFinish.run();
             }
         }
         else{
@@ -309,17 +311,7 @@ public class ChessActor extends Table {
 
             if(animate){
                 imageStatus.getColor().a = 0f;
-                imageStatus.addAction(sequence(scaleTo(0, 0), fadeIn(0f), scaleTo(1, 1, 0.2f, Interpolation.bounce), Actions.run(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(onFinish!= null) onFinish.run();
-                    }
-                })));
-
-
-            }
-            else{
-                if(onFinish!= null) onFinish.run();
+                imageStatus.addAction(sequence(scaleTo(0, 0), fadeIn(0f), scaleTo(1, 1, 0.2f, Interpolation.bounce)));
             }
         }
         _currentStatus = status;

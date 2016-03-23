@@ -17,27 +17,34 @@ public class SoundsWrapper implements Disposable {
     private Assets _assets;
     private GameCoordinator _coordinator;
     private Music _themeMusic;
-    private int _currentMusic;
+    private Music _themeSuddenDMusic;
 
     public SoundsWrapper(Assets _assets, GameCoordinator coordinator) {
         this._assets = _assets;
         this._coordinator = coordinator;
 
-        _themeMusic = _assets.getSounds().getMusic(Sounds.Name.THEME);
+        _themeMusic = _assets.getSounds().getMusic(Sounds.Name.THEME_MUSIC);
         _themeMusic.setLooping(true);
+
+        _themeSuddenDMusic = _assets.getSounds().getMusic(Sounds.Name.THEME_SUDDEN_D_MUSIC);
+        _themeSuddenDMusic.setLooping(true);
+
+        _coordinator.getSoundManager().addMusic(_themeMusic);
+        _coordinator.getSoundManager().addMusic(_themeSuddenDMusic);
     }
 
     public void playTheme(){
-        if(_currentMusic != 1){
-            _coordinator.getSoundManager().addMusic(_themeMusic);
-            _coordinator.getSoundManager().playMusic(_themeMusic);
-            _currentMusic = 1;
-        }
+        _coordinator.getSoundManager().playMusic(_themeMusic);
     }
+
+    public void playThemeMusicSuddenD(){
+        _coordinator.getSoundManager().playMusic(_themeSuddenDMusic);
+    }
+
 
     public void stopTheme(){
         _themeMusic.stop();
-        _currentMusic = 0;
+        _themeSuddenDMusic.stop();
     }
 
     public void playSounds(Sounds.Name name){
@@ -53,5 +60,6 @@ public class SoundsWrapper implements Disposable {
     @Override
     public void dispose() {
         _coordinator.getSoundManager().disposeMusic(_themeMusic);
+        _coordinator.getSoundManager().disposeMusic(_themeSuddenDMusic);
     }
 }

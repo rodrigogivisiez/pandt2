@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.mygdx.potatoandtomato.assets.Animations;
 import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.assets.Patches;
 import com.mygdx.potatoandtomato.assets.Textures;
@@ -71,7 +72,7 @@ public class BtnColor extends Table {
         _loadingTable = new Table();
         _loadingTable.setFillParent(true);
         _loadingTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
-        Animator loadingAnimator = new Animator(0.1f, _assets.getAnimations().getLoadingAnimation());
+        Animator loadingAnimator = new Animator(0.1f, _assets.getAnimations().get(Animations.Name.LOADING));
         _loadingTable.add(loadingAnimator).size(20, 20);
         this.addActor(_loadingTable);
     }

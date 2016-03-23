@@ -1,0 +1,75 @@
+
+POTATO_HAPPY.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+potato_happy
+  rotate: false
+  xy: 1, 1
+  size: 92, 107
+  orig: 92, 107
+  offset: 0, 0
+  index: 0
+potato_happy
+  rotate: false
+  xy: 95, 1
+  size: 92, 107
+  orig: 92, 107
+  offset: 0, 0
+  index: 1
+potato_happy
+  rotate: false
+  xy: 95, 1
+  size: 92, 107
+  orig: 92, 107
+  offset: 0, 0
+  index: 9
+potato_happy
+  rotate: false
+  xy: 189, 1
+  size: 92, 107
+  orig: 92, 107
+  offset: 0, 0
+  index: 2
+potato_happy
+  rotate: false
+  xy: 189, 1
+  size: 92, 107
+  orig: 92, 107
+  offset: 0, 0
+  index: 8
+potato_happy
+  rotate: false
+  xy: 283, 1
+  size: 92, 107
+  orig: 92, 107
+  offset: 0, 0
+  index: 3
+potato_happy
+  rotate: false
+  xy: 283, 1
+  size: 92, 107
+  orig: 92, 107
+  offset: 0, 0
+  index: 7
+potato_happy
+  rotate: false
+  xy: 377, 1
+  size: 92, 107
+  orig: 92, 107
+  offset: 0, 0
+  index: 4
+potato_happy
+  rotate: false
+  xy: 377, 1
+  size: 92, 107
+  orig: 92, 107
+  offset: 0, 0
+  index: 6
+potato_happy
+  rotate: false
+  xy: 471, 1
+  size: 92, 107
+  orig: 92, 107
+  offset: 0, 0
+  index: 5

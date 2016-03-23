@@ -90,7 +90,7 @@ public class MovementRef {
     private void processStatus(ArrayList<TerrainLogic> _terrains,
                                                   TerrainLogic logic, ArrayList<TerrainLogic> possibleMovelogics){
         switch (logic.getChessLogic().getChessModel().getStatus()){
-            case ANGRY:
+            case ANGRY: case KING:
                 TerrainModel model = logic.getTerrainModel();
                 ArrayList<Vector2> possibleMovePositions = new ArrayList<Vector2>();
                 possibleMovePositions.add(new Vector2(model.getCol() - 2, model.getRow()));

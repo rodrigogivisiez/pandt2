@@ -1,0 +1,75 @@
+
+POTATO_BORING.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+potato_boring
+  rotate: false
+  xy: 1, 1
+  size: 86, 110
+  orig: 86, 110
+  offset: 0, 0
+  index: 0
+potato_boring
+  rotate: false
+  xy: 89, 1
+  size: 86, 110
+  orig: 86, 110
+  offset: 0, 0
+  index: 1
+potato_boring
+  rotate: false
+  xy: 177, 1
+  size: 86, 110
+  orig: 86, 110
+  offset: 0, 0
+  index: 2
+potato_boring
+  rotate: false
+  xy: 265, 1
+  size: 86, 110
+  orig: 86, 110
+  offset: 0, 0
+  index: 3
+potato_boring
+  rotate: false
+  xy: 353, 1
+  size: 86, 110
+  orig: 86, 110
+  offset: 0, 0
+  index: 4
+potato_boring
+  rotate: false
+  xy: 441, 1
+  size: 86, 110
+  orig: 86, 110
+  offset: 0, 0
+  index: 5
+potato_boring
+  rotate: false
+  xy: 529, 1
+  size: 86, 110
+  orig: 86, 110
+  offset: 0, 0
+  index: 6
+potato_boring
+  rotate: false
+  xy: 617, 1
+  size: 86, 110
+  orig: 86, 110
+  offset: 0, 0
+  index: 7
+potato_boring
+  rotate: false
+  xy: 705, 1
+  size: 86, 110
+  orig: 86, 110
+  offset: 0, 0
+  index: 8
+potato_boring
+  rotate: false
+  xy: 793, 1
+  size: 86, 110
+  orig: 86, 110
+  offset: 0, 0
+  index: 9

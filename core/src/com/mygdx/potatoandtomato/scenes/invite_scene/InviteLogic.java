@@ -9,7 +9,8 @@ import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.absintflis.push_notifications.PushCode;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
-import com.mygdx.potatoandtomato.helpers.utils.Strings;
+import com.potatoandtomato.common.models.LeaderboardRecord;
+import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.Threadings;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.BroadcastEvent;
@@ -17,6 +18,7 @@ import com.potatoandtomato.common.BroadcastListener;
 import com.potatoandtomato.common.Status;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by SiongLeng on 23/12/2015.
@@ -33,6 +35,11 @@ public class InviteLogic extends LogicAbstract {
         _invitedUsers = new ArrayList();
 
         _room = (Room) objs[0];
+
+        _scene.addTitleToContainer(_texts.recentlyPlay(), InviteScene.InviteType.Recent);
+        _scene.addTitleToContainer(_texts.faebookFriends(), InviteScene.InviteType.Facebook);
+        _scene.addTitleToContainer(_room.getGame().getName() + " " + _texts.leaderBoards(), InviteScene.InviteType.Leaderboard);
+        _scene.changeTab(InviteScene.InviteType.Recent);
     }
 
     public ArrayList<Profile> getInvitedUsers() {
@@ -45,10 +52,14 @@ public class InviteLogic extends LogicAbstract {
 
         _services.getChat().hide();
 
-        _scene.putMessageToTable(_services.getTexts().loading(), _scene.getRecentPlayedTable());
+        _scene.putMessageToTable(_services.getTexts().loading(), InviteScene.InviteType.Recent);
 
         _scene.putMessageToTable(_services.getSocials().isFacebookLogon() ? _texts.loading() : _texts.facebookCannotGetFriends(),
-                _scene.getFacebookFriendsTable());
+                InviteScene.InviteType.Facebook);
+
+        _scene.putMessageToTable(_room.getGame().hasLeaderboard() ? _texts.loading() : _texts.noLeaderBoard(),
+                InviteScene.InviteType.Leaderboard);
+
 
         if(_services.getSocials().isFacebookLogon()){
             subscribeBroadcastOnceWithTimeout(BroadcastEvent.FACEBOOK_GET_FRIENDS_RESPONSE, 10000, new BroadcastListener<ArrayList<FacebookProfile>>() {
@@ -56,7 +67,7 @@ public class InviteLogic extends LogicAbstract {
                 public void onCallback(ArrayList<FacebookProfile> obj, Status st) {
                     if (st == Status.SUCCESS) {
                         if (obj.size() == 0) {
-                            _scene.putMessageToTable(_texts.noRecords(), _scene.getFacebookFriendsTable());
+                            _scene.putMessageToTable(_texts.noRecords(), InviteScene.InviteType.Facebook);
                         } else {
                             for (final FacebookProfile facebookProfile : obj) {
                                 _services.getDatabase().getProfileByFacebookUserId(facebookProfile.getUserId(), new DatabaseListener<Profile>(Profile.class) {
@@ -66,14 +77,14 @@ public class InviteLogic extends LogicAbstract {
                                             if (!facebookProfile.getName().equals(profile.getDisplayName(0))) {
                                                 profile.setGameName(facebookProfile.getName() + " / " + profile.getDisplayName(0));
                                             }
-                                            putProfileToTable(profile, _scene.getFacebookFriendsTable());
+                                            putProfileToTable(profile, InviteScene.InviteType.Facebook);
                                         }
                                     }
                                 });
                             }
                         }
                     } else {
-                        _scene.putMessageToTable(_texts.requestFailed(), _scene.getFacebookFriendsTable());
+                        _scene.putMessageToTable(_texts.requestFailed(), InviteScene.InviteType.Facebook);
                     }
                 }
             });
@@ -85,19 +96,52 @@ public class InviteLogic extends LogicAbstract {
             public void onCallback(ArrayList<GameHistory> obj, Status st) {
                 if(st == Status.SUCCESS){
                     if(obj.size() == 0){
-                        _scene.putMessageToTable(_texts.noRecords(), _scene.getRecentPlayedTable());
+                        _scene.putMessageToTable(_texts.noRecords(), InviteScene.InviteType.Recent);
                     }
                     else{
+                        _scene.clearTableContent(InviteScene.InviteType.Recent);
                         for(final GameHistory gameHistory : obj){
-                            putProfileToTable(gameHistory.getPlayedWith(), _scene.getRecentPlayedTable());
+                            putProfileToTable(gameHistory.getPlayedWith(), InviteScene.InviteType.Recent, gameHistory);
                         }
                     }
                 }
                 else{
-                    _scene.putMessageToTable(_texts.requestFailed(), _scene.getRecentPlayedTable());
+                    _scene.putMessageToTable(_texts.requestFailed(), InviteScene.InviteType.Recent);
                 }
             }
         });
+
+        if(_room.getGame().hasLeaderboard()){
+            _services.getDatabase().getLeaderBoardAndStreak(_room.getGame(), 200, new DatabaseListener<ArrayList<LeaderboardRecord>>(LeaderboardRecord.class) {
+                @Override
+                public void onCallback(ArrayList<LeaderboardRecord> records, Status st) {
+                    if(st == Status.SUCCESS){
+                        if(records.size() == 0){
+                            _scene.putMessageToTable(_texts.noRecords(), InviteScene.InviteType.Leaderboard);
+                        }
+                        else{
+                            _scene.clearTableContent(InviteScene.InviteType.Leaderboard);
+                            int i = 1;
+                            for(final LeaderboardRecord record : records){
+                                for (Map.Entry<String, String> entry : record.getUserIdToNameMap().entrySet()) {
+                                    String userId = entry.getKey();
+                                    String userName = entry.getValue();
+                                    Profile p = new Profile();
+                                    p.setUserId(userId);
+                                    p.setGameName(userName);
+                                    putProfileToTable(p, InviteScene.InviteType.Leaderboard, i, record.getScore(), record.getStreak());
+                                }
+                                i++;
+                            }
+                        }
+                    }
+                    else{
+                        _scene.putMessageToTable(_texts.requestFailed(), InviteScene.InviteType.Leaderboard);
+                    }
+                }
+            });
+        }
+
 
         _scene.getInviteButton().addListener(new ClickListener(){
             @Override
@@ -107,17 +151,43 @@ public class InviteLogic extends LogicAbstract {
             }
         });
 
-
-    }
-
-    private void putProfileToTable(final Profile profile, Table table){
-        _scene.putUserToTable(profile, table).addListener(new ClickListener(){
+        _scene.getRecentTabTable().addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                toggleUserSelection(profile);
+                _scene.changeTab(InviteScene.InviteType.Recent);
             }
         });
+
+        _scene.getLeaderboardTabTable().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                _scene.changeTab(InviteScene.InviteType.Leaderboard);
+            }
+        });
+
+        _scene.getFacebookTabTable().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                _scene.changeTab(InviteScene.InviteType.Facebook);
+            }
+        });
+
+
+    }
+
+    private void putProfileToTable(final Profile profile, InviteScene.InviteType inviteType, Object... objs){
+        if(!profile.getUserId().equals(_services.getProfile().getUserId())){
+            _scene.putUserToTable(profile, inviteType, objs).addListener(new ClickListener(){
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    toggleUserSelection(profile);
+                }
+            });
+        }
     }
 
     public void toggleUserSelection(Profile profile){

@@ -1,5 +1,7 @@
 package com.potatoandtomato.games.screens;
 
+import com.badlogic.gdx.Application;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Disposable;
@@ -28,13 +30,14 @@ public class GraveyardLogic implements Disposable {
     private SafeThread _countDownThread;
     private boolean _pauseTimer;
     private ChessColor _currentTurnChessColor;
+    private GameCoordinator _coordinator;
 
     public GraveyardLogic(GraveModel graveModel, GameCoordinator gameCoordinator, Texts texts, Assets assets, SoundsWrapper soundsWrapper) {
+        this._coordinator = gameCoordinator;
         this._graveModel = graveModel;
         this._soundsWrapper = soundsWrapper;
         this._graveyardActor = new GraveyardActor(gameCoordinator, texts, assets);
         setListener();
-        setCountDownThread();
     }
 
     public void invalidate(){
@@ -55,7 +58,7 @@ public class GraveyardLogic implements Disposable {
         _graveyardActor.onBoardModelChanged(boardModel);
     }
 
-    private void setCountDownThread(){
+    public void setCountDownThread(){
         _countDownThread = new SafeThread();
         Threadings.runInBackground(new Runnable() {
             @Override
@@ -116,6 +119,18 @@ public class GraveyardLogic implements Disposable {
                 _soundsWrapper.playSounds(Sounds.Name.OPEN_SLIDE);
             }
         });
+
+        //for debug purpose only
+        if(Gdx.app.getType() == Application.ApplicationType.Desktop){
+            _graveyardActor.getGraveLabel().addListener(new ClickListener(){
+                @Override
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    _coordinator.abandon(true);
+                    return super.touchDown(event, x, y, pointer, button);
+                }
+            });
+        }
+
     }
 
     @Override

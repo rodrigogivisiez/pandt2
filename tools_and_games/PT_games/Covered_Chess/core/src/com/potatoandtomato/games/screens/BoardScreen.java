@@ -4,8 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -18,9 +20,11 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.potatoandtomato.common.*;
 import com.potatoandtomato.common.Threadings;
 import com.potatoandtomato.games.assets.Fonts;
+import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.assets.Textures;
 import com.potatoandtomato.games.controls.AnimateLabel;
 import com.potatoandtomato.games.controls.DummyButton;
+import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
 import com.potatoandtomato.games.helpers.*;
 import com.potatoandtomato.games.models.Services;
@@ -39,12 +43,14 @@ public class BoardScreen extends GameScreen {
     private Texts _texts;
     private Table _root;
     private Table _overlayTable;
+    private Table _thunderTable;
     private Table _endGameTable, _endGameRootTable;
     private Table _preStartTable;
     private Table _chessesTable;
     private Stage _stage;
     private Assets _assets;
     private boolean _paused;
+
 
     public BoardScreen(GameCoordinator gameCoordinator, Services services,
                        SplashActor splashActor, GraveyardActor graveyardActor){
@@ -69,15 +75,48 @@ public class BoardScreen extends GameScreen {
         splashActor.populate();
         splashActor.setFillParent(true);
 
+        _thunderTable = new Table();
+        _thunderTable.setFillParent(true);
+        _thunderTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.FULL_BLACK)));
+        _thunderTable.setVisible(false);
+
         _stage.addActor(_root);
         _stage.addActor(graveyardActor);
         _stage.addActor(_overlayTable);
+        _stage.addActor(_thunderTable);
         _stage.addActor(splashActor);
 
         getCoordinator().addInputProcessor(_stage);
 
     }
 
+    public void thunderAnimation(){
+        _thunderTable.getColor().a = 0f;
+        _thunderTable.setVisible(true);
+
+        _services.getSoundsWrapper().stopTheme();
+        _services.getSoundsWrapper().playSounds(Sounds.Name.THUNDER);
+
+        _thunderTable.addAction(sequence(delay(0.6f), fadeIn(0.05f), alpha(0.6f, 0.4f), delay(0.1f), fadeIn(0.06f), alpha(0.6f, 0.1f),
+                delay(0.2f), fadeIn(0.02f), fadeOut(2f), new RunnableAction(){
+                    @Override
+                    public void run() {
+                        _services.getSoundsWrapper().playThemeMusicSuddenD();;
+                    }
+                }));
+
+        Threadings.delay(1000, new Runnable() {
+            @Override
+            public void run() {
+                _services.getSoundsWrapper().playSounds(Sounds.Name.THUNDER);
+            }
+        });
+
+    }
+
+    public void setSuddenDeathBg(){
+        _root.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.SUDDEN_DEATH_GAME_BG)));
+    }
 
     public void populateTerrains(ArrayList<TerrainLogic> terrainLogics){
         _chessesTable = new Table();
@@ -111,17 +150,21 @@ public class BoardScreen extends GameScreen {
         _stage.addActor(_endGameRootTable);
     }
 
-    public void showEndGameTable(final boolean won){
-        _endGameTable.getColor().a = 0;
-        _endGameTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.BLACK_BG)));
-        _endGameTable.setSize(getCoordinator().getGameWidth(), 150);
-        _endGameTable.setPosition(0, Positions.centerY(getCoordinator().getGameHeight(), 150));
-        AnimateLabel label = new AnimateLabel(won ? _texts.youWin() : _texts.youLose(),
-                                                _assets.getFonts().get(Fonts.FontName.PIZZA, Fonts.FontSize.XXXL, Fonts.FontColor.BLACK,
-                                                        Fonts.FontBorderColor.WHITE));
-        _endGameTable.add(label).expand().fill().center();
+    public void showEndGameTable(final boolean won, ChessColor chessColor){
+        _endGameTable.setSize(getCoordinator().getGameWidth(), 350);
+        _endGameTable.setPosition(0, Positions.centerY(getCoordinator().getGameHeight(), 350));
 
-        _endGameTable.addAction(sequence(fadeOut(0f), parallel(fadeIn(0.3f))));
+        Image endImage;
+        if(chessColor == ChessColor.RED){
+            endImage = new Image(_assets.getTextures().get(won ? Textures.Name.YOU_WIN_RED : Textures.Name.YOU_LOSE_RED));
+        }
+        else{
+            endImage = new Image(_assets.getTextures().get(won ? Textures.Name.YOU_WIN_YELLOW : Textures.Name.YOU_LOSE_YELLOW));
+        }
+        endImage.setOrigin(Align.center);
+        _endGameTable.add(endImage).expand().fill().center();
+        endImage.setScale(0, 0);
+        endImage.addAction(Actions.scaleTo(1, 1, 0.3f));
 
 
     }
@@ -150,7 +193,7 @@ public class BoardScreen extends GameScreen {
     @Override
     public void render(float delta) {
         if (Gdx.input.isKeyPressed(Input.Keys.BACK)){
-            getCoordinator().abandon();
+            getCoordinator().abandon(true);
         }
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);

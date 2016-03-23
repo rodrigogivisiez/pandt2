@@ -1,0 +1,75 @@
+
+POTATO_FAILED.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+potato_failed
+  rotate: false
+  xy: 1, 1
+  size: 83, 111
+  orig: 83, 111
+  offset: 0, 0
+  index: 0
+potato_failed
+  rotate: false
+  xy: 86, 1
+  size: 83, 111
+  orig: 83, 111
+  offset: 0, 0
+  index: 1
+potato_failed
+  rotate: false
+  xy: 86, 1
+  size: 83, 111
+  orig: 83, 111
+  offset: 0, 0
+  index: 9
+potato_failed
+  rotate: false
+  xy: 171, 1
+  size: 83, 111
+  orig: 83, 111
+  offset: 0, 0
+  index: 2
+potato_failed
+  rotate: false
+  xy: 171, 1
+  size: 83, 111
+  orig: 83, 111
+  offset: 0, 0
+  index: 8
+potato_failed
+  rotate: false
+  xy: 256, 1
+  size: 83, 111
+  orig: 83, 111
+  offset: 0, 0
+  index: 3
+potato_failed
+  rotate: false
+  xy: 256, 1
+  size: 83, 111
+  orig: 83, 111
+  offset: 0, 0
+  index: 7
+potato_failed
+  rotate: false
+  xy: 341, 1
+  size: 83, 111
+  orig: 83, 111
+  offset: 0, 0
+  index: 4
+potato_failed
+  rotate: false
+  xy: 341, 1
+  size: 83, 111
+  orig: 83, 111
+  offset: 0, 0
+  index: 6
+potato_failed
+  rotate: false
+  xy: 426, 1
+  size: 83, 111
+  orig: 83, 111
+  offset: 0, 0
+  index: 5

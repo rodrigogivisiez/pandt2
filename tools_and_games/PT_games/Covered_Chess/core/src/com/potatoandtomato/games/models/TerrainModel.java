@@ -7,6 +7,7 @@ public class TerrainModel {
 
     public int col, row;
     public boolean breaking, broken;
+    public boolean percentShown, selected;
 
     public TerrainModel(int col, int row) {
         this.col = col;
@@ -35,5 +36,21 @@ public class TerrainModel {
 
     public void setBreaking(boolean breaking) {
         this.breaking = breaking;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public boolean isPercentShown() {
+        return percentShown;
+    }
+
+    public void setPercentShown(boolean percentShown) {
+        this.percentShown = percentShown;
     }
 }

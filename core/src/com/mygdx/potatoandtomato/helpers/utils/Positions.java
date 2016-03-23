@@ -1,5 +1,7 @@
 package com.mygdx.potatoandtomato.helpers.utils;
 
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.mygdx.potatoandtomato.statics.Global;
 
 /**
@@ -30,5 +32,10 @@ public class Positions {
         return ((y * getHeight())/screenHeight);
     }
 
+    public static Vector2 actorLocalToStageCoord(Actor actor){
+        Vector2 coords = new Vector2(0, 0);
+        actor.localToStageCoordinates(/*in/out*/coords);
+        return coords;
+    }
 
 }

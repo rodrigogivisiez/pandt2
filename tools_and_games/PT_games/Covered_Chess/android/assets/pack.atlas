@@ -1,98 +1,105 @@
 
 pack.png
-size: 1024,1024
+size: 2048,1024
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
 ARROW_BOTTOM_LEFT
   rotate: false
-  xy: 346, 131
+  xy: 1955, 366
   size: 20, 20
   orig: 20, 20
   offset: 0, 0
   index: -1
 ARROW_BOTTOM_RIGHT
   rotate: false
-  xy: 346, 109
+  xy: 924, 313
   size: 20, 20
   orig: 20, 20
   offset: 0, 0
   index: -1
 ARROW_DOWN
   rotate: false
-  xy: 951, 860
+  xy: 266, 47
   size: 20, 17
   orig: 20, 17
   offset: 0, 0
   index: -1
 ARROW_LEFT
   rotate: false
-  xy: 951, 901
+  xy: 266, 88
   size: 17, 20
   orig: 17, 20
   offset: 0, 0
   index: -1
 ARROW_RIGHT
   rotate: false
-  xy: 951, 879
+  xy: 368, 189
   size: 17, 20
   orig: 17, 20
   offset: 0, 0
   index: -1
 ARROW_TOP_LEFT
   rotate: false
-  xy: 970, 894
+  xy: 946, 313
   size: 20, 20
   orig: 20, 20
   offset: 0, 0
   index: -1
 ARROW_TOP_RIGHT
   rotate: false
-  xy: 992, 894
+  xy: 266, 66
   size: 20, 20
   orig: 20, 20
   offset: 0, 0
   index: -1
 ARROW_UP
   rotate: false
-  xy: 486, 316
+  xy: 266, 28
   size: 20, 17
   orig: 20, 17
   offset: 0, 0
   index: -1
 BATTLE_CLOUD
   rotate: false
-  xy: 286, 153
+  xy: 491, 234
   size: 77, 76
   orig: 77, 76
   offset: 0, 0
   index: -1
 BATTLE_EFFECT
   rotate: false
-  xy: 767, 739
+  xy: 1895, 739
   size: 94, 80
   orig: 94, 80
   offset: 0, 0
   index: -1
 BLACK_BG
   rotate: false
-  xy: 767, 604
+  xy: 570, 238
   size: 58, 72
   orig: 58, 72
   offset: 0, 0
   index: -1
 CRACK
   rotate: false
-  xy: 286, 231
+  xy: 388, 231
   size: 101, 79
   orig: 101, 79
   offset: 0, 0
   index: -1
 EMPTY
   rotate: false
-  xy: 1021, 1021
+  xy: 491, 231
   size: 1, 1
   orig: 1, 1
+  offset: 0, 0
+  index: -1
+FULL_BLACK
+  rotate: false
+  xy: 368, 171
+  size: 20, 16
+  orig: 20, 16
   offset: 0, 0
   index: -1
 GAME_BG
@@ -104,14 +111,14 @@ GAME_BG
   index: -1
 GLOWING_TILE
   rotate: false
-  xy: 767, 922
+  xy: 1895, 922
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
 GLOW_CHESS
   rotate: false
-  xy: 640, 320
+  xy: 1895, 479
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
@@ -125,7 +132,7 @@ GRAVE_BG
   index: -1
 GREEN_TILE
   rotate: false
-  xy: 404, 321
+  xy: 806, 321
   size: 80, 59
   orig: 80, 59
   offset: 0, 0
@@ -139,91 +146,91 @@ POINT_LEFT_ICON
   index: -1
 POINT_RIGHT_ICON
   rotate: false
-  xy: 908, 750
+  xy: 888, 315
   size: 34, 18
   orig: 34, 18
   offset: 0, 0
   index: -1
 PREVIEW_CHESS
   rotate: false
-  xy: 286, 93
+  xy: 1895, 419
   size: 58, 58
   orig: 58, 58
   offset: 0, 0
   index: -1
 PREVIEW_ICON
   rotate: false
-  xy: 865, 581
+  xy: 1955, 641
   size: 24, 35
   orig: 24, 35
   offset: 0, 0
   index: -1
 RED_CAT
   rotate: false
-  xy: 971, 916
+  xy: 1895, 329
   size: 46, 28
   orig: 46, 28
   offset: 0, 0
   index: -1
 RED_CHESS
   rotate: false
-  xy: 266, 33
+  xy: 1895, 359
   size: 58, 58
   orig: 58, 58
   offset: 0, 0
   index: -1
 RED_CHESS_SELECTED
   rotate: false
-  xy: 767, 467
+  xy: 630, 249
   size: 60, 61
   orig: 60, 61
   offset: 0, 0
   index: -1
 RED_CHESS_TOTAL
   rotate: false
-  xy: 916, 806
+  xy: 1955, 605
   size: 34, 34
   orig: 34, 34
   offset: 0, 0
   index: -1
 RED_DOG
   rotate: false
-  xy: 863, 780
+  xy: 286, 97
   size: 43, 31
   orig: 43, 31
   offset: 0, 0
   index: -1
 RED_ELEPHANT
   rotate: false
-  xy: 829, 416
+  xy: 1991, 783
   size: 44, 32
   orig: 44, 32
   offset: 0, 0
   index: -1
 RED_LION
   rotate: false
-  xy: 971, 985
+  xy: 1997, 985
   size: 48, 37
   orig: 48, 37
   offset: 0, 0
   index: -1
 RED_LION_SPLASH
   rotate: false
-  xy: 869, 842
+  xy: 184, 29
   size: 80, 79
   orig: 80, 79
   offset: 0, 0
   index: -1
 RED_MOUSE
   rotate: false
-  xy: 827, 574
+  xy: 1997, 941
   size: 36, 42
   orig: 36, 42
   offset: 0, 0
   index: -1
 RED_TIGER
   rotate: false
-  xy: 869, 813
+  xy: 388, 202
   size: 45, 27
   orig: 45, 27
   offset: 0, 0
@@ -237,56 +244,56 @@ RED_TIGER_SPLASH
   index: -1
 RED_TILE
   rotate: false
-  xy: 767, 678
+  xy: 1895, 678
   size: 80, 59
   orig: 80, 59
   offset: 0, 0
   index: -1
 RED_WOLF
   rotate: false
-  xy: 829, 490
+  xy: 1997, 857
   size: 37, 38
   orig: 37, 38
   offset: 0, 0
   index: -1
 RED_WOLF_SPLASH
   rotate: false
-  xy: 767, 821
+  xy: 1895, 821
   size: 100, 99
   orig: 100, 99
   offset: 0, 0
   index: -1
 SPLASH_BG
   rotate: false
-  xy: 404, 382
+  xy: 806, 382
   size: 361, 640
   orig: 361, 640
   offset: 0, 0
   index: -1
 STATUS_ANGRY
   rotate: false
-  xy: 266, 2
+  xy: 1957, 505
   size: 29, 29
   orig: 29, 29
   offset: 0, 0
   index: -1
 STATUS_DECREASE
   rotate: false
-  xy: 326, 64
+  xy: 1957, 476
   size: 29, 27
   orig: 29, 27
   offset: 0, 0
   index: -1
 STATUS_INCREASE
   rotate: false
-  xy: 326, 35
+  xy: 1955, 447
   size: 28, 27
   orig: 28, 27
   offset: 0, 0
   index: -1
 STATUS_INJURED
   rotate: false
-  xy: 326, 6
+  xy: 1955, 418
   size: 28, 27
   orig: 28, 27
   offset: 0, 0
@@ -300,91 +307,98 @@ STATUS_KING
   index: -1
 STATUS_PARALYZED
   rotate: false
-  xy: 865, 548
+  xy: 1957, 536
   size: 28, 31
   orig: 28, 31
   offset: 0, 0
   index: -1
 STATUS_POISON
   rotate: false
-  xy: 297, 3
+  xy: 1955, 388
   size: 27, 28
   orig: 27, 28
   offset: 0, 0
   index: -1
+SUDDEN_DEATH_GAME_BG
+  rotate: false
+  xy: 404, 312
+  size: 400, 710
+  orig: 400, 710
+  offset: 0, 0
+  index: -1
 TRANS_BLACK_BG
   rotate: false
-  xy: 767, 530
+  xy: 1895, 604
   size: 58, 72
   orig: 58, 72
   offset: 0, 0
   index: -1
 TRANS_DARK_BROWN_ROUNDED_BG
   rotate: false
-  xy: 486, 335
+  xy: 888, 335
   size: 84, 45
   orig: 84, 45
   offset: 0, 0
   index: -1
 UNKNOWN_CHESS
   rotate: false
-  xy: 365, 171
+  xy: 1042, 322
   size: 58, 58
   orig: 58, 58
   offset: 0, 0
   index: -1
 UNKNOWN_CHESS_SELECTED
   rotate: false
-  xy: 767, 404
+  xy: 692, 249
   size: 60, 61
   orig: 60, 61
   offset: 0, 0
   index: -1
 YELLOW_CAT
   rotate: false
-  xy: 767, 374
+  xy: 754, 243
   size: 46, 28
   orig: 46, 28
   offset: 0, 0
   index: -1
 YELLOW_CHESS
   rotate: false
-  xy: 827, 618
+  xy: 1102, 322
   size: 58, 58
   orig: 58, 58
   offset: 0, 0
   index: -1
 YELLOW_CHESS_SELECTED
   rotate: false
-  xy: 702, 319
+  xy: 1895, 541
   size: 60, 61
   orig: 60, 61
   offset: 0, 0
   index: -1
 YELLOW_CHESS_TOTAL
   rotate: false
-  xy: 908, 770
+  xy: 1957, 569
   size: 34, 34
   orig: 34, 34
   offset: 0, 0
   index: -1
 YELLOW_DOG
   rotate: false
-  xy: 863, 747
+  xy: 331, 97
   size: 43, 31
   orig: 43, 31
   offset: 0, 0
   index: -1
 YELLOW_ELEPHANT
   rotate: false
-  xy: 764, 340
+  xy: 1991, 749
   size: 44, 32
   orig: 44, 32
   offset: 0, 0
   index: -1
 YELLOW_GRADIENT_BOX
   rotate: false
-  xy: 572, 329
+  xy: 974, 329
   size: 66, 51
   split: 29, 27, 19, 20
   pad: 0, 0, 0, 0
@@ -393,50 +407,78 @@ YELLOW_GRADIENT_BOX
   index: -1
 YELLOW_LION
   rotate: false
-  xy: 971, 946
+  xy: 754, 273
   size: 48, 37
   orig: 48, 37
   offset: 0, 0
   index: -1
 YELLOW_LION_SPLASH
   rotate: false
-  xy: 184, 29
+  xy: 286, 130
   size: 80, 79
   orig: 80, 79
   offset: 0, 0
   index: -1
 YELLOW_MOUSE
   rotate: false
-  xy: 827, 530
+  xy: 1997, 897
   size: 36, 42
   orig: 36, 42
   offset: 0, 0
   index: -1
 YELLOW_TIGER
   rotate: false
-  xy: 764, 311
+  xy: 435, 202
   size: 45, 27
   orig: 45, 27
   offset: 0, 0
   index: -1
 YELLOW_TIGER_SPLASH
   rotate: false
-  xy: 869, 923
+  xy: 184, 110
   size: 100, 99
   orig: 100, 99
   offset: 0, 0
   index: -1
 YELLOW_WOLF
   rotate: false
-  xy: 829, 450
+  xy: 1997, 817
   size: 37, 38
   orig: 37, 38
   offset: 0, 0
   index: -1
 YELLOW_WOLF_SPLASH
   rotate: false
-  xy: 184, 110
+  xy: 286, 211
   size: 100, 99
   orig: 100, 99
+  offset: 0, 0
+  index: -1
+YOU_LOSE_RED
+  rotate: false
+  xy: 1169, 678
+  size: 361, 344
+  orig: 361, 344
+  offset: 0, 0
+  index: -1
+YOU_LOSE_YELLOW
+  rotate: false
+  xy: 1532, 678
+  size: 361, 344
+  orig: 361, 344
+  offset: 0, 0
+  index: -1
+YOU_WIN_RED
+  rotate: false
+  xy: 1169, 336
+  size: 361, 340
+  orig: 361, 340
+  offset: 0, 0
+  index: -1
+YOU_WIN_YELLOW
+  rotate: false
+  xy: 1532, 332
+  size: 361, 344
+  orig: 361, 344
   offset: 0, 0
   index: -1

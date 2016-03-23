@@ -1,12 +1,11 @@
 package com.mygdx.potatoandtomato.models;
 
 import com.badlogic.gdx.Gdx;
+import com.mygdx.potatoandtomato.enums.LeaderboardType;
 import com.mygdx.potatoandtomato.helpers.utils.DateTimes;
-import com.mygdx.potatoandtomato.helpers.utils.Strings;
+import com.potatoandtomato.common.utils.Strings;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import java.util.ArrayList;
 
 /**
  * Created by SiongLeng on 13/12/2015.
@@ -15,12 +14,38 @@ import java.util.ArrayList;
 public class Game {
 
     String name, minPlayers, maxPlayers, teamMinPlayers, teamMaxPlayers, teamCount,
-            iconUrl, gameUrl, abbr, description, version, commonVersion;
+            iconUrl, gameUrl, abbr, description, version, commonVersion, leaderboardType;
     long createTimestamp, lastUpdatedTimestamp, gameSize;
     boolean mustFairTeam;
 
 
     public Game() {
+    }
+
+    @JsonIgnore
+    public boolean hasLeaderboard(){
+        return getLeaderboardTypeEnum() != LeaderboardType.None;
+    }
+
+    public String getLeaderboardType() {
+        return leaderboardType;
+    }
+
+    public LeaderboardType getLeaderboardTypeEnum() {
+        if(leaderboardType == null || leaderboardType.equals("")){
+            return LeaderboardType.None;
+        }
+        else{
+            return LeaderboardType.valueOf(leaderboardType);
+        }
+    }
+
+    public void setLeaderbordTypeEnum(LeaderboardType leaderbordTypeEnum){
+        leaderboardType = leaderbordTypeEnum.name();
+    }
+
+    public void setLeaderboardType(String leaderboardType) {
+        this.leaderboardType = leaderboardType;
     }
 
     public boolean getMustFairTeam() {

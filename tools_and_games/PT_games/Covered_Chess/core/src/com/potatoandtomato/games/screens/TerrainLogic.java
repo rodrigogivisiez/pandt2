@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.utils.Align;
 import com.potatoandtomato.common.GameCoordinator;
+import com.potatoandtomato.common.Threadings;
 import com.potatoandtomato.games.absint.ActionListener;
 import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.enums.ActionType;
@@ -71,7 +72,7 @@ public class TerrainLogic {
 
                 if(isEmpty()){
                     _soundsWrapper.playSounds(Sounds.Name.MOVE_CHESS);
-                    originalFromChessModel.setDragging(false);
+                    originalFromChessModel.resetSurface();
                     chessLogic.setChessModel(originalFromChessModel);
                     actionListener.changeTurnReady(ActionType.MOVE, originalFromChessModel.getChessType(), originalToChessModel.getChessType(), random);
                 }
@@ -102,7 +103,8 @@ public class TerrainLogic {
 
                     final Stage _stage = _me.getTerrainActor().getStage();
 
-                    winnerChessModel.setDragging(false);
+                    winnerChessModel.resetSurface();
+                    winnerChessModel.addKillCount();
                     chessLogic.setChessModel(winnerChessModel);
 
                     Threadings.delay(1500, new Runnable() {
@@ -210,12 +212,16 @@ public class TerrainLogic {
                                                     this.getChessLogic().getChessModel());
         }
 
+        _terrainModel.setPercentShown(true);
         terrainActor.showPercent(percent, direction);
 
     }
 
     public void hidePercentTile(){
-        terrainActor.hidePercent();
+        if(_terrainModel.isPercentShown()){
+            _terrainModel.setPercentShown(false);
+            terrainActor.hidePercent();
+        }
     }
 
     public void showCanMoveTo(){
@@ -227,8 +233,12 @@ public class TerrainLogic {
     }
 
     public void setSelected(boolean selected){
-        if(chessLogic != null) chessLogic.setSelected(selected);
-        terrainActor.setSelected(selected);
+        if(_terrainModel.isSelected() != selected){
+            _terrainModel.setSelected(selected);
+            if(chessLogic != null) chessLogic.setSelected(selected);
+            terrainActor.setSelected(selected);
+        }
+
     }
 
     public void setDragAndDrop(ArrayList<TerrainLogic> possibleMoveTerrainLogics){

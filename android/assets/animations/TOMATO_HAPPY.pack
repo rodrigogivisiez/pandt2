@@ -1,0 +1,75 @@
+
+TOMATO_HAPPY.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+tomato_happy
+  rotate: false
+  xy: 1, 1
+  size: 94, 94
+  orig: 94, 94
+  offset: 0, 0
+  index: 0
+tomato_happy
+  rotate: false
+  xy: 97, 1
+  size: 94, 94
+  orig: 94, 94
+  offset: 0, 0
+  index: 1
+tomato_happy
+  rotate: false
+  xy: 193, 1
+  size: 94, 94
+  orig: 94, 94
+  offset: 0, 0
+  index: 2
+tomato_happy
+  rotate: false
+  xy: 289, 1
+  size: 94, 94
+  orig: 94, 94
+  offset: 0, 0
+  index: 3
+tomato_happy
+  rotate: false
+  xy: 385, 1
+  size: 94, 94
+  orig: 94, 94
+  offset: 0, 0
+  index: 4
+tomato_happy
+  rotate: false
+  xy: 481, 1
+  size: 94, 94
+  orig: 94, 94
+  offset: 0, 0
+  index: 5
+tomato_happy
+  rotate: false
+  xy: 577, 1
+  size: 94, 94
+  orig: 94, 94
+  offset: 0, 0
+  index: 6
+tomato_happy
+  rotate: false
+  xy: 673, 1
+  size: 94, 94
+  orig: 94, 94
+  offset: 0, 0
+  index: 7
+tomato_happy
+  rotate: false
+  xy: 769, 1
+  size: 94, 94
+  orig: 94, 94
+  offset: 0, 0
+  index: 8
+tomato_happy
+  rotate: false
+  xy: 865, 1
+  size: 94, 94
+  orig: 94, 94
+  offset: 0, 0
+  index: 9

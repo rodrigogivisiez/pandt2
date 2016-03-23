@@ -5,6 +5,9 @@ package helpers;
  */
 public class T_Threadings {
 
+    public static int waitingTaskCount = 0;
+
+
     public static void sleep(long time){
         try {
             Thread.sleep(time);
@@ -12,5 +15,18 @@ public class T_Threadings {
             e.printStackTrace();
         }
     }
+
+    public static void waitTasks(int expectedTask){
+        waitingTaskCount = 0;
+        while (expectedTask > waitingTaskCount){
+            sleep(300);
+        }
+        waitingTaskCount = 0;
+    }
+
+    public static void oneTaskFinish(){
+        waitingTaskCount++;
+    }
+
 
 }

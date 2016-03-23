@@ -27,6 +27,7 @@ import java.util.ArrayList;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.removeAction;
 
 /**
  * Created by SiongLeng on 29/12/2015.
@@ -48,7 +49,7 @@ public class BoardLogic implements Disposable{
     SplashLogic _splashLogic;
     RoomMsgHandler _roomMsgHandler;
     SafeThread _getGameDataSafeThread, _checkCountTimeExpiredThread;
-    boolean _crackStarting, _crackHappened;
+    boolean _crackStarting, _crackHappened, _suddenDeathHappened, _gameEnded;
 
 
     public BoardLogic(Services services, GameCoordinator coordinator) {
@@ -64,12 +65,16 @@ public class BoardLogic implements Disposable{
         _graveyard = new GraveyardLogic(new GraveModel(),
                 coordinator, services.getTexts(), services.getAssets(), services.getSoundsWrapper());
         _roomMsgHandler = new RoomMsgHandler(this, _coordinator);
-        _splashLogic = new SplashLogic(coordinator, _services);
+        _splashLogic = new SplashLogic(coordinator, new Runnable() {
+            @Override
+            public void run() {
+                setCountDownThread();
+            }
+        }, _services);
 
         _screen = new BoardScreen(coordinator, services, _splashLogic.getSplashActor(), _graveyard.getGraveyardActor());
 
         setListeners();
-        setCountDownCheckingThread();
     }
 
     //call when new game
@@ -166,7 +171,6 @@ public class BoardLogic implements Disposable{
         _boardModel = boardModel;
         _crackStarting = _boardModel.isCrackStarting();
         _crackHappened = _boardModel.isCrackHappened();
-        invalidate();
         _graveyard.setGraveModel(graveModel);
 
         int i = 0;
@@ -205,7 +209,10 @@ public class BoardLogic implements Disposable{
 
                     @Override
                     public void onMoved(int fromCol, int fromRow, int toCol, int toRow, boolean isFromWon) {
-                        int random = MathUtils.random(0, 1);
+                        int r = MathUtils.random(0, 100);
+                        int random = 1;
+                        if(r < 15) random = 1;
+
                         chessMoved(fromCol, fromRow, toCol, toRow, isFromWon, false, String.valueOf(random));
                         _roomMsgHandler.sendMoveChess(fromCol, fromRow, toCol, toRow, isFromWon, String.valueOf(random),
                                getMyTimeLeft());
@@ -218,7 +225,7 @@ public class BoardLogic implements Disposable{
 
                     @Override
                     public void onChessKilled(ChessType chessType) {
-                        chessKilled(chessType);
+                        chessKilled(chessType, true);
                     }
                 });
                 _terrains.add(terrainLogic);
@@ -226,17 +233,30 @@ public class BoardLogic implements Disposable{
             }
         }
 
+        invalidate();
         _screen.populateTerrains(_terrains);
         setTurnTouchable();
         _roomMsgHandler.onGameReady();
         for(TerrainLogic terrainLogic : _terrains) terrainLogic.invalidate();
     }
 
-    private void chessKilled(ChessType chessType){
+    private void chessKilled(ChessType chessType, boolean alsoCheckGameEnded){
         _graveyard.addChessToGrave(chessType);
-        if(_graveyard.getGraveModel().getLeftChessCountByColor(ChessColor.RED) == 0){
+
+        if(alsoCheckGameEnded) checkGameEnded();
+    }
+
+    private void checkGameEnded(){
+        //draw, both parties lose
+        if(_graveyard.getGraveModel().getLeftChessCountByColor(ChessColor.RED) == 0
+                && _graveyard.getGraveModel().getLeftChessCountByColor(ChessColor.YELLOW) == 0){
+            endGame(false);
+        }
+        //yellow win
+        else if(_graveyard.getGraveModel().getLeftChessCountByColor(ChessColor.RED) == 0 ){
             endGame(ChessColor.YELLOW);
         }
+        //red win
         else if(_graveyard.getGraveModel().getLeftChessCountByColor(ChessColor.YELLOW) == 0){
             endGame(ChessColor.RED);
         }
@@ -262,53 +282,33 @@ public class BoardLogic implements Disposable{
         disableTouchable();
 
         if(_boardModel.nextTurnIsSuddenDeath()){
-            _statusRef.suddenDeathStatus(_terrains, new Runnable() {
-                @Override
-                public void run() {
-                    switchTurn();
-                }
-            });
+            suddenDeath();
         }
-        else{
-            if(actionType == ActionType.OPEN){
-                _statusRef.chessOpened(_terrains, terrainLogic, _gameDataController.getMyChessColor(), random, new Runnable() {
-                    @Override
-                    public void run() {
-                        switchTurn();
-                    }
-                });
-            }
-            else if(actionType == ActionType.MOVE){
-                _statusRef.chessMoved(_terrains, terrainLogic, winnerChessType, loserChessType, random, new Runnable() {
-                    @Override
-                    public void run() {
-                        switchTurn();
-                    }
-                });
-            }
-            else if(actionType == ActionType.SKIP){
-                switchTurn();
-            }
+
+        if(actionType == ActionType.OPEN && !_suddenDeathHappened){
+            _statusRef.chessOpened(_terrains, terrainLogic, _gameDataController.getMyChessColor(), random);
         }
+        else if(actionType == ActionType.MOVE && !_suddenDeathHappened){
+            _statusRef.chessMoved(_terrains, terrainLogic, winnerChessType, loserChessType, random);
+        }
+        else if(actionType == ActionType.SKIP){
+
+        }
+
+        switchTurn();
     }
 
     private void switchTurn(){
         if(_lastActiveTerrainLogic != null){
             clearAllTerrainsHighlights();
-            _lastActiveTerrainLogic.getChessLogic().getChessModel().setFocusing(true);
-            _lastActiveTerrainLogic.getChessLogic().invalidate();
+            _lastActiveTerrainLogic.getChessLogic().setFocusing(true);
         }
 
         _boardModel.switchTurnIndex();
         _statusRef.turnOver(_terrains);
 
-        checkBoardCrack(new Runnable() {
-            @Override
-            public void run() {
-                invalidate();
-            }
-        });
-
+        checkBoardCrack();
+        invalidate();
     }
 
     public void skipTurn(){
@@ -357,6 +357,7 @@ public class BoardLogic implements Disposable{
         }
     }
 
+
     private void hideAllTerrainPercentTile(){
         for(TerrainLogic terrainLogic : _terrains){
             terrainLogic.hidePercentTile();
@@ -365,7 +366,7 @@ public class BoardLogic implements Disposable{
 
     private void clearAllTerrainsHighlights(){
         for(TerrainLogic terrainLogic : _terrains){
-            terrainLogic.getChessLogic().getChessModel().setFocusing(false);
+            terrainLogic.getChessLogic().setFocusing(false);
             terrainLogic.setSelected(false);
             terrainLogic.hidePercentTile();
         }
@@ -379,50 +380,72 @@ public class BoardLogic implements Disposable{
         logic.setDragAndDrop(possibleMoveLogics);
     }
 
-    private void endGame(final boolean won){
-        _screen.populateEndGameTable();
-        Threadings.delay(1000, new Runnable() {
-            @Override
-            public void run() {
-                _screen.showEndGameTable(won);
-                _services.getSoundsWrapper().stopTheme();
-                _services.getSoundsWrapper().playSounds(won ? Sounds.Name.WIN : Sounds.Name.LOSE);
-                Threadings.delay(2000, new Runnable() {
-                    @Override
-                    public void run() {
-                        _screen.getEndGameRootTable().addListener(new ClickListener() {
-                            @Override
-                            public void clicked(InputEvent event, float x, float y) {
-                                super.clicked(event, x, y);
-                                _coordinator.endGame();
-                            }
-                        });
-                    }
-                });
+    public void endGame(final boolean won){
+        if(!_gameEnded){
+            _gameEnded = true;
+            _services.getScoresHelper().setIsMeWin(won);
+            _coordinator.beforeEndGame(_services.getScoresHelper().getWinnerResult(), _services.getScoresHelper().getLoser(), true);
+            _screen.populateEndGameTable();
+            Threadings.delay(1000, new Runnable() {
+                @Override
+                public void run() {
+                    _screen.showEndGameTable(won, _gameDataController.getMyChessColor());
+                    _services.getSoundsWrapper().stopTheme();
+                    _services.getSoundsWrapper().playSounds(won ? Sounds.Name.WIN : Sounds.Name.LOSE);
+                    Threadings.delay(2000, new Runnable() {
+                        @Override
+                        public void run() {
+                            _screen.getEndGameRootTable().addListener(new ClickListener() {
+                                @Override
+                                public void clicked(InputEvent event, float x, float y) {
+                                    super.clicked(event, x, y);
+                                    _coordinator.endGame();
+                                }
+                            });
+                        }
+                    });
 
-            }
-        });
+                }
+            });
+        }
     }
 
     private void endGame(ChessColor wonChessColor) {
         endGame(_gameDataController.getMyChessColor() == wonChessColor);
     }
 
-    private void checkBoardCrack(Runnable onFinish){
-        if(_crackHappened != _boardModel.isCrackHappened() && _boardModel.isCrackHappened()){
-            crackBoardHappened(onFinish);
-            _crackHappened = true;
-        }
-        else if(_crackStarting != _boardModel.isCrackStarting() && _boardModel.isCrackStarting()){
-            crackBoardStarting(onFinish);
-            _crackStarting = true;
-        }
-        else{
-            if(onFinish != null) onFinish.run();
+    private void suddenDeath(){
+        if(!_suddenDeathHappened){
+            _suddenDeathHappened = true;
+            _screen.thunderAnimation();
+            Threadings.delay(1300, new Runnable() {
+                @Override
+                public void run() {
+                    _screen.setSuddenDeathBg();
+                }
+            });
+            Threadings.delay(1500, new Runnable() {
+                @Override
+                public void run() {
+                    _statusRef.suddenDeathStatus(_terrains);
+                }
+            });
+
         }
     }
 
-    private void crackBoardStarting(Runnable onFinish){
+    private void checkBoardCrack(){
+        if(_crackHappened != _boardModel.isCrackHappened() && _boardModel.isCrackHappened()){
+            crackBoardHappened();
+            _crackHappened = true;
+        }
+        else if(_crackStarting != _boardModel.isCrackStarting() && _boardModel.isCrackStarting()){
+            crackBoardStarting();
+            _crackStarting = true;
+        }
+    }
+
+    private void crackBoardStarting(){
         for(TerrainLogic terrainLogic : _terrains){
             if(isCrackable(terrainLogic)){
                 terrainLogic.getTerrainModel().setBreaking(true);
@@ -430,25 +453,26 @@ public class BoardLogic implements Disposable{
             }
         }
         _services.getSoundsWrapper().playSounds(Sounds.Name.GLASS_CRACKING);
-        onFinish.run();
     }
 
-    private void crackBoardHappened(Runnable onFinish){
+    private void crackBoardHappened(){
+        final ThreadsPool threadsPool = new ThreadsPool();
         boolean hasDropping = false;
         for(final TerrainLogic terrainLogic : _terrains){
             if(isCrackable(terrainLogic)){
                 if(!terrainLogic.isEmpty() && !hasDropping) hasDropping = true;
                 terrainLogic.getTerrainActor().animateBroken();
-                Threadings.delay(4000, new Runnable() {
+
+                threadsPool.addFragment(Threadings.delay(4000, new Runnable() {
                     @Override
                     public void run() {
                         if (!terrainLogic.isEmpty()) {
-                            chessKilled(terrainLogic.getChessLogic().getChessModel().getChessType());
+                            chessKilled(terrainLogic.getChessLogic().getChessModel().getChessType(), false);
                         }
                         terrainLogic.getTerrainModel().setBroken(true);
                         terrainLogic.invalidate();
                     }
-                });
+                }));
             }
         }
         _services.getSoundsWrapper().playSounds(Sounds.Name.GLASS_BROKEN);
@@ -460,7 +484,18 @@ public class BoardLogic implements Disposable{
                 }
             });
         }
-        onFinish.run();
+
+        Threadings.runInBackground(new Runnable() {
+            @Override
+            public void run() {
+                while (!threadsPool.allFinished()){
+                    Threadings.sleep(300);
+                }
+                checkGameEnded();
+            }
+        });
+
+
     }
 
     private boolean isCrackable(TerrainLogic terrainLogic){
@@ -485,7 +520,7 @@ public class BoardLogic implements Disposable{
         _coordinator.setUserStateListener(new UserStateListener() {
             @Override
             public void userAbandoned(String s) {
-                if(!s.equals(_coordinator.getUserId())){
+                if(!s.equals(_coordinator.getMyUserId())){
                     endGame(true);
                 }
             }
@@ -520,7 +555,8 @@ public class BoardLogic implements Disposable{
             }
             else{
                 if(terrainLogic.getChessLogic().getChessModel().getChessColor() == _gameDataController.getMyChessColor() &&
-                        terrainLogic.getChessLogic().getChessModel().getStatus() != com.potatoandtomato.games.enums.Status.PARALYZED){
+                        terrainLogic.getChessLogic().getChessModel().getStatus() != com.potatoandtomato.games.enums.Status.PARALYZED &&
+                        terrainLogic.getChessLogic().getChessModel().getChessType() != ChessType.NONE){
                     return true;
                 }
             }
@@ -529,7 +565,8 @@ public class BoardLogic implements Disposable{
         return false;
     }
 
-    private void setCountDownCheckingThread(){
+    private void setCountDownThread(){
+        _graveyard.setCountDownThread();
         _checkCountTimeExpiredThread = new SafeThread();
         Threadings.runInBackground(new Runnable() {
             @Override
@@ -538,12 +575,20 @@ public class BoardLogic implements Disposable{
                 while (true){
                     if(_checkCountTimeExpiredThread.isKilled()) break;
                     else{
+                        boolean timeout = false;
+
                         if(myColor == ChessColor.RED && _graveyard.getGraveModel().getRedLeftTime() == 0){
-                            _coordinator.abandon();
+                            timeout = true;
                         }
                         if(myColor == ChessColor.YELLOW && _graveyard.getGraveModel().getYellowLeftTime() == 0){
-                            _coordinator.abandon();
+                            timeout = true;
                         }
+
+                        if(timeout){
+                            _roomMsgHandler.sendSurrender();
+                            endGame(false);
+                        }
+
                     }
                 }
             }

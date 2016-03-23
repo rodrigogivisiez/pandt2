@@ -12,13 +12,39 @@ import com.badlogic.gdx.utils.Array;
  */
 public class Animator extends Actor {
 
+    Array<? extends TextureRegion> keyFrames;
     float frameDuration;
     float elapsed = 0;
     Animation animation;
+    float overRiddenWidth, overRiddenHeight;
 
     public Animator(float frameDuration, Array<? extends TextureRegion> keyFrames) {
         this.frameDuration = frameDuration;
+        this.keyFrames = keyFrames;
         animation = new Animation(frameDuration, keyFrames);
+    }
+
+    public void overrideSize(float width, float height){
+        overRiddenWidth = width;
+        overRiddenHeight = height;
+    }
+
+    public float getWidth(){
+        if(overRiddenWidth == 0){
+            return keyFrames.get(0).getRegionWidth();
+        }
+        else{
+            return overRiddenWidth;
+        }
+    }
+
+    public float getHeight(){
+        if(overRiddenHeight == 0){
+            return keyFrames.get(0).getRegionHeight();
+        }
+        else{
+            return overRiddenHeight;
+        }
     }
 
     @Override

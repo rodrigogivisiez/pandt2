@@ -39,7 +39,7 @@ public class Sounds implements IAssetFragment {
                 return s.contains(".ogg") || s.contains(".mp3");
             }
         })){
-            if(soundFile.name().contains(".mp3")){
+            if(soundFile.name().contains(".mp3") || soundFile.name().contains("_MUSIC")){
                 _manager.load("sounds/" + soundFile.name(), Music.class);
             }
             else{
@@ -58,7 +58,7 @@ public class Sounds implements IAssetFragment {
                 return s.contains(".ogg") || s.contains(".mp3");
             }
         })){
-            if(soundFile.name().contains(".mp3")){
+            if(soundFile.name().contains(".mp3") || soundFile.name().contains("_MUSIC")){
                 _musicsMap.put(soundFile.nameWithoutExtension(), _manager.get("sounds/" + soundFile.name(), Music.class));
             }
             else{
@@ -81,7 +81,8 @@ public class Sounds implements IAssetFragment {
         FLIP_CHESS, MOVE_CHESS,
         FIGHT_CHESS, WIN, LOSE,
         GLASS_CRACKING, GLASS_BROKEN,
-        DROPPING, THEME
+        DROPPING, THEME_MUSIC, THUNDER, THEME_SUDDEN_D_MUSIC,
+        PARALYZED, POISON, ANGRY, DECREASE, KING, HEAL
     }
 
 }

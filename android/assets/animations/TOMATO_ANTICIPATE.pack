@@ -1,0 +1,75 @@
+
+TOMATO_ANTICIPATE.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+tomato_anticipate
+  rotate: false
+  xy: 1, 1
+  size: 79, 78
+  orig: 79, 78
+  offset: 0, 0
+  index: 0
+tomato_anticipate
+  rotate: false
+  xy: 82, 1
+  size: 79, 78
+  orig: 79, 78
+  offset: 0, 0
+  index: 1
+tomato_anticipate
+  rotate: false
+  xy: 163, 1
+  size: 79, 78
+  orig: 79, 78
+  offset: 0, 0
+  index: 2
+tomato_anticipate
+  rotate: false
+  xy: 244, 1
+  size: 79, 78
+  orig: 79, 78
+  offset: 0, 0
+  index: 3
+tomato_anticipate
+  rotate: false
+  xy: 325, 1
+  size: 79, 78
+  orig: 79, 78
+  offset: 0, 0
+  index: 4
+tomato_anticipate
+  rotate: false
+  xy: 406, 1
+  size: 79, 78
+  orig: 79, 78
+  offset: 0, 0
+  index: 5
+tomato_anticipate
+  rotate: false
+  xy: 487, 1
+  size: 79, 78
+  orig: 79, 78
+  offset: 0, 0
+  index: 6
+tomato_anticipate
+  rotate: false
+  xy: 568, 1
+  size: 79, 78
+  orig: 79, 78
+  offset: 0, 0
+  index: 7
+tomato_anticipate
+  rotate: false
+  xy: 649, 1
+  size: 79, 78
+  orig: 79, 78
+  offset: 0, 0
+  index: 8
+tomato_anticipate
+  rotate: false
+  xy: 730, 1
+  size: 79, 78
+  orig: 79, 78
+  offset: 0, 0
+  index: 9

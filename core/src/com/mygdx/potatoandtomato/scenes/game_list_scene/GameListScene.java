@@ -33,9 +33,9 @@ public class GameListScene extends SceneAbstract {
     BtnEggDownward _newGameButton, _joinGameButton, _continueGameButton;
     Table _userProfileTable;
     Label _usernameLabel;
-    Button _settingsButton, _ratingButtons;
-    Table _settingsTable, _ratingTable;
-    Image _settingsIconImg, _ratingIconImg;
+    Button _settingsButton, _leaderBoardsButton;
+    Table _settingsTable, _leaderBoardsTable;
+    Image _settingsIconImg, _leaderBoardsIconImg;
 
     public int getGameRowsCount() {
         return _gameRowsTableMap.size();
@@ -60,6 +60,10 @@ public class GameListScene extends SceneAbstract {
 
     public Button getSettingsButton() {
         return _settingsButton;
+    }
+
+    public Button getLeaderBoardsButton() {
+        return _leaderBoardsButton;
     }
 
     @Override
@@ -131,17 +135,17 @@ public class GameListScene extends SceneAbstract {
         _settingsButton.setFillParent(true);
         _settingsTable.addActor(_settingsButton);
 
-        _ratingTable = new Table();
-        _ratingTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WHITE_ROUND_BUTTON_BG)));
-        _ratingIconImg = new Image(_assets.getTextures().get(Textures.Name.RATE_ICON));
-        _ratingTable.add(_ratingIconImg).expand().fill().pad(5);
-        _ratingButtons = new Button(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
-        _ratingButtons.setFillParent(true);
-        _ratingTable.addActor(_ratingButtons);
+        _leaderBoardsTable = new Table();
+        _leaderBoardsTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WHITE_ROUND_BUTTON_BG)));
+        _leaderBoardsIconImg = new Image(_assets.getTextures().get(Textures.Name.LEADERBOARD_MAIN_ICON));
+        _leaderBoardsTable.add(_leaderBoardsIconImg).expandX().fillX().height(24).pad(5);
+        _leaderBoardsButton = new Button(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
+        _leaderBoardsButton.setFillParent(true);
+        _leaderBoardsTable.addActor(_leaderBoardsButton);
 
         _userProfileTable.add(_usernameLabel).expand().fill().padLeft(10).padRight(10);
         _userProfileTable.add(_settingsTable).size(40).padRight(10);
-        _userProfileTable.add(_ratingTable).size(40).padRight(10);
+        _userProfileTable.add(_leaderBoardsTable).size(40).padRight(10);
         //User profile END
 
         _gameListTable.add(_gameTitleTable).expandX().fillX().height(45).padLeft(20).padRight(20);

@@ -43,6 +43,7 @@ public class RoomLogic extends LogicAbstract {
     HashMap<String, String> _noGameClientUsers;
     int _currentPercentage, _previousSentPercentage;
     SafeThread _downloadThread, _countDownThread, _checkReadyThread, _checkMonitorSuccessThread;
+    UserBadgeHelper _userBadgeHelper;
     boolean _roomMonitorSuccess;
     boolean _starting;
     boolean _forceQuit;
@@ -63,6 +64,7 @@ public class RoomLogic extends LogicAbstract {
         _room = (Room) objs[0];
         _isContinue = (Boolean) objs[1];
         _scene = new RoomScene(services, screen, _room);
+        _userBadgeHelper = new UserBadgeHelper(_services, _scene, _room.getGame());
         _noGameClientUsers = new HashMap();
     }
 
@@ -140,6 +142,16 @@ public class RoomLogic extends LogicAbstract {
             }
         });
 
+        _scene.getLeaderboardImage().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                if(!_starting){
+                    _screen.toScene(SceneEnum.SINGLE_GAME_LEADER_BOARD, _room.getGame());
+                }
+            }
+        });
+
         _checkReadyThread = new SafeThread();
         Threadings.runInBackground(new Runnable() {
             @Override
@@ -183,6 +195,7 @@ public class RoomLogic extends LogicAbstract {
                             }
                             for(RoomUser u : justLeftUsers){
                                 chatAddUserJustLeftRoom(u.getProfile());
+                                _scene.getPlayersMaps().remove(u.getProfile().getUserId());
                             }
 
                             if(justJoinedUsers.size() > 0){
@@ -196,6 +209,10 @@ public class RoomLogic extends LogicAbstract {
                             _services.getChat().setRoom(_room);
                             refreshRoomDesign();
                             checkHostInRoom();
+                            _userBadgeHelper.usersJoinedRoom(justJoinedUsers);
+                            _userBadgeHelper.usersLeftRoom(justLeftUsers);
+                            _userBadgeHelper.addRoomUsersIfNotExist(_room.getRoomUsers().values());
+
                             if(justJoinedUsers.size() > 0 || justLeftUsers.size() > 0){
                                 if(!_isContinue) selfUpdateRoomStatePush();
                             }
@@ -233,6 +250,7 @@ public class RoomLogic extends LogicAbstract {
 
         if(isHost()){
             _room.addRoomUser(_services.getProfile(), true);
+            _userBadgeHelper.usersJoinedRoom(_room.getRoomUsers().values());
             chatAddUserJustJoinedRoom(_services.getProfile());
             selfUpdateRoomStatePush();
             hostSaveRoom(true, new DatabaseListener() {
@@ -264,7 +282,15 @@ public class RoomLogic extends LogicAbstract {
             }
         });
 
-        _gameStarted = false;
+        _userBadgeHelper.setPaused(false);
+
+        //come back from game end
+        if(_gameStarted){
+            _gameStarted = false;
+            _userBadgeHelper.refresh();
+        }
+
+
         _onScreen = true;
 
         if(!_isContinue && _roomMonitorSuccess) {
@@ -319,7 +345,7 @@ public class RoomLogic extends LogicAbstract {
                 _scene.updateRoom(_room);
 
                 int i = 0;
-                for(Table t : _scene.getPlayersTable()){
+                for(Table t : _scene.getSlotsTable()){
                     final int finalI = i;
                     if(!t.getName().contains("disableclick")){
                         t.addListener(new ClickListener(){
@@ -336,28 +362,13 @@ public class RoomLogic extends LogicAbstract {
                     i++;
                 }
 
-
-
-//                for(Table t : _scene.getTeamTables()){
-//                    final int finalI = i;
-//                    t.addListener(new ClickListener() {
-//                        @Override
-//                        public void clicked(InputEvent event, float x, float y) {
-//                            super.clicked(event, x, y);
-//                            if(_room.changeTeam(finalI, _services.getProfile())){
-//                                sendUpdateRoomMates(UpdateRoomMatesCode.MOVE_SLOT, String.valueOf(finalI));
-//                            }
-//                        }
-//                    });
-//                    i++;
-//                }
-
                 if(isHost()){
                     for (Map.Entry<String, Table> entry : _scene.getPlayersMaps().entrySet()) {
                         final String userId = entry.getKey();
                         Table table = entry.getValue();
                         Actor kickImage = table.findActor("kickImage");
-                        if(table.getName().contains("nokickattached") && kickImage != null && !userId.equals(_services.getProfile().getUserId())){
+                        if(kickImage != null && !userId.equals(_services.getProfile().getUserId())){
+                            kickImage.setName("");
                             kickImage.addListener(new ClickListener(){
                                 @Override
                                 public void clicked(InputEvent event, float x, float y) {
@@ -376,7 +387,6 @@ public class RoomLogic extends LogicAbstract {
                                     });
                                 }
                             });
-                            table.setName(table.getName().replace("nokickattached", "kickattached"));
                         }
                     }
                 }
@@ -631,10 +641,10 @@ public class RoomLogic extends LogicAbstract {
         if(_forceQuit) return;
         else{
             _forceQuit = true;
+            _screen.back();
             _confirm.show(message, Confirm.Type.YES, new ConfirmResultListener() {
                 @Override
                 public void onResult(Result result) {
-                    _screen.back();
                 }
             });
         }
@@ -771,6 +781,7 @@ public class RoomLogic extends LogicAbstract {
     @Override
     public void onHide() {
         super.onHide();
+        _userBadgeHelper.setPaused(true);
         _confirm.setStateChangedListener(null);
         _onScreen = false;
         if(!_quiting && !_starting)  sendIsReadyUpdate(false);
@@ -793,6 +804,7 @@ public class RoomLogic extends LogicAbstract {
     public void dispose() {
         leaveRoom();
         super.dispose();
+        _userBadgeHelper.dispose();
         Gdx.files.local("records").deleteDirectory();
         if(_checkMonitorSuccessThread != null) _checkMonitorSuccessThread.kill();
         _checkReadyThread.kill();

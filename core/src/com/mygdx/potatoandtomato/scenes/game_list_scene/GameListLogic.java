@@ -85,12 +85,19 @@ public class GameListLogic extends LogicAbstract {
             }
         });
 
+        _scene.getLeaderBoardsButton().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                _screen.toScene(SceneEnum.MULTIPLE_GAMES_LEADER_BOARD);
+            }
+        });
 
         _services.getDatabase().monitorAllRooms(_rooms, getClassTag(), new SpecialDatabaseListener<ArrayList<Room>, Room>(Room.class) {
             @Override
             public void onCallbackTypeOne(ArrayList<Room> obj, Status st) {
-                if(st == Status.SUCCESS){
-                    for(Room r : obj){
+                if (st == Status.SUCCESS) {
+                    for (Room r : obj) {
                         roomDataChanged(r, false);
                     }
                 }
@@ -98,7 +105,7 @@ public class GameListLogic extends LogicAbstract {
 
             @Override
             public void onCallbackTypeTwo(Room obj, Status st) {
-                if(st == Status.SUCCESS){
+                if (st == Status.SUCCESS) {
                     roomDataChanged(obj, true);
                 }
             }

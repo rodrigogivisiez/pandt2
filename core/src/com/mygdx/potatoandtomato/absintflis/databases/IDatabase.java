@@ -1,15 +1,12 @@
 package com.mygdx.potatoandtomato.absintflis.databases;
 
-import com.badlogic.gdx.utils.Array;
-import com.firebase.client.Query;
 import com.firebase.client.annotations.Nullable;
-import com.mygdx.potatoandtomato.helpers.utils.Logs;
-import com.mygdx.potatoandtomato.models.GameHistory;
-import com.mygdx.potatoandtomato.models.Profile;
-import com.mygdx.potatoandtomato.models.Game;
-import com.mygdx.potatoandtomato.models.Room;
+import com.mygdx.potatoandtomato.models.*;
+import com.potatoandtomato.common.models.LeaderboardRecord;
+import com.potatoandtomato.common.models.Streak;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by SiongLeng on 9/12/2015.
@@ -25,6 +22,10 @@ public interface IDatabase {
      void monitorProfileByUserId(String userId, String classTag, DatabaseListener<Profile> listener);
 
      void getProfileByUserId(String userId, DatabaseListener<Profile> listener);
+
+     void getUsernameByUserId(String userId, DatabaseListener<String> listener);
+
+     void getUsernamesByUserIds(ArrayList<String> userIds, DatabaseListener<HashMap<String, String>> listener);
 
      void getProfileByFacebookUserId(String facebookUserId, DatabaseListener<Profile> listener);
 
@@ -69,5 +70,19 @@ public interface IDatabase {
      void getGameByAbbr(String abbr, DatabaseListener<Game> listener);
 
      Object getGameBelongDatabase(String abbr);
+
+     void getUserStreak(Game game, String userId, DatabaseListener<Streak> listener);
+
+     void getLeaderBoardAndStreak(Game game, int expectedCount, DatabaseListener<ArrayList<LeaderboardRecord>> listener);
+
+     void saveLeaderBoardRecord(Room room, LeaderboardRecord record, DatabaseListener listener);
+
+     void getAccLeaderBoardRecordAndStreak(Room room, ArrayList<String> userIds, DatabaseListener<LeaderboardRecord> listener);
+
+     void deleteLeaderBoard(Game game, DatabaseListener listener);
+
+     void streakRevive(ArrayList<String> userIds, Room room, DatabaseListener listener);
+
+     void isStreakRevived(ArrayList<String> userIds, Room room, DatabaseListener<Boolean> listener);
 
 }

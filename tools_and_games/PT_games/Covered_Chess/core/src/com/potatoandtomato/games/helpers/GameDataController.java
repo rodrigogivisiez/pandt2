@@ -62,5 +62,8 @@ public class GameDataController {
         else return ChessColor.RED;
     }
 
-
+    public ChessColor getEnemyChessColor(){
+        if(getMyChessColor() == ChessColor.YELLOW) return ChessColor.RED;
+        else return ChessColor.YELLOW;
+    }
 }

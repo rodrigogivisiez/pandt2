@@ -1,0 +1,75 @@
+
+TOMATO_FAILED.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+TOMATO_FAILED
+  rotate: false
+  xy: 1, 1
+  size: 87, 77
+  orig: 87, 77
+  offset: 0, 0
+  index: 0
+TOMATO_FAILED
+  rotate: false
+  xy: 90, 1
+  size: 87, 77
+  orig: 87, 77
+  offset: 0, 0
+  index: 1
+TOMATO_FAILED
+  rotate: false
+  xy: 90, 1
+  size: 87, 77
+  orig: 87, 77
+  offset: 0, 0
+  index: 9
+TOMATO_FAILED
+  rotate: false
+  xy: 179, 1
+  size: 87, 77
+  orig: 87, 77
+  offset: 0, 0
+  index: 2
+TOMATO_FAILED
+  rotate: false
+  xy: 268, 1
+  size: 87, 77
+  orig: 87, 77
+  offset: 0, 0
+  index: 3
+TOMATO_FAILED
+  rotate: false
+  xy: 357, 1
+  size: 87, 77
+  orig: 87, 77
+  offset: 0, 0
+  index: 4
+TOMATO_FAILED
+  rotate: false
+  xy: 446, 1
+  size: 87, 77
+  orig: 87, 77
+  offset: 0, 0
+  index: 5
+TOMATO_FAILED
+  rotate: false
+  xy: 535, 1
+  size: 87, 77
+  orig: 87, 77
+  offset: 0, 0
+  index: 6
+TOMATO_FAILED
+  rotate: false
+  xy: 624, 1
+  size: 87, 77
+  orig: 87, 77
+  offset: 0, 0
+  index: 7
+TOMATO_FAILED
+  rotate: false
+  xy: 713, 1
+  size: 87, 77
+  orig: 87, 77
+  offset: 0, 0
+  index: 8

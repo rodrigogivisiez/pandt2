@@ -1,0 +1,75 @@
+
+POTATO_CRY.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+potato_cry
+  rotate: false
+  xy: 1, 1
+  size: 124, 120
+  orig: 124, 120
+  offset: 0, 0
+  index: 0
+potato_cry
+  rotate: false
+  xy: 1, 1
+  size: 124, 120
+  orig: 124, 120
+  offset: 0, 0
+  index: 1
+potato_cry
+  rotate: false
+  xy: 1, 1
+  size: 124, 120
+  orig: 124, 120
+  offset: 0, 0
+  index: 2
+potato_cry
+  rotate: false
+  xy: 127, 1
+  size: 124, 120
+  orig: 124, 120
+  offset: 0, 0
+  index: 3
+potato_cry
+  rotate: false
+  xy: 253, 1
+  size: 124, 120
+  orig: 124, 120
+  offset: 0, 0
+  index: 4
+potato_cry
+  rotate: false
+  xy: 379, 1
+  size: 124, 120
+  orig: 124, 120
+  offset: 0, 0
+  index: 5
+potato_cry
+  rotate: false
+  xy: 505, 1
+  size: 124, 120
+  orig: 124, 120
+  offset: 0, 0
+  index: 6
+potato_cry
+  rotate: false
+  xy: 631, 1
+  size: 124, 120
+  orig: 124, 120
+  offset: 0, 0
+  index: 7
+potato_cry
+  rotate: false
+  xy: 757, 1
+  size: 124, 120
+  orig: 124, 120
+  offset: 0, 0
+  index: 8
+potato_cry
+  rotate: false
+  xy: 883, 1
+  size: 124, 120
+  orig: 124, 120
+  offset: 0, 0
+  index: 9

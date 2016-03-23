@@ -12,12 +12,18 @@ public class Services {
     private Texts texts;
     private SoundsWrapper soundsWrapper;
     private Database database;
+    private ScoresHelper scoresHelper;
 
-    public Services(Assets assets, Texts texts, SoundsWrapper soundsWrapper, Database database) {
-        this.texts = texts;
+    public Services(Assets assets, Texts texts, SoundsWrapper soundsWrapper, Database database, ScoresHelper scoresHelper) {
         this.assets = assets;
+        this.texts = texts;
         this.soundsWrapper = soundsWrapper;
         this.database = database;
+        this.scoresHelper = scoresHelper;
+    }
+
+    public ScoresHelper getScoresHelper() {
+        return scoresHelper;
     }
 
     public Database getDatabase() {

@@ -7,7 +7,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.*;
-import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
@@ -20,6 +19,9 @@ import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.controls.Confirm;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
 import com.mygdx.potatoandtomato.helpers.services.Assets;
+import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
+import com.mygdx.potatoandtomato.scenes.leaderboard_scene.MultipleGamesLeaderBoardLogic;
+import com.mygdx.potatoandtomato.scenes.leaderboard_scene.SingleGameLeaderBoardLogic;
 import com.potatoandtomato.common.Threadings;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
@@ -83,6 +85,11 @@ public class PTScreen implements Screen, InputProcessor {
     //call this function to change scene
     public void toScene(final SceneEnum sceneEnum, final Object... objs){
         final LogicAbstract logic = newSceneLogic(sceneEnum, objs);
+        toScene(logic, sceneEnum, objs);
+    }
+
+    //call this function to change scene
+    public void toScene(final LogicAbstract logic, final SceneEnum sceneEnum, final Object... objs){
         logic.onInit();
         Gdx.app.postRunnable(new Runnable() {
             @Override
@@ -181,7 +188,7 @@ public class PTScreen implements Screen, InputProcessor {
         });
     }
 
-    private LogicAbstract newSceneLogic(SceneEnum sceneEnum, Object... objs){
+    public LogicAbstract newSceneLogic(SceneEnum sceneEnum, Object... objs){
         LogicAbstract logic = null;
         switch (sceneEnum){
             case BOOT:
@@ -210,6 +217,15 @@ public class PTScreen implements Screen, InputProcessor {
                 break;
             case GAME_SANDBOX:
                 logic = new GameSandboxLogic(this, _services, objs);
+                break;
+            case END_GAME_LEADER_BOARD:
+                logic = new EndGameLeaderBoardLogic(this, _services, objs);
+                break;
+            case SINGLE_GAME_LEADER_BOARD:
+                logic = new SingleGameLeaderBoardLogic(this, _services, objs);
+                break;
+            case MULTIPLE_GAMES_LEADER_BOARD:
+                logic = new MultipleGamesLeaderBoardLogic(this, _services, objs);
                 break;
         }
         return logic;

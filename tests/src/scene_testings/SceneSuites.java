@@ -17,7 +17,8 @@ import org.junit.runners.Suite;
         TestInvite.class,
         TestConfirm.class,
         TestGameSandBox.class,
-        TestInputName.class
+        TestInputName.class,
+        TestEndGameLeaderboard.class
 })
 public class SceneSuites {
 }

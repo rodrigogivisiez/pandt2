@@ -36,14 +36,20 @@ public class RoomMsgHandler {
     public void receivedInGameUpdate(final String msg, final String senderId){
         try {
 
-            if(senderId.equals(_coordinator.getUserId())) return;
+            if(senderId.equals(_coordinator.getMyUserId())) return;
 
             JSONObject jsonObject = new JSONObject(msg);
             int code = jsonObject.getInt("code");
             final String receivedMsg = jsonObject.getString("msg");
-            String[] tmp = receivedMsg.split("@");
-            String enemyLeftTime = tmp[0];
-            String realMsg = tmp[1];
+            String[] tmp;
+            String enemyLeftTime = null;
+            String realMsg = null;
+            if(!receivedMsg.equals("")){
+                tmp = receivedMsg.split("@");
+                enemyLeftTime = tmp[0];
+                realMsg = tmp[1];
+            }
+
 
             if(!_gameScreenReady){
                 _messagesQueue.add(new Runnable() {
@@ -101,6 +107,14 @@ public class RoomMsgHandler {
                         }
                     });
                     break;
+                case UpdateCode.SURRENDER:
+                    Gdx.app.postRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            _boardLogic.endGame(true);
+                        }
+                    });
+                    break;
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -122,6 +136,10 @@ public class RoomMsgHandler {
     public void sendMoveChess(int fromCol, int fromRow, int toCol, int toRow, boolean isFromWon, String random, int myLeftTime){
         _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.CHESS_MOVE, myLeftTime + "@" +
                 fromCol +"," + fromRow + "|" + toCol + "," + toRow + "|" + (isFromWon ? "1" : "0") + "|" + random));
+    }
+
+    public void sendSurrender(){
+        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.SURRENDER, ""));
     }
 
     public void onGameReady(){

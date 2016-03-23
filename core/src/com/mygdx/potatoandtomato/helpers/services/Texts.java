@@ -37,6 +37,9 @@ public class Texts {
     public String xMb() { return "%sMb";}
     public String xPlayers() { return "From %s to %s players";}
 
+    public String leaderBoard() { return "Leaderboard"; }
+    public String leaderBoards() { return "Leaderboards"; }
+
     public String roomTitle() { return "Game Room"; }
     public String settingsTitle() { return "Settings"; }
     public String inviteTitle() { return "Invite Friends"; }
@@ -110,9 +113,12 @@ public class Texts {
     public String facebookCannotGetFriends() { return "You need to login with your facebook first.";}
     public String noRecords() { return "No records found.";}
     public String requestFailed() { return "Request failed.";}
+    public String noLeaderBoard() { return "This game doesn't have leaderboard function enabled.";}
 
     public String xInvitedX() { return "%s has invited %s to join this room.";}
     public String xInvitedXFailed() { return "%s has invited %s to join this room, but request failed.";}
+
+    public String playedXAgo() { return "Played %s together %s";}
 
     public String gameStartingIn() { return "Game starting in %s...";}
     public String gameStartStop() { return "Game start process is stopped by %s...";}

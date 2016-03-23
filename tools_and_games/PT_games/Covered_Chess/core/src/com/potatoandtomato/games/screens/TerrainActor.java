@@ -182,7 +182,7 @@ public class TerrainActor extends Table {
 
     public void showBattle(){
         Image battleCloud = new Image(_assets.getTextures().get(Textures.Name.BATTLE_CLOUD));
-        _battleTable.add(battleCloud).size(65, 65);
+        _battleTable.add(battleCloud).size(80, 80);
         battleCloud.setOrigin(Align.center);
         battleCloud.addAction(forever(sequence(Actions.rotateBy(-5, 0.1f), Actions.rotateBy(5, 0.1f))));
 

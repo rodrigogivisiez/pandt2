@@ -40,6 +40,8 @@ public class Fonts implements IAssetFragment {
 
     private void loadFonts(){
 
+        _preloadFonts.add(new Font(FontName.MYRIAD, FontSize.XS, FontColor.WHITE, FontStyle.SEMI_BOLD,
+                FontBorderColor.BLACK, FontShadowColor.NONE));
         _preloadFonts.add(new Font(FontName.MYRIAD, FontSize.S, FontColor.BLACK, FontStyle.BOLD,
                 FontBorderColor.NONE, FontShadowColor.NONE));
         _preloadFonts.add(new Font(FontName.MYRIAD, FontSize.S, FontColor.BLACK, FontStyle.REGULAR,
@@ -61,6 +63,8 @@ public class Fonts implements IAssetFragment {
         _preloadFonts.add(new Font(FontName.MYRIAD, FontSize.S, FontColor.WHITE, FontStyle.BOLD,
                 FontBorderColor.NONE, FontShadowColor.NONE));
         _preloadFonts.add(new Font(FontName.MYRIAD, FontSize.S, FontColor.WHITE, FontStyle.REGULAR,
+                FontBorderColor.NONE, FontShadowColor.NONE));
+        _preloadFonts.add(new Font(FontName.MYRIAD, FontSize.S, FontColor.WHITE, FontStyle.ITALIC,
                 FontBorderColor.NONE, FontShadowColor.NONE));
         _preloadFonts.add(new Font(FontName.MYRIAD, FontSize.S, FontColor.DARK_BROWN, FontStyle.ITALIC,
                 FontBorderColor.NONE, FontShadowColor.NONE));
@@ -101,6 +105,10 @@ public class Fonts implements IAssetFragment {
                 FontBorderColor.NONE, FontShadowColor.NONE));
         _preloadFonts.add(new Font(FontName.HELVETICA, FontSize.L, FontColor.BLACK, FontStyle.BOLD,
                 FontBorderColor.NONE, FontShadowColor.NONE));
+        _preloadFonts.add(new Font(FontName.HELVETICA, FontSize.L, FontColor.WHITE, FontStyle.HEAVY,
+                FontBorderColor.NONE, FontShadowColor.NONE));
+        _preloadFonts.add(new Font(FontName.HELVETICA, FontSize.XL, FontColor.WHITE, FontStyle.HEAVY_ITALIC,
+                FontBorderColor.DARK_BROWN, FontShadowColor.NONE));
         _preloadFonts.add(new Font(FontName.HELVETICA, FontSize.XXL, FontColor.DARK_BROWN, FontStyle.CONDENSED,
                 FontBorderColor.NONE, FontShadowColor.DARK_ORANGE));
 
@@ -108,12 +116,19 @@ public class Fonts implements IAssetFragment {
                 FontBorderColor.BLACK, FontShadowColor.NONE));
         _preloadFonts.add(new Font(FontName.PIZZA, FontSize.XL, FontColor.WHITE, FontStyle.REGULAR,
                 FontBorderColor.NONE, FontShadowColor.DARK_ORANGE));
+        _preloadFonts.add(new Font(FontName.PIZZA, FontSize.XXL, FontColor.WHITE, FontStyle.REGULAR,
+                FontBorderColor.DARK_BLUE, FontShadowColor.DARK_BLUE));
         _preloadFonts.add(new Font(FontName.PIZZA, FontSize.XXL, FontColor.TEAL, FontStyle.REGULAR,
                 FontBorderColor.NONE, FontShadowColor.DARK_ORANGE));
         _preloadFonts.add(new Font(FontName.PIZZA, FontSize.XXXL, FontColor.ORANGE, FontStyle.REGULAR,
                 FontBorderColor.NONE, FontShadowColor.NONE));
         _preloadFonts.add(new Font(FontName.PIZZA, FontSize.MAX, FontColor.BLACK, FontStyle.REGULAR,
                 FontBorderColor.LIGHT_ORANGE, FontShadowColor.NONE));
+
+        _preloadFonts.add(new Font(FontName.CARTER, FontSize.S, FontColor.YELLOW, FontStyle.REGULAR,
+                FontBorderColor.BLACK, FontShadowColor.NONE));
+        _preloadFonts.add(new Font(FontName.CARTER, FontSize.L, FontColor.YELLOW, FontStyle.REGULAR,
+                FontBorderColor.BLACK, FontShadowColor.NONE));
 
         for(Font font : _preloadFonts){
             loadOneFont(font);
@@ -156,7 +171,7 @@ public class Fonts implements IAssetFragment {
     }
 
     public BitmapFont get(FontName fontName, FontStyle fontStyle){
-        return get(fontName, FontSize.M, FontColor.BLACK, fontStyle);
+        return get(fontName, FontSize.M, FontColor.WHITE, fontStyle);
     }
 
     public BitmapFont get(FontName fontName, FontSize fontSize){
@@ -164,7 +179,7 @@ public class Fonts implements IAssetFragment {
     }
 
     public BitmapFont get(FontName fontName, FontSize fontSize, FontStyle fontStyle){
-        return get(fontName, fontSize, FontColor.BLACK, fontStyle);
+        return get(fontName, fontSize, FontColor.WHITE, fontStyle);
     }
 
     public BitmapFont get(FontName fontName, FontColor fontColor, FontStyle fontStyle){
@@ -188,7 +203,7 @@ public class Fonts implements IAssetFragment {
     }
 
     public BitmapFont get(FontName fontName, FontSize fontSize, FontStyle fontStyle, FontBorderColor fontBorderColor){
-        return get(fontName, fontSize, FontColor.BLACK, fontStyle, fontBorderColor, FontShadowColor.NONE);
+        return get(fontName, fontSize, FontColor.WHITE, fontStyle, fontBorderColor, FontShadowColor.NONE);
     }
 
     public BitmapFont get(FontName fontName, FontSize fontSize, FontColor fontColor,  FontBorderColor fontBorderColor){
@@ -201,7 +216,7 @@ public class Fonts implements IAssetFragment {
     }
 
     public BitmapFont get(FontName fontName, FontSize fontSize, FontStyle fontStyle, FontShadowColor fontShadowColor){
-        return get(fontName, fontSize, FontColor.BLACK, fontStyle, FontBorderColor.NONE, fontShadowColor);
+        return get(fontName, fontSize, FontColor.WHITE, fontStyle, FontBorderColor.NONE, fontShadowColor);
     }
 
     public BitmapFont get(FontName fontName, FontSize fontSize, FontColor fontColor,  FontShadowColor fontShadowColor){
@@ -225,8 +240,15 @@ public class Fonts implements IAssetFragment {
     }
 
     private void loadOneFont(Font font){
+        int borderSize = 0;
+        if(font.hasBorder()){
+            if(font.fontSize == FontSize.MAX) borderSize = 4;
+            if(font.fontSize == FontSize.XL) borderSize = 2;
+            else borderSize = 1;
+        }
+
         loadOneFont(font.getPath(), font.getName(), font.getColor(), font.getSize(),
-                font.hasBorder() ? ( font.fontSize == FontSize.MAX ? 4 : 1) : 0, font.getBorderColor(), font.hasShadow() ? 1 : 0, font.getShadowColor());
+                borderSize, font.getBorderColor(), font.hasShadow() ? 1 : 0, font.getShadowColor());
 
     }
 
@@ -255,15 +277,15 @@ public class Fonts implements IAssetFragment {
     }
 
     public enum FontStyle {
-        SEMI_BOLD, REGULAR, BOLD, CONDENSED, ITALIC
+        SEMI_BOLD, REGULAR, BOLD, CONDENSED, ITALIC, HEAVY, HEAVY_ITALIC
     }
 
     public enum FontColor{
-        WHITE, BLACK, DARK_BROWN, TEAL, GRAY, GREEN, ORANGE, BLUE, RED
+        WHITE, BLACK, DARK_BROWN, TEAL, GRAY, GREEN, ORANGE, BLUE, RED, YELLOW
     }
 
     public enum FontName{
-        PIZZA, MYRIAD, HELVETICA
+        PIZZA, MYRIAD, HELVETICA, CARTER
     }
 
     public enum FontSize{
@@ -271,11 +293,11 @@ public class Fonts implements IAssetFragment {
     }
 
     public enum FontShadowColor{
-        GRAY, DARK_ORANGE, BLACK, NONE
+        GRAY, DARK_ORANGE, BLACK, DARK_BLUE, NONE
     }
 
     public enum FontBorderColor{
-        WHITE, GRAY, BLACK, LIGHT_ORANGE, NONE
+        WHITE, GRAY, BLACK, LIGHT_ORANGE, DARK_BLUE, DARK_BROWN, NONE
     }
 
     private class Font{
@@ -311,6 +333,9 @@ public class Fonts implements IAssetFragment {
                 case HELVETICA:
                     path = "fonts/Helvetica-%s.otf";
                     break;
+                case CARTER:
+                    path = "fonts/CarterOne-%s.otf";
+                    break;
             }
 
             String styleName = "";
@@ -330,6 +355,11 @@ public class Fonts implements IAssetFragment {
                 case ITALIC:
                     styleName = "It";
                     break;
+                case HEAVY:
+                    styleName = "Heavy";
+                    break;
+                case HEAVY_ITALIC:
+                    styleName = "HvIt";
             }
 
             return String.format(path, styleName);
@@ -359,6 +389,8 @@ public class Fonts implements IAssetFragment {
                     return Color.valueOf("11b1bf");
                 case RED:
                     return Color.valueOf("e40404");
+                case YELLOW:
+                    return Color.valueOf("fff600");
             }
             return null;
         }
@@ -371,6 +403,8 @@ public class Fonts implements IAssetFragment {
                     return Color.valueOf("a05e00");
                 case BLACK:
                     return Color.BLACK;
+                case DARK_BLUE:
+                    return Color.valueOf("0e516c");
             }
             return null;
         }
@@ -385,6 +419,10 @@ public class Fonts implements IAssetFragment {
                     return Color.BLACK;
                 case LIGHT_ORANGE:
                     return Color.valueOf("fed778");
+                case DARK_BLUE:
+                    return Color.valueOf("0f5673");
+                case DARK_BROWN:
+                    return Color.valueOf("81562c");
             }
             return null;
         }

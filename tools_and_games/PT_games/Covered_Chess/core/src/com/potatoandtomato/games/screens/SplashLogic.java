@@ -13,9 +13,11 @@ public class SplashLogic {
 
     private SplashActor _splashActor;
     private Services _services;
+    private Runnable _onFinish;
 
-    public SplashLogic(GameCoordinator coordinator, Services services) {
+    public SplashLogic(GameCoordinator coordinator, Runnable onFinish, Services services) {
         this._services = services;
+        this._onFinish = onFinish;
         _splashActor = new SplashActor(coordinator, services.getAssets(), services.getTexts());
 
         _services.getSoundsWrapper().playSounds(Sounds.Name.START_GAME);
@@ -31,6 +33,7 @@ public class SplashLogic {
                     public void run() {
                         _splashActor.remove();
                         _services.getSoundsWrapper().playTheme();
+                        _onFinish.run();
                     }
                 });
             }

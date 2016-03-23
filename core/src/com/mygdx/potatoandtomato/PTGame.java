@@ -6,6 +6,11 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
+import com.mygdx.potatoandtomato.enums.LeaderboardType;
+import com.mygdx.potatoandtomato.models.EndGameData;
+import com.mygdx.potatoandtomato.models.Room;
+import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.*;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
@@ -18,7 +23,10 @@ import com.mygdx.potatoandtomato.helpers.services.*;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
+import com.potatoandtomato.common.models.EndGameResult;
+import com.potatoandtomato.common.models.ScoreDetails;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -83,6 +91,7 @@ public class PTGame extends Game implements IPTGame {
 				setScreen(_screen);
 
 				_screen.toScene(SceneEnum.BOOT);
+
 			}
 		});
 	}
@@ -125,8 +134,8 @@ public class PTGame extends Game implements IPTGame {
 			_notification.render(Gdx.graphics.getDeltaTime());
 
 		}
-		catch (IllegalStateException ex){
-
+		catch (Exception ex){
+			ex.printStackTrace();
 		}
 	}
 

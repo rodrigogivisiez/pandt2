@@ -1,0 +1,75 @@
+
+TOMATO_BORING.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+tomato_boring
+  rotate: false
+  xy: 1, 1
+  size: 83, 83
+  orig: 83, 83
+  offset: 0, 0
+  index: 0
+tomato_boring
+  rotate: false
+  xy: 86, 1
+  size: 83, 83
+  orig: 83, 83
+  offset: 0, 0
+  index: 1
+tomato_boring
+  rotate: false
+  xy: 86, 1
+  size: 83, 83
+  orig: 83, 83
+  offset: 0, 0
+  index: 9
+tomato_boring
+  rotate: false
+  xy: 171, 1
+  size: 83, 83
+  orig: 83, 83
+  offset: 0, 0
+  index: 2
+tomato_boring
+  rotate: false
+  xy: 171, 1
+  size: 83, 83
+  orig: 83, 83
+  offset: 0, 0
+  index: 8
+tomato_boring
+  rotate: false
+  xy: 256, 1
+  size: 83, 83
+  orig: 83, 83
+  offset: 0, 0
+  index: 3
+tomato_boring
+  rotate: false
+  xy: 256, 1
+  size: 83, 83
+  orig: 83, 83
+  offset: 0, 0
+  index: 7
+tomato_boring
+  rotate: false
+  xy: 341, 1
+  size: 83, 83
+  orig: 83, 83
+  offset: 0, 0
+  index: 4
+tomato_boring
+  rotate: false
+  xy: 341, 1
+  size: 83, 83
+  orig: 83, 83
+  offset: 0, 0
+  index: 6
+tomato_boring
+  rotate: false
+  xy: 426, 1
+  size: 83, 83
+  orig: 83, 83
+  offset: 0, 0
+  index: 5

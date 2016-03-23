@@ -1,6 +1,7 @@
 package com.potatoandtomato.games.references;
 
 import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.enums.ChessAnimal;
 import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
@@ -20,71 +21,70 @@ import java.util.Collections;
 public class StatusRef {
 
     private SoundsWrapper _soundsWrapper;
+    private long _abilityTriggeredAnimateTime = 1000;
 
     public StatusRef(SoundsWrapper _soundsWrapper) {
         this._soundsWrapper = _soundsWrapper;
     }
 
-    public void chessOpened(final ArrayList<TerrainLogic> terrains, final TerrainLogic openedLogic, ChessColor myChessColor, String random,
-                            Runnable onFinish){
+    public void chessOpened(final ArrayList<TerrainLogic> terrains, final TerrainLogic openedLogic, ChessColor myChessColor, String random){
         switch (openedLogic.getChessLogic().getChessModel().getChessAnimal()){
             case DOG:
-                dogEffect(terrains, openedLogic, myChessColor, onFinish);
+                dogEffect(terrains, openedLogic, myChessColor);
                 break;
             case CAT:
-                catEffect(terrains, openedLogic, random, onFinish);
+                catEffect(terrains, openedLogic, random);
                 break;
             case TIGER:
-                tigerEffect(terrains, openedLogic, onFinish);
+                tigerEffect(terrains, openedLogic);
                 break;
             case LION:
-                lionEffect(terrains, openedLogic, onFinish);
+                lionEffect(terrains, openedLogic);
                 break;
             case ELEPHANT:
-                elephantEffect(terrains, openedLogic, onFinish);
+                elephantEffect(terrains, openedLogic);
                 break;
             default:
-                onFinish.run();
                 break;
         }
     }
 
     public void chessMoved(final ArrayList<TerrainLogic> terrains, final TerrainLogic winnerLogic, ChessType winnerChessType,
-                           final ChessType loserChessType, final String random, final Runnable onFinish){
+                           final ChessType loserChessType, final String random){
 
-        final Runnable transformRunnable = new Runnable() {
-            @Override
-            public void run() {
-                if(loserChessType != ChessType.NONE){
-                    winnerLogic.getChessLogic().getChessModel().addKillCount();
-                    transformAnimalIfNeeded(winnerLogic, random, onFinish == null ? null : onFinish);
-                }
-                else{
-                    if(onFinish != null) onFinish.run();
-                }
-            }
-        };
+        transformAnimalIfNeeded(winnerLogic, random);
+
+//        final Runnable transformRunnable = new Runnable() {
+//            @Override
+//            public void run() {
+//                if(loserChessType != ChessType.NONE){
+//                    winnerLogic.getChessLogic().getChessModel().addKillCount();
+//                    transformAnimalIfNeeded(winnerLogic, random);
+//                }
+//                else{
+//                }
+//            }
+//        };
 
         switch (loserChessType.toChessAnimal()){
             case MOUSE:
-                mouseEffect(winnerLogic, loserChessType, transformRunnable);
+                mouseEffect(winnerLogic, loserChessType);
                 break;
             case WOLF:
-                wolfEffect(terrains, loserChessType, transformRunnable);
+                wolfEffect(terrains, loserChessType);
                 break;
             default:
-                transformRunnable.run();
                 break;
         }
     }
 
-    public void suddenDeathStatus(final ArrayList<TerrainLogic> terrains, final Runnable onFinish){
+    public void suddenDeathStatus(final ArrayList<TerrainLogic> terrains){
         for(TerrainLogic terrainLogic : terrains){
             if(terrainLogic.getChessLogic().getChessModel().getStatus() != Status.ANGRY && !terrainLogic.isEmpty()){
-                setStatus(terrainLogic, Status.ANGRY, null);
+                setStatus(terrainLogic, Status.ANGRY);
             }
+            _soundsWrapper.playSounds(Sounds.Name.ANGRY);
         }
-        onFinish.run();
     }
 
     public void turnOver(final ArrayList<TerrainLogic> terrains){
@@ -92,78 +92,89 @@ public class StatusRef {
             terrainLogic.getChessLogic().getChessModel().addStatusTurn();
             if(terrainLogic.getChessLogic().getChessModel().getStatus() == Status.POISON){
                 if(terrainLogic.getChessLogic().getChessModel().getStatusTurn() > 8){
-                    setStatus(terrainLogic, Status.NONE, null);
+                    setStatus(terrainLogic, Status.NONE);
                 }
             }
             if(terrainLogic.getChessLogic().getChessModel().getStatus() == Status.PARALYZED){
                 if(terrainLogic.getChessLogic().getChessModel().getStatusTurn() > 4){
-                    setStatus(terrainLogic, Status.NONE, null);
+                    setStatus(terrainLogic, Status.NONE);
                 }
             }
             if(terrainLogic.getChessLogic().getChessModel().getStatus() == Status.DECREASE){
                 if(terrainLogic.getChessLogic().getChessModel().getStatusTurn() > 4){
-                    setStatus(terrainLogic, Status.NONE, null);
+                    setStatus(terrainLogic, Status.NONE);
                 }
             }
         }
     }
 
-    private void lionEffect(final ArrayList<TerrainLogic> terrains, final TerrainLogic lionLogic, final Runnable onFinish){
-        showAbility(lionLogic, lionLogic.getChessLogic().getChessModel().getChessType(), true, ChessAnimal.LION, new Runnable() {
+    private void lionEffect(final ArrayList<TerrainLogic> terrains, final TerrainLogic lionLogic){
+        showAbility(lionLogic, lionLogic.getChessLogic().getChessModel().getChessType(), true, ChessAnimal.LION);
+        Threadings.delay(_abilityTriggeredAnimateTime, new Runnable() {
             @Override
             public void run() {
                 ChessColor lionChessColor = lionLogic.getChessLogic().getChessModel().getChessColor();
+                boolean found = false;
                 for(TerrainLogic terrainLogic : terrains){
                     if(terrainLogic.getChessLogic().getChessModel().getChessColor() != lionChessColor && terrainLogic.isOpened() && !terrainLogic.isEmpty()){
-                        setStatus(terrainLogic, Status.DECREASE, null);
+                        setStatus(terrainLogic, Status.DECREASE);
+                        found = true;
                     }
                 }
-                if(onFinish != null) onFinish.run();
+                if(found) _soundsWrapper.playSounds(Sounds.Name.DECREASE);
             }
         });
     }
 
-    private void tigerEffect(final ArrayList<TerrainLogic> terrains, final TerrainLogic tigerLogic, final Runnable onFinish){
-        showAbility(tigerLogic, tigerLogic.getChessLogic().getChessModel().getChessType(), true, ChessAnimal.TIGER, new Runnable() {
+    private void tigerEffect(final ArrayList<TerrainLogic> terrains, final TerrainLogic tigerLogic){
+        showAbility(tigerLogic, tigerLogic.getChessLogic().getChessModel().getChessType(), true, ChessAnimal.TIGER);
+        Threadings.delay(_abilityTriggeredAnimateTime, new Runnable() {
             @Override
             public void run() {
                 ChessColor tigerChessColor = tigerLogic.getChessLogic().getChessModel().getChessColor();
+                boolean found = false;
                 for (TerrainLogic terrainLogic : terrains) {
                     if (terrainLogic.getChessLogic().getChessModel().getChessColor() != tigerChessColor && terrainLogic.isOpened() && !terrainLogic.isEmpty()){
-                        setStatus(terrainLogic, Status.PARALYZED, null);
+                        setStatus(terrainLogic, Status.PARALYZED);
+                        found = true;
                     }
                 }
-                if (onFinish != null) onFinish.run();
+                if(found) _soundsWrapper.playSounds(Sounds.Name.PARALYZED);
             }
         });
     }
 
-    private void elephantEffect(final ArrayList<TerrainLogic> terrains, final TerrainLogic elephantLogic, final Runnable onFinish){
-        showAbility(elephantLogic, elephantLogic.getChessLogic().getChessModel().getChessType(), true, ChessAnimal.ELEPHANT, new Runnable() {
+    private void elephantEffect(final ArrayList<TerrainLogic> terrains, final TerrainLogic elephantLogic){
+        showAbility(elephantLogic, elephantLogic.getChessLogic().getChessModel().getChessType(), true, ChessAnimal.ELEPHANT);
+        Threadings.delay(_abilityTriggeredAnimateTime, new Runnable() {
             @Override
             public void run() {
+                boolean found = false;
                 for (final TerrainLogic terrainLogic : terrains) {
                     if (isNegativeStatus(terrainLogic.getChessLogic().getChessModel().getStatus()) &&
                             terrainLogic.getChessLogic().getChessModel().getChessColor() == elephantLogic.getChessLogic().getChessModel().getChessColor()) {
-                        setStatus(terrainLogic, Status.NONE, null);
+                        setStatus(terrainLogic, Status.NONE);
+                        found = true;
                     }
                 }
-                if(onFinish != null) onFinish.run();
+
+                if(found) _soundsWrapper.playSounds(Sounds.Name.HEAL);
             }
         });
     }
 
-    private void wolfEffect(final ArrayList<TerrainLogic> terrains, final ChessType wolfChessType, final Runnable onFinish){
+    private void wolfEffect(final ArrayList<TerrainLogic> terrains, final ChessType wolfChessType){
         boolean found = false;
         for(final TerrainLogic terrainLogic : terrains){
             if(terrainLogic.getChessLogic().getChessModel().getChessType() == wolfChessType){
                 final Runnable effectRunnable = new Runnable() {
                     @Override
                     public void run() {
-                        showAbility(terrainLogic, wolfChessType, true, ChessAnimal.WOLF, new Runnable() {
+                        showAbility(terrainLogic, wolfChessType, true, ChessAnimal.WOLF);
+                        Threadings.delay(_abilityTriggeredAnimateTime, new Runnable() {
                             @Override
                             public void run() {
-                                setStatus(terrainLogic, Status.INCREASE, onFinish == null ? null : onFinish);
+                                setStatus(terrainLogic, Status.INCREASE);
                             }
                         });
                     }
@@ -185,19 +196,17 @@ public class StatusRef {
                 break;
             }
         }
-        if(!found){
-            if(onFinish != null) onFinish.run();
-        }
     }
 
-    private void mouseEffect(final TerrainLogic terrainLogic, final ChessType mouseChessType, final Runnable onFinish){
+    private void mouseEffect(final TerrainLogic terrainLogic, final ChessType mouseChessType){
         Threadings.delay(500, new Runnable() {
             @Override
             public void run() {
-                showAbility(terrainLogic, mouseChessType, false, ChessAnimal.MOUSE, new Runnable() {
+                showAbility(terrainLogic, mouseChessType, false, ChessAnimal.MOUSE);
+                Threadings.delay(_abilityTriggeredAnimateTime, new Runnable() {
                     @Override
                     public void run() {
-                        setStatus(terrainLogic, Status.POISON, onFinish == null ? null : onFinish);
+                        if(setStatus(terrainLogic, Status.POISON)) _soundsWrapper.playSounds(Sounds.Name.POISON);
                     }
                 });
             }
@@ -205,7 +214,7 @@ public class StatusRef {
     }
 
     private void catEffect(final ArrayList<TerrainLogic> terrains, final TerrainLogic openedLogic,
-                           String random, final Runnable onFinish){
+                           String random){
         final ArrayList<TerrainLogic> mouseLogics = getTerrainsByChessType(terrains,
                 openedLogic.getChessLogic().getChessModel().getChessColor() == ChessColor.RED ? ChessType.YELLOW_MOUSE : ChessType.RED_MOUSE, true);
         final ArrayList<TerrainLogic> processedMouseLogics = new ArrayList<TerrainLogic>();
@@ -246,7 +255,9 @@ public class StatusRef {
                 Threadings.postRunnable(new Runnable() {
                     @Override
                     public void run() {
-                        showAbility(openedLogic, openedLogic.getChessLogic().getChessModel().getChessType(), true, ChessAnimal.CAT, new Runnable() {
+                        showAbility(openedLogic, openedLogic.getChessLogic().getChessModel().getChessType(), true, ChessAnimal.CAT);
+
+                        Threadings.delay(_abilityTriggeredAnimateTime, new Runnable() {
                             @Override
                             public void run() {
                                 for(TerrainLogic logic : processedMouseLogics){
@@ -259,18 +270,15 @@ public class StatusRef {
                                 }
                             }
                         });
+
                     }
                 });
-                while (i[0] < processedMouseLogics.size()){
-                    Threadings.sleep(200);
-                }
-                if(onFinish != null) onFinish.run();
             }
         });
 
     }
 
-    private void dogEffect(final ArrayList<TerrainLogic> terrains, final TerrainLogic openedLogic, ChessColor myChessColor, final Runnable onFinish){
+    private void dogEffect(final ArrayList<TerrainLogic> terrains, final TerrainLogic openedLogic, ChessColor myChessColor){
         final ArrayList<TerrainLogic> adjacentLogics = getAdjacentTerrains(terrains, openedLogic);
         final boolean revealChess = myChessColor == openedLogic.getChessLogic().getChessModel().getChessColor();
         Threadings.runInBackground(new Runnable() {
@@ -280,9 +288,10 @@ public class StatusRef {
                 Threadings.postRunnable(new Runnable() {
                     @Override
                     public void run() {
-                        _soundsWrapper.playAnimalSound(ChessAnimal.DOG);
-                        openedLogic.getChessLogic().getChessActor().showAbilityTriggered(
-                                openedLogic.getChessLogic().getChessModel().getChessType(), true, new Runnable() {
+
+                        showAbility(openedLogic, openedLogic.getChessLogic().getChessModel().getChessType(), true, ChessAnimal.DOG);
+
+                        Threadings.delay(_abilityTriggeredAnimateTime, new Runnable() {
                             @Override
                             public void run() {
                                 for(TerrainLogic logic : adjacentLogics){
@@ -298,12 +307,9 @@ public class StatusRef {
                                 }
                             }
                         });
+
                     }
                 });
-                while (i[0] < adjacentLogics.size()){
-                    Threadings.sleep(200);
-                }
-                if(onFinish != null) onFinish.run();
             }
         });
     }
@@ -355,27 +361,26 @@ public class StatusRef {
         return logics;
     }
 
-    private void setStatus( final TerrainLogic logic, final Status status, final Runnable onFinish){
-        logic.getChessLogic().getChessModel().setStatus(status);
-        logic.getChessLogic().getChessActor().setStatusIcon(status, true, new Runnable() {
-            @Override
-            public void run() {
-                if (onFinish != null) onFinish.run();
-            }
-        });
-
+    private boolean setStatus( final TerrainLogic logic, final Status status){
+        if( logic.getChessLogic().getChessModel().getStatus() == Status.ANGRY ||  logic.getChessLogic().getChessModel().getStatus() == Status.KING){
+            return false;
+        }
+        else{
+            Threadings.delay(1000, new Runnable() {
+                @Override
+                public void run() {
+                    logic.getChessLogic().getChessModel().setStatus(status);
+                    logic.getChessLogic().invalidate();
+                }
+            });
+            logic.getChessLogic().getChessActor().setStatusIcon(status, true);
+            return true;
+        }
     }
 
-    private void showAbility(final TerrainLogic terrainLogic, ChessType chessType, boolean hideChessAnimal, ChessAnimal chessAnimal,
-                             final Runnable onFinish){
-
+    private void showAbility(final TerrainLogic terrainLogic, ChessType chessType, boolean hideChessAnimal, ChessAnimal chessAnimal){
         _soundsWrapper.playAnimalSound(chessAnimal);
-        terrainLogic.getChessLogic().getChessActor().showAbilityTriggered(chessType, hideChessAnimal, new Runnable() {
-            @Override
-            public void run() {
-                if(onFinish != null) onFinish.run();
-            }
-        });
+        terrainLogic.getChessLogic().getChessActor().showAbilityTriggered(chessType, hideChessAnimal);
     }
 
     private boolean isNegativeStatus(Status status){
@@ -383,12 +388,10 @@ public class StatusRef {
     }
 
 
-    private void transformAnimalIfNeeded(TerrainLogic animalLogic, String random, Runnable onFinish){
-        if(animalLogic.getChessLogic().getChessModel().canTransform()){
-            setStatus(animalLogic, random.equals("0") ? Status.INJURED : Status.KING, onFinish);
-        }
-        else{
-            if(onFinish != null) onFinish.run();
+    private void transformAnimalIfNeeded(TerrainLogic animalLogic, String random){
+        if(animalLogic.getChessLogic().getChessModel().canTransform() && random.equals("1")){
+            setStatus(animalLogic, Status.KING);
+            _soundsWrapper.playSounds(Sounds.Name.KING);
         }
     }
 

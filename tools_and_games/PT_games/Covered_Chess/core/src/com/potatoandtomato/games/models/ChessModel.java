@@ -44,7 +44,7 @@ public class ChessModel extends Model {
     }
 
     public boolean canTransform(){
-        return this.killCount == 3;
+        return this.killCount == 3 && this.status != Status.KING;
     }
 
     public Status getStatus() {
@@ -134,6 +134,12 @@ public class ChessModel extends Model {
         chessModel.setStatusTurn(this.getStatusTurn());
         chessModel.setKillCount(this.getKillCount());
         return chessModel;
+    }
+
+    public void resetSurface(){
+        setFocusing(false);
+        setDragging(false);
+        setSelected(false);
     }
 
 }
