@@ -6,14 +6,11 @@ import com.potatoandtomato.games.enums.ChessAnimal;
 import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
 import com.potatoandtomato.games.enums.Status;
-import com.potatoandtomato.games.helpers.SoundsWrapper;
+import com.potatoandtomato.games.services.SoundsWrapper;
 import com.potatoandtomato.games.helpers.Terrains;
-import com.potatoandtomato.games.screens.ChessLogic;
 import com.potatoandtomato.games.screens.TerrainLogic;
-import org.omg.PortableServer.THREAD_POLICY_ID;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * Created by SiongLeng on 25/2/2016.
@@ -109,58 +106,95 @@ public class StatusRef {
     }
 
     private void lionEffect(final ArrayList<TerrainLogic> terrains, final TerrainLogic lionLogic){
-        showAbility(lionLogic, lionLogic.getChessLogic().getChessModel().getChessType(), true, ChessAnimal.LION);
-        Threadings.delay(_abilityTriggeredAnimateTime, new Runnable() {
-            @Override
-            public void run() {
-                ChessColor lionChessColor = lionLogic.getChessLogic().getChessModel().getChessColor();
-                boolean found = false;
-                for(TerrainLogic terrainLogic : terrains){
-                    if(terrainLogic.getChessLogic().getChessModel().getChessColor() != lionChessColor && terrainLogic.isOpened() && !terrainLogic.isEmpty()){
-                        setStatus(terrainLogic, Status.DECREASE);
-                        found = true;
+        final ArrayList<TerrainLogic> targetLogics = getLionEffectTargets(terrains, lionLogic);
+
+        if(targetLogics.size() > 0){
+            showAbility(lionLogic, lionLogic.getChessLogic().getChessModel().getChessType(), true, ChessAnimal.LION);
+            Threadings.delay(_abilityTriggeredAnimateTime, new Runnable() {
+                @Override
+                public void run() {
+                    ChessColor lionChessColor = lionLogic.getChessLogic().getChessModel().getChessColor();
+                    boolean found = false;
+                    for(TerrainLogic terrainLogic : targetLogics){
+                          setStatus(terrainLogic, Status.DECREASE);
                     }
+                    _soundsWrapper.playSounds(Sounds.Name.DECREASE);
                 }
-                if(found) _soundsWrapper.playSounds(Sounds.Name.DECREASE);
+            });
+        }
+
+    }
+
+    private ArrayList<TerrainLogic> getLionEffectTargets(final ArrayList<TerrainLogic> terrains, final TerrainLogic lionLogic){
+        ArrayList<TerrainLogic> terrainLogics = new ArrayList<TerrainLogic>();
+        ChessColor lionChessColor = lionLogic.getChessLogic().getChessModel().getChessColor();
+        for (TerrainLogic terrainLogic : terrains) {
+            if(terrainLogic.getChessLogic().getChessModel().getChessColor() != lionChessColor && terrainLogic.isOpened() && !terrainLogic.isEmpty()){
+                terrainLogics.add(terrainLogic);
             }
-        });
+        }
+        return terrainLogics;
     }
 
     private void tigerEffect(final ArrayList<TerrainLogic> terrains, final TerrainLogic tigerLogic){
-        showAbility(tigerLogic, tigerLogic.getChessLogic().getChessModel().getChessType(), true, ChessAnimal.TIGER);
-        Threadings.delay(_abilityTriggeredAnimateTime, new Runnable() {
-            @Override
-            public void run() {
-                ChessColor tigerChessColor = tigerLogic.getChessLogic().getChessModel().getChessColor();
-                boolean found = false;
-                for (TerrainLogic terrainLogic : terrains) {
-                    if (terrainLogic.getChessLogic().getChessModel().getChessColor() != tigerChessColor && terrainLogic.isOpened() && !terrainLogic.isEmpty()){
-                        setStatus(terrainLogic, Status.PARALYZED);
-                        found = true;
+        final ArrayList<TerrainLogic> targetLogics = getTigerEffectTargets(terrains, tigerLogic);
+
+        if(targetLogics.size() > 0){
+            showAbility(tigerLogic, tigerLogic.getChessLogic().getChessModel().getChessType(), true, ChessAnimal.TIGER);
+            Threadings.delay(_abilityTriggeredAnimateTime, new Runnable() {
+                @Override
+                public void run() {
+                    ChessColor tigerChessColor = tigerLogic.getChessLogic().getChessModel().getChessColor();
+                    boolean found = false;
+                    for (TerrainLogic terrainLogic : targetLogics) {
+                           setStatus(terrainLogic, Status.PARALYZED);
                     }
+
+                    _soundsWrapper.playSounds(Sounds.Name.PARALYZED);
                 }
-                if(found) _soundsWrapper.playSounds(Sounds.Name.PARALYZED);
+            });
+        }
+    }
+
+    private ArrayList<TerrainLogic> getTigerEffectTargets(final ArrayList<TerrainLogic> terrains, final TerrainLogic tigerLogic){
+        ArrayList<TerrainLogic> terrainLogics = new ArrayList<TerrainLogic>();
+        ChessColor tigerChessColor = tigerLogic.getChessLogic().getChessModel().getChessColor();
+        for (TerrainLogic terrainLogic : terrains) {
+            if (terrainLogic.getChessLogic().getChessModel().getChessColor() != tigerChessColor && terrainLogic.isOpened() && !terrainLogic.isEmpty()){
+                terrainLogics.add(terrainLogic);
             }
-        });
+        }
+        return terrainLogics;
     }
 
     private void elephantEffect(final ArrayList<TerrainLogic> terrains, final TerrainLogic elephantLogic){
-        showAbility(elephantLogic, elephantLogic.getChessLogic().getChessModel().getChessType(), true, ChessAnimal.ELEPHANT);
-        Threadings.delay(_abilityTriggeredAnimateTime, new Runnable() {
-            @Override
-            public void run() {
-                boolean found = false;
-                for (final TerrainLogic terrainLogic : terrains) {
-                    if (isNegativeStatus(terrainLogic.getChessLogic().getChessModel().getStatus()) &&
-                            terrainLogic.getChessLogic().getChessModel().getChessColor() == elephantLogic.getChessLogic().getChessModel().getChessColor()) {
-                        setStatus(terrainLogic, Status.NONE);
-                        found = true;
-                    }
-                }
+        final ArrayList<TerrainLogic> targetLogics = getElephantEffectTargets(terrains, elephantLogic);
 
-                if(found) _soundsWrapper.playSounds(Sounds.Name.HEAL);
+        if(targetLogics.size() > 0){
+            showAbility(elephantLogic, elephantLogic.getChessLogic().getChessModel().getChessType(), true, ChessAnimal.ELEPHANT);
+            Threadings.delay(_abilityTriggeredAnimateTime, new Runnable() {
+                @Override
+                public void run() {
+                    boolean found = false;
+                    for (final TerrainLogic terrainLogic : targetLogics) {
+                          setStatus(terrainLogic, Status.NONE);
+                    }
+
+                    _soundsWrapper.playSounds(Sounds.Name.HEAL);
+                }
+            });
+        }
+    }
+
+    private ArrayList<TerrainLogic> getElephantEffectTargets(final ArrayList<TerrainLogic> terrains, final TerrainLogic elephantLogic){
+        ArrayList<TerrainLogic> terrainLogics = new ArrayList<TerrainLogic>();
+        for (final TerrainLogic terrainLogic : terrains) {
+            if (isNegativeStatus(terrainLogic.getChessLogic().getChessModel().getStatus()) &&
+                    terrainLogic.getChessLogic().getChessModel().getChessColor() == elephantLogic.getChessLogic().getChessModel().getChessColor()) {
+                terrainLogics.add(terrainLogic);
             }
-        });
+        }
+        return terrainLogics;
     }
 
     private void wolfEffect(final ArrayList<TerrainLogic> terrains, final ChessType wolfChessType){
@@ -215,6 +249,41 @@ public class StatusRef {
 
     private void catEffect(final ArrayList<TerrainLogic> terrains, final TerrainLogic openedLogic,
                            String random){
+        final ArrayList<TerrainLogic> targetLogics = getCatEffectTargets(terrains, openedLogic, random);
+
+        if(targetLogics.size() > 0){
+            Threadings.runInBackground(new Runnable() {
+                @Override
+                public void run() {
+                    final int[] i = {0};
+                    Threadings.postRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            showAbility(openedLogic, openedLogic.getChessLogic().getChessModel().getChessType(), true, ChessAnimal.CAT);
+
+                            Threadings.delay(_abilityTriggeredAnimateTime, new Runnable() {
+                                @Override
+                                public void run() {
+                                    for(TerrainLogic logic : targetLogics){
+                                        logic.getChessLogic().getChessActor().previewChess(true, new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                i[0]++;
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    private ArrayList<TerrainLogic> getCatEffectTargets(final ArrayList<TerrainLogic> terrains,  final TerrainLogic openedLogic,
+                                                        String random){
         final ArrayList<TerrainLogic> mouseLogics = getTerrainsByChessType(terrains,
                 openedLogic.getChessLogic().getChessModel().getChessColor() == ChessColor.RED ? ChessType.YELLOW_MOUSE : ChessType.RED_MOUSE, true);
         final ArrayList<TerrainLogic> processedMouseLogics = new ArrayList<TerrainLogic>();
@@ -247,71 +316,43 @@ public class StatusRef {
         for(int index : toGetLogicIndexes){
             processedMouseLogics.add(mouseLogics.get(index));
         }
-
-        Threadings.runInBackground(new Runnable() {
-            @Override
-            public void run() {
-                final int[] i = {0};
-                Threadings.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        showAbility(openedLogic, openedLogic.getChessLogic().getChessModel().getChessType(), true, ChessAnimal.CAT);
-
-                        Threadings.delay(_abilityTriggeredAnimateTime, new Runnable() {
-                            @Override
-                            public void run() {
-                                for(TerrainLogic logic : processedMouseLogics){
-                                    logic.getChessLogic().getChessActor().previewChess(true, new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            i[0]++;
-                                        }
-                                    });
-                                }
-                            }
-                        });
-
-                    }
-                });
-            }
-        });
-
+        return processedMouseLogics;
     }
 
     private void dogEffect(final ArrayList<TerrainLogic> terrains, final TerrainLogic openedLogic, ChessColor myChessColor){
-        final ArrayList<TerrainLogic> adjacentLogics = getAdjacentTerrains(terrains, openedLogic);
+        final ArrayList<TerrainLogic> targetLogics = getDogEffectTargets(terrains, openedLogic);
         final boolean revealChess = myChessColor == openedLogic.getChessLogic().getChessModel().getChessColor();
-        Threadings.runInBackground(new Runnable() {
-            @Override
-            public void run() {
-                final int[] i = {0};
-                Threadings.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
 
-                        showAbility(openedLogic, openedLogic.getChessLogic().getChessModel().getChessType(), true, ChessAnimal.DOG);
+        if(targetLogics.size() > 0){
+            Threadings.postRunnable(new Runnable() {
+                @Override
+                public void run() {
 
-                        Threadings.delay(_abilityTriggeredAnimateTime, new Runnable() {
-                            @Override
-                            public void run() {
-                                for(TerrainLogic logic : adjacentLogics){
-                                    if(logic.isOpened()) i[0]++;
-                                    else{
-                                        logic.getChessLogic().getChessActor().previewChess(revealChess, new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                i[0]++;
-                                            }
-                                        });
-                                    }
-                                }
+                    showAbility(openedLogic, openedLogic.getChessLogic().getChessModel().getChessType(), true, ChessAnimal.DOG);
+
+                    Threadings.delay(_abilityTriggeredAnimateTime, new Runnable() {
+                        @Override
+                        public void run() {
+                            for(TerrainLogic logic : targetLogics){
+                                logic.getChessLogic().getChessActor().previewChess(revealChess, null);
                             }
-                        });
+                        }
+                    });
+                }
+            });
+        }
+    }
 
-                    }
-                });
+    private ArrayList<TerrainLogic> getDogEffectTargets(final ArrayList<TerrainLogic> terrains, final TerrainLogic openedLogic){
+        final ArrayList<TerrainLogic> targetLogics = new ArrayList<TerrainLogic>();
+        final ArrayList<TerrainLogic> adjacentLogics = getAdjacentTerrains(terrains, openedLogic);
+        for(TerrainLogic logic : adjacentLogics) {
+            if (!logic.isOpened() && !logic.isEmpty()) {
+                targetLogics.add(logic);
             }
-        });
+        }
+
+        return targetLogics;
     }
 
     private ArrayList<TerrainLogic> getAdjacentTerrains(final ArrayList<TerrainLogic> terrains, final TerrainLogic openedLogic){

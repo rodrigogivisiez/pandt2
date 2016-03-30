@@ -17,7 +17,7 @@ public class SampleGame extends MockGame {
 	@Override
 	public void create() {
 		super.create();
-		initiateMockGamingKit(1, 1);
+		initiateMockGamingKit(1, 1, false);
 	}
 
 	@Override

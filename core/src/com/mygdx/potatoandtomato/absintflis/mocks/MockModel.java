@@ -65,6 +65,7 @@ public class MockModel {
         roomUsers.put(user1.getProfile().getUserId(), user1);
         roomUsers.put(user2.getProfile().getUserId(), user2);
         r.setRoomUsers(roomUsers);
+        r.convertRoomUsersToTeams();
         return r;
     }
 

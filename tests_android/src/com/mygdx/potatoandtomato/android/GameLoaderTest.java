@@ -3,16 +3,18 @@ package com.mygdx.potatoandtomato.android;
 import android.test.ActivityInstrumentationTestCase2;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.game_file_checker.GameFileCheckerListener;
-import com.mygdx.potatoandtomato.helpers.controls.Chat;
+import com.mygdx.potatoandtomato.helpers.services.Chat;
 import com.mygdx.potatoandtomato.helpers.services.*;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.potatoandtomato.common.Threadings;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.scenes.room_scene.GameFileChecker;
 import com.potatoandtomato.common.*;
+import com.potatoandtomato.common.models.ScoreDetails;
 import junit.framework.Assert;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by SiongLeng on 26/12/2015.
@@ -35,11 +37,10 @@ public class GameLoaderTest extends ActivityInstrumentationTestCase2<AndroidLaun
     public void testLoadGame() {
         final boolean[] waiting = {true};
         final Game game = new Game();
-        game.setGameUrl("http://www.potato-and-tomato.com/sample/game.jar");
-        game.setAssetUrl("http://www.potato-and-tomato.com/sample/assets.zip");
+        game.setGameUrl("http://cdn.shephertz.com/repository/files/c7236c0f55a51bcdde0415e639f2e87f73178a02cdd5d41485e19ad15334c56f/78e57d68a85885dbd3954f79f299236cfb3a43d8/sample_game.zip");
         game.setName("Sample");
         game.setAbbr("sample");
-        game.setIconUrl("http://www.potato-and-tomato.com/sample/icon.png");
+        game.setIconUrl("http://cdn.shephertz.com/repository/files/c7236c0f55a51bcdde0415e639f2e87f73178a02cdd5d41485e19ad15334c56f/5aa71b4ed51b4637128a88583bea5f3df491219d/sample_icon.png");
         game.setMinPlayers("2");
         game.setMaxPlayers("2");
         game.setTeamCount("2");
@@ -92,7 +93,27 @@ public class GameLoaderTest extends ActivityInstrumentationTestCase2<AndroidLaun
             public void userAbandoned() {
 
             }
-        }, null, "1", null, broadcaster, new Downloader());
+
+            @Override
+            public void onGameLoaded() {
+
+            }
+
+            @Override
+            public void endGame() {
+
+            }
+
+            @Override
+            public void inGameUpdateRequest(String msg) {
+
+            }
+
+            @Override
+            public void updateScores(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers) {
+
+            }
+        }, null, "1", null, broadcaster, new Downloader(), null, null);
         broadcaster.broadcast(BroadcastEvent.LOAD_GAME_REQUEST, gameCoordinator);
 
         while (waiting[0]) {
@@ -103,12 +124,12 @@ public class GameLoaderTest extends ActivityInstrumentationTestCase2<AndroidLaun
     private Services mockServices() {
         Preferences preferences = new Preferences("potatoandtomato_test");
         preferences.deleteAll();
-        Assets assets = new Assets();
+        AssetController assets = new AssetController();
         //assets.loadBasic(null);
 
         return new Services(assets, new Texts(), preferences,
                 new Profile(), null, new Shaders(), null, new Downloader(), new Chat(null, null, null, null, null, null, null, null, broadcaster),
-                new Socials(preferences, broadcaster), new GCMSender(), null, null, null, null, null, null, broadcaster);
+                new Socials(preferences, broadcaster), new GCMSender(), null, null, null, null, null, null, broadcaster, null);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.potatoandtomato.common.utils;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by SiongLeng on 27/1/2016.
@@ -48,6 +49,33 @@ public class Strings {
         if(input == null) return true;
         if(input.trim().equals("")) return true;
         return false;
+    }
+
+    public static String generateRandomKey(int length){
+        String alphabet =
+                new String("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"); //9
+        int n = alphabet.length(); //10
+
+        String result = new String();
+        Random r = new Random(); //11
+
+        for (int i=0; i<length; i++) //12
+            result = result + alphabet.charAt(r.nextInt(n)); //13
+
+        return result;
+    }
+
+    public static String formatNum(int input){
+        return String.format("%,d", input);
+    }
+
+    public static String formatNum(double input){
+        double remain = input - Math.floor(input);
+        String result = String.format("%,d", (int) input);
+        if(remain > 0){
+            result = String.valueOf(Double.valueOf(result) + remain);
+        }
+        return result;
     }
 
 }

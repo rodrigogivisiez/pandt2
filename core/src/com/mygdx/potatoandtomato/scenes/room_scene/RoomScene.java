@@ -1,5 +1,6 @@
 package com.mygdx.potatoandtomato.scenes.room_scene;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -123,11 +124,14 @@ public class RoomScene extends SceneAbstract {
         Image separatorImage = new Image(_assets.getTextures().get(Textures.Name.ORANGE_VERTICAL_LINE));
 
         Label.LabelStyle titleStyle = new Label.LabelStyle();
-        titleStyle.font = _assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.M, Fonts.FontColor.DARK_BROWN, Fonts.FontStyle.BOLD);
+        titleStyle.fontColor = Color.valueOf("573801");
+        titleStyle.font = _assets.getFonts().get(Fonts.FontId.HELVETICA_M_HEAVY);
         Label.LabelStyle smallStyle = new Label.LabelStyle();
-        smallStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.S, Fonts.FontColor.DARK_BROWN, Fonts.FontStyle.ITALIC);
+        smallStyle.fontColor = Color.valueOf("573801");
+        smallStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_S_REGULAR);
         Label.LabelStyle contentStyle = new Label.LabelStyle();
-        contentStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.S, Fonts.FontColor.DARK_BROWN);
+        contentStyle.fontColor = Color.valueOf("573801");
+        contentStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_S_REGULAR);
 
         Table _subRoot = new Table();
         _subRoot.align(Align.topLeft);
@@ -287,12 +291,20 @@ public class RoomScene extends SceneAbstract {
         detailsTitleTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WOOD_BG_TITLE)));
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = _assets.getFonts().get(Fonts.FontName.PIZZA, Fonts.FontColor.WHITE, Fonts.FontBorderColor.BLACK);
+        labelStyle.font = _assets.getFonts().get(Fonts.FontId.PIZZA_M_REGULAR_B_ffffff_000000_1);
 
         Label labelTitle = new Label(title, labelStyle);
         labelTitle.setAlignment(Align.center);
         detailsTitleTable.add(labelTitle).expand().fill();
         return detailsTitleTable;
+    }
+
+    public void playerTableTouchedDown(Table playerTable){
+        playerTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.GREY_ROUNDED_BG)));
+    }
+
+    public void playerTableTouchedUp(Table playerTable){
+        playerTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.WHITE_ROUNDED_BG)));
     }
 
     private Table getPlayerTable(String name, String userId, boolean isReady, boolean isHost){
@@ -303,10 +315,11 @@ public class RoomScene extends SceneAbstract {
             return _playerMaps.get(userId);
         }
 
-        BitmapFont font = _assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.XS);
+        BitmapFont font = _assets.getFonts().get(Fonts.FontId.HELVETICA_XS_BOLD);
+        Color fontColor = Color.BLACK;
         if(name == null){
             name = _texts.open();
-            font = _assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.XS, Fonts.FontColor.GRAY);
+            fontColor = Color.valueOf("898887");
         }
 
         Table playerTable = new Table();
@@ -333,11 +346,13 @@ public class RoomScene extends SceneAbstract {
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
         labelStyle.font = font;
+        labelStyle.fontColor = fontColor;
 
         Label nameLabel = new Label(name, labelStyle);
 
         Label.LabelStyle progressLabelStyle = new Label.LabelStyle();
-        progressLabelStyle.font = _assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.XS, Fonts.FontColor.GREEN);
+        progressLabelStyle.fontColor = Color.valueOf("51bf1b");
+        progressLabelStyle.font = _assets.getFonts().get(Fonts.FontId.HELVETICA_XS_BOLD);
         Label progressLabel = new Label("22", progressLabelStyle);
         progressLabel.setName("progress");
         progressLabel.setVisible(false);
@@ -354,7 +369,7 @@ public class RoomScene extends SceneAbstract {
         playerTable.add(nameLabel).expandX().fillX().padLeft(3).padBottom(2);
         playerTable.add(downloadImage).padRight(2);
         playerTable.add(progressLabel);
-        if(isHost && !userId.equals(_services.getProfile().getUserId())) playerTable.add(kickImage).padLeft(5);
+        if(isHost && !userId.equals(_services.getProfile().getUserId())) playerTable.add(kickImage).size(14, 14).padLeft(3);
 
         playerTable.setName(((userId != null) ? "disableclick" : ""));
 
@@ -401,8 +416,7 @@ public class RoomScene extends SceneAbstract {
             else if(badgeType == BadgeType.Rank){
                 Table rankTable = new Table();
                 rankTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.RANK_ICON)));
-                Label.LabelStyle rankStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.XS,
-                        Fonts.FontColor.WHITE, Fonts.FontStyle.SEMI_BOLD, Fonts.FontBorderColor.BLACK, Fonts.FontShadowColor.NONE), null);
+                Label.LabelStyle rankStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_XS_SEMIBOLD_B_ffffff_000000_1), null);
                 Label rankLabel = new Label(String.valueOf(num), rankStyle);
                 rankTable.add(rankLabel);
                 badgeTable.add(rankTable).size(18, 20);
@@ -410,8 +424,7 @@ public class RoomScene extends SceneAbstract {
             else if(badgeType == BadgeType.Streak){
                 Table streakTable = new Table();
                 streakTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.STREAK_ICON)));
-                Label.LabelStyle streakStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.XS,
-                        Fonts.FontColor.WHITE, Fonts.FontStyle.SEMI_BOLD, Fonts.FontBorderColor.BLACK, Fonts.FontShadowColor.NONE), null);
+                Label.LabelStyle streakStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_XS_SEMIBOLD_B_ffffff_000000_1), null);
                 Label streakLabel = new Label(String.valueOf(num), streakStyle);
                 streakTable.add(streakLabel);
                 badgeTable.add(streakTable);

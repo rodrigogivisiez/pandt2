@@ -1,7 +1,5 @@
 package com.mygdx.potatoandtomato.helpers.controls;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -15,8 +13,8 @@ import com.mygdx.potatoandtomato.assets.Animations;
 import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.assets.Patches;
 import com.mygdx.potatoandtomato.assets.Textures;
-import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
+import com.potatoandtomato.common.assets.Assets;
 
 /**
  * Created by SiongLeng on 15/12/2015.
@@ -46,8 +44,9 @@ public class BtnColor extends Table {
     }
 
     public void setText(String msg){
-        Label.LabelStyle labelStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD,
-                                            Fonts.FontSize.XL, Fonts.FontColor.WHITE, Fonts.FontStyle.BOLD, Fonts.FontShadowColor.BLACK), null);
+        Label.LabelStyle labelStyle = new Label.LabelStyle();
+        labelStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_XL_BOLD_S_000000_1_1);
+
         Label lblMessage = new Label(msg, labelStyle);
         lblMessage.setAlignment(Align.center);
         lblMessage.setWrap(true);

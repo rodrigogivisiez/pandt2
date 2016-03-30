@@ -12,15 +12,11 @@ import com.potatoandtomato.common.GameScreen;
 public class Entrance extends GameEntrance {
 
     SampleScreen _screen;
-    Assets _assets;
 
     public Entrance(GameCoordinator gameCoordinator) {
         super(gameCoordinator);
 
-        _assets = new Assets(gameCoordinator);
-        _assets.load();
-
-        _screen = new SampleScreen(gameCoordinator, _assets);
+        _screen = new SampleScreen(gameCoordinator);
 
     }
 
@@ -36,7 +32,6 @@ public class Entrance extends GameEntrance {
 
     @Override
     public void dispose() {
-        _assets.dispose();
         _screen.dispose();
     }
 

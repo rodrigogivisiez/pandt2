@@ -125,7 +125,7 @@ public class Texts {
 
     public String confirmQuit() { return "Are you sure you want to quit Potato and Tomato?";}
 
-    public String loadGameFailed() { return "Other players have failed to load the game.";}
+    public String loadGameFailed() { return "Some players have failed to load the game.";}
     public String youLoadGameFailed() { return "You have failed to load the game.";}
     public String playerLeftCauseGameCancel() { return "Game has cancelled because of players left room.";}
 
@@ -157,6 +157,8 @@ public class Texts {
     public String ready() { return "Ready";}
     public String failed() { return "Failed";}
     public String remainingTime() { return "Remaining Time: ";}
+
+    public String xPoints() {return "%s points";}
 
     //push notifications part
     public String PUSHGameInvitationsTitle() { return "P&T Game Invitations"; }

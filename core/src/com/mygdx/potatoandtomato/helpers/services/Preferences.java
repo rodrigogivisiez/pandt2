@@ -3,13 +3,15 @@ package com.mygdx.potatoandtomato.helpers.services;
 import com.badlogic.gdx.Gdx;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.mygdx.potatoandtomato.statics.Global;
+import com.potatoandtomato.common.absints.GamePreferencesAbstract;
 
 /**
  * Created by SiongLeng on 9/12/2015.
  */
-public class Preferences {
+public class Preferences extends GamePreferencesAbstract {
 
     private com.badlogic.gdx.Preferences _prefs;
+    private String _gameAbbr;
 
     public Preferences() {
         _prefs = Gdx.app.getPreferences((Global.DEBUG ? "DEBUG_" : "") + Terms.PREF_NAME);
@@ -39,5 +41,27 @@ public class Preferences {
     }
 
 
+    public void setGameAbbr(String _gameAbbr) {
+        this._gameAbbr = _gameAbbr;
+    }
+
+    @Override
+    public String getGamePref(String key) {
+        return get(appendAbbrToKey(key));
+    }
+
+    @Override
+    public void putGamePref(String key, String value) {
+        put(appendAbbrToKey(key), value);
+    }
+
+    @Override
+    public void deleteGamePref(String key) {
+        delete(appendAbbrToKey(key));
+    }
+
+    private String appendAbbrToKey(String key){
+        return this._gameAbbr + "_" + key;
+    }
 
 }

@@ -5,12 +5,12 @@ package com.potatoandtomato.common.models;
  */
 public class ScoreDetails {
 
-    long value;
+    double value;
     String reason;
     boolean addOrMultiply;
     boolean canAddStreak;
 
-    public ScoreDetails(long value, String reason, boolean addOrMultiply, boolean canAddStreak) {
+    public ScoreDetails(double value, String reason, boolean addOrMultiply, boolean canAddStreak) {
         this.value = value;
         this.reason = reason;
         this.addOrMultiply = addOrMultiply;
@@ -25,11 +25,11 @@ public class ScoreDetails {
         this.canAddStreak = canAddStreak;
     }
 
-    public long getValue() {
+    public double getValue() {
         return value;
     }
 
-    public void setValue(long value) {
+    public void setValue(double value) {
         this.value = value;
     }
 

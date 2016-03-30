@@ -143,12 +143,19 @@ public class UserBadgeHelper implements Disposable {
         }
     }
 
-    private boolean setBadge(String userId, RoomScene.BadgeType type, int num){
+    private boolean setBadge(final String userId, final RoomScene.BadgeType type, final int num){
         if(_currentBadge.containsKey(userId) && _currentBadge.get(userId) == type){
             return true;
         }
         else{
-            boolean success = _roomScene.setPlayerBadge(userId, type, num);
+            boolean success = _roomScene.getPlayersMaps().containsKey(userId);
+            Threadings.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    _roomScene.setPlayerBadge(userId, type, num);
+                }
+            });
+
             if(success){
                 _currentBadge.put(userId, type);
             }

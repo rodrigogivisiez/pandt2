@@ -44,7 +44,7 @@ public class TestUploader extends TestAbstract {
             @Override
             public void onCallBack(FileHandle result, Status status) {
                 Assert.assertEquals(true, result.exists());
-                Assert.assertEquals("test.bin", result.file().getName());
+                Assert.assertEquals("test.bin", result.name());
                 byte[] resultBytes = result.readBytes();
                 for(int i = 0; i < resultBytes.length; i++){
                     Assert.assertEquals(bytes[i], resultBytes[i]);

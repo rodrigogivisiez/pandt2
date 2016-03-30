@@ -20,11 +20,10 @@ public class SplashLogic {
         this._onFinish = onFinish;
         _splashActor = new SplashActor(coordinator, services.getAssets(), services.getTexts());
 
-        _services.getSoundsWrapper().playSounds(Sounds.Name.START_GAME);
-        startFadeOutThread();
     }
 
-    public void startFadeOutThread(){
+    public void start(){
+        _services.getSoundsWrapper().playSounds(Sounds.Name.START_GAME);
         Threadings.delay(!Global.NO_ENTRANCE ? 7000 : 0, new Runnable() {
             @Override
             public void run() {

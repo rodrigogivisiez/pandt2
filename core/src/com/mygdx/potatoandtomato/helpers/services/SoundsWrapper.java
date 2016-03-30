@@ -4,8 +4,9 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.assets.Sounds;
-import com.potatoandtomato.common.*;
 import com.mygdx.potatoandtomato.statics.Global;
+import com.potatoandtomato.common.*;
+import com.potatoandtomato.common.assets.Assets;
 
 import java.util.HashMap;
 
@@ -48,7 +49,12 @@ public class SoundsWrapper implements ISounds {
     }
 
     public void stopThemeMusic() {
-        _themeMusic.stop();
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _themeMusic.stop();
+            }
+        });
     }
 
     public void playSoundEffect(Sounds.Name soundName){

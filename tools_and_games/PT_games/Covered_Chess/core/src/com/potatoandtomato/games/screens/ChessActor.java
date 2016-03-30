@@ -7,21 +7,24 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.assets.Assets;
+import com.potatoandtomato.games.assets.MyAssets;
 import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.assets.Textures;
 import com.potatoandtomato.games.controls.CloneableTable;
 import com.potatoandtomato.games.controls.DummyButton;
 import com.potatoandtomato.games.enums.ChessType;
 import com.potatoandtomato.games.enums.Status;
-import com.potatoandtomato.games.helpers.*;
+import com.potatoandtomato.games.helpers.Logs;
+import com.potatoandtomato.games.helpers.Positions;
+import com.potatoandtomato.games.helpers.Sizes;
 import com.potatoandtomato.games.models.ChessModel;
+import com.potatoandtomato.games.services.SoundsWrapper;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -33,7 +36,7 @@ public class ChessActor extends Table {
     private ChessActor _me;
     private Table _coverChess, _previewChess;
     private CloneableTable _animalChess;
-    private Assets _assets;
+    private MyAssets _assets;
     private boolean _expanded;
     private boolean _initialized;
     private Image _animalImage;
@@ -47,7 +50,7 @@ public class ChessActor extends Table {
         return _coverChess;
     }
 
-    public ChessActor(Assets assets, SoundsWrapper soundsWrapper) {
+    public ChessActor(MyAssets assets, SoundsWrapper soundsWrapper) {
         _me = this;
         _soundsWrapper = soundsWrapper;
         _assets = assets;

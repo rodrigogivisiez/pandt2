@@ -1,14 +1,13 @@
 package com.mygdx.potatoandtomato.models;
 
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
-import com.potatoandtomato.common.IDownloader;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
-import com.mygdx.potatoandtomato.helpers.controls.Chat;
-import com.mygdx.potatoandtomato.helpers.controls.Confirm;
-import com.mygdx.potatoandtomato.helpers.controls.Notification;
 import com.mygdx.potatoandtomato.helpers.services.*;
 import com.potatoandtomato.common.Broadcaster;
+import com.potatoandtomato.common.IDownloader;
+import com.potatoandtomato.common.ITutorials;
+import com.potatoandtomato.common.assets.Assets;
 
 /**
  * Created by SiongLeng on 6/12/2015.
@@ -33,11 +32,13 @@ public class Services {
     SoundsWrapper _soundsWrapper;
     VersionControl _versionControl;
     Broadcaster _broadcaster;
+    ITutorials _tutorials;
 
     public Services(Assets assets, Texts texts, Preferences preferences,
                     Profile profile, IDatabase database, Shaders shaders, GamingKit gamingKit, IDownloader downloader,
                     Chat chat, Socials socials, GCMSender gcmSender, Confirm confirm, Notification notification,
-                    Recorder recorder, IUploader uploader, SoundsWrapper soundsWrapper, VersionControl versionControl, Broadcaster broadcaster) {
+                    Recorder recorder, IUploader uploader, SoundsWrapper soundsWrapper, VersionControl versionControl,
+                    Broadcaster broadcaster, ITutorials tutorials) {
         _texts = texts;
         _assets = assets;
         _preferences = preferences;
@@ -56,6 +57,15 @@ public class Services {
         _soundsWrapper = soundsWrapper;
         _versionControl = versionControl;
         _broadcaster = broadcaster;
+        _tutorials = tutorials;
+    }
+
+    public ITutorials getTutorials() {
+        return _tutorials;
+    }
+
+    public void setTutorials(ITutorials _tutorials) {
+        this._tutorials = _tutorials;
     }
 
     public Broadcaster getBroadcaster() {
@@ -112,10 +122,6 @@ public class Services {
 
     public Texts getTexts() {
         return _texts;
-    }
-
-    public Assets getTextures() {
-        return _assets;
     }
 
     public Preferences getPreferences() { return _preferences; }

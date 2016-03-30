@@ -38,7 +38,8 @@ public class PrerequisiteScene extends SceneAbstract {
         _loadingTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WOOD_BG_NORMAL)));
 
         Label.LabelStyle msgLabelStyle = new Label.LabelStyle();
-        msgLabelStyle.font = _assets.getFonts().get(Fonts.FontName.PIZZA, Fonts.FontSize.XXL, Fonts.FontColor.TEAL, Fonts.FontShadowColor.DARK_ORANGE);
+        msgLabelStyle.fontColor = Color.valueOf("fff6d8");
+        msgLabelStyle.font = _assets.getFonts().get(Fonts.FontId.PIZZA_XXL_REGULAR_S_a05e00_1_1);
         _msgLabel = new Label("", msgLabelStyle);
         _msgLabel.setWrap(true);
         _msgLabel.setAlignment(Align.center);

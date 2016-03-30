@@ -11,6 +11,7 @@ public class Team {
 
     ArrayList<Player> players;
     LeaderboardRecord leaderboardRecord;
+    int rank = 999;                               //ranking in leaderboard
 
     public Team() {
         players = new ArrayList();
@@ -40,6 +41,15 @@ public class Team {
         return getPlayerByUserId(userId) != null;
     }
 
+    public boolean matchedUsers(ArrayList<String> userIds){
+        for(String userId : userIds){
+            if(!hasUser(userId)){
+                return false;
+            }
+        }
+        return userIds.size() == this.getPlayersUserIds().size();
+    }
+
     public Player getPlayerByUserId(String userId){
         for(Player player : players){
             if(player.getUserId().equals(userId)){
@@ -58,6 +68,14 @@ public class Team {
         this.leaderboardRecord = leaderboardRecord;
     }
 
+    public int getRank() {
+        return rank;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
+    }
+
     @Override
     public boolean equals(Object o) {
         if(o instanceof Team){
@@ -66,7 +84,7 @@ public class Team {
                     return false;
                 }
             }
-            return true;
+            return ((Team) o).getPlayers().size() == this.getPlayers().size();
         }
         else{
             return super.equals(o);

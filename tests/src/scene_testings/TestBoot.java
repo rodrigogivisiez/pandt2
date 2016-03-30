@@ -56,6 +56,7 @@ public class TestBoot extends TestAbstract {
 
     @Test
     public void testCreateUser(){
+        _services.getProfile().setUserId(null);
         Assert.assertEquals(true, _services.getSocials().getFacebookProfile() == null);
         Assert.assertEquals(true, _services.getProfile().getUserId() == null);
         BootLogic logic = new BootLogic(mock(PTScreen.class), _services);

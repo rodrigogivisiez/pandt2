@@ -4,7 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.potatoandtomato.assets.Textures;
-import com.mygdx.potatoandtomato.helpers.services.Assets;
+import com.potatoandtomato.common.assets.Assets;
 
 /**
  * Created by SiongLeng on 13/12/2015.

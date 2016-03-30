@@ -18,10 +18,10 @@ import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.services.Shaders;
-import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.services.SoundsWrapper;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.assets.Assets;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -75,8 +75,7 @@ public class BtnEggDownward extends Table {
         this.clear();
         Label.LabelStyle textLabelStyle = new Label.LabelStyle();
 
-        textLabelStyle.font = _assets.getFonts().get(Fonts.FontName.PIZZA, Fonts.FontSize.XL,
-                                            Fonts.FontColor.WHITE, Fonts.FontShadowColor.DARK_ORANGE);
+        textLabelStyle.font = _assets.getFonts().get(Fonts.FontId.PIZZA_XL_REGULAR_S_a05e00_1_1);
 
         _textLabel = new Label(text, textLabelStyle);
         _textLabel.setWrap(true);

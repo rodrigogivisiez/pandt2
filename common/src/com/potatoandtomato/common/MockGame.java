@@ -5,9 +5,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.firebase.client.Firebase;
+import com.potatoandtomato.common.absints.GamePreferencesAbstract;
 import com.potatoandtomato.common.models.ScoreDetails;
+import com.potatoandtomato.common.utils.Strings;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -47,6 +50,10 @@ public abstract class MockGame extends Game implements IPTGame {
             @Override
             public void useConfirm(String msg, Runnable yesRunnable, Runnable noRunnable) {
                 System.out.println("show confirm: " + msg);
+                if (msg.equals("PTTEXT_ABANDON")) {
+                    yesRunnable.run();
+                    _mockGamingKit.sendUpdate("SURRENDER");
+                }
             }
 
             @Override
@@ -73,23 +80,50 @@ public abstract class MockGame extends Game implements IPTGame {
             public void updateScores(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers) {
 
             }
-        },  _ref.child("gameBelongData").child(gameId), "1", new MockSoundManager(),
-                _broadcaster, _downloader);
+        }, _ref.child("gameBelongData").child(gameId), "1", new MockSoundManager(),
+                _broadcaster, _downloader, new ITutorials() {
+            @Override
+            public void show(DisposableActor actor, String text, float duration) {
+                System.out.println("Showing tutorial: " + text);
+            }
+        }, new GamePreferencesAbstract() {
+            @Override
+            public String getGamePref(String key) {
+                return "";
+            }
+
+            @Override
+            public void putGamePref(String key, String value) {
+
+            }
+
+            @Override
+            public void deleteGamePref(String key) {
+
+            }
+        });
     }
 
-    public void initiateMockGamingKit(final int expectedTeamCount, final int eachTeamExpectedPlayers){
-        _mockGamingKit = new MockGamingKit(_gameCoordinator, expectedTeamCount, eachTeamExpectedPlayers, _broadcaster, new Runnable() {
+    public void initiateMockGamingKit(final int expectedTeamCount, final int eachTeamExpectedPlayers, final boolean debugging){
+        _mockGamingKit = new MockGamingKit(_gameCoordinator, expectedTeamCount, !debugging ? eachTeamExpectedPlayers : 0, _broadcaster, new Runnable() {
             @Override
             public void run() {
                 _gameCoordinator.setMyUserId(_mockGamingKit.getUserId());
-                if(expectedTeamCount == 0 || eachTeamExpectedPlayers == 0){
+
+                if(debugging){
+                    boolean addedMe = false;
                     ArrayList<Team> teams = new ArrayList<Team>();
-                    Team team = new Team();
-                    team.addPlayer(new Player("test", _mockGamingKit.getUserId(), true, true));
-                    teams.add(team);
+                    for(int i = 0; i < expectedTeamCount; i++){
+                        Team team = new Team();
+                        for(int q = 0; q < eachTeamExpectedPlayers; q++){
+                            team.addPlayer(new Player("test", !addedMe ? _mockGamingKit.getUserId() : Strings.generateRandomKey(8), true, true));
+                            addedMe = true;
+                        }
+                        teams.add(team);
+                    }
+
                     _gameCoordinator.setTeams(teams);
                 }
-
                 onReady();
             }
         });

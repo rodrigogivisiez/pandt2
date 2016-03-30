@@ -80,7 +80,7 @@ public class GameListScene extends SceneAbstract {
         _gameTitleTable.align(Align.left);
         _gameTitleTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.GAMELIST_TITLE_BG)));
         Label.LabelStyle titleLabelStyle = new Label.LabelStyle();
-        titleLabelStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontColor.WHITE);
+        titleLabelStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR);
         _titleGameLabel = new Label(_texts.game(), titleLabelStyle);
         _titleHostLabel = new Label(_texts.host(), titleLabelStyle);
         _titlePlayersLabel = new Label(_texts.players(), titleLabelStyle);
@@ -123,8 +123,7 @@ public class GameListScene extends SceneAbstract {
 
         Profile profile = _services.getProfile();
         _usernameLabel = new Label(profile.getDisplayName(15),
-                            new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD,
-                                    Fonts.FontSize.L, Fonts.FontColor.WHITE, Fonts.FontStyle.BOLD), null));
+                            new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_L_BOLD), null));
 
 
         _settingsTable = new Table();
@@ -162,7 +161,7 @@ public class GameListScene extends SceneAbstract {
 
         Table gameRowTable = new Table();
         Label.LabelStyle contentLabelStyle = new Label.LabelStyle();
-        contentLabelStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.S, Fonts.FontColor.WHITE, Fonts.FontStyle.BOLD);
+        contentLabelStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_S_BOLD);
 
         Table gameNameInvitationTable = new Table();
         gameNameInvitationTable.align(Align.topLeft);

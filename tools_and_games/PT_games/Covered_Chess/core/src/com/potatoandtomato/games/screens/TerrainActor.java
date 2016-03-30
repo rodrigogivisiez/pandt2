@@ -11,14 +11,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.games.assets.Fonts;
 import com.potatoandtomato.games.assets.Textures;
 import com.potatoandtomato.games.controls.DummyButton;
-import com.potatoandtomato.games.enums.ChessAnimal;
 import com.potatoandtomato.games.enums.Direction;
-import com.potatoandtomato.games.helpers.Assets;
 import com.potatoandtomato.games.helpers.Positions;
-import com.potatoandtomato.games.helpers.SoundsWrapper;
+import com.potatoandtomato.games.services.SoundsWrapper;
 import com.potatoandtomato.games.models.TerrainModel;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
@@ -81,7 +80,7 @@ public class TerrainActor extends Table {
         this.addActor(_redTile);
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontColor.BLACK, Fonts.FontBorderColor.DARK_GREEN);
+        labelStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR_B_000000_588e54_1);
         _percentLabel = new Label("", labelStyle);
         _percentLabel.setTouchable(Touchable.disabled);
         _greenTile.add(_percentLabel);

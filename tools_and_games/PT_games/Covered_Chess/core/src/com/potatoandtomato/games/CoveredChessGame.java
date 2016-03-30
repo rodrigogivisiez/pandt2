@@ -16,7 +16,7 @@ public class CoveredChessGame extends MockGame {
 	@Override
 	public void create() {
 		super.create();
-		initiateMockGamingKit(Global.DEBUG ? 0 : 2, Global.DEBUG ? 0 : 1);
+		initiateMockGamingKit(2, 1, Global.DEBUG);
 	}
 
 	@Override

@@ -7,8 +7,10 @@ import com.badlogic.gdx.utils.Disposable;
 import com.potatoandtomato.common.*;
 import com.potatoandtomato.common.Status;
 import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.models.ScoreDetails;
 import com.potatoandtomato.games.absint.ActionListener;
 import com.potatoandtomato.games.absint.DatabaseListener;
+import com.potatoandtomato.games.absint.ScoresListener;
 import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.enums.*;
 import com.potatoandtomato.games.helpers.*;
@@ -16,6 +18,8 @@ import com.potatoandtomato.games.models.*;
 import com.potatoandtomato.games.references.StatusRef;
 import com.potatoandtomato.games.references.BattleRef;
 import com.potatoandtomato.games.references.MovementRef;
+import com.potatoandtomato.games.services.GameDataController;
+import com.potatoandtomato.games.services.ScoresHandler;
 import com.shaded.fasterxml.jackson.core.JsonParseException;
 import com.shaded.fasterxml.jackson.databind.JsonMappingException;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
@@ -24,10 +28,12 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.removeAction;
+import static com.potatoandtomato.games.services.ScoresHandler.*;
 
 /**
  * Created by SiongLeng on 29/12/2015.
@@ -51,6 +57,13 @@ public class BoardLogic implements Disposable{
     SafeThread _getGameDataSafeThread, _checkCountTimeExpiredThread;
     boolean _crackStarting, _crackHappened, _suddenDeathHappened, _gameEnded;
 
+    public BoardModel getBoardModel() {
+        return _boardModel;
+    }
+
+    public GraveyardLogic getGraveyardLogic() {
+        return _graveyard;
+    }
 
     public BoardLogic(Services services, GameCoordinator coordinator) {
         this._services = services;
@@ -58,10 +71,11 @@ public class BoardLogic implements Disposable{
         _battleRef = new BattleRef();
         _movementRef = new MovementRef();
         _statusRef = new StatusRef(services.getSoundsWrapper());
+        _services.getScoresHandler().setBoardLogic(this);
 
         _boardModel = new BoardModel(-1);
         _terrains = new ArrayList<TerrainLogic>();
-        _gameDataController = new GameDataController(coordinator);
+        _gameDataController = _services.getGameDataController();
         _graveyard = new GraveyardLogic(new GraveModel(),
                 coordinator, services.getTexts(), services.getAssets(), services.getSoundsWrapper());
         _roomMsgHandler = new RoomMsgHandler(this, _coordinator);
@@ -79,6 +93,7 @@ public class BoardLogic implements Disposable{
 
     //call when new game
     public void init(){
+        _splashLogic.start();
         if(_coordinator.meIsDecisionMaker()){
             _boardModel.setCurrentTurnIndex(_gameDataController.getFirstTurnIndex());
             gameDataReady(_boardModel, _gameDataController.getGameData(), _graveyard.getGraveModel());
@@ -90,6 +105,7 @@ public class BoardLogic implements Disposable{
     }
 
     public void continueGame(){
+        _splashLogic.start();
         getGameDataFromDB();
     }
 
@@ -233,11 +249,16 @@ public class BoardLogic implements Disposable{
             }
         }
 
-        invalidate();
-        _screen.populateTerrains(_terrains);
-        setTurnTouchable();
-        _roomMsgHandler.onGameReady();
-        for(TerrainLogic terrainLogic : _terrains) terrainLogic.invalidate();
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                invalidate();
+                _screen.populateTerrains(_terrains);
+                setTurnTouchable();
+                _roomMsgHandler.onGameReady();
+                for(TerrainLogic terrainLogic : _terrains) terrainLogic.invalidate();
+            }
+        });
     }
 
     private void chessKilled(ChessType chessType, boolean alsoCheckGameEnded){
@@ -383,16 +404,18 @@ public class BoardLogic implements Disposable{
     public void endGame(final boolean won){
         if(!_gameEnded){
             _gameEnded = true;
-            _services.getScoresHelper().setIsMeWin(won);
-            _coordinator.beforeEndGame(_services.getScoresHelper().getWinnerResult(), _services.getScoresHelper().getLoser(), true);
+
             _screen.populateEndGameTable();
-            Threadings.delay(1000, new Runnable() {
+            _screen.showEndGameTable(won, _gameDataController.getMyChessColor());
+            _services.getSoundsWrapper().stopTheme();
+            _services.getSoundsWrapper().playSounds(won ? Sounds.Name.WIN : Sounds.Name.LOSE);
+
+            _services.getScoresHandler().setIsMeWin(won);
+            _services.getScoresHandler().process(new ScoresListener(){
                 @Override
-                public void run() {
-                    _screen.showEndGameTable(won, _gameDataController.getMyChessColor());
-                    _services.getSoundsWrapper().stopTheme();
-                    _services.getSoundsWrapper().playSounds(won ? Sounds.Name.WIN : Sounds.Name.LOSE);
-                    Threadings.delay(2000, new Runnable() {
+                public void onCallBack(HashMap<Team, ArrayList<ScoreDetails>> winnerResult, ArrayList<Team> losers) {
+                    _coordinator.beforeEndGame(winnerResult, losers, true);
+                    Threadings.delay(1000, new Runnable() {
                         @Override
                         public void run() {
                             _screen.getEndGameRootTable().addListener(new ClickListener() {
@@ -404,9 +427,12 @@ public class BoardLogic implements Disposable{
                             });
                         }
                     });
-
                 }
             });
+
+
+
+
         }
     }
 
@@ -597,7 +623,7 @@ public class BoardLogic implements Disposable{
 
     @Override
     public void dispose() {
-        _graveyard.dispose();
-        _checkCountTimeExpiredThread.kill();
+        if(_graveyard != null) _graveyard.dispose();
+        if(_checkCountTimeExpiredThread != null) _checkCountTimeExpiredThread.kill();
     }
 }

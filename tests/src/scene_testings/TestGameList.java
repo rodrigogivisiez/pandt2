@@ -33,7 +33,10 @@ public class TestGameList extends TestAbstract {
 
     @Test
     public void testGameListLogicSceneAddRemoveRecord(){
-        GameListLogic logic = new GameListLogic(mock(PTScreen.class), T_Services.mockServices());
+        Services services = T_Services.mockServices();
+        services.getProfile().setUserId("999");
+
+        GameListLogic logic = new GameListLogic(mock(PTScreen.class), services);
         logic.onShow();
         GameListScene scene = (GameListScene) logic.getScene();
         Room room = MockModel.mockRoom("1");

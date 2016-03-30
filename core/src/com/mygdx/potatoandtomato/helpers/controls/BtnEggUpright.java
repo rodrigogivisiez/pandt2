@@ -12,10 +12,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.assets.Textures;
-import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.services.SoundsWrapper;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.assets.Assets;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 

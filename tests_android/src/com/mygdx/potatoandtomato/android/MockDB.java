@@ -8,8 +8,11 @@ import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.GameHistory;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Room;
+import com.potatoandtomato.common.models.LeaderboardRecord;
+import com.potatoandtomato.common.models.Streak;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by SiongLeng on 8/1/2016.
@@ -37,6 +40,16 @@ public class MockDB implements IDatabase {
 
     @Override
     public void getProfileByUserId(String userId, DatabaseListener<Profile> listener) {
+
+    }
+
+    @Override
+    public void getUsernameByUserId(String userId, DatabaseListener<String> listener) {
+
+    }
+
+    @Override
+    public void getUsernamesByUserIds(ArrayList<String> userIds, DatabaseListener<HashMap<String, String>> listener) {
 
     }
 
@@ -117,6 +130,11 @@ public class MockDB implements IDatabase {
     }
 
     @Override
+    public void clearAllListeners() {
+
+    }
+
+    @Override
     public void savePlayedHistory(Profile profile, Room room, DatabaseListener<String> listener) {
 
     }
@@ -144,5 +162,40 @@ public class MockDB implements IDatabase {
     @Override
     public Object getGameBelongDatabase(String abbr) {
         return null;
+    }
+
+    @Override
+    public void getUserStreak(Game game, String userId, DatabaseListener<Streak> listener) {
+
+    }
+
+    @Override
+    public void getLeaderBoardAndStreak(Game game, int expectedCount, DatabaseListener<ArrayList<LeaderboardRecord>> listener) {
+
+    }
+
+    @Override
+    public void saveLeaderBoardRecord(Room room, LeaderboardRecord record, DatabaseListener listener) {
+
+    }
+
+    @Override
+    public void getAccLeaderBoardRecordAndStreak(Room room, ArrayList<String> userIds, DatabaseListener<LeaderboardRecord> listener) {
+
+    }
+
+    @Override
+    public void deleteLeaderBoard(Game game, DatabaseListener listener) {
+
+    }
+
+    @Override
+    public void streakRevive(ArrayList<String> userIds, Room room, DatabaseListener listener) {
+
+    }
+
+    @Override
+    public void isStreakRevived(ArrayList<String> userIds, Room room, DatabaseListener<Boolean> listener) {
+
     }
 }

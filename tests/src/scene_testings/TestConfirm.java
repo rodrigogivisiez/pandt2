@@ -2,7 +2,7 @@ package scene_testings;
 
 import abstracts.TestAbstract;
 import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
-import com.mygdx.potatoandtomato.helpers.controls.Confirm;
+import com.mygdx.potatoandtomato.helpers.services.Confirm;
 import com.mygdx.potatoandtomato.models.Services;
 import helpers.T_Services;
 import org.junit.Test;

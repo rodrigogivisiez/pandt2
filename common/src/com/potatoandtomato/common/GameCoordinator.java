@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.firebase.client.Firebase;
+import com.potatoandtomato.common.absints.GamePreferencesAbstract;
 import com.potatoandtomato.common.models.EndGameResult;
 import com.potatoandtomato.common.models.ScoreDetails;
 
@@ -33,10 +34,12 @@ public class GameCoordinator implements Disposable {
     private Object database;
     private String roomId;
     private ISounds soundManager;
-    private AssetsWrapper assetsWrapper;
+    private AssetManager assetsManager;
     private Broadcaster broadcaster;
     private DecisionsMaker decisionsMaker;
     private IDownloader downloader;
+    private ITutorials tutorials;
+    private GamePreferencesAbstract gamePreferences;
 
     private boolean _landscape;
     private ArrayList<String> _subscribedIds;
@@ -54,7 +57,8 @@ public class GameCoordinator implements Disposable {
                            String myUserId, IGameSandBox gameSandBox,
                            Object database, String roomId,
                            ISounds sounds, Broadcaster broadcaster,
-                           IDownloader downloader) {
+                           IDownloader downloader, ITutorials tutorials,
+                           GamePreferencesAbstract gamePreferences) {
         this.jarPath = jarPath;
         this.assetsPath = assetsPath;
         this.basePath = basePath;
@@ -70,12 +74,22 @@ public class GameCoordinator implements Disposable {
         this.soundManager = sounds;
         this.broadcaster = broadcaster;
         this.downloader = downloader;
+        this.tutorials = tutorials;
+        this.gamePreferences = gamePreferences;
         this.decisionsMaker = new DecisionsMaker(this.teams);
 
         _subscribedIds = new ArrayList<String>();
         _processors = new Array<InputProcessor>();
         _inGameUpdateListeners = new ArrayList<InGameUpdateListener>();
         subscribeListeners();
+    }
+
+    public ITutorials getTutorials() {
+        return tutorials;
+    }
+
+    public GamePreferencesAbstract getGamePreferences() {
+        return gamePreferences;
     }
 
     public IDownloader getDownloader() {
@@ -335,10 +349,14 @@ public class GameCoordinator implements Disposable {
         });
     }
 
-    public AssetManager getAssetManager(){
-        if(assetsWrapper == null) assetsWrapper = new AssetsWrapper(new MyFileResolver(this));
-
-        return assetsWrapper.getAssetManager();
+    public AssetManager getAssetManager(boolean singleton){
+        if(assetsManager == null) assetsManager = new AssetManager(new MyFileResolver(this));
+        if(singleton){
+            return assetsManager;
+        }
+        else{
+            return new AssetManager(new MyFileResolver(this));
+        }
     }
 
     public void setUserStateListener(UserStateListener userStateListener){
@@ -425,7 +443,7 @@ public class GameCoordinator implements Disposable {
         broadcaster.unsubscribe(_broadcastSubscribedId);
         userStateListener = null;
         _inGameUpdateListeners.clear();
-        if(assetsWrapper != null) assetsWrapper.dispose();
+        if(assetsManager != null) assetsManager.dispose();
         broadcaster.broadcast(BroadcastEvent.DEVICE_ORIENTATION, 0);
     }
 }

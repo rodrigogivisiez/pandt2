@@ -1,29 +1,39 @@
 package com.potatoandtomato.games.models;
 
-import com.potatoandtomato.games.helpers.*;
-import com.potatoandtomato.games.references.BattleRef;
+import com.potatoandtomato.games.assets.MyAssets;
+import com.potatoandtomato.games.services.*;
 
 /**
  * Created by SiongLeng on 29/12/2015.
  */
 public class Services {
 
-    private Assets assets;
+    private MyAssets assets;
     private Texts texts;
     private SoundsWrapper soundsWrapper;
     private Database database;
-    private ScoresHelper scoresHelper;
+    private ScoresHandler scoresHandler;
+    private GameDataController gameDataController;
 
-    public Services(Assets assets, Texts texts, SoundsWrapper soundsWrapper, Database database, ScoresHelper scoresHelper) {
+    public Services(MyAssets assets, Texts texts, SoundsWrapper soundsWrapper, Database database, ScoresHandler scoresHandler, GameDataController gameDataController) {
         this.assets = assets;
         this.texts = texts;
         this.soundsWrapper = soundsWrapper;
         this.database = database;
-        this.scoresHelper = scoresHelper;
+        this.scoresHandler = scoresHandler;
+        this.gameDataController = gameDataController;
     }
 
-    public ScoresHelper getScoresHelper() {
-        return scoresHelper;
+    public GameDataController getGameDataController() {
+        return gameDataController;
+    }
+
+    public void setGameDataController(GameDataController gameDataController) {
+        this.gameDataController = gameDataController;
+    }
+
+    public ScoresHandler getScoresHandler() {
+        return scoresHandler;
     }
 
     public Database getDatabase() {
@@ -38,11 +48,11 @@ public class Services {
         return texts;
     }
 
-    public Assets getAssets() {
+    public MyAssets getAssets() {
         return assets;
     }
 
-    public void setAssets(Assets assets) {
+    public void setAssets(MyAssets assets) {
         this.assets = assets;
     }
 

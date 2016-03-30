@@ -10,16 +10,20 @@ import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.utils.Align;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.games.absint.ActionListener;
+import com.potatoandtomato.games.assets.MyAssets;
 import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.enums.ActionType;
 import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
 import com.potatoandtomato.games.enums.Direction;
-import com.potatoandtomato.games.helpers.*;
+import com.potatoandtomato.games.helpers.Positions;
 import com.potatoandtomato.games.models.ChessModel;
 import com.potatoandtomato.games.models.TerrainModel;
 import com.potatoandtomato.games.references.BattleRef;
+import com.potatoandtomato.games.services.GameDataController;
+import com.potatoandtomato.games.services.SoundsWrapper;
 
 import java.util.ArrayList;
 
@@ -32,7 +36,7 @@ public class TerrainLogic {
 
     private TerrainModel _terrainModel;
     private TerrainLogic _me;
-    private Assets _assets;
+    private MyAssets _assets;
     private TerrainActor terrainActor;
     private ChessLogic chessLogic;
     private ActionListener actionListener;
@@ -42,7 +46,7 @@ public class TerrainLogic {
     private GameDataController _gameDataController;
     private SoundsWrapper _soundsWrapper;
 
-    public TerrainLogic(TerrainModel _terrainModel, Assets _assets,
+    public TerrainLogic(TerrainModel _terrainModel, MyAssets _assets,
                         GameCoordinator _coordinator, ChessModel chessModel,
                         SoundsWrapper soundsWrapper, GameDataController gameDataController,
                         BattleRef battleRef) {

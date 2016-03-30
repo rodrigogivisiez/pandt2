@@ -6,7 +6,9 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
@@ -16,24 +18,24 @@ import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.helpers.controls.Confirm;
+import com.mygdx.potatoandtomato.helpers.services.Confirm;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
-import com.mygdx.potatoandtomato.helpers.services.Assets;
-import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
-import com.mygdx.potatoandtomato.scenes.leaderboard_scene.MultipleGamesLeaderBoardLogic;
-import com.mygdx.potatoandtomato.scenes.leaderboard_scene.SingleGameLeaderBoardLogic;
-import com.potatoandtomato.common.Threadings;
-import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
+import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.scenes.boot_scene.BootLogic;
 import com.mygdx.potatoandtomato.scenes.create_game_scene.CreateGameLogic;
 import com.mygdx.potatoandtomato.scenes.game_list_scene.GameListLogic;
+import com.mygdx.potatoandtomato.scenes.game_sandbox_scene.GameSandboxLogic;
 import com.mygdx.potatoandtomato.scenes.input_name_scene.InputNameLogic;
 import com.mygdx.potatoandtomato.scenes.invite_scene.InviteLogic;
-import com.mygdx.potatoandtomato.scenes.game_sandbox_scene.GameSandboxLogic;
+import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
+import com.mygdx.potatoandtomato.scenes.leaderboard_scene.MultipleGamesLeaderBoardLogic;
+import com.mygdx.potatoandtomato.scenes.leaderboard_scene.SingleGameLeaderBoardLogic;
 import com.mygdx.potatoandtomato.scenes.prerequisite_scene.PrerequisiteLogic;
 import com.mygdx.potatoandtomato.scenes.room_scene.RoomLogic;
 import com.mygdx.potatoandtomato.scenes.settings_scene.SettingsLogic;
+import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.assets.Assets;
 
 import java.util.Stack;
 
@@ -60,7 +62,7 @@ public class PTScreen implements Screen, InputProcessor {
     public PTScreen(PTGame ptGame, Services services) {
         this._ptGame = ptGame;
         this._services = services;
-        this._assets = _services.getTextures();
+        this._assets = _services.getAssets();
         this._texts = _services.getTexts();
         this._logicStacks = new Stack();
         this._isPTScreen = true;
@@ -96,12 +98,14 @@ public class PTScreen implements Screen, InputProcessor {
             public void run() {
                 if(_logicStacks.size() == 0){
                     logic.onShow();
+                    logic.onShown();
                     _stage.addActor(logic.getScene().getRoot());
                     _currentRoot = logic.getScene().getRoot();
                 }
                 else{
                     final LogicEnumPair logicOut = _logicStacks.peek();
                     logicOut.getLogic().onHide();
+                    logic.onShow();
                     sceneTransition(logic.getScene().getRoot(), logicOut.getLogic().getScene().getRoot(), logic.getScene(), true, new Runnable() {
                         @Override
                         public void run() {
@@ -109,7 +113,7 @@ public class PTScreen implements Screen, InputProcessor {
                                 _logicStacks.remove(logicOut);
                                 logicOut.getLogic().dispose();
                             }
-                            logic.onShow();
+                            logic.onShown();
                         }
                     });
                 }
@@ -151,6 +155,7 @@ public class PTScreen implements Screen, InputProcessor {
                                     previous.getLogic().getScene(), false, new Runnable() {
                                 @Override
                                 public void run() {
+                                    previous.getLogic().onShown();
                                 }
                             });
                         }

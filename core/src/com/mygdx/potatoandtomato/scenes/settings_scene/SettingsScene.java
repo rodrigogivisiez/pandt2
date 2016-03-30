@@ -35,8 +35,9 @@ public class SettingsScene extends SceneAbstract {
     public void populateRoot() {
         new TopBar(_root, _texts.settingsTitle(), false, _assets, _screen);
 
-        Label.LabelStyle labelTitleStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.PIZZA,
-                            Fonts.FontSize.XXL, Fonts.FontColor.TEAL, Fonts.FontShadowColor.DARK_ORANGE), null);
+        Label.LabelStyle labelTitleStyle = new Label.LabelStyle();
+        labelTitleStyle.fontColor = Color.valueOf("fff6d8");
+        labelTitleStyle.font = _assets.getFonts().get(Fonts.FontId.PIZZA_XXL_REGULAR_S_a05e00_1_1);
 
         Table settingsTable = new Table();
         settingsTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WOOD_BG_NORMAL)));
@@ -61,7 +62,7 @@ public class SettingsScene extends SceneAbstract {
         Table displayNameFieldTable = new Table();
         displayNameFieldTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.TEXT_FIELD_BG)));
         TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle();
-        textFieldStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD);
+        textFieldStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR);
         textFieldStyle.fontColor = Color.BLACK;
         textFieldStyle.cursor = new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.CURSOR_BLACK));
         _displayNameTextField = new TextField(_services.getProfile().getDisplayName(15), textFieldStyle);

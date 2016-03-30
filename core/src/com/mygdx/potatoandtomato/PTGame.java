@@ -4,9 +4,13 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
+import com.mygdx.potatoandtomato.assets.*;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
 import com.mygdx.potatoandtomato.models.EndGameData;
 import com.mygdx.potatoandtomato.models.Room;
@@ -16,13 +20,14 @@ import com.potatoandtomato.common.*;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.helpers.controls.Chat;
-import com.mygdx.potatoandtomato.helpers.controls.Confirm;
-import com.mygdx.potatoandtomato.helpers.controls.Notification;
+import com.mygdx.potatoandtomato.helpers.services.Chat;
+import com.mygdx.potatoandtomato.helpers.services.Confirm;
+import com.mygdx.potatoandtomato.helpers.services.Notification;
 import com.mygdx.potatoandtomato.helpers.services.*;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
+import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.common.models.EndGameResult;
 import com.potatoandtomato.common.models.ScoreDetails;
 
@@ -49,6 +54,7 @@ public class PTGame extends Game implements IPTGame {
 	SoundsWrapper _soundsWrapper;
 	Broadcaster _broadcaster;
 	Preferences _preferences;
+	Tutorials _tutorials;
 
 	public PTGame(Broadcaster broadcaster) {
 		_broadcaster = broadcaster;
@@ -59,11 +65,11 @@ public class PTGame extends Game implements IPTGame {
 	public void create () {
 
 		_game = this;
-		_assets = new Assets();
 		_preferences = new Preferences();
 		_processors = new HashMap();
 		Threadings.setMainTreadId();
 		Global.init(_preferences);
+		initiateAssets();
 
 		//run when assets done loading
 		_assets.loadBasic(new Runnable() {
@@ -80,17 +86,20 @@ public class PTGame extends Game implements IPTGame {
 				_chat = new Chat(_gamingKit, _texts, _assets, _batch, _game, _recorder, _uploader, _soundsWrapper, _broadcaster);
 				_confirm = new Confirm(_batch, _game, _assets, _broadcaster);
 				_notification = new Notification(_batch, _assets, _game, _broadcaster);
+				_tutorials = new Tutorials(_game, _batch, _soundsWrapper, _assets, _broadcaster);
 
 				_services = new Services(_assets, _texts,
 						_preferences, new Profile(), new FirebaseDB(Terms.FIREBASE_URL),
 						new Shaders(), _gamingKit, _downloader, _chat,
 						new Socials(_preferences, _broadcaster), new GCMSender(), _confirm, _notification,
-						_recorder, _uploader, _soundsWrapper, new VersionControl(), _broadcaster);
+						_recorder, _uploader, _soundsWrapper, new VersionControl(), _broadcaster,
+						_tutorials);
 				_screen = new PTScreen(_game, _services);
 
 				setScreen(_screen);
 
 				_screen.toScene(SceneEnum.BOOT);
+
 
 			}
 		});
@@ -102,6 +111,7 @@ public class PTGame extends Game implements IPTGame {
 		_chat.resize(width, height);
 		_notification.resize(width, height);
 		_confirm.resize(width, height);
+		_tutorials.resize(width, height);
 	}
 
 	@Override
@@ -130,6 +140,7 @@ public class PTGame extends Game implements IPTGame {
 			}
 
 			_chat.render(Gdx.graphics.getDeltaTime());
+			_tutorials.render(Gdx.graphics.getDeltaTime());
 			_confirm.render(Gdx.graphics.getDeltaTime());
 			_notification.render(Gdx.graphics.getDeltaTime());
 
@@ -183,5 +194,18 @@ public class PTGame extends Game implements IPTGame {
 		multiplexer.setProcessors(inputProcessors);
 		Gdx.input.setInputProcessor(multiplexer);
 	}
+
+	private void initiateAssets(){
+		AssetManager manager = new AssetManager(new InternalFileHandleResolver());
+		Animations animations = new Animations(manager);
+		Patches patches = new Patches();
+		Sounds sounds = new Sounds(manager);
+		Textures textures = new Textures(manager, "ui_pack.atlas");
+		Fonts fonts = new Fonts(manager);
+
+		_assets = new Assets(manager, fonts, animations, sounds, patches, textures);
+	}
+
+
 
 }

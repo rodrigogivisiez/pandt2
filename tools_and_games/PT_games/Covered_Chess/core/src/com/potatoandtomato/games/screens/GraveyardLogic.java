@@ -8,14 +8,15 @@ import com.badlogic.gdx.utils.Disposable;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.SafeThread;
 import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.assets.Assets;
+import com.potatoandtomato.games.assets.MyAssets;
 import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
-import com.potatoandtomato.games.helpers.Assets;
-import com.potatoandtomato.games.helpers.SoundsWrapper;
-import com.potatoandtomato.games.helpers.Texts;
 import com.potatoandtomato.games.models.BoardModel;
 import com.potatoandtomato.games.models.GraveModel;
+import com.potatoandtomato.games.services.SoundsWrapper;
+import com.potatoandtomato.games.services.Texts;
 
 /**
  * Created by SiongLeng on 19/2/2016.
@@ -32,7 +33,7 @@ public class GraveyardLogic implements Disposable {
     private ChessColor _currentTurnChessColor;
     private GameCoordinator _coordinator;
 
-    public GraveyardLogic(GraveModel graveModel, GameCoordinator gameCoordinator, Texts texts, Assets assets, SoundsWrapper soundsWrapper) {
+    public GraveyardLogic(GraveModel graveModel, GameCoordinator gameCoordinator, Texts texts, MyAssets assets, SoundsWrapper soundsWrapper) {
         this._coordinator = gameCoordinator;
         this._graveModel = graveModel;
         this._soundsWrapper = soundsWrapper;
@@ -135,6 +136,6 @@ public class GraveyardLogic implements Disposable {
 
     @Override
     public void dispose() {
-        _countDownThread.kill();
+        if(_countDownThread != null) _countDownThread.kill();
     }
 }

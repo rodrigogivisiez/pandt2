@@ -89,8 +89,7 @@ public class LeaderBoardScene extends SceneAbstract {
         Table titleTable = new Table();
 
         _titleLabel = new Label(_texts.loading(), new Label.LabelStyle(
-                _assets.getFonts().get(Fonts.FontName.PIZZA, Fonts.FontSize.XXL,
-                        Fonts.FontColor.WHITE, Fonts.FontStyle.REGULAR, Fonts.FontBorderColor.DARK_BLUE, Fonts.FontShadowColor.DARK_BLUE), null));
+                _assets.getFonts().get(Fonts.FontId.PIZZA_XXL_REGULAR_B_ffffff_0f5673_1_S_0e516c_1_3), null));
         _titleLabel.setWrap(true);
         _titleLabel.setAlignment(Align.center);
         titleTable.add(_titleLabel).expand().fill();
@@ -147,7 +146,7 @@ public class LeaderBoardScene extends SceneAbstract {
 
         if(!found){
             Label loadingLabel = new Label(_texts.loading(), new Label.LabelStyle(
-                    _assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.S, Fonts.FontStyle.ITALIC), Color.BLACK));
+                    _assets.getFonts().get(Fonts.FontId.MYRIAD_S_ITALIC), Color.BLACK));
             _loadingTable = new Table();
             _loadingTable.add(loadingLabel);
             _loadingTable.setFillParent(true);
@@ -173,11 +172,8 @@ public class LeaderBoardScene extends SceneAbstract {
 
     private Table getRecordTable(Game game, LeaderboardRecord record, int rank){
 
-        Label.LabelStyle style1 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.HELVETICA,
-                Fonts.FontColor.WHITE), getTextColorOfRecord(record));
-        Label.LabelStyle style2 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.HELVETICA,
-                Fonts.FontSize.L, Fonts.FontColor.WHITE, Fonts.FontStyle.BOLD), getTextColorOfRecord(record));
-
+        Label.LabelStyle style1 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HELVETICA_M_REGULAR), getTextColorOfRecord(record));
+        Label.LabelStyle style2 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HELVETICA_L_BOLD), getTextColorOfRecord(record));
 
         ////////////////////////
         //Index label
@@ -201,7 +197,7 @@ public class LeaderBoardScene extends SceneAbstract {
         ////////////////////////
         //score label
         ///////////////////////
-        Label scoreLabel = new Label(String.valueOf(record.getScore()), style2);
+        Label scoreLabel = new Label(Strings.formatNum((int) record.getScore()), style2);
         scoreLabel.setAlignment(Align.right);
 
         ////////////////////////
@@ -241,12 +237,11 @@ public class LeaderBoardScene extends SceneAbstract {
         ScrollPane scrollPane = _leaderboardScrolls.get(game.getAbbr());
         final Table ranksTable = scrollPane.findActor("ranksTable");
 
-        Label.LabelStyle style1 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.HELVETICA,
-                Fonts.FontColor.WHITE), Color.valueOf("5b3000"));
+        Label.LabelStyle style1 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HELVETICA_M_REGULAR), Color.valueOf("5b3000"));
         Label.LabelStyle style3 = new Label.LabelStyle(
-                _assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.L, Fonts.FontStyle.HEAVY), Color.valueOf("5b3000"));
+                _assets.getFonts().get(Fonts.FontId.HELVETICA_L_HEAVY), Color.valueOf("5b3000"));
         Label.LabelStyle style4 = new Label.LabelStyle(
-                _assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.XL, Fonts.FontStyle.HEAVY_ITALIC, Fonts.FontBorderColor.DARK_BROWN), null);
+                _assets.getFonts().get(Fonts.FontId.HELVETICA_XL_HEAVYITALIC_B_ffffff_81562c_2), null);
 
         ////////////////////////
         //Index label
@@ -268,7 +263,7 @@ public class LeaderBoardScene extends SceneAbstract {
         /////////////////////////
         //score label
         /////////////////////////
-        _animatingScoreLabel = new Label(String.valueOf(record.getScore()), style4);
+        _animatingScoreLabel = new Label(Strings.formatNum((int) record.getScore()), style4);
 
         //////////////////////////////
         //populate namescore table
@@ -321,11 +316,10 @@ public class LeaderBoardScene extends SceneAbstract {
     public void addScore(ScoreDetails scoreDetails, final Runnable onFinish){
 
         Label.LabelStyle style5 = new Label.LabelStyle(
-                _assets.getFonts().get(Fonts.FontName.CARTER, Fonts.FontSize.S, Fonts.FontColor.YELLOW,
-                        Fonts.FontStyle.REGULAR, Fonts.FontBorderColor.BLACK, Fonts.FontShadowColor.NONE ), null);
+                _assets.getFonts().get(Fonts.FontId.CARTER_S_REGULAR_B_fff600_000000_1), null);
+        style5.font.getData().setLineHeight(13);
         Label.LabelStyle style6 = new Label.LabelStyle(
-                _assets.getFonts().get(Fonts.FontName.CARTER, Fonts.FontSize.L, Fonts.FontColor.YELLOW,
-                        Fonts.FontStyle.REGULAR, Fonts.FontBorderColor.BLACK, Fonts.FontShadowColor.NONE ), null);
+                _assets.getFonts().get(Fonts.FontId.CARTER_L_REGULAR_B_fff600_000000_1), null);
 
         ////////////////////////////////////////
         //added score label
@@ -333,13 +327,14 @@ public class LeaderBoardScene extends SceneAbstract {
         Table addedScoreTable = new Table();
         addedScoreTable.setTransform(true);
 
-        Label addedScoreLabel = new Label((scoreDetails.isAddOrMultiply() ? "+" : "x") + scoreDetails.getValue(), style6);
+        Label addedScoreLabel = new Label((scoreDetails.isAddOrMultiply() ? "+" : "x") + (Strings.formatNum(scoreDetails.getValue())), style6);
         addedScoreLabel.setAlignment(Align.center);
-        Label addedReasonLabel = new Label("(" + scoreDetails.getReason() + ")", style5);
+        Label addedReasonLabel = new Label(scoreDetails.getReason(), style5);
         addedReasonLabel.setAlignment(Align.center);
+        addedReasonLabel.setWrap(true);
         addedScoreTable.add(addedScoreLabel).expandX().fillX();
         addedScoreTable.row();
-        addedScoreTable.add(addedReasonLabel).expandX().fillX().padTop(-10);
+        addedScoreTable.add(addedReasonLabel).minWidth(80).expandX().fillX().padTop(-10);
         addedScoreTable.layout();
         addedScoreTable.setSize(addedScoreTable.getPrefWidth(), 30);
         addedScoreTable.setPosition(Positions.getWidth() - addedScoreTable.getPrefWidth() - 10, 0);
@@ -351,8 +346,11 @@ public class LeaderBoardScene extends SceneAbstract {
         addedScoreTable.setPosition(coords.x, coords.y);
         _root.addActor(addedScoreTable);
 
+        float delayDuration = 1.6f;
+        if(scoreDetails.getReason().length() > 10) delayDuration = 2.3f;
+
         addedScoreTable.setOrigin(addedScoreTable.getWidth()/2, addedScoreTable.getHeight()/2);
-        addedScoreTable.addAction(sequence(scaleTo(0, 0), scaleTo(1, 1, 0.3f, Interpolation.exp5In), delay(0.8f), new RunnableAction(){
+        addedScoreTable.addAction(sequence(scaleTo(0, 0), scaleTo(1, 1, 0.3f, Interpolation.exp5In), delay(delayDuration), new RunnableAction(){
             @Override
             public void run() {
                 onFinish.run();
@@ -378,12 +376,13 @@ public class LeaderBoardScene extends SceneAbstract {
     }
 
 
-    public void setAnimatingScore(long value){
-        _animatingScoreLabel.setText(String.valueOf(value));
+    public void setAnimatingScore(double value){
+        _animatingScoreLabel.setText(Strings.formatNum( (int) value));
     }
 
     //current rank start from zero
-    public void moveUpRank(final Game game, final int toRank, final int originalRank, final LeaderboardRecord movingRecord, final Runnable finishAnimate){
+    public void moveUpRank(final Game game, final int toRank, final int originalRank,
+                           final LeaderboardRecord movingRecord, final Runnable finishAnimate){
         final ScrollPane scrollPane = _leaderboardScrolls.get(game.getAbbr());
         final Table ranksTable = scrollPane.findActor("ranksTable");
 
@@ -465,11 +464,9 @@ public class LeaderBoardScene extends SceneAbstract {
             nameStreakTable.setName("nameStreakTable");
         }
 
-        Label.LabelStyle style1 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.HELVETICA,
-                Fonts.FontColor.WHITE), getTextColorOfRecord(record));
+        Label.LabelStyle style1 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HELVETICA_M_REGULAR), getTextColorOfRecord(record));
 
-        Label.LabelStyle style2 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.XS,
-                Fonts.FontColor.WHITE, Fonts.FontStyle.SEMI_BOLD, Fonts.FontBorderColor.BLACK, Fonts.FontShadowColor.NONE), null);
+        Label.LabelStyle style2 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_XS_SEMIBOLD_B_ffffff_000000_1), null);
 
         Label nameLabel = new Label(record.getAllUsernameCommaSeparated(), style1);
         nameLabel.setAlignment(Align.left);

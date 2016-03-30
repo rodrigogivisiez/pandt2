@@ -13,6 +13,7 @@ import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.scenes.room_scene.GameFileChecker;
 import com.potatoandtomato.common.*;
+import com.potatoandtomato.common.absints.GamePreferencesAbstract;
 import helpers.T_Services;
 import org.junit.Assert;
 import org.junit.Before;
@@ -42,10 +43,10 @@ public class TestGameLoader extends TestAbstract{
 
         final boolean[] waiting = {true};
         final Game game = new Game();
-        game.setGameUrl("http://cdn.shephertz.com/repository/files/c7236c0f55a51bcdde0415e639f2e87f73178a02cdd5d41485e19ad15334c56f/c238e0226a2cce97981606b3e0fce18589e9d196/covered_chess_game.zip");
+        game.setGameUrl("http://cdn.shephertz.com/repository/files/c7236c0f55a51bcdde0415e639f2e87f73178a02cdd5d41485e19ad15334c56f/78e57d68a85885dbd3954f79f299236cfb3a43d8/sample_game.zip");
         game.setName("Sample");
         game.setAbbr("sample");
-        game.setIconUrl("http://cdn.shephertz.com/repository/files/c7236c0f55a51bcdde0415e639f2e87f73178a02cdd5d41485e19ad15334c56f/2eaf058c6f2fae2024fb5745fae57d745bcb050a/covered_chess_icon.png");
+        game.setIconUrl("http://cdn.shephertz.com/repository/files/c7236c0f55a51bcdde0415e639f2e87f73178a02cdd5d41485e19ad15334c56f/5aa71b4ed51b4637128a88583bea5f3df491219d/sample_icon.png");
         game.setMinPlayers("2");
         game.setMaxPlayers("2");
         game.setTeamCount("2");
@@ -62,7 +63,6 @@ public class TestGameLoader extends TestAbstract{
                 listener.onCallback(game, Status.SUCCESS);
             }
         }, new VersionControl(), new GameFileCheckerListener() {
-
             @Override
             public void onCallback(GameFileChecker.GameFileResult result, Status st) {
                 Assert.assertEquals(Status.SUCCESS, st);
@@ -93,7 +93,7 @@ public class TestGameLoader extends TestAbstract{
         GameCoordinator gameCoordinator = new GameCoordinator(game.getFullLocalJarPath(),
                                         game.getLocalAssetsPath(), game.getBasePath(), new ArrayList<Team>(), Positions.getWidth(),
                                         Positions.getHeight(), null, null, "123", mock(IGameSandBox.class), null, "1", mock(ISounds.class), broadcaster,
-                                        mock(IDownloader.class));
+                                        mock(IDownloader.class), mock(ITutorials.class), mock(GamePreferencesAbstract.class));
         broadcaster.broadcast(BroadcastEvent.LOAD_GAME_REQUEST, gameCoordinator);
 
         while (waiting[0]){

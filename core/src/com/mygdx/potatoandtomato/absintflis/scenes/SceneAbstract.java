@@ -4,10 +4,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
-import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.models.Services;
-import com.potatoandtomato.common.BroadcastEvent;
-import com.potatoandtomato.common.Broadcaster;
+import com.potatoandtomato.common.assets.Assets;
 
 /**
  * Created by SiongLeng on 4/12/2015.
@@ -23,7 +21,7 @@ public abstract class SceneAbstract {
     public SceneAbstract(Services services, PTScreen screen) {
         _services = services;
         _screen = screen;
-        _assets = _services.getTextures();
+        _assets = _services.getAssets();
         _texts = _services.getTexts();
         _root = new Table();
         _root.setFillParent(true);

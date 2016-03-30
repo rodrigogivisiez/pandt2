@@ -327,7 +327,8 @@ public class FirebaseDB implements IDatabase {
                         return;
                     }
 
-                    for(LeaderboardRecord record : leaderboardRecords){
+                    for(int i = leaderboardRecords.size() -1; i >=0; i--){
+                        LeaderboardRecord record = leaderboardRecords.get(i);
                         if(record.getScore() == 0){
                             leaderboardRecords.remove(record);
                         }

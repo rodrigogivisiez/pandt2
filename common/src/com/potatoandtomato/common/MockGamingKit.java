@@ -28,7 +28,8 @@ public class MockGamingKit {
 
 
     public MockGamingKit(GameCoordinator coordinator, int expectedTeamCount,
-                         int eachTeamExpectedPlayers, Broadcaster broadcaster, Runnable onReady) {
+                         int eachTeamExpectedPlayers,
+                         Broadcaster broadcaster, Runnable onReady) {
         this._onReady = onReady;
         this._broadcaster = broadcaster;
         this._expectedTeamCount = expectedTeamCount;
@@ -136,9 +137,23 @@ public class MockGamingKit {
             System.out.println("onUpdatePeersReceived");
             String update = new String(updateEvent.getUpdate());
             try {
-                JSONObject updateJson = new JSONObject(update);
-                _broadcaster.broadcast(BroadcastEvent.INGAME_UPDATE_RESPONSE,
-                        new InGameUpdateMessage(updateJson.getString("userId"), updateJson.getString("msg")));
+                final JSONObject updateJson = new JSONObject(update);
+                if(updateJson.getString("msg").equals("SURRENDER")){
+                    Threadings.delay(5000, new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                _coordinator.userAbandon(updateJson.getString("userId"));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+                else{
+                    _broadcaster.broadcast(BroadcastEvent.INGAME_UPDATE_RESPONSE,
+                            new InGameUpdateMessage(updateJson.getString("userId"), updateJson.getString("msg")));
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }

@@ -11,9 +11,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.assets.Textures;
-import com.mygdx.potatoandtomato.helpers.services.Assets;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
+import com.potatoandtomato.common.assets.Assets;
 
 /**
  * Created by SiongLeng on 10/12/2015.
@@ -31,7 +31,7 @@ public class TopBar {
     PTScreen _screen;
 
     public TopBar(Table _root, String _title, boolean _noPreviousScene,
-                        Assets _assets, PTScreen _screen) {
+                  Assets _assets, PTScreen _screen) {
         this._root = _root;
         this._title = _title;
         this._noPreviousScene = _noPreviousScene;
@@ -56,8 +56,7 @@ public class TopBar {
         _iconImg.setPosition(76f/2 - iconSize.x/2, _barHeight/2 - iconSize.y/2);
 
         Label.LabelStyle titleLabelStyle = new Label.LabelStyle();
-        titleLabelStyle.font = _assets.getFonts().get(Fonts.FontName.PIZZA, Fonts.FontSize.MAX,
-                            Fonts.FontColor.BLACK, Fonts.FontBorderColor.LIGHT_ORANGE);
+        titleLabelStyle.font = _assets.getFonts().get(Fonts.FontId.PIZZA_MAX_REGULAR_B_000000_fed271_3);
         _titleLabel = new Label(_title, titleLabelStyle);
 
         _topBarTable.addActor(_iconImg);

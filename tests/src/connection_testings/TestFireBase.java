@@ -644,7 +644,7 @@ public class TestFireBase extends TestAbstract {
                 Assert.assertEquals(1, obj.size());
                 Assert.assertEquals(true, obj.get(0).getUserIds().contains(user1.getUserId()));
                 Assert.assertEquals(true, obj.get(0).getUserIds().contains(user2.getUserId()));
-                Assert.assertEquals(1000, obj.get(0).getScore());
+                Assert.assertEquals(1000, obj.get(0).getScore(), 0);
                 Assert.assertEquals(5, obj.get(0).getStreak().getStreakCount());
                 T_Threadings.oneTaskFinish();
             }
@@ -672,7 +672,7 @@ public class TestFireBase extends TestAbstract {
                 Assert.assertEquals(1, obj.size());
                 Assert.assertEquals(true, obj.get(0).getUserIds().contains(user1.getUserId()));
                 Assert.assertEquals(true, obj.get(0).getUserIds().contains(user2.getUserId()));
-                Assert.assertEquals(1100, obj.get(0).getScore());
+                Assert.assertEquals(1100, obj.get(0).getScore(), 0);
                 Assert.assertEquals(6, obj.get(0).getStreak().getStreakCount());
                 T_Threadings.oneTaskFinish();
             }
@@ -687,7 +687,7 @@ public class TestFireBase extends TestAbstract {
                 Assert.assertEquals(Status.SUCCESS, st);
                 Assert.assertEquals(true, obj.getUserIds().contains(user1.getUserId()));
                 Assert.assertEquals(true, obj.getUserIds().contains(user2.getUserId()));
-                Assert.assertEquals(1100, obj.getScore());
+                Assert.assertEquals(1100, obj.getScore(), 0);
                 Assert.assertEquals(6, obj.getStreak().getStreakCount());
                 T_Threadings.oneTaskFinish();
             }
@@ -785,8 +785,8 @@ public class TestFireBase extends TestAbstract {
                 Assert.assertEquals(true, obj.get(0).getUserIds().contains(user2.getUserId()));
                 Assert.assertEquals(true, obj.get(0).getUserNames().contains(user1.getGameName()));
                 Assert.assertEquals(true, obj.get(0).getUserNames().contains(user2.getGameName()));
-                Assert.assertEquals(1100, obj.get(0).getScore());
-                Assert.assertEquals(500, obj.get(1).getScore());
+                Assert.assertEquals(1100, obj.get(0).getScore(), 0);
+                Assert.assertEquals(500, obj.get(1).getScore(), 0);
                 T_Threadings.oneTaskFinish();
             }
         });
@@ -799,7 +799,7 @@ public class TestFireBase extends TestAbstract {
             public void onCallback(ArrayList<LeaderboardRecord> obj, Status st) {
                 Assert.assertEquals(Status.SUCCESS, st);
                 Assert.assertEquals(1, obj.size());
-                Assert.assertEquals(1100, obj.get(0).getScore());
+                Assert.assertEquals(1100, obj.get(0).getScore(), 0);
                 T_Threadings.oneTaskFinish();
             }
         });

@@ -98,5 +98,16 @@ public class Streak {
        return false;
     }
 
+    @JsonIgnore
+    public Streak clone(){
+        Streak streak = new Streak();
+        streak.setStreakCount(this.getStreakCount());
+        streak.setLastLoseRoomId(this.getLastLoseRoomId());
+        streak.setLastLoseRoundNumber(this.getLastLoseRoundNumber());
+        streak.setLastReviveRoomId(this.getLastReviveRoomId());
+        streak.setLastReviveRoundNumber(this.getLastReviveRoundNumber());
+        return streak;
+    }
+
 
 }

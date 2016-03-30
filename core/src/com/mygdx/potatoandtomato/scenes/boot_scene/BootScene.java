@@ -19,8 +19,6 @@ import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 import com.mygdx.potatoandtomato.statics.Global;
 
-import javax.xml.bind.annotation.XmlElementDecl;
-
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 /**
@@ -112,8 +110,7 @@ public class BootScene extends SceneAbstract {
 
         //Game Version START
         Label.LabelStyle versionStyle = new Label.LabelStyle();
-        versionStyle.font = _assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.XS,
-                Fonts.FontColor.WHITE, Fonts.FontStyle.REGULAR, Fonts.FontBorderColor.GRAY, Fonts.FontShadowColor.GRAY);
+        versionStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_XS_SEMIBOLD_B_ffffff_000000_1);
         Label versionLabel = new Label(String.format(_texts.build(), _services.getVersionControl().getClientVersion())
                             + (Global.DEBUG ? " " + _texts.debug() : ""), versionStyle);
         //Game Version END
@@ -156,7 +153,9 @@ public class BootScene extends SceneAbstract {
         //Facebook title
         //////////////////////////////
         Image facebookImage = new Image(_assets.getTextures().get(Textures.Name.FACEBOOK_ICON));
-        Label.LabelStyle titleStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.L, Fonts.FontStyle.BOLD), Color.BLACK);
+        Label.LabelStyle titleStyle = new Label.LabelStyle();
+        titleStyle.fontColor = Color.BLACK;
+        titleStyle.font = _assets.getFonts().get(Fonts.FontId.HELVETICA_L_HEAVY);
         Label titleLabel = new Label(_texts.socialLogin(), titleStyle);
 
         _titleTable = new Table();
@@ -173,7 +172,9 @@ public class BootScene extends SceneAbstract {
         tomatoTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_WHITE_BG)));
         tomatoTable.pad(5);
 
-        Label.LabelStyle contentStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontColor.DARK_BROWN, Fonts.FontStyle.SEMI_BOLD), null);
+        Label.LabelStyle contentStyle = new Label.LabelStyle();
+        contentStyle.fontColor = Color.valueOf("573801");
+        contentStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_M_SEMIBOLD);
         Label tomatoLabel = new Label(_texts.socialLoginTomato(), contentStyle);
         tomatoLabel.setWrap(true);
         Image tomatoHiImage = new Image(_assets.getTextures().get(Textures.Name.TOMATO_HI));
@@ -251,7 +252,9 @@ public class BootScene extends SceneAbstract {
         loadingTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_WHITE_BG)));
         loadingTable.pad(15);
 
-        Label.LabelStyle contentStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontColor.DARK_BROWN, Fonts.FontStyle.SEMI_BOLD), null);
+        Label.LabelStyle contentStyle = new Label.LabelStyle();
+        contentStyle.fontColor = Color.valueOf("573801");
+        contentStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_M_SEMIBOLD);
         Label loadingLabel = new Label(msg, contentStyle);
         loadingTable.add(loadingLabel);
 
@@ -273,8 +276,9 @@ public class BootScene extends SceneAbstract {
         msgTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_WHITE_BG)));
         msgTable.pad(15);
 
-        Label.LabelStyle contentStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontColor.DARK_BROWN, Fonts.FontStyle.SEMI_BOLD), null);
-        Label loadingLabel = new Label(msg, contentStyle);
+        Label.LabelStyle contentStyle = new Label.LabelStyle();
+        contentStyle.fontColor = Color.valueOf("573801");
+        contentStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_M_SEMIBOLD);   Label loadingLabel = new Label(msg, contentStyle);
         loadingLabel.setWrap(true);
         msgTable.add(loadingLabel).expand().fill();
 

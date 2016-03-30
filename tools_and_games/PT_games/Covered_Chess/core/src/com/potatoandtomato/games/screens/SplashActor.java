@@ -9,15 +9,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.potatoandtomato.common.GameCoordinator;
+import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.games.assets.Fonts;
 import com.potatoandtomato.games.assets.Textures;
-import com.potatoandtomato.games.helpers.Assets;
 import com.potatoandtomato.games.helpers.Strings;
-import com.potatoandtomato.games.helpers.Texts;
+import com.potatoandtomato.games.services.Texts;
 import com.potatoandtomato.games.statics.Global;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
 
 /**
  * Created by SiongLeng on 24/2/2016.
@@ -42,15 +41,13 @@ public class SplashActor extends Table {
         //VS labels
         /////////////////////////////
         Label labelVs = new Label(_texts.vs(), new Label.LabelStyle(
-                _assets.getFonts().get(Fonts.FontName.PIZZA, Fonts.FontSize.XXL, Fonts.FontColor.WHITE), null));
+                _assets.getFonts().get(Fonts.FontId.PIZZA_XXL_REGULAR), null));
 
-        Label labelYellowUser = new Label(Strings.cut(_coordinator.getPlayerByUniqueIndex(0).getName(), 8), new Label.LabelStyle(
-                _assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.MAX, Fonts.FontColor.WHITE,
-                        Fonts.FontStyle.BlACK_CONDENSED_ITALIC, Fonts.FontBorderColor.ORANGE, Fonts.FontShadowColor.BLACK), null));
+        Label labelYellowUser = new Label(Strings.cut(_coordinator.getPlayerByUniqueIndex(0).getName(), 9), new Label.LabelStyle(
+                _assets.getFonts().get(Fonts.FontId.HELVETICA_MAX_BlACKCONDENSEDITALIC_B_ffffff_f0c266_2_S_000000_1_1), null));
 
-        Label labelRedUser = new Label(Strings.cut(_coordinator.getPlayerByUniqueIndex(1).getName(), 8), new Label.LabelStyle(
-                _assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.MAX, Fonts.FontColor.WHITE,
-                        Fonts.FontStyle.BlACK_CONDENSED_ITALIC, Fonts.FontBorderColor.RED, Fonts.FontShadowColor.BLACK), null));
+        Label labelRedUser = new Label(Strings.cut(_coordinator.getPlayerByUniqueIndex(1).getName(), 9), new Label.LabelStyle(
+                _assets.getFonts().get(Fonts.FontId.HELVETICA_MAX_BlACKCONDENSEDITALIC_B_ffffff_f46767_2_S_000000_1_1), null));
 
 
         Table tableVs = new Table();

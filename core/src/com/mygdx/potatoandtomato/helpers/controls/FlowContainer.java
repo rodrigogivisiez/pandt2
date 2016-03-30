@@ -1,19 +1,12 @@
 package com.mygdx.potatoandtomato.helpers.controls;
 
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.assets.Textures;
-import com.mygdx.potatoandtomato.helpers.services.Assets;
-import com.mygdx.potatoandtomato.helpers.utils.Logs;
-import com.mygdx.potatoandtomato.helpers.utils.Positions;
-
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.forever;
+import com.potatoandtomato.common.assets.Assets;
 
 /**
  * Created by SiongLeng on 14/3/2016.

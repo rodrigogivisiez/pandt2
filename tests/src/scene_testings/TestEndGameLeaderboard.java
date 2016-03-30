@@ -9,12 +9,17 @@ import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
-import com.mygdx.potatoandtomato.helpers.controls.Confirm;
-import com.mygdx.potatoandtomato.helpers.services.Assets;
-import com.mygdx.potatoandtomato.models.*;
+import com.mygdx.potatoandtomato.helpers.services.Confirm;
+import com.mygdx.potatoandtomato.models.EndGameData;
+import com.mygdx.potatoandtomato.models.Game;
+import com.mygdx.potatoandtomato.models.Room;
+import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
 import com.mygdx.potatoandtomato.scenes.leaderboard_scene.LeaderBoardScene;
-import com.potatoandtomato.common.*;
+import com.potatoandtomato.common.Broadcaster;
+import com.potatoandtomato.common.IPTGame;
+import com.potatoandtomato.common.Status;
+import com.potatoandtomato.common.Threadings;
 import com.potatoandtomato.common.models.EndGameResult;
 import com.potatoandtomato.common.models.LeaderboardRecord;
 import com.potatoandtomato.common.models.ScoreDetails;
@@ -25,7 +30,6 @@ import org.mockito.Mockito;
 
 import java.util.ArrayList;
 
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
@@ -70,7 +74,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
             }
         };
 
-        Confirm mockConfirm = new Confirm(mock(SpriteBatch.class), mock(IPTGame.class), mock(Assets.class), mock(Broadcaster.class)){
+        Confirm mockConfirm = new Confirm(mock(SpriteBatch.class), mock(IPTGame.class), mock(AssetController.class), mock(Broadcaster.class)){
             @Override
             public void show(String msg, Type type, ConfirmResultListener _listener) {
                 _listener.onResult(ConfirmResultListener.Result.YES);
@@ -140,7 +144,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
             }
         };
 
-        Confirm mockConfirm = new Confirm(mock(SpriteBatch.class), mock(IPTGame.class), mock(Assets.class), mock(Broadcaster.class)){
+        Confirm mockConfirm = new Confirm(mock(SpriteBatch.class), mock(IPTGame.class), mock(AssetController.class), mock(Broadcaster.class)){
             @Override
             public void show(String msg, Type type, ConfirmResultListener _listener) {
                 _listener.onResult(ConfirmResultListener.Result.YES);
@@ -196,7 +200,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
             }
         };
 
-        Confirm mockConfirm = new Confirm(mock(SpriteBatch.class), mock(IPTGame.class), mock(Assets.class), mock(Broadcaster.class)){
+        Confirm mockConfirm = new Confirm(mock(SpriteBatch.class), mock(IPTGame.class), mock(AssetController.class), mock(Broadcaster.class)){
             @Override
             public void show(String msg, Type type, ConfirmResultListener _listener) {
                 _listener.onResult(ConfirmResultListener.Result.YES);

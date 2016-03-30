@@ -45,7 +45,8 @@ public class InputNameScene extends SceneAbstract {
         questionTable.pad(15);
 
         Label.LabelStyle questionLabelStyle = new Label.LabelStyle();
-        questionLabelStyle.font = _assets.getFonts().get(Fonts.FontName.PIZZA, Fonts.FontSize.XXL, Fonts.FontColor.TEAL, Fonts.FontShadowColor.DARK_ORANGE);
+        questionLabelStyle.fontColor = Color.valueOf("fff6d8");
+        questionLabelStyle.font = _assets.getFonts().get(Fonts.FontId.PIZZA_XXL_REGULAR_S_a05e00_1_1);
         Label questionLabel = new Label(_texts.askForName(), questionLabelStyle);
         questionLabel.setWrap(true);
         questionLabel.setAlignment(Align.center);
@@ -53,7 +54,7 @@ public class InputNameScene extends SceneAbstract {
         Table displayNameFieldTable = new Table();
         displayNameFieldTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.TEXT_FIELD_BG)));
         TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle();
-        textFieldStyle.font = _assets.getFonts().get(Fonts.FontName.MYRIAD);
+        textFieldStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR);
         textFieldStyle.fontColor = Color.BLACK;
         textFieldStyle.cursor = new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.CURSOR_BLACK));
         _displayNameTextField = new TextField(_services.getProfile().getGameName(), textFieldStyle);

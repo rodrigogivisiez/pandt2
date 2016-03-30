@@ -10,8 +10,8 @@ import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.helpers.controls.Confirm;
-import com.mygdx.potatoandtomato.helpers.controls.Notification;
+import com.mygdx.potatoandtomato.helpers.services.Confirm;
+import com.mygdx.potatoandtomato.helpers.services.Notification;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
 import com.potatoandtomato.common.Threadings;
@@ -46,6 +46,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     public GameSandboxLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
         setSaveToStack(false);
+        _failed = false;
         _me = this;
         _notification = services.getNotification();
         _scene = new GameSandboxScene(_services, _screen);
@@ -65,6 +66,8 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     @Override
     public void onInit() {
         super.onInit();
+
+        _services.getPreferences().setGameAbbr(_room.getGame().getAbbr());
 
         _services.getChat().hide();
 
@@ -105,7 +108,8 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                         _room.getGame().getLocalAssetsPath(), _room.getGame().getBasePath(), _room.getTeams(),
                         Positions.getWidth(), Positions.getHeight(), _screen.getGame(), _screen.getGame().getSpriteBatch(),
                         _services.getProfile().getUserId(), _me, _services.getDatabase().getGameBelongDatabase(_room.getGame().getAbbr()),
-                        _room.getId(), _services.getSoundsWrapper(), getBroadcaster(), _services.getDownloader()));
+                        _room.getId(), _services.getSoundsWrapper(), getBroadcaster(), _services.getDownloader(), _services.getTutorials(),
+                        _services.getPreferences()));
             }
         });
 
@@ -254,8 +258,6 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         Threadings.delay(500, new Runnable() {
             @Override
             public void run() {
-
-                _services.getSoundsWrapper().stopThemeMusic();
                 Threadings.setContinuousRenderLock(true);
                 _screen.switchToGameScreen();
                 if(!_isContinue){
@@ -279,6 +281,17 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                 }
                 _gameStarted = true;
                 dbMonitor.run();
+
+
+                _services.getSoundsWrapper().stopThemeMusic();
+                //for multitask still play theme music bug fix
+                Threadings.delay(3000, new Runnable() {
+                    @Override
+                    public void run() {
+                        _services.getSoundsWrapper().stopThemeMusic();
+                    }
+                });
+
             }
         });
 
@@ -330,7 +343,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         Threadings.runInBackground(new Runnable() {
             @Override
             public void run() {
-                while (_coordinator.getGameEntrance() == null && !_failed){
+                while (_coordinator == null || (_coordinator.getGameEntrance() == null && !_failed)){
                     Threadings.sleep(500);
                 }
                 if(!_failed){
@@ -355,8 +368,8 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         Threadings.runInBackground(new Runnable() {
             @Override
             public void run() {
+                ThreadsPool threadsPool = new ThreadsPool();
                 if(_room.getGame().getLeaderboardTypeEnum() == LeaderboardType.Accumulate){
-                    ThreadsPool threadsPool = new ThreadsPool();
                     for(final Team team : _room.getTeams()){
                         final Threadings.ThreadFragment threadFragment = new Threadings.ThreadFragment();
                         _services.getDatabase().getAccLeaderBoardRecordAndStreak(_room, team.getPlayersUserIds(), new DatabaseListener<LeaderboardRecord>(LeaderboardRecord.class) {
@@ -370,10 +383,28 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                         });
                         threadsPool.addFragment(threadFragment);
                     }
+                }
 
-                    while (!threadsPool.allFinished()){
-                        Threadings.sleep(300);
+                final Threadings.ThreadFragment allLeaderboardFragment = new Threadings.ThreadFragment();
+                _services.getDatabase().getLeaderBoardAndStreak(_room.getGame(), 200, new DatabaseListener<ArrayList<LeaderboardRecord>>(LeaderboardRecord.class) {
+                    @Override
+                    public void onCallback(ArrayList<LeaderboardRecord> records, Status st) {
+                        if(st == Status.SUCCESS){
+                            for(int i = records.size() - 1; i >= 0 ;i--){
+                                for(Team team : _room.getTeams()){
+                                    if(team.matchedUsers(records.get(i).getUserIds())){
+                                        team.setRank(i + 1);
+                                    }
+                                }
+                            }
+                        }
+                        allLeaderboardFragment.setFinished(true);
                     }
+                });
+                threadsPool.addFragment(allLeaderboardFragment);
+
+                while (!threadsPool.allFinished()){
+                    Threadings.sleep(300);
                 }
                 onFinish.run();
             }
@@ -428,17 +459,18 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                 ChatMessage.FromType.SYSTEM, null), false);
         redirectExitedSandbox();
         Threadings.setContinuousRenderLock(false);
-        _services.getSoundsWrapper().playThemeMusic();
     }
 
     private void redirectExitedSandbox(){
-        if(_room.getGame().getLeaderboardTypeEnum() != LeaderboardType.None){
+        //_gameStarted variable for failed loading case
+        if(_room.getGame().getLeaderboardTypeEnum() != LeaderboardType.None && _gameStarted){
             _endGameData.setEndGameResult(_coordinator.getEndGameResult());
             _services.getChat().hide();
             _screen.toScene(_leaderboardLogic, SceneEnum.END_GAME_LEADER_BOARD);
         }
         else{
             _screen.back();
+            _services.getSoundsWrapper().playThemeMusic();
         }
     }
 
@@ -447,7 +479,14 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         super.dispose();
         _screen.switchToPTScreen();
         if(_coordinator != null){
-            if(_coordinator.getGameEntrance() != null) _coordinator.getGameEntrance().dispose();
+            if(_coordinator.getGameEntrance() != null) {
+                Threadings.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        _coordinator.getGameEntrance().dispose();
+                    }
+                });
+            }
             _services.getBroadcaster().broadcast(BroadcastEvent.DEVICE_ORIENTATION, 0);
             _coordinator.dispose();
         }

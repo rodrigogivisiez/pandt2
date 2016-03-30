@@ -4,6 +4,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.potatoandtomato.common.assets.TextureAssets;
 import com.potatoandtomato.games.absint.IAssetFragment;
 import com.potatoandtomato.games.enums.ChessType;
 import com.potatoandtomato.games.enums.Status;
@@ -13,53 +14,19 @@ import java.util.HashMap;
 /**
  * Created by SiongLeng on 19/2/2016.
  */
-public class Textures implements IAssetFragment {
+public class Textures extends TextureAssets {
 
-    private AssetManager _manager;
-    private String _packPath = "pack.atlas";
-    private TextureAtlas _pack;
-    private HashMap<String, TextureRegion> _regions;
-
-    public Textures(AssetManager _manager) {
-        this._manager = _manager;
-        _regions = new HashMap<String, TextureRegion>();
-    }
-
-    public TextureRegion get(Name name){
-        return _regions.get(name.name());
-    }
-
-
-    @Override
-    public void load() {
-        _manager.load(_packPath, TextureAtlas.class);
-    }
-
-    @Override
-    public void onLoaded() {
-
-        _pack = _manager.get(_packPath, TextureAtlas.class);
-
-        for(TextureAtlas.AtlasRegion textureRegion : _pack.getRegions()){
-            if(textureRegion.splits == null){
-                _regions.put(textureRegion.name, textureRegion);
-            }
-        }
+    public Textures(AssetManager _manager, String packPath) {
+        super(_manager, packPath);
     }
 
     public TextureRegion getAnimalByType(ChessType chessType){
         String chessTypeString = chessType.name();
-        return _regions.get(chessTypeString);
+        return get(chessTypeString);
     }
 
     public TextureRegion getStatus(Status status){
-        return _regions.get("STATUS_" + status.name());
-    }
-
-
-
-    public TextureAtlas getPack() {
-        return _pack;
+        return get("STATUS_" + status.name());
     }
 
     public enum Name{

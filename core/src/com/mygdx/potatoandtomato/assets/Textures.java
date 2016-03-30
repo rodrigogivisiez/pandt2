@@ -1,54 +1,16 @@
 package com.mygdx.potatoandtomato.assets;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.mygdx.potatoandtomato.absintflis.assets.IAssetFragment;
-
-import java.util.HashMap;
+import com.potatoandtomato.common.assets.TextureAssets;
 
 /**
  * Created by SiongLeng on 9/2/2016.
  */
-public class Textures implements IAssetFragment {
+public class Textures extends TextureAssets {
 
-    private AssetManager _manager;
-    private TextureAtlas _UIPack;
-    private String _path = "ui_pack.atlas";
-    private HashMap<String, TextureRegion> _regions;
-
-    public Textures(AssetManager _manager) {
-        this._manager = _manager;
-        _regions = new HashMap<String, TextureRegion>();
-    }
-
-    @Override
-    public void load() {
-        _manager.load(_path, TextureAtlas.class);
-    }
-
-    @Override
-    public void dispose() {
-
-    }
-
-    public TextureRegion get(Name name){
-        return _regions.get(name.name());
-    }
-
-    @Override
-    public void onLoaded() {
-        _UIPack = _manager.get(_path, TextureAtlas.class);
-
-        for(TextureAtlas.AtlasRegion textureRegion : _UIPack.getRegions()){
-            if(textureRegion.splits == null){
-                _regions.put(textureRegion.name, textureRegion);
-            }
-        }
-    }
-
-    public TextureAtlas getUIPack() {
-        return _UIPack;
+    public Textures(AssetManager _manager, String packPath) {
+        super(_manager, packPath);
     }
 
     public enum Name{
@@ -70,7 +32,8 @@ public class Textures implements IAssetFragment {
         LOADING_IMAGE, LOADING_PAGE,
         CHAT_CONTAINER,
         SELECT_BOX, UNSELECT_BOX,
-        LEADER_BOARD_SEPARATOR, LEADERBOARD_ANIMATING_BASE
+        LEADER_BOARD_SEPARATOR, LEADERBOARD_ANIMATING_BASE,
+        TUTORIAL_MASCOT
     }
 
 

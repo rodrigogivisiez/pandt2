@@ -8,14 +8,13 @@ import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
-import com.mygdx.potatoandtomato.helpers.controls.Confirm;
+import com.mygdx.potatoandtomato.helpers.services.Confirm;
 import com.mygdx.potatoandtomato.helpers.utils.OneTimeRunnable;
 import com.mygdx.potatoandtomato.helpers.utils.Pair;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.*;
 import com.potatoandtomato.common.models.LeaderboardRecord;
 import com.potatoandtomato.common.models.ScoreDetails;
-import com.potatoandtomato.common.models.Streak;
 
 import java.util.ArrayList;
 
@@ -26,10 +25,10 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
 
     private LeaderBoardScene _scene;
     private int _leaderboardSize = 200;
-    private long _score;
+    private double _score;
     private int _scoreToAdd;
     private SafeThread _addScoreThread;
-    private boolean _saved;
+    private boolean _addScoreFinished;
     private EndGameData _endGameData;
     private Game _game;
     private Room _room;
@@ -39,7 +38,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
     private Pair<Integer, LeaderboardRecord> _myRankRecordPair;
     private LeaderboardRecord _myLeaderboardRecord;
     private boolean _leaderboardReady, _streakResetted;
-    private OneTimeRunnable _addScoreAlmostFinishRunnable;
+    private OneTimeRunnable _addScoreOnePartDoneRunnable;
 
     public EndGameLeaderBoardLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
@@ -56,6 +55,8 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
     @Override
     public void onShow() {
         super.onShow();
+
+        Threadings.setContinuousRenderLock(true);
 
         Threadings.runInBackground(new Runnable() {
             @Override
@@ -79,6 +80,12 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
         });
     }
 
+    @Override
+    public void onHide() {
+        super.onHide();
+        Threadings.setContinuousRenderLock(false);
+    }
+
     public void loserHandling(){
         final int currentRank = _myRankRecordPair.getFirst();
         final LeaderboardRecord leaderboardRecord = _myRankRecordPair.getSecond();
@@ -87,13 +94,21 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
             @Override
             public void run() {
                 _scene.leaderboardDataLoaded(_game, _records);
+                _services.getSoundsWrapper().playSoundEffect(Sounds.Name.LOSE);
+                Threadings.delay(8000, new Runnable() {
+                    @Override
+                    public void run() {
+                        _services.getSoundsWrapper().playThemeMusic();
+                    }
+                });
+
+                _scene.setMascots(LeaderBoardScene.MascotType.BORING);
                 if(currentRank != _leaderboardSize || leaderboardRecord.getScore() != 0){        //lose streak
                     _scene.scrollToRecord(_game, currentRank);
                     Threadings.delay(50, new Runnable() {
                         @Override
                         public void run() {
                             _scene.hideLoading(_game);
-                            _scene.setMascots(LeaderBoardScene.MascotType.BORING);
                             if(!_endGameData.getEndGameResult().isEmpty()){
                                 Threadings.delay(2000, new Runnable() {
                                     @Override
@@ -148,6 +163,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                     Threadings.delay(10, new Runnable() {
                         @Override
                         public void run() {
+                            _services.getSoundsWrapper().playSoundEffect(Sounds.Name.WIN);
                             _scene.scrollToRecord(_game, currentRank);
                             Threadings.delay(50, new Runnable() {
                                 @Override
@@ -172,18 +188,14 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                                                         Threadings.delay(1000, new Runnable() {
                                                                             @Override
                                                                             public void run() {
-                                                                                if(getUpperRankingDifferencePercent() <= 10){
-                                                                                    _scene.setMascots(LeaderBoardScene.MascotType.FAILED);
-                                                                                }
-                                                                                else{
-                                                                                    _scene.setMascots(LeaderBoardScene.MascotType.HAPPY);
-                                                                                }
+                                                                                _scene.setMascots(LeaderBoardScene.MascotType.HAPPY);
                                                                                 if(getStreakToAdd() > 0){
                                                                                     _services.getSoundsWrapper().playSoundEffect(Sounds.Name.STREAK);
+                                                                                    _myLeaderboardRecord.getStreak().addStreakCount(getStreakToAdd());
+                                                                                    _scene.invalidateNameStreakTable(_game, _myLeaderboardRecord,
+                                                                                            finalRank, true);
                                                                                 }
-                                                                                _myLeaderboardRecord.getStreak().addStreakCount(getStreakToAdd());
-                                                                                _scene.invalidateNameStreakTable(_game, _myLeaderboardRecord,
-                                                                                        finalRank, true);
+                                                                                _services.getSoundsWrapper().playThemeMusic();
                                                                             }
                                                                         });
                                                                     }
@@ -200,6 +212,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                     });
                 } else {
                     _scene.hideLoading(_game);
+                    _services.getSoundsWrapper().playThemeMusic();
                 }
             }
         });
@@ -245,12 +258,18 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
         _scene.addScore(_scoreDetails.get(index), new Runnable() {
             @Override
             public void run() {
-                _scoreToAdd += _scoreDetails.get(index).getValue();
-                _addScoreAlmostFinishRunnable = new OneTimeRunnable(new Runnable() {
+                if(_scoreDetails.get(index).isAddOrMultiply()){
+                    _scoreToAdd += _scoreDetails.get(index).getValue();
+                }
+
+                _addScoreOnePartDoneRunnable = new OneTimeRunnable(new Runnable() {
                     @Override
                     public void run() {
                         if(index + 1 <= _scoreDetails.size() - 1){
                             addScoresRecur(index + 1, onFinish);
+                        }
+                        else{
+                            _addScoreFinished = true;
                         }
                     }
                 });
@@ -269,37 +288,40 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                 public void run() {
                     boolean stoppedSound = true;
 
-                    while (_scoreToAdd > 0) {
-
-                        if(stoppedSound){
-                            _services.getSoundsWrapper().playSoundEffectLoop(Sounds.Name.ADDING_SCORE);
-                            stoppedSound = false;
-                        }
+                    while (_scoreToAdd > 0 || !_addScoreFinished) {
 
                         Threadings.sleep(30);
                         int adding = 0;
                         if (_scoreToAdd > 1000) {
-                            adding = MathUtils.random(100, 500);
-                        } else if (_scoreToAdd > 300) {
+                            adding = MathUtils.random(100, 200);
+                        } else if (_scoreToAdd > 500) {
                             adding = MathUtils.random(100, 200);
                         } else if (_scoreToAdd > 100) {
-                            adding = MathUtils.random(30, 100);
+                            adding = MathUtils.random(10, 50);
                         } else if (_scoreToAdd > 20) {
                             adding = MathUtils.random(1, 10);
-                        } else adding = 1;
+                        } else{
+                            if(_scoreToAdd > 0){
+                                adding = 1;
+                            }
+                        }
+
+                        if(stoppedSound && adding > 0){
+                            _services.getSoundsWrapper().playSoundEffectLoop(Sounds.Name.ADDING_SCORE);
+                            stoppedSound = false;
+                        }
 
                         _scoreToAdd -= adding;
                         _score += adding;
                         _scene.setAnimatingScore(_score);
 
-                        if(_scoreToAdd < 20 && !_addScoreAlmostFinishRunnable.isRunFinish()){
-                            _addScoreAlmostFinishRunnable.run();
-                        }
-
                         if(_scoreToAdd == 0) {
                             _services.getSoundsWrapper().stopSoundEffectLoop(Sounds.Name.ADDING_SCORE);
                             stoppedSound = true;
-                            Threadings.sleep(1000);
+                            if(!_addScoreOnePartDoneRunnable.isRunFinish()){
+                                _addScoreOnePartDoneRunnable.run();
+                            }
+                            Threadings.sleep(300);
                         }
                     }
                     _addScoreThread.kill();
@@ -372,9 +394,9 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
         while (afterRank >= 0){
             LeaderboardRecord upperRank = _records.get(afterRank);
             if(upperRank.getScore() != _myLeaderboardRecord.getScore()){
-                float score1 = upperRank.getScore();
-                float score2 = _myLeaderboardRecord.getScore();
-                float result = ((score1 - score2) / score1) * 100;
+                double score1 = upperRank.getScore();
+                double score2 = _myLeaderboardRecord.getScore();
+                double result = ((score1 - score2) / score1) * 100;
                 return (int) result;
             }
             else{

@@ -11,15 +11,15 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.games.assets.Fonts;
+import com.potatoandtomato.games.assets.MyAssets;
 import com.potatoandtomato.games.assets.Patches;
 import com.potatoandtomato.games.assets.Textures;
 import com.potatoandtomato.games.controls.DummyButton;
 import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
-import com.potatoandtomato.games.helpers.Assets;
-import com.potatoandtomato.games.helpers.Texts;
 import com.potatoandtomato.games.models.BoardModel;
 import com.potatoandtomato.games.models.GraveModel;
+import com.potatoandtomato.games.services.Texts;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -33,13 +33,13 @@ public class GraveyardActor extends Table {
     private Label _yellowTotalLabel, _redTotalLabel, _turnLabel, _turnCountLabel, _yellowPlayerLabel, _redPlayerLabel;
     private Label _yellowTimer, _redTimer;
     private Label _graveLabel;
-    private Assets _assets;
+    private MyAssets _assets;
     private Texts _texts;
     private GameCoordinator _gameCoordinator;
     private Image _pointLeftImage, _pointRightImage;
     private Container _turnCountContainer;
 
-    public GraveyardActor(GameCoordinator gameCoordinator, Texts texts, Assets assets) {
+    public GraveyardActor(GameCoordinator gameCoordinator, Texts texts, MyAssets assets) {
         this._assets = assets;
         this._texts = texts;
         this._gameCoordinator = gameCoordinator;
@@ -50,12 +50,9 @@ public class GraveyardActor extends Table {
     public void populate(){
         new DummyButton(this, _assets);
 
-        Label.LabelStyle labelTotalStyle = new Label.LabelStyle(_assets.getFonts().get(
-                                                                    Fonts.FontName.MYRIAD), null);
-        Label.LabelStyle labelSmallStyle = new Label.LabelStyle(_assets.getFonts().get(
-                                                                    Fonts.FontName.MYRIAD, Fonts.FontSize.S, Fonts.FontColor.WHITE), null);
-        Label.LabelStyle labelXSmallStyle = new Label.LabelStyle(_assets.getFonts().get(
-                                                      Fonts.FontName.HELVETICA, Fonts.FontSize.XS, Fonts.FontColor.WHITE, Fonts.FontStyle.BlACK_CONDENSED_ITALIC), null);
+        Label.LabelStyle labelTotalStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR), Color.BLACK);
+        Label.LabelStyle labelSmallStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_S_REGULAR), null);
+        Label.LabelStyle labelXSmallStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HELVETICA_XS_BlACKCONDENSEDITALIC), null);
         /////////////////////////
         //yellow total label
         ////////////////////////
@@ -109,13 +106,11 @@ public class GraveyardActor extends Table {
         /////////////////////////
         //turn icons
         ////////////////////////
-        _turnLabel = new Label("", new Label.LabelStyle(_assets.getFonts().get(
-                                Fonts.FontName.HELVETICA, Fonts.FontSize.XXL, Fonts.FontColor.DARK_BROWN, Fonts.FontStyle.HEAVY), null));
+        _turnLabel = new Label("", new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HELVETICA_XXL_HEAVY), Color.valueOf("56380a")));
         _turnLabel.setAlignment(Align.center);
 
-        _turnCountLabel = new Label("", new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.HELVETICA,
-                Fonts.FontSize.XXL, Fonts.FontColor.WHITE, Fonts.FontStyle.BlACK_CONDENSED_ITALIC,
-                Fonts.FontBorderColor.DARK_BROWN, Fonts.FontShadowColor.NONE), null));
+        _turnCountLabel = new Label("", new Label.LabelStyle(
+                                            _assets.getFonts().get(Fonts.FontId.HELVETICA_XXL_BlACKCONDENSEDITALIC_B_ffffff_56380a_1), null));
         _turnCountLabel.setOrigin(Align.center);
         _turnCountLabel.setSize(30, 20);
         _turnCountLabel.setPosition(0, 0);
@@ -163,8 +158,7 @@ public class GraveyardActor extends Table {
         _redGraveTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.GRAVE_BG)));
 
         Label.LabelStyle graveLabelStyle = new Label.LabelStyle();
-        graveLabelStyle.font = _assets.getFonts().get(Fonts.FontName.PIZZA,
-                                    Fonts.FontSize.XXXL, Fonts.FontColor.BLACK, Fonts.FontBorderColor.WHITE);
+        graveLabelStyle.font = _assets.getFonts().get(Fonts.FontId.PIZZA_XXXL_REGULAR_B_000000_ffffff_3);
         _graveLabel = new Label(_texts.graveYard(), graveLabelStyle);
         _graveLabel.setAlignment(Align.center);
 

@@ -16,7 +16,7 @@ import java.util.HashMap;
 public class LeaderboardRecord {
 
     private ArrayList<String> userIds;
-    private long score;
+    private double score;
     private Streak streak;
 
     @JsonIgnore
@@ -70,7 +70,7 @@ public class LeaderboardRecord {
         this.userIds.add(userId);
     }
 
-    public long getScore() {
+    public double getScore() {
         return score;
     }
 
@@ -96,7 +96,7 @@ public class LeaderboardRecord {
         return Strings.joinArr(this.getUserNames(), ", ");
     }
 
-    public void addScore(long value){
+    public void addScore(double value){
         this.score += value;
     }
 

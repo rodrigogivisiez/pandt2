@@ -3,7 +3,7 @@ package com.mygdx.potatoandtomato.absintflis.scenes;
 import com.badlogic.gdx.utils.Disposable;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
-import com.mygdx.potatoandtomato.helpers.controls.Confirm;
+import com.mygdx.potatoandtomato.helpers.services.Confirm;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
 import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.potatoandtomato.common.SafeThread;
@@ -85,9 +85,14 @@ public abstract class LogicAbstract implements Disposable {
         this._screen = _screen;
     }
 
-    //will be called everytime scene onshow, whether is back or forward direction, root might not have stage parent yet
+    //will be called everytime scene onshow(before moving animation), whether is back or forward direction, root might not have stage parent yet
     public void onShow(){
         _isVisible = true;
+    }
+
+    //called everytime scene have complete moving animation, wheteher back or forward direction
+    public void onShown(){
+
     }
 
     //will be called everytime scene on hide, whether is back or forward direction

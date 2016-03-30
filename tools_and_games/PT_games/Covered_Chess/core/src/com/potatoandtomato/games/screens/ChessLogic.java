@@ -6,15 +6,15 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
+import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.games.absint.ActionListener;
-import com.potatoandtomato.games.assets.Sounds;
+import com.potatoandtomato.games.assets.MyAssets;
 import com.potatoandtomato.games.enums.ChessType;
 import com.potatoandtomato.games.enums.Status;
-import com.potatoandtomato.games.helpers.Assets;
-import com.potatoandtomato.games.helpers.GameDataController;
 import com.potatoandtomato.games.helpers.Positions;
-import com.potatoandtomato.games.helpers.SoundsWrapper;
 import com.potatoandtomato.games.models.ChessModel;
+import com.potatoandtomato.games.services.GameDataController;
+import com.potatoandtomato.games.services.SoundsWrapper;
 
 import java.util.ArrayList;
 
@@ -34,7 +34,7 @@ public class ChessLogic {
     ArrayList<DragAndDrop.Target> _dragDropTargets;
     GameDataController _gameDataController;
 
-    public ChessLogic(ChessModel chessModel, Assets assets, SoundsWrapper soundsWrapper, GameDataController gameDataController) {
+    public ChessLogic(ChessModel chessModel, MyAssets assets, SoundsWrapper soundsWrapper, GameDataController gameDataController) {
         this._chessModel = chessModel;
         this._soundsWrapper = soundsWrapper;
         this._gameDataController = gameDataController;

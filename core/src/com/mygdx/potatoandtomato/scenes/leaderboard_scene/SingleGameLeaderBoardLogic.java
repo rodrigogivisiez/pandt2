@@ -30,6 +30,12 @@ public class SingleGameLeaderBoardLogic extends LogicAbstract {
         init();
     }
 
+    @Override
+    public void onShow() {
+        super.onShow();
+        Threadings.setContinuousRenderLock(true);
+    }
+
     private void init(){
         _services.getDatabase().getLeaderBoardAndStreak(_game, 200, new DatabaseListener<ArrayList<LeaderboardRecord>>() {
             @Override
@@ -71,6 +77,7 @@ public class SingleGameLeaderBoardLogic extends LogicAbstract {
     public void onHide() {
         super.onHide();
         _services.getChat().show();
+        Threadings.setContinuousRenderLock(false);
     }
 
     @Override

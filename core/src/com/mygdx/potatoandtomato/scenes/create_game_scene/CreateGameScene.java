@@ -1,5 +1,6 @@
 package com.mygdx.potatoandtomato.scenes.create_game_scene;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
@@ -74,8 +75,10 @@ public class CreateGameScene extends SceneAbstract {
 
         Image pointLeftImage = new Image(_assets.getTextures().get(Textures.Name.POINT_LEFT_ICON));
         Vector2 sizes = Sizes.resize(140, _assets.getTextures().get(Textures.Name.POINT_LEFT_ICON));
-        Label pickAGameLabel = new Label(_texts.pickAGame(), new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.XXL, Fonts.FontColor.DARK_BROWN,
-                                                                                                        Fonts.FontStyle.CONDENSED, Fonts.FontShadowColor.DARK_ORANGE), null));
+        Label.LabelStyle pickAGameLabelStyle = new Label.LabelStyle();
+        pickAGameLabelStyle.fontColor = Color.valueOf("573801");
+        pickAGameLabelStyle.font = _assets.getFonts().get(Fonts.FontId.HELVETICA_XL_CONDENSED_S_a05e00_1_1);
+        Label pickAGameLabel = new Label(_texts.pickAGame(), pickAGameLabelStyle);
         pointLeftImage.addAction(forever(sequence(moveBy(-10, 0, 1f), moveBy(10, 0, 1f))));
         _gameDetails.add(pointLeftImage).size(sizes.x, sizes.y);
         _gameDetails.row();
@@ -134,14 +137,16 @@ public class CreateGameScene extends SceneAbstract {
         _gameDetails.align(Align.top);
 
         Label.LabelStyle titleStyle = new Label.LabelStyle();
-        titleStyle.font = _assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.XXL, Fonts.FontColor.DARK_BROWN,
-                                Fonts.FontStyle.CONDENSED, Fonts.FontShadowColor.DARK_ORANGE);
+        titleStyle.fontColor = Color.valueOf("573801");
+        titleStyle.font = _assets.getFonts().get(Fonts.FontId.HELVETICA_XL_CONDENSED_S_a05e00_1_1);
 
         Label.LabelStyle contentStyle1 = new Label.LabelStyle();
-        contentStyle1.font = _assets.getFonts().get(Fonts.FontName.HELVETICA, Fonts.FontSize.M, Fonts.FontColor.WHITE, Fonts.FontStyle.BOLD);
+        contentStyle1.fontColor = Color.valueOf("fff0bb");
+        contentStyle1.font = _assets.getFonts().get(Fonts.FontId.HELVETICA_M_BOLD);
 
         Label.LabelStyle contentStyle2 = new Label.LabelStyle();
-        contentStyle2.font = _assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.S, Fonts.FontColor.WHITE);
+        contentStyle2.fontColor = Color.valueOf("fff0bb");
+        contentStyle2.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_S_REGULAR);
 
         WebImage gameLogo = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster());
         Label detailsTitleLabel = new Label(_texts.details(), titleStyle);

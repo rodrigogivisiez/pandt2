@@ -72,7 +72,7 @@ public class DesktopLauncher {
 			@Override
 			public void onCallback(Integer obj, Status st) {
 				Global.IS_POTRAIT = (obj == 0);
-				application.getGraphics().setDisplayMode(Positions.getWidth(), Positions.getHeight(), false);
+				application.getGraphics().setWindowedMode(Positions.getWidth(), Positions.getHeight());
 			}
 		});
 	}

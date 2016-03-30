@@ -37,7 +37,7 @@ public class GameSandboxScene extends SceneAbstract {
         _loadingTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
         _loadingTable.padBottom(10);
 
-        Label.LabelStyle remainingStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.S, Fonts.FontColor.WHITE), null);
+        Label.LabelStyle remainingStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_S_REGULAR), null);
         Table remainingTable = new Table();
         remainingTable.pad(10);
 
@@ -59,10 +59,9 @@ public class GameSandboxScene extends SceneAbstract {
         Table userTable;
         Label userNameLabel;
         Label statusLabel;
-        Label.LabelStyle labelNameStyle =  new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD,
-                Fonts.FontSize.S, Fonts.FontColor.WHITE, Fonts.FontStyle.SEMI_BOLD), color);
-        Label.LabelStyle labelStatusStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD,
-                Fonts.FontSize.S, Fonts.FontColor.WHITE, Fonts.FontStyle.SEMI_BOLD), isFailed ? Color.RED : isReady ? Color.GREEN : Color.WHITE);
+        Label.LabelStyle labelNameStyle =  new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_S_SEMIBOLD), color);
+        Label.LabelStyle labelStatusStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_S_SEMIBOLD),
+                                    isFailed ? Color.RED : isReady ? Color.GREEN : Color.WHITE);
         String status = isFailed ? _texts.failed() : isReady ? _texts.ready() : _texts.loading();
 
         if(_userTableMap.containsKey(userId)){

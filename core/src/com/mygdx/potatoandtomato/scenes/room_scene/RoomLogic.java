@@ -19,7 +19,7 @@ import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.helpers.controls.Confirm;
+import com.mygdx.potatoandtomato.helpers.services.Confirm;
 import com.mygdx.potatoandtomato.helpers.services.VersionControl;
 import com.mygdx.potatoandtomato.helpers.utils.JsonObj;
 import com.potatoandtomato.common.SafeThread;
@@ -52,6 +52,7 @@ public class RoomLogic extends LogicAbstract {
     boolean _quiting;
     boolean _onScreen;
     boolean _populatedPlayersListener;
+    String _errorOccuredMsg;
 
 
     public Room getRoom() {
@@ -270,6 +271,12 @@ public class RoomLogic extends LogicAbstract {
     public void onShow() {
         super.onShow();
 
+        _services.getSoundsWrapper().playThemeMusic();
+
+        if(_errorOccuredMsg != null){
+            return;
+        }
+
         _confirm.setStateChangedListener(new ConfirmStateChangedListener() {
             @Override
             public void onShow() {
@@ -317,6 +324,14 @@ public class RoomLogic extends LogicAbstract {
     }
 
     @Override
+    public void onShown() {
+        super.onShown();
+        if(_errorOccuredMsg != null){
+            errorOccured(_errorOccuredMsg);
+        }
+    }
+
+    @Override
     public void onQuit(final OnQuitListener listener) {
         if(!_forceQuit){
             _confirm.show(isHost() ? _texts.confirmHostLeaveRoom() : _texts.confirmLeaveRoom(), Confirm.Type.YESNO, new ConfirmResultListener() {
@@ -345,7 +360,7 @@ public class RoomLogic extends LogicAbstract {
                 _scene.updateRoom(_room);
 
                 int i = 0;
-                for(Table t : _scene.getSlotsTable()){
+                for(final Table t : _scene.getSlotsTable()){
                     final int finalI = i;
                     if(!t.getName().contains("disableclick")){
                         t.addListener(new ClickListener(){
@@ -355,6 +370,23 @@ public class RoomLogic extends LogicAbstract {
                                 if(_room.getRoomUserBySlotIndex(finalI) == null){
                                     sendUpdateRoomMates(UpdateRoomMatesCode.MOVE_SLOT, String.valueOf(finalI));
                                 }
+                            }
+
+                            @Override
+                            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                                if(_room.getRoomUserBySlotIndex(finalI) == null){
+                                    _scene.playerTableTouchedDown(t);
+                                }
+                                return super.touchDown(event, x, y, pointer, button);
+                            }
+
+
+                            @Override
+                            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                                if(_room.getRoomUserBySlotIndex(finalI) == null){
+                                    _scene.playerTableTouchedUp(t);
+                                }
+                                super.touchUp(event, x, y, pointer, button);
                             }
                         });
                     }
@@ -638,6 +670,12 @@ public class RoomLogic extends LogicAbstract {
     }
 
     public void errorOccured(String message){
+        if(!isSceneVisible()){
+            leaveRoom();
+            _errorOccuredMsg = message;
+            return;
+        }
+
         if(_forceQuit) return;
         else{
             _forceQuit = true;
@@ -784,7 +822,7 @@ public class RoomLogic extends LogicAbstract {
         _userBadgeHelper.setPaused(true);
         _confirm.setStateChangedListener(null);
         _onScreen = false;
-        if(!_quiting && !_starting)  sendIsReadyUpdate(false);
+        if(!_quiting)  sendIsReadyUpdate(false);
 
     }
 

@@ -20,6 +20,7 @@ import com.mygdx.potatoandtomato.models.GameHistory;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
 import com.potatoandtomato.common.models.Streak;
+import com.potatoandtomato.common.utils.Strings;
 
 import java.util.HashMap;
 
@@ -193,8 +194,7 @@ public class InviteScene extends SceneAbstract {
         titleTable.padLeft(10).padRight(10).padBottom(10).padTop(5);
         titleTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.EXPANDABLE_TITLE_BG)));
 
-        Label titleLabel = new Label(title, new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD,
-                                    Fonts.FontSize.L, Fonts.FontColor.WHITE, Fonts.FontStyle.BOLD), null));
+        Label titleLabel = new Label(title, new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_L_BOLD), null));
         titleTable.add(titleLabel).expandX().fillX();
 
         containerTable.add(titleTable).expandX().fillX();
@@ -202,13 +202,10 @@ public class InviteScene extends SceneAbstract {
 
     public Table putUserToTable(final Profile profile, InviteScene.InviteType inviteType, Object... objs){
 
-        Label.LabelStyle normalStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD,
-                                                            Fonts.FontColor.WHITE, Fonts.FontStyle.SEMI_BOLD), null);
-        Label.LabelStyle smallItalicStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD,
-                                                            Fonts.FontSize.S, Fonts.FontColor.WHITE, Fonts.FontStyle.ITALIC), null);
+        Label.LabelStyle normalStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_M_SEMIBOLD), null);
+        Label.LabelStyle smallItalicStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_S_REGULAR), null);
 
-        Label.LabelStyle badgeStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontSize.XS,
-                            Fonts.FontColor.WHITE, Fonts.FontStyle.SEMI_BOLD, Fonts.FontBorderColor.BLACK, Fonts.FontShadowColor.NONE), null);
+        Label.LabelStyle badgeStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_XS_SEMIBOLD_B_ffffff_000000_1), null);
 
         Table contentTable = getContainerContentTable(inviteType);
 
@@ -234,7 +231,7 @@ public class InviteScene extends SceneAbstract {
 
             case Leaderboard:
                 Integer rankNumber = (Integer) objs[0];
-                long score = (Long) objs[1];
+                double score = (Double) objs[1];
                 Streak streak = (Streak) objs[2];
 
                 Table rankTable = new Table();
@@ -243,7 +240,7 @@ public class InviteScene extends SceneAbstract {
                 rankTable.add(rankLabel);
 
                 Label nameLabel2 = new Label(profile.getDisplayName(30), normalStyle);
-                Label scoreLabel = new Label(String.valueOf(score), smallItalicStyle);
+                Label scoreLabel = new Label(String.format(_texts.xPoints(), Strings.formatNum((int) score)), smallItalicStyle);
                 Table nameScoreTable = new Table();
                 nameScoreTable.add(nameLabel2).expandX().fillX();
                 nameScoreTable.row();
@@ -305,7 +302,7 @@ public class InviteScene extends SceneAbstract {
         Table messageTable = getContainerContentTable(type);
         messageTable.clear();
 
-        Label msgLabel = new Label(msg, new Label.LabelStyle(_assets.getFonts().get(Fonts.FontName.MYRIAD, Fonts.FontColor.WHITE), null));
+        Label msgLabel = new Label(msg, new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR), null));
         msgLabel.setWrap(true);
         messageTable.add(msgLabel).expandX().fillX().pad(10);
     }

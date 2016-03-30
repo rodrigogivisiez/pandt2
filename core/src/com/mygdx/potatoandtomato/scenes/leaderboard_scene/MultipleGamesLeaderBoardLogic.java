@@ -34,6 +34,18 @@ public class MultipleGamesLeaderBoardLogic extends LogicAbstract {
         init();
     }
 
+    @Override
+    public void onShow() {
+        super.onShow();
+        Threadings.setContinuousRenderLock(true);
+    }
+
+    @Override
+    public void onHide() {
+        super.onHide();
+        Threadings.setContinuousRenderLock(false);
+    }
+
     private void init(){
         _services.getDatabase().getAllGames(new DatabaseListener<ArrayList<Game>>(Game.class) {
             @Override
