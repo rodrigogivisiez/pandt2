@@ -43,7 +43,7 @@ public class ChessLogic {
         _chessActor = new ChessActor(assets, soundsWrapper);
 
         setListeners();
-        invalidate();
+        invalidate(true);
     }
 
 
@@ -83,13 +83,13 @@ public class ChessLogic {
 
     public void setSelected(boolean isSelected){
         _chessModel.setSelected(isSelected);
-        invalidate();
+        invalidate(false);
     }
 
     public void setFocusing(boolean focusing){
         if(_chessModel.getFocusing() != focusing){
             _chessModel.setFocusing(focusing);
-            invalidate();
+            invalidate(false);
         }
     }
 
@@ -101,7 +101,7 @@ public class ChessLogic {
         else{
             _chessModel = chessModel;
         }
-        invalidate();
+        invalidate(true);
     }
 
     public Actor cloneActor(){
@@ -112,8 +112,8 @@ public class ChessLogic {
         return _chessActor;
     }
 
-    public void invalidate(){
-        _chessActor.invalidate(_chessModel);
+    public void invalidate(boolean invalidateStatus){
+        _chessActor.invalidate(_chessModel, invalidateStatus);
     }
 
     public ChessModel getChessModel() {
@@ -174,7 +174,7 @@ public class ChessLogic {
                     payload.setDragActor(clone);
                     _dragAndDrop.setDragActorPosition(-x, -y + clone.getHeight());
                     getChessModel().setDragging(true);
-                    invalidate();
+                    invalidate(false);
                 }
                 return payload;
             }
@@ -192,7 +192,7 @@ public class ChessLogic {
                         public boolean act(float delta) {
                             clone.remove();
                             getChessModel().setDragging(false);
-                            invalidate();
+                            invalidate(false);
                             return true;
                         }
                     }));

@@ -43,7 +43,7 @@ public class BoardModel extends Model {
     }
 
     private boolean checkExceedSuddenDeathNumber(int count){
-        return count >=50;
+        return count >=70;
     }
 
     public boolean isSuddenDeath() {
@@ -59,11 +59,11 @@ public class BoardModel extends Model {
     }
 
     public boolean isCrackStarting(){
-        return getAccTurnCount() >= 55;
+        return getAccTurnCount() >= 75;
     }
 
     public boolean isCrackHappened(){
-        return getAccTurnCount() >= 70;
+        return getAccTurnCount() >= 85;
     }
 
     public ChessColor getCurrentTurnChessColor(){

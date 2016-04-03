@@ -238,7 +238,7 @@ public class ChessActor extends Table {
         return _animalChess.clone();
     }
 
-    public void invalidate(ChessModel chessModel){
+    public void invalidate(ChessModel chessModel, boolean invalidateStatus){
         setAnimal(chessModel.getChessType());
         setSurface(chessModel.getSelected(), chessModel.getChessType());
         this.getColor().a = chessModel.getDragging() ? 0 : 1;
@@ -248,8 +248,8 @@ public class ChessActor extends Table {
             _animalChess.setVisible(true);
             _statusTable.setVisible(true);
         }
-        if(_currentStatus != chessModel.getStatus()){
-            setStatusIcon(chessModel.getStatus(), false);
+        if(invalidateStatus){
+            setStatusIcon(chessModel.getStatus(), _currentStatus != chessModel.getStatus());
         }
 
         Logs.show("Invalidating chess: " + chessModel.getChessType());
@@ -288,6 +288,8 @@ public class ChessActor extends Table {
     }
 
     public void setStatusIcon(Status status, boolean animate){
+        if(status == _currentStatus) return;
+
         _statusTable.setScale(1, 1);
 
         if(status == Status.NONE){

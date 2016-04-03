@@ -186,7 +186,7 @@ public class BoardScreen extends GameScreen {
     @Override
     public void render(float delta) {
         if (Gdx.input.isKeyPressed(Input.Keys.BACK)){
-            getCoordinator().abandon(true);
+            getCoordinator().abandon();
         }
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);

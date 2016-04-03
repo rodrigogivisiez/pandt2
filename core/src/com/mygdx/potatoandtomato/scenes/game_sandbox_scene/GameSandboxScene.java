@@ -34,7 +34,7 @@ public class GameSandboxScene extends SceneAbstract {
         _root.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.LOADING_PAGE)));
 
         _loadingTable = new Table();
-        _loadingTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
+        _loadingTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.FULL_BLACK_BG)));
         _loadingTable.padBottom(10);
 
         Label.LabelStyle remainingStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_S_REGULAR), null);

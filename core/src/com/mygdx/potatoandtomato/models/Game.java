@@ -16,7 +16,7 @@ public class Game {
     String name, minPlayers, maxPlayers, teamMinPlayers, teamMaxPlayers, teamCount,
             iconUrl, gameUrl, abbr, description, version, commonVersion, leaderboardType;
     long createTimestamp, lastUpdatedTimestamp, gameSize;
-    boolean mustFairTeam;
+    boolean mustFairTeam, streakEnabled;
 
 
     public Game() {
@@ -184,6 +184,13 @@ public class Game {
         return Strings.byteToMb(gameSize);
     }
 
+    public boolean isStreakEnabled() {
+        return streakEnabled;
+    }
+
+    public void setStreakEnabled(boolean streakEnabled) {
+        this.streakEnabled = streakEnabled;
+    }
 
     @JsonIgnore
     public String getFullBasePath(){

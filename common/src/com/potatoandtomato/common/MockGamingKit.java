@@ -1,6 +1,7 @@
 package com.potatoandtomato.common;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.shephertz.app42.gaming.multiplayer.client.WarpClient;
 import com.shephertz.app42.gaming.multiplayer.client.command.WarpResponseResultCode;
 import com.shephertz.app42.gaming.multiplayer.client.events.*;
@@ -182,7 +183,7 @@ public class MockGamingKit {
                 Collections.sort(users);
 
                 for(String user : users) {
-                    team.addPlayer(new Player(user, user, isHost, true));
+                    team.addPlayer(new Player(user, user, isHost, true, Color.RED));
                     isHost = false;
                     i++;
                     if(i == _eachTeamExpectedPlayers){

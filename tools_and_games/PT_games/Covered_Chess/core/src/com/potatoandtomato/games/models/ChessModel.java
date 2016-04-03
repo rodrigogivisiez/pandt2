@@ -44,7 +44,7 @@ public class ChessModel extends Model {
     }
 
     public boolean canTransform(){
-        return this.killCount == 3 && this.status != Status.KING;
+        return this.killCount >= 3 && this.status != Status.KING;
     }
 
     public Status getStatus() {

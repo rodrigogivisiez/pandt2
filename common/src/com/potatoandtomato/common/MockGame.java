@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
@@ -57,9 +58,10 @@ public abstract class MockGame extends Game implements IPTGame {
             }
 
             @Override
-            public void userAbandoned() {
+            public void userAbandoned(String userId) {
 
             }
+
 
             @Override
             public void onGameLoaded() {
@@ -116,7 +118,7 @@ public abstract class MockGame extends Game implements IPTGame {
                     for(int i = 0; i < expectedTeamCount; i++){
                         Team team = new Team();
                         for(int q = 0; q < eachTeamExpectedPlayers; q++){
-                            team.addPlayer(new Player("test", !addedMe ? _mockGamingKit.getUserId() : Strings.generateRandomKey(8), true, true));
+                            team.addPlayer(new Player("test", !addedMe ? _mockGamingKit.getUserId() : Strings.generateRandomKey(8), true, true, Color.BLACK));
                             addedMe = true;
                         }
                         teams.add(team);

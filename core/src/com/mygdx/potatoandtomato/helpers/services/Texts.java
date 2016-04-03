@@ -141,7 +141,7 @@ public class Texts {
 
     public String notificationAbandon() { return "%s has abandoned the game!";}
     public String notificationConnected() { return "%s has connected to the game.";}
-    public String notificationDisconnected() { return "%s has disconnected from the game, please wait for them to reconnect.";}
+    public String notificationDisconnected() { return "%s has disconnected from the game, he/she has one minute to reconnect, please wait.";}
 
     public String noConnection() { return "You have been disconnected from the server, please check your connection."; }
 

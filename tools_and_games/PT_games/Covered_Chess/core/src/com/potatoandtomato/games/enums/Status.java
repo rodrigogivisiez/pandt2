@@ -5,7 +5,7 @@ package com.potatoandtomato.games.enums;
  */
 public enum Status {
     POISON,
-    INCREASE,
+    VENGEFUL,
     KING,
     DECREASE,
     ANGRY,

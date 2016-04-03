@@ -71,7 +71,7 @@ public class Streak {
 
     @JsonIgnore
     public boolean hasValidStreak(){
-        if(getStreakCount() >= 2){
+        if(getStreakCount() >= 3){
             if(Strings.isEmpty(getLastLoseRoomId())){
                 return true;
             }

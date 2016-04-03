@@ -94,6 +94,11 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
             @Override
             public void run() {
                 _scene.leaderboardDataLoaded(_game, _records);
+
+                if(_records.size() > _leaderboardSize){     //appended not in list record in leaderboard also
+                    _scene.changeRecordTableToUnknownRank(_game, _leaderboardSize);
+                }
+
                 _services.getSoundsWrapper().playSoundEffect(Sounds.Name.LOSE);
                 Threadings.delay(8000, new Runnable() {
                     @Override
@@ -113,11 +118,11 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                 Threadings.delay(2000, new Runnable() {
                                     @Override
                                     public void run() {
-                                        if(_endGameData.getEndGameResult().isStreakEnabled() && leaderboardRecord.getStreak().hasValidStreak()){
+                                        if(_room.getGame().isStreakEnabled() && leaderboardRecord.getStreak().hasValidStreak()){
                                             _scene.loseStreakAnimate(_game, currentRank);
-                                            _scene.setMascots(LeaderBoardScene.MascotType.FAILED);
 
                                             if(leaderboardRecord.getStreak().canRevive()){
+                                                _scene.setMascots(LeaderBoardScene.MascotType.FAILED);
                                                 Threadings.delay(2000, new Runnable() {
                                                     @Override
                                                     public void run() {
@@ -136,6 +141,9 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                                         });
                                                     }
                                                 });
+                                            }
+                                            else{
+                                                _scene.setMascots(LeaderBoardScene.MascotType.CRY);
                                             }
                                         }
                                     }
@@ -185,16 +193,25 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                                             moveUpRankAnimation(currentRank, finalRank, new Runnable() {
                                                                     @Override
                                                                     public void run() {
-                                                                        Threadings.delay(1000, new Runnable() {
+                                                                        Threadings.delay(500, new Runnable() {
                                                                             @Override
                                                                             public void run() {
-                                                                                _scene.setMascots(LeaderBoardScene.MascotType.HAPPY);
+
                                                                                 if(getStreakToAdd() > 0){
                                                                                     _services.getSoundsWrapper().playSoundEffect(Sounds.Name.STREAK);
                                                                                     _myLeaderboardRecord.getStreak().addStreakCount(getStreakToAdd());
                                                                                     _scene.invalidateNameStreakTable(_game, _myLeaderboardRecord,
                                                                                             finalRank, true);
                                                                                 }
+
+                                                                                if(finalRank == _leaderboardSize){  //no enough pt to move up any rank
+                                                                                    _scene.setMascots(LeaderBoardScene.MascotType.BORING);
+                                                                                    _scene.changeRecordTableToUnknownRank(_game, finalRank);
+                                                                                }
+                                                                                else{
+                                                                                    _scene.setMascots(LeaderBoardScene.MascotType.HAPPY);
+                                                                                }
+
                                                                                 _services.getSoundsWrapper().playThemeMusic();
                                                                             }
                                                                         });
@@ -250,7 +267,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
     }
 
     public void moveUpRankAnimation(int fromRank, int toRank, Runnable onFinish){
-        _scene.moveUpRank(_game, toRank, fromRank, _myLeaderboardRecord, onFinish);
+        _scene.moveUpRank(_game, toRank, fromRank, _myLeaderboardRecord, _leaderboardSize, onFinish);
     }
 
     public void addScoresRecur(final int index, final Runnable onFinish){

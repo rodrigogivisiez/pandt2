@@ -4,11 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.firebase.client.Firebase;
+import com.potatoandtomato.common.absints.ConnectionMonitorListener;
 import com.potatoandtomato.common.absints.GamePreferencesAbstract;
+import com.potatoandtomato.common.helpers.ConnectionMonitor;
 import com.potatoandtomato.common.models.EndGameResult;
 import com.potatoandtomato.common.models.ScoreDetails;
 
@@ -49,6 +52,7 @@ public class GameCoordinator implements Disposable {
     private String _broadcastSubscribedId;
 
     private EndGameResult _endGameResult;
+    private ConnectionMonitor _connectionMonitor;
 
     public GameCoordinator(String jarPath, String assetsPath,
                            String basePath, ArrayList<Team> teams,
@@ -81,6 +85,12 @@ public class GameCoordinator implements Disposable {
         _subscribedIds = new ArrayList<String>();
         _processors = new Array<InputProcessor>();
         _inGameUpdateListeners = new ArrayList<InGameUpdateListener>();
+        _connectionMonitor = new ConnectionMonitor(new ConnectionMonitorListener() {
+            @Override
+            public void onExceedReconnectLimitTime(String userId) {
+                forceAbandonOtherUser(userId);
+            }
+        });
         subscribeListeners();
     }
 
@@ -240,14 +250,14 @@ public class GameCoordinator implements Disposable {
         getGameSandBox().endGame();
     }
 
-    public void abandon(final boolean streakEnabled){
+    public void abandon(){
         getGameSandBox().useConfirm("PTTEXT_ABANDON", new Runnable() {
             @Override
             public void run() {     //yes
-                getGameSandBox().userAbandoned();
+                getGameSandBox().userAbandoned(getMyUserId());
                 ArrayList<Team> losersTeam = new ArrayList<Team>();
                 losersTeam.add(getMyTeam());
-                beforeEndGame(new HashMap<Team, ArrayList<ScoreDetails>>(), losersTeam, streakEnabled);
+                beforeEndGame(new HashMap<Team, ArrayList<ScoreDetails>>(), losersTeam);
                 endGame();
             }
         }, new Runnable() {
@@ -258,13 +268,19 @@ public class GameCoordinator implements Disposable {
         });
     }
 
+    public void forceAbandonOtherUser(String userId){
+        getGameSandBox().userAbandoned(userId);
+    }
+
     public void userAbandon(String userId){
         setPlayerConnectionChanged(userId, false);
+        _connectionMonitor.userAbandoned(userId);
         if(this.userStateListener != null) userStateListener.userAbandoned(userId);
     }
 
     public void userConnectionChanged(String userId, boolean connected){
         setPlayerConnectionChanged(userId, connected);
+        _connectionMonitor.connectionChanged(userId, connected);
         if(this.userStateListener != null) {
             if(connected){
                 userStateListener.userConnected(userId);
@@ -312,7 +328,7 @@ public class GameCoordinator implements Disposable {
                 i++;
             }
         }
-        return new Player("", "", false, true);
+        return new Player("", "", false, true, Color.BLACK);
     }
 
 
@@ -406,7 +422,7 @@ public class GameCoordinator implements Disposable {
         return _endGameResult;
     }
 
-    public void beforeEndGame(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers, boolean streakEnabled){
+    public void beforeEndGame(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers){
         if(winners == null && losers == null){
             this._endGameResult = new EndGameResult();
             return;
@@ -421,7 +437,6 @@ public class GameCoordinator implements Disposable {
 
         this._endGameResult = new EndGameResult();
         this._endGameResult.setMyTeam(getMyTeamPlayers());
-        this._endGameResult.setStreakEnabled(streakEnabled);
 
         for(Team loserTeam : losers){
             if(loserTeam.hasUser(getMyUserId())){
@@ -440,6 +455,7 @@ public class GameCoordinator implements Disposable {
 
     @Override
     public void dispose() {
+        _connectionMonitor.dispose();
         broadcaster.unsubscribe(_broadcastSubscribedId);
         userStateListener = null;
         _inGameUpdateListeners.clear();

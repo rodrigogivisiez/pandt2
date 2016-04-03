@@ -117,7 +117,7 @@ DOWNWARD_EGG_BUTTON
   index: -1
 EMPTY
   rotate: false
-  xy: 716, 1374
+  xy: 1165, 1643
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
@@ -152,6 +152,13 @@ FACEBOOK_INVITE_ICON
   orig: 30, 20
   offset: 0, 0
   index: -1
+FULL_BLACK_BG
+  rotate: false
+  xy: 658, 1374
+  size: 35, 31
+  orig: 35, 31
+  offset: 0, 0
+  index: -1
 GAMELIST_BG
   rotate: false
   xy: 1080, 1322
@@ -184,7 +191,7 @@ GREEN_GROUND
   index: -1
 GREY_HORIZONTAL_LINE
   rotate: false
-  xy: 695, 1374
+  xy: 1158, 1643
   size: 5, 1
   orig: 5, 1
   offset: 0, 0
@@ -200,7 +207,7 @@ GREY_ROUNDED_BG
   index: -1
 INVITED_ICON
   rotate: false
-  xy: 345, 167
+  xy: 1080, 1138
   size: 30, 26
   orig: 30, 26
   offset: 0, 0
@@ -271,14 +278,14 @@ LEADERBOARD_ICON
   index: -1
 LEADERBOARD_INVITE_ICON
   rotate: false
-  xy: 345, 195
+  xy: 1080, 1166
   size: 40, 26
   orig: 40, 26
   offset: 0, 0
   index: -1
 LEADERBOARD_MAIN_ICON
   rotate: false
-  xy: 695, 1377
+  xy: 402, 558
   size: 43, 28
   orig: 43, 28
   offset: 0, 0
@@ -292,7 +299,7 @@ LEADER_BOARD_BG
   index: -1
 LEADER_BOARD_SEPARATOR
   rotate: false
-  xy: 702, 1374
+  xy: 918, 984
   size: 5, 1
   orig: 5, 1
   offset: 0, 0
@@ -369,7 +376,7 @@ NO_IMAGE
   index: -1
 ORANGE_HORIZONTAL_LINE
   rotate: false
-  xy: 709, 1374
+  xy: 1974, 1802
   size: 5, 1
   orig: 5, 1
   offset: 0, 0
@@ -385,7 +392,7 @@ ORANGE_ROUNDED_BG
   index: -1
 ORANGE_VERTICAL_LINE
   rotate: false
-  xy: 762, 1395
+  xy: 576, 617
   size: 2, 10
   orig: 2, 10
   offset: 0, 0
@@ -429,7 +436,7 @@ QUIT_ICON
   index: -1
 RANK_ICON
   rotate: false
-  xy: 740, 1382
+  xy: 345, 132
   size: 20, 23
   orig: 20, 23
   offset: 0, 0
@@ -443,7 +450,7 @@ RATE_ICON
   index: -1
 RECENT_ICON
   rotate: false
-  xy: 440, 556
+  xy: 732, 1375
   size: 30, 30
   orig: 30, 30
   offset: 0, 0
@@ -530,7 +537,7 @@ TOP_BAR_BG
   index: -1
 TRANS_BLACK_BG
   rotate: false
-  xy: 658, 1374
+  xy: 695, 1374
   size: 35, 31
   orig: 35, 31
   offset: 0, 0
@@ -552,7 +559,7 @@ TRANS_WHITE_BG
   index: -1
 TUTORIAL_BG
   rotate: false
-  xy: 1080, 1165
+  xy: 345, 157
   size: 36, 27
   split: 13, 9, 8, 11
   pad: 0, 0, 0, 0
@@ -587,9 +594,16 @@ UPRIGHT_EGG_BUTTON
   orig: 120, 120
   offset: 0, 0
   index: -1
+VERTICAL_DOTS
+  rotate: false
+  xy: 1565, 1661
+  size: 3, 20
+  orig: 3, 20
+  offset: 0, 0
+  index: -1
 VOICE_ICON
   rotate: false
-  xy: 402, 551
+  xy: 345, 186
   size: 36, 35
   orig: 36, 35
   offset: 0, 0
@@ -603,7 +617,7 @@ WHITE_HORIZONTAL_LINE
   index: -1
 WHITE_ROUNDED_BG
   rotate: false
-  xy: 1080, 1143
+  xy: 447, 566
   size: 28, 20
   split: 11, 13, 7, 9
   pad: 5, 7, 0, 0
@@ -619,7 +633,7 @@ WHITE_ROUND_BUTTON_BG
   index: -1
 WHITE_VERTICAL_LINE
   rotate: false
-  xy: 762, 1383
+  xy: 1530, 1531
   size: 2, 10
   orig: 2, 10
   offset: 0, 0

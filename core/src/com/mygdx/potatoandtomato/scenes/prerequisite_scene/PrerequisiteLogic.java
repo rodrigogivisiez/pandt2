@@ -134,7 +134,7 @@ public class PrerequisiteLogic extends LogicAbstract {
                             joinRoomFailed(0);
                         }
                     });
-                    _services.getGamingKit().joinRoom(_joiningRoom.getRoomId());
+                    _services.getGamingKit().joinRoom(_joiningRoom.getWarpRoomId());
                 }
                 else{
                     joinRoomFailed(0);
@@ -170,7 +170,7 @@ public class PrerequisiteLogic extends LogicAbstract {
             public void run() {
                 _scene.changeMessage(_texts.joiningRoom());
                 _joiningRoom = new Room();
-                _joiningRoom.setRoomId(roomId);
+                _joiningRoom.setWarpRoomId(roomId);
                 _joiningRoom.setGame(_game);
                 _joiningRoom.setOpen(true);
                 _joiningRoom.setHost(_services.getProfile());
@@ -207,11 +207,16 @@ public class PrerequisiteLogic extends LogicAbstract {
                     @Override
                     public void onCallback(String obj, Status st) {
                         if (st == Status.SUCCESS) {
-                            _screen.toScene(SceneEnum.ROOM, _joiningRoom, _joinType == JoinType.CONTINUING);
+                            if(_joinType != JoinType.CONTINUING){           //no need wait until removeUser attached to join the room
+                                _screen.toScene(SceneEnum.ROOM, _joiningRoom, false);
+                            }
+
                             _services.getDatabase().removeUserFromRoomOnDisconnect(_joiningRoom.getId(), _services.getProfile(), new DatabaseListener<String>() {
                                 @Override
                                 public void onCallback(String obj, Status st) {
-
+                                    if(_joinType == JoinType.CONTINUING){        //continue game need to wait until removeUser attached to join the room
+                                        _screen.toScene(SceneEnum.ROOM, _joiningRoom, true);
+                                    }
                                 }
                             });
                         } else {

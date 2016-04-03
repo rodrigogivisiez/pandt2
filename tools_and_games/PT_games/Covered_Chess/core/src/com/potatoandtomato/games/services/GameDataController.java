@@ -5,6 +5,7 @@ import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
 import com.potatoandtomato.games.models.ChessModel;
+import com.sun.xml.internal.fastinfoset.algorithm.BuiltInEncodingAlgorithm;
 
 import java.util.ArrayList;
 import java.util.Collections;

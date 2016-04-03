@@ -1,5 +1,6 @@
 package com.mygdx.potatoandtomato.absintflis.mocks;
 
+import com.badlogic.gdx.graphics.Color;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.models.EndGameResult;
@@ -29,6 +30,7 @@ public class MockModel {
         g.setCommonVersion("1");
         g.setDescription("This is just a mock model of game.");
         g.setLeaderbordTypeEnum(LeaderboardType.Accumulate);
+        g.setStreakEnabled(true);
         return g;
     }
 
@@ -50,7 +52,7 @@ public class MockModel {
         r.setHost(mockProfile());
         r.setOpen(false);
         r.setPlaying(false);
-        r.setRoomId("12");
+        r.setWarpRoomId("12");
         r.setRoundCounter(0);
         if(id != null) r.setId(id);
         HashMap<String, RoomUser> roomUsers = new HashMap();
@@ -87,12 +89,11 @@ public class MockModel {
         scoreDetails.add(new ScoreDetails(100, "5 win", true, true));
 
         ArrayList<Player> myTeams = new ArrayList<Player>();
-        myTeams.add(new Player("abc", "1", true, true));
+        myTeams.add(new Player("abc", "1", true, true, Color.BLACK));
 
         EndGameResult endGameResult = new EndGameResult();
         endGameResult.setScoreDetails(scoreDetails);
         endGameResult.setWon(true);
-        endGameResult.setStreakEnabled(true);
         endGameResult.setMyTeam(myTeams);
 
         EndGameData endGameData = new EndGameData(MockModel.mockRoom("1"), "1");

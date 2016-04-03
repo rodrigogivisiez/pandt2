@@ -170,6 +170,21 @@ public class LeaderBoardScene extends SceneAbstract {
         }
     }
 
+    public void changeRecordTableToUnknownRank(Game game, int rank){
+        Table rankTable = getRankTable(game);
+        Table recordTable = (Table) rankTable.getCells().get(rank).getActor();
+        ((Label) recordTable.findActor("countLabel")).setText("-");
+
+//        Table newTable = new Table();
+//        Image verticalDotsImage = new Image(_assets.getTextures().get(Textures.Name.VERTICAL_DOTS));
+//        newTable.add(verticalDotsImage).padTop(30).padBottom(20);
+//        newTable.row();
+//        newTable.add(recordTable).expandX().fillX();
+//        rankTable.removeActor(recordTable);
+//        rankTable.add(newTable).expandX().fillX();
+
+    }
+
     private Table getRecordTable(Game game, LeaderboardRecord record, int rank){
 
         Label.LabelStyle style1 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HELVETICA_M_REGULAR), getTextColorOfRecord(record));
@@ -309,23 +324,27 @@ public class LeaderBoardScene extends SceneAbstract {
             _loadingTable.setVisible(false);
             scrollPane.getColor().a = 1f;
         }
-
-
     }
 
     public void addScore(ScoreDetails scoreDetails, final Runnable onFinish){
 
+        Color fontColor = scoreDetails.isAddOrMultiply() ? Color.valueOf("fff600") : Color.valueOf("ff7676");
+
         Label.LabelStyle style5 = new Label.LabelStyle(
-                _assets.getFonts().get(Fonts.FontId.CARTER_S_REGULAR_B_fff600_000000_1), null);
+                _assets.getFonts().get(Fonts.FontId.CARTER_S_REGULAR_B_ffffff_000000_1), null);
         style5.font.getData().setLineHeight(13);
+        style5.fontColor = fontColor;
+
         Label.LabelStyle style6 = new Label.LabelStyle(
-                _assets.getFonts().get(Fonts.FontId.CARTER_L_REGULAR_B_fff600_000000_1), null);
+                _assets.getFonts().get(Fonts.FontId.CARTER_L_REGULAR_B_ffffff_000000_1), null);
+        style6.fontColor = fontColor;
 
         ////////////////////////////////////////
         //added score label
         ///////////////////////////////////////
-        Table addedScoreTable = new Table();
+        final Table addedScoreTable = new Table();
         addedScoreTable.setTransform(true);
+        addedScoreTable.getColor().a = 0f;
 
         Label addedScoreLabel = new Label((scoreDetails.isAddOrMultiply() ? "+" : "x") + (Strings.formatNum(scoreDetails.getValue())), style6);
         addedScoreLabel.setAlignment(Align.center);
@@ -350,12 +369,15 @@ public class LeaderBoardScene extends SceneAbstract {
         if(scoreDetails.getReason().length() > 10) delayDuration = 2.3f;
 
         addedScoreTable.setOrigin(addedScoreTable.getWidth()/2, addedScoreTable.getHeight()/2);
-        addedScoreTable.addAction(sequence(scaleTo(0, 0), scaleTo(1, 1, 0.3f, Interpolation.exp5In), delay(delayDuration), new RunnableAction(){
-            @Override
-            public void run() {
-                onFinish.run();
-            }
-        },fadeOut(0.1f)));
+        addedScoreTable.addAction(sequence(scaleTo(0, 0), fadeIn(0), scaleTo(1, 1, 0.3f, Interpolation.exp5In), delay(delayDuration), fadeOut(0.1f),
+                new RunnableAction(){
+                    @Override
+                    public void run() {
+                        addedScoreTable.remove();
+                        onFinish.run();
+                    }
+                }
+        ));
 
         Image starImageOne = new Image(_assets.getTextures().get(Textures.Name.SMALL_STAR_ICON));
         starImageOne.setSize(10, 10);
@@ -382,14 +404,14 @@ public class LeaderBoardScene extends SceneAbstract {
 
     //current rank start from zero
     public void moveUpRank(final Game game, final int toRank, final int originalRank,
-                           final LeaderboardRecord movingRecord, final Runnable finishAnimate){
+                           final LeaderboardRecord movingRecord, final int maxSize, final Runnable finishAnimate){
         final ScrollPane scrollPane = _leaderboardScrolls.get(game.getAbbr());
         final Table ranksTable = scrollPane.findActor("ranksTable");
 
         final Runnable onFinishMoved = new Runnable() {
             @Override
             public void run() {
-                movingEndedAnimate(game, ranksTable, movingRecord, toRank, finishAnimate);
+                movingEndedAnimate(game, ranksTable, movingRecord, toRank, maxSize, finishAnimate);
             }
         };
 
@@ -420,7 +442,7 @@ public class LeaderBoardScene extends SceneAbstract {
                         public void run() {
                             finishMoving[0] = true;
                             _services.getSoundsWrapper().stopSoundEffectLoop(Sounds.Name.MOVING_RANK);
-                            moveDownOneRank(ranksTable, toRank, originalRank, new Runnable() {
+                            moveDownOneRank(ranksTable, toRank, originalRank, maxSize, new Runnable() {
                                 @Override
                                 public void run() {
                                     Threadings.delay(500, new Runnable() {
@@ -506,8 +528,11 @@ public class LeaderBoardScene extends SceneAbstract {
         _services.getSoundsWrapper().playSoundEffect(Sounds.Name.STREAK);
     }
 
-    private void movingEndedAnimate(Game game, Table ranksTable, LeaderboardRecord movingRecord, final int toRank, Runnable finishAnimate){
+    private void movingEndedAnimate(Game game, Table ranksTable, LeaderboardRecord movingRecord, final int toRank, int maxSize, Runnable finishAnimate){
         Table newRecordTable = getRecordTable(game, movingRecord, toRank);
+        if(toRank >= maxSize){
+            ((Label) newRecordTable.findActor("countLabel")).setText("-");
+        }
         ranksTable.getCells().get(toRank).setActor(newRecordTable);
         ranksTable.layout();
         animateStarTrace(newRecordTable, finishAnimate);
@@ -553,7 +578,7 @@ public class LeaderBoardScene extends SceneAbstract {
         scrollPane.scrollTo(0, ranksTable.getCells().get(rankNumber).getActorY() - 100, 0, ranksTable.getCells().get(rankNumber).getActorHeight());
     }
 
-    public void moveDownOneRank(final Table ranksTable, final int startRank, final int endRank, final Runnable onFinish){
+    public void moveDownOneRank(final Table ranksTable, final int startRank, final int endRank, final int maxSize, final Runnable onFinish){
 
         for(int i = startRank; i < endRank; i ++){
             ranksTable.getChildren().get(i).addAction(moveBy(0, -_recordHeight, 0.2f));
@@ -567,12 +592,14 @@ public class LeaderBoardScene extends SceneAbstract {
                 for(int i = startRank + 1; i <= endRank; i++){
                     final Label countLabel = ((Table) ranksTable.getCells().get(i).getActor()).findActor("countLabel");
                     final int newRank = Integer.valueOf(countLabel.getText().toString().replace(".", "")) + 1;
-                    countLabel.addAction(sequence(alpha(0.1f, 0.8f), new RunnableAction(){
-                        @Override
-                        public void run() {
-                            countLabel.setText(String.valueOf(newRank) + ".");
-                        }
-                    }, fadeIn(1f)));
+                    if(newRank - 1 < maxSize){
+                        countLabel.addAction(sequence(alpha(0.1f, 0.8f), new RunnableAction(){
+                            @Override
+                            public void run() {
+                                countLabel.setText(String.valueOf(newRank) + ".");
+                            }
+                        }, fadeIn(1f)));
+                    }
                 }
                 onFinish.run();
             }

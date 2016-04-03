@@ -235,12 +235,16 @@ public class InviteLogic extends LogicAbstract {
                                         }
                                         _services.getGcmSender().send(user, push);
 
-                                        _services.getGamingKit().sendRoomMessage(new ChatMessage(String.format(_texts.xInvitedX(),
-                                                _services.getProfile().getDisplayName(0), user.getDisplayName(0)), ChatMessage.FromType.SYSTEM, null));
+                                        ChatMessage chatMessage = new ChatMessage(String.format(_texts.xInvitedX(),
+                                                _services.getProfile().getDisplayName(0), user.getDisplayName(0)), ChatMessage.FromType.SYSTEM, null);
+                                        _services.getChat().add(chatMessage, true);
+                                        _services.getGamingKit().sendRoomMessage(chatMessage);
                                     }
                                     else{
-                                        _services.getGamingKit().sendRoomMessage(new ChatMessage(String.format(_texts.xInvitedXFailed(),
-                                                _services.getProfile().getDisplayName(0), user.getDisplayName(0)), ChatMessage.FromType.IMPORTANT, null));
+                                        ChatMessage chatMessage = new ChatMessage(String.format(_texts.xInvitedXFailed(),
+                                                _services.getProfile().getDisplayName(0), user.getDisplayName(0)), ChatMessage.FromType.IMPORTANT, null);
+                                        _services.getChat().add(chatMessage, true);
+                                        _services.getGamingKit().sendRoomMessage(chatMessage);
                                     }
                                     done[0]++;
                                 }

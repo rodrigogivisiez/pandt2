@@ -285,7 +285,7 @@ public class TestFireBase extends TestAbstract {
                     Assert.assertTrue((user1.getProfile().equals(user2.getProfile())));
                     Assert.assertEquals(user1.getSlotIndex(), user2.getSlotIndex());
                 }
-                Assert.assertEquals(r.getRoomId(), obj.getRoomId());
+                Assert.assertEquals(r.getWarpRoomId(), obj.getWarpRoomId());
                 Assert.assertEquals(r.getRoundCounter(), obj.getRoundCounter());
                 Assert.assertEquals(r.isOpen(), obj.isOpen());
                 Assert.assertEquals(r.isPlaying(), obj.isPlaying());
@@ -301,7 +301,7 @@ public class TestFireBase extends TestAbstract {
 
         //update room
         waiting[0] = true;
-        r.setRoomId("999");
+        r.setWarpRoomId("999");
         databases.saveRoom(r, true,  new DatabaseListener<String>() {
             @Override
             public void onCallback(String obj, Status st) {

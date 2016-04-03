@@ -126,7 +126,7 @@ public class GraveyardLogic implements Disposable {
             _graveyardActor.getGraveLabel().addListener(new ClickListener(){
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    _coordinator.abandon(true);
+                    _coordinator.abandon();
                     return super.touchDown(event, x, y, pointer, button);
                 }
             });

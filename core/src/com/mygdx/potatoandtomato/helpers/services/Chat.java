@@ -66,7 +66,6 @@ public class Chat {
     private boolean _visible;
     private SpriteBatch _batch;
     private IPTGame _game;
-    private HashMap<String, Color> _userColors;
     private int _mode;
     private Image _micImage, _closeKeyboardImage;
     private Recorder _recorder;
@@ -99,7 +98,6 @@ public class Chat {
         this._recorder = recorder;
         this._uploader = uploader;
         this._mode = 1;
-        this._userColors = new HashMap();
 
         if(batch == null) return;
 
@@ -628,7 +626,7 @@ public class Chat {
                     lblInfoStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_S_REGULAR);
 
                     Label.LabelStyle lblImportantStyle = new Label.LabelStyle();
-                    lblImportantStyle.fontColor = Color.valueOf("e40404");
+                    lblImportantStyle.fontColor = Color.valueOf("F56C57");
                     lblImportantStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_S_REGULAR);
 
                     if (msg.getFromType() == ChatMessage.FromType.USER || msg.getFromType() == ChatMessage.FromType.USER_VOICE) {
@@ -678,15 +676,15 @@ public class Chat {
                     }
 
                     Label.LabelStyle labelStyle = new Label.LabelStyle();
-                    labelStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_S_BOLD);
-                    labelStyle.fontColor = getUserColor(msg.getSenderId());
+                    labelStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_S_REGULAR_B_ffffff_000000_1);
+                    if(_room != null && _userId != null) labelStyle.fontColor = _room.getUserColorByUserId(msg.getSenderId());
 
                     Label.LabelStyle labelInfoStyle = new Label.LabelStyle();
                     labelInfoStyle.fontColor = Color.valueOf("11b1bf");
                     labelInfoStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_S_BOLD_B_ffffff_000000_1);
 
                     Label.LabelStyle labelImportantStyle = new Label.LabelStyle();
-                    labelImportantStyle.fontColor = Color.valueOf("e40404");
+                    labelImportantStyle.fontColor = Color.valueOf("F56C57");
                     labelImportantStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_S_BOLD_B_ffffff_000000_1);
 
                     if(msg.getFromType() == ChatMessage.FromType.USER || msg.getFromType() == ChatMessage.FromType.USER_VOICE) {
@@ -782,17 +780,10 @@ public class Chat {
         }
     }
 
-    public Color getUserColor(String userId){
-        if(!_userColors.containsKey(userId)){
-            _userColors.put(userId, Colors.generatePleasingColor());
-        }
-        return _userColors.get(userId);
-    }
 
     public void resetChat() {
         _expanded = false;
         clearMessageTextField();
-        _userColors.clear();
 
         if(_mode == 1){
             _mode1MessagesContentTable.clear();

@@ -284,16 +284,9 @@ STATUS_DECREASE
   orig: 29, 27
   offset: 0, 0
   index: -1
-STATUS_INCREASE
-  rotate: false
-  xy: 1955, 447
-  size: 28, 27
-  orig: 28, 27
-  offset: 0, 0
-  index: -1
 STATUS_INJURED
   rotate: false
-  xy: 1955, 418
+  xy: 1955, 447
   size: 28, 27
   orig: 28, 27
   offset: 0, 0
@@ -314,9 +307,16 @@ STATUS_PARALYZED
   index: -1
 STATUS_POISON
   rotate: false
-  xy: 1955, 388
+  xy: 1955, 417
   size: 27, 28
   orig: 27, 28
+  offset: 0, 0
+  index: -1
+STATUS_VENGEFUL
+  rotate: false
+  xy: 1955, 388
+  size: 28, 27
+  orig: 28, 27
   offset: 0, 0
   index: -1
 SUDDEN_DEATH_GAME_BG

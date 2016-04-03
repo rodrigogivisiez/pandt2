@@ -215,6 +215,7 @@ public class BoardLogic implements Disposable{
 
                     @Override
                     public void onOpened() {
+                        disableTouchable();
                         String random = Strings.join(ArrayLists.randomNumericArray(2, 0, 4));
                         openChess(this.getTerrainLogic().getTerrainModel().getCol(),
                                 this.getTerrainLogic().getTerrainModel().getRow(), random);
@@ -226,9 +227,10 @@ public class BoardLogic implements Disposable{
                     @Override
                     public void onMoved(int fromCol, int fromRow, int toCol, int toRow, boolean isFromWon) {
                         int r = MathUtils.random(0, 100);
-                        int random = 1;
+                        int random = 0;
                         if(r < 15) random = 1;
 
+                        disableTouchable();
                         chessMoved(fromCol, fromRow, toCol, toRow, isFromWon, false, String.valueOf(random));
                         _roomMsgHandler.sendMoveChess(fromCol, fromRow, toCol, toRow, isFromWon, String.valueOf(random),
                                getMyTimeLeft());
@@ -320,8 +322,8 @@ public class BoardLogic implements Disposable{
     }
 
     private void switchTurn(){
+        clearAllTerrainsHighlights();
         if(_lastActiveTerrainLogic != null){
-            clearAllTerrainsHighlights();
             _lastActiveTerrainLogic.getChessLogic().setFocusing(true);
         }
 
@@ -414,7 +416,7 @@ public class BoardLogic implements Disposable{
             _services.getScoresHandler().process(new ScoresListener(){
                 @Override
                 public void onCallBack(HashMap<Team, ArrayList<ScoreDetails>> winnerResult, ArrayList<Team> losers) {
-                    _coordinator.beforeEndGame(winnerResult, losers, true);
+                    _coordinator.beforeEndGame(winnerResult, losers);
                     Threadings.delay(1000, new Runnable() {
                         @Override
                         public void run() {

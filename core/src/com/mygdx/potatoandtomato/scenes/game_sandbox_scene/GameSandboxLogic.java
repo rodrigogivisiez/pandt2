@@ -206,7 +206,8 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                 _services.getDatabase().updateProfile(_services.getProfile(), new DatabaseListener() {
                     @Override
                     public void onCallback(Object obj, Status st) {
-                        for(String userId : _room.getOriginalRoomUserIds()){
+                        for(final RoomUser roomUser : _room.getOriginalRoomUsers()){
+                            String userId = roomUser.getProfile().getUserId();
                             _services.getDatabase().monitorProfileByUserId(userId, getClassTag(), new DatabaseListener<Profile>(Profile.class) {
                                 @Override
                                 public void onCallback(final Profile obj, Status st) {
@@ -218,7 +219,8 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
 
                                         final UserPlayingState userPlayingState = obj.getUserPlayingState();
                                         if (userPlayingState != null) {
-                                            if (userPlayingState.getRoomId().equals(_room.getId())) {
+                                            if (userPlayingState.getRoomId().equals(_room.getId())
+                                                            && userPlayingState.getRoundCounter() == _room.getRoundCounter()) {
                                                 Threadings.postRunnable(new Runnable() {
                                                     @Override
                                                     public void run() {
@@ -332,7 +334,12 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         Threadings.delay(2000, new Runnable() {
             @Override
             public void run() {
-                exitSandbox();
+                if(!_isContinue){
+                    exitSandbox();
+                }
+                else{
+
+                }
             }
         });
     }
@@ -497,7 +504,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             @Override
             public void run() {
                 _scene.setUser(userId, _room.getRoomUserByUserId(userId).getProfile().getDisplayName(15),
-                        isReady, isFailed, _services.getChat().getUserColor(userId));
+                        isReady, isFailed, _room.getUserColorByUserId(userId));
             }
         });
     }
@@ -542,13 +549,27 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     }
 
     @Override
-    public void userAbandoned() {
+    public void userAbandoned(final String userId) {
         _coordinator.userConnectionChanged(_services.getProfile().getUserId(), false);
-        UserPlayingState userPlayingState = _services.getProfile().getUserPlayingState();
-        userPlayingState.setAbandon(true);
-        userPlayingState.setConnected(false);
-        _services.getProfile().setUserPlayingState(userPlayingState);
-        _services.getDatabase().updateProfile(_services.getProfile(), null);
+
+        _services.getDatabase().getProfileByUserId(userId, new DatabaseListener<Profile>(Profile.class) {
+            @Override
+            public void onCallback(Profile profile, Status st) {
+                if(st == Status.SUCCESS){
+                    UserPlayingState userPlayingState = profile.getUserPlayingState();
+                    if(userPlayingState.getRoomId().equals(_room.getId()) &&
+                             userPlayingState.getRoundCounter() == _room.getRoundCounter()){
+                        userPlayingState.setAbandon(true);
+                        userPlayingState.setConnected(false);
+                        profile.setUserPlayingState(userPlayingState);
+                        _services.getDatabase().updateProfile(profile, null);
+                    }
+                }
+            }
+        });
+
+
+
     }
 
     @Override

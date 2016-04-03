@@ -11,7 +11,7 @@ import java.util.HashMap;
 public interface IGameSandBox {
 
     void useConfirm(String msg, Runnable yesRunnable, Runnable noRunnable);
-    void userAbandoned();
+    void userAbandoned(String userId);
     void onGameLoaded();
     void endGame();
     void inGameUpdateRequest(String msg);

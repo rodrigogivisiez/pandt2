@@ -11,21 +11,19 @@ import java.util.ArrayList;
 public class EndGameResult {
 
     private ArrayList<ScoreDetails> _scoreDetails;
-    private boolean _streakEnabled, _won;
+    private boolean  _won;
     private ArrayList<Player> _myTeam;
 
     public EndGameResult() {
     }
 
-    public EndGameResult(ArrayList<ScoreDetails> _scoreDetails, boolean _streakEnabled, boolean _won) {
+    public EndGameResult(ArrayList<ScoreDetails> _scoreDetails, boolean _won) {
         this._scoreDetails = _scoreDetails;
-        this._streakEnabled = _streakEnabled;
         this._won = _won;
     }
 
-    public EndGameResult(ArrayList<ScoreDetails> _scoreDetails, boolean _streakEnabled, boolean _won, ArrayList<Player> _myTeam) {
+    public EndGameResult(ArrayList<ScoreDetails> _scoreDetails, boolean _won, ArrayList<Player> _myTeam) {
         this._scoreDetails = _scoreDetails;
-        this._streakEnabled = _streakEnabled;
         this._won = _won;
         this._myTeam = _myTeam;
     }
@@ -42,20 +40,12 @@ public class EndGameResult {
         this._scoreDetails = _scoreDetails;
     }
 
-    public void setStreakEnabled(boolean _streakEnabled) {
-        this._streakEnabled = _streakEnabled;
-    }
-
     public void setWon(boolean _won) {
         this._won = _won;
     }
 
     public boolean isWon() {
         return _won;
-    }
-
-    public boolean isStreakEnabled() {
-        return _streakEnabled;
     }
 
     public ArrayList<ScoreDetails> getScoreDetails() {

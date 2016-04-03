@@ -146,10 +146,10 @@ public class TestRoom extends TestAbstract {
         _room.addRoomUser(MockModel.mockProfile("4"), true);      //2
 
         Assert.assertEquals(4, _room.getRoomUsersCount());
-        Assert.assertEquals(0, _room.getSlotIndexByUserId(MockModel.mockProfile("1")));
-        Assert.assertEquals(1, _room.getSlotIndexByUserId(MockModel.mockProfile("2")));
-        Assert.assertEquals(2, _room.getSlotIndexByUserId(MockModel.mockProfile("4")));
-        Assert.assertEquals(3, _room.getSlotIndexByUserId(MockModel.mockProfile("3")));
+        Assert.assertEquals(0, _room.getSlotIndexByUserId(MockModel.mockProfile("1").getUserId()));
+        Assert.assertEquals(1, _room.getSlotIndexByUserId(MockModel.mockProfile("2").getUserId()));
+        Assert.assertEquals(2, _room.getSlotIndexByUserId(MockModel.mockProfile("4").getUserId()));
+        Assert.assertEquals(3, _room.getSlotIndexByUserId(MockModel.mockProfile("3").getUserId()));
 
     }
 
@@ -283,7 +283,7 @@ public class TestRoom extends TestAbstract {
 
         verify(mockKit, times(1)).leaveRoom();
         Assert.assertEquals(false, _room.isOpen());
-        Assert.assertEquals(-1, _room.getSlotIndexByUserId(_services.getProfile()));
+        Assert.assertEquals(-1, _room.getSlotIndexByUserId(_services.getProfile().getUserId()));
 
     }
 

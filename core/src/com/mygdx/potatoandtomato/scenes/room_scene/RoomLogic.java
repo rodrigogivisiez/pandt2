@@ -249,11 +249,18 @@ public class RoomLogic extends LogicAbstract {
             }
         };
 
-        if(isHost()){
+        if(_isContinue){
+            _room.addRoomUser(_services.getProfile(),
+                    _room.getOriginalRoomUserByUserId(_services.getProfile().getUserId()).getSlotIndex(), true);
+        }
+        else{
             _room.addRoomUser(_services.getProfile(), true);
-            _userBadgeHelper.usersJoinedRoom(_room.getRoomUsers().values());
-            chatAddUserJustJoinedRoom(_services.getProfile());
-            selfUpdateRoomStatePush();
+        }
+        _userBadgeHelper.usersJoinedRoom(_room.getRoomUsers().values());
+        chatAddUserJustJoinedRoom(_services.getProfile());
+        selfUpdateRoomStatePush();
+
+        if(isHost()){
             hostSaveRoom(true, new DatabaseListener() {
                 @Override
                 public void onCallback(Object obj, Status st) {

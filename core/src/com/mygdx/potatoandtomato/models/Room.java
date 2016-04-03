@@ -1,5 +1,6 @@
 package com.mygdx.potatoandtomato.models;
 
+import com.badlogic.gdx.graphics.Color;
 import com.mygdx.potatoandtomato.helpers.serializings.IntProfileMapDeserializer;
 import com.potatoandtomato.common.Player;
 import com.potatoandtomato.common.Team;
@@ -22,12 +23,12 @@ public class Room {
     boolean open;
     int roundCounter;
     boolean playing;
-    String roomId;  //this is APPWARP ROOMID
+    String warpRoomId;  //this is APPWARP ROOMID
     Profile host;
     String id;  //this is database ID
 
     ArrayList<Profile> invitedUsers;
-    ArrayList<String> originalRoomUserIds;
+    ArrayList<RoomUser> originalRoomUsers;
     ArrayList<Team> teams;
 
     @JsonDeserialize(using = IntProfileMapDeserializer.class)
@@ -67,23 +68,23 @@ public class Room {
         this.playing = playing;
     }
 
-    public String getRoomId() {
-        return roomId;
+    public String getWarpRoomId() {
+        return warpRoomId;
     }
 
-    public void setRoomId(String roomId) {
-        this.roomId = roomId;
+    public void setWarpRoomId(String warpRoomId) {
+        this.warpRoomId = warpRoomId;
     }
 
-    public ArrayList<String> getOriginalRoomUserIds() {
-        if(originalRoomUserIds == null){
-            originalRoomUserIds = new ArrayList();
+    public ArrayList<RoomUser> getOriginalRoomUsers() {
+        if(originalRoomUsers == null){
+            originalRoomUsers = new ArrayList();
         }
-        return originalRoomUserIds;
+        return originalRoomUsers;
     }
 
-    public void setOriginalRoomUserIds(ArrayList<String> originalRoomUserIds) {
-        this.originalRoomUserIds = originalRoomUserIds;
+    public void setOriginalRoomUsers(ArrayList<RoomUser> originalRoomUsers) {
+        this.originalRoomUsers = originalRoomUsers;
     }
 
     public HashMap<String, RoomUser> getRoomUsers() {
@@ -143,11 +144,11 @@ public class Room {
 
     @JsonIgnore
     public void storeRoomUsersToOriginalRoomUserIds(){
-        ArrayList<String> result = new ArrayList();
+        ArrayList<RoomUser> result = new ArrayList();
         for(RoomUser roomUser : getRoomUsers().values()){
-            result.add(roomUser.getProfile().getUserId());
+            result.add(roomUser);
         }
-        setOriginalRoomUserIds(result);
+        setOriginalRoomUsers(result);
     }
 
     @JsonIgnore
@@ -190,7 +191,7 @@ public class Room {
 
         if(roomUsers == null) roomUsers = new HashMap();
 
-        if(getSlotIndexByUserId(user) != -1) return;
+        if(getSlotIndexByUserId(user.getUserId()) != -1) return;
 
         for(int i = 0; i < Integer.valueOf(game.getMaxPlayers()); i++){
             if(getRoomUserBySlotIndex(i) == null){
@@ -224,6 +225,16 @@ public class Room {
     }
 
     @JsonIgnore
+    public RoomUser getOriginalRoomUserByUserId(String userId){
+        for(RoomUser roomUser : this.getOriginalRoomUsers()){
+            if(roomUser.getProfile().getUserId().equals(userId)){
+                return roomUser;
+            }
+        }
+        return null;
+    }
+
+    @JsonIgnore
     public Profile getProfileByUserId(String userId){
         for(RoomUser roomUser : this.getRoomUsers().values()){
             if(roomUser.getProfile().getUserId().equals(userId)){
@@ -234,9 +245,9 @@ public class Room {
     }
 
     @JsonIgnore
-    public int getSlotIndexByUserId(Profile user){
+    public int getSlotIndexByUserId(String userId){
         for(RoomUser roomUser : this.getRoomUsers().values()){
-            if(roomUser.getProfile().equals(user)){
+            if(roomUser.getProfile().getUserId().equals(userId)){
                 return roomUser.getSlotIndex();
             }
         }
@@ -256,7 +267,7 @@ public class Room {
     public boolean changeTeam(int toTeam, Profile user){
         int startIndex = toTeam * Integer.valueOf(this.getGame().getTeamMaxPlayers());
         boolean changed = false;
-        int userSlotIndex = getSlotIndexByUserId(user);
+        int userSlotIndex = getSlotIndexByUserId(user.getUserId());
 
         if(userSlotIndex != -1 && userSlotIndex >= startIndex && userSlotIndex + 1 < ((toTeam + 1) * Integer.valueOf(this.getGame().getTeamMaxPlayers()))){
             if(getRoomUserBySlotIndex(userSlotIndex+1) == null){
@@ -351,7 +362,8 @@ public class Room {
             int index = convertSlotIndexToTeamNumber(user.getSlotIndex());
             boolean isHost = false;
             if(user.getProfile().equals(this.getHost())) isHost = true;
-            teams.get(index).addPlayer(new Player(user.getProfile().getDisplayName(15), user.getProfile().getUserId(), isHost, true));
+            teams.get(index).addPlayer(new Player(user.getProfile().getDisplayName(15), user.getProfile().getUserId(), isHost, true,
+                                                getUserColorByUserId(user.getProfile().getUserId())));
         }
         this.teams = teams;
     }
@@ -404,6 +416,117 @@ public class Room {
             return true;
         }
         return false;
+    }
+
+    @JsonIgnore
+    public Color getUserColorByUserId(String userId){
+        int slotIndex = getSlotIndexByUserId(userId);
+        String hex = "ffffff";
+
+        switch (slotIndex){
+            case 0:
+                hex = "FF420E";
+                break;
+            case 1:
+                hex = "89DA59";
+                break;
+            case 2:
+                hex = "E6D72A";
+                break;
+            case 3:
+                hex = "FAAF08";
+                break;
+            case 4:
+                hex = "BA5536";
+                break;
+            case 5:
+                hex = "004445";
+                break;
+            case 6:
+                hex = "336B87";
+                break;
+            case 7:
+                hex = "808D9E";
+                break;
+            case 8:
+                hex = "6FB98F";
+                break;
+            case 9:
+                hex = "90AFC5";
+                break;
+            case 10:
+                hex = "F18D9E";
+                break;
+            case 11:
+                hex = "F98866";
+                break;
+            case 12:
+                hex = "86AC41";
+                break;
+            case 13:
+                hex = "F1F1F2";
+                break;
+            case 14:
+                hex = "BCBABE";
+                break;
+            case 15:
+                hex = "A43820";
+                break;
+            case 16:
+                hex = "1995AD";
+                break;
+            case 17:
+                hex = "9A9EAB";
+                break;
+            case 18:
+                hex = "DFE166";
+                break;
+            case 19:
+                hex = "F0810F";
+                break;
+            case 20:
+                hex = "E6DF44";
+                break;
+            case 21:
+                hex = "063852";
+                break;
+            case 22:
+                hex = "D9B44A";
+                break;
+            case 23:
+                hex = "8EBA43";
+                break;
+            case 24:
+                hex = "F9DC24";
+                break;
+            case 25:
+                hex = "F52549";
+                break;
+            case 26:
+                hex = "FFD64D";
+                break;
+            case 27:
+                hex = "B38867";
+                break;
+            case 28:
+                hex = "626D71";
+                break;
+            case 29:
+                hex = "31A9B8";
+                break;
+            case 30:
+                hex = "258039";
+                break;
+            case 31:
+                hex = "752A07";
+                break;
+            case 32:
+                hex = "FBCB7B";
+                break;
+        }
+
+        return Color.valueOf(hex);
+
     }
 
     @JsonIgnore

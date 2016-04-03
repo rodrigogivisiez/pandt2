@@ -32,19 +32,19 @@ public class ScoresHandler implements Disposable{
     private ChessColor winnerColor, loserColor;
     private HashMap<String, ArrayList<MatchHistory>> headToHeadMatchHistories;
     private HashMap<String, ArrayList<MatchHistory>> lastMatchHistories;
-    private boolean dataReady;
+    protected boolean dataReady;
     private boolean disposed;
-    private final int CATCH_UP_TRIGGERING_LOSE_STREAK_COUNT = 3;
-    private final int EZ_WIN_TRIGGERING_TIME_LEFT = 720;
-    private final int EZ_WIN_TRIGGERING_TURN_COUNT = 30;
-    private final int PAWN_LEADERBOARD_TRIGGERING_RANK = 200;
-    private final double KILL_STREAK_MULTIPLIER = 0.05;
-    private final double CATCH_UP_MULTIPLIER = 2.5;
-    private final double EASY_WIN = 50;
-    private final double NORMAL_WIN = 300;
-    private final double HARD_WIN = 500;
-    private final double PAWN_LEADERBOARD_OPPONENT = 200;
-    private final double FIRST_TIME_WIN_THIS_OPPONENT = 1000;
+    public static final int CATCH_UP_TRIGGERING_LOSE_STREAK_COUNT = 3;
+    public static final int EZ_WIN_TRIGGERING_TIME_LEFT = 720;
+    public static final int EZ_WIN_TRIGGERING_TURN_COUNT = 30;
+    public static final int PAWN_LEADERBOARD_TRIGGERING_RANK = 200;
+    public static final double KILL_STREAK_MULTIPLIER = 0.05;
+    public static final double CATCH_UP_MULTIPLIER = 2.5;
+    public static final double EASY_WIN = 50;
+    public static final double NORMAL_WIN = 300;
+    public static final double HARD_WIN = 500;
+    public static final double PAWN_LEADERBOARD_OPPONENT = 200;
+    public static final double FIRST_TIME_WIN_THIS_OPPONENT = 1000;
 
 
     public ScoresHandler(GameCoordinator coordinator, Database database, Texts texts, GameDataController gameDataController) {
@@ -61,7 +61,7 @@ public class ScoresHandler implements Disposable{
         this.boardLogic = boardLogic;
     }
 
-    private void populateData(){
+    public void populateData(){
         final String userAId = coordinator.getMyTeam().getPlayersUserIds().get(0);
         final String userBId = coordinator.getEnemyTeams().get(0).getPlayersUserIds().get(0);     //only two team in this game
 
@@ -159,7 +159,8 @@ public class ScoresHandler implements Disposable{
 
                 ArrayList<ScoreDetails> scoreDetails = new ArrayList<ScoreDetails>();
 
-                boolean canAddStreak = checkWinSituation(scoreDetails);
+                boolean canAddStreak = checkWinSituation(scoreDetails,
+                                    boardLogic.getBoardModel(), boardLogic.getGraveyardLogic().getGraveModel());
                 checkOtherSpecialCases(scoreDetails);
                 double multiply = getMultiply(scoreDetails, canAddStreak);
 
@@ -175,7 +176,7 @@ public class ScoresHandler implements Disposable{
         });
     }
 
-    private double getMultiply(ArrayList<ScoreDetails> scoreDetails, boolean canAddStreak){
+    public double getMultiply(ArrayList<ScoreDetails> scoreDetails, boolean canAddStreak){
         double result = 1f;
 
         ///////////////////////////////
@@ -239,16 +240,16 @@ public class ScoresHandler implements Disposable{
         return result;
     }
 
-    private boolean checkWinSituation(ArrayList<ScoreDetails> scoreDetails){
+    public boolean checkWinSituation(ArrayList<ScoreDetails> scoreDetails, BoardModel boardModel, GraveModel graveModel){
         double baseScore;
         boolean canAddStreak = false;
-        if(boardLogic.getBoardModel().isCrackHappened()){       //hard fought win
+        if(boardModel.isCrackHappened()){       //hard fought win
             baseScore = HARD_WIN;
             scoreDetails.add(new ScoreDetails(baseScore, texts.hardFoughtWin(), true, false));
             canAddStreak = true;
         }
-        else if(boardLogic.getGraveyardLogic().getGraveModel().getLeftTimeInt(winnerColor) >= EZ_WIN_TRIGGERING_TIME_LEFT    //easy win
-                || boardLogic.getBoardModel().getAccTurnCount() <= EZ_WIN_TRIGGERING_TURN_COUNT){
+        else if(graveModel.getLeftTimeInt(winnerColor) >= EZ_WIN_TRIGGERING_TIME_LEFT    //easy win
+                || boardModel.getAccTurnCount() <= EZ_WIN_TRIGGERING_TURN_COUNT){
             baseScore = EASY_WIN;
             scoreDetails.add(new ScoreDetails(baseScore, texts.easyWin(), true, false));
         }
@@ -311,11 +312,11 @@ public class ScoresHandler implements Disposable{
         return loser;
     }
 
-    private String getWinnerUserId(){
+    public String getWinnerUserId(){
         return this.winnerTeam.getPlayersUserIds().get(0);
     }
 
-    private String getLoserUserId(){
+    public String getLoserUserId(){
         return this.loserTeam.getPlayersUserIds().get(0);
     }
 
@@ -325,4 +326,12 @@ public class ScoresHandler implements Disposable{
         disposed = true;
     }
 
+
+    public void setLastMatchHistories(HashMap<String, ArrayList<MatchHistory>> lastMatchHistories) {
+        this.lastMatchHistories = lastMatchHistories;
+    }
+
+    public void setHeadToHeadMatchHistories(HashMap<String, ArrayList<MatchHistory>> headToHeadMatchHistories) {
+        this.headToHeadMatchHistories = headToHeadMatchHistories;
+    }
 }

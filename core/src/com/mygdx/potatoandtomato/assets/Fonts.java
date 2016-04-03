@@ -65,8 +65,8 @@ public class Fonts extends FontAssets {
         PIZZA_XXXL_REGULAR,
         PIZZA_MAX_REGULAR_B_000000_fed271_3,               //light orange
 
-        CARTER_S_REGULAR_B_fff600_000000_1,
-        CARTER_L_REGULAR_B_fff600_000000_1,
+        CARTER_S_REGULAR_B_ffffff_000000_1,
+        CARTER_L_REGULAR_B_ffffff_000000_1,
     }
 
 
