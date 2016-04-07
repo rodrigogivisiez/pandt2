@@ -19,6 +19,11 @@ import java.util.HashMap;
  */
 public class MockDB implements IDatabase {
     @Override
+    public void saveLog(String msg) {
+
+    }
+
+    @Override
     public void getTestTableCount(DatabaseListener<Integer> listener) {
 
     }

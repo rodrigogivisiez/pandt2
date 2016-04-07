@@ -1,14 +1,13 @@
 package com.potatoandtomato.games;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.potatoandtomato.common.GameCoordinator;
-import com.potatoandtomato.common.IPTGame;
-import com.potatoandtomato.common.MockGame;
+import com.potatoandtomato.common.mockings.MockGame;
+import com.potatoandtomato.games.statics.Global;
 
 public class PhotoHuntGame extends MockGame {
+
+	private boolean _initialized;
+
+	public boolean isContinue;
 
 	public PhotoHuntGame(String gameId) {
 		super(gameId);
@@ -17,12 +16,22 @@ public class PhotoHuntGame extends MockGame {
 	@Override
 	public void create() {
 		super.create();
-		initiateMockGamingKit(1, 1);
+		initiateMockGamingKit(1, 2, Global.DEBUG);
 	}
 
 	@Override
 	public void onReady() {
-		Entrance entrance = new Entrance(getCoordinator());
-		entrance.init();
+		if(!_initialized){
+			_initialized = true;
+			Entrance entrance = new Entrance(getCoordinator());
+
+			if(!isContinue){
+				entrance.init();
+			}
+			else{
+				entrance.onContinue();
+			}
+		}
+
 	}
 }

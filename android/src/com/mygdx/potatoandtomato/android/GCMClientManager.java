@@ -11,13 +11,12 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
-import com.potatoandtomato.common.BroadcastEvent;
-import com.potatoandtomato.common.BroadcastListener;
-import com.potatoandtomato.common.Broadcaster;
-import com.potatoandtomato.common.Status;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
+import com.potatoandtomato.common.broadcaster.BroadcastListener;
+import com.potatoandtomato.common.broadcaster.Broadcaster;
+import com.potatoandtomato.common.enums.Status;
 
 public class GCMClientManager {
     // Constants

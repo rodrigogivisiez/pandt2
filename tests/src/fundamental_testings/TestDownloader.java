@@ -1,9 +1,9 @@
 package fundamental_testings;
 
 import abstracts.TestAbstract;
-import com.potatoandtomato.common.DownloaderListener;
-import com.potatoandtomato.common.Downloader;
-import com.potatoandtomato.common.Status;
+import com.potatoandtomato.common.absints.DownloaderListener;
+import com.potatoandtomato.common.utils.Downloader;
+import com.potatoandtomato.common.enums.Status;
 import helpers.T_Services;
 import helpers.T_Threadings;
 import org.junit.After;

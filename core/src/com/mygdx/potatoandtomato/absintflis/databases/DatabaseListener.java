@@ -1,6 +1,6 @@
 package com.mygdx.potatoandtomato.absintflis.databases;
 
-import com.potatoandtomato.common.Status;
+import com.potatoandtomato.common.enums.Status;
 
 /**
  * Created by SiongLeng on 9/12/2015.

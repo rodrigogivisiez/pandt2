@@ -1,10 +1,7 @@
 package com.mygdx.potatoandtomato.absintflis.gamingkit;
 
-import com.badlogic.gdx.Gdx;
 import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.models.Profile;
-import com.potatoandtomato.common.BroadcastEvent;
-import com.potatoandtomato.common.Broadcaster;
 
 import java.util.HashMap;
 

@@ -15,8 +15,12 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.assets.Patches;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
-import com.potatoandtomato.common.*;
+import com.potatoandtomato.common.absints.IPTGame;
 import com.potatoandtomato.common.assets.Assets;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
+import com.potatoandtomato.common.broadcaster.BroadcastListener;
+import com.potatoandtomato.common.broadcaster.Broadcaster;
+import com.potatoandtomato.common.enums.Status;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 

@@ -2,6 +2,9 @@ package com.potatoandtomato.games.services;
 
 import com.firebase.client.*;
 import com.potatoandtomato.common.*;
+import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.utils.Threadings;
+import com.potatoandtomato.common.utils.ThreadsPool;
 import com.potatoandtomato.games.absint.DatabaseListener;
 import com.potatoandtomato.games.models.MatchHistory;
 
@@ -87,11 +90,11 @@ public class Database {
                 });
                 threadsPool.addFragment(fragment2);
 
-                while (!threadsPool.allFinished()){
+                while (!threadsPool.allFinished()) {
                     Threadings.sleep(300);
                 }
 
-                if(listener != null) listener.onCallback(null, Status.SUCCESS);
+                if (listener != null) listener.onCallback(null, Status.SUCCESS);
 
             }
         });

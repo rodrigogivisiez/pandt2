@@ -1,7 +1,7 @@
 package com.mygdx.potatoandtomato.absintflis.recorder;
 
 import com.badlogic.gdx.files.FileHandle;
-import com.potatoandtomato.common.Status;
+import com.potatoandtomato.common.enums.Status;
 
 /**
  * Created by SiongLeng on 12/1/2016.

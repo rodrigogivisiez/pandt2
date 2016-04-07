@@ -127,6 +127,7 @@ public class TerrainActor extends Table {
             _percentLabel.setText("");
         }
 
+        _greenTile.clearActions();
         _greenTile.addAction(fadeIn(0.3f));
         hideAllArrows();
         if(direction == Direction.LEFT) {
@@ -156,6 +157,7 @@ public class TerrainActor extends Table {
     }
 
     public void hidePercent(){
+        _greenTile.clearActions();
         _greenTile.addAction(fadeOut(0.1f));
         hideAllArrows();
     }

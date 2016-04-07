@@ -14,7 +14,7 @@ import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.scenes.settings_scene.SettingsLogic;
 import com.mygdx.potatoandtomato.scenes.settings_scene.SettingsScene;
 import com.mygdx.potatoandtomato.statics.Global;
-import com.potatoandtomato.common.Status;
+import com.potatoandtomato.common.enums.Status;
 import helpers.T_Services;
 import org.junit.Assert;
 import org.junit.Test;

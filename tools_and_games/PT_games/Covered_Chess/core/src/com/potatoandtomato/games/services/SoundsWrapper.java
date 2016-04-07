@@ -28,16 +28,16 @@ public class SoundsWrapper implements Disposable {
         _themeSuddenDMusic = _assets.getSounds().getMusic(Sounds.Name.THEME_SUDDEN_D_MUSIC);
         _themeSuddenDMusic.setLooping(true);
 
-        _coordinator.getSoundManager().addMusic(_themeMusic);
-        _coordinator.getSoundManager().addMusic(_themeSuddenDMusic);
+        _coordinator.getSoundsPlayer().addMusic(_themeMusic);
+        _coordinator.getSoundsPlayer().addMusic(_themeSuddenDMusic);
     }
 
     public void playTheme(){
-        _coordinator.getSoundManager().playMusic(_themeMusic);
+        _coordinator.getSoundsPlayer().playMusic(_themeMusic);
     }
 
     public void playThemeMusicSuddenD(){
-        _coordinator.getSoundManager().playMusic(_themeSuddenDMusic);
+        _coordinator.getSoundsPlayer().playMusic(_themeSuddenDMusic);
     }
 
 
@@ -48,17 +48,17 @@ public class SoundsWrapper implements Disposable {
 
     public void playSounds(Sounds.Name name){
         Sound sound =  _assets.getSounds().getSound(name);
-        _coordinator.getSoundManager().playSound(sound);
+        _coordinator.getSoundsPlayer().playSound(sound);
     }
 
     public void playAnimalSound(ChessAnimal animal){
         Sound sound = _assets.getSounds().getSound(animal.name());
-        _coordinator.getSoundManager().playSound(sound);
+        _coordinator.getSoundsPlayer().playSound(sound);
     }
 
     @Override
     public void dispose() {
-        _coordinator.getSoundManager().disposeMusic(_themeMusic);
-        _coordinator.getSoundManager().disposeMusic(_themeSuddenDMusic);
+        _coordinator.getSoundsPlayer().disposeMusic(_themeMusic);
+        _coordinator.getSoundsPlayer().disposeMusic(_themeSuddenDMusic);
     }
 }

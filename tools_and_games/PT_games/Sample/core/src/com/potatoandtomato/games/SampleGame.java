@@ -5,8 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.potatoandtomato.common.GameCoordinator;
-import com.potatoandtomato.common.IPTGame;
-import com.potatoandtomato.common.MockGame;
+import com.potatoandtomato.common.mockings.MockGame;
 
 public class SampleGame extends MockGame {
 

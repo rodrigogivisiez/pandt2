@@ -13,6 +13,8 @@ import java.util.HashMap;
  */
 public interface IDatabase {
 
+     void saveLog(String msg);
+
      void getTestTableCount(DatabaseListener<Integer> listener);
 
      void loginAnonymous(DatabaseListener<Profile> listener);

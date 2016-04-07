@@ -1,7 +1,7 @@
 package com.potatoandtomato.games.screens;
 
 import com.potatoandtomato.common.GameCoordinator;
-import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.models.Services;
 import com.potatoandtomato.games.statics.Global;

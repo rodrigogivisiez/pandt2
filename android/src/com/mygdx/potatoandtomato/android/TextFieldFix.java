@@ -8,10 +8,10 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import com.mygdx.potatoandtomato.models.NativeLibgdxTextInfo;
-import com.potatoandtomato.common.BroadcastEvent;
-import com.potatoandtomato.common.BroadcastListener;
-import com.potatoandtomato.common.Broadcaster;
-import com.potatoandtomato.common.Status;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
+import com.potatoandtomato.common.broadcaster.BroadcastListener;
+import com.potatoandtomato.common.broadcaster.Broadcaster;
+import com.potatoandtomato.common.enums.Status;
 
 /**
  * Created by SiongLeng on 18/1/2016.

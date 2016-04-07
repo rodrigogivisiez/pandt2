@@ -10,11 +10,11 @@ import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
-import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
-import com.potatoandtomato.common.Status;
+import com.potatoandtomato.common.enums.Status;
 
 /**
  * Created by SiongLeng on 15/12/2015.

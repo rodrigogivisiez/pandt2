@@ -1,9 +1,9 @@
 package abstracts;
 
-import com.potatoandtomato.common.DownloaderListener;
-import com.potatoandtomato.common.IDownloader;
-import com.potatoandtomato.common.SafeThread;
-import com.potatoandtomato.common.Status;
+import com.potatoandtomato.common.absints.DownloaderListener;
+import com.potatoandtomato.common.absints.IDownloader;
+import com.potatoandtomato.common.utils.SafeThread;
+import com.potatoandtomato.common.enums.Status;
 
 import java.io.File;
 

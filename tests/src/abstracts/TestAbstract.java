@@ -5,8 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.mygdx.potatoandtomato.PTGame;
-import com.potatoandtomato.common.Broadcaster;
-import helpers.T_Services;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;

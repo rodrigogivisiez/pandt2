@@ -2,10 +2,10 @@ package com.mygdx.potatoandtomato.android;
 
 import android.content.Context;
 import android.os.Vibrator;
-import com.potatoandtomato.common.BroadcastEvent;
-import com.potatoandtomato.common.BroadcastListener;
-import com.potatoandtomato.common.Broadcaster;
-import com.potatoandtomato.common.Status;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
+import com.potatoandtomato.common.broadcaster.BroadcastListener;
+import com.potatoandtomato.common.broadcaster.Broadcaster;
+import com.potatoandtomato.common.enums.Status;
 
 /**
  * Created by SiongLeng on 21/1/2016.

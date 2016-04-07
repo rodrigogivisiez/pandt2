@@ -16,10 +16,11 @@ import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
 import com.mygdx.potatoandtomato.scenes.leaderboard_scene.LeaderBoardScene;
-import com.potatoandtomato.common.Broadcaster;
-import com.potatoandtomato.common.IPTGame;
-import com.potatoandtomato.common.Status;
-import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.broadcaster.Broadcaster;
+import com.potatoandtomato.common.absints.IPTGame;
+import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.utils.Threadings;
+import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.common.models.EndGameResult;
 import com.potatoandtomato.common.models.LeaderboardRecord;
 import com.potatoandtomato.common.models.ScoreDetails;
@@ -54,7 +55,6 @@ public class TestEndGameLeaderboard extends TestAbstract {
 
         EndGameResult endGameResult = endGameData.getEndGameResult();
         endGameResult.setWon(true);
-        endGameResult.setStreakEnabled(true);
 
         ArrayList<ScoreDetails> scoreDetails = new ArrayList<ScoreDetails>();
         scoreDetails.add(new ScoreDetails(900, "test", true, true));
@@ -74,7 +74,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
             }
         };
 
-        Confirm mockConfirm = new Confirm(mock(SpriteBatch.class), mock(IPTGame.class), mock(AssetController.class), mock(Broadcaster.class)){
+        Confirm mockConfirm = new Confirm(mock(SpriteBatch.class), mock(IPTGame.class), mock(Assets.class), mock(Broadcaster.class)){
             @Override
             public void show(String msg, Type type, ConfirmResultListener _listener) {
                 _listener.onResult(ConfirmResultListener.Result.YES);
@@ -120,7 +120,6 @@ public class TestEndGameLeaderboard extends TestAbstract {
 
         EndGameResult endGameResult = endGameData.getEndGameResult();
         endGameResult.setWon(false);
-        endGameResult.setStreakEnabled(true);
 
         final ArrayList<LeaderboardRecord> leaderboardRecords = getSampleLeaderboardRecords();
         final boolean[] called = new boolean[1];
@@ -144,7 +143,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
             }
         };
 
-        Confirm mockConfirm = new Confirm(mock(SpriteBatch.class), mock(IPTGame.class), mock(AssetController.class), mock(Broadcaster.class)){
+        Confirm mockConfirm = new Confirm(mock(SpriteBatch.class), mock(IPTGame.class), mock(Assets.class), mock(Broadcaster.class)){
             @Override
             public void show(String msg, Type type, ConfirmResultListener _listener) {
                 _listener.onResult(ConfirmResultListener.Result.YES);
@@ -175,10 +174,10 @@ public class TestEndGameLeaderboard extends TestAbstract {
 
         final EndGameData endGameData = MockModel.mockEndGameData();
         endGameData.getRoom().getGame().setLeaderbordTypeEnum(LeaderboardType.Normal);
+        endGameData.getRoom().getGame().setStreakEnabled(false);
 
         EndGameResult endGameResult = endGameData.getEndGameResult();
         endGameResult.setWon(false);
-        endGameResult.setStreakEnabled(false);
 
         final ArrayList<LeaderboardRecord> leaderboardRecords = getSampleLeaderboardRecords();
         final boolean[] called = new boolean[1];
@@ -200,7 +199,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
             }
         };
 
-        Confirm mockConfirm = new Confirm(mock(SpriteBatch.class), mock(IPTGame.class), mock(AssetController.class), mock(Broadcaster.class)){
+        Confirm mockConfirm = new Confirm(mock(SpriteBatch.class), mock(IPTGame.class), mock(Assets.class), mock(Broadcaster.class)){
             @Override
             public void show(String msg, Type type, ConfirmResultListener _listener) {
                 _listener.onResult(ConfirmResultListener.Result.YES);

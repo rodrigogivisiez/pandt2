@@ -9,11 +9,15 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.firebase.client.Firebase;
-import com.potatoandtomato.common.absints.ConnectionMonitorListener;
-import com.potatoandtomato.common.absints.GamePreferencesAbstract;
+import com.potatoandtomato.common.absints.*;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
+import com.potatoandtomato.common.broadcaster.BroadcastListener;
+import com.potatoandtomato.common.broadcaster.Broadcaster;
+import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.helpers.ConnectionMonitor;
-import com.potatoandtomato.common.models.EndGameResult;
-import com.potatoandtomato.common.models.ScoreDetails;
+import com.potatoandtomato.common.models.*;
+import com.potatoandtomato.common.utils.DecisionsMaker;
+import com.potatoandtomato.common.utils.MyFileResolver;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +40,7 @@ public class GameCoordinator implements Disposable {
     private UserStateListener userStateListener;
     private Object database;
     private String roomId;
-    private ISounds soundManager;
+    private ISoundsPlayer soundsPlayer;
     private AssetManager assetsManager;
     private Broadcaster broadcaster;
     private DecisionsMaker decisionsMaker;
@@ -60,7 +64,7 @@ public class GameCoordinator implements Disposable {
                            IPTGame game, SpriteBatch batch,
                            String myUserId, IGameSandBox gameSandBox,
                            Object database, String roomId,
-                           ISounds sounds, Broadcaster broadcaster,
+                           ISoundsPlayer sounds, Broadcaster broadcaster,
                            IDownloader downloader, ITutorials tutorials,
                            GamePreferencesAbstract gamePreferences) {
         this.jarPath = jarPath;
@@ -75,7 +79,7 @@ public class GameCoordinator implements Disposable {
         this.gameSandBox = gameSandBox;
         this.database = database;
         this.roomId = roomId;
-        this.soundManager = sounds;
+        this.soundsPlayer = sounds;
         this.broadcaster = broadcaster;
         this.downloader = downloader;
         this.tutorials = tutorials;
@@ -130,7 +134,7 @@ public class GameCoordinator implements Disposable {
         return spriteBatch;
     }
 
-    protected void setSpriteBatch(SpriteBatch spriteBatch) {
+    public void setSpriteBatch(SpriteBatch spriteBatch) {
         this.spriteBatch = spriteBatch;
     }
 
@@ -398,12 +402,16 @@ public class GameCoordinator implements Disposable {
         return (Firebase) database;
     }
 
+    public Firebase getTestingFirebase(){
+        return getFirebase().child("testing");
+    }
+
     public String getRoomId() {
         return roomId;
     }
 
-    public ISounds getSoundManager() {
-        return soundManager;
+    public ISoundsPlayer getSoundsPlayer() {
+        return soundsPlayer;
     }
 
     public void requestVibrate(double periodInMili){
@@ -461,5 +469,8 @@ public class GameCoordinator implements Disposable {
         _inGameUpdateListeners.clear();
         if(assetsManager != null) assetsManager.dispose();
         broadcaster.broadcast(BroadcastEvent.DEVICE_ORIENTATION, 0);
+        for(InputProcessor processor : _processors){
+            getGame().removeInputProcessor(processor);
+        }
     }
 }

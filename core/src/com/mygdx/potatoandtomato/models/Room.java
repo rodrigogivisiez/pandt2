@@ -2,8 +2,8 @@ package com.mygdx.potatoandtomato.models;
 
 import com.badlogic.gdx.graphics.Color;
 import com.mygdx.potatoandtomato.helpers.serializings.IntProfileMapDeserializer;
-import com.potatoandtomato.common.Player;
-import com.potatoandtomato.common.Team;
+import com.potatoandtomato.common.models.Player;
+import com.potatoandtomato.common.models.Team;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
 import com.shaded.fasterxml.jackson.core.JsonProcessingException;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;

@@ -1,8 +1,8 @@
 package com.potatoandtomato.common.helpers;
 
 import com.badlogic.gdx.utils.Disposable;
-import com.potatoandtomato.common.SafeThread;
-import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.utils.SafeThread;
+import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.common.absints.ConnectionMonitorListener;
 
 import java.util.HashMap;

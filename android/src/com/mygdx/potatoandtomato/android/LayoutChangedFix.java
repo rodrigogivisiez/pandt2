@@ -4,9 +4,9 @@ import android.graphics.Rect;
 import android.view.View;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.statics.Global;
-import com.potatoandtomato.common.SafeThread;
-import com.potatoandtomato.common.BroadcastEvent;
-import com.potatoandtomato.common.Broadcaster;
+import com.potatoandtomato.common.utils.SafeThread;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
+import com.potatoandtomato.common.broadcaster.Broadcaster;
 
 /**
  * Created by SiongLeng on 5/1/2016.

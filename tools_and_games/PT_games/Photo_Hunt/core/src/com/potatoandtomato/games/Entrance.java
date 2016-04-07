@@ -1,57 +1,81 @@
 package com.potatoandtomato.games;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.potatoandtomato.common.GameCoordinator;
-import com.potatoandtomato.common.GameEntrance;
-import com.potatoandtomato.games.abs.database.IDatabase;
-import com.potatoandtomato.games.assets.Assets;
-import com.potatoandtomato.games.helpers.Database;
-import com.potatoandtomato.games.helpers.ImageGetter;
-import com.potatoandtomato.games.helpers.MainController;
-import com.potatoandtomato.games.models.Service;
-import com.potatoandtomato.games.screens.loading_screen.LoadingLogic;
+import com.potatoandtomato.common.absints.GameEntrance;
+import com.potatoandtomato.games.assets.*;
+import com.potatoandtomato.games.models.Services;
+import com.potatoandtomato.games.screens.main.MainLogic;
+import com.potatoandtomato.games.services.Database;
+import com.potatoandtomato.games.services.RoomMsgHandler;
+import com.potatoandtomato.games.services.SoundsWrapper;
+import com.potatoandtomato.games.services.Texts;
 
 /**
  * Created by SiongLeng on 14/7/2015.
  */
 public class Entrance extends GameEntrance {
 
-    MainController _controller;
-    Assets _assets;
-    IDatabase _database;
-    Service _service;
+    MyAssets _assets;
+    Services _services;
+    GameCoordinator _coordinator;
+    MainLogic _logic;
+
 
     public Entrance(GameCoordinator gameCoordinator) {
         super(gameCoordinator);
-        getGameCoordinator().setLandscape();
+        this._coordinator = gameCoordinator;
 
-        _assets = new Assets(gameCoordinator);
-        _assets.load();
+        initAssets();
 
-        _database = new Database(gameCoordinator.getFirebase());
-        _service = new Service(_database, _assets, new ImageGetter(gameCoordinator, _database));
-        _service.getImageGetter().init();
-        _controller = new MainController(gameCoordinator, _service);
+        _assets.loadBasic(new Runnable() {
+            @Override
+            public void run() {
+                Database database = new Database(_coordinator.getFirebase());
+                Texts texts = new Texts();
 
-        gameCoordinator.finishLoading();
+                _services =  new Services(_assets, new SoundsWrapper(_assets, _coordinator), database,
+                                        texts, new RoomMsgHandler(_coordinator));
+
+                _logic = new MainLogic(_services, getGameCoordinator());
+
+                getGameCoordinator().finishLoading();
+            }
+        });
 
     }
 
     @Override
     public void init() {
-        _controller.init();
+        _logic.init();
+        getGameCoordinator().getGame().setScreen((_logic.getMainScreen()));
     }
 
     @Override
     public void onContinue() {
-       // getGameCoordinator().getGame().setScreen(_logic.getScreen());
+//        getGameCoordinator().getGame().setScreen((_logic.getScreen()));
+//        _logic.continueGame();
     }
 
     @Override
     public void dispose() {
-        _assets.dispose();
-        _service.getImageGetter().dispose();
-        _controller.dispose();
+//        _services.getSoundsWrapper().dispose();
+//        _services.getScoresHandler().dispose();
+//        _services.getAssets().dispose();
+        if(_logic != null) _logic.dispose();
+    }
+
+    private void initAssets(){
+        AssetManager manager = _coordinator.getAssetManager(true);
+        Fonts fonts = new Fonts(manager);
+        Patches patches = new Patches();
+        Sounds sounds = new Sounds(manager);
+        Textures textures = new Textures(manager, "pack.atlas");
+
+        _assets = new MyAssets(manager, fonts, null, sounds, patches, textures);
+
 
     }
+
 
 }

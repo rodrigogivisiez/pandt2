@@ -160,6 +160,8 @@ public class Texts {
 
     public String xPoints() {return "%s points";}
 
+    public String appsCrashed() {return "Opps, looks like P&T has crashed on the last time you played, a error log has been received by Tomato and will be fixed asap.";}
+
     //push notifications part
     public String PUSHGameInvitationsTitle() { return "P&T Game Invitations"; }
     public String PUSHGameInvitationsContent() { return "You have %s new inviations from your friends.";}

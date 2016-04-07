@@ -1,93 +1,132 @@
 package com.potatoandtomato.games.assets;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.FileHandleResolver;
-import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
-import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
-import com.potatoandtomato.common.GameCoordinator;
-import com.potatoandtomato.common.MyFileResolver;
-import com.potatoandtomato.games.abs.assets.IAssetElement;
-import com.potatoandtomato.games.abs.assets.MyFreetypeFontLoader;
+import com.potatoandtomato.common.assets.FontAssets;
+import com.potatoandtomato.common.assets.FontDetailsGenerator;
 
 /**
- * Created by SiongLeng on 5/2/2016.
+ * Created by SiongLeng on 9/2/2016.
  */
-public class Fonts implements IAssetElement {
+public class Fonts extends FontAssets {
 
-    private String _fontBoldPath = "fonts/helvetica_bold.ttf";
-    private AssetManager _manager;
-    private GameCoordinator _coordinator;
-
-    public Fonts(AssetManager _manager, GameCoordinator coordinator) {
-        this._manager = _manager;
-        this._coordinator = coordinator;
-    }
-    @Override
-    public void preLoad(){
-        MyFileResolver resolver = new MyFileResolver(_coordinator);
-        _manager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
-        _manager.setLoader(BitmapFont.class, ".ttf", new MyFreetypeFontLoader(resolver));
-
-        loadOneFont(_fontBoldPath, "whiteBold3.ttf", Color.valueOf("f05837"), 22);
+    public Fonts(AssetManager _manager) {
+        super(_manager);
     }
 
     @Override
-    public void dispose() {
-
-    }
-
-    private BitmapFont whiteBold3;
-
-    @Override
-    public void finishLoading(){
-        whiteBold3 = _manager.get("whiteBold3.ttf", BitmapFont.class);
-    }
-
-    public BitmapFont getWhiteBold3() {
-        return whiteBold3;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    private void loadOneFont(String path, String name, Color color, int size){
-        loadOneFont(path, name, color, size, 0, Color.BLACK, 0, Color.BLACK);
-    }
-
-    private void loadOneFont(String path, String name, Color color, int size, int borderWidth, Color borderColor, int shadowOffset, Color shadowColor){
-        MyFreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new MyFreetypeFontLoader.FreeTypeFontLoaderParameter();
-        size2Params.fontFileName = path;
-        size2Params.fontParameters.size = size;
-        size2Params.fontParameters.color = color;
-        size2Params.fontParameters.genMipMaps = true;
-        size2Params.fontParameters.minFilter = Texture.TextureFilter.MipMapLinearNearest;
-        size2Params.fontParameters.magFilter = Texture.TextureFilter.Linear;
-        if(borderWidth != 0){
-            size2Params.fontParameters.borderWidth = borderWidth;
-            size2Params.fontParameters.borderColor = borderColor;
+    public void loadFonts() {
+        for (FontId id : FontId.values()) {
+            addPreloadParameter(id);
         }
-        if(shadowOffset != 0){
-            size2Params.fontParameters.shadowColor = shadowColor;
-            size2Params.fontParameters.shadowOffsetX = shadowOffset;
-            size2Params.fontParameters.shadowOffsetY = shadowOffset;
-        }
-        _manager.load(name, BitmapFont.class, size2Params);
     }
+
+    @Override
+    public void setFontDetailsGenerator() {
+        this.fontDetailsGenerator = new MyFontDetailsGenerator();
+    }
+
+
+    public enum FontId{
+        MYRIAD_S_REGULAR,
+        MYRIAD_M_REGULAR,
+        MYRIAD_M_REGULAR_B_000000_588e54_1,             //dark green
+
+        HELVETICA_XS_BlACKCONDENSEDITALIC,
+        HELVETICA_XXL_HEAVY,
+        HELVETICA_XXL_BlACKCONDENSEDITALIC_B_ffffff_56380a_1,
+        HELVETICA_MAX_BlACKCONDENSEDITALIC_B_ffffff_f0c266_2_S_000000_1_1,         //orange border, black shadow
+        HELVETICA_MAX_BlACKCONDENSEDITALIC_B_ffffff_f46767_2_S_000000_1_1,          //red border, black shadow
+
+        PIZZA_XXL_REGULAR,
+        PIZZA_XXXL_REGULAR_B_000000_ffffff_3,
+    }
+
+
+    private class MyFontDetailsGenerator extends FontDetailsGenerator {
+
+        @Override
+        public String getPath(String fontNameString, String fontStyleString) {
+            FontName fontName = FontName.valueOf(fontNameString);
+            FontStyle fontStyle = FontStyle.valueOf(fontStyleString);
+
+            String path = "";
+            switch (fontName){
+                case MYRIAD:
+                    path = "fonts/MyriadPro-%s.otf";
+                    break;
+                case PIZZA:
+                    path = "fonts/Pizza-%s.otf";
+                    break;
+                case HELVETICA:
+                    path = "fonts/Helvetica-%s.otf";
+                    break;
+            }
+
+            String styleName = "";
+            switch (fontStyle){
+                case SEMIBOLD:
+                    styleName = "Semibold";
+                    break;
+                case REGULAR:
+                    styleName = "Regular";
+                    break;
+                case BOLD:
+                    styleName = "Bold";
+                    break;
+                case CONDENSED:
+                    styleName = "Condensed";
+                    break;
+                case ITALIC:
+                    styleName = "It";
+                    break;
+                case HEAVY:
+                    styleName = "Heavy";
+                    break;
+                case BlACKCONDENSEDITALIC:
+                    styleName = "BlkCnO";
+                    break;
+            }
+
+            return String.format(path, styleName);
+        }
+
+        @Override
+        public int getSize(String fontSizeString) {
+            FontSize fontSize = FontSize.valueOf(fontSizeString);
+            switch (fontSize){
+                case XS:
+                    return 9;
+                case S:
+                    return 11;
+                case M:
+                    return 13;
+                case L:
+                    return 15;
+                case XL:
+                    return 17;
+                case XXL:
+                    return 20;
+                case XXXL:
+                    return 30;
+                case MAX:
+                    return 30;
+            }
+            return 0;
+        }
+    }
+
+    private enum  FontName {
+        PIZZA, MYRIAD, HELVETICA
+    }
+
+    private enum FontStyle {
+        SEMIBOLD, REGULAR, BOLD, CONDENSED, ITALIC, HEAVY, BlACKCONDENSEDITALIC
+    }
+
+    private enum FontSize{
+        XS, S, M, L, XL, XXL, XXXL, MAX
+    }
+
 
 }
+

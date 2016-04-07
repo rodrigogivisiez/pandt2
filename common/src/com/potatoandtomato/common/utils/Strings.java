@@ -18,6 +18,31 @@ public class Strings {
         return sbStr.toString();
     }
 
+    public static ArrayList<String> split(String input, String sSep) {
+        String[] tmp = input.split(sSep);
+        ArrayList<String> result = new ArrayList<String>();
+        for(String s : tmp){
+            result.add(s);
+        }
+        return result;
+    }
+
+    public static ArrayList<String> split(String input, int limitPerString){
+        ArrayList<String> result = new ArrayList<String>();
+        if(input.length() < limitPerString){
+            result.add(input);
+        }
+        else{
+            int index = 0;
+            while (index < input.length()) {
+                result.add(input.substring(index, Math.min(index + limitPerString, input.length())));
+                index += limitPerString;
+            }
+        }
+
+        return result;
+    }
+
     public static String formatToTwoDec(float f){
         return String.format("%.2f", f);
     }
@@ -77,5 +102,7 @@ public class Strings {
         }
         return result;
     }
+
+
 
 }

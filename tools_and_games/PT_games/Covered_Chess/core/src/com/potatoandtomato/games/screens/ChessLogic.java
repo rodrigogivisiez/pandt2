@@ -135,9 +135,12 @@ public class ChessLogic {
 
             @Override
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
-                if(_chessActor.openChess(_startDragX, x) && !_chessModel.getOpened()){
-                    _actionListener.onOpened();
+                if(!_chessActor.isPreviewing()){
+                    if(_chessActor.openChess(_startDragX, x) && !_chessModel.getOpened()){
+                        _actionListener.onOpened();
+                    }
                 }
+
                 super.touchDragged(event, x, y, pointer);
             }
 
@@ -150,7 +153,7 @@ public class ChessLogic {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if(!_chessModel.getOpened()){
+                if(!_chessModel.getOpened() && !_chessActor.isPreviewing()){
                     _chessActor.openChess(0, 0);
                     _chessActor.resetOpenChess();
                 }

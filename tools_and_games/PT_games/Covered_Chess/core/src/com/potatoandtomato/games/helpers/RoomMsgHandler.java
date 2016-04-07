@@ -2,7 +2,7 @@ package com.potatoandtomato.games.helpers;
 
 import com.badlogic.gdx.Gdx;
 import com.potatoandtomato.common.GameCoordinator;
-import com.potatoandtomato.common.InGameUpdateListener;
+import com.potatoandtomato.common.absints.InGameUpdateListener;
 import com.potatoandtomato.games.screens.BoardLogic;
 import org.json.JSONException;
 import org.json.JSONObject;

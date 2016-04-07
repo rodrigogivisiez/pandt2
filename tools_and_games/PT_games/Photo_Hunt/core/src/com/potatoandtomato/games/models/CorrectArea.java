@@ -1,25 +1,47 @@
 package com.potatoandtomato.games.models;
 
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-
 /**
- * Created by SiongLeng on 1/2/2016.
+ * Created by SiongLeng on 6/4/2016.
  */
 public class CorrectArea {
 
-    public Vector2 topLeft, topRight, bottomLeft, bottomRight;
+    private int topLeftX;
+    private int bottomRightX;
+    private int topLeftY;
+    private int bottomRightY;
 
-    public CorrectArea(Vector2 topLeft, Vector2 topRight, Vector2 bottomLeft, Vector2 bottomRight) {
-        this.topLeft = topLeft;
-        this.topRight = topRight;
-        this.bottomLeft = bottomLeft;
-        this.bottomRight = bottomRight;
+    public CorrectArea() {
     }
 
-
-    public Rectangle toRectangle(){
-        return new Rectangle(topLeft.x, topLeft.y, topRight.x - topLeft.x, bottomLeft.y - topLeft.y);
+    public void setTopLeftX(int topLeftX) {
+        this.topLeftX = topLeftX;
     }
 
+    public void setBottomRightX(int bottomRightX) {
+        this.bottomRightX = bottomRightX;
+    }
+
+    public void setTopLeftY(int topLeftY) {
+        this.topLeftY = topLeftY;
+    }
+
+    public void setBottomRightY(int bottomRightY) {
+        this.bottomRightY = bottomRightY;
+    }
+
+    public int getTopLeftX() {
+        return topLeftX;
+    }
+
+    public int getBottomRightX() {
+        return bottomRightX;
+    }
+
+    public int getTopLeftY() {
+        return topLeftY;
+    }
+
+    public int getBottomRightY() {
+        return bottomRightY;
+    }
 }

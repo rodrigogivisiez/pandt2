@@ -34,7 +34,7 @@ import com.mygdx.potatoandtomato.scenes.leaderboard_scene.SingleGameLeaderBoardL
 import com.mygdx.potatoandtomato.scenes.prerequisite_scene.PrerequisiteLogic;
 import com.mygdx.potatoandtomato.scenes.room_scene.RoomLogic;
 import com.mygdx.potatoandtomato.scenes.settings_scene.SettingsLogic;
-import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.common.assets.Assets;
 
 import java.util.Stack;
@@ -106,11 +106,13 @@ public class PTScreen implements Screen, InputProcessor {
                     final LogicEnumPair logicOut = _logicStacks.peek();
                     logicOut.getLogic().onHide();
                     logic.onShow();
+                    if (!logicOut.getLogic().isSaveToStack()) {
+                        _logicStacks.remove(logicOut);
+                    }
                     sceneTransition(logic.getScene().getRoot(), logicOut.getLogic().getScene().getRoot(), logic.getScene(), true, new Runnable() {
                         @Override
                         public void run() {
                             if (!logicOut.getLogic().isSaveToStack()) {
-                                _logicStacks.remove(logicOut);
                                 logicOut.getLogic().dispose();
                             }
                             logic.onShown();
@@ -253,7 +255,7 @@ public class PTScreen implements Screen, InputProcessor {
         _rootIn.setPosition(toRight ? Positions.getWidth() : -Positions.getWidth(), 0);
         _rootOut.setPosition(0, 0);
 
-        _services.getSoundsWrapper().playSoundEffect(Sounds.Name.SLIDING);
+        _services.getSoundsPlayer().playSoundEffect(Sounds.Name.SLIDING);
 
         _rootIn.addAction(sequence(moveTo(0, 0, duration)));
         _rootOut.addAction(sequence(moveBy(toRight ? -Positions.getWidth() : Positions.getWidth(), 0, duration), new Action() {

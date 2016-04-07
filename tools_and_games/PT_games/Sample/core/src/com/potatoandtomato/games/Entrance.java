@@ -2,9 +2,8 @@ package com.potatoandtomato.games;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
-import com.potatoandtomato.common.GameEntrance;
 import com.potatoandtomato.common.GameCoordinator;
-import com.potatoandtomato.common.GameScreen;
+import com.potatoandtomato.common.absints.GameEntrance;
 
 /**
  * Created by SiongLeng on 14/7/2015.

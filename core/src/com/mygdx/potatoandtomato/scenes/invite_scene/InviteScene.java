@@ -15,7 +15,7 @@ import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.controls.BtnEggDownward;
 import com.mygdx.potatoandtomato.helpers.controls.DummyButton;
 import com.mygdx.potatoandtomato.helpers.controls.TopBar;
-import com.mygdx.potatoandtomato.helpers.utils.MultiHashMap;
+import com.potatoandtomato.common.utils.MultiHashMap;
 import com.mygdx.potatoandtomato.models.GameHistory;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
@@ -123,7 +123,7 @@ public class InviteScene extends SceneAbstract {
         /////////////////////////////////////
         //Invite btnEggDownward button
         /////////////////////////////////////
-        _inviteButton = new BtnEggDownward(_assets, _services.getSoundsWrapper());
+        _inviteButton = new BtnEggDownward(_assets, _services.getSoundsPlayer());
         _inviteButton.setText(_texts.invite());
 
         ///////////////////////////////////

@@ -1,15 +1,10 @@
 package com.potatoandtomato.games.assets;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.potatoandtomato.common.assets.TextureAssets;
-import com.potatoandtomato.games.absint.IAssetFragment;
 import com.potatoandtomato.games.enums.ChessType;
 import com.potatoandtomato.games.enums.Status;
-
-import java.util.HashMap;
 
 /**
  * Created by SiongLeng on 19/2/2016.

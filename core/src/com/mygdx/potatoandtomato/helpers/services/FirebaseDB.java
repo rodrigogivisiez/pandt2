@@ -8,9 +8,9 @@ import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
 import com.potatoandtomato.common.utils.Strings;
 import com.mygdx.potatoandtomato.models.*;
-import com.potatoandtomato.common.Status;
-import com.potatoandtomato.common.Threadings;
-import com.potatoandtomato.common.ThreadsPool;
+import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.utils.Threadings;
+import com.potatoandtomato.common.utils.ThreadsPool;
 import com.potatoandtomato.common.models.LeaderboardRecord;
 import com.potatoandtomato.common.models.Streak;
 
@@ -33,6 +33,7 @@ public class FirebaseDB implements IDatabase {
     private String _tableStreak = "streaks";
     private String _tableStreakReviveHistories = "streakReviveHistories";
     private String _tableServerTimeInfo = ".info/serverTimeOffset";
+    private String _tableLogs = "logs";
     private Array<ListenerModel> _listenerModels;
 
     public FirebaseDB(String url){
@@ -716,6 +717,12 @@ public class FirebaseDB implements IDatabase {
             }
         });
                // _listenerModels.add(new ListenerModel(ref2, Logs.getCallerClassName()));
+    }
+
+    @Override
+    public void saveLog(String msg) {
+        String key = getTable(_tableLogs).push().getKey();
+        getTable(_tableLogs).child(key).setValue(msg);
     }
 
     @Override

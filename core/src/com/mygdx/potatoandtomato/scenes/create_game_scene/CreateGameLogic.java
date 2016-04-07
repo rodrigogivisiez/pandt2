@@ -2,22 +2,18 @@ package com.mygdx.potatoandtomato.scenes.create_game_scene;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
-import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.scenes.prerequisite_scene.PrerequisiteLogic;
-import com.potatoandtomato.common.Status;
+import com.potatoandtomato.common.enums.Status;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 /**
  * Created by SiongLeng on 11/12/2015.

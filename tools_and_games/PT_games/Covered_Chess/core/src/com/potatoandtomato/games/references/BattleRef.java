@@ -133,11 +133,16 @@ public class BattleRef {
         Logs.show("Winning percent is: " + percent);
         Logs.show("Calculated random is: " + random);
 
-        if(random < percent){
-            return true;
+        if(percent == 0){
+            return false;
         }
         else{
-            return false;
+            if(random <= percent){
+                return true;
+            }
+            else{
+                return false;
+            }
         }
     }
 

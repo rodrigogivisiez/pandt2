@@ -5,7 +5,7 @@ import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
 import com.mygdx.potatoandtomato.models.*;
-import com.potatoandtomato.common.Status;
+import com.potatoandtomato.common.enums.Status;
 import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import com.potatoandtomato.common.models.LeaderboardRecord;
 import com.potatoandtomato.common.models.Streak;
@@ -17,6 +17,11 @@ import java.util.HashMap;
  * Created by SiongLeng on 9/12/2015.
  */
 public class MockDB implements IDatabase {
+
+    @Override
+    public void saveLog(String msg) {
+
+    }
 
     @Override
     public void getTestTableCount(DatabaseListener<Integer> listener) {

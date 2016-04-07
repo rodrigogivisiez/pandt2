@@ -13,12 +13,12 @@ import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.services.Confirm;
-import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.models.UserPlayingState;
 import com.mygdx.potatoandtomato.scenes.prerequisite_scene.PrerequisiteLogic;
-import com.potatoandtomato.common.Status;
+import com.potatoandtomato.common.enums.Status;
 
 import java.util.ArrayList;
 
@@ -179,7 +179,7 @@ public class GameListLogic extends LogicAbstract {
                     }
                     else{
                         if(!_scene.alreadyContainsRoom(room) && playSound && isSceneVisible()){
-                            _services.getSoundsWrapper().playSoundEffect(Sounds.Name.GAME_CREATED);
+                            _services.getSoundsPlayer().playSoundEffect(Sounds.Name.GAME_CREATED);
                         }
                         final Actor clicked = _scene.updatedRoom(room);
                         if(clicked != null){

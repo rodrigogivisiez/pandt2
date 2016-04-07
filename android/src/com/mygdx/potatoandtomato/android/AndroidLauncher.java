@@ -1,7 +1,6 @@
 package com.mygdx.potatoandtomato.android;
 
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -16,8 +15,11 @@ import com.firebase.client.Firebase;
 import com.mygdx.potatoandtomato.PTGame;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.*;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
+import com.potatoandtomato.common.broadcaster.BroadcastListener;
+import com.potatoandtomato.common.broadcaster.Broadcaster;
+import com.potatoandtomato.common.enums.Status;
 
-import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 
 public class AndroidLauncher extends AndroidApplication {

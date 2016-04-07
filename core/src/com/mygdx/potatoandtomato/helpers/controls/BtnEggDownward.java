@@ -18,9 +18,9 @@ import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.services.Shaders;
-import com.mygdx.potatoandtomato.helpers.services.SoundsWrapper;
+import com.mygdx.potatoandtomato.helpers.services.SoundsPlayer;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
-import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.common.assets.Assets;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
@@ -38,13 +38,13 @@ public class BtnEggDownward extends Table {
     Shaders _shaders;
     ShaderProgram _shader;
     boolean _enabled;
-    SoundsWrapper _soundsWrapper;
+    SoundsPlayer _soundsWrapper;
 
-    public BtnEggDownward(Assets assets, SoundsWrapper soundsWrapper) {
+    public BtnEggDownward(Assets assets, SoundsPlayer soundsWrapper) {
         this(assets, soundsWrapper, null);
     }
 
-    public BtnEggDownward(Assets assets, SoundsWrapper soundsWrapper, Shaders shaders) {
+    public BtnEggDownward(Assets assets, SoundsPlayer soundsWrapper, Shaders shaders) {
         this._soundsWrapper = soundsWrapper;
         this._assets = assets;
         this._shaders = shaders;

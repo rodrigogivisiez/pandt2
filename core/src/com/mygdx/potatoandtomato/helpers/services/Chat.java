@@ -25,17 +25,19 @@ import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.controls.DummyButton;
 import com.mygdx.potatoandtomato.helpers.controls.DummyKeyboard;
-import com.mygdx.potatoandtomato.helpers.utils.Colors;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.models.NativeLibgdxTextInfo;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.statics.Global;
-import com.potatoandtomato.common.*;
+import com.potatoandtomato.common.absints.IPTGame;
 import com.potatoandtomato.common.assets.Assets;
-
-import java.util.HashMap;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
+import com.potatoandtomato.common.broadcaster.BroadcastListener;
+import com.potatoandtomato.common.broadcaster.Broadcaster;
+import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.utils.Threadings;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -73,7 +75,7 @@ public class Chat {
     private String _recordsPath;
     private String _userId;
     private boolean _fading;
-    private SoundsWrapper _soundsWrapper;
+    private SoundsPlayer _soundsWrapper;
     private Broadcaster _broadcaster;
 
     public void setRoom(Room _room) {
@@ -86,7 +88,7 @@ public class Chat {
     }
 
     public Chat(GamingKit gamingKit, Texts texts, Assets assets, SpriteBatch batch,
-                IPTGame game, Recorder recorder, IUploader uploader, SoundsWrapper soundsWrapper,
+                IPTGame game, Recorder recorder, IUploader uploader, SoundsPlayer soundsWrapper,
                 Broadcaster broadcaster) {
         this._broadcaster = broadcaster;
         this._gamingKit = gamingKit;
@@ -173,10 +175,15 @@ public class Chat {
 
         _broadcaster.subscribe(BroadcastEvent.NATIVE_TEXT_CHANGED, new BroadcastListener<NativeLibgdxTextInfo>() {
             @Override
-            public void onCallback(NativeLibgdxTextInfo obj, Status st) {
+            public void onCallback(final NativeLibgdxTextInfo obj, Status st) {
                 Threadings.renderFor(0.2f);
-                _messageTextField.setText(obj.getText());
-                _messageTextField.setCursorPosition(obj.getCursorPosition());
+                Threadings.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        _messageTextField.setText(obj.getText());
+                        _messageTextField.setCursorPosition(obj.getCursorPosition());
+                    }
+                });
             }
         });
 

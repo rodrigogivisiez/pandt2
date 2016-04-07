@@ -4,8 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.mygdx.potatoandtomato.statics.Global;
-import com.potatoandtomato.common.SafeThread;
-import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.utils.SafeThread;
+import com.potatoandtomato.common.utils.Threadings;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -86,15 +86,16 @@ public class Logs {
         handle.writeString(msg, false);
     }
 
-    public static String getLogMsg(){
+    public static String getAndDeleteLogMsg(){
         FileHandle logFile = Gdx.files.local("pt_logs.txt");
         if(logFile.exists()){
-            return logFile.readString();
+            String result =  logFile.readString();
+            logFile.delete();
+            return result;
         }
        else{
-            return "Nothing here." ;
+            return "" ;
         }
-
     }
 
 }

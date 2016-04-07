@@ -6,11 +6,19 @@ import com.mygdx.potatoandtomato.absintflis.game_file_checker.GameFileCheckerLis
 import com.mygdx.potatoandtomato.helpers.services.Chat;
 import com.mygdx.potatoandtomato.helpers.services.*;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
-import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.assets.Assets;
+import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.scenes.room_scene.GameFileChecker;
 import com.potatoandtomato.common.*;
+import com.potatoandtomato.common.absints.IGameSandBox;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
+import com.potatoandtomato.common.broadcaster.BroadcastListener;
+import com.potatoandtomato.common.broadcaster.Broadcaster;
+import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.models.ScoreDetails;
+import com.potatoandtomato.common.models.Team;
+import com.potatoandtomato.common.utils.Downloader;
 import junit.framework.Assert;
 
 import java.util.ArrayList;
@@ -37,7 +45,7 @@ public class GameLoaderTest extends ActivityInstrumentationTestCase2<AndroidLaun
     public void testLoadGame() {
         final boolean[] waiting = {true};
         final Game game = new Game();
-        game.setGameUrl("http://cdn.shephertz.com/repository/files/c7236c0f55a51bcdde0415e639f2e87f73178a02cdd5d41485e19ad15334c56f/78e57d68a85885dbd3954f79f299236cfb3a43d8/sample_game.zip");
+        game.setGameUrl("http://cdn.shephertz.com/repository/files/c7236c0f55a51bcdde0415e639f2e87f73178a02cdd5d41485e19ad15334c56f/f81fc395d173a69ad5df3daa31c07aa623316136/sample_game.zip");
         game.setName("Sample");
         game.setAbbr("sample");
         game.setIconUrl("http://cdn.shephertz.com/repository/files/c7236c0f55a51bcdde0415e639f2e87f73178a02cdd5d41485e19ad15334c56f/5aa71b4ed51b4637128a88583bea5f3df491219d/sample_icon.png");
@@ -90,7 +98,7 @@ public class GameLoaderTest extends ActivityInstrumentationTestCase2<AndroidLaun
             }
 
             @Override
-            public void userAbandoned() {
+            public void userAbandoned(String userId) {
 
             }
 
@@ -124,7 +132,7 @@ public class GameLoaderTest extends ActivityInstrumentationTestCase2<AndroidLaun
     private Services mockServices() {
         Preferences preferences = new Preferences("potatoandtomato_test");
         preferences.deleteAll();
-        AssetController assets = new AssetController();
+        Assets assets = new Assets(null, null, null, null, null, null);
         //assets.loadBasic(null);
 
         return new Services(assets, new Texts(), preferences,

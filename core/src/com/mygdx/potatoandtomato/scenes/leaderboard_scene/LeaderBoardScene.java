@@ -19,13 +19,14 @@ import com.mygdx.potatoandtomato.helpers.controls.Animator;
 import com.mygdx.potatoandtomato.helpers.controls.FlowContainer;
 import com.mygdx.potatoandtomato.helpers.controls.TopBar;
 import com.mygdx.potatoandtomato.helpers.controls.WebImage;
+import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.potatoandtomato.common.utils.Strings;
 import com.mygdx.potatoandtomato.models.Game;
 import com.potatoandtomato.common.models.LeaderboardRecord;
 import com.mygdx.potatoandtomato.models.Services;
 import com.potatoandtomato.common.models.ScoreDetails;
-import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.utils.Threadings;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +41,7 @@ public class LeaderBoardScene extends SceneAbstract {
     private HashMap<String, ScrollPane> _leaderboardScrolls;
     private Label _titleLabel, _animatingScoreLabel;
     private Table _iconTable, _ranksTable, _animatingRecordTable, _mascotsTable, _loadingTable;
-    private float _recordHeight;
+    private float _recordHeight, _animatingTableY;
     private Game _currentShowingGame;
 
     public Label getTitleLabel() {
@@ -328,6 +329,11 @@ public class LeaderBoardScene extends SceneAbstract {
 
     public void addScore(ScoreDetails scoreDetails, final Runnable onFinish){
 
+        if(_animatingTableY == 0){
+            Vector2 coords = Positions.actorLocalToStageCoord(_animatingRecordTable);
+            _animatingTableY = coords.y;
+        }
+
         Color fontColor = scoreDetails.isAddOrMultiply() ? Color.valueOf("fff600") : Color.valueOf("ff7676");
 
         Label.LabelStyle style5 = new Label.LabelStyle(
@@ -356,28 +362,16 @@ public class LeaderBoardScene extends SceneAbstract {
         addedScoreTable.add(addedReasonLabel).minWidth(80).expandX().fillX().padTop(-10);
         addedScoreTable.layout();
         addedScoreTable.setSize(addedScoreTable.getPrefWidth(), 30);
-        addedScoreTable.setPosition(Positions.getWidth() - addedScoreTable.getPrefWidth() - 10, 0);
 
-        _animatingRecordTable.addActor(addedScoreTable);
+        addedScoreTable.setPosition(Positions.getWidth() - addedScoreTable.getPrefWidth() - 3, _animatingTableY);
 
-        Vector2 coords = Positions.actorLocalToStageCoord(addedScoreTable);
-        addedScoreTable.remove();
-        addedScoreTable.setPosition(coords.x, coords.y);
         _root.addActor(addedScoreTable);
 
         float delayDuration = 1.6f;
         if(scoreDetails.getReason().length() > 10) delayDuration = 2.3f;
 
         addedScoreTable.setOrigin(addedScoreTable.getWidth()/2, addedScoreTable.getHeight()/2);
-        addedScoreTable.addAction(sequence(scaleTo(0, 0), fadeIn(0), scaleTo(1, 1, 0.3f, Interpolation.exp5In), delay(delayDuration), fadeOut(0.1f),
-                new RunnableAction(){
-                    @Override
-                    public void run() {
-                        addedScoreTable.remove();
-                        onFinish.run();
-                    }
-                }
-        ));
+
 
         Image starImageOne = new Image(_assets.getTextures().get(Textures.Name.SMALL_STAR_ICON));
         starImageOne.setSize(10, 10);
@@ -394,6 +388,18 @@ public class LeaderBoardScene extends SceneAbstract {
         starImageOne.addAction(sequence(delay(0.3f), fadeIn(0f), moveBy(-5, 5, 0.3f), parallel(moveBy(-5, -5, 0.3f), fadeOut(0.3f))));
         starImageTwo.addAction(sequence(delay(0.3f), fadeIn(0f), moveBy(5, 5, 0.3f), parallel(moveBy(5, -5, 0.3f), fadeOut(0.3f))));
 
+        addedScoreTable.setScale(0f, 0f);
+        addedScoreTable.getColor().a = 1f;
+
+        addedScoreTable.addAction(sequence(scaleTo(1, 1, 0.3f, Interpolation.exp5In), delay(delayDuration), fadeOut(0.1f),
+                new RunnableAction(){
+                    @Override
+                    public void run() {
+                        addedScoreTable.remove();
+                        onFinish.run();
+                    }
+                }
+        ));
 
     }
 
@@ -435,20 +441,20 @@ public class LeaderBoardScene extends SceneAbstract {
                     final boolean[] finishMoving = {false};
                     final Table toSwitchActor = (Table) ranksTable.getCells().get(toRank).getActor();
 
-                    _services.getSoundsWrapper().playSoundEffectLoop(Sounds.Name.MOVING_RANK);
+                    _services.getSoundsPlayer().playSoundEffectLoop(Sounds.Name.MOVING_RANK);
 
                     _animatingRecordTable.addAction(sequence(Actions.moveTo(toSwitchActor.getX(), toSwitchActor.getY(), finalDuration, Interpolation.exp10Out), new RunnableAction(){
                         @Override
                         public void run() {
                             finishMoving[0] = true;
-                            _services.getSoundsWrapper().stopSoundEffectLoop(Sounds.Name.MOVING_RANK);
+                            _services.getSoundsPlayer().stopSoundEffectLoop(Sounds.Name.MOVING_RANK);
                             moveDownOneRank(ranksTable, toRank, originalRank, maxSize, new Runnable() {
                                 @Override
                                 public void run() {
                                     Threadings.delay(500, new Runnable() {
                                         @Override
                                         public void run() {
-                                            _services.getSoundsWrapper().playSoundEffect(Sounds.Name.MOVING_RANK_END);
+                                            _services.getSoundsPlayer().playSoundEffect(Sounds.Name.MOVING_RANK_END);
                                             onFinishMoved.run();
                                         }
                                     });
@@ -517,7 +523,7 @@ public class LeaderBoardScene extends SceneAbstract {
         Table recordTable = (Table) rankTable.getCells().get(rank).getActor();
         Table streakTable = recordTable.findActor("streakTable");
         streakTable.addAction(fadeOut(0.2f));
-        _services.getSoundsWrapper().playSoundEffect(Sounds.Name.STREAK_DIED);
+        _services.getSoundsPlayer().playSoundEffect(Sounds.Name.STREAK_DIED);
     }
 
     public void reviveStreakAnimate(final Game game, int rank){
@@ -525,7 +531,7 @@ public class LeaderBoardScene extends SceneAbstract {
         Table recordTable = (Table) rankTable.getCells().get(rank).getActor();
         Table streakTable = recordTable.findActor("streakTable");
         streakTable.addAction(fadeIn(0.2f));
-        _services.getSoundsWrapper().playSoundEffect(Sounds.Name.STREAK);
+        _services.getSoundsPlayer().playSoundEffect(Sounds.Name.STREAK);
     }
 
     private void movingEndedAnimate(Game game, Table ranksTable, LeaderboardRecord movingRecord, final int toRank, int maxSize, Runnable finishAnimate){
@@ -649,7 +655,7 @@ public class LeaderBoardScene extends SceneAbstract {
                     _mascotsTable.addActor(tomato);
                     _mascotsTable.addActor(potato);
 
-                    _services.getSoundsWrapper().playSoundEffect(Sounds.Name.TOGETHER_BORED);
+                    _services.getSoundsPlayer().playSoundEffect(Sounds.Name.TOGETHER_BORED);
 
                 } else if (type == MascotType.FAILED) {
                     Animator tomato = new Animator(0.3f, _assets.getAnimations().get(Animations.Name.TOMATO_FAILED));
@@ -665,7 +671,7 @@ public class LeaderBoardScene extends SceneAbstract {
                     _mascotsTable.addActor(tomato);
                     _mascotsTable.addActor(potato);
 
-                    _services.getSoundsWrapper().playSoundEffect(Sounds.Name.TOGETHER_FAILED);
+                    _services.getSoundsPlayer().playSoundEffect(Sounds.Name.TOGETHER_FAILED);
 
                 } else if (type == MascotType.CRY) {
                     Animator tomato = new Animator(0.3f, _assets.getAnimations().get(Animations.Name.TOMATO_CRY));
@@ -681,7 +687,7 @@ public class LeaderBoardScene extends SceneAbstract {
                     _mascotsTable.addActor(tomato);
                     _mascotsTable.addActor(potato);
 
-                    _services.getSoundsWrapper().playSoundEffect(Sounds.Name.TOGETHER_CRY);
+                    _services.getSoundsPlayer().playSoundEffect(Sounds.Name.TOGETHER_CRY);
 
                 } else if (type == MascotType.HAPPY) {
                     Animator tomato = new Animator(0.3f, _assets.getAnimations().get(Animations.Name.TOMATO_HAPPY));
@@ -697,7 +703,7 @@ public class LeaderBoardScene extends SceneAbstract {
                     _mascotsTable.addActor(tomato);
                     _mascotsTable.addActor(potato);
 
-                    _services.getSoundsWrapper().playSoundEffect(Sounds.Name.TOGETHER_HAPPY);
+                    _services.getSoundsPlayer().playSoundEffect(Sounds.Name.TOGETHER_HAPPY);
 
                 } else if (type == MascotType.ANTICIPATE) {
                     Animator tomato = new Animator(0.3f, _assets.getAnimations().get(Animations.Name.TOMATO_ANTICIPATE));
@@ -713,7 +719,7 @@ public class LeaderBoardScene extends SceneAbstract {
                     _mascotsTable.addActor(tomato);
                     _mascotsTable.addActor(potato);
 
-                    _services.getSoundsWrapper().playSoundEffect(Sounds.Name.TOGETHER_ANTICIPATING);
+                    _services.getSoundsPlayer().playSoundEffect(Sounds.Name.TOGETHER_ANTICIPATING);
                 }
                 _mascotsTable.addAction(sequence(fadeIn(0.1f)));
             }

@@ -5,15 +5,20 @@ import abstracts.TestAbstract;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.game_file_checker.GameFileCheckerListener;
 import com.mygdx.potatoandtomato.desktop.DesktopLauncher;
-import com.potatoandtomato.common.Downloader;
+import com.potatoandtomato.common.absints.*;
+import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.models.Team;
+import com.potatoandtomato.common.utils.Downloader;
 import com.mygdx.potatoandtomato.helpers.services.VersionControl;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
-import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.scenes.room_scene.GameFileChecker;
 import com.potatoandtomato.common.*;
-import com.potatoandtomato.common.absints.GamePreferencesAbstract;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
+import com.potatoandtomato.common.broadcaster.BroadcastListener;
+import com.potatoandtomato.common.broadcaster.Broadcaster;
 import helpers.T_Services;
 import org.junit.Assert;
 import org.junit.Before;
@@ -43,7 +48,7 @@ public class TestGameLoader extends TestAbstract{
 
         final boolean[] waiting = {true};
         final Game game = new Game();
-        game.setGameUrl("http://cdn.shephertz.com/repository/files/c7236c0f55a51bcdde0415e639f2e87f73178a02cdd5d41485e19ad15334c56f/78e57d68a85885dbd3954f79f299236cfb3a43d8/sample_game.zip");
+        game.setGameUrl("http://cdn.shephertz.com/repository/files/c7236c0f55a51bcdde0415e639f2e87f73178a02cdd5d41485e19ad15334c56f/f81fc395d173a69ad5df3daa31c07aa623316136/sample_game.zip");
         game.setName("Sample");
         game.setAbbr("sample");
         game.setIconUrl("http://cdn.shephertz.com/repository/files/c7236c0f55a51bcdde0415e639f2e87f73178a02cdd5d41485e19ad15334c56f/5aa71b4ed51b4637128a88583bea5f3df491219d/sample_icon.png");
@@ -92,7 +97,7 @@ public class TestGameLoader extends TestAbstract{
 
         GameCoordinator gameCoordinator = new GameCoordinator(game.getFullLocalJarPath(),
                                         game.getLocalAssetsPath(), game.getBasePath(), new ArrayList<Team>(), Positions.getWidth(),
-                                        Positions.getHeight(), null, null, "123", mock(IGameSandBox.class), null, "1", mock(ISounds.class), broadcaster,
+                                        Positions.getHeight(), null, null, "123", mock(IGameSandBox.class), null, "1", mock(ISoundsPlayer.class), broadcaster,
                                         mock(IDownloader.class), mock(ITutorials.class), mock(GamePreferencesAbstract.class));
         broadcaster.broadcast(BroadcastEvent.LOAD_GAME_REQUEST, gameCoordinator);
 

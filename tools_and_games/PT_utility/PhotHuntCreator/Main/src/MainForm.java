@@ -1,4 +1,6 @@
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -66,6 +68,7 @@ public class MainForm extends JFrame {
                 if ((e.getKeyCode() == KeyEvent.VK_R) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0)) {
                     resetEverything();
                 }
+
             }
 
             @Override
@@ -84,14 +87,27 @@ public class MainForm extends JFrame {
             return;
         }
 
-        final JSONObject jsonObject = new JSONObject();
+        final ImageDetails imageDetails = new ImageDetails();
+
         int i = 1;
         for(MyCanvas canvas : canvases){
-            jsonObject.put(i, canvas.toString());
+            CorrectArea correctArea = new CorrectArea();
+            correctArea.setTopLeftX(canvas.getStartX());
+            correctArea.setTopLeftY(canvas.getStartY());
+            correctArea.setBottomRightX(canvas.getFinalX());
+            correctArea.setBottomRightY(canvas.getFinalY());
+
+            if(i == 1) imageDetails.setArea1(correctArea);
+            else if(i == 2) imageDetails.setArea2(correctArea);
+            else if(i == 3) imageDetails.setArea3(correctArea);
+            else if(i == 4) imageDetails.setArea4(correctArea);
+            else if(i == 5) imageDetails.setArea5(correctArea);
+
             i++;
         }
-        jsonObject.put("width", IMAGE_WIDTH);
-        jsonObject.put("height", IMAGE_HEIGHT);
+
+        imageDetails.setWidth(IMAGE_WIDTH);
+        imageDetails.setHeight(IMAGE_HEIGHT);
 
 
         JOptionPane opt = new JOptionPane("Saving Item, please don't close this window...");
@@ -101,43 +117,30 @@ public class MainForm extends JFrame {
             @Override
             public void run() {
                 String key = fireDB.getKey();
+                imageDetails.setId(key);
                 resizeFile(fileName1, 1);
                 resizeFile(fileName2, 2);
 
-                try {
-                    uploadFtp("1.jpg", "photo_hunt_images/" + key);
-                    uploadFtp("2.jpg", "photo_hunt_images/" + key);
+                File f = new File("1.jpg");
+                File f2 = new File("2.jpg");
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    cancel[0] = true;
-                    JOptionPane.showMessageDialog(_this, "Ftp upload failed.");
+                Uploads uploads = new Uploads();
+                uploads.uploadImage(f, key, 1, imageDetails);
+                uploads.uploadImage(f2, key, 2, imageDetails);
+
+                f.delete();
+                f2.delete();
+
+                if(!cancel[0]){
+                    fireDB.save(key, imageDetails, new Runnable() {
+                        @Override
+                        public void run() {
+                            dlg.dispose();
+                        }
+                    });
                 }
-                catch (Exception e) {
-                    e.printStackTrace();
-                    cancel[0] = true;
-                    JOptionPane.showMessageDialog(_this, "Operation failed.");
-                }
-                finally {
-                    File f = new File("1.jpg");
-                    f.delete();
-
-                    File f2 = new File("2.jpg");
-                    f2.delete();
-
-                    if(!cancel[0]){
-                        fireDB.saveNew(key, jsonObject.toJSONString(), new Runnable() {
-                            @Override
-                            public void run() {
-                                dlg.dispose();
-                            }
-                        });
-                    }
-                    else{
-                        dlg.dispose();
-                    }
-
-
+                else{
+                    dlg.dispose();
                 }
             }
         });
@@ -172,9 +175,6 @@ public class MainForm extends JFrame {
         _this.setTitle("Total records: " + newCount);
     }
 
-    private static void uploadFtp(String fileName, String toPath) throws IOException {
-        Ftp.uploadFile(new File(fileName), toPath);
-    }
 
     private static void resizeFile(String fileName, int i){
         BufferedImage originalImage = null;
@@ -524,3 +524,7 @@ class MyCanvas extends JComponent {
     }
 
 }
+
+
+
+

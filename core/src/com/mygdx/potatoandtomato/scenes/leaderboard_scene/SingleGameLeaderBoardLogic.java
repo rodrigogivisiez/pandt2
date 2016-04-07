@@ -6,8 +6,8 @@ import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Services;
-import com.potatoandtomato.common.Status;
-import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.common.models.LeaderboardRecord;
 
 import java.util.ArrayList;

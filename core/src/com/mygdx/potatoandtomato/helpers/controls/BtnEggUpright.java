@@ -12,9 +12,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.assets.Textures;
-import com.mygdx.potatoandtomato.helpers.services.SoundsWrapper;
+import com.mygdx.potatoandtomato.helpers.services.SoundsPlayer;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
-import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.common.assets.Assets;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
@@ -28,13 +28,13 @@ public class BtnEggUpright extends Table {
     Assets _assets;
     Vector2 _size;
     Image _contentImg;
-    SoundsWrapper _soundsWrapper;
+    SoundsPlayer _soundsWrapper;
 
-    public BtnEggUpright(Assets assets, SoundsWrapper soundsWrapper){
+    public BtnEggUpright(Assets assets, SoundsPlayer soundsWrapper){
         this(assets, soundsWrapper, 120);
     }
 
-    public BtnEggUpright(Assets assets, SoundsWrapper soundsWrapper, int width) {
+    public BtnEggUpright(Assets assets, SoundsPlayer soundsWrapper, int width) {
         this._assets = assets;
         this._soundsWrapper = soundsWrapper;
         this._button = new Button(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));

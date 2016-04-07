@@ -3,7 +3,7 @@ package connection_testings;
 import abstracts.TestAbstract;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.*;
 import com.mygdx.potatoandtomato.helpers.services.Appwarp;
-import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import helpers.T_Threadings;
@@ -70,22 +70,28 @@ public class TestAppwarp extends TestAbstract {
 
         waiting[0] = true;
         final int code = 10;
-        final String sendingMsg = "nothing";
+        final String sendingMsg = "supersuper";
         final int[] monitorCount = new int[]{0};
 
+        String finalMsg = "";
+        for(int i=0; i<400; i++){
+            finalMsg += sendingMsg;
+        }
+
         //test update peers
+        final String finalMsg1 = finalMsg;
         _gamingKit.addListener(getClassTag(), new UpdateRoomMatesListener() {
             @Override
             public void onUpdateRoomMatesReceived(int broadcastCode, String msg, String senderId) {
                 Assert.assertEquals(code, broadcastCode);
-                Assert.assertEquals(sendingMsg, msg);
+                Assert.assertEquals(finalMsg1, msg);
                 Assert.assertEquals(senderId, "random");
                 waiting[0] = false;
                 monitorCount[0]++;
             }
         });
 
-        _gamingKit.updateRoomMates(code, sendingMsg);
+        _gamingKit.updateRoomMates(code, finalMsg);
 
         while(waiting[0]){
             T_Threadings.sleep(100);

@@ -20,7 +20,7 @@ import com.mygdx.potatoandtomato.helpers.controls.TopBar;
 import com.mygdx.potatoandtomato.helpers.controls.WebImage;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
-import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Services;
 
@@ -84,7 +84,7 @@ public class CreateGameScene extends SceneAbstract {
         _gameDetails.row();
         _gameDetails.add(pickAGameLabel).padTop(10);
 
-        _createButton = new BtnEggDownward(_assets, _services.getSoundsWrapper());
+        _createButton = new BtnEggDownward(_assets, _services.getSoundsPlayer());
         _createButton.setText(_texts.create());
         _createButton.setPosition(60, -80);
         _createButton.setVisible(false);

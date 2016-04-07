@@ -4,9 +4,9 @@ import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
 import com.mygdx.potatoandtomato.helpers.services.*;
-import com.potatoandtomato.common.Broadcaster;
-import com.potatoandtomato.common.IDownloader;
-import com.potatoandtomato.common.ITutorials;
+import com.potatoandtomato.common.broadcaster.Broadcaster;
+import com.potatoandtomato.common.absints.IDownloader;
+import com.potatoandtomato.common.absints.ITutorials;
 import com.potatoandtomato.common.assets.Assets;
 
 /**
@@ -29,7 +29,7 @@ public class Services {
     Notification _notification;
     Recorder _recorder;
     IUploader _uploader;
-    SoundsWrapper _soundsWrapper;
+    SoundsPlayer _soundsPlayer;
     VersionControl _versionControl;
     Broadcaster _broadcaster;
     ITutorials _tutorials;
@@ -37,7 +37,7 @@ public class Services {
     public Services(Assets assets, Texts texts, Preferences preferences,
                     Profile profile, IDatabase database, Shaders shaders, GamingKit gamingKit, IDownloader downloader,
                     Chat chat, Socials socials, GCMSender gcmSender, Confirm confirm, Notification notification,
-                    Recorder recorder, IUploader uploader, SoundsWrapper soundsWrapper, VersionControl versionControl,
+                    Recorder recorder, IUploader uploader, SoundsPlayer soundsPlayer, VersionControl versionControl,
                     Broadcaster broadcaster, ITutorials tutorials) {
         _texts = texts;
         _assets = assets;
@@ -54,7 +54,7 @@ public class Services {
         _notification = notification;
         _recorder = recorder;
         _uploader = uploader;
-        _soundsWrapper = soundsWrapper;
+        _soundsPlayer = soundsPlayer;
         _versionControl = versionControl;
         _broadcaster = broadcaster;
         _tutorials = tutorials;
@@ -80,12 +80,12 @@ public class Services {
         return _versionControl;
     }
 
-    public SoundsWrapper getSoundsWrapper() {
-        return _soundsWrapper;
+    public SoundsPlayer getSoundsPlayer() {
+        return _soundsPlayer;
     }
 
-    public void setSoundsWrapper(SoundsWrapper _soundsWrapper) {
-        this._soundsWrapper = _soundsWrapper;
+    public void setSoundsPlayer(SoundsPlayer _soundsPlayer) {
+        this._soundsPlayer = _soundsPlayer;
     }
 
     public IUploader getUploader() {

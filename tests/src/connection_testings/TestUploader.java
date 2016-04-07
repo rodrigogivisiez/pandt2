@@ -5,9 +5,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.mygdx.potatoandtomato.absintflis.uploader.UploadListener;
 import com.mygdx.potatoandtomato.helpers.services.App42Uploader;
-import com.potatoandtomato.common.Downloader;
-import com.potatoandtomato.common.Threadings;
-import com.potatoandtomato.common.Status;
+import com.potatoandtomato.common.utils.Downloader;
+import com.potatoandtomato.common.utils.Threadings;
+import com.potatoandtomato.common.enums.Status;
 import org.junit.Assert;
 import org.junit.Test;
 

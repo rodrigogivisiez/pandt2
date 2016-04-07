@@ -11,8 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.potatoandtomato.common.Threadings;
 import com.potatoandtomato.common.assets.Assets;
+import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.assets.MyAssets;
 import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.assets.Textures;
@@ -45,6 +45,7 @@ public class ChessActor extends Table {
     private SoundsWrapper _soundsWrapper;
     private Table _statusTable;
     private Status _currentStatus;
+    private boolean _previewing;
 
     public Table getCoverChess() {
         return _coverChess;
@@ -95,13 +96,20 @@ public class ChessActor extends Table {
     }
 
     public void previewChess(final boolean revealChess, final Runnable toRun){
+        _previewing = true;
         flipChessAnimation(_coverChess, revealChess ? _animalChess : _previewChess, new Runnable() {
             @Override
             public void run() {
                 Threadings.delay(2000, new Runnable() {
                     @Override
                     public void run() {
-                        flipChessAnimation(revealChess ? _animalChess : _previewChess, _coverChess, toRun);
+                        flipChessAnimation(revealChess ? _animalChess : _previewChess, _coverChess, new Runnable() {
+                            @Override
+                            public void run() {
+                                _previewing = false;
+                                if (toRun != null) toRun.run();
+                            }
+                        });
                     }
                 });
             }
@@ -321,6 +329,14 @@ public class ChessActor extends Table {
         }
         _currentStatus = status;
 
+    }
+
+    public boolean isPreviewing() {
+        return _previewing;
+    }
+
+    public void setPreviewing(boolean _previewing) {
+        this._previewing = _previewing;
     }
 }
 

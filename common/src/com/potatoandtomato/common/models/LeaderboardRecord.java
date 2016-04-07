@@ -1,12 +1,10 @@
 package com.potatoandtomato.common.models;
 
-import com.potatoandtomato.common.Player;
 import com.potatoandtomato.common.utils.Strings;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 
 /**

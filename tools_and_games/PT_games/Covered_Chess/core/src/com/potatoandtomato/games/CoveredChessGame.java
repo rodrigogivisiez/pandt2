@@ -1,6 +1,6 @@
 package com.potatoandtomato.games;
 
-import com.potatoandtomato.common.MockGame;
+import com.potatoandtomato.common.mockings.MockGame;
 import com.potatoandtomato.games.statics.Global;
 
 public class CoveredChessGame extends MockGame {

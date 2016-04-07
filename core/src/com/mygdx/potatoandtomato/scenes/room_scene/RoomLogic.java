@@ -21,12 +21,13 @@ import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.services.Confirm;
 import com.mygdx.potatoandtomato.helpers.services.VersionControl;
-import com.mygdx.potatoandtomato.helpers.utils.JsonObj;
-import com.potatoandtomato.common.SafeThread;
-import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.utils.JsonObj;
+import com.potatoandtomato.common.utils.SafeThread;
+import com.potatoandtomato.common.utils.Strings;
+import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.*;
-import com.potatoandtomato.common.BroadcastEvent;
-import com.potatoandtomato.common.Status;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
+import com.potatoandtomato.common.enums.Status;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -278,7 +279,7 @@ public class RoomLogic extends LogicAbstract {
     public void onShow() {
         super.onShow();
 
-        _services.getSoundsWrapper().playThemeMusic();
+        _services.getSoundsPlayer().playThemeMusic();
 
         if(_errorOccuredMsg != null){
             return;
@@ -605,7 +606,7 @@ public class RoomLogic extends LogicAbstract {
     }
 
     public boolean checkHostInRoom(){
-        if(_forceQuit) return false;
+        if(_forceQuit || !Strings.isEmpty(_errorOccuredMsg)) return false;
         if(_gameStarted) return true;
 
 
@@ -618,18 +619,7 @@ public class RoomLogic extends LogicAbstract {
         }
         if(!found) {
             _room.setOpen(false);
-            _forceQuit = true;
-            Gdx.app.postRunnable(new Runnable() {
-                @Override
-                public void run() {
-                    _confirm.show(_texts.hostLeft(), Confirm.Type.YES, new ConfirmResultListener() {
-                        @Override
-                        public void onResult(Result result) {
-                            _screen.back();
-                        }
-                    });
-                }
-            });
+            errorOccured(_texts.hostLeft());
         }
         return found;
     }
@@ -677,9 +667,9 @@ public class RoomLogic extends LogicAbstract {
     }
 
     public void errorOccured(String message){
-        if(!isSceneVisible()){
-            leaveRoom();
+        if(!isSceneFullyVisible()){
             _errorOccuredMsg = message;
+            leaveRoom();
             return;
         }
 
@@ -748,7 +738,7 @@ public class RoomLogic extends LogicAbstract {
                 _services.getChat().show();
                 _services.getChat().expanded();
                 while(i > 0){
-                    _services.getSoundsWrapper().playSoundEffect(Sounds.Name.COUNT_DOWN);
+                    _services.getSoundsPlayer().playSoundEffect(Sounds.Name.COUNT_DOWN);
                     _services.getChat().add(new ChatMessage(String.format(_texts.gameStartingIn(), i), ChatMessage.FromType.IMPORTANT, null), false);
                     Threadings.sleep(1500);
                     i--;

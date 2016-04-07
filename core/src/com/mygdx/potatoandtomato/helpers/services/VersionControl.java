@@ -1,7 +1,7 @@
 package com.mygdx.potatoandtomato.helpers.services;
 
 import com.mygdx.potatoandtomato.statics.Global;
-import com.potatoandtomato.common.CommonVersion;
+import com.potatoandtomato.common.statics.CommonVersion;
 
 /**
  * Created by SiongLeng on 19/1/2016.

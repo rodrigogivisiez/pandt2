@@ -2,8 +2,8 @@ package com.potatoandtomato.games;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.firebase.client.Firebase;
-import com.potatoandtomato.common.GameEntrance;
 import com.potatoandtomato.common.GameCoordinator;
+import com.potatoandtomato.common.absints.GameEntrance;
 import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.games.assets.*;
 import com.potatoandtomato.games.models.Services;

@@ -3,11 +3,11 @@ package com.mygdx.potatoandtomato.android;
 import android.test.ActivityInstrumentationTestCase2;
 import com.badlogic.gdx.graphics.Texture;
 import com.mygdx.potatoandtomato.helpers.utils.Pair;
-import com.potatoandtomato.common.Threadings;
-import com.potatoandtomato.common.BroadcastEvent;
-import com.potatoandtomato.common.BroadcastListener;
-import com.potatoandtomato.common.Broadcaster;
-import com.potatoandtomato.common.Status;
+import com.potatoandtomato.common.utils.Threadings;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
+import com.potatoandtomato.common.broadcaster.BroadcastListener;
+import com.potatoandtomato.common.broadcaster.Broadcaster;
+import com.potatoandtomato.common.enums.Status;
 import junit.framework.Assert;
 
 /**

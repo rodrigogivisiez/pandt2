@@ -21,8 +21,13 @@ import com.mygdx.potatoandtomato.assets.Patches;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.controls.DummyButton;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
-import com.potatoandtomato.common.*;
+import com.potatoandtomato.common.absints.IPTGame;
 import com.potatoandtomato.common.assets.Assets;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
+import com.potatoandtomato.common.broadcaster.BroadcastListener;
+import com.potatoandtomato.common.broadcaster.Broadcaster;
+import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.utils.Threadings;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -120,7 +125,7 @@ public class Confirm {
             public void run() {
                 setListener(_listener);
 
-                if(_previousTime !=0 && System.currentTimeMillis() - _previousTime < 500){
+                if (_previousTime != 0 && System.currentTimeMillis() - _previousTime < 500) {
                     return;
                 }
                 _previousTime = System.currentTimeMillis();
@@ -130,11 +135,10 @@ public class Confirm {
 
                 int w = 70;
 
-                if(type == Type.YESNO){
+                if (type == Type.YESNO) {
                     _buttonsTable.add(_yesImage).size(w, w).space(70);
                     _buttonsTable.add(_noImage).size(w, w).space(70);
-                }
-                else if(type == Type.YES){
+                } else if (type == Type.YES) {
                     _buttonsTable.add(_yesImage).size(w, w);
                 }
 
@@ -150,7 +154,7 @@ public class Confirm {
                                 return true;
                             }
                         }));
-                        if(_stateChangedListener != null) _stateChangedListener.onShow();
+                        if (_stateChangedListener != null) _stateChangedListener.onShow();
                         return true;
                     }
                 }));

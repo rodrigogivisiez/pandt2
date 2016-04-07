@@ -2,9 +2,13 @@ package com.potatoandtomato.games.services;
 
 import com.badlogic.gdx.utils.Disposable;
 import com.potatoandtomato.common.*;
+import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.models.ScoreDetails;
 import com.potatoandtomato.common.models.Streak;
+import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.utils.Strings;
+import com.potatoandtomato.common.utils.Threadings;
+import com.potatoandtomato.common.utils.ThreadsPool;
 import com.potatoandtomato.games.absint.DatabaseListener;
 import com.potatoandtomato.games.absint.ScoresListener;
 import com.potatoandtomato.games.enums.ChessColor;
@@ -35,7 +39,7 @@ public class ScoresHandler implements Disposable{
     protected boolean dataReady;
     private boolean disposed;
     public static final int CATCH_UP_TRIGGERING_LOSE_STREAK_COUNT = 3;
-    public static final int EZ_WIN_TRIGGERING_TIME_LEFT = 720;
+    public static final int EZ_WIN_TRIGGERING_TIME_LEFT = 800;
     public static final int EZ_WIN_TRIGGERING_TURN_COUNT = 30;
     public static final int PAWN_LEADERBOARD_TRIGGERING_RANK = 200;
     public static final double KILL_STREAK_MULTIPLIER = 0.05;
@@ -74,7 +78,7 @@ public class ScoresHandler implements Disposable{
                 database.getLastMatchHistories(userAId, 5, new DatabaseListener<ArrayList<MatchHistory>>(MatchHistory.class) {
                     @Override
                     public void onCallback(ArrayList<MatchHistory> obj, Status st) {
-                        if(st == Status.SUCCESS){
+                        if (st == Status.SUCCESS) {
                             lastMatchHistories.put(userAId, obj);
                         }
                         fragment1.setFinished(true);
@@ -87,7 +91,7 @@ public class ScoresHandler implements Disposable{
                 database.getLastMatchHistories(userBId, 5, new DatabaseListener<ArrayList<MatchHistory>>(MatchHistory.class) {
                     @Override
                     public void onCallback(ArrayList<MatchHistory> obj, Status st) {
-                        if(st == Status.SUCCESS){
+                        if (st == Status.SUCCESS) {
                             lastMatchHistories.put(userBId, obj);
                         }
                         fragment2.setFinished(true);
@@ -119,8 +123,8 @@ public class ScoresHandler implements Disposable{
                 });
                 threadsPool.addFragment(fragment4);
 
-                while (!threadsPool.allFinished()){
-                    if(disposed) return;
+                while (!threadsPool.allFinished()) {
+                    if (disposed) return;
                     Threadings.sleep(300);
                 }
 

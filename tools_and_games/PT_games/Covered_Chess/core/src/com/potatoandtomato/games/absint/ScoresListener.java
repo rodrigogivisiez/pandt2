@@ -1,7 +1,7 @@
 package com.potatoandtomato.games.absint;
 
-import com.potatoandtomato.common.Team;
 import com.potatoandtomato.common.models.ScoreDetails;
+import com.potatoandtomato.common.models.Team;
 
 import java.util.ArrayList;
 import java.util.HashMap;

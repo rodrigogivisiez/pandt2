@@ -1,8 +1,8 @@
 package com.mygdx.potatoandtomato.helpers.controls;
 
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.potatoandtomato.common.BroadcastEvent;
-import com.potatoandtomato.common.Broadcaster;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
+import com.potatoandtomato.common.broadcaster.Broadcaster;
 
 /**
  * Created by SiongLeng on 18/1/2016.

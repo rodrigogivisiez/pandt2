@@ -3,14 +3,8 @@ package com.mygdx.potatoandtomato.android;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.os.PowerManager;
 import com.mygdx.potatoandtomato.models.PushNotification;
-import com.potatoandtomato.common.BroadcastEvent;
-import com.potatoandtomato.common.BroadcastListener;
-import com.potatoandtomato.common.Broadcaster;
-import com.potatoandtomato.common.Status;
 
 /**
  * Created by SiongLeng on 20/1/2016.

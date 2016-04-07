@@ -14,11 +14,18 @@ import com.mygdx.potatoandtomato.helpers.services.Confirm;
 import com.mygdx.potatoandtomato.helpers.services.Notification;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
-import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.*;
+import com.potatoandtomato.common.absints.IGameSandBox;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
+import com.potatoandtomato.common.broadcaster.BroadcastListener;
+import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.models.InGameUpdateMessage;
 import com.potatoandtomato.common.models.LeaderboardRecord;
 import com.potatoandtomato.common.models.ScoreDetails;
+import com.potatoandtomato.common.models.Team;
+import com.potatoandtomato.common.utils.ThreadsPool;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -108,7 +115,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                         _room.getGame().getLocalAssetsPath(), _room.getGame().getBasePath(), _room.getTeams(),
                         Positions.getWidth(), Positions.getHeight(), _screen.getGame(), _screen.getGame().getSpriteBatch(),
                         _services.getProfile().getUserId(), _me, _services.getDatabase().getGameBelongDatabase(_room.getGame().getAbbr()),
-                        _room.getId(), _services.getSoundsWrapper(), getBroadcaster(), _services.getDownloader(), _services.getTutorials(),
+                        _room.getId(), _services.getSoundsPlayer(), getBroadcaster(), _services.getDownloader(), _services.getTutorials(),
                         _services.getPreferences()));
             }
         });
@@ -285,12 +292,12 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                 dbMonitor.run();
 
 
-                _services.getSoundsWrapper().stopThemeMusic();
+                _services.getSoundsPlayer().stopThemeMusic();
                 //for multitask still play theme music bug fix
                 Threadings.delay(3000, new Runnable() {
                     @Override
                     public void run() {
-                        _services.getSoundsWrapper().stopThemeMusic();
+                        _services.getSoundsPlayer().stopThemeMusic();
                     }
                 });
 
@@ -477,7 +484,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         }
         else{
             _screen.back();
-            _services.getSoundsWrapper().playThemeMusic();
+            _services.getSoundsPlayer().playThemeMusic();
         }
     }
 

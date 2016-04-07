@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.models.EndGameResult;
-import com.potatoandtomato.common.Player;
+import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.models.ScoreDetails;
 
 import java.util.ArrayList;
@@ -68,6 +68,7 @@ public class MockModel {
         roomUsers.put(user2.getProfile().getUserId(), user2);
         r.setRoomUsers(roomUsers);
         r.convertRoomUsersToTeams();
+        r.storeRoomUsersToOriginalRoomUserIds();
         return r;
     }
 

@@ -2,12 +2,12 @@ package com.mygdx.potatoandtomato.helpers.services;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
-import com.potatoandtomato.common.DownloaderListener;
-import com.potatoandtomato.common.IDownloader;
+import com.potatoandtomato.common.absints.DownloaderListener;
+import com.potatoandtomato.common.absints.IDownloader;
 import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
 import com.mygdx.potatoandtomato.absintflis.uploader.UploadListener;
-import com.potatoandtomato.common.Threadings;
-import com.potatoandtomato.common.Status;
+import com.potatoandtomato.common.utils.Threadings;
+import com.potatoandtomato.common.enums.Status;
 import com.shephertz.app42.paas.sdk.android.App42Exception;
 import com.shephertz.app42.paas.sdk.android.ServiceAPI;
 import com.shephertz.app42.paas.sdk.android.upload.Upload;

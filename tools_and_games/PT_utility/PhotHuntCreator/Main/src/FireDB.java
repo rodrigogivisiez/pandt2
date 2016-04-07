@@ -1,6 +1,8 @@
 import com.firebase.client.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -12,6 +14,7 @@ public class FireDB {
     Firebase _ref;
     boolean finished = false;
     boolean success = false;
+    private String _tableStorage = "storage";
 
     public FireDB() {
         _ref = new Firebase("https://glaring-inferno-8572.firebaseIO.com").child("gameBelongData").child("photo_hunt");
@@ -19,38 +22,20 @@ public class FireDB {
     }
 
     public String getKey(){
-        final Firebase r = _ref.child("images");
+        final Firebase r = _ref.child(_tableStorage);
         return r.push().getKey();
     }
 
-
-    public String saveNew(final String key, final String meta, final Runnable onFinish){
-        getImagesCount(new Runnable() {
-            @Override
-            public void run() {
-                final Firebase r = _ref.child("images").child(key);
-                ImageData imageData = new ImageData(meta, totalImageCount, key);
-                r.setValue(imageData, new Firebase.CompletionListener() {
-                    @Override
-                    public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                        if(onFinish!= null) onFinish.run();
-                    }
-                });
-            }
-        });
-        return key;
-    }
-
     public void getImagesCount(final Runnable onFinish){
-        final Query r = _ref.child("images").orderByChild("index").limitToLast(1);
+        final Query r = _ref.child(_tableStorage).orderByChild("index").limitToLast(1);
         r.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 long count = 0;
                 if(snapshot.exists()){
                     for(DataSnapshot snapshot1 : snapshot.getChildren()){
-                        ImageData imageData = snapshot1.getValue(ImageData.class);
-                        count = imageData.getIndex() + 1;
+                        ImageDetails imageDetails = snapshot1.getValue(ImageDetails.class);
+                        count = imageDetails.getIndex() + 1;
                         break;
                     }
                 }
@@ -61,6 +46,47 @@ public class FireDB {
             @Override
             public void onCancelled(FirebaseError firebaseError) {
 
+            }
+        });
+    }
+
+
+    public void save(final String key, final ImageDetails details, final Runnable onFinish){
+        getImagesCount(new Runnable() {
+            @Override
+            public void run() {
+                final Firebase r = _ref.child(_tableStorage).child(key);
+                details.setIndex((int) totalImageCount);
+                System.out.println(totalImageCount);
+                r.setValue(details, new Firebase.CompletionListener() {
+                    @Override
+                    public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                        if(onFinish!= null) onFinish.run();
+                    }
+                });
+            }
+        });
+    }
+
+    public void getAllVersionOneImages(DatabaseListener listener){
+        getData(_ref.child("images"), listener);
+    }
+
+    private void getData(final Query ref, final DatabaseListener listener){
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                List<Object> results = new ArrayList<Object>();
+                for(DataSnapshot postSnapShot : snapshot.getChildren()){
+                    Object newPost = postSnapShot.getValue(listener.getType());
+                    results.add(newPost);
+                }
+                listener.onCallback(results);
+
+            }
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                listener.onCallback(0);
             }
         });
     }

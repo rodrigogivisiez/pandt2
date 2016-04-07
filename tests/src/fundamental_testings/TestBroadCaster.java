@@ -1,12 +1,12 @@
 package fundamental_testings;
 
 import abstracts.TestAbstract;
-import com.potatoandtomato.common.BroadcastListener;
-import com.potatoandtomato.common.Status;
+import com.potatoandtomato.common.broadcaster.BroadcastListener;
+import com.potatoandtomato.common.enums.Status;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import com.potatoandtomato.common.Broadcaster;
+import com.potatoandtomato.common.broadcaster.Broadcaster;
 
 /**
  * Created by SiongLeng on 23/9/2015.

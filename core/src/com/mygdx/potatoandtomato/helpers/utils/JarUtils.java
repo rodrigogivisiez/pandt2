@@ -1,7 +1,7 @@
 package com.mygdx.potatoandtomato.helpers.utils;
 
 import com.potatoandtomato.common.GameCoordinator;
-import com.potatoandtomato.common.GameEntrance;
+import com.potatoandtomato.common.absints.GameEntrance;
 
 import java.lang.reflect.InvocationTargetException;
 

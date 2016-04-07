@@ -1,10 +1,12 @@
 package com.mygdx.potatoandtomato.helpers.services;
 
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
-import com.mygdx.potatoandtomato.helpers.utils.JsonObj;
+import com.potatoandtomato.common.utils.JsonObj;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.models.Profile;
+import com.potatoandtomato.common.utils.MultiHashMap;
+import com.potatoandtomato.common.utils.Strings;
 import com.shaded.fasterxml.jackson.core.JsonProcessingException;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 import com.shephertz.app42.gaming.multiplayer.client.WarpClient;
@@ -17,7 +19,7 @@ import com.shephertz.app42.gaming.multiplayer.client.listener.ZoneRequestListene
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -30,14 +32,17 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
     private String _appKey = Terms.WARP_API_KEY;
     private String _secretKey = Terms.WARP_SECRET_KEY;
     private String _username, _realUsername, _roomId;
+    private MultiHashMap<String, String> _msgPieces;
 
     public Appwarp(String appKey, String secretKey){
         _appKey = appKey;
         _secretKey = secretKey;
+        _msgPieces = new MultiHashMap();
         init();
     }
 
     public Appwarp() {
+        _msgPieces = new MultiHashMap();
        init();
     }
 
@@ -124,7 +129,23 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
         data.put("code", updateRoomMatesCode);
         data.put("msg", msg);
         data.put("realUsername", _realUsername);
-        _warpInstance.sendUpdatePeers(data.getJSONObject().toString().getBytes());
+
+        String toSend = data.getJSONObject().toString();
+        if(toSend.length() > 800){
+            ArrayList<String> results = Strings.split(toSend, 800);
+            String id = Strings.generateRandomKey(10);
+            for(int i = 0; i < results.size(); i++){
+                _warpInstance.sendUpdatePeers(appendDataToPeerUpdate(results.get(i), i, results.size(), id).getBytes());
+            }
+        }
+        else{
+            _warpInstance.sendUpdatePeers(toSend.getBytes());
+        }
+    }
+
+    private String appendDataToPeerUpdate(String input, int pieceIndex, int totalPieces, String id){
+        String sending = String.format("@PT_%s_%s_%s@", id, pieceIndex, totalPieces) + input;
+        return sending;
     }
 
     @Override
@@ -220,8 +241,48 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
     @Override
     public void onUpdatePeersReceived(UpdateEvent updateEvent) {
-        JsonObj jsonObj = new JsonObj(new String(updateEvent.getUpdate()));
-        onUpdateRoomMatesReceived(jsonObj.getInt("code"), jsonObj.getString("msg"), jsonObj.getString("realUsername"));
+        unAppendDataFromPeerMsg(new String(updateEvent.getUpdate()));
+    }
+
+    private synchronized void unAppendDataFromPeerMsg(String msg){
+        if(msg.startsWith("@PT")){
+            int endIndex = msg.indexOf("@", 2);
+            String stripped = msg.substring(0, endIndex);
+            String realMsg = msg.substring(endIndex + 1);
+            String meta[] = stripped.split("_");
+            String id = meta[1];
+            int pieceIndex = Integer.valueOf(meta[2]);
+            int totalPieces = Integer.valueOf(meta[3]);
+
+            if(totalPieces == 1){
+                JsonObj jsonObj = new JsonObj(realMsg);
+                onUpdateRoomMatesReceived(jsonObj.getInt("code"), jsonObj.getString("msg"), jsonObj.getString("realUsername"));
+            }
+            else{
+                if(!_msgPieces.containsKey(id)){
+                    _msgPieces.put(id, realMsg);
+                }
+                else{
+                    ArrayList<String> currentPieces = _msgPieces.get(id);
+                    if(pieceIndex > currentPieces.size()){
+                        currentPieces.add(currentPieces.size(), realMsg);
+                    }
+                    else{
+                        currentPieces.add(pieceIndex, realMsg);
+                    }
+
+                    if(currentPieces.size() == totalPieces){
+                        JsonObj jsonObj = new JsonObj(Strings.joinArr(currentPieces, ""));
+                        onUpdateRoomMatesReceived(jsonObj.getInt("code"), jsonObj.getString("msg"), jsonObj.getString("realUsername"));
+                        _msgPieces.remove(id);
+                    }
+                }
+            }
+        }
+        else{
+            JsonObj jsonObj = new JsonObj(msg);
+            onUpdateRoomMatesReceived(jsonObj.getInt("code"), jsonObj.getString("msg"), jsonObj.getString("realUsername"));
+        }
     }
 
     @Override

@@ -15,8 +15,15 @@ import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.statics.Global;
-import com.potatoandtomato.common.*;
+import com.potatoandtomato.common.absints.IPTGame;
+import com.potatoandtomato.common.absints.ITutorials;
 import com.potatoandtomato.common.assets.Assets;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
+import com.potatoandtomato.common.broadcaster.BroadcastListener;
+import com.potatoandtomato.common.broadcaster.Broadcaster;
+import com.potatoandtomato.common.controls.DisposableActor;
+import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.utils.Threadings;
 
 import java.util.ArrayList;
 
@@ -28,7 +35,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 public class Tutorials implements ITutorials {
 
     private Assets _assets;
-    private SoundsWrapper _soundsWrapper;
+    private SoundsPlayer _soundsWrapper;
     private Stage _stage;
     private SpriteBatch _batch;
     private IPTGame _game;
@@ -38,7 +45,7 @@ public class Tutorials implements ITutorials {
     private boolean _showing;
 
 
-    public Tutorials(IPTGame _game, SpriteBatch _batch, SoundsWrapper _soundsWrapper, Assets _assets, Broadcaster broadcaster) {
+    public Tutorials(IPTGame _game, SpriteBatch _batch, SoundsPlayer _soundsWrapper, Assets _assets, Broadcaster broadcaster) {
         this._game = _game;
         this._batch = _batch;
         this._soundsWrapper = _soundsWrapper;
@@ -91,7 +98,7 @@ public class Tutorials implements ITutorials {
         Threadings.runInBackground(new Runnable() {
             @Override
             public void run() {
-                while (_queueItems.size() > 0){
+                while (_queueItems.size() > 0) {
                     final boolean[] waiting = {true};
                     final TutorialItem tutorialItem = _queueItems.get(0);
                     _queueItems.remove(tutorialItem);
@@ -121,23 +128,22 @@ public class Tutorials implements ITutorials {
                             tutorialRoot.add(textLabel).expandX().fillX();
 
 
-
                             _root.add(tutorialRoot).expandX().fillX();
 
                             _root.addAction(sequence(moveTo(-_root.getWidth(), 0), moveTo(-10, 0, 0.4f), delay(tutorialItem.getDuration()),
-                                                    moveTo(-_root.getWidth(), 0, 0.2f), new RunnableAction(){
-                                @Override
-                                public void run() {
-                                    waiting[0] = false;
-                                }
-                            }));
+                                    moveTo(-_root.getWidth(), 0, 0.2f), new RunnableAction() {
+                                        @Override
+                                        public void run() {
+                                            waiting[0] = false;
+                                        }
+                                    }));
 
                             _soundsWrapper.playSoundEffect(Sounds.Name.TUTORIAL);
 
                         }
                     });
 
-                    while (waiting[0]){
+                    while (waiting[0]) {
                         Threadings.sleep(300);
                     }
 

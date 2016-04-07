@@ -4,22 +4,30 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Disposable;
-import com.potatoandtomato.common.*;
-import com.potatoandtomato.common.Status;
-import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.GameCoordinator;
+import com.potatoandtomato.common.absints.UserStateListener;
 import com.potatoandtomato.common.models.ScoreDetails;
+import com.potatoandtomato.common.models.Team;
+import com.potatoandtomato.common.utils.SafeThread;
+import com.potatoandtomato.common.utils.Threadings;
+import com.potatoandtomato.common.utils.ThreadsPool;
 import com.potatoandtomato.games.absint.ActionListener;
 import com.potatoandtomato.games.absint.DatabaseListener;
 import com.potatoandtomato.games.absint.ScoresListener;
 import com.potatoandtomato.games.assets.Sounds;
-import com.potatoandtomato.games.enums.*;
-import com.potatoandtomato.games.helpers.*;
+import com.potatoandtomato.games.enums.ActionType;
+import com.potatoandtomato.games.enums.ChessColor;
+import com.potatoandtomato.games.enums.ChessType;
+import com.potatoandtomato.games.helpers.ArrayLists;
+import com.potatoandtomato.games.helpers.RoomMsgHandler;
+import com.potatoandtomato.games.helpers.Strings;
+import com.potatoandtomato.games.helpers.Terrains;
 import com.potatoandtomato.games.models.*;
-import com.potatoandtomato.games.references.StatusRef;
 import com.potatoandtomato.games.references.BattleRef;
 import com.potatoandtomato.games.references.MovementRef;
+import com.potatoandtomato.games.references.StatusRef;
 import com.potatoandtomato.games.services.GameDataController;
-import com.potatoandtomato.games.services.ScoresHandler;
+import com.potatoandtomato.common.enums.Status;
 import com.shaded.fasterxml.jackson.core.JsonParseException;
 import com.shaded.fasterxml.jackson.databind.JsonMappingException;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
@@ -29,11 +37,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.removeAction;
-import static com.potatoandtomato.games.services.ScoresHandler.*;
 
 /**
  * Created by SiongLeng on 29/12/2015.
@@ -136,18 +139,18 @@ public class BoardLogic implements Disposable{
                     @Override
                     public void run() {
                         final String[] json = new String[1];
-                        while (!_getGameDataSafeThread.isKilled()){
+                        while (!_getGameDataSafeThread.isKilled()) {
                             _services.getDatabase().getGameData(new DatabaseListener<String>(String.class) {
                                 @Override
                                 public void onCallback(String result, Status st) {
-                                    if(st == Status.SUCCESS && result != null && !result.equals("")){
+                                    if (st == Status.SUCCESS && result != null && !result.equals("")) {
                                         json[0] = result;
                                         _getGameDataSafeThread.kill();
                                     }
                                 }
                             });
                             int i = 0;
-                            while (!_getGameDataSafeThread.isKilled() && i < 5){
+                            while (!_getGameDataSafeThread.isKilled() && i < 5) {
                                 Threadings.sleep(500);
                                 i++;
                             }
@@ -156,7 +159,7 @@ public class BoardLogic implements Disposable{
                             ArrayList<ChessModel> chessModels = new ArrayList<ChessModel>();
                             JSONObject jsonObject = new JSONObject(json[0]);
                             ObjectMapper mapper1 = new ObjectMapper();
-                            for(int i = 0; i < 32; i++){
+                            for (int i = 0; i < 32; i++) {
                                 chessModels.add(mapper1.readValue(jsonObject.getString(String.valueOf(i)), ChessModel.class));
                             }
                             GraveModel graveModel = mapper1.readValue(jsonObject.getString("graveModel"), GraveModel.class);
@@ -327,10 +330,12 @@ public class BoardLogic implements Disposable{
             _lastActiveTerrainLogic.getChessLogic().setFocusing(true);
         }
 
+
+        checkBoardCrack();
+
         _boardModel.switchTurnIndex();
         _statusRef.turnOver(_terrains);
 
-        checkBoardCrack();
         invalidate();
     }
 
@@ -446,6 +451,7 @@ public class BoardLogic implements Disposable{
         if(!_suddenDeathHappened){
             _suddenDeathHappened = true;
             _screen.thunderAnimation();
+            _statusRef.suddenDeathStatus(_terrains);
             Threadings.delay(1300, new Runnable() {
                 @Override
                 public void run() {
@@ -455,7 +461,9 @@ public class BoardLogic implements Disposable{
             Threadings.delay(1500, new Runnable() {
                 @Override
                 public void run() {
-                    _statusRef.suddenDeathStatus(_terrains);
+                    for(TerrainLogic terrainLogic : _terrains){
+                        terrainLogic.getChessLogic().invalidate(true);
+                    }
                 }
             });
 
@@ -490,6 +498,7 @@ public class BoardLogic implements Disposable{
             if(isCrackable(terrainLogic)){
                 if(!terrainLogic.isEmpty() && !hasDropping) hasDropping = true;
                 terrainLogic.getTerrainActor().animateBroken();
+                terrainLogic.getTerrainModel().setBroken(true);
 
                 threadsPool.addFragment(Threadings.delay(4000, new Runnable() {
                     @Override
@@ -497,7 +506,6 @@ public class BoardLogic implements Disposable{
                         if (!terrainLogic.isEmpty()) {
                             chessKilled(terrainLogic.getChessLogic().getChessModel().getChessType(), false);
                         }
-                        terrainLogic.getTerrainModel().setBroken(true);
                         terrainLogic.invalidate();
                     }
                 }));

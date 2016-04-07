@@ -11,7 +11,7 @@ import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.services.Confirm;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
-import com.potatoandtomato.common.Status;
+import com.potatoandtomato.common.enums.Status;
 
 /**
  * Created by SiongLeng on 10/1/2016.

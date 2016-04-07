@@ -1,6 +1,6 @@
 package com.potatoandtomato.games.references;
 
-import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.enums.ChessAnimal;
 import com.potatoandtomato.games.enums.ChessColor;
@@ -251,6 +251,9 @@ public class StatusRef {
     private void catEffect(final ArrayList<TerrainLogic> terrains, final TerrainLogic openedLogic,
                            String random){
         final ArrayList<TerrainLogic> targetLogics = getCatEffectTargets(terrains, openedLogic, random);
+        for(TerrainLogic logic : targetLogics){
+            logic.getChessLogic().getChessActor().setPreviewing(true);
+        }
 
         if(targetLogics.size() > 0){
             Threadings.runInBackground(new Runnable() {
@@ -265,7 +268,7 @@ public class StatusRef {
                             Threadings.delay(_abilityTriggeredAnimateTime, new Runnable() {
                                 @Override
                                 public void run() {
-                                    for(TerrainLogic logic : targetLogics){
+                                    for (TerrainLogic logic : targetLogics) {
                                         logic.getChessLogic().getChessActor().previewChess(true, new Runnable() {
                                             @Override
                                             public void run() {
@@ -323,6 +326,10 @@ public class StatusRef {
     private void dogEffect(final ArrayList<TerrainLogic> terrains, final TerrainLogic openedLogic, ChessColor myChessColor){
         final ArrayList<TerrainLogic> targetLogics = getDogEffectTargets(terrains, openedLogic);
         final boolean revealChess = myChessColor == openedLogic.getChessLogic().getChessModel().getChessColor();
+
+        for(TerrainLogic logic : targetLogics){
+            logic.getChessLogic().getChessActor().setPreviewing(true);
+        }
 
         if(targetLogics.size() > 0){
             Threadings.postRunnable(new Runnable() {

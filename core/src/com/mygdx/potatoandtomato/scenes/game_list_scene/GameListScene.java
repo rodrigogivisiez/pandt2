@@ -98,14 +98,14 @@ public class GameListScene extends SceneAbstract {
         //Game list Table END
 
         //Buttons START
-        _newGameButton = new BtnEggDownward(_assets, _services.getSoundsWrapper());
+        _newGameButton = new BtnEggDownward(_assets, _services.getSoundsPlayer());
         _newGameButton.setText(_texts.newGame());
 
-        _joinGameButton = new BtnEggDownward(_assets, _services.getSoundsWrapper(), _services.getShaders());
+        _joinGameButton = new BtnEggDownward(_assets, _services.getSoundsPlayer(), _services.getShaders());
         _joinGameButton.setText(_texts.joinGame());
         _joinGameButton.setEnabled(false);
 
-        _continueGameButton = new BtnEggDownward(_assets, _services.getSoundsWrapper(), _services.getShaders());
+        _continueGameButton = new BtnEggDownward(_assets, _services.getSoundsPlayer(), _services.getShaders());
         _continueGameButton.setText(_texts.continueLastGame());
         _continueGameButton.setEnabled(false);
 

@@ -12,13 +12,15 @@ import com.mygdx.potatoandtomato.absintflis.socials.FacebookListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.services.Confirm;
+import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.mygdx.potatoandtomato.models.FacebookProfile;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
-import com.potatoandtomato.common.BroadcastEvent;
-import com.potatoandtomato.common.BroadcastListener;
-import com.potatoandtomato.common.Status;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
+import com.potatoandtomato.common.broadcaster.BroadcastListener;
+import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.utils.Strings;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 
@@ -42,8 +44,7 @@ public class BootLogic extends LogicAbstract {
 
     @Override
     public void onShow() {
-
-        _services.getSoundsWrapper().playThemeMusic();
+        _services.getSoundsPlayer().playThemeMusic();
         _screen.showRotateSunrise();
         publishBroadcast(BroadcastEvent.DESTROY_ROOM);
 
@@ -54,12 +55,15 @@ public class BootLogic extends LogicAbstract {
         dispose();
 
         _services.getDatabase().online();
+
+        checkCrashedBefore();
+
         _bootScene = new BootScene(_services, _screen);
         _bootScene.getPlayButton().addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                _services.getSoundsWrapper().playSoundEffect(Sounds.Name.TOGETHER_CHEERS);
+                _services.getSoundsPlayer().playSoundEffect(Sounds.Name.TOGETHER_CHEERS);
                 showLoginBox();
             }
         });
@@ -234,4 +238,14 @@ public class BootLogic extends LogicAbstract {
         _services.getDatabase().onDcSetGameStateDisconnected(_services.getProfile(), null);
         _services.getChat().setUserId(_services.getProfile().getUserId());
     }
+
+    private void checkCrashedBefore(){
+        String msg = Logs.getAndDeleteLogMsg();
+        if(!Strings.isEmpty(msg)){
+            _services.getDatabase().saveLog(msg);
+            _services.getConfirm().show(_texts.appsCrashed(), Confirm.Type.YES, null);
+        }
+    }
+
+
 }

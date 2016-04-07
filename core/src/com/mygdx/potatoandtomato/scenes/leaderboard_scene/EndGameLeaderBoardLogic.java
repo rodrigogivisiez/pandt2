@@ -12,9 +12,12 @@ import com.mygdx.potatoandtomato.helpers.services.Confirm;
 import com.mygdx.potatoandtomato.helpers.utils.OneTimeRunnable;
 import com.mygdx.potatoandtomato.helpers.utils.Pair;
 import com.mygdx.potatoandtomato.models.*;
-import com.potatoandtomato.common.*;
+import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.models.LeaderboardRecord;
+import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.models.ScoreDetails;
+import com.potatoandtomato.common.utils.SafeThread;
+import com.potatoandtomato.common.utils.Threadings;
 
 import java.util.ArrayList;
 
@@ -99,11 +102,11 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                     _scene.changeRecordTableToUnknownRank(_game, _leaderboardSize);
                 }
 
-                _services.getSoundsWrapper().playSoundEffect(Sounds.Name.LOSE);
+                _services.getSoundsPlayer().playSoundEffect(Sounds.Name.LOSE);
                 Threadings.delay(8000, new Runnable() {
                     @Override
                     public void run() {
-                        _services.getSoundsWrapper().playThemeMusic();
+                        _services.getSoundsPlayer().playThemeMusic();
                     }
                 });
 
@@ -171,7 +174,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                     Threadings.delay(10, new Runnable() {
                         @Override
                         public void run() {
-                            _services.getSoundsWrapper().playSoundEffect(Sounds.Name.WIN);
+                            _services.getSoundsPlayer().playSoundEffect(Sounds.Name.WIN);
                             _scene.scrollToRecord(_game, currentRank);
                             Threadings.delay(50, new Runnable() {
                                 @Override
@@ -198,7 +201,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                                                             public void run() {
 
                                                                                 if(getStreakToAdd() > 0){
-                                                                                    _services.getSoundsWrapper().playSoundEffect(Sounds.Name.STREAK);
+                                                                                    _services.getSoundsPlayer().playSoundEffect(Sounds.Name.STREAK);
                                                                                     _myLeaderboardRecord.getStreak().addStreakCount(getStreakToAdd());
                                                                                     _scene.invalidateNameStreakTable(_game, _myLeaderboardRecord,
                                                                                             finalRank, true);
@@ -212,7 +215,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                                                                     _scene.setMascots(LeaderBoardScene.MascotType.HAPPY);
                                                                                 }
 
-                                                                                _services.getSoundsWrapper().playThemeMusic();
+                                                                                _services.getSoundsPlayer().playThemeMusic();
                                                                             }
                                                                         });
                                                                     }
@@ -229,7 +232,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                     });
                 } else {
                     _scene.hideLoading(_game);
-                    _services.getSoundsWrapper().playThemeMusic();
+                    _services.getSoundsPlayer().playThemeMusic();
                 }
             }
         });
@@ -271,7 +274,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
     }
 
     public void addScoresRecur(final int index, final Runnable onFinish){
-        _services.getSoundsWrapper().playSoundEffect(Sounds.Name.SCORE_APPEAR);
+        _services.getSoundsPlayer().playSoundEffect(Sounds.Name.SCORE_APPEAR);
         _scene.addScore(_scoreDetails.get(index), new Runnable() {
             @Override
             public void run() {
@@ -324,7 +327,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                         }
 
                         if(stoppedSound && adding > 0){
-                            _services.getSoundsWrapper().playSoundEffectLoop(Sounds.Name.ADDING_SCORE);
+                            _services.getSoundsPlayer().playSoundEffectLoop(Sounds.Name.ADDING_SCORE);
                             stoppedSound = false;
                         }
 
@@ -333,7 +336,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                         _scene.setAnimatingScore(_score);
 
                         if(_scoreToAdd == 0) {
-                            _services.getSoundsWrapper().stopSoundEffectLoop(Sounds.Name.ADDING_SCORE);
+                            _services.getSoundsPlayer().stopSoundEffectLoop(Sounds.Name.ADDING_SCORE);
                             stoppedSound = true;
                             if(!_addScoreOnePartDoneRunnable.isRunFinish()){
                                 _addScoreOnePartDoneRunnable.run();

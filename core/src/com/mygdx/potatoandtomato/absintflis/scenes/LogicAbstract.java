@@ -6,11 +6,11 @@ import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
 import com.mygdx.potatoandtomato.helpers.services.Confirm;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
 import com.mygdx.potatoandtomato.helpers.utils.Logs;
-import com.potatoandtomato.common.SafeThread;
-import com.potatoandtomato.common.Threadings;
+import com.potatoandtomato.common.utils.SafeThread;
+import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Services;
-import com.potatoandtomato.common.BroadcastListener;
-import com.potatoandtomato.common.Broadcaster;
+import com.potatoandtomato.common.broadcaster.BroadcastListener;
+import com.potatoandtomato.common.broadcaster.Broadcaster;
 
 import java.util.ArrayList;
 
@@ -29,6 +29,7 @@ public abstract class LogicAbstract implements Disposable {
     protected Confirm _confirm;
     private String _classTag;
     private boolean _isVisible;
+    private boolean _isFullyVisible;
     private Broadcaster _broadcaster;
 
     public LogicAbstract(PTScreen screen, Services services, Object... objs) {
@@ -92,12 +93,13 @@ public abstract class LogicAbstract implements Disposable {
 
     //called everytime scene have complete moving animation, wheteher back or forward direction
     public void onShown(){
-
+        _isFullyVisible = true;
     }
 
     //will be called everytime scene on hide, whether is back or forward direction
     public void onHide(){
         _isVisible = false;
+        _isFullyVisible = false;
     }
 
     //will only be called when scene init, must be forward direction
@@ -109,8 +111,14 @@ public abstract class LogicAbstract implements Disposable {
         return _classTag;
     }
 
+    //scene may not finish sliding animation yet
     protected boolean isSceneVisible() {
         return _isVisible;
+    }
+
+    //scene already finish sliding animation
+    protected boolean isSceneFullyVisible() {
+        return _isFullyVisible;
     }
 
     protected void keepAlive(){

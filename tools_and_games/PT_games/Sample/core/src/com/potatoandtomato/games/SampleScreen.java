@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.potatoandtomato.common.GameCoordinator;
-import com.potatoandtomato.common.GameScreen;
+import com.potatoandtomato.common.absints.GameScreen;
 
 /**
  * Created by SiongLeng on 25/12/2015.
@@ -25,7 +25,7 @@ public class SampleScreen extends GameScreen {
     @Override
     public void render(float delta) {
         if (Gdx.input.isKeyPressed(Input.Keys.BACK)){
-            getCoordinator().abandon(false);
+            getCoordinator().abandon();
         }
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.gl.glClearColor(253/255, 221/255, 221/255, 1f);

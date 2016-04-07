@@ -14,8 +14,8 @@ import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.statics.Global;
-import com.potatoandtomato.common.BroadcastEvent;
-import com.potatoandtomato.common.Status;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
+import com.potatoandtomato.common.enums.Status;
 
 /**
  * Created by SiongLeng on 19/12/2015.
@@ -59,7 +59,6 @@ public class SettingsLogic extends LogicAbstract {
                 toggleSounds();
             }
         });
-
     }
 
     public void facebookRequest(){
@@ -86,6 +85,9 @@ public class SettingsLogic extends LogicAbstract {
                 }
             });
         }
+
+
+
     }
 
     public void toggleSounds(){

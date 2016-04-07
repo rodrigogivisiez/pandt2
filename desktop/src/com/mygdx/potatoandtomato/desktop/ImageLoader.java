@@ -3,13 +3,13 @@ package com.mygdx.potatoandtomato.desktop;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.potatoandtomato.common.DownloaderListener;
-import com.potatoandtomato.common.Downloader;
+import com.potatoandtomato.common.absints.DownloaderListener;
+import com.potatoandtomato.common.utils.Downloader;
 import com.mygdx.potatoandtomato.helpers.utils.Pair;
-import com.potatoandtomato.common.BroadcastEvent;
-import com.potatoandtomato.common.BroadcastListener;
-import com.potatoandtomato.common.Broadcaster;
-import com.potatoandtomato.common.Status;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
+import com.potatoandtomato.common.broadcaster.BroadcastListener;
+import com.potatoandtomato.common.broadcaster.Broadcaster;
+import com.potatoandtomato.common.enums.Status;
 
 /**
  * Created by SiongLeng on 3/1/2016.

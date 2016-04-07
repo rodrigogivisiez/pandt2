@@ -8,7 +8,6 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import com.mygdx.potatoandtomato.assets.*;
@@ -16,7 +15,6 @@ import com.mygdx.potatoandtomato.enums.LeaderboardType;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
 import com.mygdx.potatoandtomato.statics.Global;
-import com.potatoandtomato.common.*;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
@@ -25,9 +23,16 @@ import com.mygdx.potatoandtomato.helpers.services.Confirm;
 import com.mygdx.potatoandtomato.helpers.services.Notification;
 import com.mygdx.potatoandtomato.helpers.services.*;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
+import com.potatoandtomato.common.absints.IDownloader;
+import com.potatoandtomato.common.absints.IPTGame;
 import com.potatoandtomato.common.assets.Assets;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
+import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.models.EndGameResult;
+import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.models.ScoreDetails;
+import com.potatoandtomato.common.utils.Downloader;
+import com.potatoandtomato.common.utils.Threadings;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,7 +54,7 @@ public class PTGame extends Game implements IPTGame {
 	Recorder _recorder;
 	IUploader _uploader;
 	IDownloader _downloader;
-	SoundsWrapper _soundsWrapper;
+	SoundsPlayer _soundsWrapper;
 	Broadcaster _broadcaster;
 	Preferences _preferences;
 	Tutorials _tutorials;
@@ -80,7 +85,7 @@ public class PTGame extends Game implements IPTGame {
 				_recorder = new Recorder();
 				_downloader = new Downloader();
 				_uploader = new App42Uploader(_downloader);
-				_soundsWrapper = new SoundsWrapper(_assets, _broadcaster);
+				_soundsWrapper = new SoundsPlayer(_assets, _broadcaster);
 				_chat = new Chat(_gamingKit, _texts, _assets, _batch, _game, _recorder, _uploader, _soundsWrapper, _broadcaster);
 				_confirm = new Confirm(_batch, _game, _assets, _broadcaster);
 				_notification = new Notification(_batch, _assets, _game, _broadcaster);
@@ -97,6 +102,7 @@ public class PTGame extends Game implements IPTGame {
 				setScreen(_screen);
 
 				_screen.toScene(SceneEnum.BOOT);
+
 			}
 		});
 	}
@@ -128,22 +134,16 @@ public class PTGame extends Game implements IPTGame {
 
 	@Override
 	public void render() {
-		try{
-			super.render();
-			if(Gdx.input.justTouched())
-			{
-				_chat.screenTouched(Gdx.input.getX(), Gdx.input.getY());
-			}
-
-			_chat.render(Gdx.graphics.getDeltaTime());
-			_tutorials.render(Gdx.graphics.getDeltaTime());
-			_confirm.render(Gdx.graphics.getDeltaTime());
-			_notification.render(Gdx.graphics.getDeltaTime());
-
+		super.render();
+		if(Gdx.input.justTouched())
+		{
+			_chat.screenTouched(Gdx.input.getX(), Gdx.input.getY());
 		}
-		catch (Exception ex){
-			ex.printStackTrace();
-		}
+
+		_chat.render(Gdx.graphics.getDeltaTime());
+		_tutorials.render(Gdx.graphics.getDeltaTime());
+		_confirm.render(Gdx.graphics.getDeltaTime());
+		_notification.render(Gdx.graphics.getDeltaTime());
 	}
 
 	@Override

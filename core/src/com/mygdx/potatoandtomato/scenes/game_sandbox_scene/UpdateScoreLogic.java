@@ -1,10 +1,9 @@
 package com.mygdx.potatoandtomato.scenes.game_sandbox_scene;
 
-import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
 import com.potatoandtomato.common.models.ScoreDetails;
-import com.potatoandtomato.common.Team;
+import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.models.Streak;
 import com.potatoandtomato.common.utils.Strings;
 

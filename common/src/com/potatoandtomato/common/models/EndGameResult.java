@@ -1,8 +1,5 @@
 package com.potatoandtomato.common.models;
 
-import com.potatoandtomato.common.Player;
-import com.potatoandtomato.common.models.ScoreDetails;
-
 import java.util.ArrayList;
 
 /**
