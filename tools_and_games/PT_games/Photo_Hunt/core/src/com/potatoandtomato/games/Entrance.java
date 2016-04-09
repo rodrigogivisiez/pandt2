@@ -25,19 +25,15 @@ public class Entrance extends GameEntrance {
     public Entrance(GameCoordinator gameCoordinator) {
         super(gameCoordinator);
         this._coordinator = gameCoordinator;
+        getGameCoordinator().setLandscape();
 
         initAssets();
 
         _assets.loadBasic(new Runnable() {
             @Override
             public void run() {
-                Database database = new Database(_coordinator.getFirebase());
-                Texts texts = new Texts();
 
-                _services =  new Services(_assets, new SoundsWrapper(_assets, _coordinator), database,
-                                        texts, new RoomMsgHandler(_coordinator));
-
-                _logic = new MainLogic(_services, getGameCoordinator());
+                _logic = new MainLogic(getServices(), getGameCoordinator());
 
                 getGameCoordinator().finishLoading();
             }
@@ -73,9 +69,19 @@ public class Entrance extends GameEntrance {
         Textures textures = new Textures(manager, "pack.atlas");
 
         _assets = new MyAssets(manager, fonts, null, sounds, patches, textures);
-
-
     }
 
+    public Services getServices() {
+        if(_services == null){
+            Database database = new Database(_coordinator.getFirebase());
+            Texts texts = new Texts();
+            _services = new Services(_assets, new SoundsWrapper(_assets, _coordinator), database,
+                    texts, new RoomMsgHandler(_coordinator));
+        }
+        return _services;
+    }
 
+    public void setServices(Services _services) {
+        this._services = _services;
+    }
 }

@@ -158,7 +158,7 @@ public class ImageStorage implements Disposable {
         });
     }
 
-    public void downloadImages(final ImageDetails imageDetails, final int currentOrderIndex){
+    public synchronized void downloadImages(final ImageDetails imageDetails, final int currentOrderIndex){
         Threadings.runInBackground(new Runnable() {
             @Override
             public void run() {
@@ -174,20 +174,30 @@ public class ImageStorage implements Disposable {
 
                     gameCoordinator.getDownloader().downloadData(imageDetails.getImageOneUrl(), new DownloaderListener() {
                         @Override
-                        public void onCallback(byte[] bytes, Status status) {
-                            if(status == Status.SUCCESS){
-                                image1[0] = processTextureBytes(bytes);
-                            }
-                            threadFragment1.setFinished(true);
+                        public void onCallback(final byte[] bytes, final Status status) {
+                            Threadings.postRunnable(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if(status == Status.SUCCESS){
+                                        image1[0] = processTextureBytes(bytes);
+                                    }
+                                    threadFragment1.setFinished(true);
+                                }
+                            });
                         }
                     });
                     gameCoordinator.getDownloader().downloadData(imageDetails.getImageTwoUrl(), new DownloaderListener() {
                         @Override
-                        public void onCallback(byte[] bytes, Status status) {
-                            if(status == Status.SUCCESS){
-                                image2[0] = processTextureBytes(bytes);
-                            }
-                            threadFragment2.setFinished(true);
+                        public void onCallback(final byte[] bytes, final Status status) {
+                            Threadings.postRunnable(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if(status == Status.SUCCESS){
+                                        image2[0] = processTextureBytes(bytes);
+                                    }
+                                    threadFragment2.setFinished(true);
+                                }
+                            });
                         }
                     });
 
@@ -195,14 +205,26 @@ public class ImageStorage implements Disposable {
                         Threadings.sleep(100);
                     }
 
+                    if(!randomize){
+                        if(imageDetails.getIndex() > currentIndex){
+                            return;
+                        }
+                    }
+
                     if(image1[0] != null && image2[0] != null){
                         int addingIndex = getStartIndexWithHigherOrderIndex(currentOrderIndex);
-                        imagePairs.add(addingIndex,
-                                new ImagePair(imageDetails, image1[0], image2[0], currentOrderIndex));
+                        addImagePair(addingIndex, imageDetails, image1[0], image2[0], currentOrderIndex);
                     }
                 }
         });
+    }
 
+    private synchronized void addImagePair(int toIndex,
+                                                ImageDetails imageDetails, Texture texture1, Texture texture2, int currentOrderIndex){
+        if(getImagePairById(imageDetails.getId()) == null){
+            imagePairs.add(toIndex,
+                    new ImagePair(imageDetails, texture1, texture2, currentOrderIndex));
+        }
     }
 
     public Texture processTextureBytes(byte[] textureBytes) {
@@ -237,7 +259,27 @@ public class ImageStorage implements Disposable {
         });
     }
 
-    public void pop(final ImageStorageListener listener){
+    public void peek(final int index, final ImageStorageListener listener){
+        if(index == -1){
+            peek(listener);
+            return;
+        }
+
+        Threadings.runInBackground(new Runnable() {
+            @Override
+            public void run() {
+                while (getImagePairByIndex(index) == null){
+                    Threadings.sleep(300);
+                    if(safeThread.isKilled()) return;
+                }
+
+                ImagePair first = getImagePairByIndex(index);
+                listener.onPeeked(first);
+            }
+        });
+    }
+
+    public synchronized void pop(final ImageStorageListener listener){
         Threadings.runInBackground(new Runnable() {
             @Override
             public void run() {
@@ -253,7 +295,7 @@ public class ImageStorage implements Disposable {
         });
     }
 
-    public void pop(final String id, final ImageStorageListener listener){
+    public synchronized void pop(final String id, final ImageStorageListener listener){
         Threadings.runInBackground(new Runnable() {
             @Override
             public void run() {
@@ -286,10 +328,19 @@ public class ImageStorage implements Disposable {
         return null;
     }
 
+    private ImagePair getImagePairByIndex(int index){
+        for(ImagePair imagePair : imagePairs){
+            if(imagePair.getImageDetails().getIndex() == index){
+                return imagePair;
+            }
+        }
+        return null;
+    }
+
     private synchronized int getStartIndexWithHigherOrderIndex(int orderIndex){
         int i = 0;
         for(ImagePair imagePair : imagePairs){
-            if(imagePair.getOrderIndex() >= orderIndex){
+            if (imagePair.getOrderIndex() >= orderIndex){
                 return i;
             }
             i++;
@@ -297,14 +348,18 @@ public class ImageStorage implements Disposable {
         return imagePairs.size();
     }
 
-    @Override
-    public void dispose() {
-        safeThread.kill();
+    public void disposeAllImages(){
         for(ImagePair pair : imagePairs){
             pair.getImageOne().dispose();
             pair.getImageTwo().dispose();
         }
         imagePairs.clear();
+    }
+
+    @Override
+    public void dispose() {
+        safeThread.kill();
+        disposeAllImages();
     }
 
     public ArrayList<ImagePair> getImagePairs() {
@@ -318,4 +373,14 @@ public class ImageStorage implements Disposable {
     public void setDownloadPeriod(long downloadPeriod) {
         this.downloadPeriod = downloadPeriod;
     }
+
+    public void setCurrentIndex(int currentIndex) {
+        if(currentIndex > totalIndex){
+            currentIndex = 0;
+        }
+        this.currentIndex = currentIndex;
+    }
+
+
+
 }

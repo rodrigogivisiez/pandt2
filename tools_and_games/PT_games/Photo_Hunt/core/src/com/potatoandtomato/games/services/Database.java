@@ -18,9 +18,24 @@ public class Database {
     private GameCoordinator _coordinator;
     private Firebase _ref;
     private final String _storageTable = "storage";
+    private final String _adminTable = "admin";
 
     public Database(Firebase ref) {
         _ref = ref;
+    }
+
+    public void checkIsAdmin(String userId, final DatabaseListener<Boolean> listener){
+        getSingleData(getTable(_adminTable).child(userId), new DatabaseListener<String>(String.class) {
+            @Override
+            public void onCallback(String obj, Status st) {
+                if(st == Status.SUCCESS && obj.equals("yes")){
+                    listener.onCallback(true, Status.SUCCESS);
+                }
+                else{
+                    listener.onCallback(false, Status.SUCCESS);
+                }
+            }
+        });
     }
 
     public void getLastImageIndex(final DatabaseListener<Integer> listener) {

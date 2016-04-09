@@ -1,5 +1,7 @@
 package com.potatoandtomato.games.models;
 
+import com.badlogic.gdx.math.Rectangle;
+import com.potatoandtomato.games.absintf.GameStateListener;
 import com.potatoandtomato.games.enums.GameState;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
 import com.shaded.fasterxml.jackson.core.JsonProcessingException;
@@ -19,6 +21,9 @@ public class GameModel {
     private GameState gameState;
     private ArrayList<SimpleRectangle> handledAreas;
     private int remainingSecs;
+    private int hintsLeft;
+    private ImageDetails imageDetails;
+    private GameStateListener gameStateListener;
 
 
     public GameModel(int stageNumber, int score) {
@@ -26,11 +31,29 @@ public class GameModel {
         this.score = score;
         this.userRecords = new HashMap();
         this.handledAreas = new ArrayList();
+        this.hintsLeft = 3;
     }
 
     public GameModel() {
         this.userRecords = new HashMap();
         this.handledAreas = new ArrayList();
+        this.hintsLeft = 3;
+    }
+
+    public ImageDetails getImageDetails() {
+        return imageDetails;
+    }
+
+    public void setImageDetails(ImageDetails imageDetails) {
+        this.imageDetails = imageDetails;
+    }
+
+    public int getHintsLeft() {
+        return hintsLeft;
+    }
+
+    public void setHintsLeft(int hintsLeft) {
+        this.hintsLeft = hintsLeft;
     }
 
     public int getRemainingSecs() {
@@ -63,6 +86,7 @@ public class GameModel {
 
     public void setGameState(GameState gameState) {
         this.gameState = gameState;
+        if(this.gameStateListener != null) gameStateListener.onChanged(gameState);
     }
 
     public int getScore() {
@@ -130,6 +154,19 @@ public class GameModel {
     }
 
     @JsonIgnore
+    public boolean isAreaAlreadyHandled(Rectangle rectangle){
+        for(SimpleRectangle simpleRectangle : handledAreas){
+            if(simpleRectangle.getX() == rectangle.getX() &&
+                    simpleRectangle.getY() == rectangle.getY() &&
+                    simpleRectangle.getHeight() == rectangle.getHeight() &&
+                    simpleRectangle.getWidth() == rectangle.getWidth()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @JsonIgnore
     public void addHandledArea(SimpleRectangle rectangle){
         if(!isAreaAlreadyHandled(rectangle)){
             handledAreas.add(rectangle);
@@ -152,5 +189,13 @@ public class GameModel {
         return "";
     }
 
+    @JsonIgnore
+    public GameStateListener getGameStateListener() {
+        return gameStateListener;
+    }
 
+    @JsonIgnore
+    public void setGameStateListener(GameStateListener gameStateListener) {
+        this.gameStateListener = gameStateListener;
+    }
 }

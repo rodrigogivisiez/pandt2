@@ -13,8 +13,12 @@ public class Textures extends TextureAssets {
     }
 
     public enum Name{
-        ONE, TWO, CIRCLE,
+        CIRCLE,
         EMPTY,
+        TOP_BG, TOP_BG_SHADOW,
+        BOTTOM_BG, BOTTOM_BG_SHADOW, CASTLE_ROOM,
+        HINT_ON_ICON, HINT_OFF_ICON,
+        TRANS_BLACK_BG, CURSOR_BLACK
     }
 
 

@@ -7,6 +7,7 @@ import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.absintf.TimeLogicListener;
 import com.potatoandtomato.games.helpers.Logs;
 import com.potatoandtomato.games.models.GameModel;
+import com.potatoandtomato.games.statics.Global;
 
 /**
  * Created by SiongLeng on 6/4/2016.
@@ -28,6 +29,10 @@ public class TimeLogic implements Disposable {
     public void start(){
         timeRunning = true;
         timeThread = new SafeThread();
+        if(Global.REVIEW_MODE){
+            return;
+        }
+
         Threadings.runInBackground(new Runnable() {
             @Override
             public void run() {

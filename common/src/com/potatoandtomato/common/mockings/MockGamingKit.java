@@ -163,7 +163,12 @@ public class MockGamingKit {
         public void onUpdatePeersReceived(final UpdateEvent updateEvent) {
             System.out.println("onUpdatePeersReceived");
             String update = new String(updateEvent.getUpdate());
-            unAppendDataFromPeerMsg(update);
+            if(update.startsWith("@PT")){
+                unAppendDataFromPeerMsg(update);
+            }
+            else{
+                updateRoomMatesReceived(update);
+            }
         }
 
         private void updateRoomMatesReceived(String update){
@@ -191,39 +196,34 @@ public class MockGamingKit {
         }
 
         private synchronized void unAppendDataFromPeerMsg(String msg){
-            if(msg.startsWith("@PT")){
-                int endIndex = msg.indexOf("@", 2);
-                String stripped = msg.substring(0, endIndex);
-                String realMsg = msg.substring(endIndex + 1);
-                String meta[] = stripped.split("_");
-                String id = meta[1];
-                int pieceIndex = Integer.valueOf(meta[2]);
-                int totalPieces = Integer.valueOf(meta[3]);
+            int endIndex = msg.indexOf("@", 2);
+            String stripped = msg.substring(0, endIndex);
+            String realMsg = msg.substring(endIndex + 1);
+            String meta[] = stripped.split("_");
+            String id = meta[1];
+            int pieceIndex = Integer.valueOf(meta[2]);
+            int totalPieces = Integer.valueOf(meta[3]);
 
-                if(totalPieces == 1){
-                    updateRoomMatesReceived(realMsg);
-                } else {
-                    if (!_msgPieces.containsKey(id)){
-                        _msgPieces.put(id, realMsg);
+            if(totalPieces == 1){
+                updateRoomMatesReceived(realMsg);
+            } else {
+                if (!_msgPieces.containsKey(id)){
+                    _msgPieces.put(id, realMsg);
+                }
+                else{
+                    ArrayList<String> currentPieces = _msgPieces.get(id);
+                    if(pieceIndex > currentPieces.size()){
+                        currentPieces.add(currentPieces.size(), realMsg);
                     }
                     else{
-                        ArrayList<String> currentPieces = _msgPieces.get(id);
-                        if(pieceIndex > currentPieces.size()){
-                            currentPieces.add(currentPieces.size(), realMsg);
-                        }
-                        else{
-                            currentPieces.add(pieceIndex, realMsg);
-                        }
+                        currentPieces.add(pieceIndex, realMsg);
+                    }
 
-                        if(currentPieces.size() == totalPieces){
-                            updateRoomMatesReceived(Strings.joinArr(currentPieces, ""));
-                            _msgPieces.remove(id);
-                        }
+                    if(currentPieces.size() == totalPieces){
+                        updateRoomMatesReceived(Strings.joinArr(currentPieces, ""));
+                        _msgPieces.remove(id);
                     }
                 }
-            }
-            else{
-                updateRoomMatesReceived(msg);
             }
         }
 

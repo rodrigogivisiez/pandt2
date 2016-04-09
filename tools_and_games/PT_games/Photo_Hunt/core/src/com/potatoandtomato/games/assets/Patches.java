@@ -8,7 +8,7 @@ import com.potatoandtomato.common.assets.PatchAssets;
 public class Patches extends PatchAssets {
 
     public enum Name{
-        YELLOW_GRADIENT_BOX
+        WHITE_ROUNDED_BG
     }
 
 }

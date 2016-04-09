@@ -468,6 +468,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
 
     public void exitSandbox(){
         _screen.switchToPTScreen();
+        _services.getBroadcaster().broadcast(BroadcastEvent.DEVICE_ORIENTATION, 0);
         _services.getChat().setMode(1);
         _services.getChat().add(new ChatMessage(_texts.gameEnded(),
                 ChatMessage.FromType.SYSTEM, null), false);

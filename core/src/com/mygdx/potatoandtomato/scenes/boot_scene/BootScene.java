@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -137,12 +138,11 @@ public class BootScene extends SceneAbstract {
     }
 
     public void showSocialLogin(){
-        _playButton.addAction(sequence(fadeOut(0.3f), new Action() {
+        _playButton.addAction(sequence(fadeOut(0.3f), new RunnableAction() {
             @Override
-            public boolean act(float delta) {
+            public void run() {
                 _infoTable.addAction(fadeIn(0.3f));
                 _playButton.setVisible(false);
-                return true;
             }
         }));
 

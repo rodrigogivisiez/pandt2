@@ -31,6 +31,9 @@ public class Fonts extends FontAssets {
         MYRIAD_M_REGULAR,
         MYRIAD_M_REGULAR_B_000000_588e54_1,             //dark green
 
+        ENCHANTED_XXL_REGULAR,
+        ENCHANTED_MAX_REGULAR_B_FFFFFF_563500_4,
+
         HELVETICA_XS_BlACKCONDENSEDITALIC,
         HELVETICA_XXL_HEAVY,
         HELVETICA_XXL_BlACKCONDENSEDITALIC_B_ffffff_56380a_1,
@@ -59,6 +62,9 @@ public class Fonts extends FontAssets {
                     break;
                 case HELVETICA:
                     path = "fonts/Helvetica-%s.otf";
+                    break;
+                case ENCHANTED:
+                    path = "fonts/EnchantedLand-%s.otf";
                     break;
             }
 
@@ -109,14 +115,14 @@ public class Fonts extends FontAssets {
                 case XXXL:
                     return 30;
                 case MAX:
-                    return 30;
+                    return 45;
             }
             return 0;
         }
     }
 
     private enum  FontName {
-        PIZZA, MYRIAD, HELVETICA
+        PIZZA, MYRIAD, HELVETICA, ENCHANTED
     }
 
     private enum FontStyle {

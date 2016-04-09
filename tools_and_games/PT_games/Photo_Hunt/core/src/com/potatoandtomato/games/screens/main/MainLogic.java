@@ -1,22 +1,27 @@
 package com.potatoandtomato.games.screens.main;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.absints.GameLogic;
 import com.potatoandtomato.common.absints.UserStateListener;
+import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.Threadings;
-import com.potatoandtomato.games.absintf.ImageStorageListener;
-import com.potatoandtomato.games.absintf.RoomMsgListener;
-import com.potatoandtomato.games.absintf.TimeLogicListener;
+import com.potatoandtomato.games.absintf.*;
 import com.potatoandtomato.games.enums.GameState;
 import com.potatoandtomato.games.enums.StageType;
 import com.potatoandtomato.games.helpers.Logs;
 import com.potatoandtomato.games.models.*;
+import com.potatoandtomato.games.screens.hints.HintsLogic;
+import com.potatoandtomato.games.screens.review.ReviewLogic;
 import com.potatoandtomato.games.screens.time_bar.TimeLogic;
+import com.potatoandtomato.games.statics.Global;
 
 import java.util.ArrayList;
 
@@ -29,33 +34,38 @@ public class MainLogic extends GameLogic {
     private MainScreen _screen;
     private ImageDetails _imageDetails;
     private TimeLogic _timeLogic;
+    private HintsLogic _hintsLogic;
+    private ReviewLogic _reviewLogic;
     private GameModel _gameModel;
     private ImageStorage _imageStorage;
 
     public MainLogic(Services services, GameCoordinator gameCoordinator) {
         super(gameCoordinator);
-
         this._services = services;
-        _screen = new MainScreen(services, gameCoordinator);
-
-        setListeners();
-
         _gameModel = new GameModel();
+        _hintsLogic = new HintsLogic(_gameModel, services);
+        _reviewLogic = new ReviewLogic(_gameModel, services, gameCoordinator);
+
         _imageStorage = new ImageStorage(services, gameCoordinator);
         _imageStorage.startMonitor();
+
+        _screen = new MainScreen(services, gameCoordinator);
+        _screen.populate(_hintsLogic.getHintsActor());
+        setListeners();
     }
 
     public void init(){
-        sendGoToNextStageIfIsDecisionMaker();
+        sendGoToNextStageIfIsDecisionMaker(-1);
     }
 
     public void onContinue(){
 
     }
 
-    public void sendGoToNextStageIfIsDecisionMaker(){
+    //index = -1 mean peek next item in imagestorage, else peek item by index
+    public void sendGoToNextStageIfIsDecisionMaker(int index){
         if(getCoordinator().meIsDecisionMaker()) {
-            _imageStorage.peek(new ImageStorageListener() {
+            _imageStorage.peek(index, new ImageStorageListener() {
                 @Override
                 public void onPeeked(ImagePair imagePair) {
                     _services.getRoomMsgHandler().sendGotoNextStage(imagePair.getImageDetails().getId(), StageType.Normal, "");
@@ -71,11 +81,14 @@ public class MainLogic extends GameLogic {
                 Threadings.postRunnable(new Runnable() {
                     @Override
                     public void run() {
+                        _gameModel.setImageDetails(imagePair.getImageDetails());
                         _gameModel.setGameState(GameState.Playing);
                         _gameModel.clearHandledAreas();
                         _imageDetails = imagePair.getImageDetails();
                         _imageDetails.setGameImageSize((int) _screen.getImageSize().x, (int) _screen.getImageSize().y);
                         _gameModel.addStageNumber();
+                        invalidateReviewLogic();
+
                         if(_timeLogic != null) _timeLogic.dispose();
 
                         _gameModel.convertStageNumberToRemainingSecs();
@@ -90,6 +103,8 @@ public class MainLogic extends GameLogic {
                         changeScreenImages(imagePair.getImageOne(), imagePair.getImageTwo());
 
                         _timeLogic.start();
+
+                        _gameModel.setGameState(GameState.Playing);
                     }
                 });
             }
@@ -100,7 +115,7 @@ public class MainLogic extends GameLogic {
         _screen.resetImages(texture1, texture2);
     }
 
-    public void imageTouched(float x, float y, int remainingSecs){
+    public void imageTouched(float x, float y, int remainingSecs, boolean usedHint){
         Vector2 imageSize = _screen.getImageSize();
 
         float finalY = imageSize.y - y;  //libgdx origin is at bottomleft
@@ -109,6 +124,9 @@ public class MainLogic extends GameLogic {
             _timeLogic.reduceTime();
         }
         else if(!_gameModel.isAreaAlreadyHandled(correctRect)) {
+            if(usedHint){
+                minusAvailableHint();
+            }
             _gameModel.addHandledArea(correctRect);
             Rectangle circleRect = new Rectangle();
             circleRect.setSize(correctRect.getWidth(), correctRect.getHeight());
@@ -118,8 +136,8 @@ public class MainLogic extends GameLogic {
         }
     }
 
-    public void sendTouchedMsg(float x, float y){
-        _services.getRoomMsgHandler().sendTouched(new TouchedPoint(x, y, _timeLogic.getRemainingSecs()));
+    public void sendTouchedMsg(float x, float y, boolean hintUsed){
+        _services.getRoomMsgHandler().sendTouched(new TouchedPoint(x, y, _timeLogic.getRemainingSecs(), hintUsed));
     }
 
     //allow a 1 sec tolerance time for game over
@@ -150,14 +168,84 @@ public class MainLogic extends GameLogic {
         }
     }
 
+    private void minusAvailableHint(){
+        if(!Global.REVIEW_MODE){
+            _gameModel.setHintsLeft(_gameModel.getHintsLeft() - 1);
+            _hintsLogic.invalidate();
+        }
+    }
+
+    public void invalidateReviewLogic(){
+        _reviewLogic.invalidate();
+    }
+
+    private void checkCanSwitchToReviewMode(){
+        if(!Global.REVIEW_MODE){
+            switch(Gdx.app.getType()) {
+                case Android:
+                    _services.getDatabase().checkIsAdmin(getCoordinator().getMyUserId(), new DatabaseListener<Boolean>() {
+                        @Override
+                        public void onCallback(Boolean obj, Status st) {
+                            if(st == Status.SUCCESS && obj){
+                                switchToReviewMode();
+                            }
+                        }
+                    });
+                    break;
+                case Desktop:
+                    switchToReviewMode();
+                    break;
+            }
+        }
+    }
+
+    private void switchToReviewMode(){
+        Global.REVIEW_MODE = true;
+        _gameModel.setGameState(GameState.Blocking);
+        _screen.switchToReviewMode(_reviewLogic.getReviewActor());
+        _imageStorage.setRandomize(false);
+        _imageStorage.disposeAllImages();
+        _imageStorage.initiateDownloadsIfNeeded();
+        sendGoToNextStageIfIsDecisionMaker(0);
+    }
+
     private void setListeners(){
+
+        _hintsLogic.setHintsLogicListener(new HintsLogicListener() {
+            @Override
+            public void onHintClicked() {
+                if(canClick()){
+                    int i = 0;
+                    Rectangle notYetHandledArea = null;
+                    for(Rectangle rectangle : _imageDetails.getCorrectRects()){
+                        if(!_gameModel.isAreaAlreadyHandled(rectangle)){
+                            notYetHandledArea = rectangle;
+                            break;
+                        }
+                        i++;
+                    }
+
+
+                    if(notYetHandledArea != null){
+                        float x, y;
+                        x = notYetHandledArea.getX() + 1;
+                        y = notYetHandledArea.getY() + 1;
+                        y = _screen.getImageSize().y - y;           //libgdx y is from bottom left
+                        sendTouchedMsg(x, y, true);
+                        imageTouched(x, y, _timeLogic.getRemainingSecs(), true);
+                    }
+
+                }
+            }
+        });
+
         _screen.getImageOneTable().addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 if(canClick()){
-                    sendTouchedMsg(x, y);
-                    imageTouched(x, y, _timeLogic.getRemainingSecs());
+                    sendTouchedMsg(x, y, false);
+                    imageTouched(x, y, _timeLogic.getRemainingSecs(), false);
                 }
             }
         });
@@ -167,16 +255,31 @@ public class MainLogic extends GameLogic {
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 if(canClick()){
-                    sendTouchedMsg(x, y);
-                    imageTouched(x, y, _timeLogic.getRemainingSecs());
+                    sendTouchedMsg(x, y, false);
+                    imageTouched(x, y, _timeLogic.getRemainingSecs(), false);
                 }
+            }
+        });
+
+        _screen.getBlockTable().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+
+            }
+        });
+
+        _screen.getBottomBarTable().addListener(new ActorGestureListener(){
+            @Override
+            public boolean longPress(Actor actor, float x, float y) {
+                checkCanSwitchToReviewMode();
+                return super.longPress(actor, x, y);
             }
         });
 
         _services.getRoomMsgHandler().setRoomMsgListener(new RoomMsgListener() {
             @Override
             public void onTouched(TouchedPoint touchedPoint, String userId) {
-                imageTouched(touchedPoint.x, touchedPoint.y, touchedPoint.getRemainingSecs());
+                imageTouched(touchedPoint.x, touchedPoint.y, touchedPoint.getRemainingSecs(), touchedPoint.isUsedHint());
             }
 
             @Override
@@ -190,7 +293,9 @@ public class MainLogic extends GameLogic {
                 Threadings.delay(5000, new Runnable() {
                     @Override
                     public void run() {
-                        sendGoToNextStageIfIsDecisionMaker();
+                        if(!Global.REVIEW_MODE){
+                            sendGoToNextStageIfIsDecisionMaker(-1);
+                        }
                     }
                 });
 
@@ -205,6 +310,7 @@ public class MainLogic extends GameLogic {
             public void onGoToNextStage(String id, StageType stageType, String extra) {
                 newStage(id, stageType, extra);
             }
+
         });
 
         getCoordinator().setUserStateListener(new UserStateListener() {
@@ -223,6 +329,32 @@ public class MainLogic extends GameLogic {
 
             }
         });
+
+        _gameModel.setGameStateListener(new GameStateListener() {
+            @Override
+            public void onChanged(GameState newState) {
+                _screen.refreshGameState(newState);
+            }
+        });
+
+        _reviewLogic.setReviewLogicListener(new ReviewLogicListener() {
+            @Override
+            public void onDeleted() {
+
+            }
+
+            @Override
+            public void onGoToIndex(int index) {
+                if(index != _gameModel.getImageDetails().getIndex() + 1){       //skip to next
+                    _imageStorage.setCurrentIndex(index);
+                    _imageStorage.disposeAllImages();
+                    _imageStorage.initiateDownloadsIfNeeded();
+                }
+                sendGoToNextStageIfIsDecisionMaker(index);
+            }
+        });
+
+
     }
 
     private boolean canClick(){

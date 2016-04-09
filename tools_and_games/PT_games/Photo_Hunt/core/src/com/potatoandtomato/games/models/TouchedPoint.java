@@ -8,14 +8,24 @@ public class TouchedPoint {
     public float x;
     public float y;
     public int remainingSecs;
+    public boolean usedHint;
 
-    public TouchedPoint(float x, float y, int remainingSecs) {
+    public TouchedPoint(float x, float y, int remainingSecs, boolean usedHint) {
         this.x = x;
         this.y = y;
         this.remainingSecs = remainingSecs;
+        this.usedHint = usedHint;
     }
 
     public TouchedPoint() {
+    }
+
+    public boolean isUsedHint() {
+        return usedHint;
+    }
+
+    public void setUsedHint(boolean usedHint) {
+        this.usedHint = usedHint;
     }
 
     public float getX() {

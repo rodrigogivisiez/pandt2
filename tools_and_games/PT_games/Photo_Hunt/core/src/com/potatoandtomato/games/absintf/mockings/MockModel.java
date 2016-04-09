@@ -57,6 +57,8 @@ public class MockModel {
         imageDetails.setArea5(area5);
 
         imageDetails.setId("1");
+        imageDetails.setImageOneUrl("1");
+        imageDetails.setImageTwoUrl("2");
 
         return imageDetails;
 

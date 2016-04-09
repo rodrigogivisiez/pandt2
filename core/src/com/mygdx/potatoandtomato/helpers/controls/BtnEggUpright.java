@@ -46,7 +46,12 @@ public class BtnEggUpright extends Table {
         _button.addListener(new ClickListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                animate();
+                Threadings.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        animate();
+                    }
+                });
                 _soundsWrapper.playSoundEffect(Sounds.Name.BUTTON_CLICKED);
                 return super.touchDown(event, x, y, pointer, button);
             }

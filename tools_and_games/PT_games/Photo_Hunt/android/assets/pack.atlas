@@ -1,34 +1,92 @@
 
 pack.png
-size: 1024,512
+size: 2048,64
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
-CIRCLE
+BOTTOM_BG
   rotate: false
   xy: 2, 2
+  size: 640, 60
+  orig: 640, 60
+  offset: 0, 0
+  index: -1
+BOTTOM_BG_SHADOW
+  rotate: false
+  xy: 1559, 37
+  size: 38, 25
+  orig: 38, 25
+  offset: 0, 0
+  index: -1
+CASTLE_ROOM
+  rotate: false
+  xy: 1286, 10
+  size: 153, 52
+  orig: 153, 52
+  offset: 0, 0
+  index: -1
+CIRCLE
+  rotate: false
+  xy: 1644, 32
   size: 30, 30
   orig: 30, 30
   offset: 0, 0
   index: -1
+CURSOR_BLACK
+  rotate: false
+  xy: 1706, 21
+  size: 1, 41
+  orig: 1, 41
+  offset: 0, 0
+  index: -1
 EMPTY
   rotate: false
-  xy: 906, 333
+  xy: 1286, 7
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
-ONE
+HINT_OFF_ICON
   rotate: false
-  xy: 2, 34
-  size: 450, 300
-  orig: 450, 300
+  xy: 1482, 22
+  size: 38, 40
+  orig: 38, 40
   offset: 0, 0
   index: -1
-TWO
+HINT_ON_ICON
   rotate: false
-  xy: 454, 34
-  size: 450, 300
-  orig: 450, 300
+  xy: 1441, 22
+  size: 39, 40
+  orig: 39, 40
+  offset: 0, 0
+  index: -1
+TOP_BG
+  rotate: false
+  xy: 644, 3
+  size: 640, 59
+  orig: 640, 59
+  offset: 0, 0
+  index: -1
+TOP_BG_SHADOW
+  rotate: false
+  xy: 1599, 47
+  size: 43, 15
+  orig: 43, 15
+  offset: 0, 0
+  index: -1
+TRANS_BLACK_BG
+  rotate: false
+  xy: 1522, 31
+  size: 35, 31
+  orig: 35, 31
+  offset: 0, 0
+  index: -1
+WHITE_ROUNDED_BG
+  rotate: false
+  xy: 1676, 42
+  size: 28, 20
+  split: 11, 13, 7, 9
+  pad: 5, 7, 0, 0
+  orig: 28, 20
   offset: 0, 0
   index: -1

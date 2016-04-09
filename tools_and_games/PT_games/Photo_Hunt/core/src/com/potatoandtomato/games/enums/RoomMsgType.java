@@ -9,6 +9,6 @@ public enum RoomMsgType {
     Won,
     Lose,
     Download,
-    NextStage,
+    NextStage
 
 }

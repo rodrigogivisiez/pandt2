@@ -1,4 +1,4 @@
-BASE="C:\Users\SiongLeng\Desktop\Potato Tomato 2\pandt2\tools_and_games\PT_games\<DIRECTORY>\"
+BASE="C:\Users\SiongLeng\Desktop\Potato Tomato 2\pandt2\tools_and_games\PT_games\Photo_Hunt\"
 ASSETS={BASE}"android\assets\"
 WORKING={BASE}"android\assets\"
 JAR={BASE}"out\artifacts\core_jar\core.jar"

@@ -5,6 +5,7 @@ package com.potatoandtomato.games.enums;
  */
 public enum  GameState {
 
-    Playing, Ended
+    Playing, Ended,
+    Blocking
 
 }
