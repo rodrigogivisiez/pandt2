@@ -15,6 +15,12 @@ public class MockModel {
         return imagePair;
     }
 
+    public static ImageDetails mockImageDetails(String id){
+        ImageDetails imageDetails = mockImageDetails();
+        imageDetails.setId(id);
+        return imageDetails;
+    }
+
     public static ImageDetails mockImageDetails(){
         ImageDetails imageDetails = new ImageDetails();
         imageDetails.setHeight(400);

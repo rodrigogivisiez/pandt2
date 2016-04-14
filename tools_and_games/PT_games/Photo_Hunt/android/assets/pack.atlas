@@ -1,89 +1,231 @@
 
 pack.png
-size: 2048,64
+size: 2048,256
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
 BOTTOM_BG
   rotate: false
-  xy: 2, 2
+  xy: 644, 191
   size: 640, 60
   orig: 640, 60
   offset: 0, 0
   index: -1
 BOTTOM_BG_SHADOW
   rotate: false
-  xy: 1559, 37
+  xy: 876, 77
   size: 38, 25
   orig: 38, 25
   offset: 0, 0
   index: -1
+CASTLE_DOOR
+  rotate: false
+  xy: 644, 12
+  size: 65, 62
+  orig: 65, 62
+  offset: 0, 0
+  index: -1
 CASTLE_ROOM
   rotate: false
-  xy: 1286, 10
+  xy: 644, 76
   size: 153, 52
   orig: 153, 52
   offset: 0, 0
   index: -1
 CIRCLE
   rotate: false
-  xy: 1644, 32
-  size: 30, 30
-  orig: 30, 30
+  xy: 1932, 73
+  size: 97, 71
+  orig: 97, 71
+  offset: 0, 0
+  index: -1
+CROSS
+  rotate: false
+  xy: 748, 20
+  size: 32, 24
+  orig: 32, 24
   offset: 0, 0
   index: -1
 CURSOR_BLACK
   rotate: false
-  xy: 1706, 21
+  xy: 2034, 210
   size: 1, 41
   orig: 1, 41
   offset: 0, 0
   index: -1
+DOOR_LEFT
+  rotate: false
+  xy: 1286, 8
+  size: 321, 243
+  orig: 321, 243
+  offset: 0, 0
+  index: -1
+DOOR_OVERLAY
+  rotate: false
+  xy: 2, 5
+  size: 640, 246
+  orig: 640, 246
+  offset: 0, 0
+  index: -1
+DOOR_RIGHT
+  rotate: false
+  xy: 1609, 8
+  size: 321, 243
+  orig: 321, 243
+  offset: 0, 0
+  index: -1
 EMPTY
   rotate: false
-  xy: 1286, 7
+  xy: 2, 2
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 HINT_OFF_ICON
   rotate: false
-  xy: 1482, 22
+  xy: 1973, 17
   size: 38, 40
   orig: 38, 40
   offset: 0, 0
   index: -1
 HINT_ON_ICON
   rotate: false
-  xy: 1441, 22
+  xy: 1932, 17
   size: 39, 40
   orig: 39, 40
   offset: 0, 0
   index: -1
+ICE_BOTTOM_HALF
+  rotate: false
+  xy: 876, 104
+  size: 64, 24
+  orig: 64, 24
+  offset: 0, 0
+  index: -1
+ICE_TOP_HALF
+  rotate: false
+  xy: 711, 46
+  size: 64, 28
+  orig: 64, 28
+  offset: 0, 0
+  index: -1
+PLAYER0_COUNTER
+  rotate: false
+  xy: 942, 104
+  size: 38, 24
+  orig: 38, 24
+  offset: 0, 0
+  index: -1
+PLAYER1_COUNTER
+  rotate: false
+  xy: 916, 78
+  size: 38, 24
+  orig: 38, 24
+  offset: 0, 0
+  index: -1
+PLAYER2_COUNTER
+  rotate: false
+  xy: 982, 104
+  size: 38, 24
+  orig: 38, 24
+  offset: 0, 0
+  index: -1
+PLAYER3_COUNTER
+  rotate: false
+  xy: 956, 78
+  size: 38, 24
+  orig: 38, 24
+  offset: 0, 0
+  index: -1
+PLAYER4_COUNTER
+  rotate: false
+  xy: 1022, 104
+  size: 38, 24
+  orig: 38, 24
+  offset: 0, 0
+  index: -1
+PLAYER5_COUNTER
+  rotate: false
+  xy: 996, 78
+  size: 38, 24
+  orig: 38, 24
+  offset: 0, 0
+  index: -1
+PLAYER6_COUNTER
+  rotate: false
+  xy: 1062, 104
+  size: 38, 24
+  orig: 38, 24
+  offset: 0, 0
+  index: -1
+PLAYER7_COUNTER
+  rotate: false
+  xy: 1036, 78
+  size: 38, 24
+  orig: 38, 24
+  offset: 0, 0
+  index: -1
+RED_ARROW
+  rotate: false
+  xy: 2031, 122
+  size: 15, 22
+  split: 0, 14, 0, 0
+  pad: 0, 0, 0, 0
+  orig: 15, 22
+  offset: 0, 0
+  index: -1
+REFLECTION
+  rotate: false
+  xy: 1932, 146
+  size: 100, 105
+  orig: 100, 105
+  offset: 0, 0
+  index: -1
+SCRATCH_SEPARATOR
+  rotate: false
+  xy: 1932, 59
+  size: 89, 12
+  orig: 89, 12
+  offset: 0, 0
+  index: -1
+SHIELD_SWORD
+  rotate: false
+  xy: 799, 77
+  size: 75, 51
+  orig: 75, 51
+  offset: 0, 0
+  index: -1
+STAR
+  rotate: false
+  xy: 1076, 77
+  size: 25, 25
+  orig: 25, 25
+  offset: 0, 0
+  index: -1
 TOP_BG
   rotate: false
-  xy: 644, 3
+  xy: 644, 130
   size: 640, 59
   orig: 640, 59
   offset: 0, 0
   index: -1
 TOP_BG_SHADOW
   rotate: false
-  xy: 1599, 47
+  xy: 1102, 113
   size: 43, 15
   orig: 43, 15
   offset: 0, 0
   index: -1
 TRANS_BLACK_BG
   rotate: false
-  xy: 1522, 31
+  xy: 711, 13
   size: 35, 31
   orig: 35, 31
   offset: 0, 0
   index: -1
 WHITE_ROUNDED_BG
   rotate: false
-  xy: 1676, 42
+  xy: 1147, 108
   size: 28, 20
   split: 11, 13, 7, 9
   pad: 5, 7, 0, 0

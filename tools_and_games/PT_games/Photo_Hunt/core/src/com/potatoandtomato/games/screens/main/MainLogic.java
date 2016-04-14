@@ -18,9 +18,13 @@ import com.potatoandtomato.games.enums.GameState;
 import com.potatoandtomato.games.enums.StageType;
 import com.potatoandtomato.games.helpers.Logs;
 import com.potatoandtomato.games.models.*;
+import com.potatoandtomato.games.screens.announcements.GameStartingAnnouncement;
 import com.potatoandtomato.games.screens.hints.HintsLogic;
 import com.potatoandtomato.games.screens.review.ReviewLogic;
+import com.potatoandtomato.games.screens.scores.ScoresLogic;
+import com.potatoandtomato.games.screens.stage_counter.StageCounterLogic;
 import com.potatoandtomato.games.screens.time_bar.TimeLogic;
+import com.potatoandtomato.games.screens.user_counters.UserCountersLogic;
 import com.potatoandtomato.games.statics.Global;
 
 import java.util.ArrayList;
@@ -32,30 +36,52 @@ public class MainLogic extends GameLogic {
 
     private Services _services;
     private MainScreen _screen;
-    private ImageDetails _imageDetails;
     private TimeLogic _timeLogic;
     private HintsLogic _hintsLogic;
     private ReviewLogic _reviewLogic;
+    private UserCountersLogic _userCounterLogic;
+    private StageCounterLogic _stageCounterLogic;
+    private ScoresLogic _scoresLogic;
     private GameModel _gameModel;
     private ImageStorage _imageStorage;
 
-    public MainLogic(Services services, GameCoordinator gameCoordinator) {
+    public MainLogic(GameCoordinator gameCoordinator, Services _services,
+                     TimeLogic _timeLogic, HintsLogic _hintsLogic, ReviewLogic _reviewLogic, UserCountersLogic _userCounterLogic,
+                     StageCounterLogic _stageCounterLogic, ScoresLogic _scoresLogic,
+                     ImageStorage _imageStorage, GameModel _gameModel) {
         super(gameCoordinator);
-        this._services = services;
-        _gameModel = new GameModel();
-        _hintsLogic = new HintsLogic(_gameModel, services);
-        _reviewLogic = new ReviewLogic(_gameModel, services, gameCoordinator);
+        this._services = _services;
+        this._timeLogic = _timeLogic;
+        this._hintsLogic = _hintsLogic;
+        this._reviewLogic = _reviewLogic;
+        this._userCounterLogic = _userCounterLogic;
+        this._stageCounterLogic = _stageCounterLogic;
+        this._scoresLogic = _scoresLogic;
+        this._imageStorage = _imageStorage;
+        this._gameModel = _gameModel;
 
-        _imageStorage = new ImageStorage(services, gameCoordinator);
-        _imageStorage.startMonitor();
-
-        _screen = new MainScreen(services, gameCoordinator);
-        _screen.populate(_hintsLogic.getHintsActor());
+        _screen = new MainScreen(_services, gameCoordinator);
+        _screen.populate(_timeLogic.getTimeActor(), _hintsLogic.getHintsActor(),
+                                _userCounterLogic.getUserCountersActor(), _stageCounterLogic.getStageCounterActor(),
+                                _scoresLogic.getScoresActor());
         setListeners();
+
     }
 
     public void init(){
-        sendGoToNextStageIfIsDecisionMaker(-1);
+        _imageStorage.startMonitor();
+        _gameModel.setGameState(GameState.Close);
+
+        _screen.showAnnouncement(new GameStartingAnnouncement(_services));
+
+        Threadings.delay(Global.START_PREPARE_TIME, new Runnable() {
+            @Override
+            public void run() {
+                sendGoToNextStageIfIsDecisionMaker(-1);
+            }
+        });
+
+
     }
 
     public void onContinue(){
@@ -74,37 +100,25 @@ public class MainLogic extends GameLogic {
         }
     }
 
-    public void newStage(String id, StageType stageType, String extra){
+    public void goToNewStage(String id, StageType stageType, String extra){
         _imageStorage.pop(id, new ImageStorageListener() {
             @Override
             public void onPopped(final ImagePair imagePair) {
                 Threadings.postRunnable(new Runnable() {
                     @Override
                     public void run() {
+                        _screen.clearAnnouncement();
+                        imagePair.getImageDetails().setGameImageSize((int) _screen.getImageSize().x, (int) _screen.getImageSize().y);
                         _gameModel.setImageDetails(imagePair.getImageDetails());
-                        _gameModel.setGameState(GameState.Playing);
                         _gameModel.clearHandledAreas();
-                        _imageDetails = imagePair.getImageDetails();
-                        _imageDetails.setGameImageSize((int) _screen.getImageSize().x, (int) _screen.getImageSize().y);
+                        _gameModel.setStageType(StageType.Normal);
                         _gameModel.addStageNumber();
+                        //_gameModel.setStageNumber(20);
+                        _gameModel.setGameState(GameState.Playing);
+
                         invalidateReviewLogic();
 
-                        if(_timeLogic != null) _timeLogic.dispose();
-
-                        _gameModel.convertStageNumberToRemainingSecs();
-
-                        _timeLogic = new TimeLogic(_gameModel, getCoordinator(), new TimeLogicListener() {
-                            @Override
-                            public void onTimeFinished() {
-                                timeFinished();
-                            }
-                        });
-
                         changeScreenImages(imagePair.getImageOne(), imagePair.getImageTwo());
-
-                        _timeLogic.start();
-
-                        _gameModel.setGameState(GameState.Playing);
                     }
                 });
             }
@@ -115,52 +129,32 @@ public class MainLogic extends GameLogic {
         _screen.resetImages(texture1, texture2);
     }
 
-    public void imageTouched(float x, float y, int remainingSecs, boolean usedHint){
+    public void imageTouched(String userId, float x, float y, int remainingMiliSecs, boolean usedHint){
         Vector2 imageSize = _screen.getImageSize();
 
         float finalY = imageSize.y - y;  //libgdx origin is at bottomleft
-        SimpleRectangle correctRect = _imageDetails.getTouchedCorrectRect(x, finalY);
+        SimpleRectangle correctRect = _gameModel.getImageDetails().getTouchedCorrectRect(x, finalY);
         if(correctRect == null){
             _timeLogic.reduceTime();
+            _screen.cross(x, y, userId);
         }
         else if(!_gameModel.isAreaAlreadyHandled(correctRect)) {
-            if(usedHint){
-                minusAvailableHint();
+            if(usedHint && !Global.REVIEW_MODE){
+                _gameModel.setHintsLeft(_gameModel.getHintsLeft() - 1);
             }
-            _gameModel.addHandledArea(correctRect);
-            Rectangle circleRect = new Rectangle();
-            circleRect.setSize(correctRect.getWidth(), correctRect.getHeight());
-            circleRect.setPosition(correctRect.getX(), imageSize.y - correctRect.getY()); //libgdx origin is at bottomleft
-            _screen.circle(circleRect);
-            checkGameEnded(remainingSecs);
+            _gameModel.addHandledArea(correctRect, userId);
+            checkGameEnded(remainingMiliSecs);
         }
     }
 
     public void sendTouchedMsg(float x, float y, boolean hintUsed){
-        _services.getRoomMsgHandler().sendTouched(new TouchedPoint(x, y, _timeLogic.getRemainingSecs(), hintUsed));
+        _services.getRoomMsgHandler().sendTouched(new TouchedPoint(x, y,  _gameModel.getRemainingMiliSecs(), hintUsed));
     }
 
-    //allow a 1 sec tolerance time for game over
-    public void timeFinished(){
-        if(getCoordinator().meIsDecisionMaker()){
-            Threadings.delay(1000, new Runnable() {
-                @Override
-                public void run() {
-                    if(_gameModel.getGameState() == GameState.Ended){
-                        return;
-                    }
-                    else{
-                        _services.getRoomMsgHandler().sendLose();
-                    }
-                }
-            });
-        }
-    }
 
     public void checkGameEnded(int remainingSecs){
         if(_gameModel.getHandledAreas().size() == 5){
-            _gameModel.setGameState(GameState.Ended);
-            _timeLogic.stop();
+            _gameModel.setGameState(GameState.Pause);
             if(getCoordinator().meIsDecisionMaker()){
                 _services.getRoomMsgHandler().sendWon(new WonStageModel(_gameModel.getStageNumber(),
                                         _gameModel.getScore(), remainingSecs, "0", StageType.Normal));
@@ -168,12 +162,7 @@ public class MainLogic extends GameLogic {
         }
     }
 
-    private void minusAvailableHint(){
-        if(!Global.REVIEW_MODE){
-            _gameModel.setHintsLeft(_gameModel.getHintsLeft() - 1);
-            _hintsLogic.invalidate();
-        }
-    }
+
 
     public void invalidateReviewLogic(){
         _reviewLogic.invalidate();
@@ -201,7 +190,7 @@ public class MainLogic extends GameLogic {
 
     private void switchToReviewMode(){
         Global.REVIEW_MODE = true;
-        _gameModel.setGameState(GameState.Blocking);
+        _gameModel.setGameState(GameState.BlockingReview);
         _screen.switchToReviewMode(_reviewLogic.getReviewActor());
         _imageStorage.setRandomize(false);
         _imageStorage.disposeAllImages();
@@ -211,13 +200,57 @@ public class MainLogic extends GameLogic {
 
     private void setListeners(){
 
+        _gameModel.addGameModelListener(new GameModelListener() {
+
+            @Override
+            public void onTimeFinished() {
+                //allow a 1 sec tolerance time for game over
+                if(getCoordinator().meIsDecisionMaker()){
+                    Threadings.delay(1000, new Runnable() {
+                        @Override
+                        public void run() {
+                            if(_gameModel.getGameState() == GameState.Playing){
+                                _services.getRoomMsgHandler().sendLose();
+                            }
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onGameStateChanged(GameState newState) {
+                if(newState == GameState.Ended){
+                    if(!Global.REVIEW_MODE){
+                        Threadings.delay(1000, new Runnable() {
+                            @Override
+                            public void run() {
+                                sendGoToNextStageIfIsDecisionMaker(-1);
+                            }
+                        });
+                    }
+                }
+                _screen.refreshGameState(newState);
+            }
+
+            @Override
+            public void onCorrectClicked(SimpleRectangle correctRect, String userId) {
+                Vector2 imageSize = _screen.getImageSize();
+                Rectangle circleRect = new Rectangle();
+                circleRect.setSize(correctRect.getWidth(), correctRect.getHeight());
+                circleRect.setPosition(correctRect.getX(), imageSize.y - correctRect.getY()); //libgdx origin is at bottomleft
+                _screen.circle(circleRect, userId);
+
+                _gameModel.addFreezeMiliSecs();
+            }
+        });
+
         _hintsLogic.setHintsLogicListener(new HintsLogicListener() {
             @Override
             public void onHintClicked() {
-                if(canClick()){
+                if(_gameModel.isPlaying() && _gameModel.getHintsLeft() > 0){
                     int i = 0;
                     Rectangle notYetHandledArea = null;
-                    for(Rectangle rectangle : _imageDetails.getCorrectRects()){
+                    for(Rectangle rectangle : _gameModel.getImageDetails().getCorrectRects()){
                         if(!_gameModel.isAreaAlreadyHandled(rectangle)){
                             notYetHandledArea = rectangle;
                             break;
@@ -225,16 +258,14 @@ public class MainLogic extends GameLogic {
                         i++;
                     }
 
-
                     if(notYetHandledArea != null){
                         float x, y;
                         x = notYetHandledArea.getX() + 1;
                         y = notYetHandledArea.getY() + 1;
                         y = _screen.getImageSize().y - y;           //libgdx y is from bottom left
                         sendTouchedMsg(x, y, true);
-                        imageTouched(x, y, _timeLogic.getRemainingSecs(), true);
+                        imageTouched(getCoordinator().getMyUserId(), x, y, _gameModel.getRemainingMiliSecs(), true);
                     }
-
                 }
             }
         });
@@ -243,9 +274,9 @@ public class MainLogic extends GameLogic {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                if(canClick()){
+                if(_gameModel.isPlaying()){
                     sendTouchedMsg(x, y, false);
-                    imageTouched(x, y, _timeLogic.getRemainingSecs(), false);
+                    imageTouched(getCoordinator().getMyUserId(), x, y,  _gameModel.getRemainingMiliSecs(), false);
                 }
             }
         });
@@ -254,9 +285,9 @@ public class MainLogic extends GameLogic {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                if(canClick()){
+                if(_gameModel.isPlaying()){
                     sendTouchedMsg(x, y, false);
-                    imageTouched(x, y, _timeLogic.getRemainingSecs(), false);
+                    imageTouched(getCoordinator().getMyUserId(), x, y,  _gameModel.getRemainingMiliSecs(), false);
                 }
             }
         });
@@ -278,27 +309,28 @@ public class MainLogic extends GameLogic {
 
         _services.getRoomMsgHandler().setRoomMsgListener(new RoomMsgListener() {
             @Override
-            public void onTouched(TouchedPoint touchedPoint, String userId) {
-                imageTouched(touchedPoint.x, touchedPoint.y, touchedPoint.getRemainingSecs(), touchedPoint.isUsedHint());
+            public void onTouched(final TouchedPoint touchedPoint, final String userId) {
+                Threadings.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        imageTouched(userId, touchedPoint.x, touchedPoint.y, touchedPoint.getRemainingMiliSecs(), touchedPoint.isUsedHint());
+                    }
+                });
             }
 
             @Override
             public void onLose() {
                 Logs.show("YOU LOSE!! Bye!");
+                _gameModel.setGameState(GameState.Lose);
             }
 
             @Override
             public void onWon(WonStageModel wonStageModel) {
-                Logs.show("You win, time is: " + wonStageModel.getRemainingSecs());
-                Threadings.delay(5000, new Runnable() {
-                    @Override
-                    public void run() {
-                        if(!Global.REVIEW_MODE){
-                            sendGoToNextStageIfIsDecisionMaker(-1);
-                        }
-                    }
-                });
+                _gameModel.setRemainingMiliSecs(wonStageModel.getRemainingSecs(), false);
+                _gameModel.setGameState(GameState.Won);
 
+
+                Logs.show("You win, time is: " + wonStageModel.getRemainingSecs());
             }
 
             @Override
@@ -308,7 +340,7 @@ public class MainLogic extends GameLogic {
 
             @Override
             public void onGoToNextStage(String id, StageType stageType, String extra) {
-                newStage(id, stageType, extra);
+                goToNewStage(id, stageType, extra);
             }
 
         });
@@ -327,13 +359,6 @@ public class MainLogic extends GameLogic {
             @Override
             public void userDisconnected(String s) {
 
-            }
-        });
-
-        _gameModel.setGameStateListener(new GameStateListener() {
-            @Override
-            public void onChanged(GameState newState) {
-                _screen.refreshGameState(newState);
             }
         });
 
@@ -357,11 +382,6 @@ public class MainLogic extends GameLogic {
 
     }
 
-    private boolean canClick(){
-        return _timeLogic != null && _timeLogic.isTimeRunning()
-                && _gameModel.getHandledAreas().size() < 5 && _gameModel.getGameState() == GameState.Playing;
-    }
-
 
 
 
@@ -370,7 +390,6 @@ public class MainLogic extends GameLogic {
 
     @Override
     public void dispose() {
-        _imageStorage.dispose();
     }
 
     public MainScreen getMainScreen() {
@@ -385,19 +404,11 @@ public class MainLogic extends GameLogic {
         return _timeLogic;
     }
 
-    public void setTimeLogic(TimeLogic _timeLogic) {
-        this._timeLogic = _timeLogic;
-    }
-
     public GameModel getGameModel() {
         return _gameModel;
     }
 
-    public void setGameModel(GameModel _gameModel) {
-        this._gameModel = _gameModel;
-    }
-
-    public void setImageStorage(ImageStorage _imageStorage) {
-        this._imageStorage = _imageStorage;
+    public Services getServices() {
+        return _services;
     }
 }

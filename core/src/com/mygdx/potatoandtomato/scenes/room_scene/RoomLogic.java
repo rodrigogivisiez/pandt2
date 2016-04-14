@@ -297,7 +297,6 @@ public class RoomLogic extends LogicAbstract {
             }
         });
 
-        _userBadgeHelper.setPaused(false);
 
         //come back from game end
         if(_gameStarted){
@@ -305,6 +304,7 @@ public class RoomLogic extends LogicAbstract {
             _userBadgeHelper.refresh();
         }
 
+        _userBadgeHelper.setPaused(false);
 
         _onScreen = true;
 

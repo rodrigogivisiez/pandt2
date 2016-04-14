@@ -255,13 +255,18 @@ public class GameCoordinator implements Disposable {
     }
 
     public void abandon(){
+        abandon(null, null);
+    }
+
+    public void abandon(final HashMap<Team, ArrayList<ScoreDetails>> winners, final Runnable confirmedAbandon){
         getGameSandBox().useConfirm("PTTEXT_ABANDON", new Runnable() {
             @Override
             public void run() {     //yes
                 getGameSandBox().userAbandoned(getMyUserId());
                 ArrayList<Team> losersTeam = new ArrayList<Team>();
                 losersTeam.add(getMyTeam());
-                beforeEndGame(new HashMap<Team, ArrayList<ScoreDetails>>(), losersTeam);
+                beforeEndGame(winners, losersTeam);
+                if(confirmedAbandon != null) confirmedAbandon.run();
                 endGame();
             }
         }, new Runnable() {
@@ -309,6 +314,20 @@ public class GameCoordinator implements Disposable {
         return decisionsMaker.checkIsDecisionMaker(this.getMyUserId());
     }
 
+    public HashMap<Integer, Player> getIndexToPlayersMap(){
+        HashMap<Integer, Player> playerHashMap = new HashMap();
+
+        int i = 0;
+        for(Team team : teams){
+            for(Player player : team.getPlayers()){
+                playerHashMap.put(i, player);
+                i++;
+            }
+        }
+
+        return playerHashMap;
+    }
+
     public int getMyUniqueIndex(){
         int i = 0;
         for(Team team : teams){
@@ -321,6 +340,20 @@ public class GameCoordinator implements Disposable {
         }
         return -1;
     }
+
+    public int getPlayerUniqueIndex(String userId){
+        int i = 0;
+        for(Team team : teams){
+            for(Player player : team.getPlayers()){
+                if(player.getUserId().equals(userId)){
+                    return i;
+                }
+                i++;
+            }
+        }
+        return -1;
+    }
+
 
     public Player getPlayerByUniqueIndex(int index){
         int i = 0;
@@ -335,6 +368,16 @@ public class GameCoordinator implements Disposable {
         return new Player("", "", false, true, Color.BLACK);
     }
 
+    public Player getPlayerByUserId(String userId){
+        for(Team team : teams){
+            for(Player player : team.getPlayers()){
+                if(player.getUserId().equals(userId)){
+                    return player;
+                }
+            }
+        }
+        return new Player("", "", false, true, Color.BLACK);
+    }
 
     public void addInputProcessor(InputProcessor processor){
         _processors.add(processor);
@@ -452,10 +495,12 @@ public class GameCoordinator implements Disposable {
             }
         }
 
-        for(Team winnerTeam : winners.keySet()){
+        this._endGameResult.setWinnersScoreDetails(winners);
+        this._endGameResult.setLoserTeams(losers);
+
+       for(Team winnerTeam : winners.keySet()){
             if(winnerTeam.hasUser(getMyUserId())){
                 this._endGameResult.setWon(true);
-                this._endGameResult.setScoreDetails(winners.get(winnerTeam));
             }
         }
     }

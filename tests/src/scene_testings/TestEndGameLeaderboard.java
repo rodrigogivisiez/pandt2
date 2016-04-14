@@ -2,6 +2,7 @@ package scene_testings;
 
 import abstracts.MockDB;
 import abstracts.TestAbstract;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.mygdx.potatoandtomato.PTScreen;
@@ -10,26 +11,22 @@ import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
 import com.mygdx.potatoandtomato.helpers.services.Confirm;
-import com.mygdx.potatoandtomato.models.EndGameData;
-import com.mygdx.potatoandtomato.models.Game;
-import com.mygdx.potatoandtomato.models.Room;
-import com.mygdx.potatoandtomato.models.Services;
+import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
 import com.mygdx.potatoandtomato.scenes.leaderboard_scene.LeaderBoardScene;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.absints.IPTGame;
 import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.models.*;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.common.assets.Assets;
-import com.potatoandtomato.common.models.EndGameResult;
-import com.potatoandtomato.common.models.LeaderboardRecord;
-import com.potatoandtomato.common.models.ScoreDetails;
 import helpers.T_Services;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.mockito.Mockito.*;
 
@@ -56,9 +53,16 @@ public class TestEndGameLeaderboard extends TestAbstract {
         EndGameResult endGameResult = endGameData.getEndGameResult();
         endGameResult.setWon(true);
 
+        Profile profile = MockModel.mockProfile();
+        Team team = new Team();
+        team.addPlayer(new Player(profile.getGameName(), profile.getUserId(), true, true, Color.BLACK));
+
         ArrayList<ScoreDetails> scoreDetails = new ArrayList<ScoreDetails>();
         scoreDetails.add(new ScoreDetails(900, "test", true, true));
-        endGameResult.setScoreDetails(scoreDetails);
+
+        HashMap<Team, ArrayList<ScoreDetails>> winnerScoreDetails = new HashMap();
+        winnerScoreDetails.put(team, scoreDetails);
+        endGameResult.setWinnersScoreDetails(winnerScoreDetails);
 
         final ArrayList<LeaderboardRecord> leaderboardRecords = getSampleLeaderboardRecords();
 
@@ -224,6 +228,47 @@ public class TestEndGameLeaderboard extends TestAbstract {
         Threadings.sleep(6000);
         Assert.assertEquals(false, called[0]);
     }
+
+    @Test
+    public void testProcessOtherTeamAndSorting(){
+        final EndGameData endGameData = MockModel.mockEndGameData();
+        endGameData.getRoom().getGame().setLeaderbordTypeEnum(LeaderboardType.Normal);
+        endGameData.getRoom().getGame().setStreakEnabled(false);
+
+        EndGameResult endGameResult = endGameData.getEndGameResult();
+        endGameResult.setWon(false);
+
+        Team myTeam = new Team();
+        myTeam.addPlayer(new Player("", MockModel.mockProfile().getUserId(), true, true, Color.BLACK));
+        endGameResult.setMyTeam(myTeam.getPlayers());
+
+        ArrayList<Team> losersTeam = new ArrayList<>();
+        losersTeam.add(myTeam);
+
+        endGameResult.setLoserTeams(losersTeam);
+
+        final ArrayList<LeaderboardRecord> leaderboardRecords = getSampleLeaderboardRecords();
+
+        Services services = T_Services.mockServices();
+
+        EndGameLeaderBoardLogic logic = Mockito.spy(new EndGameLeaderBoardLogic(mock(PTScreen.class), services, endGameData, endGameResult.getMyTeam()){
+            @Override
+            public void getLeaderBoardAndMyCurrentRank() {
+            }
+        });
+
+        logic.setLeaderboardRecords(leaderboardRecords);
+        logic.processOtherTeamScoresAndStreaks();
+
+        ArrayList<LeaderboardRecord> afterLeaderboardRecords = logic.getLeaderboardRecords();
+
+        Assert.assertEquals(true, afterLeaderboardRecords.get(0).getUserIds().contains("0"));
+        Assert.assertEquals(true, afterLeaderboardRecords.get(1).getUserIds().contains("1"));
+        Assert.assertEquals(2000, afterLeaderboardRecords.get(1).getScore(), 0);
+        Assert.assertEquals(true, afterLeaderboardRecords.get(2).getUserIds().contains("3"));
+
+    }
+
 
     private ArrayList<LeaderboardRecord> getSampleLeaderboardRecords(){
         final LeaderboardRecord leaderboardRecord1 = new LeaderboardRecord();

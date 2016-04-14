@@ -80,7 +80,7 @@ public class BoardLogic implements Disposable{
         _terrains = new ArrayList<TerrainLogic>();
         _gameDataController = _services.getGameDataController();
         _graveyard = new GraveyardLogic(new GraveModel(),
-                coordinator, services.getTexts(), services.getAssets(), services.getSoundsWrapper());
+                coordinator, services.getTexts(), services.getAssets(), services, services.getSoundsWrapper());
         _roomMsgHandler = new RoomMsgHandler(this, _coordinator);
         _splashLogic = new SplashLogic(coordinator, new Runnable() {
             @Override
@@ -418,6 +418,7 @@ public class BoardLogic implements Disposable{
             _services.getSoundsWrapper().playSounds(won ? Sounds.Name.WIN : Sounds.Name.LOSE);
 
             _services.getScoresHandler().setIsMeWin(won);
+            _services.getScoresHandler().updateMatchHistory();
             _services.getScoresHandler().process(new ScoresListener(){
                 @Override
                 public void onCallBack(HashMap<Team, ArrayList<ScoreDetails>> winnerResult, ArrayList<Team> losers) {
@@ -436,10 +437,6 @@ public class BoardLogic implements Disposable{
                     });
                 }
             });
-
-
-
-
         }
     }
 

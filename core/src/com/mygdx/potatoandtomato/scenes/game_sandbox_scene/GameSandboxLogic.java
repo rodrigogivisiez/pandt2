@@ -590,7 +590,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         _services.getGamingKit().updateRoomMates(UpdateRoomMatesCode.IN_GAME_UPDATE, msg);
     }
 
-    @Override
+    @Override       //only decision maker will call this
     public void updateScores(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers) {
         if(_room.getGame().hasLeaderboard()){
             UpdateScoreLogic updateScoreLogic = new UpdateScoreLogic(_services, _room);

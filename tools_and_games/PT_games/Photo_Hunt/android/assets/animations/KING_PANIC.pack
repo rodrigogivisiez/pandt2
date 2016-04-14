@@ -1,0 +1,75 @@
+
+KING_PANIC.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+king_panic
+  rotate: false
+  xy: 0, 111
+  size: 147, 109
+  orig: 147, 109
+  offset: 0, 0
+  index: 0
+king_panic
+  rotate: false
+  xy: 0, 0
+  size: 147, 109
+  orig: 147, 109
+  offset: 0, 0
+  index: 1
+king_panic
+  rotate: false
+  xy: 149, 111
+  size: 147, 109
+  orig: 147, 109
+  offset: 0, 0
+  index: 2
+king_panic
+  rotate: false
+  xy: 149, 0
+  size: 147, 109
+  orig: 147, 109
+  offset: 0, 0
+  index: 3
+king_panic
+  rotate: false
+  xy: 298, 111
+  size: 147, 109
+  orig: 147, 109
+  offset: 0, 0
+  index: 4
+king_panic
+  rotate: false
+  xy: 298, 0
+  size: 147, 109
+  orig: 147, 109
+  offset: 0, 0
+  index: 5
+king_panic
+  rotate: false
+  xy: 447, 111
+  size: 147, 109
+  orig: 147, 109
+  offset: 0, 0
+  index: 6
+king_panic
+  rotate: false
+  xy: 447, 0
+  size: 147, 109
+  orig: 147, 109
+  offset: 0, 0
+  index: 7
+king_panic
+  rotate: false
+  xy: 596, 111
+  size: 147, 109
+  orig: 147, 109
+  offset: 0, 0
+  index: 8
+king_panic
+  rotate: false
+  xy: 596, 0
+  size: 147, 109
+  orig: 147, 109
+  offset: 0, 0
+  index: 9

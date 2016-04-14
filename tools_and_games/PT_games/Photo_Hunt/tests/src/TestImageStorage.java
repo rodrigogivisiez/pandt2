@@ -34,7 +34,7 @@ public class TestImageStorage extends TestAbstract {
     @Test
     public void testInitiateDownloads_Randomize(){
 
-        Services services = Mockings.mockServices();
+        Services services = Mockings.mockServices(_game.getCoordinator());
         services.setDatabase(Mockito.spy(new Database(null){
             @Override
             public void getLastImageIndex(DatabaseListener<Integer> listener) {
@@ -44,6 +44,7 @@ public class TestImageStorage extends TestAbstract {
             @Override
             public void getImageDetailsByIndex(int index, DatabaseListener<ImageDetails> listener) {
                 ImageDetails imageDetails = MockModel.mockImageDetails();
+                imageDetails.setId(String.valueOf(index));
                 listener.onCallback(imageDetails, Status.SUCCESS);
             }
 
@@ -115,11 +116,13 @@ public class TestImageStorage extends TestAbstract {
 
         Assert.assertEquals(true, imageStorage.getImagePairs().size() >= 5 && imageStorage.getImagePairs().size() <= 10);
 
+        imageStorage.dispose();
+
     }
 
     @Test
     public void testInitiateDownloads_NoRandomize(){
-        Services services = Mockings.mockServices();
+        Services services = Mockings.mockServices(_game.getCoordinator());
         services.setDatabase(Mockito.spy(new Database(null){
             @Override
             public void getLastImageIndex(DatabaseListener<Integer> listener) {
@@ -185,11 +188,13 @@ public class TestImageStorage extends TestAbstract {
             Assert.assertEquals(String.valueOf(i), imagePairs.get(i).getImageDetails().getId());
         }
 
+        imageStorage.dispose();
+
     }
 
     @Test
     public void testReceivedDownloadRequests(){
-        Services services = Mockings.mockServices();
+        Services services = Mockings.mockServices(_game.getCoordinator());
         services.setDatabase(Mockito.spy(new Database(null){
             @Override
             public void getLastImageIndex(DatabaseListener<Integer> listener) {
@@ -238,6 +243,8 @@ public class TestImageStorage extends TestAbstract {
         for(int i = 0; i < 5; i++){
             Assert.assertEquals(String.valueOf(i), imagePairs.get(i).getImageDetails().getId());
         }
+
+        imageStorage.dispose();
 
     }
 

@@ -6,13 +6,17 @@ import com.potatoandtomato.games.absintf.mockings.MockModel;
 import com.potatoandtomato.games.enums.GameState;
 import com.potatoandtomato.games.enums.StageType;
 import com.potatoandtomato.games.models.GameModel;
-import com.potatoandtomato.games.models.ImageDetails;
 import com.potatoandtomato.games.models.Services;
+import com.potatoandtomato.games.models.SimpleRectangle;
 import com.potatoandtomato.games.models.WonStageModel;
+import com.potatoandtomato.games.screens.hints.HintsLogic;
 import com.potatoandtomato.games.screens.main.ImageStorage;
 import com.potatoandtomato.games.screens.main.MainLogic;
 import com.potatoandtomato.games.screens.main.MainScreen;
+import com.potatoandtomato.games.screens.review.ReviewLogic;
+import com.potatoandtomato.games.screens.stage_counter.StageCounterLogic;
 import com.potatoandtomato.games.screens.time_bar.TimeLogic;
+import com.potatoandtomato.games.screens.user_counters.UserCountersLogic;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -28,110 +32,85 @@ import static org.mockito.Mockito.*;
 public class TestMainLogic extends TestAbstract {
 
     @Test
-    public void testTimeFinished(){
+    public void testLose(){
 
-        Services services =  Mockings.mockServices();
+        GameModel gameModel = new GameModel();
 
-        MainLogic mainLogic = new MainLogic(services, _game.getCoordinator()){
-            @Override
-            public void changeScreenImages(Texture texture1, Texture texture2) {
-
-            }
-        };
-        GameModel gameModel = Mockito.spy(new GameModel());
-        doAnswer(new Answer<Integer>() {
-            @Override
-            public Integer answer(InvocationOnMock invocation) throws Throwable {
-                return 2;
-            }
-        }).when(gameModel).convertStageNumberToRemainingSecs();
-
-        mainLogic.setGameModel(gameModel);
-
-        ImageStorage imageStorage = new ImageStorage(services, _game.getCoordinator()){
-            @Override
-            public void pop(String id, ImageStorageListener listener) {
-                listener.onPopped(MockModel.mockImagePair());
-            }
-        };
-
-        mainLogic.setImageStorage(imageStorage);
-
-        mainLogic.newStage("1", StageType.Normal, "");
-
-        Threadings.sleep(4000);
-
-        verify(services.getRoomMsgHandler(), times(1)).sendLose();
+        MainLogic mainLogic = Mockito.spy(getMainLogic(gameModel));
+        gameModel.setRemainingMiliSecs(0);
+        verify(mainLogic.getServices().getRoomMsgHandler(), times(0)).sendLose();
 
     }
 
     @Test
     public void testWin(){
 
-        Services services =  Mockings.mockServices();
+        GameModel gameModel = new GameModel();
 
-        MainLogic mainLogic = Mockito.spy(new MainLogic(services, _game.getCoordinator()){
-            @Override
-            public void changeScreenImages(Texture texture1, Texture texture2) {
+        MainLogic mainLogic = Mockito.spy(getMainLogic(gameModel));
+        Services services = mainLogic.getServices();
 
-            }
-        });
-
-        MainScreen mainScreen = Mockito.mock(MainScreen.class);
-        doAnswer(new Answer<Vector2>() {
-            @Override
-            public Vector2 answer(InvocationOnMock invocation) throws Throwable {
-                return new Vector2(178, 440);
-            }
-        }).when(mainScreen).getImageSize();
-
-        mainLogic.setMainScreen(mainScreen);
-
-        ImageStorage imageStorage = new ImageStorage(services, _game.getCoordinator()){
-            @Override
-            public void pop(String id, ImageStorageListener listener) {
-                listener.onPopped(MockModel.mockImagePair());
-            }
-        };
-
-        mainLogic.setImageStorage(imageStorage);
-
-        mainLogic.newStage("1", StageType.Normal, "");
+        mainLogic.goToNewStage("1", StageType.Normal, "");
 
         Threadings.sleep(200);
 
-        mainLogic.imageTouched(47, 303, 1);
-        mainLogic.imageTouched(10, 358, 1);
-        mainLogic.imageTouched(108, 60, 1);
-        mainLogic.imageTouched(123, 198, 0);
+        String userId = _game.getCoordinator().getMyUserId();
+
+        mainLogic.imageTouched(userId, 47, 303, 1, false);
+        mainLogic.imageTouched(userId, 10, 358, 1, false);
+        mainLogic.imageTouched(userId, 108, 60, 1, false);
+        mainLogic.imageTouched(userId, 123, 198, 0, false);
 
         verify(services.getRoomMsgHandler(), times(0)).sendWon(any(WonStageModel.class));
         Assert.assertEquals(GameState.Playing, mainLogic.getGameModel().getGameState());
-        Assert.assertEquals(true, mainLogic.getTimeLogic().isTimeRunning());
 
-        mainLogic.imageTouched(55, 422, 0);
-        mainLogic.imageTouched(55, 422, 0);
+        mainLogic.imageTouched(userId, 55, 422, 0, false);
+        mainLogic.imageTouched(userId, 55, 422, 0, false);
 
-        Threadings.sleep(2000);
+        Threadings.sleep(3000);
 
         verify(services.getRoomMsgHandler(), times(1)).sendWon(any(WonStageModel.class));
         Assert.assertEquals(GameState.Ended, mainLogic.getGameModel().getGameState());
-        Assert.assertEquals(false, mainLogic.getTimeLogic().isTimeRunning());
 
-        verify(mainLogic, times(0)).timeFinished();
-
+        verify(services.getRoomMsgHandler(), times(0)).sendLose();
     }
 
     @Test
-    public void testWrongTouched(){
-        Services services = Mockings.mockServices();
+    public void testWrongAndCorrectTouched(){
 
-        MainLogic mainLogic = Mockito.spy(new MainLogic(services, _game.getCoordinator()){
+        GameModel gameModel = Mockito.spy(new GameModel());
+
+        MainLogic mainLogic = Mockito.spy(getMainLogic(gameModel));
+
+        mainLogic.goToNewStage("1", StageType.Normal, "");
+
+        Threadings.sleep(200);
+
+
+        String userId = _game.getCoordinator().getMyUserId();
+
+        mainLogic.imageTouched(userId, 1, 1, 30, false);
+        verify(mainLogic.getTimeLogic(), times(1)).reduceTime();
+
+        mainLogic.imageTouched(userId, 1, 1, 30, false);
+        mainLogic.imageTouched(userId, 1, 1, 30, false);
+        verify(mainLogic.getTimeLogic(), times(3)).reduceTime();
+
+        mainLogic.imageTouched(userId, 55, 422, 0, false);
+        verify(gameModel, times(1)).addHandledArea(any(SimpleRectangle.class), any(String.class));
+
+    }
+
+
+    private MainLogic getMainLogic(GameModel gameModel){
+        Services services =  Mockings.mockServices(_game.getCoordinator());
+
+        ImageStorage imageStorage = new ImageStorage(services, _game.getCoordinator()){
             @Override
-            public void changeScreenImages(Texture texture1, Texture texture2) {
-
+            public void pop(String id, ImageStorageListener listener) {
+                listener.onPopped(MockModel.mockImagePair());
             }
-        });
+        };
 
         MainScreen mainScreen = Mockito.mock(MainScreen.class);
         doAnswer(new Answer<Vector2>() {
@@ -141,32 +120,20 @@ public class TestMainLogic extends TestAbstract {
             }
         }).when(mainScreen).getImageSize();
 
-        mainLogic.setMainScreen(mainScreen);
-
-
-        ImageStorage imageStorage = new ImageStorage(services, _game.getCoordinator()){
+        MainLogic mainLogic = new MainLogic(_game.getCoordinator(), services, mock(TimeLogic.class),
+                mock(HintsLogic.class), mock(ReviewLogic.class), mock(UserCountersLogic.class), mock(StageCounterLogic.class),
+                imageStorage, gameModel){
             @Override
-            public void pop(String id, ImageStorageListener listener) {
-                listener.onPopped(MockModel.mockImagePair());
+            public void changeScreenImages(Texture texture1, Texture texture2) {
+
             }
         };
 
-        mainLogic.setImageStorage(imageStorage);
+        mainLogic.setMainScreen(mainScreen);
 
-        mainLogic.newStage("1", StageType.Normal, "");
+        return mainLogic;
 
-        Threadings.sleep(200);
-
-        mainLogic.setTimeLogic(Mockito.mock(TimeLogic.class));
-
-        mainLogic.imageTouched(1, 1, 30);
-        verify(mainLogic.getTimeLogic(), times(1)).reduceTime();
-
-        mainLogic.imageTouched(1, 1, 30);
-        mainLogic.imageTouched(1, 1, 30);
-        verify(mainLogic.getTimeLogic(), times(3)).reduceTime();
     }
-
 
 
 

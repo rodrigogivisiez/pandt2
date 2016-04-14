@@ -1,0 +1,75 @@
+
+KING_NORMAL.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+king_normal
+  rotate: false
+  xy: 0, 308
+  size: 111, 152
+  orig: 111, 152
+  offset: 0, 0
+  index: 0
+king_normal
+  rotate: false
+  xy: 0, 154
+  size: 111, 152
+  orig: 111, 152
+  offset: 0, 0
+  index: 1
+king_normal
+  rotate: false
+  xy: 113, 308
+  size: 111, 152
+  orig: 111, 152
+  offset: 0, 0
+  index: 2
+king_normal
+  rotate: false
+  xy: 0, 0
+  size: 111, 152
+  orig: 111, 152
+  offset: 0, 0
+  index: 3
+king_normal
+  rotate: false
+  xy: 113, 154
+  size: 111, 152
+  orig: 111, 152
+  offset: 0, 0
+  index: 4
+king_normal
+  rotate: false
+  xy: 226, 308
+  size: 111, 152
+  orig: 111, 152
+  offset: 0, 0
+  index: 5
+king_normal
+  rotate: false
+  xy: 113, 0
+  size: 111, 152
+  orig: 111, 152
+  offset: 0, 0
+  index: 6
+king_normal
+  rotate: false
+  xy: 226, 154
+  size: 111, 152
+  orig: 111, 152
+  offset: 0, 0
+  index: 7
+king_normal
+  rotate: false
+  xy: 339, 308
+  size: 111, 152
+  orig: 111, 152
+  offset: 0, 0
+  index: 8
+king_normal
+  rotate: false
+  xy: 226, 0
+  size: 111, 152
+  orig: 111, 152
+  offset: 0, 0
+  index: 9

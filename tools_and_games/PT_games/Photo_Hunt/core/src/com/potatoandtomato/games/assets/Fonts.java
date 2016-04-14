@@ -27,12 +27,19 @@ public class Fonts extends FontAssets {
 
 
     public enum FontId{
+        MYRIAD_XS_REGULAR,
+        MYRIAD_XS_REGULAR_B_ffffff_000000_1,
         MYRIAD_S_REGULAR,
+        MYRIAD_M_REGULAR_B_ffffff_000000_2,
         MYRIAD_M_REGULAR,
+        MYRIAD_M_REGULAR_B_ffffff_8e4403_2,
         MYRIAD_M_REGULAR_B_000000_588e54_1,             //dark green
 
+        ENCHANTED_XL_REGULAR,
         ENCHANTED_XXL_REGULAR,
+        ENCHANTED_MAX_REGULAR,
         ENCHANTED_MAX_REGULAR_B_FFFFFF_563500_4,
+
 
         HELVETICA_XS_BlACKCONDENSEDITALIC,
         HELVETICA_XXL_HEAVY,

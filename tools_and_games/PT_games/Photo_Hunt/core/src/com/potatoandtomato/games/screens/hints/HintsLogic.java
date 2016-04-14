@@ -2,7 +2,9 @@ package com.potatoandtomato.games.screens.hints;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.potatoandtomato.games.absintf.GameModelListener;
 import com.potatoandtomato.games.absintf.HintsLogicListener;
+import com.potatoandtomato.games.enums.GameState;
 import com.potatoandtomato.games.models.GameModel;
 import com.potatoandtomato.games.models.Services;
 
@@ -37,9 +39,14 @@ public class HintsLogic {
         this.hintsActor.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(hintsLogicListener != null && gameModel.getHintsLeft() > 0){
-                    hintsLogicListener.onHintClicked();
-                }
+                hintsLogicListener.onHintClicked();
+            }
+        });
+
+        gameModel.addGameModelListener(new GameModelListener() {
+            @Override
+            public void onHintChanged(int newHintLeft) {
+                invalidate();
             }
         });
     }
@@ -51,6 +58,8 @@ public class HintsLogic {
     public void setHintsLogicListener(HintsLogicListener hintsLogicListener) {
         this.hintsLogicListener = hintsLogicListener;
     }
+
+
 
 
 }

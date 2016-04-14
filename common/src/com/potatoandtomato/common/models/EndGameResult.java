@@ -1,28 +1,36 @@
 package com.potatoandtomato.common.models;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by SiongLeng on 18/3/2016.
  */
 public class EndGameResult {
 
-    private ArrayList<ScoreDetails> _scoreDetails;
+    private HashMap<Team, ArrayList<ScoreDetails>> _winnersScoreDetails;
+    private ArrayList<Team> _loserTeams;
     private boolean  _won;
     private ArrayList<Player> _myTeam;
 
     public EndGameResult() {
     }
 
-    public EndGameResult(ArrayList<ScoreDetails> _scoreDetails, boolean _won) {
-        this._scoreDetails = _scoreDetails;
-        this._won = _won;
-    }
-
-    public EndGameResult(ArrayList<ScoreDetails> _scoreDetails, boolean _won, ArrayList<Player> _myTeam) {
-        this._scoreDetails = _scoreDetails;
+    public EndGameResult(HashMap<Team, ArrayList<ScoreDetails>> _winnersScoreDetails,
+                            ArrayList<Team> _loserTeams, boolean _won, ArrayList<Player> _myTeam) {
+        this._winnersScoreDetails = _winnersScoreDetails;
+        this._loserTeams = _loserTeams;
         this._won = _won;
         this._myTeam = _myTeam;
+    }
+
+    public ArrayList<Team> getLoserTeams() {
+        if(_loserTeams == null) _loserTeams = new ArrayList<Team>();
+        return _loserTeams;
+    }
+
+    public void setLoserTeams(ArrayList<Team> _loserTeams) {
+        this._loserTeams = _loserTeams;
     }
 
     public ArrayList<Player> getMyTeam() {
@@ -33,10 +41,6 @@ public class EndGameResult {
         this._myTeam = _myTeam;
     }
 
-    public void setScoreDetails(ArrayList<ScoreDetails> _scoreDetails) {
-        this._scoreDetails = _scoreDetails;
-    }
-
     public void setWon(boolean _won) {
         this._won = _won;
     }
@@ -45,8 +49,22 @@ public class EndGameResult {
         return _won;
     }
 
-    public ArrayList<ScoreDetails> getScoreDetails() {
-        return _scoreDetails;
+    public ArrayList<ScoreDetails> getMyTeamWinnerScoreDetails(String userId){
+        for(Team winnerTeam : _winnersScoreDetails.keySet()){
+            if(winnerTeam.hasUser(userId)){
+                return _winnersScoreDetails.get(winnerTeam);
+            }
+        }
+        return new ArrayList();
+    }
+
+    public HashMap<Team, ArrayList<ScoreDetails>> getWinnersScoreDetails() {
+        if(_winnersScoreDetails == null) return new HashMap();
+        return _winnersScoreDetails;
+    }
+
+    public void setWinnersScoreDetails(HashMap<Team, ArrayList<ScoreDetails>> _winnersScoreDetails) {
+        this._winnersScoreDetails = _winnersScoreDetails;
     }
 
     public boolean isEmpty(){

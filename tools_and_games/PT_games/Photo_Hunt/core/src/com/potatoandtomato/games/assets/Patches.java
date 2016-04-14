@@ -8,7 +8,7 @@ import com.potatoandtomato.common.assets.PatchAssets;
 public class Patches extends PatchAssets {
 
     public enum Name{
-        WHITE_ROUNDED_BG
+        WHITE_ROUNDED_BG, RED_ARROW
     }
 
 }

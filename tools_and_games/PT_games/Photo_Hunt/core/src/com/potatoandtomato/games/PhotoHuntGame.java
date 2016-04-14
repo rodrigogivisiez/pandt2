@@ -5,6 +5,7 @@ import com.potatoandtomato.common.absints.IDownloader;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.mockings.MockGame;
 import com.potatoandtomato.common.utils.SafeThread;
+import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.games.absintf.DatabaseListener;
 import com.potatoandtomato.games.absintf.mockings.MockModel;
 import com.potatoandtomato.games.models.ImageDetails;
@@ -52,12 +53,12 @@ public class PhotoHuntGame extends MockGame {
 
 							@Override
 							public void getImageDetailsByIndex(int index, DatabaseListener<ImageDetails> listener) {
-								listener.onCallback(MockModel.mockImageDetails(), Status.SUCCESS);
+								listener.onCallback(MockModel.mockImageDetails(Strings.generateRandomKey(5)), Status.SUCCESS);
 							}
 
 							@Override
 							public void getImageDetailsById(String id, DatabaseListener<ImageDetails> listener) {
-								listener.onCallback(MockModel.mockImageDetails(), Status.SUCCESS);
+								listener.onCallback(MockModel.mockImageDetails(id), Status.SUCCESS);
 							}
 						});
 						getCoordinator().setDownloader(new IDownloader() {

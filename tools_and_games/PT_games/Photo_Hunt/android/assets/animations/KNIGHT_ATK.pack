@@ -1,0 +1,264 @@
+
+KNIGHT_ATK.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+knight_atk
+  rotate: false
+  xy: 0, 798
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 0
+knight_atk
+  rotate: false
+  xy: 0, 684
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 1
+knight_atk
+  rotate: false
+  xy: 108, 798
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 2
+knight_atk
+  rotate: false
+  xy: 0, 570
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 3
+knight_atk
+  rotate: false
+  xy: 108, 684
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 4
+knight_atk
+  rotate: false
+  xy: 216, 798
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 5
+knight_atk
+  rotate: false
+  xy: 0, 456
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 6
+knight_atk
+  rotate: false
+  xy: 108, 570
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 7
+knight_atk
+  rotate: false
+  xy: 216, 684
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 8
+knight_atk
+  rotate: false
+  xy: 324, 798
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 9
+knight_atk
+  rotate: false
+  xy: 0, 342
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 10
+knight_atk
+  rotate: false
+  xy: 108, 456
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 11
+knight_atk
+  rotate: false
+  xy: 216, 570
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 12
+knight_atk
+  rotate: false
+  xy: 324, 684
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 13
+knight_atk
+  rotate: false
+  xy: 432, 798
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 14
+knight_atk
+  rotate: false
+  xy: 0, 228
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 15
+knight_atk
+  rotate: false
+  xy: 108, 342
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 16
+knight_atk
+  rotate: false
+  xy: 216, 456
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 17
+knight_atk
+  rotate: false
+  xy: 324, 570
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 18
+knight_atk
+  rotate: false
+  xy: 432, 684
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 19
+knight_atk
+  rotate: false
+  xy: 540, 798
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 20
+knight_atk
+  rotate: false
+  xy: 0, 114
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 21
+knight_atk
+  rotate: false
+  xy: 108, 228
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 22
+knight_atk
+  rotate: false
+  xy: 216, 342
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 23
+knight_atk
+  rotate: false
+  xy: 324, 456
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 24
+knight_atk
+  rotate: false
+  xy: 432, 570
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 25
+knight_atk
+  rotate: false
+  xy: 540, 684
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 26
+knight_atk
+  rotate: false
+  xy: 648, 798
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 27
+knight_atk
+  rotate: false
+  xy: 0, 0
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 28
+knight_atk
+  rotate: false
+  xy: 108, 114
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 29
+knight_atk
+  rotate: false
+  xy: 216, 228
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 30
+knight_atk
+  rotate: false
+  xy: 324, 342
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 31
+knight_atk
+  rotate: false
+  xy: 432, 456
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 32
+knight_atk
+  rotate: false
+  xy: 540, 570
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 33
+knight_atk
+  rotate: false
+  xy: 648, 684
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 34
+knight_atk
+  rotate: false
+  xy: 756, 798
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 35
+knight_atk
+  rotate: false
+  xy: 108, 0
+  size: 106, 112
+  orig: 106, 112
+  offset: 0, 0
+  index: 36

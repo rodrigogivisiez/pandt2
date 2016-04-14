@@ -19,6 +19,7 @@ import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.models.ScoreDetails;
 import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.statics.CommonVersion;
+import com.potatoandtomato.common.utils.ColorUtils;
 import com.potatoandtomato.common.utils.Downloader;
 import com.potatoandtomato.common.utils.Strings;
 
@@ -124,11 +125,14 @@ public abstract class MockGame extends Game implements IPTGame {
                 if(debugging){
                     boolean addedMe = false;
                     ArrayList<Team> teams = new ArrayList<Team>();
+                    int index = 0;
                     for(int i = 0; i < expectedTeamCount; i++){
                         Team team = new Team();
                         for(int q = 0; q < eachTeamExpectedPlayers; q++){
-                            team.addPlayer(new Player("test", !addedMe ? _mockGamingKit.getUserId() : Strings.generateRandomKey(8), true, true, Color.BLACK));
+                            team.addPlayer(new Player("test", !addedMe ? _mockGamingKit.getUserId() : Strings.generateRandomKey(8), true, true,
+                                                        ColorUtils.getUserColorByIndex(index)));
                             addedMe = true;
+                            index++;
                         }
                         teams.add(team);
                     }

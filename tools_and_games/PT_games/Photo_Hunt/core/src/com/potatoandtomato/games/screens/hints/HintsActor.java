@@ -1,9 +1,11 @@
 package com.potatoandtomato.games.screens.hints;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.potatoandtomato.games.assets.MyAssets;
 import com.potatoandtomato.games.assets.Textures;
 import com.potatoandtomato.games.controls.DummyButton;
@@ -93,7 +95,7 @@ public class HintsActor extends Table {
         if(off3){
             hintOnImage3.addAction(sequence(Actions.scaleTo(0, 0, 0.1f)));
         }
-
     }
+
 
 }

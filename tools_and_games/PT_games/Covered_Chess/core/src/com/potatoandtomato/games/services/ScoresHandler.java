@@ -146,7 +146,9 @@ public class ScoresHandler implements Disposable{
             winnerColor = gameDataController.getEnemyChessColor();
             loserColor = gameDataController.getMyChessColor();
         }
+    }
 
+    public void updateMatchHistory(){
         if(this.winnerTeam.getPlayersUserIds().size() > 0 && this.loserTeam.getPlayersUserIds().size() > 0){
             database.saveMatchHistory(this.winnerTeam.getPlayersUserIds().get(0), this.loserTeam.getPlayersUserIds().get(0), null);
         }

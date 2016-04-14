@@ -1,8 +1,11 @@
 import com.badlogic.gdx.assets.AssetManager;
+import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.assets.AnimationAssets;
 import com.potatoandtomato.common.assets.FontAssets;
 import com.potatoandtomato.common.assets.PatchAssets;
 import com.potatoandtomato.common.assets.SoundAssets;
+import com.potatoandtomato.common.utils.Threadings;
+import com.potatoandtomato.games.assets.Animations;
 import com.potatoandtomato.games.assets.MyAssets;
 import com.potatoandtomato.games.assets.Textures;
 import com.potatoandtomato.games.models.Services;
@@ -17,10 +20,15 @@ import org.mockito.Mockito;
  */
 public class Mockings {
 
-    public static  Services mockServices(){
-        MyAssets myAssets = new MyAssets(Mockito.mock(AssetManager.class), Mockito.mock(FontAssets.class),
-                Mockito.mock(AnimationAssets.class), Mockito.mock(SoundAssets.class), Mockito.mock(PatchAssets.class),
-                Mockito.mock(Textures.class));
+    public static  Services mockServices(GameCoordinator gameCoordinator){
+        AssetManager manager = gameCoordinator.getAssetManager(true);
+
+        MyAssets myAssets = new MyAssets(manager, Mockito.mock(FontAssets.class),
+                new Animations(manager), Mockito.mock(SoundAssets.class), Mockito.mock(PatchAssets.class),
+                new Textures(manager, "pack.atlas"));
+
+        myAssets.loadBasic(null);
+
 
         Services services = new Services(myAssets, Mockito.mock(SoundsWrapper.class), Mockito.mock(Database.class),
                 Mockito.mock(Texts.class), Mockito.mock(RoomMsgHandler.class));

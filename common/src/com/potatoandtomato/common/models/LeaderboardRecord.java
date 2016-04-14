@@ -119,4 +119,12 @@ public class LeaderboardRecord {
         }
     }
 
+    public void addStreakToRecord(ArrayList<ScoreDetails> scoreDetails){
+        for(ScoreDetails detail : scoreDetails){
+            if(detail.canAddStreak()){
+                this.getStreak().addStreakCount();
+            }
+        }
+    }
+
 }

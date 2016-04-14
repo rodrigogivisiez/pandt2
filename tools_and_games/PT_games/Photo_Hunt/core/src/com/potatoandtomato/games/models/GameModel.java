@@ -1,8 +1,10 @@
 package com.potatoandtomato.games.models;
 
 import com.badlogic.gdx.math.Rectangle;
-import com.potatoandtomato.games.absintf.GameStateListener;
+import com.potatoandtomato.games.absintf.GameModelListener;
 import com.potatoandtomato.games.enums.GameState;
+import com.potatoandtomato.games.enums.StageType;
+import com.potatoandtomato.games.statics.Global;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
 import com.shaded.fasterxml.jackson.core.JsonProcessingException;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
@@ -20,10 +22,12 @@ public class GameModel {
     private int score;
     private GameState gameState;
     private ArrayList<SimpleRectangle> handledAreas;
-    private int remainingSecs;
+    private int remainingMiliSecs;
     private int hintsLeft;
+    private int freezingMiliSecs;
     private ImageDetails imageDetails;
-    private GameStateListener gameStateListener;
+    private StageType stageType;
+    private ArrayList<GameModelListener> listeners;
 
 
     public GameModel(int stageNumber, int score) {
@@ -32,12 +36,22 @@ public class GameModel {
         this.userRecords = new HashMap();
         this.handledAreas = new ArrayList();
         this.hintsLeft = 3;
+        this.listeners = new ArrayList();
     }
 
     public GameModel() {
         this.userRecords = new HashMap();
         this.handledAreas = new ArrayList();
         this.hintsLeft = 3;
+        this.listeners = new ArrayList();
+    }
+
+    public StageType getStageType() {
+        return stageType;
+    }
+
+    public void setStageType(StageType stageType) {
+        this.stageType = stageType;
     }
 
     public ImageDetails getImageDetails() {
@@ -56,12 +70,57 @@ public class GameModel {
         this.hintsLeft = hintsLeft;
     }
 
-    public int getRemainingSecs() {
-        return remainingSecs;
+    public void minusHintLeft(boolean notifyListener){
+        setHintsLeft(hintsLeft - 1);
+        if(notifyListener){
+            for(GameModelListener listener : listeners){
+                listener.onHintChanged(hintsLeft);
+            }
+        }
     }
 
-    public void setRemainingSecs(int remainingSecs) {
-        this.remainingSecs = remainingSecs;
+    public int getRemainingMiliSecs() {
+        return remainingMiliSecs;
+    }
+
+    public void setRemainingMiliSecs(int remainingMiliSecs, boolean notify) {
+        this.remainingMiliSecs = remainingMiliSecs;
+        if(notify){
+            for(GameModelListener listener : listeners){
+                listener.onRemainingMiliSecsChanged(remainingMiliSecs);
+            }
+        }
+
+        if(this.remainingMiliSecs <= 0 && notify){
+            for(GameModelListener listener : listeners){
+                listener.onTimeFinished();
+            }
+        }
+    }
+
+    public void minusRemainingMiliSecs(int minus){
+        setRemainingMiliSecs(this.remainingMiliSecs - minus, true);
+    }
+
+    public int getFreezingMiliSecs() {
+        return freezingMiliSecs;
+    }
+
+    public void setFreezingMiliSecs(int freezingMiliSecs) {
+        this.freezingMiliSecs = freezingMiliSecs;
+        for(GameModelListener listener : listeners){
+            listener.onFreezingMiliSecsChanged(freezingMiliSecs);
+        }
+    }
+
+    public void addFreezeMiliSecs(){
+        if(freezingMiliSecs < 0){
+            freezingMiliSecs = 0;
+        }
+
+        if(freezingMiliSecs < 2000){
+            setFreezingMiliSecs(freezingMiliSecs + 2000);
+        }
     }
 
     public HashMap<String, Integer> getUserRecords() {
@@ -86,7 +145,9 @@ public class GameModel {
 
     public void setGameState(GameState gameState) {
         this.gameState = gameState;
-        if(this.gameStateListener != null) gameStateListener.onChanged(gameState);
+        for(GameModelListener listener : listeners){
+            listener.onGameStateChanged(gameState);
+        }
     }
 
     public int getScore() {
@@ -103,22 +164,39 @@ public class GameModel {
 
     public void setStageNumber(int stageNumber) {
         this.stageNumber = stageNumber;
+        convertStageNumberToRemainingMiliSecs();
+        for(GameModelListener listener : listeners){
+            listener.onStageNumberChanged(stageNumber);
+        }
     }
 
     @JsonIgnore
     public void addStageNumber(){
-        stageNumber++;
+        setStageNumber(stageNumber + 1);
     }
 
     @JsonIgnore
-    public void convertStageNumberToRemainingSecs(){
-        if(stageNumber < 10){
-            this.setRemainingSecs(30);
-        }
-        else{
-            this.setRemainingSecs(10);
-        }
+    public void convertStageNumberToRemainingMiliSecs(){
+        double time =  getThisStageTotalMiliSecs();
+        this.setRemainingMiliSecs((int) time, true);
     }
+
+    @JsonIgnore
+    public int getThisStageTotalMiliSecs(){
+        double time =  Math.max(60000 - (Math.pow(stageNumber, 1.5) * 1000), 0) + 6000;
+        return (int) time;
+    }
+
+    @JsonIgnore
+    public int getThisStageTotalMovingMiliSecs(){
+        return getThisStageTotalMiliSecs() - getThisStageTotalAtkMiliSecs();
+    }
+
+    @JsonIgnore
+    public int getThisStageTotalAtkMiliSecs(){
+        return Math.max(5000, getThisStageTotalMiliSecs() * ((Global.ATTACK_TIME_PERCENT) / 100));
+    }
+
 
     @JsonIgnore
     public void addUserClickedCount(String userId){
@@ -127,6 +205,10 @@ public class GameModel {
         }
         else{
             userRecords.put(userId, userRecords.get(userId) + 1);
+        }
+
+        for(GameModelListener listener : listeners){
+            listener.onAddedClickCount(userId, userRecords.get(userId));
         }
     }
 
@@ -167,9 +249,13 @@ public class GameModel {
     }
 
     @JsonIgnore
-    public void addHandledArea(SimpleRectangle rectangle){
+    public void addHandledArea(SimpleRectangle rectangle, String userId){
         if(!isAreaAlreadyHandled(rectangle)){
             handledAreas.add(rectangle);
+            for(GameModelListener listener : listeners){
+                listener.onCorrectClicked(rectangle, userId);
+            }
+            addUserClickedCount(userId);
         }
     }
 
@@ -190,12 +276,22 @@ public class GameModel {
     }
 
     @JsonIgnore
-    public GameStateListener getGameStateListener() {
-        return gameStateListener;
+    public GameModelListener addGameModelListener(GameModelListener listener){
+        this.listeners.add(listener);
+        return listener;
     }
 
     @JsonIgnore
-    public void setGameStateListener(GameStateListener gameStateListener) {
-        this.gameStateListener = gameStateListener;
+    public void removeGameModelListener(GameModelListener listener){
+        this.listeners.remove(listener);
+    }
+
+    @JsonIgnore
+    public boolean isPlaying(){
+        return getHandledAreas().size() < 5 && getGameState() == GameState.Playing && getRemainingMiliSecs() > 0;
+    }
+
+    public void dispose(){
+        listeners.clear();
     }
 }

@@ -22,6 +22,7 @@ import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.RoomUser;
 import com.mygdx.potatoandtomato.models.Services;
+import com.potatoandtomato.common.controls.Animator;
 
 import java.util.HashMap;
 

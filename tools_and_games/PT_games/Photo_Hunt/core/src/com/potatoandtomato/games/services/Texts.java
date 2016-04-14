@@ -5,5 +5,7 @@ package com.potatoandtomato.games.services;
  */
 public class Texts {
 
-  
+    public String nextHighScore(){ return "Next HighScore"; }
+    public String gameStarting(){ return "Game starting"; }
+    public String verySoon(){ return "very very soon....."; }
 }

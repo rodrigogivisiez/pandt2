@@ -7,13 +7,13 @@ public class TouchedPoint {
 
     public float x;
     public float y;
-    public int remainingSecs;
+    public int remainingMiliSecs;
     public boolean usedHint;
 
-    public TouchedPoint(float x, float y, int remainingSecs, boolean usedHint) {
+    public TouchedPoint(float x, float y, int remainingMiliSecs, boolean usedHint) {
         this.x = x;
         this.y = y;
-        this.remainingSecs = remainingSecs;
+        this.remainingMiliSecs = remainingMiliSecs;
         this.usedHint = usedHint;
     }
 
@@ -44,11 +44,11 @@ public class TouchedPoint {
         this.y = y;
     }
 
-    public int getRemainingSecs() {
-        return remainingSecs;
+    public int getRemainingMiliSecs() {
+        return remainingMiliSecs;
     }
 
-    public void setRemainingSecs(int remainingSecs) {
-        this.remainingSecs = remainingSecs;
+    public void setRemainingMiliSecs(int remainingMiliSecs) {
+        this.remainingMiliSecs = remainingMiliSecs;
     }
 }

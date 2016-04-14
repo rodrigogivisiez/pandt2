@@ -16,10 +16,12 @@ import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.models.LeaderboardRecord;
 import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.models.ScoreDetails;
+import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by SiongLeng on 8/3/2016.
@@ -72,7 +74,8 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                     _myLeaderboardRecord.resetStreak();
                 }
 
-                _scoreDetails = _endGameData.getEndGameResult().getScoreDetails();
+                _scoreDetails = _endGameData.getEndGameResult().getMyTeamWinnerScoreDetails(_services.getProfile().getUserId());
+                processOtherTeamScoresAndStreaks();
 
                 if (_endGameData.getEndGameResult().isWon()) {
                     winnerHandling();
@@ -238,7 +241,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
         });
     }
 
-    private void getLeaderBoardAndMyCurrentRank(){
+    public void getLeaderBoardAndMyCurrentRank(){
         _services.getDatabase().getLeaderBoardAndStreak(_game, _leaderboardSize, new DatabaseListener<ArrayList<LeaderboardRecord>>() {
             @Override
             public void onCallback(final ArrayList<LeaderboardRecord> records, Status st) {
@@ -426,6 +429,55 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
         return 100;
     }
 
+    public void processOtherTeamScoresAndStreaks(){
+
+        HashMap<Team, ArrayList<ScoreDetails>> winnersScoreDetails = _endGameData.getEndGameResult().getWinnersScoreDetails();
+        ArrayList<Team> loserTeams = _endGameData.getEndGameResult().getLoserTeams();
+
+        ArrayList<Integer> changedRecordIndexes = new ArrayList<Integer>();
+
+        for(Team team : winnersScoreDetails.keySet()){
+            if(!team.hasUser(_services.getProfile().getUserId())){
+                ArrayList<ScoreDetails> scoreDetails = winnersScoreDetails.get(team);
+                int i = 0;
+                for(LeaderboardRecord record : _records){
+                    if(record.usersMatched(team.getPlayersUserIds())){
+                        record.addScoresToRecord(scoreDetails);
+                        changedRecordIndexes.add(i);
+                        if(_room.getGame().isStreakEnabled()){
+                            record.addStreakToRecord(scoreDetails);
+                        }
+                    }
+                    i++;
+                }
+            }
+        }
+
+        if(_room.getGame().isStreakEnabled()){
+            for(Team team : loserTeams){
+                if(!team.hasUser(_services.getProfile().getUserId())){
+                    for(LeaderboardRecord record : _records){
+                        if(record.usersMatched(team.getPlayersUserIds())){
+                            record.resetStreak();
+                        }
+                    }
+                }
+            }
+        }
+
+        for(Integer index : changedRecordIndexes){
+            for(int i = 0; i < index; i++){
+                if(_records.get(i).getScore() < _records.get(index).getScore()){
+                    LeaderboardRecord record = _records.get(index);
+                    _records.remove(record);
+                    _records.add(i, record);
+                    break;
+                }
+            }
+        }
+    }
+
+
     @Override
     public SceneAbstract getScene() {
         return _scene;
@@ -437,5 +489,13 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
 
     public void setStreakResetted(boolean _streakResetted) {
         this._streakResetted = _streakResetted;
+    }
+
+    public void setLeaderboardRecords(ArrayList<LeaderboardRecord> _records) {
+        this._records = _records;
+    }
+
+    public ArrayList<LeaderboardRecord> getLeaderboardRecords() {
+        return _records;
     }
 }

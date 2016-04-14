@@ -15,7 +15,10 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.absints.GameScreen;
 import com.potatoandtomato.common.assets.Assets;
+import com.potatoandtomato.common.models.ScoreDetails;
+import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.utils.Threadings;
+import com.potatoandtomato.games.absint.ScoresListener;
 import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.assets.Textures;
 import com.potatoandtomato.games.controls.DummyButton;
@@ -26,6 +29,7 @@ import com.potatoandtomato.games.services.Texts;
 import com.potatoandtomato.games.statics.Global;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -45,6 +49,7 @@ public class BoardScreen extends GameScreen {
     private Stage _stage;
     private Assets _assets;
     private boolean _paused;
+    private boolean _abandoning;
 
 
     public BoardScreen(GameCoordinator gameCoordinator, Services services,
@@ -188,7 +193,18 @@ public class BoardScreen extends GameScreen {
     @Override
     public void render(float delta) {
         if (Gdx.input.isKeyPressed(Input.Keys.BACK)){
-            getCoordinator().abandon();
+            _services.getScoresHandler().setIsMeWin(false);
+            _services.getScoresHandler().process(new ScoresListener() {
+                @Override
+                public void onCallBack(HashMap<Team, ArrayList<ScoreDetails>> winnerResult, ArrayList<Team> losers) {
+                    getCoordinator().abandon(winnerResult, new Runnable() {
+                        @Override
+                        public void run() {
+                            _services.getScoresHandler().updateMatchHistory();
+                        }
+                    });
+                }
+            });
         }
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);

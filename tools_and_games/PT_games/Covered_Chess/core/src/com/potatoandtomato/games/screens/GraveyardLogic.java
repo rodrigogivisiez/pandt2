@@ -6,16 +6,23 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.potatoandtomato.common.GameCoordinator;
+import com.potatoandtomato.common.models.ScoreDetails;
+import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
+import com.potatoandtomato.games.absint.ScoresListener;
 import com.potatoandtomato.games.assets.MyAssets;
 import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
 import com.potatoandtomato.games.models.BoardModel;
 import com.potatoandtomato.games.models.GraveModel;
+import com.potatoandtomato.games.models.Services;
 import com.potatoandtomato.games.services.SoundsWrapper;
 import com.potatoandtomato.games.services.Texts;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by SiongLeng on 19/2/2016.
@@ -31,11 +38,13 @@ public class GraveyardLogic implements Disposable {
     private boolean _pauseTimer;
     private ChessColor _currentTurnChessColor;
     private GameCoordinator _coordinator;
+    private Services _services;
 
-    public GraveyardLogic(GraveModel graveModel, GameCoordinator gameCoordinator, Texts texts, MyAssets assets, SoundsWrapper soundsWrapper) {
+    public GraveyardLogic(GraveModel graveModel, GameCoordinator gameCoordinator, Texts texts, MyAssets assets, Services services, SoundsWrapper soundsWrapper) {
         this._coordinator = gameCoordinator;
         this._graveModel = graveModel;
         this._soundsWrapper = soundsWrapper;
+        this._services = services;
         this._graveyardActor = new GraveyardActor(gameCoordinator, texts, assets);
         setListener();
     }
@@ -125,7 +134,18 @@ public class GraveyardLogic implements Disposable {
             _graveyardActor.getGraveLabel().addListener(new ClickListener(){
                 @Override
                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    _coordinator.abandon();
+                    _services.getScoresHandler().setIsMeWin(false);
+                    _services.getScoresHandler().process(new ScoresListener() {
+                        @Override
+                        public void onCallBack(HashMap<Team, ArrayList<ScoreDetails>> winnerResult, ArrayList<Team> losers) {
+                            _coordinator.abandon(winnerResult, new Runnable() {
+                                @Override
+                                public void run() {
+                                    _services.getScoresHandler().updateMatchHistory();
+                                }
+                            });
+                        }
+                    });
                     return super.touchDown(event, x, y, pointer, button);
                 }
             });

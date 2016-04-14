@@ -1,0 +1,47 @@
+
+KNIGHT_RUN.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+knight_run
+  rotate: false
+  xy: 0, 0
+  size: 122, 97
+  orig: 122, 97
+  offset: 0, 0
+  index: 0
+knight_run
+  rotate: false
+  xy: 124, 0
+  size: 122, 97
+  orig: 122, 97
+  offset: 0, 0
+  index: 1
+knight_run
+  rotate: false
+  xy: 124, 0
+  size: 122, 97
+  orig: 122, 97
+  offset: 0, 0
+  index: 5
+knight_run
+  rotate: false
+  xy: 248, 0
+  size: 122, 97
+  orig: 122, 97
+  offset: 0, 0
+  index: 2
+knight_run
+  rotate: false
+  xy: 248, 0
+  size: 122, 97
+  orig: 122, 97
+  offset: 0, 0
+  index: 4
+knight_run
+  rotate: false
+  xy: 372, 0
+  size: 122, 97
+  orig: 122, 97
+  offset: 0, 0
+  index: 3

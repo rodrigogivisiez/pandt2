@@ -21,10 +21,10 @@ public class DesktopLauncher {
 		settings.filterMin = Texture.TextureFilter.Linear;
 		if(arg.length > 0 && arg[0].equals("pack")) TexturePacker.process(settings, "../../images", "../../android/assets", "pack");
 
+		if(arg.length > 0 && (arg[0].equals("debug"))) Global.setDEBUG(true);
+
 		PhotoHuntGame photoHuntGame = new PhotoHuntGame("photo_hunt");
 		if(arg.length > 0 && arg[0].equals("continue")) photoHuntGame.isContinue = true;
-
-		if(arg.length > 0 && (arg[0].equals("debug"))) Global.DEBUG = true;
 
 		if(arg.length > 0 && arg[0].equals("pack")) return;
 

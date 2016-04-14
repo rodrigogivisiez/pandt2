@@ -6,6 +6,7 @@ import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.models.EndGameResult;
 import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.models.ScoreDetails;
+import com.potatoandtomato.common.models.Team;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,14 +87,20 @@ public class MockModel {
     }
 
     public static EndGameData mockEndGameData(){
-        ArrayList<ScoreDetails> scoreDetails = new ArrayList<ScoreDetails>();
-        scoreDetails.add(new ScoreDetails(100, "5 win", true, true));
+        ArrayList<ScoreDetails> scoreDetails = new ArrayList<>();
+        scoreDetails.add(new ScoreDetails(1000, "5 win", true, true));
 
         ArrayList<Player> myTeams = new ArrayList<Player>();
         myTeams.add(new Player("abc", "1", true, true, Color.BLACK));
 
+        Team team = new Team();
+        team.setPlayers(myTeams);
+
+        HashMap<Team, ArrayList<ScoreDetails>> winnersScoreDetails = new HashMap();
+        winnersScoreDetails.put(team, scoreDetails);
+
         EndGameResult endGameResult = new EndGameResult();
-        endGameResult.setScoreDetails(scoreDetails);
+        endGameResult.setWinnersScoreDetails(winnersScoreDetails);
         endGameResult.setWon(true);
         endGameResult.setMyTeam(myTeams);
 

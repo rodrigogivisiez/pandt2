@@ -1,0 +1,47 @@
+
+KNIGHT_WALK.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+knight_walk
+  rotate: false
+  xy: 0, 0
+  size: 107, 95
+  orig: 107, 95
+  offset: 0, 0
+  index: 0
+knight_walk
+  rotate: false
+  xy: 109, 0
+  size: 107, 95
+  orig: 107, 95
+  offset: 0, 0
+  index: 1
+knight_walk
+  rotate: false
+  xy: 109, 0
+  size: 107, 95
+  orig: 107, 95
+  offset: 0, 0
+  index: 5
+knight_walk
+  rotate: false
+  xy: 218, 0
+  size: 107, 95
+  orig: 107, 95
+  offset: 0, 0
+  index: 2
+knight_walk
+  rotate: false
+  xy: 218, 0
+  size: 107, 95
+  orig: 107, 95
+  offset: 0, 0
+  index: 4
+knight_walk
+  rotate: false
+  xy: 327, 0
+  size: 107, 95
+  orig: 107, 95
+  offset: 0, 0
+  index: 3

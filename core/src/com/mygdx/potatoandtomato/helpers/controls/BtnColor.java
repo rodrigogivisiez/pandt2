@@ -15,6 +15,7 @@ import com.mygdx.potatoandtomato.assets.Patches;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 import com.potatoandtomato.common.assets.Assets;
+import com.potatoandtomato.common.controls.Animator;
 
 /**
  * Created by SiongLeng on 15/12/2015.

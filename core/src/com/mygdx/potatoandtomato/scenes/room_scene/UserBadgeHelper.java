@@ -107,14 +107,25 @@ public class UserBadgeHelper implements Disposable {
                         boolean showingRank = true;
 
                         while (true){
-                            if(safeThread.isKilled()) break;
+
+                            final String userId = roomUser.getProfile().getUserId();
+
+                            if(safeThread.isKilled()){
+                                setBadge(userId, RoomScene.BadgeType.Normal, 0);
+                                break;
+                            }
 
                             if(isPaused()){
-                                Threadings.sleep(10 * 1000);
+                                Threadings.sleep(1000);
                                 continue;
                             }
 
-                            final String userId = roomUser.getProfile().getUserId();
+                            if(safeThread.isKilled()){
+                                setBadge(userId, RoomScene.BadgeType.Normal, 0);
+                                break;
+                            }
+
+
                             boolean reRun = false;
 
                             if(!showingRank && _records != null){
@@ -169,9 +180,7 @@ public class UserBadgeHelper implements Disposable {
         for(LeaderboardRecord record : _records){
             for(RoomUser roomUser : _roomUsers){
                 if(record.containUser(roomUser.getProfile().getUserId())){
-                    if(!_rankMap.containsKey(roomUser.getProfile().getUserId())){
-                        _rankMap.put(roomUser.getProfile().getUserId(), i);
-                    }
+                    _rankMap.put(roomUser.getProfile().getUserId(), i);
                 }
             }
             i++;
@@ -201,10 +210,11 @@ public class UserBadgeHelper implements Disposable {
             @Override
             public void run() {
                 fillRankMap();
+                fillStreaksMap();
+                fillRunningThreadsMap();
             }
         });
-        fillStreaksMap();
-        fillRunningThreadsMap();
+
     }
 
     public void getLeaderboardRecords(final Runnable onFinish){

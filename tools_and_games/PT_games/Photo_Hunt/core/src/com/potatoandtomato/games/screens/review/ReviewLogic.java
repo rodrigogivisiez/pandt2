@@ -44,7 +44,7 @@ public class ReviewLogic {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                gameModel.setGameState(GameState.Blocking);
+                gameModel.setGameState(GameState.BlockingReview);
                 reviewLogicListener.onGoToIndex(gameModel.getImageDetails().getIndex() + 1);
             }
         });
@@ -56,7 +56,7 @@ public class ReviewLogic {
                 String goToIndex = reviewActor.getGoToTextField().getText();
                 if(Integer.valueOf(goToIndex) != gameModel.getImageDetails().getIndex()){
                     reviewActor.getStage().setKeyboardFocus(reviewActor.getGoToLabel());
-                    gameModel.setGameState(GameState.Blocking);
+                    gameModel.setGameState(GameState.BlockingReview);
                     reviewLogicListener.onGoToIndex(Integer.valueOf(goToIndex));
                 }
             }
@@ -71,7 +71,7 @@ public class ReviewLogic {
                     reviewActor.getDeleteLabel().setText("Delete?");
                 }
                 else{
-                    gameModel.setGameState(GameState.Blocking);
+                    gameModel.setGameState(GameState.BlockingReview);
                     services.getDatabase().removeImageById(String.valueOf(gameModel.getImageDetails().getId()), new DatabaseListener() {
                         @Override
                         public void onCallback(Object obj, Status st) {
