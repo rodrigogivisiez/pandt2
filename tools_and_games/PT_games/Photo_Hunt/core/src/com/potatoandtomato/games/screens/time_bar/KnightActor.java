@@ -1,5 +1,6 @@
 package com.potatoandtomato.games.screens.time_bar;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -49,7 +50,7 @@ public class KnightActor extends Table {
         knightRunAnimator.overrideSize(55, 48);
 
         knightAtkAnimator = new Animator(0.3f, animationAssets.get(Animations.Name.KNIGHT_ATK));
-        knightAtkAnimator.overrideSize(47, 47);
+        knightAtkAnimator.overrideSize(52, 52);
 
         iceTopImage = new Image(services.getAssets().getTextures().get(Textures.Name.ICE_TOP_HALF));
         iceTopImage.setSize(iceTopImage.getPrefWidth(), iceTopImage.getPrefHeight());
@@ -63,16 +64,20 @@ public class KnightActor extends Table {
 
     public void changeState(KnightState knightState){
         if(currentKnightState != knightState){
+            if(currentKnightState == KnightState.Attack){
+                knightContainer.setY(knightContainer.getY() - 7);
+            }
+
             currentKnightState = knightState;
             knightContainer.clear();
-            if(knightState == KnightState.Walk){
+            if(knightState == KnightState.Walk) {
                 knightContainer.setActor(knightWalkAnimator);
             }
             else if(knightState == KnightState.Run){
                 knightContainer.setActor(knightRunAnimator);
             }
             else if(knightState == KnightState.Attack){
-                knightContainer.setY(knightContainer.getY() + 5);
+                knightContainer.setY(knightContainer.getY() + 7);
                 knightContainer.setActor(knightAtkAnimator);
             }
         }
@@ -156,6 +161,38 @@ public class KnightActor extends Table {
             positionOnStage = Positions.actorLocalToStageCoord(this);
         }
         return positionOnStage;
+    }
+
+    public void popStars(){
+        int totalStars = MathUtils.random(3, 8);
+        for(int i = 0; i < totalStars; i++){
+            final Image starImage = new Image(services.getAssets().getTextures().get(Textures.Name.SMALL_STAR_ICON));
+            Vector2 startingPosition = new Vector2(MathUtils.random(-25f, -20f), MathUtils.random(20f, 30f));
+            Vector2 middlePosition = new Vector2(MathUtils.random(-40f, 0f), MathUtils.random(startingPosition.y, 50f));
+
+            float finalPositionX;
+            if(middlePosition.x > startingPosition.x){
+                finalPositionX = MathUtils.random(middlePosition.x + 10, 10f);
+            }
+            else{
+                finalPositionX = MathUtils.random(-50f, middlePosition.x - 10);
+            }
+
+            Vector2 finalPosition = new Vector2(finalPositionX, MathUtils.random(0f, middlePosition.y - 10f));
+
+            starImage.setPosition(startingPosition.x, startingPosition.y);
+            starImage.setSize(starImage.getPrefWidth(), starImage.getPrefHeight());
+            starImage.addAction(sequence(Actions.moveTo(middlePosition.x, middlePosition.y, MathUtils.random(0.4f, 0.5f)),
+                                            parallel(Actions.moveTo(finalPosition.x, finalPosition.y, MathUtils.random(0.4f, 0.5f)), fadeOut(MathUtils.random(0.5f, 0.7f))), new RunnableAction(){
+                                                @Override
+                                                public void run() {
+                                                    starImage.remove();
+                                                }
+                                            }));
+
+            this.addActor(starImage);
+        }
+
     }
 
     @Override

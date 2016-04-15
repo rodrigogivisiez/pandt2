@@ -127,10 +127,10 @@ public class KnightLogic {
             }
         });
 
-        knightActor.getKnightAtkAnimator().callBackOnIndex(Animator.IndexType.Last, new Runnable() {
+        knightActor.getKnightAtkAnimator().callBackOnIndex(17, new Runnable() {
             @Override
             public void run() {
-
+                knightActor.popStars();
             }
         });
 

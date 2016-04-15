@@ -14,6 +14,7 @@ import com.potatoandtomato.games.screens.main.ImageStorage;
 import com.potatoandtomato.games.screens.main.MainLogic;
 import com.potatoandtomato.games.screens.main.MainScreen;
 import com.potatoandtomato.games.screens.review.ReviewLogic;
+import com.potatoandtomato.games.screens.scores.ScoresLogic;
 import com.potatoandtomato.games.screens.stage_counter.StageCounterLogic;
 import com.potatoandtomato.games.screens.time_bar.TimeLogic;
 import com.potatoandtomato.games.screens.user_counters.UserCountersLogic;
@@ -37,7 +38,7 @@ public class TestMainLogic extends TestAbstract {
         GameModel gameModel = new GameModel();
 
         MainLogic mainLogic = Mockito.spy(getMainLogic(gameModel));
-        gameModel.setRemainingMiliSecs(0);
+        gameModel.setRemainingMiliSecs(0, true);
         verify(mainLogic.getServices().getRoomMsgHandler(), times(0)).sendLose();
 
     }
@@ -70,7 +71,7 @@ public class TestMainLogic extends TestAbstract {
         Threadings.sleep(3000);
 
         verify(services.getRoomMsgHandler(), times(1)).sendWon(any(WonStageModel.class));
-        Assert.assertEquals(GameState.Ended, mainLogic.getGameModel().getGameState());
+        Assert.assertEquals(GameState.Pause, mainLogic.getGameModel().getGameState());
 
         verify(services.getRoomMsgHandler(), times(0)).sendLose();
     }
@@ -122,7 +123,7 @@ public class TestMainLogic extends TestAbstract {
 
         MainLogic mainLogic = new MainLogic(_game.getCoordinator(), services, mock(TimeLogic.class),
                 mock(HintsLogic.class), mock(ReviewLogic.class), mock(UserCountersLogic.class), mock(StageCounterLogic.class),
-                imageStorage, gameModel){
+                mock(ScoresLogic.class), imageStorage, gameModel){
             @Override
             public void changeScreenImages(Texture texture1, Texture texture2) {
 

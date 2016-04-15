@@ -195,6 +195,13 @@ SHIELD_SWORD
   orig: 75, 51
   offset: 0, 0
   index: -1
+SMALL_STAR_ICON
+  rotate: false
+  xy: 2037, 242
+  size: 9, 9
+  orig: 9, 9
+  offset: 0, 0
+  index: -1
 STAR
   rotate: false
   xy: 1076, 77

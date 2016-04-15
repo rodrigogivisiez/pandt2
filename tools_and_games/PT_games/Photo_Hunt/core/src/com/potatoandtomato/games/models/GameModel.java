@@ -68,15 +68,13 @@ public class GameModel {
 
     public void setHintsLeft(int hintsLeft) {
         this.hintsLeft = hintsLeft;
+        for(GameModelListener listener : listeners){
+            listener.onHintChanged(hintsLeft);
+        }
     }
 
-    public void minusHintLeft(boolean notifyListener){
+    public void minusHintLeft(){
         setHintsLeft(hintsLeft - 1);
-        if(notifyListener){
-            for(GameModelListener listener : listeners){
-                listener.onHintChanged(hintsLeft);
-            }
-        }
     }
 
     public int getRemainingMiliSecs() {
@@ -249,11 +247,11 @@ public class GameModel {
     }
 
     @JsonIgnore
-    public void addHandledArea(SimpleRectangle rectangle, String userId){
+    public void addHandledArea(SimpleRectangle rectangle, String userId, int remainingMiliSecsWhenClicked){
         if(!isAreaAlreadyHandled(rectangle)){
             handledAreas.add(rectangle);
             for(GameModelListener listener : listeners){
-                listener.onCorrectClicked(rectangle, userId);
+                listener.onCorrectClicked(rectangle, userId, remainingMiliSecsWhenClicked);
             }
             addUserClickedCount(userId);
         }

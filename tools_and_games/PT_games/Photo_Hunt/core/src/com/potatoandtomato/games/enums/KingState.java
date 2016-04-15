@@ -5,6 +5,6 @@ package com.potatoandtomato.games.enums;
  */
 public enum KingState {
 
-    Normal, Panic
+    Normal, Panic, Win, Lose
 
 }

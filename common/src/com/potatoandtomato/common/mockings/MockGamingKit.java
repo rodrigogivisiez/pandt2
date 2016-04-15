@@ -8,10 +8,7 @@ import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.models.InGameUpdateMessage;
 import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.models.Team;
-import com.potatoandtomato.common.utils.JsonObj;
-import com.potatoandtomato.common.utils.MultiHashMap;
-import com.potatoandtomato.common.utils.Strings;
-import com.potatoandtomato.common.utils.Threadings;
+import com.potatoandtomato.common.utils.*;
 import com.shephertz.app42.gaming.multiplayer.client.WarpClient;
 import com.shephertz.app42.gaming.multiplayer.client.command.WarpResponseResultCode;
 import com.shephertz.app42.gaming.multiplayer.client.events.*;
@@ -250,7 +247,7 @@ public class MockGamingKit {
                 Collections.sort(users);
 
                 for(String user : users) {
-                    team.addPlayer(new Player(user, user, isHost, true, Color.RED));
+                    team.addPlayer(new Player(user, user, isHost, true, ColorUtils.getUserColorByIndex(i)));
                     isHost = false;
                     i++;
                     if(i == _eachTeamExpectedPlayers){

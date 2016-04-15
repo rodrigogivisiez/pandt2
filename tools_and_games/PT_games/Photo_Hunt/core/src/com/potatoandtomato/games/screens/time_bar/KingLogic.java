@@ -45,6 +45,15 @@ public class KingLogic{
         }
     }
 
+    public void updateKingByGameState(GameState gameState){
+        if(gameState == GameState.Won){
+            kingActor.changeState(KingState.Win);
+        }
+        else if(gameState == GameState.Lose){
+            kingActor.changeState(KingState.Lose);
+        }
+    }
+
     public void setPaused(boolean pause){
         if(pause){
             kingActor.stopAnimation();
@@ -84,7 +93,17 @@ public class KingLogic{
                     public void run() {
                         if (newState == GameState.Playing) {
                             setPaused(false);
-                        } else {
+                        }
+                        else if(newState == GameState.Won || newState == GameState.Lose){
+                            setPaused(false);
+                            Threadings.postRunnable(new Runnable() {
+                                @Override
+                                public void run() {
+                                    updateKingByGameState(newState);
+                                }
+                            });
+                        }
+                        else {
                             setPaused(true);
                         }
                     }

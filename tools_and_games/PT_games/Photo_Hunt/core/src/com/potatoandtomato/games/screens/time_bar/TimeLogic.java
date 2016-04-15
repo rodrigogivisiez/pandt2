@@ -75,7 +75,9 @@ public class TimeLogic implements Disposable {
                             continue;
                         }
 
-                        gameModel.setRemainingMiliSecs(gameModel.getRemainingMiliSecs() - renderPeriodMiliSecs, true);
+                        if(!Global.REVIEW_MODE){
+                            gameModel.setRemainingMiliSecs(gameModel.getRemainingMiliSecs() - renderPeriodMiliSecs, true);
+                        }
 
                     }
                 }
@@ -121,7 +123,7 @@ public class TimeLogic implements Disposable {
             }
 
             @Override
-            public void onCorrectClicked(SimpleRectangle rectangle, String userId) {
+            public void onCorrectClicked(SimpleRectangle rectangle, String userId, int remainingMiliSecsWhenClicked) {
                 gameModel.addFreezeMiliSecs();
             }
 

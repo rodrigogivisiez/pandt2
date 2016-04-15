@@ -21,7 +21,7 @@ public abstract class GameModelListener {
 
     public void onGameStateChanged(GameState newState){}
 
-    public void onCorrectClicked(SimpleRectangle rectangle, String userId){}
+    public void onCorrectClicked(SimpleRectangle rectangle, String userId, int remainingMiliSecsWhenClicked){}
 
     public void onAddedClickCount(String userId, int newCount){}
 

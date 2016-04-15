@@ -63,7 +63,7 @@ public class Entrance extends GameEntrance {
 
                 _timeLogic = new TimeLogic(getServices(), _coordinator, _kingLogic, _castleLogic, _knightLogic, _gameModel);
                 _userCountersLogic = new UserCountersLogic(_gameModel, getServices(), _coordinator);
-                _hintsLogic = new HintsLogic(_gameModel, getServices());
+                _hintsLogic = new HintsLogic(_gameModel, getServices(), _coordinator);
                 _imageStorage = new ImageStorage(getServices(), _coordinator);
                 _reviewLogic = new ReviewLogic(_gameModel, getServices(), _coordinator);
                 _stageCounterLogic = new StageCounterLogic(getServices(), _coordinator, _gameModel);

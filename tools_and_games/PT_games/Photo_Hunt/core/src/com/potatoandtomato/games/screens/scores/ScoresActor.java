@@ -32,14 +32,14 @@ public class ScoresActor extends Table {
     private GameCoordinator gameCoordinator;
     private Label mainScoreLabel;
     private Label nextHighScoreLabel;
-    private Array<Actor> poppedActors;
+    private Array<Actor> poppedActorsArray;
     private Table popRulerActor;
 
     public ScoresActor(Services services, GameCoordinator gameCoordinator) {
         this.services = services;
         this.assets = services.getAssets();
         this.gameCoordinator = gameCoordinator;
-        this.poppedActors = new Array();
+        this.poppedActorsArray = new Array();
         this.align(Align.left);
     }
 
@@ -115,6 +115,10 @@ public class ScoresActor extends Table {
         container.setOrigin(Align.center);
         container.setActor(scoreLabel);
 
+        if(score == 0){
+            container.getColor().a = 0f;
+        }
+
         container.setScale(0, 0);
         stage.addActor(container);
         container.addAction(sequence(parallel(Actions.rotateBy(720, 0.6f), Actions.scaleTo(1, 1, 0.8f, Interpolation.bounceOut)), new RunnableAction(){
@@ -124,15 +128,14 @@ public class ScoresActor extends Table {
             }
         }));
 
-
-        poppedActors.add(container);
+        poppedActorsArray.add(container);
     }
 
     public void clearAllPopScores(){
-        for(Actor actor : poppedActors){
+        for(Actor actor : poppedActorsArray){
             actor.remove();
         }
-        poppedActors.clear();
+        poppedActorsArray.clear();
         if(popRulerActor != null){
             popRulerActor.remove();
             popRulerActor = null;

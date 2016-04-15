@@ -18,6 +18,7 @@ import com.potatoandtomato.games.enums.GameState;
 import com.potatoandtomato.games.enums.StageType;
 import com.potatoandtomato.games.helpers.Logs;
 import com.potatoandtomato.games.models.*;
+import com.potatoandtomato.games.screens.announcements.GameOverAnnouncement;
 import com.potatoandtomato.games.screens.announcements.GameStartingAnnouncement;
 import com.potatoandtomato.games.screens.hints.HintsLogic;
 import com.potatoandtomato.games.screens.review.ReviewLogic;
@@ -140,10 +141,9 @@ public class MainLogic extends GameLogic {
         }
         else if(!_gameModel.isAreaAlreadyHandled(correctRect)) {
             if(usedHint && !Global.REVIEW_MODE){
-                _gameModel.setHintsLeft(_gameModel.getHintsLeft() - 1);
+                _gameModel.minusHintLeft();
             }
-            _gameModel.addHandledArea(correctRect, userId);
-            checkGameEnded(remainingMiliSecs);
+            _gameModel.addHandledArea(correctRect, userId, remainingMiliSecs);
         }
     }
 
@@ -162,7 +162,10 @@ public class MainLogic extends GameLogic {
         }
     }
 
-
+    private void gameLost(){
+        _gameModel.setGameState(GameState.Close);
+        _screen.showAnnouncement(new GameOverAnnouncement(_services));
+    }
 
     public void invalidateReviewLogic(){
         _reviewLogic.invalidate();
@@ -229,11 +232,19 @@ public class MainLogic extends GameLogic {
                         });
                     }
                 }
+                else if(newState == GameState.Lose){
+                    Threadings.postRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            gameLost();
+                        }
+                    });
+                }
                 _screen.refreshGameState(newState);
             }
 
             @Override
-            public void onCorrectClicked(SimpleRectangle correctRect, String userId) {
+            public void onCorrectClicked(SimpleRectangle correctRect, String userId, int remainingMiliSecsWhenClicked) {
                 Vector2 imageSize = _screen.getImageSize();
                 Rectangle circleRect = new Rectangle();
                 circleRect.setSize(correctRect.getWidth(), correctRect.getHeight());
@@ -241,32 +252,7 @@ public class MainLogic extends GameLogic {
                 _screen.circle(circleRect, userId);
 
                 _gameModel.addFreezeMiliSecs();
-            }
-        });
-
-        _hintsLogic.setHintsLogicListener(new HintsLogicListener() {
-            @Override
-            public void onHintClicked() {
-                if(_gameModel.isPlaying() && _gameModel.getHintsLeft() > 0){
-                    int i = 0;
-                    Rectangle notYetHandledArea = null;
-                    for(Rectangle rectangle : _gameModel.getImageDetails().getCorrectRects()){
-                        if(!_gameModel.isAreaAlreadyHandled(rectangle)){
-                            notYetHandledArea = rectangle;
-                            break;
-                        }
-                        i++;
-                    }
-
-                    if(notYetHandledArea != null){
-                        float x, y;
-                        x = notYetHandledArea.getX() + 1;
-                        y = notYetHandledArea.getY() + 1;
-                        y = _screen.getImageSize().y - y;           //libgdx y is from bottom left
-                        sendTouchedMsg(x, y, true);
-                        imageTouched(getCoordinator().getMyUserId(), x, y, _gameModel.getRemainingMiliSecs(), true);
-                    }
-                }
+                checkGameEnded(remainingMiliSecsWhenClicked);
             }
         });
 
@@ -328,7 +314,6 @@ public class MainLogic extends GameLogic {
             public void onWon(WonStageModel wonStageModel) {
                 _gameModel.setRemainingMiliSecs(wonStageModel.getRemainingSecs(), false);
                 _gameModel.setGameState(GameState.Won);
-
 
                 Logs.show("You win, time is: " + wonStageModel.getRemainingSecs());
             }

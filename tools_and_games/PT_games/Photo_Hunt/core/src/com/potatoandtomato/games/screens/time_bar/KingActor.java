@@ -1,5 +1,6 @@
 package com.potatoandtomato.games.screens.time_bar;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -20,7 +21,7 @@ public class KingActor extends Table {
     private Services services;
     private MyAssets assets;
     private AnimationAssets animations;
-    private Animator normalAnimator, panicAnimator;
+    private Animator normalAnimator, panicAnimator, winAnimator, loseAnimator;
     private KingState currentKingState;
 
     public KingActor(Services services) {
@@ -33,6 +34,13 @@ public class KingActor extends Table {
 
         panicAnimator = new Animator(0.1f, this.animations.get(Animations.Name.KING_PANIC));
         panicAnimator.overrideSize(58, 40);
+
+        winAnimator = new Animator(0.1f, this.animations.get(Animations.Name.KING_WIN));
+        winAnimator.overrideSize(31, 40);
+
+        loseAnimator = new Animator(0.20f, this.animations.get(Animations.Name.KING_LOSE), false);
+        loseAnimator.overrideSize(34, 40);
+
     }
 
     public void changeState(KingState kingState){
@@ -45,6 +53,14 @@ public class KingActor extends Table {
             else if(kingState == KingState.Panic){
                 this.clear();
                 this.add(panicAnimator).padLeft(-10);
+            }
+            else if(kingState == KingState.Win){
+                this.clear();
+                this.add(winAnimator).padLeft(-2);
+            }
+            else if(kingState == KingState.Lose){
+                this.clear();
+                this.add(loseAnimator).padLeft(-6);
             }
         }
     }

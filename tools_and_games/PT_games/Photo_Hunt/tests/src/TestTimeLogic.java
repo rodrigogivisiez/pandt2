@@ -20,7 +20,7 @@ public class TestTimeLogic extends TestAbstract {
     public void testTimeOut(){
 
         GameModel gameModel = new GameModel();
-        gameModel.setRemainingMiliSecs(1000);
+        gameModel.setRemainingMiliSecs(1000, true);
 
         TimeLogic timeLogic = getTimeLogicAndRestart(gameModel);
 
@@ -38,7 +38,7 @@ public class TestTimeLogic extends TestAbstract {
     public void testFreezed(){
 
         GameModel gameModel = Mockito.spy(new GameModel());
-        gameModel.setRemainingMiliSecs(1000);
+        gameModel.setRemainingMiliSecs(1000, true);
 
         TimeLogic timeLogic = getTimeLogicAndRestart(gameModel);
 
@@ -64,7 +64,7 @@ public class TestTimeLogic extends TestAbstract {
     @Test
     public void testStopAndRestart(){
         GameModel gameModel = Mockito.spy(new GameModel());
-        gameModel.setRemainingMiliSecs(5000);
+        gameModel.setRemainingMiliSecs(5000, true);
 
         TimeLogic timeLogic = getTimeLogicAndRestart(gameModel);
 
@@ -74,7 +74,7 @@ public class TestTimeLogic extends TestAbstract {
 
         Threadings.sleep(1000);
 
-        gameModel.setRemainingMiliSecs(1000);
+        gameModel.setRemainingMiliSecs(1000, true);
         timeLogic.restart();
 
         gameModel.addGameModelListener(new GameModelListener() {

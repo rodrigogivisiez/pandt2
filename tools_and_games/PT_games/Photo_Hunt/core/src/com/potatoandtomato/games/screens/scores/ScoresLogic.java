@@ -111,16 +111,14 @@ public class ScoresLogic implements Disposable {
     }
 
     public void addScoreAndPopScoreOnActor(Actor actor, final int score, final Runnable onFinish){
-        if(score > 0){
-            Vector2 actorPosition = Positions.actorLocalToStageCoord(actor);
-            scoresActor.popScoreOnPosition(actorPosition.x + actor.getWidth() / 2, actorPosition.y + actor.getHeight() / 2, score, new Runnable() {
-                @Override
-                public void run() {
-                    addScoreWithoutAnimation(score);
-                    if(onFinish != null) onFinish.run();
-                }
-            });
-        }
+        Vector2 actorPosition = Positions.actorLocalToStageCoord(actor);
+        scoresActor.popScoreOnPosition(actorPosition.x + actor.getWidth() / 2, actorPosition.y + actor.getHeight() / 2, score, new Runnable() {
+            @Override
+            public void run() {
+                addScoreWithoutAnimation(score);
+                if(onFinish != null) onFinish.run();
+            }
+        });
     }
 
     public void setListeners(){
@@ -132,7 +130,7 @@ public class ScoresLogic implements Disposable {
             }
 
             @Override
-            public void onCorrectClicked(SimpleRectangle rectangle, String userId) {
+            public void onCorrectClicked(SimpleRectangle rectangle, String userId, int remainingMiliSecsWhenClicked) {
                 addScoreWithoutAnimation(PER_CLICK_SCORE);
             }
 

@@ -21,14 +21,22 @@ public class Animator extends Actor {
     float overRiddenWidth, overRiddenHeight;
     boolean paused;
     HashMap<Integer, Runnable> callBackOnIndexMap;
-    int currentIndex;
+    int previousIndex;
+    boolean looping;
 
     public Animator(float frameDuration, Array<? extends TextureRegion> keyFrames) {
+        this(frameDuration, keyFrames, true);
+    }
+
+    public Animator(float frameDuration, Array<? extends TextureRegion> keyFrames, boolean looping) {
         this.frameDuration = frameDuration;
         this.keyFrames = keyFrames;
-        currentIndex = -1;
+        previousIndex = -1;
         animation = new Animation(frameDuration, keyFrames);
-        animation.setPlayMode(Animation.PlayMode.LOOP);
+        this.looping = looping;
+        if(looping){
+            animation.setPlayMode(Animation.PlayMode.LOOP);
+        }
         callBackOnIndexMap = new HashMap();
     }
 
@@ -48,6 +56,8 @@ public class Animator extends Actor {
     public Animation getAnimation() {
         return animation;
     }
+
+
 
     public void overrideSize(float width, float height){
         overRiddenWidth = width;
@@ -88,18 +98,29 @@ public class Animator extends Actor {
             elapsed += Gdx.graphics.getDeltaTime();
         }
 
-        batch.draw(animation.getKeyFrame(elapsed, true), getX() , getY(), getOriginX(), getOriginY(), getWidth(),
+        batch.draw(animation.getKeyFrame(elapsed, looping), getX() , getY(), getOriginX(), getOriginY(), getWidth(),
                                             getHeight(), getScaleX(), getScaleY(), getRotation());
 
-        if(currentIndex != animation.getKeyFrameIndex(elapsed)){
-            currentIndex = animation.getKeyFrameIndex(elapsed);
-            if(callBackOnIndexMap.containsKey(currentIndex)){
-                callBackOnIndexMap.get(currentIndex).run();
+        int currentIndex = animation.getKeyFrameIndex(elapsed);
+        if(previousIndex != currentIndex){
+            if(currentIndex < previousIndex){
+                if(callBackOnIndexMap.containsKey(currentIndex)){
+                    callBackOnIndexMap.get(currentIndex).run();
+                }
             }
+            else{
+                for(int i = previousIndex + 1; i <= currentIndex; i++){
+                    if(callBackOnIndexMap.containsKey(i)){
+                        callBackOnIndexMap.get(i).run();
+                    }
+                }
+            }
+            previousIndex = currentIndex;
+
         }
 
         if(this.getDebug()){
-            System.out.println(currentIndex);
+            System.out.println(previousIndex);
         }
 
 
