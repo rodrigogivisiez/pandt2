@@ -2,6 +2,7 @@ package com.potatoandtomato.games.screens.stage_counter;
 
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.games.absintf.GameModelListener;
+import com.potatoandtomato.games.enums.StageType;
 import com.potatoandtomato.games.models.GameModel;
 import com.potatoandtomato.games.models.Services;
 
@@ -14,6 +15,7 @@ public class StageCounterLogic {
     private GameCoordinator gameCoordinator;
     private StageCounterActor stageCounterActor;
     private GameModel gameModel;
+    private StageType currentStageType;
 
     public StageCounterLogic(Services services, GameCoordinator gameCoordinator, GameModel gameModel) {
         this.services = services;
@@ -33,6 +35,13 @@ public class StageCounterLogic {
             @Override
             public void onStageNumberChanged(int newStageNumber) {
                 stageChanged();
+            }
+
+            @Override
+            public void onStageTypeChanged(StageType stageType) {
+                if(currentStageType != stageType){
+                    stageChanged();
+                }
             }
         });
     }

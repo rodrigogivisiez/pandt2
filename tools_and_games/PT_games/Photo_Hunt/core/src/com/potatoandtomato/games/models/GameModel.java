@@ -51,7 +51,11 @@ public class GameModel {
     }
 
     public void setStageType(StageType stageType) {
+
         this.stageType = stageType;
+        for(GameModelListener listener : listeners){
+            listener.onStageTypeChanged(stageType);
+        }
     }
 
     public ImageDetails getImageDetails() {
@@ -119,6 +123,9 @@ public class GameModel {
         if(freezingMiliSecs < 2000){
             setFreezingMiliSecs(freezingMiliSecs + 2000);
         }
+        else{
+            setFreezingMiliSecs(freezingMiliSecs + 500);
+        }
     }
 
     public HashMap<String, Integer> getUserRecords() {
@@ -181,7 +188,15 @@ public class GameModel {
 
     @JsonIgnore
     public int getThisStageTotalMiliSecs(){
-        double time =  Math.max(60000 - (Math.pow(stageNumber, 1.5) * 1000), 0) + 6000;
+        double time = 0;
+        if(this.stageType == StageType.Normal){
+            time =  Math.max(60000 - (Math.pow(stageNumber, 1.5) * 1000), 0) +
+                    Math.max(3000 - (Math.pow(stageNumber, 0.2) * 1000), 0) + 5500;
+        }
+        else if(this.stageType == StageType.Bonus){
+            time = 30000;
+        }
+
         return (int) time;
     }
 

@@ -79,6 +79,8 @@ public class TimeLogic implements Disposable {
                             gameModel.setRemainingMiliSecs(gameModel.getRemainingMiliSecs() - renderPeriodMiliSecs, true);
                         }
 
+                        Logs.show(String.valueOf(gameModel.getRemainingMiliSecs()));
+
                     }
                 }
             }
@@ -107,7 +109,12 @@ public class TimeLogic implements Disposable {
         gameModel.addGameModelListener(new GameModelListener() {
             @Override
             public void onStageNumberChanged(int newStageNumber) {
-                restart();
+                Threadings.delay(1000, new Runnable() {
+                    @Override
+                    public void run() {
+                        restart();
+                    }
+                });
             }
 
             @Override

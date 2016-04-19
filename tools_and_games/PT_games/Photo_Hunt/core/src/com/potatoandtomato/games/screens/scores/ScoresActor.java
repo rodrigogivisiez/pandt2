@@ -34,6 +34,7 @@ public class ScoresActor extends Table {
     private Label nextHighScoreLabel;
     private Array<Actor> poppedActorsArray;
     private Table popRulerActor;
+    private Stage stage;
 
     public ScoresActor(Services services, GameCoordinator gameCoordinator) {
         this.services = services;
@@ -91,8 +92,9 @@ public class ScoresActor extends Table {
             meterLabel.setAlignment(Align.center);
             popRulerActor.add(meterLabel).padBottom(-20).expandX().fillX();
 
-            Stage stage = this.getStage();
             popRulerActor.setPosition(x, y);
+
+            if(stage == null) stage = this.getStage();
             stage.addActor(popRulerActor);
         }
 
@@ -101,8 +103,6 @@ public class ScoresActor extends Table {
     }
 
     public void popScoreOnPosition(float x, float y, int score, final Runnable onFinish){
-        Stage stage = this.getStage();
-
         Label.LabelStyle scoreStyle = new Label.LabelStyle(
                                     assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR_B_ffffff_000000_2), Color.WHITE);
 
@@ -120,6 +120,8 @@ public class ScoresActor extends Table {
         }
 
         container.setScale(0, 0);
+
+        if(stage == null) stage = this.getStage();
         stage.addActor(container);
         container.addAction(sequence(parallel(Actions.rotateBy(720, 0.6f), Actions.scaleTo(1, 1, 0.8f, Interpolation.bounceOut)), new RunnableAction(){
             @Override

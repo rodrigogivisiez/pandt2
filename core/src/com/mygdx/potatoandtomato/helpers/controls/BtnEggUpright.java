@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -74,9 +75,9 @@ public class BtnEggUpright extends Table {
         float duration = 0.2f;
         Threadings.renderFor(duration + 0.1f);
         this.addAction(parallel(
-                            fadeIn(duration, Interpolation.sineIn),
-                            sizeTo(_size.x, _size.y, duration, Interpolation.bounceOut),
-                            moveTo(originalPosition.x, originalPosition.y, duration)
+                             Actions.fadeIn(duration, Interpolation.sineIn),
+                             Actions.sizeTo(_size.x, _size.y, duration, Interpolation.bounceOut),
+                             Actions.moveTo(originalPosition.x, originalPosition.y, duration)
                         ));
 
     }

@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.potatoandtomato.common.assets.AnimationAssets;
 import com.potatoandtomato.common.controls.Animator;
+import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.assets.Animations;
 import com.potatoandtomato.games.assets.Textures;
 import com.potatoandtomato.games.enums.KnightState;
@@ -31,6 +32,7 @@ public class KnightActor extends Table {
     private KnightState currentKnightState;
     private Image iceTopImage, iceBottomImage;
     private Vector2 positionOnStage;
+    private float knightFinalX;
 
     public KnightActor(Services services, float totalDistance) {
         this.services = services;
@@ -94,16 +96,14 @@ public class KnightActor extends Table {
             iceTopImage.getColor().a = 1f;
             iceBottomImage.getColor().a = 1f;
 
-            float x = knightContainer.getX();
+            float x = knightFinalX;
             float y = knightContainer.getY() + knightContainer.getHeight() / 2;
-
-            if(x < 1) x = 10;
 
             iceTopImage.setPosition(x - iceTopImage.getWidth() / 2, y + 24);
             iceBottomImage.setPosition(x - iceBottomImage.getWidth() / 2, y - 50);
 
             iceTopImage.addAction(Actions.moveBy(0, -25, 0.2f));
-            iceBottomImage.addAction(Actions.moveBy(0, +25, 0.2f));
+            iceBottomImage.addAction(Actions.moveBy(0, +25.3f, 0.2f));
 
             this.addActor(iceTopImage);
             this.addActor(iceBottomImage);
@@ -141,6 +141,7 @@ public class KnightActor extends Table {
             }
         }
 
+        knightFinalX = x;
         knightContainer.addAction(moveTo(x, knightContainer.getY(), 0.3f));
     }
 

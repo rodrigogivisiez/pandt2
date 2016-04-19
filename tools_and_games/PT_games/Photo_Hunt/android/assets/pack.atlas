@@ -6,168 +6,168 @@ filter: Linear,Linear
 repeat: none
 BOTTOM_BG
   rotate: false
-  xy: 644, 191
+  xy: 644, 188
   size: 640, 60
   orig: 640, 60
   offset: 0, 0
   index: -1
 BOTTOM_BG_SHADOW
   rotate: false
-  xy: 876, 77
+  xy: 876, 74
   size: 38, 25
   orig: 38, 25
   offset: 0, 0
   index: -1
 CASTLE_DOOR
   rotate: false
-  xy: 644, 12
+  xy: 644, 9
   size: 65, 62
   orig: 65, 62
   offset: 0, 0
   index: -1
 CASTLE_ROOM
   rotate: false
-  xy: 644, 76
+  xy: 644, 73
   size: 153, 52
   orig: 153, 52
   offset: 0, 0
   index: -1
 CIRCLE
   rotate: false
-  xy: 1932, 73
+  xy: 1932, 70
   size: 97, 71
   orig: 97, 71
   offset: 0, 0
   index: -1
 CROSS
   rotate: false
-  xy: 748, 20
+  xy: 1076, 75
   size: 32, 24
   orig: 32, 24
   offset: 0, 0
   index: -1
 CURSOR_BLACK
   rotate: false
-  xy: 2034, 210
+  xy: 2034, 207
   size: 1, 41
   orig: 1, 41
   offset: 0, 0
   index: -1
 DOOR_LEFT
   rotate: false
-  xy: 1286, 8
+  xy: 1286, 5
   size: 321, 243
   orig: 321, 243
   offset: 0, 0
   index: -1
 DOOR_OVERLAY
   rotate: false
-  xy: 2, 5
+  xy: 2, 2
   size: 640, 246
   orig: 640, 246
   offset: 0, 0
   index: -1
 DOOR_RIGHT
   rotate: false
-  xy: 1609, 8
+  xy: 1609, 5
   size: 321, 243
   orig: 321, 243
   offset: 0, 0
   index: -1
 EMPTY
   rotate: false
-  xy: 2, 2
+  xy: 777, 43
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 HINT_OFF_ICON
   rotate: false
-  xy: 1973, 17
+  xy: 1973, 14
   size: 38, 40
   orig: 38, 40
   offset: 0, 0
   index: -1
 HINT_ON_ICON
   rotate: false
-  xy: 1932, 17
+  xy: 1932, 14
   size: 39, 40
   orig: 39, 40
   offset: 0, 0
   index: -1
 ICE_BOTTOM_HALF
   rotate: false
-  xy: 876, 104
+  xy: 876, 101
   size: 64, 24
   orig: 64, 24
   offset: 0, 0
   index: -1
 ICE_TOP_HALF
   rotate: false
-  xy: 711, 46
+  xy: 711, 43
   size: 64, 28
   orig: 64, 28
   offset: 0, 0
   index: -1
 PLAYER0_COUNTER
   rotate: false
-  xy: 942, 104
+  xy: 942, 101
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER1_COUNTER
   rotate: false
-  xy: 916, 78
+  xy: 916, 75
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER2_COUNTER
   rotate: false
-  xy: 982, 104
+  xy: 982, 101
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER3_COUNTER
   rotate: false
-  xy: 956, 78
+  xy: 956, 75
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER4_COUNTER
   rotate: false
-  xy: 1022, 104
+  xy: 1022, 101
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER5_COUNTER
   rotate: false
-  xy: 996, 78
+  xy: 996, 75
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER6_COUNTER
   rotate: false
-  xy: 1062, 104
+  xy: 1062, 101
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER7_COUNTER
   rotate: false
-  xy: 1036, 78
+  xy: 1036, 75
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 RED_ARROW
   rotate: false
-  xy: 2031, 122
+  xy: 2031, 119
   size: 15, 22
   split: 0, 14, 0, 0
   pad: 0, 0, 0, 0
@@ -176,63 +176,70 @@ RED_ARROW
   index: -1
 REFLECTION
   rotate: false
-  xy: 1932, 146
+  xy: 1932, 143
   size: 100, 105
   orig: 100, 105
   offset: 0, 0
   index: -1
 SCRATCH_SEPARATOR
   rotate: false
-  xy: 1932, 59
+  xy: 1932, 56
   size: 89, 12
   orig: 89, 12
   offset: 0, 0
   index: -1
 SHIELD_SWORD
   rotate: false
-  xy: 799, 77
+  xy: 799, 74
   size: 75, 51
   orig: 75, 51
   offset: 0, 0
   index: -1
 SMALL_STAR_ICON
   rotate: false
-  xy: 2037, 242
+  xy: 2037, 239
   size: 9, 9
   orig: 9, 9
   offset: 0, 0
   index: -1
 STAR
   rotate: false
-  xy: 1076, 77
+  xy: 777, 46
   size: 25, 25
   orig: 25, 25
   offset: 0, 0
   index: -1
+STOP_ICON
+  rotate: false
+  xy: 748, 11
+  size: 30, 30
+  orig: 30, 30
+  offset: 0, 0
+  index: -1
 TOP_BG
   rotate: false
-  xy: 644, 130
+  xy: 644, 127
   size: 640, 59
   orig: 640, 59
   offset: 0, 0
   index: -1
 TOP_BG_SHADOW
   rotate: false
-  xy: 1102, 113
+  xy: 1102, 110
   size: 43, 15
   orig: 43, 15
   offset: 0, 0
   index: -1
 TRANS_BLACK_BG
   rotate: false
-  xy: 711, 13
+  xy: 711, 10
   size: 35, 31
   orig: 35, 31
   offset: 0, 0
   index: -1
 WHITE_ROUNDED_BG
   rotate: false
-  xy: 1147, 108
+  xy: 804, 52
   size: 28, 20
   split: 11, 13, 7, 9
   pad: 5, 7, 0, 0

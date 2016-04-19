@@ -3,6 +3,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.absintf.ImageStorageListener;
 import com.potatoandtomato.games.absintf.mockings.MockModel;
+import com.potatoandtomato.games.enums.BonusType;
 import com.potatoandtomato.games.enums.GameState;
 import com.potatoandtomato.games.enums.StageType;
 import com.potatoandtomato.games.models.GameModel;
@@ -13,6 +14,7 @@ import com.potatoandtomato.games.screens.hints.HintsLogic;
 import com.potatoandtomato.games.screens.main.ImageStorage;
 import com.potatoandtomato.games.screens.main.MainLogic;
 import com.potatoandtomato.games.screens.main.MainScreen;
+import com.potatoandtomato.games.screens.main.StageImagesHandler;
 import com.potatoandtomato.games.screens.review.ReviewLogic;
 import com.potatoandtomato.games.screens.scores.ScoresLogic;
 import com.potatoandtomato.games.screens.stage_counter.StageCounterLogic;
@@ -51,7 +53,7 @@ public class TestMainLogic extends TestAbstract {
         MainLogic mainLogic = Mockito.spy(getMainLogic(gameModel));
         Services services = mainLogic.getServices();
 
-        mainLogic.goToNewStage("1", StageType.Normal, "");
+        mainLogic.goToNewStage("1", StageType.Normal, BonusType.NONE, "");
 
         Threadings.sleep(200);
 
@@ -83,7 +85,7 @@ public class TestMainLogic extends TestAbstract {
 
         MainLogic mainLogic = Mockito.spy(getMainLogic(gameModel));
 
-        mainLogic.goToNewStage("1", StageType.Normal, "");
+        mainLogic.goToNewStage("1", StageType.Normal, BonusType.NONE, "");
 
         Threadings.sleep(200);
 
@@ -98,7 +100,7 @@ public class TestMainLogic extends TestAbstract {
         verify(mainLogic.getTimeLogic(), times(3)).reduceTime();
 
         mainLogic.imageTouched(userId, 55, 422, 0, false);
-        verify(gameModel, times(1)).addHandledArea(any(SimpleRectangle.class), any(String.class));
+        verify(gameModel, times(1)).addHandledArea(any(SimpleRectangle.class), any(String.class), 10);
 
     }
 
@@ -123,7 +125,7 @@ public class TestMainLogic extends TestAbstract {
 
         MainLogic mainLogic = new MainLogic(_game.getCoordinator(), services, mock(TimeLogic.class),
                 mock(HintsLogic.class), mock(ReviewLogic.class), mock(UserCountersLogic.class), mock(StageCounterLogic.class),
-                mock(ScoresLogic.class), imageStorage, gameModel){
+                mock(ScoresLogic.class), imageStorage, gameModel, mock(StageImagesHandler.class)){
             @Override
             public void changeScreenImages(Texture texture1, Texture texture2) {
 

@@ -4,8 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.AudioDevice;
 import com.badlogic.gdx.audio.AudioRecorder;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.absintflis.recorder.RecordListener;
+import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.enums.Status;
@@ -27,7 +29,7 @@ public class Recorder {
     boolean _canRecord = true;
 
 
-    public void recordToFile(final FileHandle fileHandle,  final RecordListener _listener){
+    public void recordToFile(final FileHandle fileHandle, final RecordListener _listener){
         if(!_canRecord) return;
         _startTime = System.currentTimeMillis();
         _recording = true;
@@ -44,6 +46,25 @@ public class Recorder {
                 while (_recording){
                     short[] data = new short[_samples];
                     recorder.read(data, 0, data.length);
+
+//                    for(int i = 0; i < data.length; i++){
+//                        Logs.show("before:" + data[i]);
+//                        short after = (short) (data[i] * 1.1f);
+//                        boolean convert = true;
+//                        if(after < 0){
+//                            if(after < -15000){
+//                                convert = false;
+//                            }
+//                        }
+//                        if(after > 0){
+//                            if(after > 15000){
+//                                convert = false;
+//                            }
+//                        }
+//                        if(convert) data[i] = after;
+//                        Logs.show("after:" + data[i]);
+//                    }
+
                     datas.add(data);
                 }
                 recorder.dispose();
@@ -54,6 +75,7 @@ public class Recorder {
                     return;
                 }
 
+
                 _results = new short[_samples * datas.size];
                 int i = 0;
                 for(short[] data : datas){
@@ -63,6 +85,9 @@ public class Recorder {
 
                 saveAudioToFile(_results, fileHandle);
                 _listener.onFinishedRecord(fileHandle, Status.SUCCESS);
+
+                Logs.show("end recording...........................................");
+
             }
         });
     }

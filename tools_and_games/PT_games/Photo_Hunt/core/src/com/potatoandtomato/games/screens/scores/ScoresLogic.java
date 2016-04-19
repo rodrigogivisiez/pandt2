@@ -95,7 +95,7 @@ public class ScoresLogic implements Disposable {
                                             scoresActor.setMainScore(originalScore[0]);
                                         }
                                     });
-                                    Threadings.sleep(10);
+                                    Threadings.sleep(8);
 
                                     originalScore[0] += PER_METER_DISTANCE_SCORE;
                                 }
@@ -137,7 +137,12 @@ public class ScoresLogic implements Disposable {
             @Override
             public void onGameStateChanged(GameState newState) {
                 if(newState == GameState.Won){
-                    calculate();
+                    Threadings.postRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            calculate();
+                        }
+                    });
                 }
             }
         });

@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
@@ -107,17 +108,25 @@ public class MainScreen extends GameScreen {
         _imageTwoTable = new Table();
 
         _imageOneInnerTable = new Table();
+        _imageOneInnerTable.setTransform(true);
         _imageTwoInnerTable = new Table();
+        _imageTwoInnerTable.setTransform(true);
 
         _imageOneTable.add(_imageOneInnerTable).expand().fill();
         _imageTwoTable.add(_imageTwoInnerTable).expand().fill();
 
-        Table _imagesContainer = new Table();
+        Table imageTwoContainer = new Table();
+        imageTwoContainer.setClip(true);
 
-        _imagesContainer.add(_imageOneTable).expand().fill().space(2);
-        _imagesContainer.add(_imageTwoTable).expand().fill();
+        Table imagesContainer = new Table();
 
-        _root.add(_imagesContainer).expand().fill();
+        imagesContainer.add(_imageOneTable).expand().fill().space(2).uniform();
+        imagesContainer.add(new Table()).expand().fill().uniform();
+
+        imagesContainer.addActor(imageTwoContainer);
+        imageTwoContainer.addActor(_imageTwoTable);
+
+        _root.add(imagesContainer).expand().fill();
         _root.row();
 
 
@@ -126,7 +135,7 @@ public class MainScreen extends GameScreen {
         //////////////////////////////////////////
         _doorsTable = new Table();
         _doorsTable.setFillParent(true);
-        _imagesContainer.addActor(_doorsTable);
+        imagesContainer.addActor(_doorsTable);
 
         _doorLeftImage = new Image(_assets.getTextures().get(Textures.Name.DOOR_LEFT));
         _doorRightImage = new Image(_assets.getTextures().get(Textures.Name.DOOR_RIGHT));
@@ -142,7 +151,7 @@ public class MainScreen extends GameScreen {
         _announcementTable.setFillParent(true);
         _announcementTable.setVisible(false);
 
-        _imagesContainer.addActor(_announcementTable);
+        imagesContainer.addActor(_announcementTable);
 
         /////////////////////////////////////////
         //bottom bar
@@ -161,20 +170,24 @@ public class MainScreen extends GameScreen {
         _root.add(_bottomBarTable).expandX().fillX().height(60);
 
 
-
         try{
             _stage.draw();
         }
         catch (Exception ex){
 
         }
+
         _imageSize = new Vector2(_imageOneTable.getWidth(), _imageOneTable.getHeight());
+
+        imageTwoContainer.setSize(_imageOneTable.getWidth(), _imageOneTable.getHeight());
+        imageTwoContainer.setPosition(_imageOneTable.getWidth() + 2, 0);
+        _imageTwoTable.setSize(_imageOneTable.getWidth(), _imageOneTable.getHeight());
 
         Image topBarShadow = new Image(_assets.getTextures().get(Textures.Name.TOP_BG_SHADOW));
         topBarShadow.setSize(getCoordinator().getGameWidth(), 15);
         topBarShadow.setPosition(0, _imageSize.y - topBarShadow.getHeight() + 2);
         topBarShadow.setTouchable(Touchable.disabled);
-        _imagesContainer.addActor(topBarShadow);
+        imagesContainer.addActor(topBarShadow);
 
         Image bottomBarShadow = new Image(_assets.getTextures().get(Textures.Name.BOTTOM_BG_SHADOW));
         bottomBarShadow.setSize(getCoordinator().getGameWidth(), 25);
@@ -188,7 +201,10 @@ public class MainScreen extends GameScreen {
         _imageTwoInnerTable.clear();
 
         Image image1 = new Image(texture1);
+        image1.setName("image");
+
         Image image2 = new Image(texture2);
+        image2.setName("image");
 
         _imageOneInnerTable.add(image1).expand().fill();
         _imageTwoInnerTable.add(image2).expand().fill();
@@ -199,12 +215,7 @@ public class MainScreen extends GameScreen {
         cross.setPosition(x - cross.getPrefWidth() / 2, y  - cross.getPrefHeight() / 2);
         cross.setSize(cross.getPrefWidth(), cross.getPrefHeight());
 
-        final Cross cross2 = new Cross(getCoordinator(), _services, userId);
-        cross2.setPosition(x - cross.getPrefWidth() / 2, y - cross.getPrefHeight() / 2);
-        cross2.setSize(cross.getPrefWidth(), cross.getPrefHeight());
-
         _imageOneInnerTable.addActor(cross);
-        _imageTwoInnerTable.addActor(cross2);
 
         cross.addAction(sequence(delay(0.6f), fadeOut(0.3f), new RunnableAction(){
             @Override
@@ -213,14 +224,23 @@ public class MainScreen extends GameScreen {
             }
         }));
 
-        cross2.addAction(sequence(delay(0.6f), fadeOut(0.3f), new RunnableAction(){
-            @Override
-            public void run() {
-                cross2.remove();
+        for(Actor actor : _imageTwoTable.getChildren()){
+            if(actor instanceof Table){
+                Table innerTable = (Table) actor;
+                final Cross cross2 = new Cross(getCoordinator(), _services, userId);
+                cross2.setPosition(x - cross.getPrefWidth() / 2, y - cross.getPrefHeight() / 2);
+                cross2.setSize(cross.getPrefWidth(), cross.getPrefHeight());
+                innerTable.addActor(cross2);
+
+                cross2.addAction(sequence(delay(0.6f), fadeOut(0.3f), new RunnableAction(){
+                    @Override
+                    public void run() {
+                        cross2.remove();
+                    }
+                }));
+
             }
-        }));
-
-
+        }
     }
 
     public void circle(Rectangle rectangle, String userId){
@@ -228,14 +248,21 @@ public class MainScreen extends GameScreen {
         Circle circle1 = new Circle(getCoordinator(), _services, userId);
         circle1.setSize(rectangle.getWidth(), rectangle.getHeight());
         circle1.setPosition(rectangle.getX(), rectangle.getY() - rectangle.getHeight());
-
-        Circle circle2 = new Circle(getCoordinator(), _services, userId);
-        circle2.setSize(rectangle.getWidth(), rectangle.getHeight());
-        circle2.setPosition(rectangle.getX(), rectangle.getY() - rectangle.getHeight());
-
         _imageOneInnerTable.addActor(circle1);
-        _imageTwoInnerTable.addActor(circle2);
+
+        for(Actor actor : _imageTwoTable.getChildren()){
+            if(actor instanceof Table){
+                Table innerTable = (Table) actor;
+                Circle circle2 = new Circle(getCoordinator(), _services, userId);
+                circle2.setSize(rectangle.getWidth(), rectangle.getHeight());
+                circle2.setPosition(rectangle.getX(), rectangle.getY() - rectangle.getHeight());
+                innerTable.addActor(circle2);
+            }
+        }
+
     }
+
+
 
     public void switchToReviewMode(ReviewActor reviewActor){
         _bottomBarTable.clear();
@@ -362,6 +389,14 @@ public class MainScreen extends GameScreen {
 
     public Table getImageOneTable() {
         return _imageOneTable;
+    }
+
+    public Table getImageOneInnerTable() {
+        return _imageOneInnerTable;
+    }
+
+    public Table getImageTwoInnerTable() {
+        return _imageTwoInnerTable;
     }
 
     public Table getBlockTable() {

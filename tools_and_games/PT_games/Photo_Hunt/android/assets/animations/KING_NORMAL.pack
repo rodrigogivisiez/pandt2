@@ -5,71 +5,71 @@ filter: Nearest,Nearest
 repeat: none
 king_normal
   rotate: false
-  xy: 0, 308
-  size: 111, 152
-  orig: 111, 152
+  xy: 0, 168
+  size: 60, 82
+  orig: 60, 82
   offset: 0, 0
   index: 0
 king_normal
   rotate: false
-  xy: 0, 154
-  size: 111, 152
-  orig: 111, 152
+  xy: 0, 84
+  size: 60, 82
+  orig: 60, 82
   offset: 0, 0
   index: 1
 king_normal
   rotate: false
-  xy: 113, 308
-  size: 111, 152
-  orig: 111, 152
+  xy: 62, 168
+  size: 60, 82
+  orig: 60, 82
   offset: 0, 0
   index: 2
 king_normal
   rotate: false
   xy: 0, 0
-  size: 111, 152
-  orig: 111, 152
+  size: 60, 82
+  orig: 60, 82
   offset: 0, 0
   index: 3
 king_normal
   rotate: false
-  xy: 113, 154
-  size: 111, 152
-  orig: 111, 152
+  xy: 62, 84
+  size: 60, 82
+  orig: 60, 82
   offset: 0, 0
   index: 4
 king_normal
   rotate: false
-  xy: 226, 308
-  size: 111, 152
-  orig: 111, 152
+  xy: 124, 168
+  size: 60, 82
+  orig: 60, 82
   offset: 0, 0
   index: 5
 king_normal
   rotate: false
-  xy: 113, 0
-  size: 111, 152
-  orig: 111, 152
+  xy: 62, 0
+  size: 60, 82
+  orig: 60, 82
   offset: 0, 0
   index: 6
 king_normal
   rotate: false
-  xy: 226, 154
-  size: 111, 152
-  orig: 111, 152
+  xy: 124, 84
+  size: 60, 82
+  orig: 60, 82
   offset: 0, 0
   index: 7
 king_normal
   rotate: false
-  xy: 339, 308
-  size: 111, 152
-  orig: 111, 152
+  xy: 186, 168
+  size: 60, 82
+  orig: 60, 82
   offset: 0, 0
   index: 8
 king_normal
   rotate: false
-  xy: 226, 0
-  size: 111, 152
-  orig: 111, 152
+  xy: 124, 0
+  size: 60, 82
+  orig: 60, 82
   offset: 0, 0
   index: 9

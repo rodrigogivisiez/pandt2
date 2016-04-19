@@ -5,6 +5,7 @@ import com.potatoandtomato.common.absints.InGameUpdateListener;
 import com.potatoandtomato.common.utils.JsonObj;
 import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.games.absintf.RoomMsgListener;
+import com.potatoandtomato.games.enums.BonusType;
 import com.potatoandtomato.games.enums.RoomMsgType;
 import com.potatoandtomato.games.enums.StageType;
 import com.potatoandtomato.games.models.TouchedPoint;
@@ -75,6 +76,7 @@ public class RoomMsgHandler {
                 else if(type == RoomMsgType.NextStage){
                     JsonObj jsonObj = new JsonObj(msg);
                     listener.onGoToNextStage(jsonObj.getString("id"), StageType.valueOf(jsonObj.getString("stageType")),
+                                                    BonusType.valueOf(jsonObj.getString("bonusType")),
                                                     jsonObj.getString("extra"));
                 }
 
@@ -102,7 +104,8 @@ public class RoomMsgHandler {
         gameCoordinator.sendRoomUpdate(jsonObject.toString());
     }
 
-    public void sendTouched(TouchedPoint touchedPoint){
+    public void sendTouched(float x, float y, boolean hintUsed, int remaninigMiliSecs){
+        TouchedPoint touchedPoint = new TouchedPoint(x, y,  remaninigMiliSecs, hintUsed);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             send(objectMapper.writeValueAsString(touchedPoint), RoomMsgType.Touched);
@@ -124,9 +127,10 @@ public class RoomMsgHandler {
         send("", RoomMsgType.Lose);
     }
 
-    public void sendGotoNextStage(String id, StageType stageType, String extra){
+    public void sendGotoNextStage(String id, StageType stageType, BonusType bonusType, String extra){
         JsonObj jsonObj = new JsonObj();
         jsonObj.put("id", id);
+        jsonObj.put("bonusType", bonusType.name());
         jsonObj.put("stageType", stageType.name());
         jsonObj.put("extra", extra);
         send(jsonObj.toString(), RoomMsgType.NextStage);

@@ -171,4 +171,8 @@ public class ImageDetails {
         return new Vector2(finalX, finalY);
     }
 
+    @JsonIgnore
+    public int getGameImageHeight() {
+        return gameImageHeight;
+    }
 }

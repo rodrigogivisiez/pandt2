@@ -57,7 +57,14 @@ public class HintsLogic {
                     }
 
                     if(notYetHandledArea != null){
-                        gameModel.addHandledArea(new SimpleRectangle(notYetHandledArea), gameCoordinator.getMyUserId(), gameModel.getRemainingMiliSecs());
+                        gameModel.addHandledArea(new SimpleRectangle(notYetHandledArea), gameCoordinator.getMyUserId(),
+                                gameModel.getRemainingMiliSecs());
+                        float x, y;
+                        x = notYetHandledArea.getX() + 1;
+                        y = notYetHandledArea.getY() + 1;
+                        y = gameModel.getImageDetails().getGameImageHeight() - y;
+                        services.getRoomMsgHandler().sendTouched(x, y,
+                                                true, gameModel.getRemainingMiliSecs());
                         if(!Global.REVIEW_MODE){
                             gameModel.minusHintLeft();
                         }

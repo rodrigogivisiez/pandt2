@@ -44,6 +44,7 @@ public class KnightLogic {
         this.totalAtkMiliSecs = gameModel.getThisStageTotalAtkMiliSecs();
         knightActor.setKnightAtkSpeed(totalMiliSecs / (3000 * 1000));
         knightActor.changeState(KnightState.Walk);
+        setFreezed(false);
         knightActor.setKnightPositionX(totalDistance, false);
     }
 

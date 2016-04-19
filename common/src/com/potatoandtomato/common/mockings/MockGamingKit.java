@@ -82,7 +82,7 @@ public class MockGamingKit {
 
     }
 
-    public void sendUpdate(String msg){
+    public void sendUpdate(final String msg){
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("userId", _userId);
@@ -92,8 +92,14 @@ public class MockGamingKit {
         }
 
         if(_eachTeamExpectedPlayers == 0 || _expectedTeamCount == 0){
-            _broadcaster.broadcast(BroadcastEvent.INGAME_UPDATE_RESPONSE,
-                    new InGameUpdateMessage(_userId, msg));
+            Threadings.runInBackground(new Runnable() {
+                @Override
+                public void run() {
+                    _broadcaster.broadcast(BroadcastEvent.INGAME_UPDATE_RESPONSE,
+                            new InGameUpdateMessage(_userId, msg));
+                }
+            });
+
         }
         else{
             String toSend = jsonObject.toString();

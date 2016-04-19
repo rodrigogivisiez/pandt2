@@ -11,6 +11,8 @@ public abstract class GameModelListener {
 
     public void onStageNumberChanged(int newStageNumber){}
 
+    public void onStageTypeChanged(StageType stageType){}
+
     public void onTimeFinished(){}
 
     public void onRemainingMiliSecsChanged(int remainingMiliSecs){}

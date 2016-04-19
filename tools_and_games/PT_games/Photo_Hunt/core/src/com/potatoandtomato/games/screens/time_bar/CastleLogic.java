@@ -26,6 +26,7 @@ public class CastleLogic {
         this.gameCoordinator = gameCoordinator;
 
         this.castleActor = new CastleActor(services);
+        this.castleActor.changeState(CastleState.Normal);
         setListeners();
     }
 
