@@ -26,6 +26,7 @@ import com.potatoandtomato.games.controls.Cross;
 import com.potatoandtomato.games.controls.DummyButton;
 import com.potatoandtomato.games.enums.GameState;
 import com.potatoandtomato.games.models.Services;
+import com.potatoandtomato.games.models.SimpleRectangle;
 import com.potatoandtomato.games.screens.hints.HintsActor;
 import com.potatoandtomato.games.screens.review.ReviewActor;
 import com.potatoandtomato.games.screens.scores.ScoresActor;
@@ -111,6 +112,7 @@ public class MainScreen extends GameScreen {
         _imageOneInnerTable.setTransform(true);
         _imageTwoInnerTable = new Table();
         _imageTwoInnerTable.setTransform(true);
+        _imageTwoInnerTable.setName("innerTable");
 
         _imageOneTable.add(_imageOneInnerTable).expand().fill();
         _imageTwoTable.add(_imageTwoInnerTable).expand().fill();
@@ -243,7 +245,12 @@ public class MainScreen extends GameScreen {
         }
     }
 
-    public void circle(Rectangle rectangle, String userId){
+    public void circle(SimpleRectangle correctRect, String userId){
+
+        Vector2 imageSize = getImageSize();
+        Rectangle rectangle = new Rectangle();
+        rectangle.setSize(correctRect.getWidth(), correctRect.getHeight());
+        rectangle.setPosition(correctRect.getX(), imageSize.y - correctRect.getY()); //libgdx origin is at bottomleft
 
         Circle circle1 = new Circle(getCoordinator(), _services, userId);
         circle1.setSize(rectangle.getWidth(), rectangle.getHeight());
@@ -260,6 +267,26 @@ public class MainScreen extends GameScreen {
             }
         }
 
+    }
+
+    public void unCircleAll(){
+        for(int i = _imageOneInnerTable.getChildren().size - 1; i >=0; i--){
+            Actor circle = _imageOneInnerTable.getChildren().get(i);
+            if(circle instanceof Circle){
+                circle.remove();
+            }
+        }
+
+        for(Actor actor : _imageTwoTable.getChildren()){
+            if(actor instanceof Table){
+                Table innerTable = (Table) actor;
+                for(Actor circle : innerTable.getChildren()){
+                    if(circle instanceof Circle){
+                        circle.remove();
+                    }
+                }
+            }
+        }
     }
 
 

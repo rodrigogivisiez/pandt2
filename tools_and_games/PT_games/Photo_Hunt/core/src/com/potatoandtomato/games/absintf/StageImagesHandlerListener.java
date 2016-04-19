@@ -7,4 +7,7 @@ public abstract class StageImagesHandlerListener {
 
     public abstract void onTouch(float x, float y);
 
+    public abstract void requestCircleAll();
+
+    public abstract void cancelCircleAll();
 }

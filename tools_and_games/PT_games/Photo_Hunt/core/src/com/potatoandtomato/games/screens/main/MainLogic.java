@@ -47,12 +47,12 @@ public class MainLogic extends GameLogic {
     private ScoresLogic _scoresLogic;
     private GameModel _gameModel;
     private ImageStorage _imageStorage;
-    private StageImagesHandler _stageImagesHandler;
+    private StageImagesLogic _stageImagesLogic;
 
     public MainLogic(GameCoordinator gameCoordinator, Services _services,
                      TimeLogic _timeLogic, HintsLogic _hintsLogic, ReviewLogic _reviewLogic, UserCountersLogic _userCounterLogic,
                      StageCounterLogic _stageCounterLogic, ScoresLogic _scoresLogic,
-                     ImageStorage _imageStorage, GameModel _gameModel, StageImagesHandler _stageImagesHandler) {
+                     ImageStorage _imageStorage, GameModel _gameModel, StageImagesLogic _stageImagesLogic) {
         super(gameCoordinator);
         this._services = _services;
         this._timeLogic = _timeLogic;
@@ -63,14 +63,14 @@ public class MainLogic extends GameLogic {
         this._scoresLogic = _scoresLogic;
         this._imageStorage = _imageStorage;
         this._gameModel = _gameModel;
-        this._stageImagesHandler = _stageImagesHandler;
+        this._stageImagesLogic = _stageImagesLogic;
 
         _screen = new MainScreen(_services, gameCoordinator);
         _screen.populate(_timeLogic.getTimeActor(), _hintsLogic.getHintsActor(),
                                 _userCounterLogic.getUserCountersActor(), _stageCounterLogic.getStageCounterActor(),
                                 _scoresLogic.getScoresActor());
 
-        _stageImagesHandler.init(_screen.getImageOneTable(), _screen.getImageTwoTable(),
+        _stageImagesLogic.init(_screen.getImageOneTable(), _screen.getImageTwoTable(),
                                     _screen.getImageOneInnerTable(), _screen.getImageTwoInnerTable());
         setListeners();
 
@@ -104,7 +104,7 @@ public class MainLogic extends GameLogic {
 //                                                StageType.Normal, BonusType.NONE, "");
 
                     _services.getRoomMsgHandler().sendGotoNextStage(imagePair.getImageDetails().getId(),
-                            StageType.Bonus, BonusType.LIGHTING, "");
+                            StageType.Bonus, BonusType.MEMORY, "");
 
                 }
             });
@@ -144,7 +144,7 @@ public class MainLogic extends GameLogic {
                         }
 
                         changeScreenImages(imagePair.getImageOne(), imagePair.getImageTwo());
-                        _stageImagesHandler.beforeStartStage(stageType, bonusType, extra);
+                        _stageImagesLogic.beforeStartStage(stageType, bonusType, extra);
                     }
                 });
             }
@@ -299,11 +299,7 @@ public class MainLogic extends GameLogic {
 
             @Override
             public void onCorrectClicked(SimpleRectangle correctRect, String userId, int remainingMiliSecsWhenClicked) {
-                Vector2 imageSize = _screen.getImageSize();
-                Rectangle circleRect = new Rectangle();
-                circleRect.setSize(correctRect.getWidth(), correctRect.getHeight());
-                circleRect.setPosition(correctRect.getX(), imageSize.y - correctRect.getY()); //libgdx origin is at bottomleft
-                _screen.circle(circleRect, userId);
+                _screen.circle(correctRect, userId);
 
                 _gameModel.addFreezeMiliSecs();
                 checkGameEnded(remainingMiliSecsWhenClicked);
@@ -362,13 +358,25 @@ public class MainLogic extends GameLogic {
 
         });
 
-        _stageImagesHandler.setStageImagesHandlerListener(new StageImagesHandlerListener() {
+        _stageImagesLogic.setStageImagesHandlerListener(new StageImagesHandlerListener() {
             @Override
             public void onTouch(float x, float y) {
                 if(_gameModel.isPlaying()){
                     _services.getRoomMsgHandler().sendTouched(x, y, false, _gameModel.getRemainingMiliSecs());
                     imageTouched(getCoordinator().getMyUserId(), x, y,  _gameModel.getRemainingMiliSecs(), false);
                 }
+            }
+
+            @Override
+            public void requestCircleAll() {
+                for(SimpleRectangle simpleRectangle : _gameModel.getImageDetails().getCorrectSimpleRects()){
+                    _screen.circle(simpleRectangle, getCoordinator().getMyUserId());
+                }
+            }
+
+            @Override
+            public void cancelCircleAll() {
+                _screen.unCircleAll();
             }
         });
 

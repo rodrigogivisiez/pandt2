@@ -9,4 +9,5 @@ public class Texts {
     public String gameStarting(){ return "Game starting"; }
     public String verySoon(){ return "very very soon....."; }
     public String gameOver(){ return "Game Over."; }
+    public String memoryStart(){ return "You may start now";}
 }

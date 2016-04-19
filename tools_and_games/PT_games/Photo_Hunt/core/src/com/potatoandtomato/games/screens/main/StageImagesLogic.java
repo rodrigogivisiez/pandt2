@@ -1,47 +1,39 @@
 package com.potatoandtomato.games.screens.main;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.Align;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.absintf.GameModelListener;
 import com.potatoandtomato.games.absintf.StageImagesHandlerListener;
-import com.potatoandtomato.games.assets.Textures;
-import com.potatoandtomato.games.controls.Cross;
 import com.potatoandtomato.games.enums.BonusType;
 import com.potatoandtomato.games.enums.GameState;
 import com.potatoandtomato.games.enums.StageType;
 import com.potatoandtomato.games.models.GameModel;
 import com.potatoandtomato.games.models.Services;
 
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
-
 /**
  * Created by SiongLeng on 18/4/2016.
  */
-public class StageImagesHandler {
+public class StageImagesLogic {
 
     private GameModel gameModel;
     private Table imageOneTable;
     private Table imageTwoTable;
     private Table imageOneInnerTable;
     private Table imageTwoInnerTable;
+    private StageImagesActor stageImagesActor;
     private StageType stageType;
     private String extra;
     private GameCoordinator gameCoordinator;
     private Services services;
     private BonusType bonusType;
+    private boolean disallowClick;
     private StageImagesHandlerListener stageImagesHandlerListener;
 
-    public StageImagesHandler(GameCoordinator gameCoordinator, Services services, GameModel gameModel) {
+    public StageImagesLogic(GameCoordinator gameCoordinator, Services services, GameModel gameModel) {
         this.gameModel = gameModel;
         this.gameCoordinator = gameCoordinator;
         this.services = services;
@@ -52,6 +44,8 @@ public class StageImagesHandler {
         this.imageTwoTable = imageTwoTable;
         this.imageOneInnerTable = imageOneInnerTable;
         this.imageTwoInnerTable = imageTwoInnerTable;
+        stageImagesActor = new StageImagesActor(services, gameCoordinator,
+                            imageOneTable, imageTwoTable, imageOneInnerTable, imageTwoInnerTable);
         setListeners();
     }
 
@@ -59,62 +53,55 @@ public class StageImagesHandler {
         this.stageType = stageType;
         this.extra = extra;
         this.bonusType = bonusType;
-        reset();
+        this.disallowClick = false;
         process();
     }
 
-    private void reset(){
-        imageTwoInnerTable.setRotation(0);
-        for(Actor actor : imageTwoTable.getChildren()){
-            if(actor.getName() != null && actor.getName().equals("duplicate")){
-                actor.remove();
-            }
-        }
-    }
-
     public void process(){
-        if(this.bonusType == BonusType.INVERTED){
-            imageTwoInnerTable.setOrigin(Align.center);
-            imageTwoInnerTable.setRotation(180);
-        }
-        else if(this.bonusType == BonusType.LOOPING){
-            imageTwoTable.setTransform(true);
-            imageTwoTable.addAction(forever(moveBy(-imageTwoInnerTable.getWidth(), 0, 5f)));
+        stageImagesActor.reset();
 
-            Image image = imageTwoInnerTable.findActor("image");
+        if(bonusType == BonusType.MEMORY){
+            disallowClick = true;
+            int startTime = gameModel.getThisStageTotalMiliSecs() * 25 / 100;
+            int showCircleTime = gameModel.getThisStageTotalMiliSecs() * 15 / 100;
 
-            if(image != null){
-                for(int i = 1; i < 20; i++){
-                    Table imageTwoDuplicateInnerTable = new Table();
-                    Image imageTwoImage = new Image(image.getDrawable());
-                    imageTwoDuplicateInnerTable.add(imageTwoImage).expand().fill();
-                    imageTwoDuplicateInnerTable.setSize(imageTwoInnerTable.getWidth(), imageTwoInnerTable.getHeight());
-                    imageTwoDuplicateInnerTable.setPosition(imageTwoInnerTable.getWidth() * i, 0);
-                    imageTwoDuplicateInnerTable.setName("duplicate");
-                    imageTwoTable.addActor(imageTwoDuplicateInnerTable);
+            Threadings.delay(showCircleTime, new Runnable() {
+                @Override
+                public void run() {
+                    stageImagesHandlerListener.requestCircleAll();
                 }
-            }
+            });
+
+            Threadings.delay(startTime, new Runnable() {
+                @Override
+                public void run() {
+                    stageImagesHandlerListener.cancelCircleAll();
+                    stageImagesActor.memory();
+                    disallowClick = false;
+                }
+            });
+
         }
+
+        stageImagesActor.maneuver(bonusType, extra, gameModel);
     }
 
     public boolean checkCanTouch(float x, float y, boolean isTableTwo){
-        if(this.bonusType == BonusType.ONE_PERSON && !extra.equals(gameCoordinator.getMyUserId())){
-            Table touchTable = isTableTwo ? imageTwoInnerTable : imageOneInnerTable;
-            final Image stopImage = new Image(services.getAssets().getTextures().get(Textures.Name.STOP_ICON));
-            stopImage.setPosition(x - stopImage.getPrefWidth() / 2, y  - stopImage.getPrefHeight() / 2);
-            stopImage.setSize(stopImage.getPrefWidth(), stopImage.getPrefHeight());
-            touchTable.addActor(stopImage);
+        boolean canTouch = true;
 
-            stopImage.addAction(sequence(delay(0.6f), fadeOut(0.3f), new RunnableAction(){
-                @Override
-                public void run() {
-                    stopImage.remove();
-                }
-            }));
-
-            return false;
+        if(disallowClick){
+            canTouch = false;
         }
-        return true;
+        else if(this.bonusType == BonusType.ONE_PERSON && !extra.equals(gameCoordinator.getMyUserId())){
+            canTouch = false;
+        }
+
+
+        if(!canTouch){
+            stageImagesActor.showDisallowClick(x, y, isTableTwo);
+        }
+
+        return canTouch;
     }
 
     public Vector2 processTouch(float x, float y, boolean isTableTwo){
@@ -139,7 +126,6 @@ public class StageImagesHandler {
                     Vector2 result = processTouch(x, y, false);
                     stageImagesHandlerListener.onTouch(result.x, result.y);
                 }
-
             }
         });
 
@@ -153,21 +139,6 @@ public class StageImagesHandler {
                 }
             }
          });
-
-        gameModel.addGameModelListener(new GameModelListener() {
-            @Override
-            public void onGameStateChanged(GameState newState) {
-                if (newState == GameState.Won) {
-                    Threadings.postRunnable(new Runnable() {
-                        @Override
-                        public void run() {
-                            imageTwoTable.clearActions();
-                            imageTwoTable.setPosition(0, 0);
-                        }
-                    });
-                }
-            }
-        });
 
     }
 

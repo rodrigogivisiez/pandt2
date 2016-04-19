@@ -27,7 +27,8 @@ public class Textures extends TextureAssets {
         CIRCLE, CROSS,
         PLAYER$1_COUNTER,
         ICE_BOTTOM_HALF, ICE_TOP_HALF,
-        DOOR_LEFT, DOOR_RIGHT, DOOR_OVERLAY
+        DOOR_LEFT, DOOR_RIGHT, DOOR_OVERLAY,
+        BULB_BROKEN, BULB_LIGHT_OFF, BULB_LIGHT_ON, WOOD_BOARD, FULL_BLACK_BG
     }
 
 

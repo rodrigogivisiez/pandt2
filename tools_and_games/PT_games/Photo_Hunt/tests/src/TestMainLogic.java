@@ -14,7 +14,7 @@ import com.potatoandtomato.games.screens.hints.HintsLogic;
 import com.potatoandtomato.games.screens.main.ImageStorage;
 import com.potatoandtomato.games.screens.main.MainLogic;
 import com.potatoandtomato.games.screens.main.MainScreen;
-import com.potatoandtomato.games.screens.main.StageImagesHandler;
+import com.potatoandtomato.games.screens.main.StageImagesLogic;
 import com.potatoandtomato.games.screens.review.ReviewLogic;
 import com.potatoandtomato.games.screens.scores.ScoresLogic;
 import com.potatoandtomato.games.screens.stage_counter.StageCounterLogic;
@@ -125,7 +125,7 @@ public class TestMainLogic extends TestAbstract {
 
         MainLogic mainLogic = new MainLogic(_game.getCoordinator(), services, mock(TimeLogic.class),
                 mock(HintsLogic.class), mock(ReviewLogic.class), mock(UserCountersLogic.class), mock(StageCounterLogic.class),
-                mock(ScoresLogic.class), imageStorage, gameModel, mock(StageImagesHandler.class)){
+                mock(ScoresLogic.class), imageStorage, gameModel, mock(StageImagesLogic.class)){
             @Override
             public void changeScreenImages(Texture texture1, Texture texture2) {
 

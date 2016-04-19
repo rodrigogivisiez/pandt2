@@ -6,168 +6,196 @@ filter: Linear,Linear
 repeat: none
 BOTTOM_BG
   rotate: false
-  xy: 644, 188
+  xy: 644, 194
   size: 640, 60
   orig: 640, 60
   offset: 0, 0
   index: -1
 BOTTOM_BG_SHADOW
   rotate: false
-  xy: 876, 74
+  xy: 1016, 53
   size: 38, 25
   orig: 38, 25
   offset: 0, 0
   index: -1
+BULB_BROKEN
+  rotate: false
+  xy: 822, 4
+  size: 27, 19
+  orig: 27, 19
+  offset: 0, 0
+  index: -1
+BULB_LIGHT_OFF
+  rotate: false
+  xy: 792, 4
+  size: 28, 19
+  orig: 28, 19
+  offset: 0, 0
+  index: -1
+BULB_LIGHT_ON
+  rotate: false
+  xy: 1932, 30
+  size: 77, 117
+  orig: 77, 117
+  offset: 0, 0
+  index: -1
 CASTLE_DOOR
   rotate: false
-  xy: 644, 9
+  xy: 644, 15
   size: 65, 62
   orig: 65, 62
   offset: 0, 0
   index: -1
 CASTLE_ROOM
   rotate: false
-  xy: 644, 73
+  xy: 644, 79
   size: 153, 52
   orig: 153, 52
   offset: 0, 0
   index: -1
 CIRCLE
   rotate: false
-  xy: 1932, 70
+  xy: 917, 60
   size: 97, 71
   orig: 97, 71
   offset: 0, 0
   index: -1
 CROSS
   rotate: false
-  xy: 1076, 75
+  xy: 2011, 25
   size: 32, 24
   orig: 32, 24
   offset: 0, 0
   index: -1
 CURSOR_BLACK
   rotate: false
-  xy: 2034, 207
+  xy: 2045, 40
   size: 1, 41
   orig: 1, 41
   offset: 0, 0
   index: -1
 DOOR_LEFT
   rotate: false
-  xy: 1286, 5
+  xy: 1286, 11
   size: 321, 243
   orig: 321, 243
   offset: 0, 0
   index: -1
 DOOR_OVERLAY
   rotate: false
-  xy: 2, 2
+  xy: 2, 8
   size: 640, 246
   orig: 640, 246
   offset: 0, 0
   index: -1
 DOOR_RIGHT
   rotate: false
-  xy: 1609, 5
+  xy: 1609, 11
   size: 321, 243
   orig: 321, 243
   offset: 0, 0
   index: -1
 EMPTY
   rotate: false
-  xy: 777, 43
+  xy: 2045, 37
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
+FULL_BLACK_BG
+  rotate: false
+  xy: 2011, 116
+  size: 35, 31
+  orig: 35, 31
+  offset: 0, 0
+  index: -1
 HINT_OFF_ICON
   rotate: false
-  xy: 1973, 14
+  xy: 752, 7
   size: 38, 40
   orig: 38, 40
   offset: 0, 0
   index: -1
 HINT_ON_ICON
   rotate: false
-  xy: 1932, 14
+  xy: 711, 7
   size: 39, 40
   orig: 39, 40
   offset: 0, 0
   index: -1
 ICE_BOTTOM_HALF
   rotate: false
-  xy: 876, 101
+  xy: 1093, 93
   size: 64, 24
   orig: 64, 24
   offset: 0, 0
   index: -1
 ICE_TOP_HALF
   rotate: false
-  xy: 711, 43
+  xy: 711, 49
   size: 64, 28
   orig: 64, 28
   offset: 0, 0
   index: -1
 PLAYER0_COUNTER
   rotate: false
-  xy: 942, 101
+  xy: 1056, 54
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER1_COUNTER
   rotate: false
-  xy: 916, 75
+  xy: 792, 25
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER2_COUNTER
   rotate: false
-  xy: 982, 101
+  xy: 832, 25
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER3_COUNTER
   rotate: false
-  xy: 956, 75
+  xy: 872, 25
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER4_COUNTER
   rotate: false
-  xy: 1022, 101
+  xy: 1184, 107
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER5_COUNTER
   rotate: false
-  xy: 996, 75
+  xy: 1224, 107
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER6_COUNTER
   rotate: false
-  xy: 1062, 101
+  xy: 1096, 67
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER7_COUNTER
   rotate: false
-  xy: 1036, 75
+  xy: 1096, 41
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 RED_ARROW
   rotate: false
-  xy: 2031, 119
+  xy: 777, 55
   size: 15, 22
   split: 0, 14, 0, 0
   pad: 0, 0, 0, 0
@@ -176,73 +204,80 @@ RED_ARROW
   index: -1
 REFLECTION
   rotate: false
-  xy: 1932, 143
+  xy: 1932, 149
   size: 100, 105
   orig: 100, 105
   offset: 0, 0
   index: -1
 SCRATCH_SEPARATOR
   rotate: false
-  xy: 1932, 56
+  xy: 1093, 119
   size: 89, 12
   orig: 89, 12
   offset: 0, 0
   index: -1
 SHIELD_SWORD
   rotate: false
-  xy: 799, 74
+  xy: 1016, 80
   size: 75, 51
   orig: 75, 51
   offset: 0, 0
   index: -1
 SMALL_STAR_ICON
   rotate: false
-  xy: 2037, 239
+  xy: 1932, 2
   size: 9, 9
   orig: 9, 9
   offset: 0, 0
   index: -1
 STAR
   rotate: false
-  xy: 777, 46
+  xy: 1136, 66
   size: 25, 25
   orig: 25, 25
   offset: 0, 0
   index: -1
 STOP_ICON
   rotate: false
-  xy: 748, 11
+  xy: 2011, 51
   size: 30, 30
   orig: 30, 30
   offset: 0, 0
   index: -1
 TOP_BG
   rotate: false
-  xy: 644, 127
+  xy: 644, 133
   size: 640, 59
   orig: 640, 59
   offset: 0, 0
   index: -1
 TOP_BG_SHADOW
   rotate: false
-  xy: 1102, 110
+  xy: 1932, 13
   size: 43, 15
   orig: 43, 15
   offset: 0, 0
   index: -1
 TRANS_BLACK_BG
   rotate: false
-  xy: 711, 10
+  xy: 2011, 83
   size: 35, 31
   orig: 35, 31
   offset: 0, 0
   index: -1
 WHITE_ROUNDED_BG
   rotate: false
-  xy: 804, 52
+  xy: 1136, 44
   size: 28, 20
   split: 11, 13, 7, 9
   pad: 5, 7, 0, 0
   orig: 28, 20
+  offset: 0, 0
+  index: -1
+WOOD_BOARD
+  rotate: false
+  xy: 799, 51
+  size: 116, 80
+  orig: 116, 80
   offset: 0, 0
   index: -1

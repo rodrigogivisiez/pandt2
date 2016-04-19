@@ -143,6 +143,15 @@ public class ImageDetails {
     }
 
     @JsonIgnore
+    public ArrayList<SimpleRectangle> getCorrectSimpleRects() {
+        ArrayList<SimpleRectangle> simpleRectangles = new ArrayList();
+        for(Rectangle rectangle : getCorrectRects()){
+            simpleRectangles.add(new SimpleRectangle(rectangle));
+        }
+        return simpleRectangles;
+    }
+
+    @JsonIgnore
     public SimpleRectangle getTouchedCorrectRect(float touchedX, float touchedY){
         for(Rectangle rectangle : getCorrectRects()){
             if(rectangle.contains(touchedX, touchedY)){
