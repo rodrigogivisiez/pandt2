@@ -6,6 +6,7 @@ import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Services;
+import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.common.models.LeaderboardRecord;
@@ -37,7 +38,7 @@ public class SingleGameLeaderBoardLogic extends LogicAbstract {
     }
 
     private void init(){
-        _services.getDatabase().getLeaderBoardAndStreak(_game, 200, new DatabaseListener<ArrayList<LeaderboardRecord>>() {
+        _services.getDatabase().getLeaderBoardAndStreak(_game, Global.LEADERBOARD_COUNT, new DatabaseListener<ArrayList<LeaderboardRecord>>() {
             @Override
             public void onCallback(ArrayList<LeaderboardRecord> records, Status st) {
                 if(st == Status.SUCCESS){

@@ -12,6 +12,7 @@ import com.mygdx.potatoandtomato.helpers.services.Confirm;
 import com.mygdx.potatoandtomato.helpers.utils.OneTimeRunnable;
 import com.mygdx.potatoandtomato.helpers.utils.Pair;
 import com.mygdx.potatoandtomato.models.*;
+import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.models.LeaderboardRecord;
 import com.potatoandtomato.common.models.Player;
@@ -29,7 +30,7 @@ import java.util.HashMap;
 public class EndGameLeaderBoardLogic extends LogicAbstract {
 
     private LeaderBoardScene _scene;
-    private int _leaderboardSize = 200;
+    private int _leaderboardSize = Global.LEADERBOARD_COUNT;
     private double _score;
     private int _scoreToAdd;
     private SafeThread _addScoreThread;

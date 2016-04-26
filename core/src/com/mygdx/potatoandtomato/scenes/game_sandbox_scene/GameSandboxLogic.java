@@ -14,6 +14,7 @@ import com.mygdx.potatoandtomato.helpers.services.Confirm;
 import com.mygdx.potatoandtomato.helpers.services.Notification;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
+import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.*;
@@ -399,12 +400,15 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                     }
                 }
 
+                //the purpose of this part is to complement with the above function, we cant use
+                //this function to get leaderboard and streak because user might not be in the leaderboard
                 final Threadings.ThreadFragment allLeaderboardFragment = new Threadings.ThreadFragment();
-                _services.getDatabase().getLeaderBoardAndStreak(_room.getGame(), 200, new DatabaseListener<ArrayList<LeaderboardRecord>>(LeaderboardRecord.class) {
+                _services.getDatabase().getLeaderBoardAndStreak(_room.getGame(), Global.LEADERBOARD_COUNT, new DatabaseListener<ArrayList<LeaderboardRecord>>(LeaderboardRecord.class) {
                     @Override
                     public void onCallback(ArrayList<LeaderboardRecord> records, Status st) {
                         if(st == Status.SUCCESS){
                             for(int i = records.size() - 1; i >= 0 ;i--){
+                                _coordinator.getGameLeaderboardRecords().add(0, records.get(i));
                                 for(Team team : _room.getTeams()){
                                     if(team.matchedUsers(records.get(i).getUserIds())){
                                         team.setRank(i + 1);

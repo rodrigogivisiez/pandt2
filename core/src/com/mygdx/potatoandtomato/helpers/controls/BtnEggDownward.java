@@ -19,6 +19,7 @@ import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.services.Shaders;
 import com.mygdx.potatoandtomato.helpers.services.SoundsPlayer;
+import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.common.assets.Assets;
@@ -78,6 +79,7 @@ public class BtnEggDownward extends Table {
     }
 
     public void setText(String text){
+        Logs.add();
         this.clear();
         Label.LabelStyle textLabelStyle = new Label.LabelStyle();
 

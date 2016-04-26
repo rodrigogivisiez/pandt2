@@ -52,6 +52,7 @@ public class GameCoordinator implements Disposable {
     private ArrayList<String> _subscribedIds;
     private Array<InputProcessor> _processors;
     private ArrayList<InGameUpdateListener> _inGameUpdateListeners;
+    private ArrayList<LeaderboardRecord> _gameLeaderboardRecords;
 
     private String _broadcastSubscribedId;
 
@@ -86,6 +87,7 @@ public class GameCoordinator implements Disposable {
         this.gamePreferences = gamePreferences;
         this.decisionsMaker = new DecisionsMaker(this.teams);
 
+        _gameLeaderboardRecords = new ArrayList<LeaderboardRecord>();
         _subscribedIds = new ArrayList<String>();
         _processors = new Array<InputProcessor>();
         _inGameUpdateListeners = new ArrayList<InGameUpdateListener>();
@@ -96,6 +98,14 @@ public class GameCoordinator implements Disposable {
             }
         });
         subscribeListeners();
+    }
+
+    public ArrayList<LeaderboardRecord> getGameLeaderboardRecords() {
+        return _gameLeaderboardRecords;
+    }
+
+    public void setGameLeaderboardRecords(ArrayList<LeaderboardRecord> _gameLeaderboardRecords) {
+        this._gameLeaderboardRecords = _gameLeaderboardRecords;
     }
 
     public ITutorials getTutorials() {
@@ -314,6 +324,10 @@ public class GameCoordinator implements Disposable {
         return decisionsMaker.checkIsDecisionMaker(this.getMyUserId());
     }
 
+    public String getDecisionMaker(){
+        return decisionsMaker.getDecisionMaker();
+    }
+
     public HashMap<Integer, Player> getIndexToPlayersMap(){
         HashMap<Integer, Player> playerHashMap = new HashMap();
 
@@ -377,6 +391,19 @@ public class GameCoordinator implements Disposable {
             }
         }
         return new Player("", "", false, true, Color.BLACK);
+    }
+
+    public ArrayList<Player> getPlayersByConnectionState(boolean isConnected){
+        ArrayList<Player> result = new ArrayList();
+
+        for(Team team : teams){
+            for(Player player : team.getPlayers()){
+                if(player.getIsConnected() == isConnected){
+                    result.add(player);
+                }
+            }
+        }
+        return result;
     }
 
     public void addInputProcessor(InputProcessor processor){

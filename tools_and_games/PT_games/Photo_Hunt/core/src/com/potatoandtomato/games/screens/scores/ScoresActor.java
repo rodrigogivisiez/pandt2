@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.potatoandtomato.common.GameCoordinator;
+import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.assets.Fonts;
 import com.potatoandtomato.games.assets.MyAssets;
 import com.potatoandtomato.games.assets.Patches;
@@ -47,7 +48,7 @@ public class ScoresActor extends Table {
     public void populate(int currentScore){
         Label.LabelStyle mainScoreLabelStyle = new Label.LabelStyle(assets.getFonts().get(
                                                         Fonts.FontId.ENCHANTED_MAX_REGULAR_B_FFFFFF_563500_4), Color.valueOf("ffe9c0"));
-        mainScoreLabel = new Label(String.valueOf(currentScore), mainScoreLabelStyle);
+        mainScoreLabel = new Label(String.format("%,d", currentScore), mainScoreLabelStyle);
 
         this.add(mainScoreLabel).padLeft(10);
 
@@ -64,8 +65,8 @@ public class ScoresActor extends Table {
         Label.LabelStyle nextHighScoreLabelStyle = new Label.LabelStyle(assets.getFonts().get(
                                     Fonts.FontId.ENCHANTED_XXL_REGULAR), Color.WHITE);
 
-        nextHighScoreLabel = new Label("50,000", nextHighScoreLabelStyle);
-
+        nextHighScoreLabel = new Label("", nextHighScoreLabelStyle);
+        setNextHighScore(-1);
 
         nextHighScoreTable.add(captionLabel);
         nextHighScoreTable.row();
@@ -76,8 +77,22 @@ public class ScoresActor extends Table {
         this.add(nextHighScoreTable).expand().fill().padRight(5);
     }
 
-    public void setMainScore(int score){
-        mainScoreLabel.setText(String.valueOf(score));
+    public void setMainScore(final int score){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                mainScoreLabel.setText(String.format("%,d", score));
+            }
+        });
+    }
+
+    public void setNextHighScore(final int nextHighScore){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                nextHighScoreLabel.setText(nextHighScore == -1 ? "-" : String.format("%,d", nextHighScore));
+            }
+        });
     }
 
     public void popRulerScoreOnPosition(float x, float y, int width){

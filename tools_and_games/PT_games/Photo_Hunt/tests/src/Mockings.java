@@ -6,6 +6,7 @@ import com.potatoandtomato.common.assets.PatchAssets;
 import com.potatoandtomato.common.assets.SoundAssets;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.assets.Animations;
+import com.potatoandtomato.games.assets.Fonts;
 import com.potatoandtomato.games.assets.MyAssets;
 import com.potatoandtomato.games.assets.Textures;
 import com.potatoandtomato.games.models.Services;
@@ -23,7 +24,7 @@ public class Mockings {
     public static  Services mockServices(GameCoordinator gameCoordinator){
         AssetManager manager = gameCoordinator.getAssetManager(true);
 
-        MyAssets myAssets = new MyAssets(manager, Mockito.mock(FontAssets.class),
+        MyAssets myAssets = new MyAssets(manager, new Fonts(manager),
                 new Animations(manager), Mockito.mock(SoundAssets.class), Mockito.mock(PatchAssets.class),
                 new Textures(manager, "pack.atlas"));
 

@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.assets.Fonts;
 import com.potatoandtomato.games.assets.MyAssets;
 import com.potatoandtomato.games.assets.Textures;
@@ -53,31 +54,37 @@ public class StageCounterActor extends Table {
         this.addActor(specialStageTable);
     }
 
-    public void refreshStageNumber(final int newNumber, StageType stageType){
-        stageLabel.clearActions();
-        stageLabel.addAction(fadeOut(0.1f));
+    public void refreshStageNumber(final int newNumber, final StageType stageType){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                stageLabel.clearActions();
+                stageLabel.addAction(fadeOut(0.1f));
 
-        specialStageImage.clearActions();
-        specialStageTable.clearActions();
-        specialStageTable.addAction(fadeOut(0.1f));
+                specialStageImage.clearActions();
+                specialStageTable.clearActions();
+                specialStageTable.addAction(fadeOut(0.1f));
 
-        if(stageType == StageType.Normal){
-            stageLabel.addAction(sequence(delay(0.1f), new RunnableAction(){
-                @Override
-                public void run() {
-                    stageLabel.setText(String.valueOf(newNumber));
+                if(stageType == StageType.Normal){
+                    stageLabel.addAction(sequence(delay(0.1f), new RunnableAction(){
+                        @Override
+                        public void run() {
+                            stageLabel.setText(String.valueOf(newNumber));
+                        }
+                    },fadeIn(0.3f)));
                 }
-            },fadeIn(0.3f)));
-        }
-        else if(stageType == StageType.Bonus){
-            specialStageTable.addAction(sequence(delay(0.1f), fadeIn(0.3f), new RunnableAction(){
-                @Override
-                public void run() {
-                    specialStageImage.addAction(sequence(forever(Actions.rotateBy(3f, 0.01f))));
-                }
-            }));
+                else if(stageType == StageType.Bonus){
+                    specialStageTable.addAction(sequence(delay(0.1f), fadeIn(0.3f), new RunnableAction(){
+                        @Override
+                        public void run() {
+                            specialStageImage.addAction(sequence(forever(Actions.rotateBy(3f, 0.01f))));
+                        }
+                    }));
 
-        }
+                }
+            }
+        });
+
     }
 
 }

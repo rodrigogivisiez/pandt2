@@ -85,13 +85,15 @@ public class Entrance extends GameEntrance {
     @Override
     public void init() {
         _mainLogic.init();
+        _scoresLogic.refreshAllScores();
         getGameCoordinator().getGame().setScreen((_mainLogic.getMainScreen()));
     }
 
     @Override
     public void onContinue() {
-//        getGameCoordinator().getGame().setScreen((_mainLogic.getScreen()));
-//        _mainLogic.continueGame();
+        _mainLogic.onContinue();
+        _scoresLogic.refreshAllScores();
+        getGameCoordinator().getGame().setScreen((_mainLogic.getMainScreen()));
     }
 
     @Override
@@ -100,6 +102,7 @@ public class Entrance extends GameEntrance {
 //        _services.getScoresHandler().dispose();
 //        _services.getAssets().dispose();
         if(_mainLogic != null) _mainLogic.dispose();
+        if(_stageImagesLogic != null) _stageImagesLogic.dispose();
     }
 
     private void initAssets(){

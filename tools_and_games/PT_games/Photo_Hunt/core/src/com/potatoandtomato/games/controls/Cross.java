@@ -2,6 +2,7 @@ package com.potatoandtomato.games.controls;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.potatoandtomato.common.GameCoordinator;
@@ -24,5 +25,6 @@ public class Cross extends Image {
 
         this.setDrawable(new TextureRegionDrawable(services.getAssets().getTextures().get(Textures.Name.CROSS)));
         this.setColor(userColor);
+        this.setTouchable(Touchable.disabled);
     }
 }

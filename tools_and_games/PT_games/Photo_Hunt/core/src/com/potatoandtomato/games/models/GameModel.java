@@ -11,6 +11,7 @@ import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by SiongLeng on 6/4/2016.
@@ -24,11 +25,11 @@ public class GameModel {
     private ArrayList<SimpleRectangle> handledAreas;
     private int remainingMiliSecs;
     private int hintsLeft;
+    private int castleAttackedCount;
     private int freezingMiliSecs;
     private ImageDetails imageDetails;
     private StageType stageType;
     private ArrayList<GameModelListener> listeners;
-
 
     public GameModel(int stageNumber, int score) {
         this.stageNumber = stageNumber;
@@ -44,6 +45,26 @@ public class GameModel {
         this.handledAreas = new ArrayList();
         this.hintsLeft = 3;
         this.listeners = new ArrayList();
+    }
+
+    public void copyGameModelDataToThis(GameModel gameModel){
+        setStageNumber(gameModel.getStageNumber());
+        setUserRecords(gameModel.getUserRecords());
+        setScore(gameModel.getScore());
+        setGameState(gameModel.getGameState());
+        setHintsLeft(gameModel.getHintsLeft());
+        setStageType(gameModel.getStageType());
+    }
+
+    public int getCastleAttackedCount() {
+        return castleAttackedCount;
+    }
+
+    public void setCastleAttackedCount(int castleAttackedCount) {
+        this.castleAttackedCount = castleAttackedCount;
+        for(GameModelListener listener : listeners){
+            listener.onCastleAttackedCountChanged(castleAttackedCount);
+        }
     }
 
     public StageType getStageType() {
@@ -78,7 +99,9 @@ public class GameModel {
     }
 
     public void minusHintLeft(){
-        setHintsLeft(hintsLeft - 1);
+        if(!Global.REVIEW_MODE) {
+            setHintsLeft(hintsLeft - 1);
+        }
     }
 
     public int getRemainingMiliSecs() {
@@ -134,6 +157,12 @@ public class GameModel {
 
     public void setUserRecords(HashMap<String, Integer> userRecords) {
         this.userRecords = userRecords;
+
+        for(GameModelListener listener : listeners){
+            for (Map.Entry<String, Integer> entry : userRecords.entrySet()) {
+                listener.onAddedClickCount(entry.getKey(), entry.getValue());
+            }
+        }
     }
 
     public ArrayList<SimpleRectangle> getHandledAreas() {
@@ -207,7 +236,8 @@ public class GameModel {
 
     @JsonIgnore
     public int getThisStageTotalAtkMiliSecs(){
-        return Math.max(5000, getThisStageTotalMiliSecs() * ((Global.ATTACK_TIME_PERCENT) / 100));
+        int atkMiliSecs = (int) (getThisStageTotalMiliSecs() * ((float) Global.ATTACK_TIME_PERCENT / 100));
+        return Math.max(5000, atkMiliSecs);
     }
 
 
@@ -238,10 +268,7 @@ public class GameModel {
     @JsonIgnore
     public boolean isAreaAlreadyHandled(SimpleRectangle rectangle){
         for(SimpleRectangle simpleRectangle : handledAreas){
-            if(simpleRectangle.getX() == rectangle.getX() &&
-                    simpleRectangle.getY() == rectangle.getY() &&
-                    simpleRectangle.getHeight() == rectangle.getHeight() &&
-                    simpleRectangle.getWidth() == rectangle.getWidth()){
+            if(simpleRectangle.equals(rectangle)){
                 return true;
             }
         }
@@ -262,13 +289,31 @@ public class GameModel {
     }
 
     @JsonIgnore
-    public void addHandledArea(SimpleRectangle rectangle, String userId, int remainingMiliSecsWhenClicked){
+    public void addHandledArea(SimpleRectangle rectangle, int remainingMiliSecsWhenClicked){
         if(!isAreaAlreadyHandled(rectangle)){
             handledAreas.add(rectangle);
             for(GameModelListener listener : listeners){
-                listener.onCorrectClicked(rectangle, userId, remainingMiliSecsWhenClicked);
+                listener.onCorrectClicked(rectangle, remainingMiliSecsWhenClicked);
             }
-            addUserClickedCount(userId);
+        }
+    }
+
+    @JsonIgnore
+    public boolean isAreaAlreadyConfirmClicked(SimpleRectangle rectangle){
+        for(SimpleRectangle simpleRectangle : handledAreas){
+            if(simpleRectangle.equals(rectangle)){
+                return simpleRectangle.getUserId() != null;
+            }
+        }
+        return false;
+    }
+
+    @JsonIgnore
+    public void setConfirmAreaClickedBy(SimpleRectangle rectangle, String userId){
+        for(SimpleRectangle simpleRectangle : handledAreas){
+            if(simpleRectangle.equals(rectangle)){
+                simpleRectangle.setUserId(userId);
+            }
         }
     }
 
@@ -301,7 +346,14 @@ public class GameModel {
 
     @JsonIgnore
     public boolean isPlaying(){
-        return getHandledAreas().size() < 5 && getGameState() == GameState.Playing && getRemainingMiliSecs() > 0;
+        return getHandledAreas().size() < 5 && getGameState() == GameState.Playing && getRemainingMiliSecs() > 0 &&
+                imageDetails != null;
+    }
+
+    @JsonIgnore
+    public boolean isNextStageBonus(){
+        int nextStageNumber = stageNumber + 1;
+        return nextStageNumber % 10 == 0 && !Global.REVIEW_MODE;
     }
 
     public void dispose(){

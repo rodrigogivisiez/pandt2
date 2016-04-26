@@ -9,6 +9,7 @@ import com.potatoandtomato.common.utils.Threadings;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -19,6 +20,31 @@ public class Logs {
     private static long _startTime;
     private static FPSLogger _fps;
     private static SafeThread _fpsThread;
+    private static ArrayList<String> _logs = new ArrayList();
+
+    public static void add(){
+        final Throwable t = new Throwable();
+        final StackTraceElement[] elements = t.getStackTrace();
+
+        final String callerClassName = elements[1].getFileName();
+        final String callerMethodName = elements[1].getMethodName();
+
+        String TAG = "[" + callerClassName + "]";
+
+        _logs.add(TAG + " [" + callerMethodName + "]");
+
+        ArrayList<String> clone = (ArrayList) _logs.clone();
+
+        for(int i = _logs.size() - 1; i > 10; i--){
+            clone.remove(clone.get(0));
+        }
+
+        _logs = clone;
+    }
+
+    public static ArrayList<String> getAllLogs(){
+        return _logs;
+    }
 
     public static void show(String msg){
         if(Global.DEBUG)
@@ -83,6 +109,10 @@ public class Logs {
         System.out.println(dateFormat.format(date));
         FileHandle handle = Gdx.files.local("pt_logs.txt");
         msg = "Report date: " + dateFormat.format(date) + "\n" + msg;
+        msg += "-------------------------------\n";
+        for(String callLog : getAllLogs()){
+            msg += callLog + "\n";
+        }
         handle.writeString(msg, false);
     }
 

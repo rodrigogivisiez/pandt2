@@ -1,7 +1,6 @@
 package com.potatoandtomato.games.screens.main;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -9,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.potatoandtomato.common.GameCoordinator;
+import com.potatoandtomato.common.absints.BackKeyListener;
 import com.potatoandtomato.common.absints.GameLogic;
 import com.potatoandtomato.common.absints.UserStateListener;
 import com.potatoandtomato.common.enums.Status;
@@ -19,9 +19,7 @@ import com.potatoandtomato.games.enums.GameState;
 import com.potatoandtomato.games.enums.StageType;
 import com.potatoandtomato.games.helpers.Logs;
 import com.potatoandtomato.games.models.*;
-import com.potatoandtomato.games.screens.announcements.BonusAnnouncement;
-import com.potatoandtomato.games.screens.announcements.GameOverAnnouncement;
-import com.potatoandtomato.games.screens.announcements.GameStartingAnnouncement;
+import com.potatoandtomato.games.screens.announcements.*;
 import com.potatoandtomato.games.screens.hints.HintsLogic;
 import com.potatoandtomato.games.screens.review.ReviewLogic;
 import com.potatoandtomato.games.screens.scores.ScoresLogic;
@@ -48,6 +46,9 @@ public class MainLogic extends GameLogic {
     private GameModel _gameModel;
     private ImageStorage _imageStorage;
     private StageImagesLogic _stageImagesLogic;
+    private String _currentDecisionMaker;
+    private boolean _waitingContinue;
+    private boolean _attachGameModelOnFinish;
 
     public MainLogic(GameCoordinator gameCoordinator, Services _services,
                      TimeLogic _timeLogic, HintsLogic _hintsLogic, ReviewLogic _reviewLogic, UserCountersLogic _userCounterLogic,
@@ -74,15 +75,17 @@ public class MainLogic extends GameLogic {
                                     _screen.getImageOneInnerTable(), _screen.getImageTwoInnerTable());
         setListeners();
 
+
     }
 
     public void init(){
+        _currentDecisionMaker = getCoordinator().getDecisionMaker();
         _imageStorage.startMonitor();
         _gameModel.setGameState(GameState.Close);
 
         _screen.showAnnouncement(new GameStartingAnnouncement(_services));
 
-        Threadings.delay(Global.START_PREPARE_TIME, new Runnable() {
+        Threadings.delay(Global.ClOSE_DOOR_BUFFER_TIME, new Runnable() {
             @Override
             public void run() {
                 sendGoToNextStageIfIsDecisionMaker(-1);
@@ -91,76 +94,142 @@ public class MainLogic extends GameLogic {
     }
 
     public void onContinue(){
+        _waitingContinue = true;
+        _imageStorage.startMonitor();
+        _gameModel.setGameState(GameState.Close);
 
+        _screen.showAnnouncement(new WaitContinueAnnouncement(_services));
     }
 
     //index = -1 mean peek next item in imagestorage, else peek item by index
     public void sendGoToNextStageIfIsDecisionMaker(int index){
-        if(getCoordinator().meIsDecisionMaker()) {
+        if(meIsThisStageDecisionMaker()) {
             _imageStorage.peek(index, new ImageStorageListener() {
                 @Override
                 public void onPeeked(ImagePair imagePair) {
-//                    _services.getRoomMsgHandler().sendGotoNextStage(imagePair.getImageDetails().getId(),
-//                                                StageType.Normal, BonusType.NONE, "");
+
+                    StageType stageType = StageType.Normal;
+                    BonusType bonusType = BonusType.NONE;
+                    if(_gameModel.isNextStageBonus()){
+                        stageType = StageType.Bonus;
+                        bonusType = BonusType.random();
+                    }
 
                     _services.getRoomMsgHandler().sendGotoNextStage(imagePair.getImageDetails().getId(),
-                            StageType.Bonus, BonusType.MEMORY, "");
+                            stageType, bonusType,
+                                StageImagesLogic.generateBonusTypeExtra(bonusType, getCoordinator().getPlayersByConnectionState(true)),
+                            _attachGameModelOnFinish ? _gameModel : null);
 
+                    _attachGameModelOnFinish = false;
                 }
             });
         }
     }
 
     public void goToNewStage(String id, final StageType stageType, final BonusType bonusType, final String extra){
+        _currentDecisionMaker = getCoordinator().getDecisionMaker();
+        _screen.clearAnnouncement();
+        _gameModel.setImageDetails(null);
+        _gameModel.clearHandledAreas();
+        _gameModel.setStageType(stageType);
+        _gameModel.addStageNumber();
+
+        if(stageType == StageType.Normal){
+            invalidateReviewLogic();
+            Threadings.delay(200, new Runnable() {
+                @Override
+                public void run() {
+                    _gameModel.setGameState(GameState.Playing);
+                }
+            });
+        }
+        else if(stageType == StageType.Bonus){
+            _gameModel.setGameState(GameState.Close);
+            _screen.showAnnouncement(new BonusAnnouncement(_services, bonusType));
+            Threadings.delay(Global.ClOSE_DOOR_BUFFER_TIME, new Runnable() {
+                @Override
+                public void run() {
+                    _screen.clearAnnouncement();
+                    _gameModel.setGameState(GameState.Playing);
+                }
+            });
+        }
+
         _imageStorage.pop(id, new ImageStorageListener() {
             @Override
             public void onPopped(final ImagePair imagePair) {
                 Threadings.postRunnable(new Runnable() {
                     @Override
                     public void run() {
-                        _screen.clearAnnouncement();
+                        if (imagePair == null) {
+                            _screen.showMessages(_services.getTexts().slowMessage());
+                            return;
+                        }
+
                         imagePair.getImageDetails().setGameImageSize((int) _screen.getImageSize().x, (int) _screen.getImageSize().y);
                         _gameModel.setImageDetails(imagePair.getImageDetails());
-                        _gameModel.clearHandledAreas();
-                        _gameModel.setStageType(stageType);
+
+                        final Runnable setImageRunnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                _screen.setImages(imagePair.getImageOne(), imagePair.getImageTwo());
+                                _stageImagesLogic.beforeStartStage(stageType, bonusType, extra);
+                            }
+                        };
 
                         if(stageType == StageType.Normal){
-                            _gameModel.addStageNumber();
-                            _gameModel.setGameState(GameState.Playing);
-                            invalidateReviewLogic();
+                            setImageRunnable.run();
                         }
                         else if(stageType == StageType.Bonus){
-                            _gameModel.setGameState(GameState.Close);
-                            _screen.showAnnouncement(new BonusAnnouncement(_services, bonusType));
-                            Threadings.delay(1000, new Runnable() {
+                            Threadings.delay(Global.ClOSE_DOOR_BUFFER_TIME, new Runnable() {
                                 @Override
                                 public void run() {
-                                    _screen.clearAnnouncement();
-                                    _gameModel.addStageNumber();
-                                    _gameModel.setGameState(GameState.Playing);
+                                    setImageRunnable.run();
                                 }
                             });
-
                         }
-
-                        changeScreenImages(imagePair.getImageOne(), imagePair.getImageTwo());
-                        _stageImagesLogic.beforeStartStage(stageType, bonusType, extra);
                     }
                 });
             }
         });
     }
 
-    public void changeScreenImages(Texture texture1, Texture texture2){
-        _screen.resetImages(texture1, texture2);
+    //only call by self
+    public void imageTouched(float x, float y, int remainingMiliSecs, int hintLeft){
+        SimpleRectangle correctRect = getCorrectRectByTouchPosition(x, y);
+
+        if(correctRect == null){
+            _timeLogic.reduceTime();
+            _screen.cross(x, y, getCoordinator().getMyUserId());
+        }
+        else if(!_gameModel.isAreaAlreadyHandled(correctRect)) {
+            _gameModel.addHandledArea(correctRect, remainingMiliSecs);
+        }
+
+        _services.getRoomMsgHandler().sendTouched(x, y, _gameModel.getRemainingMiliSecs(), hintLeft, correctRect);
     }
 
-    public void imageTouched(String userId, float x, float y, int remainingMiliSecs, boolean usedHint){
+    public void touchReceived(String userId, float x, float y, int remainingMiliSecs, int hintLeft, SimpleRectangle correctRect){
+        if(correctRect == null){
+            if(!userId.equals(getCoordinator().getMyUserId())){
+                _timeLogic.reduceTime();
+                _screen.cross(x, y, userId);
+            }
+        }
+        else if(!_gameModel.isAreaAlreadyConfirmClicked(correctRect)) {
+            _gameModel.addHandledArea(correctRect, remainingMiliSecs);
+            _gameModel.setConfirmAreaClickedBy(correctRect, userId);
+            _screen.circle(correctRect, userId);
+            _gameModel.addUserClickedCount(userId);
+            _gameModel.setHintsLeft(hintLeft);
+        }
+    }
+
+    public SimpleRectangle getCorrectRectByTouchPosition(float x, float y){
         Vector2 imageSize = _screen.getImageSize();
 
         float finalY = imageSize.y - y;  //libgdx origin is at bottomleft
         SimpleRectangle correctRect = null;
-
 
         //expand the touch to a imaginary small square, for better touch experience
         int i = 0, expandSize = 5;
@@ -187,24 +256,13 @@ public class MainLogic extends GameLogic {
             i++;
         }
 
-
-
-        if(correctRect == null){
-            _timeLogic.reduceTime();
-            _screen.cross(x, y, userId);
-        }
-        else if(!_gameModel.isAreaAlreadyHandled(correctRect)) {
-            if(usedHint && !Global.REVIEW_MODE){
-                _gameModel.minusHintLeft();
-            }
-            _gameModel.addHandledArea(correctRect, userId, remainingMiliSecs);
-        }
+        return correctRect;
     }
 
     public void checkGameEnded(int remainingSecs){
         if(_gameModel.getHandledAreas().size() == 5){
             _gameModel.setGameState(GameState.Pause);
-            if(getCoordinator().meIsDecisionMaker()){
+            if(meIsThisStageDecisionMaker()){
                 _services.getRoomMsgHandler().sendWon(new WonStageModel(_gameModel.getStageNumber(),
                                         _gameModel.getScore(), remainingSecs, "0", StageType.Normal));
             }
@@ -213,12 +271,38 @@ public class MainLogic extends GameLogic {
 
     private void gameLost(){
         if(_gameModel.getStageType() == StageType.Normal){
-            _gameModel.setGameState(GameState.Close);
-            _screen.showAnnouncement(new GameOverAnnouncement(_services));
+            gameOver();
         }
         else if(_gameModel.getStageType() == StageType.Bonus){
             sendGoToNextStageIfIsDecisionMaker(-1);
         }
+    }
+
+    private void gameOver(){
+        _screen.refreshGameState(GameState.Close);      //dont change lose state for continue player
+        _screen.showAnnouncement(new GameOverAnnouncement(_services));
+
+        getCoordinator().beforeEndGame(_scoresLogic.getFinalScoreDetails(), null);
+        getCoordinator().endGame();
+    }
+
+    private void gameLoseAllGameModelHolderDc(){
+        _screen.showAnnouncement(new ContinueFailedAnnouncement(_services));
+
+        getCoordinator().beforeEndGame(null, null);
+        getCoordinator().endGame();
+    }
+
+    private void reconstructGameModelIfWaitingContinue(GameModel gameModel){
+        if(_waitingContinue){
+            _waitingContinue = false;
+            this._gameModel.copyGameModelDataToThis(gameModel);
+            _scoresLogic.refreshAllScores();
+        }
+    }
+
+    private boolean meIsThisStageDecisionMaker(){
+        return (_currentDecisionMaker != null && _currentDecisionMaker.equals(getCoordinator().getMyUserId()));
     }
 
     public void invalidateReviewLogic(){
@@ -258,16 +342,16 @@ public class MainLogic extends GameLogic {
     private void setListeners(){
 
         _gameModel.addGameModelListener(new GameModelListener() {
-
             @Override
             public void onTimeFinished() {
                 //allow a 1 sec tolerance time for game over
-                if(getCoordinator().meIsDecisionMaker()){
+                if(meIsThisStageDecisionMaker()){
                     Threadings.delay(1000, new Runnable() {
                         @Override
                         public void run() {
                             if(_gameModel.getGameState() == GameState.Playing){
                                 _services.getRoomMsgHandler().sendLose();
+                                _attachGameModelOnFinish = false;
                             }
                         }
                     });
@@ -298,11 +382,20 @@ public class MainLogic extends GameLogic {
             }
 
             @Override
-            public void onCorrectClicked(SimpleRectangle correctRect, String userId, int remainingMiliSecsWhenClicked) {
-                _screen.circle(correctRect, userId);
-
+            public void onCorrectClicked(SimpleRectangle correctRect, int remainingMiliSecsWhenClicked) {
+                _screen.circle(correctRect, null);
                 _gameModel.addFreezeMiliSecs();
                 checkGameEnded(remainingMiliSecsWhenClicked);
+            }
+
+        });
+
+        _screen.setBackKeyListener(new BackKeyListener() {
+            @Override
+            public void backPressed() {
+                if(_gameModel.getGameState() != GameState.Lose){
+                    getCoordinator().abandon();
+                }
             }
         });
 
@@ -321,29 +414,42 @@ public class MainLogic extends GameLogic {
             }
         });
 
+        _hintsLogic.setHintsLogicListener(new HintsLogicListener() {
+            @Override
+            public void onHintClicked(Rectangle notYetHandledArea, int newHintLeft) {
+                float x, y;
+                x = notYetHandledArea.getX() + 1;
+                y = notYetHandledArea.getY() + 1;
+                y = _gameModel.getImageDetails().getGameImageHeight() - y;
+                imageTouched(x, y, _gameModel.getRemainingMiliSecs(), newHintLeft);
+            }
+        });
+
         _services.getRoomMsgHandler().setRoomMsgListener(new RoomMsgListener() {
             @Override
             public void onTouched(final TouchedPoint touchedPoint, final String userId) {
-                Threadings.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        imageTouched(userId, touchedPoint.x, touchedPoint.y, touchedPoint.getRemainingMiliSecs(), touchedPoint.isUsedHint());
-                    }
-                });
+                if(!_waitingContinue){
+                    touchReceived(userId, touchedPoint.x, touchedPoint.y, touchedPoint.getRemainingMiliSecs(),
+                            touchedPoint.getHintLeft(), touchedPoint.getCorrectRect());
+                }
             }
 
             @Override
             public void onLose() {
-                Logs.show("YOU LOSE!! Bye!");
-                _gameModel.setGameState(GameState.Lose);
+                if(!_waitingContinue) {
+                    Logs.show("YOU LOSE!! Bye!");
+                    _gameModel.setGameState(GameState.Lose);
+                }
             }
 
             @Override
             public void onWon(WonStageModel wonStageModel) {
-                _gameModel.setRemainingMiliSecs(wonStageModel.getRemainingSecs(), false);
-                _gameModel.setGameState(GameState.Won);
+                if(!_waitingContinue) {
+                    _gameModel.setRemainingMiliSecs(wonStageModel.getRemainingSecs(), false);
+                    _gameModel.setGameState(GameState.Won);
 
-                Logs.show("You win, time is: " + wonStageModel.getRemainingSecs());
+                    Logs.show("You win, time is: " + wonStageModel.getRemainingSecs());
+                }
             }
 
             @Override
@@ -352,7 +458,8 @@ public class MainLogic extends GameLogic {
             }
 
             @Override
-            public void onGoToNextStage(String id, StageType stageType, BonusType bonusType, String extra) {
+            public void onGoToNextStage(String id, StageType stageType, BonusType bonusType, String extra, GameModel gameModel) {
+                reconstructGameModelIfWaitingContinue(gameModel);
                 goToNewStage(id, stageType, bonusType, extra);
             }
 
@@ -362,8 +469,7 @@ public class MainLogic extends GameLogic {
             @Override
             public void onTouch(float x, float y) {
                 if(_gameModel.isPlaying()){
-                    _services.getRoomMsgHandler().sendTouched(x, y, false, _gameModel.getRemainingMiliSecs());
-                    imageTouched(getCoordinator().getMyUserId(), x, y,  _gameModel.getRemainingMiliSecs(), false);
+                    imageTouched(x, y, _gameModel.getRemainingMiliSecs(), _gameModel.getHintsLeft());
                 }
             }
 
@@ -383,17 +489,30 @@ public class MainLogic extends GameLogic {
         getCoordinator().setUserStateListener(new UserStateListener() {
             @Override
             public void userAbandoned(String s) {
-
+                if(s.equals(_currentDecisionMaker)){
+                    _currentDecisionMaker = getCoordinator().getDecisionMaker();
+                }
             }
 
             @Override
             public void userConnected(String s) {
-
+                _imageStorage.resendRedownloadCurrentImageStorage();
+                _attachGameModelOnFinish = true;
             }
 
             @Override
             public void userDisconnected(String s) {
+                if(getCoordinator().getPlayersByConnectionState(true).size() == 1){
+                    //only me is connected, and nobody will send me game model for continue, deem as lose
+                    if(_waitingContinue){
+                        gameLoseAllGameModelHolderDc();
+                        return;
+                    }
+                }
 
+                if(s.equals(_currentDecisionMaker)){
+                    _currentDecisionMaker = getCoordinator().getDecisionMaker();
+                }
             }
         });
 

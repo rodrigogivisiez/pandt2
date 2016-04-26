@@ -39,17 +39,18 @@ public class KnightLogic {
     }
 
     public void reset(){
+        gameModel.setCastleAttackedCount(0);
         this.totalMiliSecs = gameModel.getThisStageTotalMiliSecs();
         this.totalMovingMiliSecs = gameModel.getThisStageTotalMovingMiliSecs();
         this.totalAtkMiliSecs = gameModel.getThisStageTotalAtkMiliSecs();
         knightActor.setKnightAtkSpeed(totalMiliSecs / (3000 * 1000));
         knightActor.changeState(KnightState.Walk);
         setFreezed(false);
-        knightActor.setKnightPositionX(totalDistance, false);
+        knightActor.setKnightPositionX(totalDistance, false, false);
     }
 
     public void updatePosition(float remainingMiliSecs){
-        knightActor.setKnightPositionX(getRemainingDistanceByRemainingTime(remainingMiliSecs), true);
+        knightActor.setKnightPositionX(getRemainingDistanceByRemainingTime(remainingMiliSecs), true, true);
     }
 
     public void setFreezed(boolean freezed) {
@@ -132,6 +133,7 @@ public class KnightLogic {
             @Override
             public void run() {
                 knightActor.popStars();
+                gameModel.setCastleAttackedCount(gameModel.getCastleAttackedCount() + 1);
             }
         });
 
@@ -141,8 +143,7 @@ public class KnightLogic {
         return knightActor;
     }
 
-
-
-
-
+    public void setKnightActor(KnightActor knightActor) {
+        this.knightActor = knightActor;
+    }
 }

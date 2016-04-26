@@ -8,24 +8,34 @@ public class TouchedPoint {
     public float x;
     public float y;
     public int remainingMiliSecs;
-    public boolean usedHint;
+    public int hintLeft;
+    public SimpleRectangle correctRect;
 
-    public TouchedPoint(float x, float y, int remainingMiliSecs, boolean usedHint) {
+    public TouchedPoint(float x, float y, int remainingMiliSecs, int hintLeft, SimpleRectangle correctRect) {
         this.x = x;
         this.y = y;
         this.remainingMiliSecs = remainingMiliSecs;
-        this.usedHint = usedHint;
+        this.hintLeft = hintLeft;
+        this.correctRect = correctRect;
     }
 
     public TouchedPoint() {
     }
 
-    public boolean isUsedHint() {
-        return usedHint;
+    public SimpleRectangle getCorrectRect() {
+        return correctRect;
     }
 
-    public void setUsedHint(boolean usedHint) {
-        this.usedHint = usedHint;
+    public void setCorrectRect(SimpleRectangle correctRect) {
+        this.correctRect = correctRect;
+    }
+
+    public int getHintLeft() {
+        return hintLeft;
+    }
+
+    public void setHintLeft(int hintLeft) {
+        this.hintLeft = hintLeft;
     }
 
     public float getX() {

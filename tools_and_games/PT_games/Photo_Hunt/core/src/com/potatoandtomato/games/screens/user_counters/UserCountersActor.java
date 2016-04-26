@@ -100,7 +100,10 @@ public class UserCountersActor extends Table {
     }
 
     public void updateCounter(String userId, int updatedCounter){
-        Table counterTable = userIdToTableMap.get(userId).findActor("counterTable");
+        Table userTable = userIdToTableMap.get(userId);
+        if(userTable == null) return;
+
+        Table counterTable = userTable.findActor("counterTable");
 
         final Actor oldLabel = counterTable.getChildren().get(counterTable.getChildren().size - 1);
         if(oldLabel != null){
@@ -132,6 +135,8 @@ public class UserCountersActor extends Table {
 
             final Table userTable = (Table) this.getCells().get(i).getActor();
             final Table movingTable = userIdToTableMap.get(userIdsSortedByRecord.get(i));
+
+            if(movingTable == null) continue;
 
             int movingIndex = 0;
             for(int q = 0; q < this.getCells().size; q++){

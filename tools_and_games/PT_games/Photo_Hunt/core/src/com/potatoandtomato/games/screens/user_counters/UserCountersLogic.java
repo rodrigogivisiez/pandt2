@@ -68,8 +68,13 @@ public class UserCountersLogic implements Disposable {
 
         gameModel.addGameModelListener(new GameModelListener() {
             @Override
-            public void onAddedClickCount(String userId, int newCount) {
-                userCounterChanged(userId);
+            public void onAddedClickCount(final String userId, int newCount) {
+                Threadings.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        userCounterChanged(userId);
+                    }
+                });
             }
         });
 

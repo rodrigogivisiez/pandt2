@@ -1,23 +1,33 @@
 package com.potatoandtomato.games.screens.main;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Disposable;
 import com.potatoandtomato.common.GameCoordinator;
+import com.potatoandtomato.common.models.Player;
+import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.absintf.GameModelListener;
 import com.potatoandtomato.games.absintf.StageImagesHandlerListener;
 import com.potatoandtomato.games.enums.BonusType;
 import com.potatoandtomato.games.enums.GameState;
 import com.potatoandtomato.games.enums.StageType;
+import com.potatoandtomato.games.helpers.Logs;
 import com.potatoandtomato.games.models.GameModel;
+import com.potatoandtomato.games.models.LightTimingModel;
 import com.potatoandtomato.games.models.Services;
+import com.potatoandtomato.games.models.SimpleRectangle;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by SiongLeng on 18/4/2016.
  */
-public class StageImagesLogic {
+public class StageImagesLogic implements Disposable {
 
     private GameModel gameModel;
     private Table imageOneTable;
@@ -47,6 +57,29 @@ public class StageImagesLogic {
         stageImagesActor = new StageImagesActor(services, gameCoordinator,
                             imageOneTable, imageTwoTable, imageOneInnerTable, imageTwoInnerTable);
         setListeners();
+    }
+
+    public static String generateBonusTypeExtra(BonusType bonusType, ArrayList<Player> connectedPlayers){
+        if(bonusType == BonusType.LIGHTING){
+            LightTimingModel lightTimingModel = new LightTimingModel();
+            lightTimingModel.randomize();
+            return lightTimingModel.toJson();
+        }
+        else if(bonusType == BonusType.ONE_PERSON){
+            int index = MathUtils.random(0, connectedPlayers.size() - 1);
+            Player chosenPlayer = connectedPlayers.get(index);
+            return chosenPlayer.getUserId();
+        }
+        else if(bonusType == BonusType.DISTRACTION){
+            ArrayList<String> array = new ArrayList();
+            for(int i = 0; i < 10; i++){
+                array.add(String.valueOf(i));
+            }
+            Collections.shuffle(array);
+            return Strings.joinArr(array, ",");
+        }
+
+        return "";
     }
 
     public void beforeStartStage(StageType stageType, BonusType bonusType, String extra){
@@ -120,29 +153,45 @@ public class StageImagesLogic {
     public void setListeners(){
         imageOneTable.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 if(checkCanTouch(x, y, false)){
                     Vector2 result = processTouch(x, y, false);
                     stageImagesHandlerListener.onTouch(result.x, result.y);
                 }
+                return super.touchDown(event, x, y, pointer, button);
             }
         });
 
         imageTwoTable.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                if (checkCanTouch(x, y, true)) {
-                    Vector2 result = processTouch(x, y, true);
-                    stageImagesHandlerListener.onTouch(result.x,result.y);
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                if(bonusType != BonusType.COVERED){
+                    if (checkCanTouch(x, y, true)) {
+                        Vector2 result = processTouch(x, y, true);
+                        stageImagesHandlerListener.onTouch(result.x,result.y);
+                    }
                 }
+                return super.touchDown(event, x, y, pointer, button);
             }
          });
+
+        gameModel.addGameModelListener(new GameModelListener() {
+            @Override
+            public void onCorrectClicked(SimpleRectangle rectangle, int remainingMiliSecsWhenClicked) {
+                if(gameModel.getHandledAreas().size() == 5){
+                    stageImagesActor.stop();
+                }
+            }
+        });
 
     }
 
     public void setStageImagesHandlerListener(StageImagesHandlerListener stageImagesHandlerListener) {
         this.stageImagesHandlerListener = stageImagesHandlerListener;
+    }
+
+    @Override
+    public void dispose() {
+        stageImagesActor.reset();
     }
 }

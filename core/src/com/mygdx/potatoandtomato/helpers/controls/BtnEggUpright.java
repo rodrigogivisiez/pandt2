@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.services.SoundsPlayer;
+import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.mygdx.potatoandtomato.helpers.utils.Sizes;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.common.assets.Assets;
@@ -69,6 +70,7 @@ public class BtnEggUpright extends Table {
     }
 
     public void animate(){
+        Logs.add();
         this.setSize(_size.x, _size.y - 40);
         Vector2 originalPosition = new Vector2(this.getX(), this.getY());
         this.setPosition(originalPosition.x, originalPosition.y + 10);

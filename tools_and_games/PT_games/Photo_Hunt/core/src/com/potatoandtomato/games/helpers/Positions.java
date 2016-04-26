@@ -18,7 +18,9 @@ public class Positions {
 
     public static Vector2 actorLocalToStageCoord(Actor actor){
         Vector2 coords = new Vector2(0, 0);
-        actor.localToStageCoordinates(/*in/out*/coords);
+        if(actor != null){
+            actor.localToStageCoordinates(/*in/out*/coords);
+        }
         return coords;
     }
 

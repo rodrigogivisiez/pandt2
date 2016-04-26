@@ -7,10 +7,9 @@ import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.games.absintf.GameModelListener;
 import com.potatoandtomato.games.absintf.HintsLogicListener;
 import com.potatoandtomato.games.enums.GameState;
+import com.potatoandtomato.games.enums.StageType;
 import com.potatoandtomato.games.models.GameModel;
 import com.potatoandtomato.games.models.Services;
-import com.potatoandtomato.games.models.SimpleRectangle;
-import com.potatoandtomato.games.statics.Global;
 
 /**
  * Created by SiongLeng on 8/4/2016.
@@ -23,6 +22,8 @@ public class HintsLogic {
     private GameCoordinator gameCoordinator;
     private HintsLogicListener hintsLogicListener;
     private Services services;
+    private boolean isHintBlocked;
+    private int usedCount = 1;
 
     public HintsLogic(GameModel gameModel, Services services, GameCoordinator gameCoordinator) {
         this.gameModel = gameModel;
@@ -40,12 +41,28 @@ public class HintsLogic {
         }
     }
 
+    public void refreshBlockHint(){
+        boolean blockHint = (gameModel.getStageType() == StageType.Bonus);
+        if(isHintBlocked != blockHint){
+            isHintBlocked = blockHint;
+            hintsActor.setHintBlockVisible(isHintBlocked);
+        }
+    }
+
+    public void reviveAllHints(){
+        gameModel.setHintsLeft(3);
+    }
 
     private void setListeners(){
         this.hintsActor.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x1, float y1) {
-                if(gameModel.isPlaying() && gameModel.getHintsLeft() > 0){
+                if(usedCount > 3){      //hotfix for fast consecutive click can use more than 3 hints bug
+                    return;
+                }
+                usedCount++;
+
+                if(gameModel.isPlaying() && gameModel.getHintsLeft() > 0 && !isHintBlocked){
                     int i = 0;
                     Rectangle notYetHandledArea = null;
                     for(Rectangle rectangle : gameModel.getImageDetails().getCorrectRects()){
@@ -57,28 +74,44 @@ public class HintsLogic {
                     }
 
                     if(notYetHandledArea != null){
-                        gameModel.addHandledArea(new SimpleRectangle(notYetHandledArea), gameCoordinator.getMyUserId(),
-                                gameModel.getRemainingMiliSecs());
-                        float x, y;
-                        x = notYetHandledArea.getX() + 1;
-                        y = notYetHandledArea.getY() + 1;
-                        y = gameModel.getImageDetails().getGameImageHeight() - y;
-                        services.getRoomMsgHandler().sendTouched(x, y,
-                                                true, gameModel.getRemainingMiliSecs());
-                        if(!Global.REVIEW_MODE){
-                            gameModel.minusHintLeft();
-                        }
+                        gameModel.minusHintLeft();
+                        hintsLogicListener.onHintClicked(notYetHandledArea, gameModel.getHintsLeft());
+
                     }
                 }
+
             }
         });
 
         gameModel.addGameModelListener(new GameModelListener() {
+
+            @Override
+            public void onGameStateChanged(GameState newState) {
+                if(newState == GameState.Won && gameModel.getStageType() == StageType.Bonus){
+                    reviveAllHints();
+                }
+            }
+
             @Override
             public void onHintChanged(int newHintLeft) {
                 invalidate();
             }
+
+            @Override
+            public void onStageNumberChanged(int newStageNumber) {
+                usedCount = 1;
+                refreshBlockHint();
+            }
         });
+    }
+
+    public int getCurrentHintsLeft() {
+        if(isHintBlocked){
+            return 0;
+        }
+        else{
+            return currentHintsLeft;
+        }
     }
 
     public HintsActor getHintsActor() {

@@ -192,21 +192,7 @@ public class BoardScreen extends GameScreen {
 
     @Override
     public void render(float delta) {
-        if (Gdx.input.isKeyPressed(Input.Keys.BACK)){
-            _services.getScoresHandler().setIsMeWin(false);
-            _services.getScoresHandler().process(new ScoresListener() {
-                @Override
-                public void onCallBack(HashMap<Team, ArrayList<ScoreDetails>> winnerResult, ArrayList<Team> losers) {
-                    getCoordinator().abandon(winnerResult, new Runnable() {
-                        @Override
-                        public void run() {
-                            _services.getScoresHandler().updateMatchHistory();
-                        }
-                    });
-                }
-            });
-        }
-
+        super.render(delta);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.gl.glClearColor(253 / 255, 221 / 255, 221 / 255, 1f);
 

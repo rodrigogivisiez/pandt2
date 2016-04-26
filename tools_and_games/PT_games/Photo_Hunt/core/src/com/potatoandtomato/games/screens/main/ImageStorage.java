@@ -33,12 +33,14 @@ public class ImageStorage implements Disposable {
     private int currentIndex;
     private int orderIndex;           //used to make sure final results is in same order
     private long downloadPeriod = 30000;
+    private ArrayList<String> currentStoreImageIds;
     private SafeThread safeThread;
 
     public ImageStorage(Services services, GameCoordinator gameCoordinator) {
         this.services = services;
         this.gameCoordinator = gameCoordinator;
         this.imagePairs = new ArrayList();
+        this.currentStoreImageIds = new ArrayList();
         safeThread = new SafeThread();
     }
 
@@ -129,15 +131,21 @@ public class ImageStorage implements Disposable {
 
             }
         });
-
-
     }
 
     public void receivedDownloadRequest(final ArrayList<String> imageIds){
+        for(String id : imageIds){
+            if(!currentStoreImageIds.contains(id)){
+                currentStoreImageIds.add(id);
+            }
+        }
+
         Threadings.runInBackground(new Runnable() {
             @Override
             public void run() {
                 for(String id : imageIds){
+                    if(getImagePairById(id) != null) continue;
+
                     final Threadings.ThreadFragment threadFragment = new Threadings.ThreadFragment();
                     services.getDatabase().getImageDetailsById(id, new DatabaseListener<ImageDetails>(ImageDetails.class) {
                         @Override
@@ -290,6 +298,7 @@ public class ImageStorage implements Disposable {
 
                 ImagePair first = imagePairs.get(0);
                 imagePairs.remove(first);
+                currentStoreImageIds.remove(first.getImageDetails().getId());
                 listener.onPopped(first);
             }
         });
@@ -300,24 +309,32 @@ public class ImageStorage implements Disposable {
             @Override
             public void run() {
                 int i = 0;
-                while (getImagePairById(id) == null){
-                    Threadings.sleep(300);
-                    if(safeThread.isKilled()) return;
-                    i++;
-                    if(i > 10){     //redownload
-                        ArrayList<String> ids = new ArrayList<String>();
-                        ids.add(id);
-                        receivedDownloadRequest(ids);
-                        i = 0;
-                    }
-                }
+//                while (getImagePairById(id) == null){
+//                    Threadings.sleep(300);
+//                    if(safeThread.isKilled()) return;
+//                    i++;
+//                    if(i > 10){     //redownload
+//                        ArrayList<String> ids = new ArrayList<String>();
+//                        ids.add(id);
+//                        receivedDownloadRequest(ids);
+//                        i = 0;
+//                    }
+//                }
 
                 ImagePair first = getImagePairById(id);
-                imagePairs.remove(first);
+                if(first != null){
+                    imagePairs.remove(first);
+                    currentStoreImageIds.remove(first.getImageDetails().getId());
+                }
                 listener.onPopped(first);
             }
         });
     }
+
+    public void resendRedownloadCurrentImageStorage(){
+        services.getRoomMsgHandler().sendDownloadImageRequest(currentStoreImageIds);
+    }
+
 
     private ImagePair getImagePairById(String id){
         for(ImagePair imagePair : imagePairs){

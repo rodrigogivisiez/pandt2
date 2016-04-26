@@ -1,6 +1,7 @@
 package com.potatoandtomato.games.controls;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.potatoandtomato.common.GameCoordinator;
@@ -19,9 +20,10 @@ public class Circle extends Image {
     public Circle(GameCoordinator gameCoordinator, Services services, String userId) {
         this.services = services;
         this.gameCoordinator = gameCoordinator;
-        this.userColor = gameCoordinator.getPlayerByUserId(userId).getUserColor();
+        this.userColor = ((userId == null) ? Color.WHITE :gameCoordinator.getPlayerByUserId(userId).getUserColor());
 
         this.setDrawable(new TextureRegionDrawable(services.getAssets().getTextures().get(Textures.Name.CIRCLE)));
         this.setColor(userColor);
+        this.setTouchable(Touchable.disabled);
     }
 }

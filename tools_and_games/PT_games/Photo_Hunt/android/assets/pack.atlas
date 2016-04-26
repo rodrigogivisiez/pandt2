@@ -1,201 +1,299 @@
 
 pack.png
-size: 2048,256
+size: 2048,1024
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
+ALIEN
+  rotate: false
+  xy: 1527, 611
+  size: 30, 105
+  orig: 30, 105
+  offset: 0, 0
+  index: -1
+BIRTHDAY
+  rotate: false
+  xy: 235, 44
+  size: 150, 114
+  orig: 150, 114
+  offset: 0, 0
+  index: -1
 BOTTOM_BG
   rotate: false
-  xy: 644, 194
+  xy: 2, 160
   size: 640, 60
   orig: 640, 60
   offset: 0, 0
   index: -1
 BOTTOM_BG_SHADOW
   rotate: false
-  xy: 1016, 53
+  xy: 1411, 500
   size: 38, 25
   orig: 38, 25
   offset: 0, 0
   index: -1
 BULB_BROKEN
   rotate: false
-  xy: 822, 4
+  xy: 414, 30
   size: 27, 19
   orig: 27, 19
   offset: 0, 0
   index: -1
 BULB_LIGHT_OFF
   rotate: false
-  xy: 792, 4
+  xy: 2000, 809
   size: 28, 19
   orig: 28, 19
   offset: 0, 0
   index: -1
 BULB_LIGHT_ON
   rotate: false
-  xy: 1932, 30
+  xy: 1309, 377
   size: 77, 117
   orig: 77, 117
   offset: 0, 0
   index: -1
 CASTLE_DOOR
   rotate: false
-  xy: 644, 15
+  xy: 1292, 260
   size: 65, 62
   orig: 65, 62
   offset: 0, 0
   index: -1
 CASTLE_ROOM
   rotate: false
-  xy: 644, 79
+  xy: 1446, 718
   size: 153, 52
   orig: 153, 52
   offset: 0, 0
   index: -1
+CAT
+  rotate: false
+  xy: 2000, 830
+  size: 33, 35
+  orig: 33, 35
+  offset: 0, 0
+  index: -1
 CIRCLE
   rotate: false
-  xy: 917, 60
+  xy: 693, 87
   size: 97, 71
   orig: 97, 71
   offset: 0, 0
   index: -1
+COVERED
+  rotate: false
+  xy: 1309, 603
+  size: 106, 110
+  orig: 106, 110
+  offset: 0, 0
+  index: -1
 CROSS
   rotate: false
-  xy: 2011, 25
+  xy: 353, 18
   size: 32, 24
   orig: 32, 24
   offset: 0, 0
   index: -1
+CROWD
+  rotate: false
+  xy: 2, 8
+  size: 231, 150
+  orig: 231, 150
+  offset: 0, 0
+  index: -1
 CURSOR_BLACK
   rotate: false
-  xy: 2045, 40
+  xy: 796, 179
   size: 1, 41
   orig: 1, 41
   offset: 0, 0
   index: -1
+DEER_RIGHT
+  rotate: false
+  xy: 489, 54
+  size: 100, 104
+  orig: 100, 104
+  offset: 0, 0
+  index: -1
 DOOR_LEFT
   rotate: false
-  xy: 1286, 11
+  xy: 804, 470
   size: 321, 243
   orig: 321, 243
   offset: 0, 0
   index: -1
 DOOR_OVERLAY
   rotate: false
-  xy: 2, 8
+  xy: 804, 776
   size: 640, 246
   orig: 640, 246
   offset: 0, 0
   index: -1
 DOOR_RIGHT
   rotate: false
-  xy: 1609, 11
+  xy: 804, 225
   size: 321, 243
   orig: 321, 243
   offset: 0, 0
   index: -1
+EGG
+  rotate: false
+  xy: 1359, 295
+  size: 20, 27
+  orig: 20, 27
+  offset: 0, 0
+  index: -1
 EMPTY
   rotate: false
-  xy: 2045, 37
+  xy: 1446, 715
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 FULL_BLACK_BG
   rotate: false
-  xy: 2011, 116
+  xy: 1792, 739
   size: 35, 31
   orig: 35, 31
   offset: 0, 0
   index: -1
+GIRAFFE
+  rotate: false
+  xy: 1127, 330
+  size: 180, 383
+  orig: 180, 383
+  offset: 0, 0
+  index: -1
+HINT_BLOCK
+  rotate: false
+  xy: 1703, 734
+  size: 87, 36
+  orig: 87, 36
+  offset: 0, 0
+  index: -1
 HINT_OFF_ICON
   rotate: false
-  xy: 752, 7
+  xy: 276, 2
   size: 38, 40
   orig: 38, 40
   offset: 0, 0
   index: -1
 HINT_ON_ICON
   rotate: false
-  xy: 711, 7
+  xy: 235, 2
   size: 39, 40
   orig: 39, 40
   offset: 0, 0
   index: -1
 ICE_BOTTOM_HALF
   rotate: false
-  xy: 1093, 93
+  xy: 591, 56
   size: 64, 24
   orig: 64, 24
   offset: 0, 0
   index: -1
 ICE_TOP_HALF
   rotate: false
-  xy: 711, 49
+  xy: 1848, 777
   size: 64, 28
   orig: 64, 28
   offset: 0, 0
   index: -1
+MAN_GIVE_FLOWER
+  rotate: false
+  xy: 1848, 867
+  size: 130, 155
+  orig: 130, 155
+  offset: 0, 0
+  index: -1
+MAN_RUNNING
+  rotate: false
+  xy: 1980, 867
+  size: 66, 155
+  orig: 66, 155
+  offset: 0, 0
+  index: -1
+MONSTERS
+  rotate: false
+  xy: 644, 160
+  size: 150, 60
+  orig: 150, 60
+  offset: 0, 0
+  index: -1
+MONSTERS_INVERT
+  rotate: false
+  xy: 1848, 807
+  size: 150, 58
+  orig: 150, 58
+  offset: 0, 0
+  index: -1
 PLAYER0_COUNTER
   rotate: false
-  xy: 1056, 54
+  xy: 1559, 631
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER1_COUNTER
   rotate: false
-  xy: 792, 25
+  xy: 1914, 781
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER2_COUNTER
   rotate: false
-  xy: 832, 25
+  xy: 1954, 781
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER3_COUNTER
   rotate: false
-  xy: 872, 25
+  xy: 1559, 605
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER4_COUNTER
   rotate: false
-  xy: 1184, 107
+  xy: 1559, 579
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER5_COUNTER
   rotate: false
-  xy: 1224, 107
+  xy: 1477, 540
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER6_COUNTER
   rotate: false
-  xy: 1096, 67
+  xy: 657, 56
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER7_COUNTER
   rotate: false
-  xy: 1096, 41
+  xy: 697, 61
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
+PREGNANT
+  rotate: false
+  xy: 1388, 344
+  size: 44, 150
+  orig: 44, 150
+  offset: 0, 0
+  index: -1
 RED_ARROW
   rotate: false
-  xy: 777, 55
+  xy: 1829, 748
   size: 15, 22
   split: 0, 14, 0, 0
   pad: 0, 0, 0, 0
@@ -204,80 +302,150 @@ RED_ARROW
   index: -1
 REFLECTION
   rotate: false
-  xy: 1932, 149
+  xy: 1309, 496
   size: 100, 105
   orig: 100, 105
   offset: 0, 0
   index: -1
+ROCKET
+  rotate: false
+  xy: 1417, 593
+  size: 62, 120
+  orig: 62, 120
+  offset: 0, 0
+  index: -1
+SANTA_LEFT
+  rotate: false
+  xy: 387, 51
+  size: 100, 107
+  orig: 100, 107
+  offset: 0, 0
+  index: -1
 SCRATCH_SEPARATOR
   rotate: false
-  xy: 1093, 119
+  xy: 1127, 234
   size: 89, 12
   orig: 89, 12
   offset: 0, 0
   index: -1
+SEXY_GIRL
+  rotate: false
+  xy: 1481, 566
+  size: 44, 150
+  orig: 44, 150
+  offset: 0, 0
+  index: -1
 SHIELD_SWORD
   rotate: false
-  xy: 1016, 80
+  xy: 1309, 324
   size: 75, 51
   orig: 75, 51
   offset: 0, 0
   index: -1
 SMALL_STAR_ICON
   rotate: false
-  xy: 1932, 2
+  xy: 1292, 249
   size: 9, 9
   orig: 9, 9
   offset: 0, 0
   index: -1
+SPEECH
+  rotate: false
+  xy: 1411, 527
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 STAR
   rotate: false
-  xy: 1136, 66
+  xy: 387, 24
   size: 25, 25
   orig: 25, 25
   offset: 0, 0
   index: -1
 STOP_ICON
   rotate: false
-  xy: 2011, 51
+  xy: 1527, 579
   size: 30, 30
   orig: 30, 30
   offset: 0, 0
   index: -1
 TOP_BG
   rotate: false
-  xy: 644, 133
+  xy: 804, 715
   size: 640, 59
   orig: 640, 59
   offset: 0, 0
   index: -1
 TOP_BG_SHADOW
   rotate: false
-  xy: 1932, 13
+  xy: 737, 70
   size: 43, 15
   orig: 43, 15
   offset: 0, 0
   index: -1
 TRANS_BLACK_BG
   rotate: false
-  xy: 2011, 83
+  xy: 316, 11
   size: 35, 31
   orig: 35, 31
   offset: 0, 0
   index: -1
+UFO
+  rotate: false
+  xy: 1601, 726
+  size: 100, 44
+  orig: 100, 44
+  offset: 0, 0
+  index: -1
+VAMPIRE
+  rotate: false
+  xy: 1559, 657
+  size: 50, 59
+  orig: 50, 59
+  offset: 0, 0
+  index: -1
+VAN
+  rotate: false
+  xy: 1127, 248
+  size: 163, 80
+  orig: 163, 80
+  offset: 0, 0
+  index: -1
+VIGNETTE
+  rotate: false
+  xy: 2, 222
+  size: 800, 800
+  orig: 800, 800
+  offset: 0, 0
+  index: -1
+WHITE_BG
+  rotate: false
+  xy: 1601, 718
+  size: 10, 6
+  orig: 10, 6
+  offset: 0, 0
+  index: -1
 WHITE_ROUNDED_BG
   rotate: false
-  xy: 1136, 44
+  xy: 387, 2
   size: 28, 20
   split: 11, 13, 7, 9
   pad: 5, 7, 0, 0
   orig: 28, 20
   offset: 0, 0
   index: -1
-WOOD_BOARD
+WRINKLE_BG
   rotate: false
-  xy: 799, 51
-  size: 116, 80
-  orig: 116, 80
+  xy: 1446, 772
+  size: 400, 250
+  orig: 400, 250
+  offset: 0, 0
+  index: -1
+YOLK
+  rotate: false
+  xy: 591, 82
+  size: 100, 76
+  orig: 100, 76
   offset: 0, 0
   index: -1

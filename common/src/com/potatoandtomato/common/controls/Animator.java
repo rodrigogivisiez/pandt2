@@ -82,6 +82,10 @@ public class Animator extends Actor {
         }
     }
 
+    public void setElapsed(float elapsed) {
+        this.elapsed = elapsed;
+    }
+
     public void setPaused(boolean paused) {
         this.paused = paused;
     }

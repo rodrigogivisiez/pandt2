@@ -8,6 +8,7 @@ import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.absintflis.push_notifications.PushCode;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.models.LeaderboardRecord;
 import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
@@ -15,6 +16,7 @@ import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.enums.Status;
+import ogg.OggFile;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -111,7 +113,7 @@ public class InviteLogic extends LogicAbstract {
         });
 
         if(_room.getGame().hasLeaderboard()){
-            _services.getDatabase().getLeaderBoardAndStreak(_room.getGame(), 200, new DatabaseListener<ArrayList<LeaderboardRecord>>(LeaderboardRecord.class) {
+            _services.getDatabase().getLeaderBoardAndStreak(_room.getGame(), Global.LEADERBOARD_COUNT, new DatabaseListener<ArrayList<LeaderboardRecord>>(LeaderboardRecord.class) {
                 @Override
                 public void onCallback(ArrayList<LeaderboardRecord> records, Status st) {
                     if(st == Status.SUCCESS){
@@ -173,6 +175,7 @@ public class InviteLogic extends LogicAbstract {
                 _scene.changeTab(InviteScene.InviteType.Facebook);
             }
         });
+
 
 
     }

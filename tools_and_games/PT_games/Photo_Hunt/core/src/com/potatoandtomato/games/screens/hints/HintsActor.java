@@ -11,6 +11,7 @@ import com.potatoandtomato.games.assets.Textures;
 import com.potatoandtomato.games.controls.DummyButton;
 import com.potatoandtomato.games.models.Services;
 
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 /**
@@ -22,6 +23,7 @@ public class HintsActor extends Table {
     private Services services;
     private Image hintOnImage1, hintOnImage2, hintOnImage3;
     private Image hintOffImage1, hintOffImage2, hintOffImage3;
+    private Image hintBlock;
 
     public HintsActor(Services services) {
         this.services = services;
@@ -70,6 +72,19 @@ public class HintsActor extends Table {
         this.add(hintTable1).size(width, height).padLeft(8);
         this.add(hintTable2).size(width, height).padLeft(-6);
         this.add(hintTable3).size(width, height).padLeft(-6).padRight(8);
+
+        hintBlock = new Image(myAssets.getTextures().get(Textures.Name.HINT_BLOCK));
+        hintBlock.setPosition(-hintBlock.getWidth(), -3.5f);
+        this.addActor(hintBlock);
+    }
+
+    public void setHintBlockVisible(boolean visible){
+        if(visible){
+            hintBlock.addAction(moveTo(0, hintBlock.getY(), 1f));
+        }
+        else{
+            hintBlock.addAction(moveTo(-hintBlock.getWidth(), hintBlock.getY(), 1f));
+        }
     }
 
     public void refreshDesign(int leftHints){
@@ -87,15 +102,27 @@ public class HintsActor extends Table {
         if(off1){
             hintOnImage1.addAction(sequence(Actions.scaleTo(0, 0, 0.1f)));
         }
+        else{
+            hintOnImage1.setScale(1, 1);
+        }
 
         if(off2){
             hintOnImage2.addAction(sequence(Actions.scaleTo(0, 0, 0.1f)));
+        }
+        else{
+            hintOnImage2.setScale(1, 1);
         }
 
         if(off3){
             hintOnImage3.addAction(sequence(Actions.scaleTo(0, 0, 0.1f)));
         }
+        else{
+            hintOnImage3.setScale(1, 1);
+        }
     }
 
 
+    public Image getHintBlock() {
+        return hintBlock;
+    }
 }

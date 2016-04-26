@@ -27,7 +27,6 @@ public class KingLogic{
         this.kingActor = new KingActor(services);
         setListeners();
 
-        reset();
     }
 
     public void reset(){

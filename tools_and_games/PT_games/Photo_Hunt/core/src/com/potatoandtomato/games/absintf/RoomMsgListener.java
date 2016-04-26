@@ -2,6 +2,7 @@ package com.potatoandtomato.games.absintf;
 
 import com.potatoandtomato.games.enums.BonusType;
 import com.potatoandtomato.games.enums.StageType;
+import com.potatoandtomato.games.models.GameModel;
 import com.potatoandtomato.games.models.TouchedPoint;
 import com.potatoandtomato.games.models.WonStageModel;
 
@@ -20,6 +21,6 @@ public abstract class RoomMsgListener {
 
     public abstract void onDownloadImageRequest(ArrayList<String> ids);
 
-    public abstract void onGoToNextStage(String id, StageType stageType, BonusType bonusType, String extra);
+    public abstract void onGoToNextStage(String id, StageType stageType, BonusType bonusType, String extra, GameModel gameModel);
 
 }

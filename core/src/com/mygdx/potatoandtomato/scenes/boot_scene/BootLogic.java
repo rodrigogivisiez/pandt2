@@ -21,6 +21,7 @@ import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.Strings;
+import ogg.OggFile;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 
@@ -101,6 +102,8 @@ public class BootLogic extends LogicAbstract {
     }
 
     public void showLoginBox(){
+
+        Logs.add();
         _bootScene.showSocialLogin();
         attachClickListenerToSocial();
         if(_services.getSocials().isFacebookLogon()){    //user already logged in facebook before, log in again now

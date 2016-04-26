@@ -37,4 +37,11 @@ public class DecisionsMaker {
         return true;
     }
 
+    public String getDecisionMaker(){
+        if(_userIDs.size() > 0){
+            return _userIDs.get(0);
+        }
+        return "";
+    }
+
 }

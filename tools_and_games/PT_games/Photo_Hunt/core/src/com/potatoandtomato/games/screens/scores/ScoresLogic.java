@@ -5,6 +5,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Disposable;
 import com.potatoandtomato.common.GameCoordinator;
+import com.potatoandtomato.common.models.LeaderboardRecord;
+import com.potatoandtomato.common.models.ScoreDetails;
+import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.absintf.GameModelListener;
@@ -19,6 +22,9 @@ import com.potatoandtomato.games.screens.hints.HintsLogic;
 import com.potatoandtomato.games.screens.time_bar.CastleLogic;
 import com.potatoandtomato.games.screens.time_bar.KnightLogic;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
  * Created by SiongLeng on 14/4/2016.
  */
@@ -32,6 +38,7 @@ public class ScoresLogic implements Disposable {
     private HintsLogic hintsLogic;
     private ScoresActor scoresActor;
     private SafeThread safeThread;
+    private ArrayList<LeaderboardRecord> leaderboardRecords;
     private final int PER_CLICK_SCORE = 1000;
     private final int PER_HINT_LEFT_SCORE = 1000;
     private final int PER_CASTLE_STATE_SCORE = 250;
@@ -51,15 +58,22 @@ public class ScoresLogic implements Disposable {
         setListeners();
     }
 
+    public void refreshAllScores(){
+        this.leaderboardRecords = gameCoordinator.getGameLeaderboardRecords();
+        scoresActor.setMainScore(gameModel.getScore());
+        scoresActor.setNextHighScore(getNextLeaderboardScore());
+    }
+
     public void addScoreWithoutAnimation(int addingScore){
         gameModel.setScore(gameModel.getScore() + addingScore);
         scoresActor.setMainScore(gameModel.getScore());
+        scoresActor.setNextHighScore(getNextLeaderboardScore());
     }
 
 
     public void calculate(){
         Actor hintsActor = hintsLogic.getHintsActor();
-        addScoreAndPopScoreOnActor(hintsActor, gameModel.getHintsLeft() * PER_HINT_LEFT_SCORE, new Runnable() {
+        addScoreAndPopScoreOnActor(hintsActor, hintsLogic.getCurrentHintsLeft() * PER_HINT_LEFT_SCORE, new Runnable() {
             @Override
             public void run() {
 
@@ -100,6 +114,13 @@ public class ScoresLogic implements Disposable {
                                     originalScore[0] += PER_METER_DISTANCE_SCORE;
                                 }
 
+                                Threadings.postRunnable(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        scoresActor.setNextHighScore(getNextLeaderboardScore());
+                                    }
+                                });
+
                                 gameModel.setGameState(GameState.Ended);
                             }
                         });
@@ -121,6 +142,30 @@ public class ScoresLogic implements Disposable {
         });
     }
 
+    public HashMap<Team, ArrayList<ScoreDetails>> getFinalScoreDetails(){
+        HashMap<Team, ArrayList<ScoreDetails>> result = new HashMap();
+        ArrayList<ScoreDetails> scores = new ArrayList();
+        scores.add(new ScoreDetails(gameModel.getScore(), services.getTexts().finalScore(), true, false));
+        if(gameModel.getScore() > 0){
+            result.put(gameCoordinator.getMyTeam(), scores);
+        }
+        return result;
+    }
+
+    public int getNextLeaderboardScore(){
+        if(leaderboardRecords.size() <= 0){
+            return -1;
+        }
+        else{
+            for(int i = leaderboardRecords.size() -1; i >= 0; i--){
+                if(leaderboardRecords.get(i).getScore() > gameModel.getScore()){
+                    return (int) leaderboardRecords.get(i).getScore();
+                }
+            }
+            return -1;
+        }
+    }
+
     public void setListeners(){
         gameModel.addGameModelListener(new GameModelListener() {
 
@@ -130,7 +175,7 @@ public class ScoresLogic implements Disposable {
             }
 
             @Override
-            public void onCorrectClicked(SimpleRectangle rectangle, String userId, int remainingMiliSecsWhenClicked) {
+            public void onAddedClickCount(String userId, int newCount) {
                 addScoreWithoutAnimation(PER_CLICK_SCORE);
             }
 
@@ -150,6 +195,10 @@ public class ScoresLogic implements Disposable {
 
     public ScoresActor getScoresActor() {
         return scoresActor;
+    }
+
+    public void setScoresActor(ScoresActor scoresActor) {
+        this.scoresActor = scoresActor;
     }
 
     @Override

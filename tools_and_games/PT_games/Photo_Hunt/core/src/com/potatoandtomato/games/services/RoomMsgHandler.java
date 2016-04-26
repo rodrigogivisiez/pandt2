@@ -8,6 +8,8 @@ import com.potatoandtomato.games.absintf.RoomMsgListener;
 import com.potatoandtomato.games.enums.BonusType;
 import com.potatoandtomato.games.enums.RoomMsgType;
 import com.potatoandtomato.games.enums.StageType;
+import com.potatoandtomato.games.models.GameModel;
+import com.potatoandtomato.games.models.SimpleRectangle;
 import com.potatoandtomato.games.models.TouchedPoint;
 import com.potatoandtomato.games.models.WonStageModel;
 import com.shaded.fasterxml.jackson.core.JsonParseException;
@@ -57,17 +59,16 @@ public class RoomMsgHandler {
                 RoomMsgType type = RoomMsgType.valueOf(jsonObject.getString("type"));
 
                 if(type == RoomMsgType.Touched){
-                    if(!userId.equals(gameCoordinator.getMyUserId())){
-                        ObjectMapper objectMapper = new ObjectMapper();
-                        listener.onTouched(objectMapper.readValue(msg, TouchedPoint.class), userId);
-                    }
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    listener.onTouched(objectMapper.readValue(msg, TouchedPoint.class), userId);
                 }
                 else if(type == RoomMsgType.Lose){
                     listener.onLose();
                 }
                 else if(type == RoomMsgType.Won){
                     ObjectMapper objectMapper = new ObjectMapper();
-                    listener.onWon(objectMapper.readValue(msg, WonStageModel.class));
+                    WonStageModel wonStageModel = objectMapper.readValue(msg, WonStageModel.class);
+                    listener.onWon(wonStageModel);
                 }
                 else if(type == RoomMsgType.Download){
                     ArrayList<String> ids = Strings.split(msg, ",");
@@ -75,9 +76,15 @@ public class RoomMsgHandler {
                 }
                 else if(type == RoomMsgType.NextStage){
                     JsonObj jsonObj = new JsonObj(msg);
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    GameModel gameModel = null;
+                    if(!jsonObj.getString("gameModel").equals("")){
+                        gameModel =  objectMapper.readValue(jsonObj.getString("gameModel"), GameModel.class);
+                    }
+
                     listener.onGoToNextStage(jsonObj.getString("id"), StageType.valueOf(jsonObj.getString("stageType")),
-                                                    BonusType.valueOf(jsonObj.getString("bonusType")),
-                                                    jsonObj.getString("extra"));
+                            BonusType.valueOf(jsonObj.getString("bonusType")),
+                            jsonObj.getString("extra"), gameModel);
                 }
 
             } catch (JSONException e) {
@@ -104,8 +111,8 @@ public class RoomMsgHandler {
         gameCoordinator.sendRoomUpdate(jsonObject.toString());
     }
 
-    public void sendTouched(float x, float y, boolean hintUsed, int remaninigMiliSecs){
-        TouchedPoint touchedPoint = new TouchedPoint(x, y,  remaninigMiliSecs, hintUsed);
+    public void sendTouched(float x, float y, int remaninigMiliSecs, int hintLeft, SimpleRectangle correctRect){
+        TouchedPoint touchedPoint = new TouchedPoint(x, y,  remaninigMiliSecs, hintLeft, correctRect);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             send(objectMapper.writeValueAsString(touchedPoint), RoomMsgType.Touched);
@@ -127,13 +134,19 @@ public class RoomMsgHandler {
         send("", RoomMsgType.Lose);
     }
 
-    public void sendGotoNextStage(String id, StageType stageType, BonusType bonusType, String extra){
-        JsonObj jsonObj = new JsonObj();
-        jsonObj.put("id", id);
-        jsonObj.put("bonusType", bonusType.name());
-        jsonObj.put("stageType", stageType.name());
-        jsonObj.put("extra", extra);
-        send(jsonObj.toString(), RoomMsgType.NextStage);
+    public void sendGotoNextStage(String id, StageType stageType, BonusType bonusType, String extra, GameModel gameModel){
+        try {
+            JsonObj jsonObj = new JsonObj();
+            jsonObj.put("id", id);
+            jsonObj.put("bonusType", bonusType.name());
+            jsonObj.put("stageType", stageType.name());
+            ObjectMapper objectMapper = new ObjectMapper();
+            jsonObj.put("gameModel", gameModel == null ? "" : objectMapper.writeValueAsString(gameModel));
+            jsonObj.put("extra", extra);
+            send(jsonObj.toString(), RoomMsgType.NextStage);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     public void sendDownloadImageRequest(ArrayList<String> imageIds){

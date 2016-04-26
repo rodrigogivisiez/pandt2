@@ -5,6 +5,7 @@ import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.RoomUser;
 import com.mygdx.potatoandtomato.models.Services;
+import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.Threadings;
@@ -179,7 +180,7 @@ public class UserBadgeHelper implements Disposable {
 
         for(LeaderboardRecord record : _records){
             for(RoomUser roomUser : _roomUsers){
-                if(record.containUser(roomUser.getProfile().getUserId())){
+                if(record.containUser(roomUser.getProfile().getUserId()) && !_rankMap.containsKey(roomUser.getProfile().getUserId())){
                     _rankMap.put(roomUser.getProfile().getUserId(), i);
                 }
             }
@@ -218,7 +219,7 @@ public class UserBadgeHelper implements Disposable {
     }
 
     public void getLeaderboardRecords(final Runnable onFinish){
-        _services.getDatabase().getLeaderBoardAndStreak(_game, 200, new DatabaseListener<ArrayList<LeaderboardRecord>>(LeaderboardRecord.class) {
+        _services.getDatabase().getLeaderBoardAndStreak(_game, Global.LEADERBOARD_COUNT, new DatabaseListener<ArrayList<LeaderboardRecord>>(LeaderboardRecord.class) {
             @Override
             public void onCallback(ArrayList<LeaderboardRecord> records, Status st) {
                 if(st == Status.SUCCESS){

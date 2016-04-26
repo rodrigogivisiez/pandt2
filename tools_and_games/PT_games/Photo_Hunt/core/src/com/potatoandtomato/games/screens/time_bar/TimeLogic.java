@@ -14,6 +14,8 @@ import com.potatoandtomato.games.models.Services;
 import com.potatoandtomato.games.models.SimpleRectangle;
 import com.potatoandtomato.games.statics.Global;
 
+import java.util.ArrayList;
+
 /**
  * Created by SiongLeng on 6/4/2016.
  */
@@ -23,7 +25,7 @@ public class TimeLogic implements Disposable {
     private GameModel gameModel;
     private GameCoordinator gameCoordinator;
     private boolean paused;
-    private SafeThread timeThread;
+    private ArrayList<SafeThread> timeThreads;
     private TimeActor timeActor;
     private KingLogic kingLogic;
     private CastleLogic castleLogic;
@@ -37,6 +39,7 @@ public class TimeLogic implements Disposable {
         this.kingLogic = kingLogic;
         this.castleLogic = castleLogic;
         this.knightLogic = knightLogic;
+        this.timeThreads = new ArrayList();
 
 
         this.timeActor = new TimeActor(services, gameCoordinator);
@@ -46,12 +49,15 @@ public class TimeLogic implements Disposable {
 
     public void restart(){
         gameModel.setFreezingMiliSecs(0);
+        stop();
         setPause(false);
         start();
+
     }
 
     private void start(){
-        timeThread = new SafeThread();
+        final SafeThread timeThread = new SafeThread();
+        timeThreads.add(timeThread);
 
         if(Global.REVIEW_MODE){
             return;
@@ -92,7 +98,12 @@ public class TimeLogic implements Disposable {
     }
 
     public void stop(){
-        if(timeThread != null) timeThread.kill();
+        if(timeThreads.size() > 0){
+            for(SafeThread safeThread : timeThreads){
+                safeThread.kill();
+            }
+            timeThreads.clear();
+        }
         setPause(true);
     }
 
@@ -109,7 +120,7 @@ public class TimeLogic implements Disposable {
         gameModel.addGameModelListener(new GameModelListener() {
             @Override
             public void onStageNumberChanged(int newStageNumber) {
-                Threadings.delay(1000, new Runnable() {
+                Threadings.delay(900, new Runnable() {
                     @Override
                     public void run() {
                         restart();
@@ -130,7 +141,7 @@ public class TimeLogic implements Disposable {
             }
 
             @Override
-            public void onCorrectClicked(SimpleRectangle rectangle, String userId, int remainingMiliSecsWhenClicked) {
+            public void onCorrectClicked(SimpleRectangle rectangle, int remainingMiliSecsWhenClicked) {
                 gameModel.addFreezeMiliSecs();
             }
 

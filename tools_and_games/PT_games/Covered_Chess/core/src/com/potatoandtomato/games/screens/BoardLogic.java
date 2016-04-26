@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.potatoandtomato.common.GameCoordinator;
+import com.potatoandtomato.common.absints.BackKeyListener;
 import com.potatoandtomato.common.absints.UserStateListener;
 import com.potatoandtomato.common.models.ScoreDetails;
 import com.potatoandtomato.common.models.Team;
@@ -570,6 +571,24 @@ public class BoardLogic implements Disposable{
                 _graveyard.setPauseTimer(true);
                 _screen.setPaused(true, _boardModel.getCurrentTurnIndex() == _coordinator.getMyUniqueIndex());
                 saveGameDataToDB();
+            }
+        });
+
+        _screen.setBackKeyListener(new BackKeyListener() {
+            @Override
+            public void backPressed() {
+                _services.getScoresHandler().setIsMeWin(false);
+                _services.getScoresHandler().process(new ScoresListener() {
+                    @Override
+                    public void onCallBack(HashMap<Team, ArrayList<ScoreDetails>> winnerResult, ArrayList<Team> losers) {
+                        _coordinator.abandon(winnerResult, new Runnable() {
+                            @Override
+                            public void run() {
+                                _services.getScoresHandler().updateMatchHistory();
+                            }
+                        });
+                    }
+                });
             }
         });
 

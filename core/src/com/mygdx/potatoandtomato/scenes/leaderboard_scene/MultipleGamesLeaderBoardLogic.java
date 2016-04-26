@@ -8,6 +8,7 @@ import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Services;
+import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.common.models.LeaderboardRecord;
@@ -81,7 +82,7 @@ public class MultipleGamesLeaderBoardLogic extends LogicAbstract {
             _scene.setMascots(found ? LeaderBoardScene.MascotType.HAPPY : LeaderBoardScene.MascotType.BORING);
         }
         else{
-            _services.getDatabase().getLeaderBoardAndStreak(game, 200, new DatabaseListener<ArrayList<LeaderboardRecord>>(LeaderboardRecord.class) {
+            _services.getDatabase().getLeaderBoardAndStreak(game, Global.LEADERBOARD_COUNT, new DatabaseListener<ArrayList<LeaderboardRecord>>(LeaderboardRecord.class) {
                 @Override
                 public void onCallback(final ArrayList<LeaderboardRecord> records, Status st) {
                     if(st == Status.SUCCESS){

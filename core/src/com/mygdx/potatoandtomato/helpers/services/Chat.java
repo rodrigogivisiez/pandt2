@@ -522,7 +522,7 @@ public class Chat {
         _soundsWrapper.playSoundEffect(Sounds.Name.MIC);
         _bigMicTable.addAction(sequence(fadeOut(0f), forever(sequence(fadeOut(0.6f), fadeIn(0.6f)))));
         _bigMicTable.setVisible(true);
-        final String fileName =  System.currentTimeMillis() + "_" + MathUtils.random(0, 10000) + ".wav";
+        final String fileName =  System.currentTimeMillis() + "_" + MathUtils.random(0, 10000) + ".bin";
         final FileHandle file = Gdx.files.local(_recordsPath + fileName);
 
         Threadings.delay(500, new Runnable() {

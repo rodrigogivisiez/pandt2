@@ -126,7 +126,7 @@ public class KnightActor extends Table {
         }
     }
 
-    public void setKnightPositionX(float x, boolean autoChangeState){
+    public void setKnightPositionX(float x, boolean autoChangeState, boolean animate){
         if(autoChangeState){
             float toMovedDistance = Math.abs(x - knightContainer.getX());
 
@@ -142,7 +142,7 @@ public class KnightActor extends Table {
         }
 
         knightFinalX = x;
-        knightContainer.addAction(moveTo(x, knightContainer.getY(), 0.3f));
+        knightContainer.addAction(moveTo(x, knightContainer.getY(), animate ? 0.3f : 0f));
     }
 
     public void continueAnimation(){

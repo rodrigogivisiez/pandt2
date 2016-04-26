@@ -11,6 +11,7 @@ public class SimpleRectangle {
     private float height;
     private float x;
     private float y;
+    private String userId;
 
     public SimpleRectangle(float width, float height, float x, float y) {
         this.width = width;
@@ -27,6 +28,14 @@ public class SimpleRectangle {
         this.height = rectangle.getHeight();
         this.x = rectangle.getX();
         this.y = rectangle.getY();
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public float getWidth() {
@@ -59,5 +68,19 @@ public class SimpleRectangle {
 
     public void setY(float y) {
         this.y = y;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof SimpleRectangle){
+            SimpleRectangle rectangle = (SimpleRectangle) o;
+            return this.getX() == rectangle.getX() &&
+                    this.getY() == rectangle.getY() &&
+                    this.getHeight() == rectangle.getHeight() &&
+                    this.getWidth() == rectangle.getWidth();
+        }
+        else{
+            return super.equals(o);
+        }
     }
 }

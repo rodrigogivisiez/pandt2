@@ -361,10 +361,12 @@ public class Room {
         }
         for (RoomUser user : this.getRoomUsers().values()) {
             int index = convertSlotIndexToTeamNumber(user.getSlotIndex());
-            boolean isHost = false;
-            if(user.getProfile().equals(this.getHost())) isHost = true;
-            teams.get(index).addPlayer(new Player(user.getProfile().getDisplayName(15), user.getProfile().getUserId(), isHost, true,
-                                                getUserColorByUserId(user.getProfile().getUserId())));
+            if(index != -1){
+                boolean isHost = false;
+                if(user.getProfile().equals(this.getHost())) isHost = true;
+                teams.get(index).addPlayer(new Player(user.getProfile().getDisplayName(15), user.getProfile().getUserId(), isHost, true,
+                        getUserColorByUserId(user.getProfile().getUserId())));
+            }
         }
         this.teams = teams;
     }
