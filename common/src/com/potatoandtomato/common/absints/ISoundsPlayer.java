@@ -8,11 +8,14 @@ import com.badlogic.gdx.audio.Sound;
  */
 public interface ISoundsPlayer {
 
-    void addMusic(Music music);
-    void disposeMusic(Music music);
+    void disposeAllExternalSounds();
 
     void playMusic(Music music);
+    void stopMusic(Music music);
     void playSound(Sound sound);
+    void playSoundLoop(final Sound sound);
+    void stopSoundLoop(final Sound sound);
 
     void setVolume(float volume);
+
 }

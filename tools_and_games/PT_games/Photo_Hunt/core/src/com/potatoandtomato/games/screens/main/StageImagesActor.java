@@ -19,6 +19,7 @@ import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.assets.Fonts;
 import com.potatoandtomato.games.assets.MyAssets;
+import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.assets.Textures;
 import com.potatoandtomato.games.enums.BonusType;
 import com.potatoandtomato.games.helpers.Logs;
@@ -62,6 +63,10 @@ public class StageImagesActor {
     }
 
     public void reset(){
+
+        services.getSoundsWrapper().stopMusic(Sounds.Name.BONUS_MUSIC);
+        services.getSoundsWrapper().stopAllLoopingSounds();
+
         imageTwoTable.clearActions();
         imageTwoTable.setPosition(0, 0);
         imageTwoTable.setClip(true);
@@ -80,6 +85,10 @@ public class StageImagesActor {
     }
 
     public void maneuver(BonusType bonusType, String extra, GameModel gameModel){
+        if(bonusType != BonusType.NONE){
+            services.getSoundsWrapper().playMusic(Sounds.Name.BONUS_MUSIC);
+        }
+
         switch (bonusType){
             case INVERTED:
                 inverted();
@@ -111,6 +120,7 @@ public class StageImagesActor {
                 break;
         }
     }
+
 
     public void egg(){
         int colCount = 10;
@@ -220,7 +230,7 @@ public class StageImagesActor {
             });
         }
 
-
+        services.getSoundsWrapper().playSounds(Sounds.Name.PUT_EGGS);
 
     }
 
@@ -240,130 +250,152 @@ public class StageImagesActor {
         });
 
         table.addActor(yolkImage);
+
+        services.getSoundsWrapper().playSounds(Sounds.Name.BREAK_EGG);
     }
 
     public void covered(){
-        Image image = (Image) imageTwoInnerTable.findActor("image");
-        imageTwoInnerTable.setVisible(false);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Image image = (Image) imageTwoInnerTable.findActor("image");
+                imageTwoInnerTable.setVisible(false);
 
-        Table fakeInnerTable = new Table();
-        fakeInnerTable.align(Align.topLeft);
-        imageTwoTable.add(fakeInnerTable).expand().fill();
+                Table fakeInnerTable = new Table();
+                fakeInnerTable.align(Align.topLeft);
+                imageTwoTable.add(fakeInnerTable).expand().fill();
 
 
-        for(int row = 1; row >= 0; row--){
-            for(int col = 0; col < 3; col++){
-                Table innerTable = new Table();
-                innerTable.setFillParent(true);
-                Image image1 = new Image(image.getDrawable());
-                image1.setSize(imageTwoInnerTable.getWidth(), imageTwoInnerTable.getHeight());
-                image1.setPosition(col * (-imageTwoInnerTable.getWidth() / 3),
-                                        row * (-image1.getHeight() + imageTwoInnerTable.getHeight() / 2));
-                innerTable.setClip(true);
-                innerTable.addActor(image1);
+                for(int row = 1; row >= 0; row--){
+                    for(int col = 0; col < 3; col++){
+                        Table innerTable = new Table();
+                        innerTable.setFillParent(true);
+                        Image image1 = new Image(image.getDrawable());
+                        image1.setSize(imageTwoInnerTable.getWidth(), imageTwoInnerTable.getHeight());
+                        image1.setPosition(col * (-imageTwoInnerTable.getWidth() / 3),
+                                row * (-image1.getHeight() + imageTwoInnerTable.getHeight() / 2));
+                        innerTable.setClip(true);
+                        innerTable.addActor(image1);
 
-                final Image coverImage = new Image(assets.getTextures().get(Textures.Name.COVERED));
-                coverImage.setFillParent(true);
+                        final Image coverImage = new Image(assets.getTextures().get(Textures.Name.COVERED));
+                        coverImage.setFillParent(true);
 
-                Table table1 = new Table();
-                table1.addActor(innerTable);
-                table1.addActor(coverImage);
-                fakeInnerTable.add(table1).size(imageTwoInnerTable.getWidth() / 3, imageTwoInnerTable.getHeight() / 2).space(1.5f);
+                        Table table1 = new Table();
+                        table1.addActor(innerTable);
+                        table1.addActor(coverImage);
+                        fakeInnerTable.add(table1).size(imageTwoInnerTable.getWidth() / 3, imageTwoInnerTable.getHeight() / 2).space(1.5f);
 
-                coverImage.addListener(new ClickListener() {
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        float originalAlpha = coverImage.getColor().a;
-                        originalAlpha -= 0.25f;
-                        if(originalAlpha < 0) originalAlpha = 0f;
-                        coverImage.getColor().a = originalAlpha;
+                        coverImage.addListener(new ClickListener() {
+                            @Override
+                            public void clicked(InputEvent event, float x, float y) {
+                                float originalAlpha = coverImage.getColor().a;
+                                originalAlpha -= 0.25f;
+                                if(originalAlpha < 0) originalAlpha = 0f;
+                                coverImage.getColor().a = originalAlpha;
 
-                        coverImage.clearActions();
-                        coverImage.addAction(sequence(delay(4f), fadeIn(1f)));
+                                coverImage.clearActions();
+                                coverImage.addAction(sequence(delay(4f), fadeIn(1f)));
+
+                                services.getSoundsWrapper().playSounds(Sounds.Name.COVERED_PRESS);
+                            }
+                        });
+
                     }
-                });
-
+                    fakeInnerTable.row();
+                }
             }
-            fakeInnerTable.row();
-        }
+        });
+
+
     }
 
     public void wrinkle(){
         Image wrinkleImage = new Image(assets.getTextures().get(Textures.Name.WRINKLE_BG));
         wrinkleImage.getColor().a = 0.6f;
         imageTwoTable.addActor(wrinkleImage);
+        services.getSoundsWrapper().playSounds(Sounds.Name.WRINKLE_PAPER);
     }
 
     public void inverted(){
         imageTwoInnerTable.setOrigin(Align.center);
         imageTwoInnerTable.setRotation(180);
+        services.getSoundsWrapper().playSounds(Sounds.Name.INVERTED);
     }
 
-    public void lighting(String extra, GameModel gameModel){
-        ObjectMapper objectMapper = new ObjectMapper();
-        LightTimingModel lightTimingModel = null;
-        try {
-            lightTimingModel = objectMapper.readValue(extra, LightTimingModel.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void lighting(final String extra, final GameModel gameModel){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                ObjectMapper objectMapper = new ObjectMapper();
+                LightTimingModel lightTimingModel = null;
+                try {
+                    lightTimingModel = objectMapper.readValue(extra, LightTimingModel.class);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-        blackBg = new Image(assets.getTextures().get(Textures.Name.FULL_BLACK_BG));
-        blackBg.setSize(imageTwoTable.getWidth(), imageTwoTable.getHeight());
-        imageTwoTable.addActor(blackBg);
+                blackBg = new Image(assets.getTextures().get(Textures.Name.FULL_BLACK_BG));
+                blackBg.setSize(imageTwoTable.getWidth(), imageTwoTable.getHeight());
+                imageTwoTable.addActor(blackBg);
 
-        lightBulbOff = new Image(assets.getTextures().get(Textures.Name.BULB_LIGHT_OFF));
-        lightBulbOff.setSize(lightBulbOff.getPrefWidth(), lightBulbOff.getPrefHeight());
-        lightBulbOff.setPosition(imageTwoTable.getWidth() - 25, imageTwoTable.getHeight() / 2 - lightBulbOff.getHeight() / 2);
-        imageTwoTable.addActor(lightBulbOff);
+                lightBulbOff = new Image(assets.getTextures().get(Textures.Name.BULB_LIGHT_OFF));
+                lightBulbOff.setSize(lightBulbOff.getPrefWidth(), lightBulbOff.getPrefHeight());
+                lightBulbOff.setPosition(imageTwoTable.getWidth() - 25, imageTwoTable.getHeight() / 2 - lightBulbOff.getHeight() / 2);
+                imageTwoTable.addActor(lightBulbOff);
 
-        lightBulbBreak = new Image(assets.getTextures().get(Textures.Name.BULB_BROKEN));
-        lightBulbBreak.setSize(lightBulbBreak.getPrefWidth(), lightBulbBreak.getPrefHeight());
-        lightBulbBreak.setPosition(imageTwoTable.getWidth() - 25, imageTwoTable.getHeight() / 2 - lightBulbBreak.getHeight() / 2);
-        lightBulbBreak.setVisible(false);
-        imageTwoTable.addActor(lightBulbBreak);
+                lightBulbBreak = new Image(assets.getTextures().get(Textures.Name.BULB_BROKEN));
+                lightBulbBreak.setSize(lightBulbBreak.getPrefWidth(), lightBulbBreak.getPrefHeight());
+                lightBulbBreak.setPosition(imageTwoTable.getWidth() - 25, imageTwoTable.getHeight() / 2 - lightBulbBreak.getHeight() / 2);
+                lightBulbBreak.setVisible(false);
+                imageTwoTable.addActor(lightBulbBreak);
 
-        lightBulbOn = new Image(assets.getTextures().get(Textures.Name.BULB_LIGHT_ON));
-        lightBulbOn.setSize(lightBulbOn.getPrefWidth(), lightBulbOn.getPrefHeight());
-        lightBulbOn.setPosition(imageTwoTable.getWidth() - 76, imageTwoTable.getHeight() / 2 - lightBulbOn.getHeight() / 2);
-        lightBulbOn.getColor().a = 0f;
-        imageTwoTable.addActor(lightBulbOn);
+                lightBulbOn = new Image(assets.getTextures().get(Textures.Name.BULB_LIGHT_ON));
+                lightBulbOn.setSize(lightBulbOn.getPrefWidth(), lightBulbOn.getPrefHeight());
+                lightBulbOn.setPosition(imageTwoTable.getWidth() - 76, imageTwoTable.getHeight() / 2 - lightBulbOn.getHeight() / 2);
+                lightBulbOn.getColor().a = 0f;
+                imageTwoTable.addActor(lightBulbOn);
 
-        int totalTimingMiliSecs = gameModel.getThisStageTotalMiliSecs() + 10;
+                int totalTimingMiliSecs = gameModel.getThisStageTotalMiliSecs() + 10;
 
-        if(lightTimingModel != null){
-            int i = 0;
-            for(TimePeriodModel periodModel : lightTimingModel.getTimePeriodModels()){
+                if(lightTimingModel != null){
+                    int i = 0;
+                    safeThread = new SafeThread();
+                    for(TimePeriodModel periodModel : lightTimingModel.getTimePeriodModels()){
 
-                int startMiliSecs = (int) ((periodModel.getStart() / 100) * totalTimingMiliSecs);
-                int endMiliSecs = (int) ((periodModel.getEnd() / 100) * totalTimingMiliSecs);
+                        int startMiliSecs = (int) ((periodModel.getStart() / 100) * totalTimingMiliSecs);
+                        int endMiliSecs = (int) ((periodModel.getEnd() / 100) * totalTimingMiliSecs);
 
-                Threadings.delay(startMiliSecs, new Runnable() {
-                    @Override
-                    public void run() {
-                        lightBulbOnAnimation();
+                        Threadings.delay(startMiliSecs, new Runnable() {
+                            @Override
+                            public void run() {
+                                if(safeThread != null && safeThread.isKilled()) return;
+
+                                lightBulbOnAnimation();
+                            }
+                        });
+
+                        final LightTimingModel finalLightTimingModel = lightTimingModel;
+                        final int finalI = i;
+                        Threadings.delay(endMiliSecs, new Runnable() {
+                            @Override
+                            public void run() {
+                                if(safeThread != null && safeThread.isKilled()) return;
+
+                                if(finalI == finalLightTimingModel.getTimePeriodModels().size() - 1){
+                                    lightBulbBreakAnimation();
+                                }
+                                else{
+                                    lightBulbOffAnimation();
+                                }
+
+                            }
+                        });
+
+                        i++;
                     }
-                });
-
-                final LightTimingModel finalLightTimingModel = lightTimingModel;
-                final int finalI = i;
-                Threadings.delay(endMiliSecs, new Runnable() {
-                    @Override
-                    public void run() {
-                        if(finalI == finalLightTimingModel.getTimePeriodModels().size() - 1){
-                            lightBulbBreakAnimation();
-                        }
-                        else{
-                            lightBulbOffAnimation();
-                        }
-
-                    }
-                });
-
-                i++;
+                }
             }
-        }
-
+        });
     }
 
     private void lightBulbOnAnimation(){
@@ -371,13 +403,13 @@ public class StageImagesActor {
         blackBg.clearActions();
         lightBulbOn.addAction(sequence(fadeIn(0.5f)));
         blackBg.addAction(sequence(fadeOut(0.5f)));
+        services.getSoundsWrapper().playSounds(Sounds.Name.SWITCH_LIGHT);
     }
 
     private void lightBulbOffAnimation(){
-       // lightBulbOn.clearActions();
-       // blackBg.clearActions();
         lightBulbOn.addAction(sequence(fadeOut(0.5f)));
         blackBg.addAction(sequence(fadeIn(0.5f)));
+        services.getSoundsWrapper().playSounds(Sounds.Name.SWITCH_LIGHT);
     }
 
     private void lightBulbBreakAnimation(){
@@ -387,29 +419,44 @@ public class StageImagesActor {
         lightBulbOn.setVisible(false);
         lightBulbOff.setVisible(false);
         lightBulbBreak.setVisible(true);
+        services.getSoundsWrapper().playSounds(Sounds.Name.BULB_BREAK);
     }
 
     public void looping(){
-        imageTwoTable.setTransform(true);
-        imageTwoTable.addAction(forever(moveBy(-imageTwoInnerTable.getWidth(), 0, 5f)));
-        imageTwoTable.setClip(false);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                imageTwoTable.setTransform(true);
+                imageTwoTable.addAction(forever(moveBy(-imageTwoInnerTable.getWidth(), 0, 5f)));
+                imageTwoTable.setClip(false);
 
-        Image image = imageTwoInnerTable.findActor("image");
+                Image image = imageTwoInnerTable.findActor("image");
 
-        if(image != null){
-            for(int i = 1; i < 20; i++){
-                Table imageTwoDuplicateInnerTable = new Table();
-                Image imageTwoImage = new Image(image.getDrawable());
-                imageTwoDuplicateInnerTable.add(imageTwoImage).expand().fill();
-                imageTwoDuplicateInnerTable.setSize(imageTwoInnerTable.getWidth(), imageTwoInnerTable.getHeight());
-                imageTwoDuplicateInnerTable.setPosition(imageTwoInnerTable.getWidth() * i, 0);
-                imageTwoDuplicateInnerTable.setName("duplicate");
-                imageTwoTable.addActor(imageTwoDuplicateInnerTable);
+                if(image != null){
+                    for(int i = 1; i < 20; i++){
+                        Table imageTwoDuplicateInnerTable = new Table();
+                        Image imageTwoImage = new Image(image.getDrawable());
+                        imageTwoDuplicateInnerTable.add(imageTwoImage).expand().fill();
+                        imageTwoDuplicateInnerTable.setSize(imageTwoInnerTable.getWidth(), imageTwoInnerTable.getHeight());
+                        imageTwoDuplicateInnerTable.setPosition(imageTwoInnerTable.getWidth() * i, 0);
+                        imageTwoDuplicateInnerTable.setName("duplicate");
+                        imageTwoTable.addActor(imageTwoDuplicateInnerTable);
+                    }
+                }
+
+                services.getSoundsWrapper().playSoundLoop(Sounds.Name.LOOPING);
             }
-        }
+        });
+
     }
 
-    public void memory(){
+    public void startMemory(){
+        services.getSoundsWrapper().playSoundLoop(Sounds.Name.MEMORY);
+    }
+
+    public void endMemory(){
+        services.getSoundsWrapper().stopSoundLoop(Sounds.Name.MEMORY);
+
         Table blackBgTable = new Table();
         blackBgTable.setTransform(true);
         blackBgTable.setBackground(new TextureRegionDrawable(assets.getTextures().get(Textures.Name.FULL_BLACK_BG)));
@@ -426,6 +473,8 @@ public class StageImagesActor {
 
         blackBgTable.addAction(scaleTo(1, 1, 1.35f, Interpolation.exp10Out));
 
+        services.getSoundsWrapper().playSounds(Sounds.Name.MEMORY_END);
+
     }
 
     public void torchLight(){
@@ -434,12 +483,13 @@ public class StageImagesActor {
         vignetteImage.setPosition(-235 , -280);
         imageTwoTable.addActor(vignetteImage);
 
-
         vignetteImage.addAction(forever(sequence(moveTo(-375, -180, 2f),  moveTo(-95, -180, 4f),
                                             moveTo(-375, -370, 4f), moveTo(-95, -280, 3f),
                                             moveTo(-375, -280, 4f), moveTo(-375, -180, 2f),
                                             moveTo(-375, -370, 4f),  moveTo(-95, -370, 4f),
                                             moveTo(-95, -180, 4f), moveTo(-235, -280, 2f))));
+
+        services.getSoundsWrapper().playSounds(Sounds.Name.TORCH_LIGHT);
 
     }
 
@@ -458,13 +508,22 @@ public class StageImagesActor {
                 imageTwoTable.addActor(monstersImage);
                 imageTwoTable.addActor(monstersInvertImage);
 
-                monstersImage.addAction(sequence(moveTo(monstersImage.getX(), -30, 2f), delay(4f), moveTo(monstersImage.getX(), -100, 2f)));
+                monstersImage.addAction(sequence(moveTo(monstersImage.getX(), -30, 2f), new RunnableAction(){
+                    @Override
+                    public void run() {
+                        services.getSoundsWrapper().playSounds(Sounds.Name.MONSTER_SOUND);
+                    }
+                },delay(4f), moveTo(monstersImage.getX(), -100, 2f)));
                 monstersInvertImage.addAction(sequence(moveTo(monstersInvertImage.getX(), 200, 2f), delay(4f), moveTo(monstersImage.getX(), 270, 2f), new RunnableAction(){
                     @Override
                     public void run() {
+
                         _this.setFinish(true);
                     }
                 }));
+
+
+
             }
         };
 
@@ -481,14 +540,32 @@ public class StageImagesActor {
 
                 imageTwoTable.addActor(giraffeImage);
 
-                giraffeImage.addAction(sequence(moveTo(imageTwoTable.getWidth() - 30, giraffeImage.getY(), 5f),
-                                                delay(3f),
-                                                moveTo(imageTwoTable.getWidth() /2 - 100, giraffeImage.getY(), 3f),
-                                                delay(8f),
-                                                moveTo(-180, giraffeImage.getY(), 4f), new RunnableAction(){
+                services.getSoundsWrapper().playSoundLoop(Sounds.Name.MOVE_IN_FOREST);
+                giraffeImage.addAction(sequence(moveTo(imageTwoTable.getWidth() - 30, giraffeImage.getY(), 5f), new RunnableAction(){
+                            @Override
+                            public void run() {
+                                services.getSoundsWrapper().stopSoundLoop(Sounds.Name.MOVE_IN_FOREST);
+                            }
+                        },delay(3f), new RunnableAction(){
+                            @Override
+                            public void run() {
+                                services.getSoundsWrapper().playSoundLoop(Sounds.Name.MOVE_IN_FOREST);
+                            }
+                        },moveTo(imageTwoTable.getWidth() /2 - 100, giraffeImage.getY(), 3f), new RunnableAction(){
+                            @Override
+                            public void run() {
+                                services.getSoundsWrapper().stopSoundLoop(Sounds.Name.MOVE_IN_FOREST);
+                            }
+                        },delay(8f), new RunnableAction(){
+                            @Override
+                            public void run() {
+                                services.getSoundsWrapper().playSoundLoop(Sounds.Name.MOVE_IN_FOREST);
+                            }
+                        },moveTo(-180, giraffeImage.getY(), 4f), new RunnableAction(){
                             @Override
                             public void run() {
                                 _this.setFinish(true);
+                                services.getSoundsWrapper().stopSoundLoop(Sounds.Name.MOVE_IN_FOREST);
                             }
                         }));
             }
@@ -518,18 +595,23 @@ public class StageImagesActor {
 
                 if(stop[0]) return;
                 moveCat(0);
+                services.getSoundsWrapper().playSounds(Sounds.Name.CAT);
 
                 Threadings.delay(6000, new Runnable() {
                     @Override
                     public void run() {
                         if(stop[0]) return;
                         moveCat(-30);
+                        services.getSoundsWrapper().playSounds(Sounds.Name.CAT);
                         moveCat(30);
+                        services.getSoundsWrapper().playSounds(Sounds.Name.CAT);
+
                         Threadings.delay(6000, new Runnable() {
                             @Override
                             public void run() {
                                 for(int i = 0; i < 30; i++){
                                     if(stop[0]) return;
+                                    final int finalI = i;
                                     Threadings.delay(i * 300, new Runnable() {
                                         @Override
                                         public void run() {
@@ -540,6 +622,9 @@ public class StageImagesActor {
                                             moveCat(20);
                                             moveCat(40);
                                             moveCat(60);
+                                            if(finalI % 4 == 0){
+                                                services.getSoundsWrapper().playSounds(Sounds.Name.CAT);
+                                            }
                                         }
                                     });
                                 }
@@ -568,7 +653,7 @@ public class StageImagesActor {
                 vampireImage.setPosition(-100, -100);
 
                 imageTwoTable.addActor(vampireImage);
-
+                services.getSoundsWrapper().playSounds(Sounds.Name.BOY_LAUGH);
                 Threadings.runInBackground(new Runnable() {
                     @Override
                     public void run() {
@@ -583,18 +668,21 @@ public class StageImagesActor {
                                             finish[0] = true;
                                         }
                                     });
+
                                 }
                             });
                             while (!finish[0]){
                                 Threadings.sleep(300);
                             }
                         }
-                        vampireImage.addAction(sequence(moveTo(-100, -100, 3f), new RunnableAction(){
+                        vampireImage.addAction(sequence(moveTo(-100, -100, 3f), new RunnableAction() {
                             @Override
                             public void run() {
                                 _this.setFinish(true);
                             }
                         }));
+
+
                     }
                 });
             }
@@ -613,10 +701,44 @@ public class StageImagesActor {
 
                 imageTwoTable.addActor(vanImage);
 
-                vanImage.addAction(sequence(moveBy(400, 0, 8f), delay(3f), moveBy(200, 0, 3f), delay(1f), moveBy(-200, 0, 4f),
-                                        delay(4f), moveBy(400, 0, 2f), new RunnableAction(){
+                services.getSoundsWrapper().playSoundLoop(Sounds.Name.CAR_DRIVING);
+
+                vanImage.addAction(sequence(moveBy(400, 0, 8f), new RunnableAction(){
                             @Override
                             public void run() {
+                                services.getSoundsWrapper().stopSoundLoop(Sounds.Name.CAR_DRIVING);
+                                services.getSoundsWrapper().playSounds(Sounds.Name.CAR_BRAKE);
+                            }
+                        }, delay(3f), new RunnableAction(){
+                            @Override
+                            public void run() {
+                                services.getSoundsWrapper().playSoundLoop(Sounds.Name.CAR_DRIVING);
+                            }
+                        } ,moveBy(200, 0, 3f), new RunnableAction(){
+                            @Override
+                            public void run() {
+                                services.getSoundsWrapper().stopSoundLoop(Sounds.Name.CAR_DRIVING);
+                                services.getSoundsWrapper().playSounds(Sounds.Name.CAR_BRAKE);
+                            }
+                        } ,delay(1f), new RunnableAction(){
+                            @Override
+                            public void run() {
+                                services.getSoundsWrapper().playSoundLoop(Sounds.Name.CAR_REVERSE);
+                            }
+                        } ,moveBy(-200, 0, 4f), new RunnableAction(){
+                            @Override
+                            public void run() {
+                                services.getSoundsWrapper().stopSoundLoop(Sounds.Name.CAR_REVERSE);
+                            }
+                        }, delay(4f), new RunnableAction(){
+                            @Override
+                            public void run() {
+                                services.getSoundsWrapper().playSoundLoop(Sounds.Name.CAR_DRIVING);
+                            }
+                        }, moveBy(400, 0, 2f), new RunnableAction(){
+                            @Override
+                            public void run() {
+                                services.getSoundsWrapper().stopSoundLoop(Sounds.Name.CAR_DRIVING);
                                 _this.setFinish(true);
                             }
                         }));
@@ -645,6 +767,9 @@ public class StageImagesActor {
                         _this.setFinish(true);
                     }
                 }));
+
+                services.getSoundsWrapper().playSounds(Sounds.Name.HAPPY_BIRTHDAY);
+
             }
         };
 
@@ -671,11 +796,13 @@ public class StageImagesActor {
                         _this.setFinish(true);
                     }
                 }));
+
+                services.getSoundsWrapper().playSounds(Sounds.Name.JINGLE_BELL);
             }
         };
 
         runnables.add(run7);
-        //run7.run();
+
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -701,24 +828,37 @@ public class StageImagesActor {
                 imageTwoTable.addActor(manGiveFlowerImage);
                 imageTwoTable.addActor(manRunningImage);
 
-                sexyGirlImage.addAction(sequence(fadeIn(0.5f), delay(4f), new RunnableAction(){
+                sexyGirlImage.addAction(sequence(fadeIn(0.5f), new RunnableAction(){
                     @Override
                     public void run() {
+                        services.getSoundsWrapper().playSounds(Sounds.Name.SEXY_GIRL);
+                    }
+                }, delay(4f), new RunnableAction(){
+                    @Override
+                    public void run() {
+                        services.getSoundsWrapper().playSounds(Sounds.Name.COVERED_PRESS);
                         manGiveFlowerImage.addAction(fadeIn(0.5f));
                     }
                 }, delay(3f), fadeOut(0.5f), new RunnableAction(){
                     @Override
                     public void run() {
+                        services.getSoundsWrapper().playSounds(Sounds.Name.BABY);
                         pregnantImage.addAction(sequence(fadeIn(0.5f), delay(3f), new RunnableAction(){
                             @Override
                             public void run() {
                                 manGiveFlowerImage.setVisible(false);
-                                manRunningImage.addAction(sequence(fadeIn(0.1f), delay(2f), moveBy(-300, 0, 1f), new RunnableAction(){
+                                manRunningImage.addAction(sequence(fadeIn(0.1f), delay(2f), new RunnableAction(){
+                                    @Override
+                                    public void run() {
+                                        services.getSoundsWrapper().playSoundLoop(Sounds.Name.RUNNING);
+                                    }
+                                }, moveBy(-300, 0, 1f), new RunnableAction(){
                                     @Override
                                     public void run() {
                                         pregnantImage.addAction(sequence(moveBy(-300, 0f, 3f), new RunnableAction(){
                                             @Override
                                             public void run() {
+                                                services.getSoundsWrapper().stopSoundLoop(Sounds.Name.RUNNING);
                                                 _this.setFinish(true);
                                             }
                                         }));
@@ -753,6 +893,7 @@ public class StageImagesActor {
                 crowdImage.addAction(sequence(moveBy(250, 0, 3f), delay(3f), new RunnableAction(){
                     @Override
                     public void run() {
+                        services.getSoundsWrapper().playSounds(Sounds.Name.CROWD_APPLAUSE);
                         speechImage.addAction(sequence(fadeIn(0.5f), delay(8f), new RunnableAction(){
                             @Override
                             public void run() {
@@ -789,21 +930,31 @@ public class StageImagesActor {
                 imageTwoTable.addActor(alienImage);
                 imageTwoTable.addActor(rocketImage);
 
+                services.getSoundsWrapper().playSounds(Sounds.Name.UFO);
+
                 ufoImage.addAction(sequence(moveBy(400, 0, 5f), new RunnableAction(){
                     @Override
                     public void run() {
                         alienImage.addAction(sequence(fadeIn(2f), new RunnableAction(){
                             @Override
                             public void run() {
+                                services.getSoundsWrapper().playSounds(Sounds.Name.UFO);
                                 ufoImage.addAction(sequence(moveBy(400, 0, 5f), delay(5f), new RunnableAction(){
                                     @Override
                                     public void run() {
+                                        services.getSoundsWrapper().playSoundLoop(Sounds.Name.ROCKET_SLOW_FLY);
                                         rocketImage.addAction(sequence(moveBy(0f, 160f, 4f), new RunnableAction(){
                                             @Override
                                             public void run() {
                                                 alienImage.setVisible(false);
+                                                services.getSoundsWrapper().stopSoundLoop(Sounds.Name.ROCKET_SLOW_FLY);
                                             }
-                                        }, delay(1f), moveBy(0f, 300f, 3f), new RunnableAction(){
+                                        }, delay(1f), new RunnableAction(){
+                                            @Override
+                                            public void run() {
+                                                services.getSoundsWrapper().playSounds(Sounds.Name.ROCKET_LAUNCH);
+                                            }
+                                        },moveBy(0f, 300f, 3f), new RunnableAction(){
                                             @Override
                                             public void run() {
                                                 _this.setFinish(true);
@@ -824,28 +975,32 @@ public class StageImagesActor {
 
         safeThread = new SafeThread();
         final ArrayList<String> sequence = Strings.split(extra, ",");
-        Threadings.runInBackground(new Runnable() {
+
+        Threadings.delay(2000, new Runnable() {
             @Override
             public void run() {
-                for(String index : sequence){
-                    NotifyRunnable runnable = runnables.get(Integer.valueOf(index));
-                    runnable.run();
+                Threadings.runInBackground(new Runnable() {
+                    @Override
+                    public void run() {
+                        for(String index : sequence){
+                            NotifyRunnable runnable = runnables.get(Integer.valueOf(index));
+                            runnable.run();
 
-                    while (!runnable.isFinish()){
-                        Threadings.sleep(100);
-                        if(safeThread.isKilled()) return;
+                            while (!runnable.isFinish()){
+                                Threadings.sleep(100);
+                                if(safeThread.isKilled()) return;
+                            }
+                        }
                     }
-                }
+                });
             }
         });
-
-
     }
 
 
     private void moveCat(float yOffset){
         final Image catImage1 = new Image(assets.getTextures().get(Textures.Name.CAT));
-        catImage1.setPosition(-300, imageTwoTable.getHeight() / 2 - catImage1.getPrefHeight() / 2 + yOffset);
+        catImage1.setPosition(-80, imageTwoTable.getHeight() / 2 - catImage1.getPrefHeight() / 2 + yOffset);
         imageTwoTable.addActor(catImage1);
 
         catImage1.addAction(sequence(moveBy(700, 0, 6f)));
@@ -873,6 +1028,9 @@ public class StageImagesActor {
                 stopImage.remove();
             }
         }));
+
+        services.getSoundsWrapper().playSounds(Sounds.Name.DISALLOW_CLICK);
+
     }
 
     private void resetAllTable(){

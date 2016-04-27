@@ -289,13 +289,15 @@ public class GameModel {
     }
 
     @JsonIgnore
-    public void addHandledArea(SimpleRectangle rectangle, int remainingMiliSecsWhenClicked){
+    public boolean addHandledArea(SimpleRectangle rectangle, int remainingMiliSecsWhenClicked){
         if(!isAreaAlreadyHandled(rectangle)){
             handledAreas.add(rectangle);
             for(GameModelListener listener : listeners){
                 listener.onCorrectClicked(rectangle, remainingMiliSecsWhenClicked);
             }
+            return false;
         }
+        return true;
     }
 
     @JsonIgnore
@@ -353,7 +355,7 @@ public class GameModel {
     @JsonIgnore
     public boolean isNextStageBonus(){
         int nextStageNumber = stageNumber + 1;
-        return nextStageNumber % 10 == 0 && !Global.REVIEW_MODE;
+        return nextStageNumber % 2 == 0 && !Global.REVIEW_MODE;
     }
 
     public void dispose(){

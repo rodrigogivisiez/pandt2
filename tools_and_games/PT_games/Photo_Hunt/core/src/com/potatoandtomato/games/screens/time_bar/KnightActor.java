@@ -12,6 +12,7 @@ import com.potatoandtomato.common.assets.AnimationAssets;
 import com.potatoandtomato.common.controls.Animator;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.assets.Animations;
+import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.assets.Textures;
 import com.potatoandtomato.games.enums.KnightState;
 import com.potatoandtomato.games.helpers.Positions;
@@ -24,6 +25,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
  */
 public class KnightActor extends Table {
 
+    private Table _this;
     private Services services;
     private AnimationAssets animationAssets;
     private Animator knightWalkAnimator, knightRunAnimator, knightAtkAnimator;
@@ -34,7 +36,8 @@ public class KnightActor extends Table {
     private Vector2 positionOnStage;
     private float knightFinalX;
 
-    public KnightActor(Services services, float totalDistance) {
+    public KnightActor(final Services services, float totalDistance) {
+        _this = this;
         this.services = services;
         this.animationAssets = services.getAssets().getAnimations();
         this.knightContainer = new Container();
@@ -52,19 +55,28 @@ public class KnightActor extends Table {
         knightRunAnimator.overrideSize(55, 48);
 
         knightAtkAnimator = new Animator(0.3f, animationAssets.get(Animations.Name.KNIGHT_ATK));
-        knightAtkAnimator.overrideSize(52, 52);
+        knightAtkAnimator.overrideSize(52, 54);
 
         iceTopImage = new Image(services.getAssets().getTextures().get(Textures.Name.ICE_TOP_HALF));
         iceTopImage.setSize(iceTopImage.getPrefWidth(), iceTopImage.getPrefHeight());
         iceBottomImage = new Image(services.getAssets().getTextures().get(Textures.Name.ICE_BOTTOM_HALF));
         iceBottomImage.setSize(iceBottomImage.getPrefWidth(), iceBottomImage.getPrefHeight());
+
+
+        knightAtkAnimator.callBackOnIndex(18, new Runnable() {
+            @Override
+            public void run() {
+                services.getSoundsWrapper().playSounds(Sounds.Name.KNIGHT_ATTACKING);
+            }
+        });
+
     }
 
     public void setKnightAtkSpeed(float frameRate){
         knightAtkAnimator.getAnimation().setFrameDuration(frameRate);
     }
 
-    public void changeState(KnightState knightState){
+    public void changeState(KnightState knightState, boolean playSound){
         if(currentKnightState != knightState){
             if(currentKnightState == KnightState.Attack){
                 knightContainer.setY(knightContainer.getY() - 7);
@@ -77,6 +89,7 @@ public class KnightActor extends Table {
             }
             else if(knightState == KnightState.Run){
                 knightContainer.setActor(knightRunAnimator);
+                if(playSound) services.getSoundsWrapper().playSounds(Sounds.Name.KNIGHT_RUN);
             }
             else if(knightState == KnightState.Attack){
                 knightContainer.setY(knightContainer.getY() + 7);
@@ -85,45 +98,52 @@ public class KnightActor extends Table {
         }
     }
 
-    public void setFreeze(boolean freezed){
-        if(freezed){
-            stopAnimation();
+    public void setFreeze(final boolean freezed){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(freezed){
+                    stopAnimation();
 
-            iceTopImage.clearActions();
-            iceBottomImage.clearActions();
-            iceTopImage.remove();
-            iceBottomImage.remove();
-            iceTopImage.getColor().a = 1f;
-            iceBottomImage.getColor().a = 1f;
-
-            float x = knightFinalX;
-            float y = knightContainer.getY() + knightContainer.getHeight() / 2;
-
-            iceTopImage.setPosition(x - iceTopImage.getWidth() / 2, y + 24);
-            iceBottomImage.setPosition(x - iceBottomImage.getWidth() / 2, y - 50);
-
-            iceTopImage.addAction(Actions.moveBy(0, -25, 0.2f));
-            iceBottomImage.addAction(Actions.moveBy(0, +25.3f, 0.2f));
-
-            this.addActor(iceTopImage);
-            this.addActor(iceBottomImage);
-
-        }
-        else{
-            iceTopImage.addAction(sequence(fadeOut(0.1f), new RunnableAction(){
-                @Override
-                public void run() {
+                    iceTopImage.clearActions();
+                    iceBottomImage.clearActions();
                     iceTopImage.remove();
-                }
-            }));
-            iceBottomImage.addAction(sequence(fadeOut(0.1f), new RunnableAction(){
-                @Override
-                public void run() {
                     iceBottomImage.remove();
+                    iceTopImage.getColor().a = 1f;
+                    iceBottomImage.getColor().a = 1f;
+
+                    float x = knightFinalX;
+                    float y = knightContainer.getY() + knightContainer.getHeight() / 2;
+
+                    iceTopImage.setPosition(x - iceTopImage.getWidth() / 2, y + 24);
+                    iceBottomImage.setPosition(x - iceBottomImage.getWidth() / 2, y - 50);
+
+                    iceTopImage.addAction(Actions.moveBy(0, -25, 0.2f));
+                    iceBottomImage.addAction(Actions.moveBy(0, +25.3f, 0.2f));
+
+                    _this.addActor(iceTopImage);
+                    _this.addActor(iceBottomImage);
+
                 }
-            }));
-            continueAnimation();
-        }
+                else{
+                    iceTopImage.addAction(sequence(fadeOut(0.1f), new RunnableAction(){
+                        @Override
+                        public void run() {
+                            iceTopImage.remove();
+                        }
+                    }));
+                    iceBottomImage.addAction(sequence(fadeOut(0.1f), new RunnableAction(){
+                        @Override
+                        public void run() {
+                            iceBottomImage.remove();
+                        }
+                    }));
+                    continueAnimation();
+                }
+            }
+        });
+
+
     }
 
     public void setKnightPositionX(float x, boolean autoChangeState, boolean animate){
@@ -131,13 +151,13 @@ public class KnightActor extends Table {
             float toMovedDistance = Math.abs(x - knightContainer.getX());
 
             if(toMovedDistance > 10 && x > 5){
-                changeState(KnightState.Run);
+                changeState(KnightState.Run, animate);
             }
             else if(toMovedDistance <= 10 && toMovedDistance > 0 && x > 5){
-                changeState(KnightState.Walk);
+                changeState(KnightState.Walk, animate);
             }
             else{
-               changeState(KnightState.Attack);
+               changeState(KnightState.Attack, animate);
             }
         }
 
@@ -217,5 +237,13 @@ public class KnightActor extends Table {
 
     public Animator getKnightAtkAnimator() {
         return knightAtkAnimator;
+    }
+
+    public Animator getKnightWalkAnimator() {
+        return knightWalkAnimator;
+    }
+
+    public Animator getKnightRunAnimator() {
+        return knightRunAnimator;
     }
 }

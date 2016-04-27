@@ -113,11 +113,14 @@ public class MainLogic extends GameLogic {
                     if(_gameModel.isNextStageBonus()){
                         stageType = StageType.Bonus;
                         bonusType = BonusType.random();
+
+                        bonusType = BonusType.LIGHTING;
+
                     }
+                    String extra = StageImagesLogic.generateBonusTypeExtra(bonusType, getCoordinator().getPlayersByConnectionState(true));
 
                     _services.getRoomMsgHandler().sendGotoNextStage(imagePair.getImageDetails().getId(),
-                            stageType, bonusType,
-                                StageImagesLogic.generateBonusTypeExtra(bonusType, getCoordinator().getPlayersByConnectionState(true)),
+                            stageType, bonusType, extra,
                             _attachGameModelOnFinish ? _gameModel : null);
 
                     _attachGameModelOnFinish = false;
@@ -133,6 +136,8 @@ public class MainLogic extends GameLogic {
         _gameModel.clearHandledAreas();
         _gameModel.setStageType(stageType);
         _gameModel.addStageNumber();
+
+
 
         if(stageType == StageType.Normal){
             invalidateReviewLogic();
@@ -217,9 +222,9 @@ public class MainLogic extends GameLogic {
             }
         }
         else if(!_gameModel.isAreaAlreadyConfirmClicked(correctRect)) {
-            _gameModel.addHandledArea(correctRect, remainingMiliSecs);
+            boolean alreadyHandled = _gameModel.addHandledArea(correctRect, remainingMiliSecs);
             _gameModel.setConfirmAreaClickedBy(correctRect, userId);
-            _screen.circle(correctRect, userId);
+            _screen.circle(correctRect, userId, alreadyHandled ? -1 : _gameModel.getHandledAreas().size());
             _gameModel.addUserClickedCount(userId);
             _gameModel.setHintsLeft(hintLeft);
         }
@@ -301,7 +306,7 @@ public class MainLogic extends GameLogic {
         }
     }
 
-    private boolean meIsThisStageDecisionMaker(){
+    public boolean meIsThisStageDecisionMaker(){
         return (_currentDecisionMaker != null && _currentDecisionMaker.equals(getCoordinator().getMyUserId()));
     }
 
@@ -383,7 +388,7 @@ public class MainLogic extends GameLogic {
 
             @Override
             public void onCorrectClicked(SimpleRectangle correctRect, int remainingMiliSecsWhenClicked) {
-                _screen.circle(correctRect, null);
+                _screen.circle(correctRect, null, _gameModel.getHandledAreas().size());
                 _gameModel.addFreezeMiliSecs();
                 checkGameEnded(remainingMiliSecsWhenClicked);
             }
@@ -476,7 +481,7 @@ public class MainLogic extends GameLogic {
             @Override
             public void requestCircleAll() {
                 for(SimpleRectangle simpleRectangle : _gameModel.getImageDetails().getCorrectSimpleRects()){
-                    _screen.circle(simpleRectangle, getCoordinator().getMyUserId());
+                    _screen.circle(simpleRectangle, getCoordinator().getMyUserId(), -1);
                 }
             }
 
@@ -564,5 +569,9 @@ public class MainLogic extends GameLogic {
 
     public Services getServices() {
         return _services;
+    }
+
+    public String getCurrentDecisionMaker() {
+        return _currentDecisionMaker;
     }
 }

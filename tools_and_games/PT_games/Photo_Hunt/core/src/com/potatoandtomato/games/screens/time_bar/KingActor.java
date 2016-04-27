@@ -11,6 +11,7 @@ import com.potatoandtomato.common.controls.Animator;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.assets.Animations;
 import com.potatoandtomato.games.assets.MyAssets;
+import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.enums.KingState;
 import com.potatoandtomato.games.models.Services;
 
@@ -26,7 +27,7 @@ public class KingActor extends Table {
     private Animator normalAnimator, panicAnimator, winAnimator, loseAnimator;
     private KingState currentKingState;
 
-    public KingActor(Services services) {
+    public KingActor(final Services services) {
         _this = this;
         this.services = services;
         this.assets = services.getAssets();
@@ -45,6 +46,7 @@ public class KingActor extends Table {
         loseAnimator.overrideSize(34, 40);
 
         changeState(KingState.Normal);
+
     }
 
     public void changeState(final KingState kingState){

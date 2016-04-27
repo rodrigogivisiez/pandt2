@@ -44,7 +44,7 @@ public class KnightLogic {
         this.totalMovingMiliSecs = gameModel.getThisStageTotalMovingMiliSecs();
         this.totalAtkMiliSecs = gameModel.getThisStageTotalAtkMiliSecs();
         knightActor.setKnightAtkSpeed(totalMiliSecs / (3000 * 1000));
-        knightActor.changeState(KnightState.Walk);
+        knightActor.changeState(KnightState.Walk, false);
         setFreezed(false);
         knightActor.setKnightPositionX(totalDistance, false, false);
     }
@@ -97,20 +97,16 @@ public class KnightLogic {
                 Threadings.postRunnable(new Runnable() {
                     @Override
                     public void run() {
-                        updatePosition(remainingMiliSecs);
+                        if(remainingMiliSecs != gameModel.getThisStageTotalMiliSecs()){
+                            updatePosition(remainingMiliSecs);
+                        }
                     }
                 });
             }
 
             @Override
             public void onFreezingMiliSecsChanged(final int remainingMiliSecs) {
-                Threadings.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        setFreezed(remainingMiliSecs > 0);
-                    }
-                });
-
+                setFreezed(remainingMiliSecs > 0);
             }
 
             @Override

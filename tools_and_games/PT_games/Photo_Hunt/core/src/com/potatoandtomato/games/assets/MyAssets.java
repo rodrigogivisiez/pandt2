@@ -9,11 +9,13 @@ import com.potatoandtomato.common.assets.*;
 public class MyAssets extends Assets {
 
     private Textures textures;
+    private Sounds sounds;
 
     public MyAssets(AssetManager manager, FontAssets fontAssets, AnimationAssets animationAssets,
-                                SoundAssets soundAssets, PatchAssets patchAssets, Textures textureAssets) {
+                                Sounds soundAssets, PatchAssets patchAssets, Textures textureAssets) {
         super(manager, fontAssets, animationAssets, soundAssets, patchAssets, textureAssets);
         this.textures = textureAssets;
+        this.sounds = soundAssets;
     }
 
     @Override
@@ -21,5 +23,8 @@ public class MyAssets extends Assets {
         return textures;
     }
 
-
+    @Override
+    public Sounds getSounds() {
+        return sounds;
+    }
 }

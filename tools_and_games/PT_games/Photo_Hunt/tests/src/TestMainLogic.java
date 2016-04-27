@@ -57,18 +57,18 @@ public class TestMainLogic extends TestAbstract {
 
         Threadings.sleep(200);
 
-        String userId = _game.getCoordinator().getMyUserId();
+        mainLogic.imageTouched(47, 303, 1, 3);
+        mainLogic.imageTouched(10, 358, 1, 3);
+        mainLogic.imageTouched(108, 60, 1, 3);
+        mainLogic.imageTouched(123, 198, 0, 3);
 
-        mainLogic.imageTouched(userId, 47, 303, 1, false);
-        mainLogic.imageTouched(userId, 10, 358, 1, false);
-        mainLogic.imageTouched(userId, 108, 60, 1, false);
-        mainLogic.imageTouched(userId, 123, 198, 0, false);
+        Threadings.sleep(200);
 
         verify(services.getRoomMsgHandler(), times(0)).sendWon(any(WonStageModel.class));
         Assert.assertEquals(GameState.Playing, mainLogic.getGameModel().getGameState());
 
-        mainLogic.imageTouched(userId, 55, 422, 0, false);
-        mainLogic.imageTouched(userId, 55, 422, 0, false);
+        mainLogic.imageTouched(55, 422, 0, 3);
+        mainLogic.imageTouched(55, 422, 0, 3);
 
         Threadings.sleep(3000);
 
@@ -92,15 +92,15 @@ public class TestMainLogic extends TestAbstract {
 
         String userId = _game.getCoordinator().getMyUserId();
 
-        mainLogic.imageTouched(userId, 1, 1, 30, false);
+        mainLogic.imageTouched(1, 1, 30, 3);
         verify(mainLogic.getTimeLogic(), times(1)).reduceTime();
 
-        mainLogic.imageTouched(userId, 1, 1, 30, false);
-        mainLogic.imageTouched(userId, 1, 1, 30, false);
+        mainLogic.imageTouched(1, 1, 30, 3);
+        mainLogic.imageTouched(1, 1, 30, 3);
         verify(mainLogic.getTimeLogic(), times(3)).reduceTime();
 
-        mainLogic.imageTouched(userId, 55, 422, 0, false);
-        verify(gameModel, times(1)).addHandledArea(any(SimpleRectangle.class), any(String.class), 10);
+        mainLogic.imageTouched( 55, 422, 0, 3);
+        verify(gameModel, times(1)).addHandledArea(any(SimpleRectangle.class), any(Integer.class));
 
     }
 
@@ -127,8 +127,8 @@ public class TestMainLogic extends TestAbstract {
                 mock(HintsLogic.class), mock(ReviewLogic.class), mock(UserCountersLogic.class), mock(StageCounterLogic.class),
                 mock(ScoresLogic.class), imageStorage, gameModel, mock(StageImagesLogic.class)){
             @Override
-            public void changeScreenImages(Texture texture1, Texture texture2) {
-
+            public boolean meIsThisStageDecisionMaker() {
+                return true;
             }
         };
 

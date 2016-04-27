@@ -24,6 +24,7 @@ import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.absintf.Announcement;
 import com.potatoandtomato.games.assets.Fonts;
 import com.potatoandtomato.games.assets.MyAssets;
+import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.assets.Textures;
 import com.potatoandtomato.games.controls.Circle;
 import com.potatoandtomato.games.controls.Cross;
@@ -54,11 +55,13 @@ public class MainScreen extends GameScreen {
     private Image _doorLeftImage, _doorRightImage;
     private Vector2 _imageSize;
     private GameState _previousGameState;
+    private GameCoordinator _coordinator;
 
     public MainScreen(Services services, GameCoordinator gameCoordinator) {
         super(gameCoordinator);
 
         this._services = services;
+        this._coordinator = gameCoordinator;
         this._assets = _services.getAssets();
         init();
     }
@@ -290,11 +293,16 @@ public class MainScreen extends GameScreen {
 
                     }
                 }
+
+                _services.getSoundsWrapper().playSounds(Sounds.Name.WRONG);
+                _coordinator.requestVibrate(200);
+
+
             }
         });
     }
 
-    public void circle(final SimpleRectangle correctRect, final String userId){
+    public void circle(final SimpleRectangle correctRect, final String userId, final int playSoundNumber){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -326,6 +334,11 @@ public class MainScreen extends GameScreen {
                         innerTable.addActor(circle2);
                     }
                 }
+
+                if(playSoundNumber != -1){
+                    _services.getSoundsWrapper().playSounds(_assets.getSounds().getClickSound(playSoundNumber));
+                }
+
             }
         });
     }
@@ -369,6 +382,7 @@ public class MainScreen extends GameScreen {
                     if(_previousGameState == GameState.Close){
                         _doorLeftImage.addAction(moveBy(-_doorLeftImage.getWidth(), 0, 0.8f, Interpolation.exp5In));
                         _doorRightImage.addAction(moveBy(_doorRightImage.getWidth(), 0, 0.8f, Interpolation.exp5In));
+                        _services.getSoundsWrapper().playSounds(Sounds.Name.OPEN_DOOR);
                     }
 
                     if(newState == GameState.BlockingReview){
@@ -387,6 +401,8 @@ public class MainScreen extends GameScreen {
                                 _doorLeftImage.addAction(sequence(moveTo(-_doorLeftImage.getWidth(), 0), moveTo(0, 0, 0.8f, Interpolation.exp5Out)));
                                 _doorRightImage.addAction(sequence(moveTo(_doorLeftImage.getWidth() + _doorRightImage.getWidth(), 0),
                                         moveTo(_doorLeftImage.getWidth(), 0, 0.8f, Interpolation.exp5Out)));
+
+                                _services.getSoundsWrapper().playSounds(Sounds.Name.CLOSE_DOOR);
                             }
                         }
                     }

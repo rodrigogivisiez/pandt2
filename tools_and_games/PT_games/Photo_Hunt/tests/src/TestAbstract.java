@@ -2,12 +2,17 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.potatoandtomato.common.models.Player;
+import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.games.PhotoHuntGame;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+
+import java.util.ArrayList;
 
 import static org.mockito.Mockito.mock;
 
@@ -29,6 +34,12 @@ public abstract class TestAbstract {
         new HeadlessApplication(mock(PhotoHuntGame.class), config);
         _game = new PhotoHuntGame("photo_hunt");
         _game.getCoordinator().setSpriteBatch(mock(SpriteBatch.class));
+        _game.getCoordinator().setMyUserId("testUser");
+        ArrayList<Team> teams = _game.getCoordinator().getTeams();
+        Team team = new Team();
+        team.addPlayer(new Player("testUser", "testUser", true, true, Color.BLACK));
+        teams.add(team);
+        _game.getCoordinator().userConnectionChanged("testUser", true);
     }
 
     @Before

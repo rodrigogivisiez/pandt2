@@ -3,353 +3,353 @@ KNIGHT_ATK.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 0, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 0, 408
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 0
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 0, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 0, 340
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 1
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 62, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 62, 408
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 2
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 62, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 0, 272
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 3
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 124, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 62, 340
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 4
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 124, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 124, 408
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 5
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 186, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 0, 204
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 6
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 186, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 62, 272
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 7
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 248, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 124, 340
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 8
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 248, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 186, 408
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 9
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 310, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 0, 136
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 10
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 310, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 62, 204
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 11
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 372, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 124, 272
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 12
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 372, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 186, 340
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 13
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 434, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 248, 408
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 14
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 434, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 0, 68
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 15
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 496, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 62, 136
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 16
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 496, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 124, 204
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 17
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 558, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 186, 272
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 18
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 558, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 248, 340
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 19
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 620, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 310, 408
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 20
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 620, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 0, 0
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 21
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 682, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 62, 68
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 22
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 682, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 124, 136
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 23
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 744, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 186, 204
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 24
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 744, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 248, 272
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 25
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 806, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 310, 340
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 26
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 806, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 372, 408
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 27
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 868, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 62, 0
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 28
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 868, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 124, 68
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 29
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 930, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 186, 136
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 30
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 930, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 248, 204
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 31
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 992, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 310, 272
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 32
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 992, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 372, 340
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 33
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 1054, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 434, 408
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 34
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 1054, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 124, 0
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 35
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 1116, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 186, 68
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 36
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 1116, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 248, 136
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 37
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 1178, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 310, 204
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 38
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 1178, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 372, 272
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 39
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 1240, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 434, 340
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 40
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 1240, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 186, 0
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 41
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 1302, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 248, 68
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 42
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 1302, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 310, 136
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 43
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 1364, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 372, 204
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 44
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 1364, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 434, 272
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 45
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 1426, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 248, 0
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 46
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 1426, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 310, 68
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 47
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 1488, 63
-  size: 60, 61
-  orig: 60, 61
+  xy: 372, 136
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 48
-knight_atk
+KNIGHT_ATK
   rotate: false
-  xy: 1488, 0
-  size: 60, 61
-  orig: 60, 61
+  xy: 434, 204
+  size: 60, 66
+  orig: 60, 66
   offset: 0, 0
   index: 49

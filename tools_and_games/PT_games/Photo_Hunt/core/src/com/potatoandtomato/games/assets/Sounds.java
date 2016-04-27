@@ -1,6 +1,7 @@
 package com.potatoandtomato.games.assets;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.potatoandtomato.common.assets.SoundAssets;
 
 /**
@@ -12,13 +13,23 @@ public class Sounds extends SoundAssets {
         super(_manager);
     }
 
+    public Sound getClickSound(int clickNumber){
+        return getSound("CLICK_" + clickNumber);
+    }
+
     public enum Name{
-        START_GAME, OPEN_SLIDE,
-        FLIP_CHESS, MOVE_CHESS,
-        FIGHT_CHESS, WIN, LOSE,
-        GLASS_CRACKING, GLASS_BROKEN,
-        DROPPING, THEME_MUSIC, THUNDER, THEME_SUDDEN_D_MUSIC,
-        PARALYZED, POISON, ANGRY, DECREASE, KING, HEAL
+        BONUS_MUSIC,
+        HORSE_HOOF, KNIGHT_ATTACKING, KNIGHT_RUN,
+        SHOCK, WRONG, ICE,
+        HINT, WIN, ADDING_SCORE, CLOSE_DOOR, OPEN_DOOR,
+        WRINKLE_PAPER, INVERTED, COVERED_PRESS, TORCH_LIGHT,
+        LOOPING, DISALLOW_CLICK, SWITCH_LIGHT, BULB_BREAK,
+        MEMORY, MEMORY_END, PUT_EGGS, BREAK_EGG,
+        MONSTER_SOUND, MOVE_IN_FOREST, CAT, BOY_LAUGH,
+        CAR_REVERSE, CAR_DRIVING, CAR_BRAKE, HAPPY_BIRTHDAY,
+        JINGLE_BELL, SEXY_GIRL, BABY, RUNNING, CROWD_APPLAUSE,
+        UFO, ROCKET_LAUNCH, ROCKET_SLOW_FLY,
+
     }
 
 }

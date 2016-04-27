@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.games.absintf.GameModelListener;
 import com.potatoandtomato.games.absintf.HintsLogicListener;
+import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.enums.GameState;
 import com.potatoandtomato.games.enums.StageType;
 import com.potatoandtomato.games.models.GameModel;
@@ -36,6 +37,10 @@ public class HintsLogic {
 
     public void invalidate(){
         if(currentHintsLeft != gameModel.getHintsLeft()){
+            if(currentHintsLeft == gameModel.getHintsLeft() + 1){
+                services.getSoundsWrapper().playSounds(Sounds.Name.HINT);
+            }
+
             currentHintsLeft = gameModel.getHintsLeft();
             hintsActor.refreshDesign(currentHintsLeft);
         }

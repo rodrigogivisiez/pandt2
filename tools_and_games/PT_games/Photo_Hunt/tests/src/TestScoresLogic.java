@@ -15,6 +15,8 @@ import com.potatoandtomato.games.screens.time_bar.KnightLogic;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import java.util.ArrayList;
 
@@ -44,6 +46,8 @@ public class TestScoresLogic extends TestAbstract {
         ScoresLogic scoresLogic = new ScoresLogic(gameCoordinator, Mockings.mockServices(gameCoordinator),
                                         gameModel, mock(KnightLogic.class), mock(CastleLogic.class), mock(HintsLogic.class));
 
+        scoresLogic.refreshAllScores();
+
         Assert.assertEquals(record2.getScore(), scoresLogic.getNextLeaderboardScore(), 0);
 
         scoresLogic.addScoreWithoutAnimation(3000);
@@ -59,7 +63,7 @@ public class TestScoresLogic extends TestAbstract {
 
     @Test
     public void testCalculate(){
-        GameModel gameModel = new GameModel();
+        final GameModel gameModel = new GameModel();
         gameModel.setScore(0);
         gameModel.setRemainingMiliSecs(1, false);
         gameModel.setHintsLeft(2);
@@ -84,14 +88,24 @@ public class TestScoresLogic extends TestAbstract {
         KnightLogic knightLogic = new KnightLogic(gameModel,  Mockings.mockServices(gameCoordinator), gameCoordinator);
         knightLogic.setKnightActor(knightActor);
 
+        HintsLogic hintsLogic = mock(HintsLogic.class);
+        doAnswer(new Answer<Integer>() {
+            @Override
+            public Integer answer(InvocationOnMock invocation) throws Throwable {
+                return gameModel.getHintsLeft();
+            }
+        }).when(hintsLogic).getCurrentHintsLeft();
+
         ScoresLogic scoresLogic = new ScoresLogic(gameCoordinator, Mockings.mockServices(gameCoordinator),
-                gameModel, knightLogic, mock(CastleLogic.class), mock(HintsLogic.class)){
+                gameModel, knightLogic, mock(CastleLogic.class), hintsLogic){
             @Override
             public void addScoreAndPopScoreOnActor(Actor actor, int score, Runnable onFinish) {
                 addScoreWithoutAnimation(score);
                 onFinish.run();
             }
         };
+
+        scoresLogic.refreshAllScores();
 
         ScoresActor scoresActor = Mockito.mock(ScoresActor.class);
         scoresLogic.setScoresActor(scoresActor);

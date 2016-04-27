@@ -11,6 +11,7 @@ import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.absintf.GameModelListener;
+import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.enums.CastleState;
 import com.potatoandtomato.games.enums.GameState;
 import com.potatoandtomato.games.helpers.Logs;
@@ -73,55 +74,83 @@ public class ScoresLogic implements Disposable {
 
     public void calculate(){
         Actor hintsActor = hintsLogic.getHintsActor();
+        services.getSoundsWrapper().playSounds(Sounds.Name.WIN);
+
         addScoreAndPopScoreOnActor(hintsActor, hintsLogic.getCurrentHintsLeft() * PER_HINT_LEFT_SCORE, new Runnable() {
             @Override
             public void run() {
 
-                CastleState castleState = castleLogic.getCastleState(gameModel.getRemainingMiliSecs());
-                int i = 0;
-                if (castleState == CastleState.Normal) {
-                    i = 2;
-                } else if (castleState == CastleState.Semi_Destroyed) {
-                    i = 1;
-                }
-                addScoreAndPopScoreOnActor(castleLogic.getCastleActor(), i * PER_CASTLE_STATE_SCORE, new Runnable() {
+                Threadings.delay(600, new Runnable() {
                     @Override
                     public void run() {
 
-                        final int remainingDistance = (int) knightLogic.getRemainingDistanceByRemainingTime(gameModel.getRemainingMiliSecs());
-                        final int[] originalScore = {gameModel.getScore()};
-                        gameModel.setScore(originalScore[0] + ((int) (remainingDistance * PER_METER_DISTANCE_SCORE)));
-                        final Vector2 knightActorPosition = new Vector2(knightLogic.getKnightActor().getPositionOnStage().x,
-                                                                    knightLogic.getKnightActor().getPositionOnStage().y) ;
-                        knightActorPosition.y = knightActorPosition.y + knightLogic.getKnightActor().getHeight() / 2;
+                        CastleState castleState = castleLogic.getCastleState(gameModel.getRemainingMiliSecs());
+                        int i = 0;
+                        if (castleState == CastleState.Normal) {
+                            i = 2;
+                        } else if (castleState == CastleState.Semi_Destroyed) {
+                            i = 1;
+                        }
 
-                        Logs.show("Final score:" + gameModel.getScore());
-
-                        Threadings.runInBackground(new Runnable() {
+                        addScoreAndPopScoreOnActor(castleLogic.getCastleActor(), i * PER_CASTLE_STATE_SCORE, new Runnable() {
                             @Override
                             public void run() {
-                                for (int i = 0; i < remainingDistance; i++) {
-                                    final int finalI = i;
-                                    Threadings.postRunnable(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            scoresActor.popRulerScoreOnPosition(knightActorPosition.x - 10, knightActorPosition.y, finalI + 1);
-                                            scoresActor.setMainScore(originalScore[0]);
-                                        }
-                                    });
-                                    Threadings.sleep(8);
-
-                                    originalScore[0] += PER_METER_DISTANCE_SCORE;
-                                }
-
-                                Threadings.postRunnable(new Runnable() {
+                                Threadings.delay(900, new Runnable() {
                                     @Override
                                     public void run() {
-                                        scoresActor.setNextHighScore(getNextLeaderboardScore());
+                                        final int remainingDistance = (int) knightLogic.getRemainingDistanceByRemainingTime(gameModel.getRemainingMiliSecs());
+                                        final int[] originalScore = {gameModel.getScore()};
+                                        gameModel.setScore(originalScore[0] + ((int) (remainingDistance * PER_METER_DISTANCE_SCORE)));
+                                        final Vector2 knightActorPosition = new Vector2(knightLogic.getKnightActor().getPositionOnStage().x,
+                                                knightLogic.getKnightActor().getPositionOnStage().y);
+                                        knightActorPosition.y = knightActorPosition.y + knightLogic.getKnightActor().getHeight() / 2;
+
+                                        Logs.show("Final score:" + gameModel.getScore());
+
+                                        Threadings.runInBackground(new Runnable() {
+                                            @Override
+                                            public void run() {
+
+                                                services.getSoundsWrapper().playSoundLoop(Sounds.Name.ADDING_SCORE);
+
+                                                int totalSleepTime = 0;
+                                                int sleepTime = 8;
+
+                                                for (int i = 0; i < remainingDistance; i++) {
+                                                    final int finalI = i;
+                                                    Threadings.postRunnable(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            scoresActor.popRulerScoreOnPosition(knightActorPosition.x - 10, knightActorPosition.y, finalI + 1);
+                                                            scoresActor.setMainScore(originalScore[0]);
+                                                        }
+                                                    });
+                                                    Threadings.sleep(sleepTime);
+                                                    totalSleepTime += sleepTime;
+
+                                                    originalScore[0] += PER_METER_DISTANCE_SCORE;
+                                                }
+
+                                                scoresActor.setMainScore(gameModel.getScore());
+
+                                                services.getSoundsWrapper().stopSoundLoop(Sounds.Name.ADDING_SCORE);
+
+                                                Threadings.postRunnable(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        scoresActor.setNextHighScore(getNextLeaderboardScore());
+                                                    }
+                                                });
+
+                                                if(totalSleepTime < 2000){
+                                                    Threadings.sleep(2000 - totalSleepTime);
+                                                }
+
+                                                gameModel.setGameState(GameState.Ended);
+                                            }
+                                        });
                                     }
                                 });
-
-                                gameModel.setGameState(GameState.Ended);
                             }
                         });
                     }

@@ -2,7 +2,6 @@ package com.mygdx.potatoandtomato.helpers.services;
 
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.absints.ISoundsPlayer;
@@ -23,15 +22,17 @@ public class SoundsPlayer implements ISoundsPlayer {
     private Assets _assets;
     private Music _themeMusic;
     private float _volume;
-    private Array<Music> _musicList;
+    private HashMap<Music, Boolean> _musicMap;
     private Broadcaster _broadcaster;
     private HashMap<Sounds.Name, Long> _soundIdsMap;
+    private HashMap<Sound, Long> _externalSoundIdsMap;
 
     public SoundsPlayer(Assets assets, Broadcaster broadcaster) {
         this._assets = assets;
         this._broadcaster = broadcaster;
-        _musicList = new Array<Music>();
+        _musicMap = new HashMap();
         _soundIdsMap = new HashMap<Sounds.Name, Long>();
+        _externalSoundIdsMap = new HashMap();
         setVolume(1);
 
         _broadcaster.subscribe(BroadcastEvent.SOUNDS_CHANGED, new BroadcastListener() {
@@ -47,10 +48,8 @@ public class SoundsPlayer implements ISoundsPlayer {
     public void playThemeMusic() {
         if(_themeMusic == null){
             _themeMusic = _assets.getSounds().getMusic(Sounds.Name.THEME);
-            _themeMusic.setLooping(true);
-            addMusic(_themeMusic);
         }
-        playMusic(_themeMusic);
+        playMusic(_themeMusic, false);
     }
 
     public void stopThemeMusic() {
@@ -89,13 +88,6 @@ public class SoundsPlayer implements ISoundsPlayer {
     }
 
     @Override
-    public void addMusic(Music music) {
-        if(!_musicList.contains(music, true)){
-            _musicList.add(music);
-        }
-    }
-
-    @Override
     public void playSound(final Sound sound) {
         Threadings.postRunnable(new Runnable() {
             @Override
@@ -103,23 +95,55 @@ public class SoundsPlayer implements ISoundsPlayer {
                 sound.play(_volume);
             }
         });
+    }
 
+    @Override
+    public void playSoundLoop(final Sound sound) {
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                long id = sound.play(_volume);
+                sound.setLooping(id, true);
+                _externalSoundIdsMap.put(sound, id);
+            }
+        });
+    }
+
+    @Override
+    public void stopSoundLoop(final Sound sound) {
+        if(_externalSoundIdsMap.containsKey(sound)){
+            sound.setLooping(_externalSoundIdsMap.get(sound), false);
+            _externalSoundIdsMap.remove(sound);
+        }
     }
 
     @Override
     public void playMusic(final Music music) {
-        if(!_musicList.contains(music, true)) {
-            System.out.println("Please add the music using addMusic() method first before playing.");
-            return;
+        playMusic(music, true);
+    }
+
+    public void playMusic(final Music music, boolean external) {
+        if(!_musicMap.containsKey(music)){
+            _musicMap.put(music, external);
         }
         music.setVolume(_volume);
+        music.setLooping(true);
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
                 music.play();
             }
         });
+    }
 
+    @Override
+    public void stopMusic(final Music music) {
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                music.stop();
+            }
+        });
     }
 
     @Override
@@ -132,17 +156,23 @@ public class SoundsPlayer implements ISoundsPlayer {
             this._volume = 0f;
         }
 
-        for(Music music : _musicList){
+        for(Music music : _musicMap.keySet()){
             music.setVolume(_volume);
         }
     }
 
     @Override
-    public void disposeMusic(Music music) {
-        if(_musicList.contains(music, true)){
-            _musicList.removeValue(music, true);
-            music.dispose();
+    public void disposeAllExternalSounds() {
+        for(Sound sound : _externalSoundIdsMap.keySet()){
+            sound.dispose();
+        }
+        _externalSoundIdsMap.clear();
+
+        for(Music music : _musicMap.keySet()){
+            if(_musicMap.get(music)){
+                music.dispose();
+            }
+            _musicMap.remove(music);
         }
     }
-
 }

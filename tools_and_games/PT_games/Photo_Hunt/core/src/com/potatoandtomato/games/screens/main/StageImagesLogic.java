@@ -96,7 +96,9 @@ public class StageImagesLogic implements Disposable {
         if(bonusType == BonusType.MEMORY){
             disallowClick = true;
             int startTime = gameModel.getThisStageTotalMiliSecs() * 25 / 100;
-            int showCircleTime = gameModel.getThisStageTotalMiliSecs() * 15 / 100;
+            int showCircleTime = gameModel.getThisStageTotalMiliSecs() * 12 / 100;
+
+            stageImagesActor.startMemory();
 
             Threadings.delay(showCircleTime, new Runnable() {
                 @Override
@@ -109,7 +111,7 @@ public class StageImagesLogic implements Disposable {
                 @Override
                 public void run() {
                     stageImagesHandlerListener.cancelCircleAll();
-                    stageImagesActor.memory();
+                    stageImagesActor.endMemory();
                     disallowClick = false;
                 }
             });
