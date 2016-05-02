@@ -28,7 +28,7 @@ public class KnightActor extends Table {
     private Table _this;
     private Services services;
     private AnimationAssets animationAssets;
-    private Animator knightWalkAnimator, knightRunAnimator, knightAtkAnimator;
+    private Animator knightWalkAnimator, knightRunAnimator, knightAtkAnimator, knightWonAnimator;
     private Container knightContainer;
     private float totalDistance;
     private KnightState currentKnightState;
@@ -57,11 +57,13 @@ public class KnightActor extends Table {
         knightAtkAnimator = new Animator(0.3f, animationAssets.get(Animations.Name.KNIGHT_ATK));
         knightAtkAnimator.overrideSize(52, 54);
 
+        knightWonAnimator = new Animator(0.1f, animationAssets.get(Animations.Name.KNIGHT_WON), false);
+        knightWonAnimator.overrideSize(45, 56);
+
         iceTopImage = new Image(services.getAssets().getTextures().get(Textures.Name.ICE_TOP_HALF));
         iceTopImage.setSize(iceTopImage.getPrefWidth(), iceTopImage.getPrefHeight());
         iceBottomImage = new Image(services.getAssets().getTextures().get(Textures.Name.ICE_BOTTOM_HALF));
         iceBottomImage.setSize(iceBottomImage.getPrefWidth(), iceBottomImage.getPrefHeight());
-
 
         knightAtkAnimator.callBackOnIndex(18, new Runnable() {
             @Override
@@ -76,26 +78,40 @@ public class KnightActor extends Table {
         knightAtkAnimator.getAnimation().setFrameDuration(frameRate);
     }
 
-    public void changeState(KnightState knightState, boolean playSound){
-        if(currentKnightState != knightState){
-            if(currentKnightState == KnightState.Attack){
-                knightContainer.setY(knightContainer.getY() - 7);
-            }
+    public void changeState(final KnightState knightState, final boolean playSound){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(currentKnightState != knightState){
+                    if(currentKnightState == KnightState.Attack){
+                        knightContainer.setY(knightContainer.getY() - 7);
+                    }
+                    else if(currentKnightState == KnightState.Won){
+                        knightContainer.setY(knightContainer.getY() - 10);
+                    }
 
-            currentKnightState = knightState;
-            knightContainer.clear();
-            if(knightState == KnightState.Walk) {
-                knightContainer.setActor(knightWalkAnimator);
+                    currentKnightState = knightState;
+                    knightContainer.clear();
+                    if(knightState == KnightState.Walk) {
+                        knightContainer.setActor(knightWalkAnimator);
+                    }
+                    else if(knightState == KnightState.Run){
+                        knightContainer.setActor(knightRunAnimator);
+                        if(playSound) services.getSoundsWrapper().playSounds(Sounds.Name.KNIGHT_RUN);
+                    }
+                    else if(knightState == KnightState.Attack){
+                        knightContainer.setY(knightContainer.getY() + 7);
+                        knightContainer.setActor(knightAtkAnimator);
+                    }
+                    else if(knightState == KnightState.Won){
+                        knightContainer.setY(knightContainer.getY() + 10);
+                        knightContainer.setActor(knightWonAnimator);
+                        services.getSoundsWrapper().playSounds(Sounds.Name.KNIGHT_WON);
+                    }
+                }
             }
-            else if(knightState == KnightState.Run){
-                knightContainer.setActor(knightRunAnimator);
-                if(playSound) services.getSoundsWrapper().playSounds(Sounds.Name.KNIGHT_RUN);
-            }
-            else if(knightState == KnightState.Attack){
-                knightContainer.setY(knightContainer.getY() + 7);
-                knightContainer.setActor(knightAtkAnimator);
-            }
-        }
+        });
+
     }
 
     public void setFreeze(final boolean freezed){
@@ -146,7 +162,7 @@ public class KnightActor extends Table {
 
     }
 
-    public void setKnightPositionX(float x, boolean autoChangeState, boolean animate){
+    public void setKnightPositionX(final float x, boolean autoChangeState, final boolean animate){
         if(autoChangeState){
             float toMovedDistance = Math.abs(x - knightContainer.getX());
 
@@ -162,7 +178,13 @@ public class KnightActor extends Table {
         }
 
         knightFinalX = x;
-        knightContainer.addAction(moveTo(x, knightContainer.getY(), animate ? 0.3f : 0f));
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                knightContainer.addAction(moveTo(x, knightContainer.getY(), animate ? 0.3f : 0f));
+            }
+        });
+
     }
 
     public void continueAnimation(){
@@ -185,34 +207,40 @@ public class KnightActor extends Table {
     }
 
     public void popStars(){
-        int totalStars = MathUtils.random(3, 8);
-        for(int i = 0; i < totalStars; i++){
-            final Image starImage = new Image(services.getAssets().getTextures().get(Textures.Name.SMALL_STAR_ICON));
-            Vector2 startingPosition = new Vector2(MathUtils.random(-25f, -20f), MathUtils.random(20f, 30f));
-            Vector2 middlePosition = new Vector2(MathUtils.random(-40f, 0f), MathUtils.random(startingPosition.y, 50f));
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                int totalStars = MathUtils.random(3, 8);
+                for(int i = 0; i < totalStars; i++){
+                    final Image starImage = new Image(services.getAssets().getTextures().get(Textures.Name.SMALL_STAR_ICON));
+                    Vector2 startingPosition = new Vector2(MathUtils.random(-25f, -20f), MathUtils.random(20f, 30f));
+                    Vector2 middlePosition = new Vector2(MathUtils.random(-40f, 0f), MathUtils.random(startingPosition.y, 50f));
 
-            float finalPositionX;
-            if(middlePosition.x > startingPosition.x){
-                finalPositionX = MathUtils.random(middlePosition.x + 10, 10f);
+                    float finalPositionX;
+                    if(middlePosition.x > startingPosition.x){
+                        finalPositionX = MathUtils.random(middlePosition.x + 10, 10f);
+                    }
+                    else{
+                        finalPositionX = MathUtils.random(-50f, middlePosition.x - 10);
+                    }
+
+                    Vector2 finalPosition = new Vector2(finalPositionX, MathUtils.random(0f, middlePosition.y - 10f));
+
+                    starImage.setPosition(startingPosition.x, startingPosition.y);
+                    starImage.setSize(starImage.getPrefWidth(), starImage.getPrefHeight());
+                    starImage.addAction(sequence(Actions.moveTo(middlePosition.x, middlePosition.y, MathUtils.random(0.4f, 0.5f)),
+                            parallel(Actions.moveTo(finalPosition.x, finalPosition.y, MathUtils.random(0.4f, 0.5f)), fadeOut(MathUtils.random(0.5f, 0.7f))), new RunnableAction(){
+                                @Override
+                                public void run() {
+                                    starImage.remove();
+                                }
+                            }));
+
+                    _this.addActor(starImage);
+                }
             }
-            else{
-                finalPositionX = MathUtils.random(-50f, middlePosition.x - 10);
-            }
+        });
 
-            Vector2 finalPosition = new Vector2(finalPositionX, MathUtils.random(0f, middlePosition.y - 10f));
-
-            starImage.setPosition(startingPosition.x, startingPosition.y);
-            starImage.setSize(starImage.getPrefWidth(), starImage.getPrefHeight());
-            starImage.addAction(sequence(Actions.moveTo(middlePosition.x, middlePosition.y, MathUtils.random(0.4f, 0.5f)),
-                                            parallel(Actions.moveTo(finalPosition.x, finalPosition.y, MathUtils.random(0.4f, 0.5f)), fadeOut(MathUtils.random(0.5f, 0.7f))), new RunnableAction(){
-                                                @Override
-                                                public void run() {
-                                                    starImage.remove();
-                                                }
-                                            }));
-
-            this.addActor(starImage);
-        }
 
     }
 

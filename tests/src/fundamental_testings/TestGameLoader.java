@@ -5,6 +5,7 @@ import abstracts.TestAbstract;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.game_file_checker.GameFileCheckerListener;
 import com.mygdx.potatoandtomato.desktop.DesktopLauncher;
+import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.absints.*;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.models.Team;
@@ -98,7 +99,7 @@ public class TestGameLoader extends TestAbstract{
         GameCoordinator gameCoordinator = new GameCoordinator(game.getFullLocalJarPath(),
                                         game.getLocalAssetsPath(), game.getBasePath(), new ArrayList<Team>(), Positions.getWidth(),
                                         Positions.getHeight(), null, null, "123", mock(IGameSandBox.class), null, "1", mock(ISoundsPlayer.class), broadcaster,
-                                        mock(IDownloader.class), mock(ITutorials.class), mock(GamePreferencesAbstract.class));
+                                        mock(IDownloader.class), mock(ITutorials.class), mock(GamePreferencesAbstract.class), Global.LEADERBOARD_COUNT);
         broadcaster.broadcast(BroadcastEvent.LOAD_GAME_REQUEST, gameCoordinator);
 
         while (waiting[0]){

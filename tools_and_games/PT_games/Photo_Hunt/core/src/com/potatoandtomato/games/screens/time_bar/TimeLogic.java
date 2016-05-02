@@ -1,12 +1,10 @@
 package com.potatoandtomato.games.screens.time_bar;
 
 import com.badlogic.gdx.utils.Disposable;
-import com.firebase.client.snapshot.EmptyNode;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.absintf.GameModelListener;
-import com.potatoandtomato.games.enums.CastleState;
 import com.potatoandtomato.games.enums.GameState;
 import com.potatoandtomato.games.helpers.Logs;
 import com.potatoandtomato.games.models.GameModel;
@@ -50,7 +48,6 @@ public class TimeLogic implements Disposable {
     public void restart(){
         gameModel.setFreezingMiliSecs(0);
         stop();
-        setPause(false);
         start();
 
     }
@@ -120,12 +117,7 @@ public class TimeLogic implements Disposable {
         gameModel.addGameModelListener(new GameModelListener() {
             @Override
             public void onStageNumberChanged(int newStageNumber) {
-                Threadings.delay(900, new Runnable() {
-                    @Override
-                    public void run() {
-                        restart();
-                    }
-                });
+                restart();
             }
 
             @Override
@@ -150,7 +142,7 @@ public class TimeLogic implements Disposable {
                 if(newState == GameState.Playing){
                     setPause(false);
                 }
-                else if(newState == GameState.Ended){
+                else if(newState == GameState.WaitingForNextStage){
                     stop();
                 }
                 else{

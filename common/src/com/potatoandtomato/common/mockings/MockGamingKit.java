@@ -75,11 +75,7 @@ public class MockGamingKit {
         _warpInstance.addNotificationListener(listeners);
         _warpInstance.addUpdateRequestListener(listeners);
 
-
         _warpInstance.connectWithUserName(_userId);
-
-
-
     }
 
     public void sendUpdate(final String msg){
@@ -105,7 +101,7 @@ public class MockGamingKit {
             String toSend = jsonObject.toString();
             if(toSend.length() > 800){
                 ArrayList<String> results = Strings.split(toSend, 800);
-                String id = Strings.generateRandomKey(10);
+                String id = Strings.generateUniqueRandomKey(20);
                 for(int i = 0; i < results.size(); i++){
                     _warpInstance.sendUpdatePeers(appendDataToPeerUpdate(results.get(i), i, results.size(), id).getBytes());
                 }
@@ -253,7 +249,7 @@ public class MockGamingKit {
                 Collections.sort(users);
 
                 for(String user : users) {
-                    team.addPlayer(new Player(user, user, isHost, true, ColorUtils.getUserColorByIndex(i)));
+                    team.addPlayer(new Player(user, user, isHost, true, i));
                     isHost = false;
                     i++;
                     if(i == _eachTeamExpectedPlayers){

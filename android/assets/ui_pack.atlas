@@ -82,7 +82,7 @@ CLOSE_KEYBOARD_ICON
   index: -1
 COLLAPSED_ICON
   rotate: false
-  xy: 993, 1004
+  xy: 328, 18
   size: 17, 18
   orig: 17, 18
   offset: 0, 0
@@ -117,7 +117,7 @@ DOWNWARD_EGG_BUTTON
   index: -1
 EMPTY
   rotate: false
-  xy: 1165, 1643
+  xy: 402, 561
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
@@ -147,7 +147,7 @@ FACEBOOK_ICON
   index: -1
 FACEBOOK_INVITE_ICON
   rotate: false
-  xy: 671, 636
+  xy: 738, 662
   size: 30, 20
   orig: 30, 20
   offset: 0, 0
@@ -177,7 +177,7 @@ GAMELIST_HIGHLIGHT
   index: -1
 GAMELIST_TITLE_BG
   rotate: false
-  xy: 1543, 1652
+  xy: 1543, 1622
   size: 20, 29
   orig: 20, 29
   offset: 0, 0
@@ -191,14 +191,14 @@ GREEN_GROUND
   index: -1
 GREY_HORIZONTAL_LINE
   rotate: false
-  xy: 1158, 1643
+  xy: 568, 611
   size: 5, 1
   orig: 5, 1
   offset: 0, 0
   index: -1
 GREY_ROUNDED_BG
   rotate: false
-  xy: 478, 592
+  xy: 345, 135
   size: 28, 20
   split: 11, 11, 6, 9
   pad: 4, 6, 0, 1
@@ -223,7 +223,7 @@ INVITE_BG
   index: -1
 INVITE_TAB_CENTER
   rotate: false
-  xy: 328, 24
+  xy: 1080, 1124
   size: 18, 12
   split: 6, 7, 3, 3
   pad: 0, 0, 0, 0
@@ -241,7 +241,7 @@ INVITE_TAB_LEFT
   index: -1
 INVITE_TAB_RIGHT
   rotate: false
-  xy: 402, 588
+  xy: 405, 488
   size: 74, 24
   split: 20, 30, 22, 0
   pad: 0, 0, 0, 0
@@ -285,7 +285,7 @@ LEADERBOARD_INVITE_ICON
   index: -1
 LEADERBOARD_MAIN_ICON
   rotate: false
-  xy: 402, 558
+  xy: 671, 628
   size: 43, 28
   orig: 43, 28
   offset: 0, 0
@@ -299,7 +299,7 @@ LEADER_BOARD_BG
   index: -1
 LEADER_BOARD_SEPARATOR
   rotate: false
-  xy: 918, 984
+  xy: 1001, 1021
   size: 5, 1
   orig: 5, 1
   offset: 0, 0
@@ -367,6 +367,20 @@ MIC_ICON
   orig: 15, 29
   offset: 0, 0
   index: -1
+NEXT_LEADERBOARD_CLICKED
+  rotate: false
+  xy: 402, 564
+  size: 81, 48
+  orig: 81, 48
+  offset: 0, 0
+  index: -1
+NEXT_LEADERBOARD_NORMAL
+  rotate: false
+  xy: 485, 564
+  size: 81, 48
+  orig: 81, 48
+  offset: 0, 0
+  index: -1
 NO_IMAGE
   rotate: false
   xy: 878, 1172
@@ -376,14 +390,14 @@ NO_IMAGE
   index: -1
 ORANGE_HORIZONTAL_LINE
   rotate: false
-  xy: 1974, 1802
+  xy: 488, 524
   size: 5, 1
   orig: 5, 1
   offset: 0, 0
   index: -1
 ORANGE_ROUNDED_BG
   rotate: false
-  xy: 738, 662
+  xy: 345, 113
   size: 28, 20
   split: 10, 11, 6, 9
   pad: 0, 2, 0, 2
@@ -392,7 +406,7 @@ ORANGE_ROUNDED_BG
   index: -1
 ORANGE_VERTICAL_LINE
   rotate: false
-  xy: 576, 617
+  xy: 1530, 1531
   size: 2, 10
   orig: 2, 10
   offset: 0, 0
@@ -427,6 +441,20 @@ POTATO_HI
   orig: 76, 70
   offset: 0, 0
   index: -1
+PREV_LEADERBOARD_CLICKED
+  rotate: false
+  xy: 918, 974
+  size: 81, 48
+  orig: 81, 48
+  offset: 0, 0
+  index: -1
+PREV_LEADERBOARD_NORMAL
+  rotate: false
+  xy: 405, 514
+  size: 81, 48
+  orig: 81, 48
+  offset: 0, 0
+  index: -1
 QUIT_ICON
   rotate: false
   xy: 345, 410
@@ -436,9 +464,9 @@ QUIT_ICON
   index: -1
 RANK_ICON
   rotate: false
-  xy: 345, 132
-  size: 20, 23
-  orig: 20, 23
+  xy: 1543, 1653
+  size: 25, 28
+  orig: 25, 28
   offset: 0, 0
   index: -1
 RATE_ICON
@@ -453,6 +481,13 @@ RECENT_ICON
   xy: 732, 1375
   size: 30, 30
   orig: 30, 30
+  offset: 0, 0
+  index: -1
+ROPE
+  rotate: false
+  xy: 1513, 1487
+  size: 11, 28
+  orig: 11, 28
   offset: 0, 0
   index: -1
 SCROLLBAR_VERTICAL_HANDLE
@@ -486,9 +521,9 @@ SMALL_STAR_ICON
   index: -1
 STREAK_ICON
   rotate: false
-  xy: 1513, 1495
-  size: 15, 20
-  orig: 15, 20
+  xy: 716, 633
+  size: 20, 23
+  orig: 20, 23
   offset: 0, 0
   index: -1
 SUNRAY
@@ -507,7 +542,7 @@ SUNRISE
   index: -1
 TEXT_FIELD_BG
   rotate: false
-  xy: 918, 987
+  xy: 488, 527
   size: 73, 35
   split: 23, 31, 16, 17
   pad: 15, 14, 0, 0
@@ -596,7 +631,7 @@ UPRIGHT_EGG_BUTTON
   index: -1
 VERTICAL_DOTS
   rotate: false
-  xy: 1565, 1661
+  xy: 1565, 1631
   size: 3, 20
   orig: 3, 20
   offset: 0, 0
@@ -617,7 +652,7 @@ WHITE_HORIZONTAL_LINE
   index: -1
 WHITE_ROUNDED_BG
   rotate: false
-  xy: 447, 566
+  xy: 349, 91
   size: 28, 20
   split: 11, 13, 7, 9
   pad: 5, 7, 0, 0
@@ -633,7 +668,7 @@ WHITE_ROUND_BUTTON_BG
   index: -1
 WHITE_VERTICAL_LINE
   rotate: false
-  xy: 1530, 1531
+  xy: 1158, 1634
   size: 2, 10
   orig: 2, 10
   offset: 0, 0

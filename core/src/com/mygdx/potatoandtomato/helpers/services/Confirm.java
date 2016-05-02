@@ -72,51 +72,55 @@ public class Confirm {
     }
 
     public void invalidate(){
-        if(_stage != null){
-            _stage.dispose();
-            _confirmRoot.remove();
-            _confirmRoot.clear();
-        }
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(_stage != null){
+                    _stage.dispose();
+                    _confirmRoot.remove();
+                    _confirmRoot.clear();
+                }
 
 
-        StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
-        _stage = new Stage(viewPort, _batch);
+                StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
+                _stage = new Stage(viewPort, _batch);
 
-        _confirmRoot.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
-        _confirmRoot.setFillParent(true);
-        _confirmRoot.align(Align.bottom);
-        new DummyButton(_confirmRoot, _assets);
+                _confirmRoot.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
+                _confirmRoot.setFillParent(true);
+                _confirmRoot.align(Align.bottom);
+                new DummyButton(_confirmRoot, _assets);
 
-        _msgTable = new Table();
-        _msgTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.POPUP_BG)));
+                _msgTable = new Table();
+                _msgTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.POPUP_BG)));
 
-        Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR);
-        labelStyle.fontColor = Color.BLACK;
-        _messageLabel = new Label("", labelStyle);
-        _messageLabel.setWrap(true);
-        _messageLabel.setAlignment(Align.center);
+                Label.LabelStyle labelStyle = new Label.LabelStyle();
+                labelStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR);
+                labelStyle.fontColor = Color.BLACK;
+                _messageLabel = new Label("", labelStyle);
+                _messageLabel.setWrap(true);
+                _messageLabel.setAlignment(Align.center);
 
-        ScrollPane scrollPane = new ScrollPane(_messageLabel);
+                ScrollPane scrollPane = new ScrollPane(_messageLabel);
 
-        _buttonsTable = new Table();
+                _buttonsTable = new Table();
 
-        _yesImage = new Image(_assets.getTextures().get(Textures.Name.TICK_ICON));
-        _noImage = new Image(_assets.getTextures().get(Textures.Name.CROSS_ICON));
+                _yesImage = new Image(_assets.getTextures().get(Textures.Name.TICK_ICON));
+                _noImage = new Image(_assets.getTextures().get(Textures.Name.CROSS_ICON));
 
-        _msgTable.add(scrollPane).padTop(20).padBottom(20).expand().fill().padLeft(10).padRight(10);
-        _msgTable.row();
-        _msgTable.add(_buttonsTable).expandX().fillX().padBottom(20);
+                _msgTable.add(scrollPane).padTop(20).padBottom(20).expand().fill().padLeft(10).padRight(10);
+                _msgTable.row();
+                _msgTable.add(_buttonsTable).expandX().fillX().padBottom(20);
 
 
-        _confirmRoot.add(_msgTable).expandX().fillX();
-        _confirmRoot.invalidate();
+                _confirmRoot.add(_msgTable).expandX().fillX();
+                _confirmRoot.invalidate();
 
-        _stage.addActor(_confirmRoot);
-        close();
+                _stage.addActor(_confirmRoot);
+                close();
 
-        attachEvent();
-
+                attachEvent();
+            }
+        });
     }
 
     public void show(final String msg, final Type type, final ConfirmResultListener _listener){

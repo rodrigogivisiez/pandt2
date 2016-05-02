@@ -47,6 +47,7 @@ public class GameCoordinator implements Disposable {
     private IDownloader downloader;
     private ITutorials tutorials;
     private GamePreferencesAbstract gamePreferences;
+    private int leaderboardSize;
 
     private boolean _landscape;
     private ArrayList<String> _subscribedIds;
@@ -67,7 +68,8 @@ public class GameCoordinator implements Disposable {
                            Object database, String roomId,
                            ISoundsPlayer sounds, Broadcaster broadcaster,
                            IDownloader downloader, ITutorials tutorials,
-                           GamePreferencesAbstract gamePreferences) {
+                           GamePreferencesAbstract gamePreferences,
+                           int leaderboardSize) {
         this.jarPath = jarPath;
         this.assetsPath = assetsPath;
         this.basePath = basePath;
@@ -86,6 +88,7 @@ public class GameCoordinator implements Disposable {
         this.tutorials = tutorials;
         this.gamePreferences = gamePreferences;
         this.decisionsMaker = new DecisionsMaker(this.teams);
+        this.leaderboardSize = leaderboardSize;
 
         _gameLeaderboardRecords = new ArrayList<LeaderboardRecord>();
         _subscribedIds = new ArrayList<String>();
@@ -98,6 +101,14 @@ public class GameCoordinator implements Disposable {
             }
         });
         subscribeListeners();
+    }
+
+    public int getLeaderboardSize() {
+        return leaderboardSize;
+    }
+
+    public void setLeaderboardSize(int leaderboardSize) {
+        this.leaderboardSize = leaderboardSize;
     }
 
     public ArrayList<LeaderboardRecord> getGameLeaderboardRecords() {
@@ -331,38 +342,26 @@ public class GameCoordinator implements Disposable {
     public HashMap<Integer, Player> getIndexToPlayersMap(){
         HashMap<Integer, Player> playerHashMap = new HashMap();
 
-        int i = 0;
         for(Team team : teams){
             for(Player player : team.getPlayers()){
-                playerHashMap.put(i, player);
-                i++;
+                playerHashMap.put(player.getSlotIndex(), player);
             }
         }
 
         return playerHashMap;
     }
 
+    //unique index is the same as slot index
     public int getMyUniqueIndex(){
-        int i = 0;
-        for(Team team : teams){
-            for(Player player : team.getPlayers()){
-                if(player.getUserId().equals(getMyUserId())){
-                    return i;
-                }
-                i++;
-            }
-        }
-        return -1;
+       return getPlayerUniqueIndex(getMyUserId());
     }
 
     public int getPlayerUniqueIndex(String userId){
-        int i = 0;
         for(Team team : teams){
             for(Player player : team.getPlayers()){
                 if(player.getUserId().equals(userId)){
-                    return i;
+                    return player.getSlotIndex();
                 }
-                i++;
             }
         }
         return -1;
@@ -370,16 +369,14 @@ public class GameCoordinator implements Disposable {
 
 
     public Player getPlayerByUniqueIndex(int index){
-        int i = 0;
         for(Team team : teams){
             for(Player player : team.getPlayers()){
-                if(index == i){
+                if(index == player.getSlotIndex()){
                     return player;
                 }
-                i++;
             }
         }
-        return new Player("", "", false, true, Color.BLACK);
+        return new Player("", "", false, true, -1);
     }
 
     public Player getPlayerByUserId(String userId){
@@ -390,7 +387,7 @@ public class GameCoordinator implements Disposable {
                 }
             }
         }
-        return new Player("", "", false, true, Color.BLACK);
+        return new Player("", "", false, true, -1);
     }
 
     public ArrayList<Player> getPlayersByConnectionState(boolean isConnected){

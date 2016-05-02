@@ -574,6 +574,7 @@ public class BoardLogic implements Disposable{
             }
         });
 
+
         _screen.setBackKeyListener(new BackKeyListener() {
             @Override
             public void backPressed() {

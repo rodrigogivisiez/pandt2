@@ -2,6 +2,7 @@ package com.mygdx.potatoandtomato.scenes.room_scene;
 
 import com.badlogic.gdx.utils.Disposable;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
+import com.mygdx.potatoandtomato.enums.BadgeType;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.RoomUser;
 import com.mygdx.potatoandtomato.models.Services;
@@ -29,7 +30,7 @@ public class UserBadgeHelper implements Disposable {
     private HashMap<String, SafeThread> _runningThreads;
     private HashMap<String, Streak> _streaksMap;
     private HashMap<String, Integer> _rankMap;
-    private HashMap<String, RoomScene.BadgeType> _currentBadge;
+    private HashMap<String, BadgeType> _currentBadge;
     private ArrayList<LeaderboardRecord> _records;
     private boolean paused;
 
@@ -41,7 +42,7 @@ public class UserBadgeHelper implements Disposable {
         this._streaksMap = new HashMap<String, Streak>();
         this._rankMap = new HashMap<String, Integer>();
         this._roomUsers = new ArrayList<RoomUser>();
-        this._currentBadge = new HashMap<String, RoomScene.BadgeType>();
+        this._currentBadge = new HashMap<String, BadgeType>();
         refresh();
     }
 
@@ -112,7 +113,7 @@ public class UserBadgeHelper implements Disposable {
                             final String userId = roomUser.getProfile().getUserId();
 
                             if(safeThread.isKilled()){
-                                setBadge(userId, RoomScene.BadgeType.Normal, 0);
+                                setBadge(userId, BadgeType.Normal, 0);
                                 break;
                             }
 
@@ -122,7 +123,7 @@ public class UserBadgeHelper implements Disposable {
                             }
 
                             if(safeThread.isKilled()){
-                                setBadge(userId, RoomScene.BadgeType.Normal, 0);
+                                setBadge(userId, BadgeType.Normal, 0);
                                 break;
                             }
 
@@ -131,17 +132,17 @@ public class UserBadgeHelper implements Disposable {
 
                             if(!showingRank && _records != null){
                                 if(_streaksMap.containsKey(userId)){
-                                    reRun = !setBadge(userId, RoomScene.BadgeType.Streak, _streaksMap.get(userId).getStreakCount());
+                                    reRun = !setBadge(userId, BadgeType.Streak, _streaksMap.get(userId).getStreakCount());
                                 }
                             }
                             else{
                                 if(_rankMap.containsKey(userId)){
-                                    reRun =  !setBadge(userId, RoomScene.BadgeType.Rank, _rankMap.get(userId));
+                                    reRun =  !setBadge(userId, BadgeType.Rank, _rankMap.get(userId));
                                 }
                             }
 
                             if(!_streaksMap.containsKey(userId) && !_rankMap.containsKey(userId)){
-                                reRun = !setBadge(userId, RoomScene.BadgeType.Normal, 0);
+                                reRun = !setBadge(userId, BadgeType.Normal, 0);
                             }
 
                             Threadings.sleep(_records == null || reRun? 1 * 1000 : 7 * 1000);
@@ -154,18 +155,13 @@ public class UserBadgeHelper implements Disposable {
         }
     }
 
-    private boolean setBadge(final String userId, final RoomScene.BadgeType type, final int num){
+    private boolean setBadge(final String userId, final BadgeType type, final int num){
         if(_currentBadge.containsKey(userId) && _currentBadge.get(userId) == type){
             return true;
         }
         else{
             boolean success = _roomScene.getPlayersMaps().containsKey(userId);
-            Threadings.postRunnable(new Runnable() {
-                @Override
-                public void run() {
-                    _roomScene.setPlayerBadge(userId, type, num);
-                }
-            });
+            _roomScene.setPlayerBadge(userId, type, num);
 
             if(success){
                 _currentBadge.put(userId, type);

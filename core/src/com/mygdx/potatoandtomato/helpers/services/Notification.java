@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -21,6 +22,7 @@ import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.utils.Threadings;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -56,25 +58,30 @@ public class Notification {
     }
 
     public void invalidate(){
-        if(_stage != null){
-            _game.removeInputProcessor(_stage);
-            _stage.dispose();
-            _root.remove();
-        }
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(_stage != null){
+                    _game.removeInputProcessor(_stage);
+                    _stage.dispose();
+                    _root.remove();
+                }
 
-        StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
-        _stage = new Stage(viewPort, _batch);
+                StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
+                _stage = new Stage(viewPort, _batch);
 
-        _root.setHeight(Positions.getHeight());
-        _root.align(Align.top);
-        _root.setWidth(200);
-        _root.setPosition(Positions.getWidth() - _root.getWidth(), 0);
-        _root.invalidate();
+                _root.setHeight(Positions.getHeight());
+                _root.align(Align.top);
+                _root.setWidth(200);
+                _root.setPosition(Positions.getWidth() - _root.getWidth(), 0);
+                _root.invalidate();
 
-        _stage.addActor(_root);
-        _game.addInputProcessor(_stage, 20);
+                _stage.addActor(_root);
+                _game.addInputProcessor(_stage, 20);
 
-        reposition();
+                reposition();
+            }
+        });
     }
 
     public void important(String msg){
@@ -85,75 +92,82 @@ public class Notification {
         showNotification(msg, Color.BLUE);
     }
 
-    private void showNotification(String msg, Color color){
-
-        Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_S_REGULAR);
-        labelStyle.fontColor = (color == Color.RED ?  Color.valueOf("e40404") : Color.valueOf("11b1bf"));
-
-        final Label labelMsg = new Label(msg, labelStyle);
-        labelMsg.setWrap(true);
-        labelMsg.setWidth(_root.getWidth());
-        labelMsg.layout();
-        float tableHeight = labelMsg.getPrefHeight() + 15;
-
-        final Table childTable = new Table();
-        childTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.WHITE_ROUNDED_BG)));
-        childTable.setTransform(true);
-        childTable.setWidth(labelMsg.getWidth());
-        childTable.setHeight(tableHeight);
-        childTable.pad(10);
-        childTable.padRight(20);
-        childTable.setPosition(labelMsg.getWidth() + 10, _root.getHeight() - tableHeight);
-
-        childTable.add(labelMsg).expand().fill().center();
-
-        _root.addActor(childTable);
-        reposition();
-
-        childTable.addAction(sequence(delay(5), moveBy(labelMsg.getWidth(), 0, 0.2f), new Action() {
+    private void showNotification(final String msg, final Color color){
+        Threadings.postRunnable(new Runnable() {
             @Override
-            public boolean act(float delta) {
-                childTable.remove();
-                _showingNotification--;
-                return true;
-            }
-        }));
+            public void run() {
+                Label.LabelStyle labelStyle = new Label.LabelStyle();
+                labelStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_S_REGULAR);
+                labelStyle.fontColor = (color == Color.RED ?  Color.valueOf("e40404") : Color.valueOf("11b1bf"));
 
-        childTable.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                childTable.clearActions();
-                childTable.addAction(sequence(moveBy(labelMsg.getWidth(), 0, 0.2f), new Action() {
+                final Label labelMsg = new Label(msg, labelStyle);
+                labelMsg.setWrap(true);
+                labelMsg.setWidth(_root.getWidth());
+                labelMsg.layout();
+                float tableHeight = labelMsg.getPrefHeight() + 15;
+
+                final Table childTable = new Table();
+                childTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.WHITE_ROUNDED_BG)));
+                childTable.setTransform(true);
+                childTable.setWidth(labelMsg.getWidth());
+                childTable.setHeight(tableHeight);
+                childTable.pad(10);
+                childTable.padRight(20);
+                childTable.setPosition(labelMsg.getWidth() + 10, _root.getHeight() - tableHeight);
+
+                childTable.add(labelMsg).expand().fill().center();
+
+                _root.addActor(childTable);
+                reposition();
+
+                childTable.addAction(sequence(delay(5), moveBy(labelMsg.getWidth(), 0, 0.2f), new RunnableAction() {
                     @Override
-                    public boolean act(float delta) {
+                    public void run() {
                         childTable.remove();
                         _showingNotification--;
-                        return true;
                     }
                 }));
+
+                childTable.addListener(new ClickListener(){
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        childTable.clearActions();
+                        childTable.addAction(sequence(moveBy(labelMsg.getWidth(), 0, 0.2f), new RunnableAction() {
+                            @Override
+                            public void run() {
+                                childTable.remove();
+                                _showingNotification--;
+                            }
+                        }));
+                    }
+                });
+
+                _showingNotification++;
             }
         });
-
-        _showingNotification++;
     }
 
     private void reposition(){
-        float y = 0;
-        int spacing = 20;
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                float y = 0;
+                int spacing = 20;
 
-        for(int i = _root.getChildren().size - 1; i >= 0; i--){
-            Actor actor = _root.getChildren().get(i);
-            if(y == 0){
-                y = _root.getHeight() - actor.getHeight() - spacing;
+                for(int i = _root.getChildren().size - 1; i >= 0; i--){
+                    Actor actor = _root.getChildren().get(i);
+                    if(y == 0){
+                        y = _root.getHeight() - actor.getHeight() - spacing;
+                    }
+                    else{
+                        y -= spacing;        //space between notification
+                        y -= actor.getHeight();
+                    }
+                    actor.addAction(moveTo(10, y, 0.2f));
+                }
             }
-            else{
-                y -= spacing;        //space between notification
-                y -= actor.getHeight();
-            }
-            actor.addAction(moveTo(10, y, 0.2f));
-        }
+        });
     }
 
     public void render(float delta){

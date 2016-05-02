@@ -208,7 +208,12 @@ public class MockDB implements IDatabase {
     }
 
     @Override
-    public void getAccLeaderBoardRecordAndStreak(Room room, ArrayList<String> userIds, DatabaseListener<LeaderboardRecord> listener) {
+    public void getHighestLeaderBoardRecordAndStreak(Game game, ArrayList<String> teamUserIds, DatabaseListener<LeaderboardRecord> listener) {
+
+    }
+
+    @Override
+    public void getLeaderBoardRecordById(Game game, String leaderboardId, DatabaseListener<LeaderboardRecord> listener) {
 
     }
 

@@ -1,7 +1,10 @@
 package com.potatoandtomato.common.utils;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Created by SiongLeng on 27/1/2016.
@@ -43,6 +46,11 @@ public class Strings {
         return result;
     }
 
+    public static boolean isNumeric(String str)
+    {
+        return str.matches("-?\\d+(\\.\\d+)?");  //match a number with optional '-' and decimal.
+    }
+
     public static String formatToTwoDec(float f){
         return String.format("%.2f", f);
     }
@@ -76,7 +84,7 @@ public class Strings {
         return false;
     }
 
-    public static String generateRandomKey(int length){
+    public static String generateUniqueRandomKey(int length){
         String alphabet =
                 new String("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"); //9
         int n = alphabet.length(); //10
@@ -87,6 +95,11 @@ public class Strings {
         for (int i=0; i<length; i++) //12
             result = result + alphabet.charAt(r.nextInt(n)); //13
 
+        long unixTime = System.currentTimeMillis() / 1000L;
+        result = unixTime + result;
+        if(result.length() > length){
+            result = result.substring(0, length);
+        }
         return result;
     }
 
@@ -103,6 +116,46 @@ public class Strings {
         return result;
     }
 
+    public static String compress(String str) {
+        if (str == null || str.length() == 0) {
+            return str;
+        }
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        GZIPOutputStream gzip = null;
+        try {
+            gzip = new GZIPOutputStream(out);
+            gzip.write(str.getBytes());
+            gzip.close();
+            return out.toString("ISO-8859-1");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
+
+    public static String decompress(String str){
+        try {
+            if (str == null || str.length() == 0) {
+                return str;
+            }
+            GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(str.getBytes("ISO-8859-1")));
+            BufferedReader bf = null;
+            bf = new BufferedReader(new InputStreamReader(gis, "ISO-8859-1"));
+            String outStr = "";
+            String line;
+            while ((line=bf.readLine())!=null) {
+                outStr += line;
+            }
+            return outStr;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
 
 
 }

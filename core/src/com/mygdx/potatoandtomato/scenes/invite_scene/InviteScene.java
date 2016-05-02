@@ -12,6 +12,8 @@ import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.assets.Patches;
 import com.mygdx.potatoandtomato.assets.Textures;
+import com.mygdx.potatoandtomato.enums.BadgeType;
+import com.mygdx.potatoandtomato.helpers.controls.Badge;
 import com.mygdx.potatoandtomato.helpers.controls.BtnEggDownward;
 import com.mygdx.potatoandtomato.helpers.controls.DummyButton;
 import com.mygdx.potatoandtomato.helpers.controls.TopBar;
@@ -21,6 +23,7 @@ import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
 import com.potatoandtomato.common.models.Streak;
 import com.potatoandtomato.common.utils.Strings;
+import com.potatoandtomato.common.utils.Threadings;
 
 import java.util.HashMap;
 
@@ -134,45 +137,56 @@ public class InviteScene extends SceneAbstract {
         _root.add(_inviteButton).expandX().padTop(-10);
     }
 
-    public void changeTab(InviteType inviteType){
-        _invitesTable.clear();
-        _invitesTable.add(getContainer(inviteType)).expand().fill();
+    public void changeTab(final InviteType inviteType){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _invitesTable.clear();
+                _invitesTable.add(getContainer(inviteType)).expand().fill();
 
-        _recentTabTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
-        _facebookTabTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
-        _leaderboardTabTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
+                _recentTabTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
+                _facebookTabTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
+                _leaderboardTabTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
 
-        switch (inviteType){
-            case Recent:
-                _recentTabTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.INVITE_TAB_LEFT)));
-                break;
-            case Facebook:
-                _facebookTabTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.INVITE_TAB_CENTER)));
-                break;
-            case Leaderboard:
-                _leaderboardTabTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.INVITE_TAB_RIGHT)));
-                break;
-        }
+                switch (inviteType){
+                    case Recent:
+                        _recentTabTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.INVITE_TAB_LEFT)));
+                        break;
+                    case Facebook:
+                        _facebookTabTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.INVITE_TAB_CENTER)));
+                        break;
+                    case Leaderboard:
+                        _leaderboardTabTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.INVITE_TAB_RIGHT)));
+                        break;
+                }
+            }
+        });
     }
 
     private Table getContainer(InviteType inviteType){
         if(!_containersMap.containsKey(inviteType)){
-            Table rootTable = new Table();
-            rootTable.align(Align.top);
-            rootTable.setName("rootTable");
-            Table titleTable = new Table();
-            titleTable.setName("titleTable");
 
-            Table contentTable = new Table();
-            contentTable.setName("contentTable");
-            contentTable.align(Align.top);
+            final Table rootTable = new Table();
+            Threadings.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    rootTable.align(Align.top);
+                    rootTable.setName("rootTable");
+                    Table titleTable = new Table();
+                    titleTable.setName("titleTable");
 
-            ScrollPane scrollPane = new ScrollPane(contentTable);
+                    Table contentTable = new Table();
+                    contentTable.setName("contentTable");
+                    contentTable.align(Align.top);
 
-            rootTable.add(titleTable).expandX().fillX();
-            rootTable.row();
-            rootTable.add(scrollPane).expand().fill();
+                    ScrollPane scrollPane = new ScrollPane(contentTable);
 
+                    rootTable.add(titleTable).expandX().fillX();
+                    rootTable.row();
+                    rootTable.add(scrollPane).expand().fill();
+
+                }
+            });
             _containersMap.put(inviteType, rootTable);
         }
         return _containersMap.get(inviteType);
@@ -186,129 +200,156 @@ public class InviteScene extends SceneAbstract {
         return getContainer(inviteType).findActor("contentTable");
     }
 
-    public void addTitleToContainer(String title, InviteType inviteType){
-        Table containerTable = getContainerTitleTable(inviteType);
+    public void addTitleToContainer(final String title, final InviteType inviteType){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Table containerTable = getContainerTitleTable(inviteType);
 
-        final Table titleTable = new Table();
+                final Table titleTable = new Table();
 
-        titleTable.padLeft(10).padRight(10).padBottom(10).padTop(5);
-        titleTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.EXPANDABLE_TITLE_BG)));
+                titleTable.padLeft(10).padRight(10).padBottom(10).padTop(5);
+                titleTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.EXPANDABLE_TITLE_BG)));
 
-        Label titleLabel = new Label(title, new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_L_BOLD), null));
-        titleTable.add(titleLabel).expandX().fillX();
+                Label titleLabel = new Label(title, new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_L_BOLD), null));
+                titleTable.add(titleLabel).expandX().fillX();
 
-        containerTable.add(titleTable).expandX().fillX();
+                containerTable.add(titleTable).expandX().fillX();
+            }
+        });
     }
 
-    public Table putUserToTable(final Profile profile, InviteScene.InviteType inviteType, Object... objs){
+    public Table putUserToTable(final Profile profile, final InviteScene.InviteType inviteType, final Object... objs){
+        final Table userTable = new Table();
 
-        Label.LabelStyle normalStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_M_SEMIBOLD), null);
-        Label.LabelStyle smallItalicStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_S_REGULAR), null);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Label.LabelStyle normalStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_M_SEMIBOLD), null);
+                Label.LabelStyle smallItalicStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_S_REGULAR), null);
 
-        Label.LabelStyle badgeStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_XS_SEMIBOLD_B_ffffff_000000_1), null);
+                Label.LabelStyle badgeStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_XS_SEMIBOLD_B_ffffff_000000_1), null);
 
-        Table contentTable = getContainerContentTable(inviteType);
+                Table contentTable = getContainerContentTable(inviteType);
 
-        Table userTable = new Table();
-        userTable.setName("unselected");
-        userTable.padLeft(10).padRight(10).padTop(5);
-        new DummyButton(userTable, _assets);
+                userTable.setName("unselected");
+                userTable.padLeft(10).padRight(10).padTop(5);
+                new DummyButton(userTable, _assets);
 
-        Table detailsTable = new Table();
+                Table detailsTable = new Table();
 
-        switch (inviteType){
-            case Recent:
+                switch (inviteType){
+                    case Recent:
 
-                GameHistory history = (GameHistory) objs[0];
-                Label nameLabel = new Label(profile.getDisplayName(30), normalStyle);
-                Label historyLabel = new Label(String.format(_texts.playedXAgo(), history.getNameOfGame(), history.getCreationDateAgo()),
-                                                                    smallItalicStyle);
+                        GameHistory history = (GameHistory) objs[0];
+                        Label nameLabel = new Label(profile.getDisplayName(30), normalStyle);
+                        Label historyLabel = new Label(String.format(_texts.playedXAgo(), history.getNameOfGame(), history.getCreationDateAgo()),
+                                smallItalicStyle);
 
-                detailsTable.add(nameLabel).expandX().fillX();
-                detailsTable.row();
-                detailsTable.add(historyLabel).expandX().fillX();
-                break;
+                        detailsTable.add(nameLabel).expandX().fillX();
+                        detailsTable.row();
+                        detailsTable.add(historyLabel).expandX().fillX();
+                        break;
 
-            case Leaderboard:
-                Integer rankNumber = (Integer) objs[0];
-                double score = (Double) objs[1];
-                Streak streak = (Streak) objs[2];
+                    case Leaderboard:
+                        Integer rankNumber = (Integer) objs[0];
+                        double score = (Double) objs[1];
+                        Streak streak = (Streak) objs[2];
 
-                Table rankTable = new Table();
-                rankTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.RANK_ICON)));
-                Label rankLabel = new Label(String.valueOf(rankNumber), badgeStyle);
-                rankTable.add(rankLabel);
+                        Badge rankBadge = new Badge(BadgeType.Rank, String.valueOf(rankNumber), _assets, 2);
 
-                Label nameLabel2 = new Label(profile.getDisplayName(30), normalStyle);
-                Label scoreLabel = new Label(String.format(_texts.xPoints(), Strings.formatNum((int) score)), smallItalicStyle);
-                Table nameScoreTable = new Table();
-                nameScoreTable.add(nameLabel2).expandX().fillX();
-                nameScoreTable.row();
-                nameScoreTable.add(scoreLabel).expandX().fillX();
+                        Label nameLabel2 = new Label(profile.getDisplayName(30), normalStyle);
+                        Label scoreLabel = new Label(String.format(_texts.xPoints(), Strings.formatNum((int) score)), smallItalicStyle);
+                        Table nameScoreTable = new Table();
+                        nameScoreTable.add(nameLabel2).expandX().fillX();
+                        nameScoreTable.row();
+                        nameScoreTable.add(scoreLabel).expandX().fillX();
 
-                detailsTable.add(rankTable).padRight(5);
-                if(streak.hasValidStreak()){
-                    Table streakTable = new Table();
-                    streakTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.STREAK_ICON)));
-                    Label streakLabel = new Label(String.valueOf(streak.getStreakCount()), badgeStyle);
-                    streakTable.add(streakLabel);
-                    detailsTable.add(streakTable).padRight(5);
+                        detailsTable.add(rankBadge).padRight(5);
+                        if(streak.hasValidStreak()){
+                            Badge streakBadge = new Badge(BadgeType.Streak, String.valueOf(streak.getStreakCount()), _assets, 2);
+                            detailsTable.add(streakBadge).size(28, 30).padRight(5);
+                        }
+                        detailsTable.add(nameScoreTable).expandX().fillX();
+
+                        break;
+
                 }
-                detailsTable.add(nameScoreTable).expandX().fillX();
-
-                break;
-
-        }
 
 
-        Image selectBoxImage = new Image(_assets.getTextures().get(Textures.Name.UNSELECT_BOX));
-        selectBoxImage.setName("selectbox");
-        Image separator = new Image(_assets.getTextures().get(Textures.Name.WHITE_HORIZONTAL_LINE));
+                Image selectBoxImage = new Image(_assets.getTextures().get(Textures.Name.UNSELECT_BOX));
+                selectBoxImage.setName("selectbox");
+                Image separator = new Image(_assets.getTextures().get(Textures.Name.WHITE_HORIZONTAL_LINE));
 
-        userTable.add(detailsTable).expandX().fillX().padLeft(10);
-        userTable.add(selectBoxImage).size(35, 35).padRight(10);
-        userTable.row();
-        userTable.add(separator).expandX().fillX().padTop(5).colspan(2);
+                userTable.add(detailsTable).expandX().fillX().padLeft(10);
+                userTable.add(selectBoxImage).size(35, 35).padRight(10);
+                userTable.row();
+                userTable.add(separator).expandX().fillX().padTop(5).colspan(2);
 
-        contentTable.add(userTable).expandX().fillX();
-        contentTable.row();
+                contentTable.add(userTable).expandX().fillX();
+                contentTable.row();
 
-        _usersHashMap.put(profile.getUserId(), userTable);
+                _usersHashMap.put(profile.getUserId(), userTable);
+            }
+        });
+
+
 
         return userTable;
     }
 
 
     public boolean toggleUserSelection(Profile user){
+
         boolean result = false;
         for(Table userTable : _usersHashMap.get(user.getUserId())){
-            Image selectBox =  userTable.findActor("selectbox");
+            final Image selectBox =  userTable.findActor("selectbox");
             if(userTable.getName().equals("selected")){
                 userTable.setName("unselected");
-                selectBox.setDrawable(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.UNSELECT_BOX)));
+                Threadings.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        selectBox.setDrawable(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.UNSELECT_BOX)));
+                    }
+                });
                 result = false;
             }
             else{
                 userTable.setName("selected");
-                selectBox.setDrawable(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.SELECT_BOX)));
+                Threadings.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        selectBox.setDrawable(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.SELECT_BOX)));
+                    }
+                });
                 result = true;
             }
         }
         return result;
     }
 
-    public void putMessageToTable(String msg, InviteType type){
+    public void putMessageToTable(final String msg, final InviteType type){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Table messageTable = getContainerContentTable(type);
+                messageTable.clear();
 
-        Table messageTable = getContainerContentTable(type);
-        messageTable.clear();
+                Label msgLabel = new Label(msg, new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR), null));
+                msgLabel.setWrap(true);
+                messageTable.add(msgLabel).expandX().fillX().pad(10);
+            }
+        });
 
-        Label msgLabel = new Label(msg, new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR), null));
-        msgLabel.setWrap(true);
-        messageTable.add(msgLabel).expandX().fillX().pad(10);
     }
 
-    public void clearTableContent(InviteType type){
-        getContainerContentTable(type).clear();
+    public void clearTableContent(final InviteType type){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                getContainerContentTable(type).clear();
+            }
+        });
     }
 
     public enum InviteType {

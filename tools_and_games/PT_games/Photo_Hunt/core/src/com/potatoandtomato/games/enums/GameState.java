@@ -5,11 +5,11 @@ package com.potatoandtomato.games.enums;
  */
 public enum  GameState {
 
-    //normal flow, Close -> Playing -> Pause -> Won/Lose -> Ended -> Playing ............
+    //normal flow, Close -> Playing -> Pause -> Won/Lose -> WaitingForNextStage -> Playing ............
     //BlockingReview is for review mode only
 
     Close,
-    Playing, Pause, Won, Lose, Ended,
+    Playing, Pause, Won, Lose, WaitingForNextStage,
     BlockingReview
 
 }

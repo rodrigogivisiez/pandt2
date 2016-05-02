@@ -6,6 +6,7 @@ import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
 import com.mygdx.potatoandtomato.helpers.services.FirebaseDB;
+import com.potatoandtomato.common.utils.ArrayUtils;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.enums.Status;
@@ -273,11 +274,11 @@ public class TestFireBase extends TestAbstract {
 
                 Assert.assertEquals(obj.getGame().getAbbr(), r.getGame().getAbbr());
                 Assert.assertTrue(obj.getHost().equals(r.getHost()));
-                Assert.assertEquals(obj.getRoomUsers().size(), r.getRoomUsers().size());
-                for (Map.Entry<String, RoomUser> entry : obj.getRoomUsers().entrySet()) {
+                Assert.assertEquals(obj.getRoomUsersMap().size(), r.getRoomUsersMap().size());
+                for (Map.Entry<String, RoomUser> entry : obj.getRoomUsersMap().entrySet()) {
                     String key = entry.getKey();
-                    RoomUser user1 = obj.getRoomUsers().get(key);
-                    RoomUser user2 = r.getRoomUsers().get(key);
+                    RoomUser user1 = obj.getRoomUsersMap().get(key);
+                    RoomUser user2 = r.getRoomUsersMap().get(key);
 
                     Assert.assertTrue((user1.getProfile().equals(user2.getProfile())));
                     Assert.assertEquals(user1.getSlotIndex(), user2.getSlotIndex());
@@ -321,7 +322,7 @@ public class TestFireBase extends TestAbstract {
             public void onCallback(String obj, Status st) {
                 Assert.assertEquals(st, Status.SUCCESS);
                 databases.offline();
-                r.getRoomUsers().remove(r.getHost().getUserId());
+                r.getRoomUsersMap().remove(r.getHost().getUserId());
                 r.setOpen(false);
                 databases.online();
             }
@@ -335,7 +336,7 @@ public class TestFireBase extends TestAbstract {
 
         waiting[0] = true;
 
-        r.getRoomUsers().get("another").setSlotIndex(20);
+        r.getRoomUsersMap().get("another").setSlotIndex(20);
         databases.saveRoom(r, true,  new DatabaseListener<String>() {
             @Override
             public void onCallback(String obj, Status st) {
@@ -465,8 +466,8 @@ public class TestFireBase extends TestAbstract {
     public void testSaveGameHistoryAndRetrieve(){
 
         Room room = MockModel.mockRoom("1");
-        Profile myProfile =((RoomUser) room.getRoomUsers().values().toArray()[0]).getProfile();
-        final Profile anotherProfile = ((RoomUser) room.getRoomUsers().values().toArray()[1]).getProfile();
+        Profile myProfile =((RoomUser) room.getRoomUsersMap().values().toArray()[0]).getProfile();
+        final Profile anotherProfile = ((RoomUser) room.getRoomUsersMap().values().toArray()[1]).getProfile();
         anotherProfile.setGameName("first");
 
         final boolean[] waiting = {true};
@@ -678,7 +679,8 @@ public class TestFireBase extends TestAbstract {
         T_Threadings.waitTasks(1);
 
 
-        databases.getAccLeaderBoardRecordAndStreak(room, leaderboardRecord.getUserIds(), new DatabaseListener<LeaderboardRecord>(LeaderboardRecord.class) {
+        databases.getHighestLeaderBoardRecordAndStreak(room.getGame(), leaderboardRecord.getUserIds(),
+                new DatabaseListener<LeaderboardRecord>(LeaderboardRecord.class) {
             @Override
             public void onCallback(LeaderboardRecord obj, Status st) {
                 Assert.assertEquals(Status.SUCCESS, st);
@@ -773,17 +775,44 @@ public class TestFireBase extends TestAbstract {
 
         T_Threadings.waitTasks(1);
 
+        leaderboardRecord.setScore(1200);
+
+        room.setId("3");
+        databases.saveLeaderBoardRecord(room, leaderboardRecord, new DatabaseListener() {
+            @Override
+            public void onCallback(Object obj, Status st) {
+                Assert.assertEquals(Status.SUCCESS, st);
+                T_Threadings.oneTaskFinish();
+            }
+        });
+
+        T_Threadings.waitTasks(1);
+
+
+        leaderboardRecord.setScore(100);
+
+        room.setId("4");
+        databases.saveLeaderBoardRecord(room, leaderboardRecord, new DatabaseListener() {
+            @Override
+            public void onCallback(Object obj, Status st) {
+                Assert.assertEquals(Status.SUCCESS, st);
+                T_Threadings.oneTaskFinish();
+            }
+        });
+
+        T_Threadings.waitTasks(1);
+
         databases.getLeaderBoardAndStreak(game, 100, new DatabaseListener<ArrayList<LeaderboardRecord>>(LeaderboardRecord.class) {
             @Override
             public void onCallback(ArrayList<LeaderboardRecord> obj, Status st) {
                 Assert.assertEquals(Status.SUCCESS, st);
-                Assert.assertEquals(2, obj.size());
+                Assert.assertEquals(4, obj.size());
                 Assert.assertEquals(true, obj.get(0).getUserIds().contains(user1.getUserId()));
                 Assert.assertEquals(true, obj.get(0).getUserIds().contains(user2.getUserId()));
                 Assert.assertEquals(true, obj.get(0).getUserNames().contains(user1.getGameName()));
                 Assert.assertEquals(true, obj.get(0).getUserNames().contains(user2.getGameName()));
-                Assert.assertEquals(1100, obj.get(0).getScore(), 0);
-                Assert.assertEquals(500, obj.get(1).getScore(), 0);
+                Assert.assertEquals(1200, obj.get(0).getScore(), 0);
+                Assert.assertEquals(1100, obj.get(1).getScore(), 0);
                 T_Threadings.oneTaskFinish();
             }
         });
@@ -796,7 +825,19 @@ public class TestFireBase extends TestAbstract {
             public void onCallback(ArrayList<LeaderboardRecord> obj, Status st) {
                 Assert.assertEquals(Status.SUCCESS, st);
                 Assert.assertEquals(1, obj.size());
-                Assert.assertEquals(1100, obj.get(0).getScore(), 0);
+                Assert.assertEquals(1200, obj.get(0).getScore(), 0);
+                T_Threadings.oneTaskFinish();
+            }
+        });
+
+        T_Threadings.waitTasks(1);
+
+        databases.getHighestLeaderBoardRecordAndStreak(room.getGame(), ArrayUtils.stringsToArray(user1.getUserId()), new DatabaseListener<LeaderboardRecord>(LeaderboardRecord.class) {
+            @Override
+            public void onCallback(LeaderboardRecord obj, Status st) {
+                Assert.assertEquals(Status.SUCCESS, st);
+                Assert.assertEquals(2, obj.getUserIds().size());
+                Assert.assertEquals(1200, obj.getScore(), 0);
                 T_Threadings.oneTaskFinish();
             }
         });
@@ -908,7 +949,7 @@ public class TestFireBase extends TestAbstract {
 
         T_Threadings.waitTasks(1);
 
-        databases.getAccLeaderBoardRecordAndStreak(room, leaderboardRecord.getUserIds(), new DatabaseListener<LeaderboardRecord>() {
+        databases.getHighestLeaderBoardRecordAndStreak(room.getGame(), leaderboardRecord.getUserIds(), new DatabaseListener<LeaderboardRecord>() {
             @Override
             public void onCallback(LeaderboardRecord result, Status st) {
                 Assert.assertEquals(Status.SUCCESS, st);

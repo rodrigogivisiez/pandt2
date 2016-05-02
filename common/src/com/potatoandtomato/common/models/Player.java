@@ -1,6 +1,7 @@
 package com.potatoandtomato.common.models;
 
 import com.badlogic.gdx.graphics.Color;
+import com.potatoandtomato.common.utils.ColorUtils;
 
 /**
  * Created by SiongLeng on 25/12/2015.
@@ -11,17 +12,19 @@ public class Player {
     public String userId;
     public boolean isHost;
     public boolean isConnected;
+    public int slotIndex;
     public Color userColor;
 
     public Player() {
     }
 
-    public Player(String name, String userId, boolean isHost, boolean isConnected, Color userColor) {
+    public Player(String name, String userId, boolean isHost, boolean isConnected, int slotIndex) {
         this.name = name;
         this.userId = userId;
         this.isHost = isHost;
         this.isConnected = isConnected;
-        this.userColor = userColor;
+        this.slotIndex = slotIndex;
+        this.userColor = ColorUtils.getUserColorByIndex(slotIndex);
     }
 
     public boolean getIsConnected() {
@@ -62,5 +65,13 @@ public class Player {
 
     public void setUserColor(Color userColor) {
         this.userColor = userColor;
+    }
+
+    public int getSlotIndex() {
+        return slotIndex;
+    }
+
+    public void setSlotIndex(int slotIndex) {
+        this.slotIndex = slotIndex;
     }
 }

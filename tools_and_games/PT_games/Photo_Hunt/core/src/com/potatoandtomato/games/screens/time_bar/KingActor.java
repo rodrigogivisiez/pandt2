@@ -14,6 +14,7 @@ import com.potatoandtomato.games.assets.MyAssets;
 import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.enums.KingState;
 import com.potatoandtomato.games.models.Services;
+import com.sun.org.apache.xml.internal.serializer.ToHTMLSAXHandler;
 
 /**
  * Created by SiongLeng on 12/4/2016.
@@ -70,7 +71,9 @@ public class KingActor extends Table {
                     else if(kingState == KingState.Lose){
                         _this.clear();
                         _this.add(loseAnimator).padLeft(-6);
+                        services.getSoundsWrapper().playSounds(Sounds.Name.FALL_DOWN);
                     }
+
                 }
             }
         });
@@ -78,13 +81,23 @@ public class KingActor extends Table {
     }
 
     public void stopAnimation(){
-        normalAnimator.setPaused(true);
-        panicAnimator.setPaused(true);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                normalAnimator.setPaused(true);
+                panicAnimator.setPaused(true);
+            }
+        });
     }
 
     public void continueAnimation(){
-        normalAnimator.setPaused(false);
-        panicAnimator.setPaused(false);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                normalAnimator.setPaused(false);
+                panicAnimator.setPaused(false);
+            }
+        });
     }
 
 

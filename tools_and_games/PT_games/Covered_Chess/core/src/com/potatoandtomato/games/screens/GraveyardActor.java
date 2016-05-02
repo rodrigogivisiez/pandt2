@@ -10,15 +10,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.potatoandtomato.common.GameCoordinator;
-import com.potatoandtomato.games.assets.Fonts;
-import com.potatoandtomato.games.assets.MyAssets;
-import com.potatoandtomato.games.assets.Patches;
-import com.potatoandtomato.games.assets.Textures;
+import com.potatoandtomato.games.assets.*;
 import com.potatoandtomato.games.controls.DummyButton;
 import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
 import com.potatoandtomato.games.models.BoardModel;
 import com.potatoandtomato.games.models.GraveModel;
+import com.potatoandtomato.games.services.SoundsWrapper;
 import com.potatoandtomato.games.services.Texts;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
@@ -33,15 +31,20 @@ public class GraveyardActor extends Table {
     private Label _yellowTotalLabel, _redTotalLabel, _turnLabel, _turnCountLabel, _yellowPlayerLabel, _redPlayerLabel;
     private Label _yellowTimer, _redTimer;
     private Label _graveLabel;
+    private Image _graveCloseImage, _tutorialCloseImage;
     private MyAssets _assets;
     private Texts _texts;
     private GameCoordinator _gameCoordinator;
     private Image _pointLeftImage, _pointRightImage;
+    private Image _tutorialIcon, _graveIcon;
     private Container _turnCountContainer;
+    private Table _graveTable, _tutorialTable, _containerTable;
+    private SoundsWrapper _soundsWrapper;
 
-    public GraveyardActor(GameCoordinator gameCoordinator, Texts texts, MyAssets assets) {
+    public GraveyardActor(GameCoordinator gameCoordinator, Texts texts, MyAssets assets, SoundsWrapper soundsWrapper) {
         this._assets = assets;
         this._texts = texts;
+        this._soundsWrapper = soundsWrapper;
         this._gameCoordinator = gameCoordinator;
 
         populate();
@@ -106,7 +109,7 @@ public class GraveyardActor extends Table {
         /////////////////////////
         //turn icons
         ////////////////////////
-        _turnLabel = new Label("", new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HELVETICA_XXL_HEAVY), Color.valueOf("56380a")));
+        _turnLabel = new Label("", new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HELVETICA_XL_HEAVY), Color.valueOf("56380a")));
         _turnLabel.setAlignment(Align.center);
 
         _turnCountLabel = new Label("", new Label.LabelStyle(
@@ -118,6 +121,17 @@ public class GraveyardActor extends Table {
         _turnCountContainer.setTransform(true);
         _turnCountContainer.setOrigin(Align.center);
 
+        //////////////////////////////////
+        //tiny icons
+        ///////////////////////////////////
+        _tutorialIcon = new Image(_assets.getTextures().get(Textures.Name.TUTORIAL_ICON));
+        _graveIcon = new Image(_assets.getTextures().get(Textures.Name.GRAVE_ICON));
+
+        Table turnAndIconsTable = new Table();
+        turnAndIconsTable.add(_turnLabel).padRight(5);
+        turnAndIconsTable.add(_graveIcon).padRight(5);
+        turnAndIconsTable.add(_tutorialIcon);
+
         /////////////////////////
         //pointing icons
         ////////////////////////
@@ -125,7 +139,7 @@ public class GraveyardActor extends Table {
         _pointRightImage = new Image(_assets.getTextures().get(Textures.Name.POINT_RIGHT_ICON));
 
         Table turnTable = new Table();
-        turnTable.add(_turnLabel).expandX().fillX().colspan(3);
+        turnTable.add(turnAndIconsTable).expandX().fillX().colspan(3);
         turnTable.row();
         turnTable.add(_pointLeftImage).expandX().right().space(0, 10, 0, 10).height(20);
         turnTable.add(_turnCountContainer).height(20);
@@ -157,24 +171,49 @@ public class GraveyardActor extends Table {
         _redGraveTable.pad(10);
         _redGraveTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.GRAVE_BG)));
 
-        Label.LabelStyle graveLabelStyle = new Label.LabelStyle();
-        graveLabelStyle.font = _assets.getFonts().get(Fonts.FontId.PIZZA_XXXL_REGULAR_B_000000_ffffff_3);
-        _graveLabel = new Label(_texts.graveYard(), graveLabelStyle);
+        Label.LabelStyle headerLabelStyle = new Label.LabelStyle();
+        headerLabelStyle.font = _assets.getFonts().get(Fonts.FontId.PIZZA_XXXL_REGULAR_B_000000_ffffff_3);
+        _graveLabel = new Label(_texts.graveYard(), headerLabelStyle);
         _graveLabel.setAlignment(Align.center);
 
-        Table graveTable = new Table();
-        graveTable.pad(10);
-        graveTable.add(_graveLabel).expandX().fillX().colspan(2);
-        graveTable.row();
-        graveTable.add(_yellowGraveTable).expand().fill().space(3);
-        graveTable.add(_redGraveTable).expand().fill().space(3);
-        graveTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.YELLOW_GRADIENT_BOX)));
+        _graveCloseImage = new Image(_assets.getTextures().get(Textures.Name.CLOSE_ICON));
+
+        Table graveHeaderTable = new Table();
+        graveHeaderTable.add(_graveLabel).expandX().fillX();
+        graveHeaderTable.add(_graveCloseImage).padBottom(5);
+
+        _graveTable = new Table();
+        _graveTable.pad(10);
+        _graveTable.add(graveHeaderTable).expandX().fillX().colspan(2);
+        _graveTable.row();
+        _graveTable.add(_yellowGraveTable).expand().fill().space(3);
+        _graveTable.add(_redGraveTable).expand().fill().space(3);
+        _graveTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.YELLOW_GRADIENT_BOX)));
+
+        //////////////////////////////////////
+        //Tutorials Table
+        ///////////////////////////////////////
+        Label tutorialLabel = new Label(_texts.tutorial(), headerLabelStyle);
+        tutorialLabel.setAlignment(Align.center);
+
+        _tutorialCloseImage = new Image(_assets.getTextures().get(Textures.Name.CLOSE_ICON));
+
+        Table tutorialHeaderTable = new Table();
+        tutorialHeaderTable.add(tutorialLabel).expandX().fillX();
+        tutorialHeaderTable.add(_tutorialCloseImage).padBottom(5);
+
+        _tutorialTable = new Table();
+        _tutorialTable.add(tutorialHeaderTable).expandX().fillX();
+        _tutorialTable.pad(10);
+        _tutorialTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.YELLOW_GRADIENT_BOX)));
 
         /////////////////////////
         //population
         ////////////////////////
+        _containerTable = new Table();
+        _containerTable.add(_graveTable);
 
-        this.add(graveTable).expand().fill();
+        this.add(_containerTable).expand().fill();
         this.row();
         this.add(topInfoTable).expandX().fillX();
 
@@ -232,15 +271,48 @@ public class GraveyardActor extends Table {
         grave.add(img).uniform().space(5);
     }
 
-    public void expand(){
-        this.addAction(Actions.moveBy(0, -(400 - 55), 0.5f));
+    public void expand(boolean isGraveyard){
+        _containerTable.clear();
+        if(isGraveyard){
+            _containerTable.add(_graveTable).expand().fill();
+        }
+        else{
+            _containerTable.add(_tutorialTable).expand().fill();
+        }
+        if(this.getName() == null || !this.getName().equals("showed")){
+            this.setName("showed");
+            this.addAction(Actions.moveBy(0, -(400 - 55), 0.5f));
+            _soundsWrapper.playSounds(Sounds.Name.OPEN_SLIDE);
+        }
+
     }
 
     public void hide(){
-        this.addAction(Actions.moveBy(0, (400 - 55), 0.5f));
+        if(this.getName() != null && this.getName().equals("showed")){
+            this.setName("hide");
+            this.addAction(Actions.moveBy(0, (400 - 55), 0.5f));
+            _soundsWrapper.playSounds(Sounds.Name.OPEN_SLIDE);
+        }
+
     }
 
     public Label getGraveLabel() {
         return _graveLabel;
+    }
+
+    public Image getTutorialIcon() {
+        return _tutorialIcon;
+    }
+
+    public Image getGraveIcon() {
+        return _graveIcon;
+    }
+
+    public Image getGraveCloseImage() {
+        return _graveCloseImage;
+    }
+
+    public Image getTutorialCloseImage() {
+        return _tutorialCloseImage;
     }
 }

@@ -144,87 +144,70 @@ public class PrerequisiteLogic extends LogicAbstract {
     }
 
     public void joinRoomFailed(final int reason){
-        Threadings.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                if(reason == 0){    //general msg
-                    _scene.failedMessage(_texts.joinRoomFailed());
-                }
-                else if(reason == 1){    //full room
-                    _scene.failedMessage(_texts.roomIsFull());
-                }
-                else if(reason == 2){    //room is not open
-                    _scene.failedMessage(_texts.roomStarted());
-                }
-                else if(reason == 3){   //cannot continue game
-                    _scene.failedMessage(_texts.cannotContinue());
-                }
-            }
-        });
+        if(reason == 0){    //general msg
+            _scene.failedMessage(_texts.joinRoomFailed());
+        }
+        else if(reason == 1){    //full room
+            _scene.failedMessage(_texts.roomIsFull());
+        }
+        else if(reason == 2){    //room is not open
+            _scene.failedMessage(_texts.roomStarted());
+        }
+        else if(reason == 3){   //cannot continue game
+            _scene.failedMessage(_texts.cannotContinue());
+        }
 
     }
 
     public void createRoomSuccess(final String roomId){
-        Threadings.postRunnable(new Runnable() {
+        _scene.changeMessage(_texts.joiningRoom());
+        _joiningRoom = new Room();
+        _joiningRoom.setWarpRoomId(roomId);
+        _joiningRoom.setGame(_game);
+        _joiningRoom.setOpen(true);
+        _joiningRoom.setHost(_services.getProfile());
+        _joiningRoom.setPlaying(false);
+        _joiningRoom.setRoundCounter(0);
+        _joiningRoom.addRoomUser(_services.getProfile(), true);
+        _services.getDatabase().saveRoom(_joiningRoom, true, new DatabaseListener<String>() {
             @Override
-            public void run() {
-                _scene.changeMessage(_texts.joiningRoom());
-                _joiningRoom = new Room();
-                _joiningRoom.setWarpRoomId(roomId);
-                _joiningRoom.setGame(_game);
-                _joiningRoom.setOpen(true);
-                _joiningRoom.setHost(_services.getProfile());
-                _joiningRoom.setPlaying(false);
-                _joiningRoom.setRoundCounter(0);
-                _joiningRoom.addRoomUser(_services.getProfile(), true);
-                _services.getDatabase().saveRoom(_joiningRoom, true, new DatabaseListener<String>() {
-                    @Override
-                    public void onCallback(String obj, Status st) {
-                        if(st == Status.SUCCESS){
-                            _screen.toScene(SceneEnum.ROOM, _joiningRoom, false);
-                            _services.getDatabase().removeUserFromRoomOnDisconnect(_joiningRoom.getId(), _services.getProfile(), new DatabaseListener<String>() {
-                                @Override
-                                public void onCallback(String obj, Status st) {
+            public void onCallback(String obj, Status st) {
+                if (st == Status.SUCCESS) {
+                    _screen.toScene(SceneEnum.ROOM, _joiningRoom, false);
+                    _services.getDatabase().removeUserFromRoomOnDisconnect(_joiningRoom.getId(), _services.getProfile(), new DatabaseListener<String>() {
+                        @Override
+                        public void onCallback(String obj, Status st) {
 
-                                }
-                            });
                         }
-                        else{
-                            joinRoomFailed(0);
-                        }
-                    }
-                });
+                    });
+                } else {
+                    joinRoomFailed(0);
+                }
             }
         });
     }
 
     public void joinRoomSuccess(){
-        Threadings.postRunnable(new Runnable() {
+        _scene.changeMessage(_texts.joiningRoom());
+        _services.getDatabase().addUserToRoom(_joiningRoom, _services.getProfile(), new DatabaseListener<String>() {
             @Override
-            public void run() {
-                _scene.changeMessage(_texts.joiningRoom());
-                _services.getDatabase().addUserToRoom(_joiningRoom, _services.getProfile(), new DatabaseListener<String>() {
-                    @Override
-                    public void onCallback(String obj, Status st) {
-                        if (st == Status.SUCCESS) {
-                            if(_joinType != JoinType.CONTINUING){           //no need wait until removeUser attached to join the room
-                                _screen.toScene(SceneEnum.ROOM, _joiningRoom, false);
-                            }
-
-                            _services.getDatabase().removeUserFromRoomOnDisconnect(_joiningRoom.getId(), _services.getProfile(), new DatabaseListener<String>() {
-                                @Override
-                                public void onCallback(String obj, Status st) {
-                                    if(_joinType == JoinType.CONTINUING){        //continue game need to wait until removeUser attached to join the room
-                                        _screen.toScene(SceneEnum.ROOM, _joiningRoom, true);
-                                    }
-                                }
-                            });
-                        } else {
-                            joinRoomFailed(0);
-                        }
+            public void onCallback(String obj, Status st) {
+                if (st == Status.SUCCESS) {
+                    if (_joinType != JoinType.CONTINUING) {           //no need wait until removeUser attached to join the room
+                        _screen.toScene(SceneEnum.ROOM, _joiningRoom, false);
                     }
-                });
 
+                    _services.getDatabase().removeUserFromRoomOnDisconnect(_joiningRoom.getId(), _services.getProfile(), new DatabaseListener<String>() {
+                        @Override
+                        public void onCallback(String obj, Status st) {
+                            if (_joinType == JoinType.CONTINUING) {        //continue game need to wait until removeUser attached to join the room
+                                _screen.toScene(SceneEnum.ROOM, _joiningRoom, true);
+                            }
+                        }
+                    });
+                } else {
+                    joinRoomFailed(0);
+                }
             }
         });
     }

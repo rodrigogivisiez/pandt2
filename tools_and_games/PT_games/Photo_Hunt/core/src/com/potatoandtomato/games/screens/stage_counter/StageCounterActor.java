@@ -1,6 +1,7 @@
 package com.potatoandtomato.games.screens.stage_counter;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -52,6 +53,11 @@ public class StageCounterActor extends Table {
         specialStageImage.setOrigin(Align.center);
         specialStageTable.add(specialStageImage);
         this.addActor(specialStageTable);
+
+        Image swordSeparator = new Image(assets.getTextures().get(Textures.Name.SWORD_SEPARATOR));
+        swordSeparator.setPosition(22, 39);
+        swordSeparator.setTouchable(Touchable.disabled);
+        this.addActor(swordSeparator);
     }
 
     public void refreshStageNumber(final int newNumber, final StageType stageType){

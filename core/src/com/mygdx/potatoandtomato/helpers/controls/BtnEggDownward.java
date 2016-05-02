@@ -31,6 +31,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
  */
 public class BtnEggDownward extends Table {
 
+    BtnEggDownward _this;
     Button _button;
     Assets _assets;
     Vector2 _size;
@@ -46,6 +47,7 @@ public class BtnEggDownward extends Table {
     }
 
     public BtnEggDownward(Assets assets, SoundsPlayer soundsWrapper, Shaders shaders) {
+        _this = this;
         this._soundsWrapper = soundsWrapper;
         this._assets = assets;
         this._shaders = shaders;
@@ -72,24 +74,34 @@ public class BtnEggDownward extends Table {
         });
     }
 
-    public void setContent(TextureRegion textureRegion){
-        _contentImg = new Image(textureRegion);
-        this.align(Align.center);
-        this.add(_contentImg).padLeft(15).expandY();
+    public void setContent(final TextureRegion textureRegion){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _this.clearChildren();
+                _contentImg = new Image(textureRegion);
+                _this.align(Align.center);
+                _this.add(_contentImg).padLeft(15).expandY();
+            }
+        });
     }
 
-    public void setText(String text){
-        Logs.add();
-        this.clear();
-        Label.LabelStyle textLabelStyle = new Label.LabelStyle();
+    public void setText(final String text){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _this.clearChildren();
+                Label.LabelStyle textLabelStyle = new Label.LabelStyle();
 
-        textLabelStyle.font = _assets.getFonts().get(Fonts.FontId.PIZZA_XL_REGULAR_S_a05e00_1_1);
+                textLabelStyle.font = _assets.getFonts().get(Fonts.FontId.PIZZA_XL_REGULAR_S_a05e00_1_1);
 
-        _textLabel = new Label(text, textLabelStyle);
-        _textLabel.setWrap(true);
-        _textLabel.setAlignment(Align.center);
-        this.add(_textLabel).expand().fill().padBottom(8);
-        this.addActor(_button);
+                _textLabel = new Label(text, textLabelStyle);
+                _textLabel.setWrap(true);
+                _textLabel.setAlignment(Align.center);
+                _this.add(_textLabel).expand().fill().padBottom(8);
+                _this.addActor(_button);
+            }
+        });
     }
 
     public void setEnabled(final boolean enabled){
@@ -104,18 +116,23 @@ public class BtnEggDownward extends Table {
     }
 
     public void animate(){
-        if(this._enabled){
-            Vector2 originalPosition = new Vector2(this.getX(), this.getY());
-            this.setSize(_size.x, _size.y - 40);
-            this.setPosition(originalPosition.x, originalPosition.y + 10);
-            float duration = 0.2f;
-            Threadings.renderFor(duration + 0.1f);
-            this.addAction(parallel(
-                    fadeIn(duration, Interpolation.sineIn),
-                    sizeTo(_size.x, _size.y, duration, Interpolation.bounceOut),
-                    moveTo(originalPosition.x, originalPosition.y, duration)
-            ));
-        }
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(_this._enabled){
+                    Vector2 originalPosition = new Vector2(_this.getX(), _this.getY());
+                    _this.setSize(_size.x, _size.y - 40);
+                    _this.setPosition(originalPosition.x, originalPosition.y + 10);
+                    float duration = 0.2f;
+                    Threadings.renderFor(duration + 0.1f);
+                    _this.addAction(parallel(
+                            fadeIn(duration, Interpolation.sineIn),
+                            sizeTo(_size.x, _size.y, duration, Interpolation.bounceOut),
+                            moveTo(originalPosition.x, originalPosition.y, duration)
+                    ));
+                }
+            }
+        });
     }
 
     public float getWidth() {

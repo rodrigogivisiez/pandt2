@@ -26,6 +26,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
  */
 public class BtnEggUpright extends Table {
 
+    BtnEggUpright _this;
     Button _button;
     Assets _assets;
     Vector2 _size;
@@ -37,6 +38,7 @@ public class BtnEggUpright extends Table {
     }
 
     public BtnEggUpright(Assets assets, SoundsPlayer soundsWrapper, int width) {
+        _this = this;
         this._assets = assets;
         this._soundsWrapper = soundsWrapper;
         this._button = new Button(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
@@ -62,26 +64,34 @@ public class BtnEggUpright extends Table {
 
     }
 
-    public void setContent(TextureRegion textureRegion){
-        _contentImg = new Image(textureRegion);
-        this.align(Align.center);
-        this.add(_contentImg).padLeft(15).expandY();
-        this.addActor(_button);
+    public void setContent(final TextureRegion textureRegion){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _contentImg = new Image(textureRegion);
+                _this.align(Align.center);
+                _this.add(_contentImg).padLeft(15).expandY();
+                _this.addActor(_button);
+            }
+        });
     }
 
     public void animate(){
-        Logs.add();
-        this.setSize(_size.x, _size.y - 40);
-        Vector2 originalPosition = new Vector2(this.getX(), this.getY());
-        this.setPosition(originalPosition.x, originalPosition.y + 10);
-        float duration = 0.2f;
-        Threadings.renderFor(duration + 0.1f);
-        this.addAction(parallel(
-                             Actions.fadeIn(duration, Interpolation.sineIn),
-                             Actions.sizeTo(_size.x, _size.y, duration, Interpolation.bounceOut),
-                             Actions.moveTo(originalPosition.x, originalPosition.y, duration)
-                        ));
-
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _this.setSize(_size.x, _size.y - 40);
+                Vector2 originalPosition = new Vector2(_this.getX(), _this.getY());
+                _this.setPosition(originalPosition.x, originalPosition.y + 10);
+                float duration = 0.2f;
+                Threadings.renderFor(duration + 0.1f);
+                _this.addAction(parallel(
+                        Actions.fadeIn(duration, Interpolation.sineIn),
+                        Actions.sizeTo(_size.x, _size.y, duration, Interpolation.bounceOut),
+                        Actions.moveTo(originalPosition.x, originalPosition.y, duration)
+                ));
+            }
+        });
     }
 
     public float getWidth() {

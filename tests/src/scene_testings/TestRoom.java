@@ -125,7 +125,7 @@ public class TestRoom extends TestAbstract {
             @Override
             public void monitorRoomById(String id, String classTag, DatabaseListener<Room> listener) {
                 super.monitorRoomById(id, classTag, listener);
-                _room.getRoomUsers().remove(_room.getHost().getUserId());
+                _room.getRoomUsersMap().remove(_room.getHost().getUserId());
                 listener.onCallback(_room, Status.SUCCESS);
             }
         });
@@ -138,7 +138,7 @@ public class TestRoom extends TestAbstract {
 
     @Test
     public void testJoinRoom(){
-        _room.getRoomUsers().clear();
+        _room.getRoomUsersMap().clear();
 
         _room.addRoomUser(MockModel.mockProfile("1"), true);      //0
         _room.addRoomUser(MockModel.mockProfile("2"), true);      //1
@@ -162,7 +162,7 @@ public class TestRoom extends TestAbstract {
         _room.getGame().setMinPlayers("2");
         _room.getGame().setTeamCount("2");
         _room.getGame().setTeamMaxPlayers("1");
-        _room.getRoomUsers().get("another").setSlotIndex(1);
+        _room.getRoomUsersMap().get("another").setSlotIndex(1);
         _room.convertRoomUsersToTeams();
         Assert.assertEquals(2, _room.getTeams().size());
         Assert.assertEquals(1, _room.getTeams().get(0).getPlayers().size());
@@ -174,7 +174,7 @@ public class TestRoom extends TestAbstract {
         verify(gamingKit, times(1)).updateRoomMates(eq(UpdateRoomMatesCode.START_GAME), anyString());
 
         logic.receivedUpdateRoomMates(UpdateRoomMatesCode.START_GAME, "", "");
-        logic.stopGameStartCountDown(_room.getRoomUsers().get("another").getProfile());
+        logic.stopGameStartCountDown(_room.getRoomUsersMap().get("another").getProfile());
         Threadings.sleep(1600);
         verify(logic, times(0)).gameStarted();
 
@@ -233,7 +233,7 @@ public class TestRoom extends TestAbstract {
         GCMSender gcmSender = mock(GCMSender.class);
         _services.setGcmSender(gcmSender);
         RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room, false));
-        _room.getRoomUsers().remove("another");
+        _room.getRoomUsersMap().remove("another");
         _room.addRoomUser(MockModel.mockProfile("another"), 1, true);
 
         _services.setProfile(_room.getProfileByUserId("123"));

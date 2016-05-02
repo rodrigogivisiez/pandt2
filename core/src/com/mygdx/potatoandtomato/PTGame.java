@@ -31,6 +31,7 @@ import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.models.EndGameResult;
 import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.models.ScoreDetails;
+import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.utils.Downloader;
 import com.potatoandtomato.common.utils.Threadings;
 
@@ -54,7 +55,7 @@ public class PTGame extends Game implements IPTGame {
 	Recorder _recorder;
 	IUploader _uploader;
 	IDownloader _downloader;
-	SoundsPlayer _soundsWrapper;
+	SoundsPlayer _soundsPlayer;
 	Broadcaster _broadcaster;
 	Preferences _preferences;
 	Tutorials _tutorials;
@@ -82,27 +83,27 @@ public class PTGame extends Game implements IPTGame {
 				_batch = new SpriteBatch();
 				_gamingKit = new Appwarp();
 				_texts = new Texts();
-				_recorder = new Recorder();
+				_soundsPlayer = new SoundsPlayer(_assets, _broadcaster);
+				_recorder = new Recorder(_soundsPlayer);
 				_downloader = new Downloader();
 				_uploader = new App42Uploader(_downloader);
-				_soundsWrapper = new SoundsPlayer(_assets, _broadcaster);
-				_chat = new Chat(_gamingKit, _texts, _assets, _batch, _game, _recorder, _uploader, _soundsWrapper, _broadcaster);
+
+				_chat = new Chat(_gamingKit, _texts, _assets, _batch, _game, _recorder, _uploader, _soundsPlayer, _broadcaster);
 				_confirm = new Confirm(_batch, _game, _assets, _broadcaster);
 				_notification = new Notification(_batch, _assets, _game, _broadcaster);
-				_tutorials = new Tutorials(_game, _batch, _soundsWrapper, _assets, _broadcaster);
+				_tutorials = new Tutorials(_game, _batch, _soundsPlayer, _assets, _broadcaster);
 
 				_services = new Services(_assets, _texts,
 						_preferences, new Profile(), new FirebaseDB(Terms.FIREBASE_URL),
 						new Shaders(), _gamingKit, _downloader, _chat,
 						new Socials(_preferences, _broadcaster), new GCMSender(), _confirm, _notification,
-						_recorder, _uploader, _soundsWrapper, new VersionControl(), _broadcaster,
+						_recorder, _uploader, _soundsPlayer, new VersionControl(), _broadcaster,
 						_tutorials);
 				_screen = new PTScreen(_game, _services);
 
 				setScreen(_screen);
 
 				_screen.toScene(SceneEnum.BOOT);
-
 			}
 		});
 	}

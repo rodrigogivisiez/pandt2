@@ -5,8 +5,8 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
@@ -16,6 +16,8 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.MessagingListener;
+import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesCode;
+import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
 import com.mygdx.potatoandtomato.absintflis.recorder.RecordListener;
 import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
 import com.mygdx.potatoandtomato.absintflis.uploader.UploadListener;
@@ -25,6 +27,7 @@ import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.controls.DummyButton;
 import com.mygdx.potatoandtomato.helpers.controls.DummyKeyboard;
+import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.models.NativeLibgdxTextInfo;
@@ -37,7 +40,16 @@ import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
+import com.shephertz.app42.gaming.multiplayer.client.util.Base64;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -75,7 +87,7 @@ public class Chat {
     private String _recordsPath;
     private String _userId;
     private boolean _fading;
-    private SoundsPlayer _soundsWrapper;
+    private SoundsPlayer _soundsPlayer;
     private Broadcaster _broadcaster;
 
     public void setRoom(Room _room) {
@@ -92,7 +104,7 @@ public class Chat {
                 Broadcaster broadcaster) {
         this._broadcaster = broadcaster;
         this._gamingKit = gamingKit;
-        this._soundsWrapper = soundsWrapper;
+        this._soundsPlayer = soundsWrapper;
         this._texts = texts;
         this._assets = assets;
         this._batch = batch;
@@ -241,69 +253,79 @@ public class Chat {
     }
 
     public void invalidate(){
-        boolean isShowing = isVisible();
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                boolean isShowing = isVisible();
 
-        if(_stage != null){
-            if(isShowing) hide();
-            _stage.dispose();
-            _chatRoot.remove();
-            _textFieldFocusImage.remove();
-            _textFieldNotFocusImage.remove();
-            _bigMicTable.remove();
-            _micImage.remove();
-            _closeKeyboardImage.remove();
-            _mode2AllMessagesTable.remove();
-        }
+                if(_stage != null){
+                    if(isShowing) hide();
+                    _stage.dispose();
+                    _chatRoot.remove();
+                    _textFieldFocusImage.remove();
+                    _textFieldNotFocusImage.remove();
+                    _bigMicTable.remove();
+                    _micImage.remove();
+                    _closeKeyboardImage.remove();
+                    _mode2AllMessagesTable.remove();
+                }
 
-        final StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
-        _stage = new Stage(viewPort, _batch);
+                final StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
+                _stage = new Stage(viewPort, _batch);
 
-        _bigMicTable.setSize(Positions.getWidth(), Positions.getHeight());
-        _bigMicTable.setPosition(0, 0);
+                _bigMicTable.setSize(Positions.getWidth(), Positions.getHeight());
+                _bigMicTable.setPosition(0, 0);
 
-        _textFieldFocusImage.setWidth(Global.IS_POTRAIT ? 246 : 520);
-        _textFieldFocusImage.setHeight(1);
-        _textFieldFocusImage.setPosition(10, 5);
-        _boxChildTable.addActor(_textFieldFocusImage);
-        _textFieldNotFocusImage.setWidth(Global.IS_POTRAIT ? 246 : 520);
-        _textFieldNotFocusImage.setHeight(1);
-        _textFieldNotFocusImage.setPosition(10, 5);
-        _boxChildTable.addActor(_textFieldNotFocusImage);
-        _micImage.setSize(18, 30);
-        _micImage.setPosition(Global.IS_POTRAIT ? 227 : 510, 13);
-        _boxChildTable.addActor(_micImage);
-        if(!Global.IS_POTRAIT){
-            _closeKeyboardImage.setSize(40, 30);
-            _closeKeyboardImage.setPosition(460 ,13);
-            _boxChildTable.addActor(_closeKeyboardImage);
-        }
+                _textFieldFocusImage.setWidth(Global.IS_POTRAIT ? 246 : 520);
+                _textFieldFocusImage.setHeight(1);
+                _textFieldFocusImage.setPosition(10, 5);
+                _boxChildTable.addActor(_textFieldFocusImage);
+                _textFieldNotFocusImage.setWidth(Global.IS_POTRAIT ? 246 : 520);
+                _textFieldNotFocusImage.setHeight(1);
+                _textFieldNotFocusImage.setPosition(10, 5);
+                _boxChildTable.addActor(_textFieldNotFocusImage);
+                _micImage.setSize(18, 30);
+                _micImage.setPosition(Global.IS_POTRAIT ? 227 : 510, 13);
+                _boxChildTable.addActor(_micImage);
+                if(!Global.IS_POTRAIT){
+                    _closeKeyboardImage.setSize(40, 30);
+                    _closeKeyboardImage.setPosition(460 ,13);
+                    _boxChildTable.addActor(_closeKeyboardImage);
+                }
 
 
-        _mode2AllMessagesTable.setSize(Positions.getWidth(), Global.IS_POTRAIT ? 80 : 70);
-        _stage.addActor(_mode2AllMessagesTable);
+                _mode2AllMessagesTable.setSize(Positions.getWidth(), Global.IS_POTRAIT ? 80 : 70);
+                _stage.addActor(_mode2AllMessagesTable);
 
-        _chatRoot.setPosition(0, 0);
-        _chatRoot.setSize(Positions.getWidth(), _chatRoot.getPrefHeight());
-        _chatRoot.addActor(_bigMicTable);
+                _chatRoot.setPosition(0, 0);
+                _chatRoot.setSize(Positions.getWidth(), _chatRoot.getPrefHeight());
+                _chatRoot.addActor(_bigMicTable);
 
-        _stage.addActor(_chatRoot);
+                _stage.addActor(_chatRoot);
 
-        if(isShowing) {
-            show();
-            scrollToBottom();
-        }
+                if(isShowing) {
+                    show();
+                    scrollToBottom();
+                }
+            }
+        });
     }
 
-    public void setMode(int mode){
+    public void setMode(final int mode){
         _mode = mode;
-        if(mode == 1){
-            _mode1AllMessagesTable.setVisible(true);
-            _mode2AllMessagesTable.setVisible(false);
-        }
-        else if(mode == 2){
-            _mode2AllMessagesTable.setVisible(true);
-            _mode1AllMessagesTable.setVisible(false);
-        }
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(mode == 1){
+                    _mode1AllMessagesTable.setVisible(true);
+                    _mode2AllMessagesTable.setVisible(false);
+                }
+                else if(mode == 2){
+                    _mode2AllMessagesTable.setVisible(true);
+                    _mode1AllMessagesTable.setVisible(false);
+                }
+            }
+        });
     }
 
     public void expanded(){
@@ -317,9 +339,14 @@ public class Chat {
 
     public void collapsed(){
         _expanded = false;
-        _stage.setKeyboardFocus(_stage.getActors().get(0));
-        _textFieldNotFocusImage.setVisible(true);
-        _textFieldFocusImage.setVisible(false);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _stage.setKeyboardFocus(_stage.getActors().get(0));
+                _textFieldNotFocusImage.setVisible(true);
+                _textFieldFocusImage.setVisible(false);
+            }
+        });
 
         if(_mode == 2){
             fadeOutMode2();
@@ -341,25 +368,34 @@ public class Chat {
     }
 
     public void animateHideForMode2(){
-        if(_mode == 2){
-            _messageBoxTable.clearActions();
-            _messageBoxTable.addAction(sequence(moveTo(-Positions.getWidth(), 0, 1f, Interpolation.exp10Out), new Action() {
-                @Override
-                public boolean act(float delta) {
-                    collapsed();
-                    return true;
-                }
-            }));
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(_mode == 2){
+                    _messageBoxTable.clearActions();
+                    _messageBoxTable.addAction(sequence(moveTo(-Positions.getWidth(), 0, 1f, Interpolation.exp10Out), new RunnableAction() {
+                        @Override
+                        public void run() {
+                            collapsed();
+                        }
+                    }));
 
-        }
+                }
+            }
+        });
     }
 
     public void animateShowForMode2(){
-        if(_mode == 2){
-            _messageBoxTable.clearActions();
-            _messageBoxTable.addAction(moveTo(0, 0, 0.3f));
-            expanded();
-        }
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(_mode == 2){
+                    _messageBoxTable.clearActions();
+                    _messageBoxTable.addAction(moveTo(0, 0, 0.3f));
+                    expanded();
+                }
+            }
+        });
     }
 
 
@@ -367,15 +403,20 @@ public class Chat {
         return _visible;
     }
 
-    private void moveChatPosition(float newY){
-        _chatRoot.setPosition(0, newY);
-        _mode2AllMessagesTable.setPosition(0, Global.IS_POTRAIT ? 80 + newY : 50 + newY);
-        if(newY > 0){
-            expanded();
-        }
-        else{
-            collapsed();
-        }
+    private void moveChatPosition(final float newY){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _chatRoot.setPosition(0, newY);
+                _mode2AllMessagesTable.setPosition(0, Global.IS_POTRAIT ? 80 + newY : 50 + newY);
+                if(newY > 0){
+                    expanded();
+                }
+                else{
+                    collapsed();
+                }
+            }
+        });
     }
 
 
@@ -397,6 +438,31 @@ public class Chat {
             @Override
             public void onRoomMessageReceived(ChatMessage chatMessage, String senderId) {
                 add(chatMessage, false);
+            }
+        });
+
+        _gamingKit.addListener(this.getClass().getName(), new UpdateRoomMatesListener() {
+
+            @Override
+            public void onUpdateRoomMatesReceived(int code, String msg, String senderId) {
+
+            }
+
+            @Override
+            public void onUpdateRoomMatesReceived(byte identifier, byte[] data, String senderId) {
+                if(identifier == UpdateRoomMatesCode.AUDIO_CHAT){
+                    try {
+                        if(!senderId.equals(_userId)){
+                            FileHandle oggFile = Gdx.files.local(_recordsPath + Strings.generateUniqueRandomKey(15) + ".ogg");
+                            FileOutputStream fos = new FileOutputStream(oggFile.file().getAbsolutePath());
+                            fos.write(data);
+                            fos.close();
+                            add(new ChatMessage(oggFile.name(), ChatMessage.FromType.USER_VOICE, senderId), false);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         });
 
@@ -510,30 +576,43 @@ public class Chat {
         Threadings.delay(1000, new Runnable() {
             @Override
             public void run() {
-                _soundsWrapper.setVolume(1);
+                _soundsPlayer.setVolume(1);
             }
         });
 
-        _bigMicTable.setVisible(false);
-        _bigMicTable.clearActions();
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _bigMicTable.setVisible(false);
+                _bigMicTable.clearActions();
+            }
+        });
     }
 
     private void micTouchDown(){
-        _soundsWrapper.playSoundEffect(Sounds.Name.MIC);
-        _bigMicTable.addAction(sequence(fadeOut(0f), forever(sequence(fadeOut(0.6f), fadeIn(0.6f)))));
-        _bigMicTable.setVisible(true);
-        final String fileName =  System.currentTimeMillis() + "_" + MathUtils.random(0, 10000) + ".bin";
-        final FileHandle file = Gdx.files.local(_recordsPath + fileName);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _soundsPlayer.playSoundEffect(Sounds.Name.MIC);
+                _bigMicTable.addAction(sequence(fadeOut(0f), forever(sequence(fadeOut(0.6f), fadeIn(0.6f)))));
+                _bigMicTable.setVisible(true);
+            }
+        });
 
         Threadings.delay(500, new Runnable() {
             @Override
             public void run() {
-                _soundsWrapper.setVolume(0);
-                _recorder.recordToFile(file, new RecordListener(){
+                _soundsPlayer.setVolume(0);
+                _recorder.recordToFile(_recordsPath, new RecordListener(){
+                    @Override
+                    public void onRecording(int volumeLevel) {
+                        Logs.show(volumeLevel);
+                    }
+
                     @Override
                     public void onFinishedRecord(FileHandle resultFile, Status status) {
                         if(status == Status.SUCCESS){
-                            sendVoiceMessage(file);
+                            sendVoiceMessage(resultFile);
                         }
                     }
                 });
@@ -558,40 +637,59 @@ public class Chat {
     }
 
     public void playVoiceMessage(FileHandle fileHandle){
-        _soundsWrapper.setVolume(0);
+        _soundsPlayer.setVolume(0);
         _recorder.playBack(fileHandle, new Runnable() {
             @Override
             public void run() {
-                _soundsWrapper.setVolume(1);
+                _soundsPlayer.setVolume(1);
             }
         });
     }
 
-    public void setMessage(String msg){
-        _messageTextField.setText(msg);
+    public void setMessage(final String msg){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _messageTextField.setText(msg);
+            }
+        });
     }
 
     public void sendMessage(){
-        String msg = _messageTextField.getText().trim();
-        if(!msg.equals("")){
-            ChatMessage chatMessage = new ChatMessage(msg, ChatMessage.FromType.USER, _userId);
-            _gamingKit.sendRoomMessage(chatMessage);
-            add(chatMessage, true);
-        }
-        clearMessageTextField();
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                String msg = _messageTextField.getText().trim();
+                if(!msg.equals("")){
+                    ChatMessage chatMessage = new ChatMessage(msg, ChatMessage.FromType.USER, _userId);
+                    _gamingKit.sendRoomMessage(chatMessage);
+                    add(chatMessage, true);
+                }
+                clearMessageTextField();
+            }
+        });
     }
 
     public void sendVoiceMessage(final FileHandle file){
+
+        Path path = Paths.get(file.file().getAbsolutePath());
+        try {
+            byte[] data = Files.readAllBytes(path);
+            _gamingKit.updateRoomMates((byte) UpdateRoomMatesCode.AUDIO_CHAT, data);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         final ChatMessage c = new ChatMessage(file.file().getName(), ChatMessage.FromType.USER_VOICE, _userId);
         add(c, true);
-        _uploader.uploadFile(file, new UploadListener<String>() {
-            @Override
-            public void onCallBack(String result, Status status) {
-                if(status == Status.SUCCESS) {
-                    _gamingKit.sendRoomMessage(c);
-                }
-            }
-        });
+//        _uploader.uploadFile(file, new UploadListener<String>() {
+//            @Override
+//            public void onCallBack(String result, Status status) {
+//                if(status == Status.SUCCESS) {
+//                    _gamingKit.sendRoomMessage(c);
+//                }
+//            }
+//        });
 
     }
 
@@ -608,7 +706,7 @@ public class Chat {
                     playVoiceMessage(Gdx.files.local(_recordsPath + msg.getMessage()));
                 }
 
-                _soundsWrapper.playSoundEffect(Sounds.Name.MESSAGING);
+                _soundsPlayer.playSoundEffect(Sounds.Name.MESSAGING);
 
                 if(_mode == 1){
                     Table chatTable = new Table();
@@ -733,32 +831,31 @@ public class Chat {
             }
         };
 
-        if(msg.getFromType() == ChatMessage.FromType.USER_VOICE && !msg.getSenderId().equals(_userId)){
-            String fileName = msg.getMessage();
-            final FileHandle fileHandle = Gdx.files.local(_recordsPath + fileName);
-            _uploader.getUploadedFile(fileName, fileHandle, new UploadListener<FileHandle>() {
-                @Override
-                public void onCallBack(FileHandle result, Status status) {
-                    if(status == Status.SUCCESS){
-                        Threadings.postRunnable(runnable);
-                    }
-                }
-            });
-        }
-        else{
+//        if(msg.getFromType() == ChatMessage.FromType.USER_VOICE && !msg.getSenderId().equals(_userId)){
+//            String fileName = msg.getMessage();
+//            final FileHandle fileHandle = Gdx.files.local(_recordsPath + fileName);
+//            _uploader.getUploadedFile(fileName, fileHandle, new UploadListener<FileHandle>() {
+//                @Override
+//                public void onCallBack(FileHandle result, Status status) {
+//                    if(status == Status.SUCCESS){
+//                        Threadings.postRunnable(runnable);
+//                    }
+//                }
+//            });
+//        }
+//        else{
             Threadings.postRunnable(runnable);
-        }
+      //  }
 
     }
 
     public void scrollToBottom(){
-        Gdx.app.postRunnable(new Runnable() {
+        Threadings.delay(100, new Runnable() {
             @Override
             public void run() {
-                if(_mode == 1){
+                if (_mode == 1) {
                     _mode1ChatScroll.setScrollPercentY(100);
-                }
-                else if(_mode == 2){
+                } else if (_mode == 2) {
                     _mode2ChatScroll.setScrollPercentY(100);
                 }
             }
@@ -766,40 +863,58 @@ public class Chat {
     }
 
     private void fadeInMode2(){
-        _fading = false;
-        _mode2MessagesContentTable.clearActions();
-        _mode2MessagesContentTable.getColor().a = 1;
-        fadeOutMode2();
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _fading = false;
+                _mode2MessagesContentTable.clearActions();
+                _mode2MessagesContentTable.getColor().a = 1;
+                fadeOutMode2();
+            }
+        });
     }
 
     private void fadeOutMode2(){
+
         if(_fading) return;
 
         if(!_expanded){
             _fading = true;
-            _mode2MessagesContentTable.addAction(sequence(delay(5), fadeOut(0.3f), new Action() {
+            Threadings.postRunnable(new Runnable() {
                 @Override
-                public boolean act(float delta) {
-                    _fading = false;
-                    return true;
+                public void run() {
+                    _mode2MessagesContentTable.addAction(sequence(delay(5), fadeOut(0.3f), new RunnableAction() {
+                        @Override
+                        public void run() {
+                            _fading = false;
+                        }
+                    }));
                 }
-            }));
+            });
+
         }
     }
 
 
     public void resetChat() {
         _expanded = false;
-        clearMessageTextField();
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                clearMessageTextField();
 
-        if(_mode == 1){
-            _mode1MessagesContentTable.clear();
-            _mode1NotFirstMessage = false;
-        }
-        else if(_mode == 2){
-            _mode2MessagesContentTable.clear();
-            _mode2NotFirstMessage = false;
-        }
+                if(_mode == 1){
+                    _mode1MessagesContentTable.clear();
+                    _mode1NotFirstMessage = false;
+                }
+                else if(_mode == 2){
+                    _mode2MessagesContentTable.clear();
+                    _mode2NotFirstMessage = false;
+                }
+            }
+        });
+
+
 
     }
 
@@ -816,8 +931,13 @@ public class Chat {
     }
 
     public void clearMessageTextField(){
-        _messageTextField.setText("");
-        _broadcaster.broadcast(BroadcastEvent.LIBGDX_TEXT_CHANGED, new NativeLibgdxTextInfo("", 0));
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _messageTextField.setText("");
+                _broadcaster.broadcast(BroadcastEvent.LIBGDX_TEXT_CHANGED, new NativeLibgdxTextInfo("", 0));
+            }
+        });
     }
 
 

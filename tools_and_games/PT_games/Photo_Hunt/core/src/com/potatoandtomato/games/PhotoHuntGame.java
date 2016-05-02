@@ -53,7 +53,7 @@ public class PhotoHuntGame extends MockGame {
 
 							@Override
 							public void getImageDetailsByIndex(int index, DatabaseListener<ImageDetails> listener) {
-								listener.onCallback(MockModel.mockImageDetails(Strings.generateRandomKey(5)), Status.SUCCESS);
+								listener.onCallback(MockModel.mockImageDetails(Strings.generateUniqueRandomKey(15)), Status.SUCCESS);
 							}
 
 							@Override

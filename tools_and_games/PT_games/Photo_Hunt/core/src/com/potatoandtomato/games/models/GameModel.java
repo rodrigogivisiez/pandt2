@@ -92,9 +92,11 @@ public class GameModel {
     }
 
     public void setHintsLeft(int hintsLeft) {
-        this.hintsLeft = hintsLeft;
-        for(GameModelListener listener : listeners){
-            listener.onHintChanged(hintsLeft);
+        if(this.hintsLeft != hintsLeft){
+            this.hintsLeft = hintsLeft;
+            for(GameModelListener listener : listeners){
+                listener.onHintChanged(hintsLeft);
+            }
         }
     }
 
@@ -218,12 +220,12 @@ public class GameModel {
     @JsonIgnore
     public int getThisStageTotalMiliSecs(){
         double time = 0;
-        if(this.stageType == StageType.Normal){
+        if(this.stageType == StageType.Bonus){
+            time = 30000;
+        }
+        else{
             time =  Math.max(60000 - (Math.pow(stageNumber, 1.5) * 1000), 0) +
                     Math.max(3000 - (Math.pow(stageNumber, 0.2) * 1000), 0) + 5500;
-        }
-        else if(this.stageType == StageType.Bonus){
-            time = 30000;
         }
 
         return (int) time;
@@ -355,7 +357,7 @@ public class GameModel {
     @JsonIgnore
     public boolean isNextStageBonus(){
         int nextStageNumber = stageNumber + 1;
-        return nextStageNumber % 2 == 0 && !Global.REVIEW_MODE;
+        return nextStageNumber % Global.BONUS_STAGE_NUMBER == 0 && !Global.REVIEW_MODE;
     }
 
     public void dispose(){

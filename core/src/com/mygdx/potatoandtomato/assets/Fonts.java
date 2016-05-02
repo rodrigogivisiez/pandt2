@@ -67,6 +67,9 @@ public class Fonts extends FontAssets {
 
         CARTER_S_REGULAR_B_ffffff_000000_1,
         CARTER_L_REGULAR_B_ffffff_000000_1,
+
+        IMPACT_XS_REGULAR_S_a74828_1_1,
+        IMPACT_S_REGULAR_S_a74828_1_1
     }
 
 
@@ -90,6 +93,9 @@ public class Fonts extends FontAssets {
                     break;
                 case CARTER:
                     path = "fonts/CarterOne-%s.otf";
+                    break;
+                case IMPACT:
+                    path = "fonts/Impact-%s.otf";
                     break;
             }
 
@@ -148,7 +154,7 @@ public class Fonts extends FontAssets {
     }
 
     private enum  FontName {
-        PIZZA, MYRIAD, HELVETICA, CARTER
+        PIZZA, MYRIAD, HELVETICA, CARTER, IMPACT
     }
 
     private enum FontStyle {

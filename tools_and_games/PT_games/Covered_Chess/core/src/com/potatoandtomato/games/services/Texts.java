@@ -8,6 +8,7 @@ public class Texts {
     public String yourTurn(){ return "Your Turn"; }
     public String enemyTurn(){ return "Enemy Turn"; }
     public String graveYard() { return "Graveyard"; }
+    public String tutorial() { return "Tutorial"; }
     public String gameStart() { return "Game Start"; }
     public String youWin() { return "You Win"; }
     public String youLose() { return "You Lose"; }
@@ -20,7 +21,7 @@ public class Texts {
     public String breakEnemyXWinStreak() { return "Stop opponent %s wins streak"; }
 
     public String easyWin() { return "Ez win"; }
-    public String hardFoughtWin() { return "Almost lose"; }
+    //public String hardFoughtWin() { return "Almost lose"; }
     public String normalWin() { return "Win the match"; }
 
     public String firstTimeWinPlayer() { return "First blood on this opponent"; }

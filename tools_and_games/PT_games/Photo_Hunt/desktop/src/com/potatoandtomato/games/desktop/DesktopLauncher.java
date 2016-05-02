@@ -23,6 +23,8 @@ public class DesktopLauncher {
 
 		if(arg.length > 0 && (arg[0].equals("debug"))) Global.setDEBUG(true);
 
+		if(arg.length > 1 && (arg[1].equals("bonus"))) Global.setDEBUG_BONUS(true);
+
 		PhotoHuntGame photoHuntGame = new PhotoHuntGame("photo_hunt");
 		if(arg.length > 0 && arg[0].equals("continue")) photoHuntGame.isContinue = true;
 

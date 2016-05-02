@@ -171,87 +171,97 @@ public class StageImagesActor {
 
     }
 
-    private void putEggs(ArrayList<Vector2> randoms, final float eachColWidth , float eachRowHeight, int totalCount){
-
-        for(int i = imageOneTable.getChildren().size - 1 ; i >=0; i--){
-            Actor actor = imageOneTable.getChildren().get(i);
-            if(actor.getName() != null && actor.getName().equals("egg")){
-                actor.clearActions();
-                actor.remove();
-            }
-        }
-
-        for(int i = imageTwoTable.getChildren().size - 1 ; i >=0; i--){
-            Actor actor = imageTwoTable.getChildren().get(i);
-            if(actor.getName() != null && actor.getName().equals("egg")){
-                actor.clearActions();
-                actor.remove();
-            }
-        }
-
-        Collections.shuffle(randoms);
-        for(int i = 0; i < totalCount; i++){
-            final Image eggImage = new Image(assets.getTextures().get(Textures.Name.EGG));
-            eggImage.setName("egg");
-            eggImage.setOrigin(Align.center);
-            Vector2 position = randoms.get(i);
-            eggImage.setPosition(position.x * eachColWidth + eggImage.getWidth() / 4, position.y * eachRowHeight);
-            eggImage.addAction(forever(sequence(rotateBy(-30, 0.5f),rotateBy(30, 0.5f))));
-            imageOneTable.addActor(eggImage);
-            eggImage.addListener(new ClickListener(){
-
-                @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                   event.stop();
-                    eggToYolk(eggImage, imageOneTable);
-                    return false;
-                }
-
-            });
-        }
-
-        Collections.shuffle(randoms);
-        for(int i = 0; i < totalCount; i++){
-            Vector2 position = randoms.get(i);
-            final Image eggImage2 = new Image(assets.getTextures().get(Textures.Name.EGG));
-            eggImage2.setName("egg");
-            eggImage2.setOrigin(Align.center);
-            eggImage2.setPosition(position.x * eachColWidth + eggImage2.getWidth() / 4, position.y * eachRowHeight);
-            eggImage2.addAction(forever(sequence(rotateBy(-30, 0.5f),rotateBy(30, 0.5f))));
-            imageTwoTable.addActor(eggImage2);
-
-            eggImage2.addListener(new ClickListener(){
-                @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    event.stop();
-                    eggToYolk(eggImage2, imageTwoTable);
-                    return false;
-                }
-            });
-        }
-
-        services.getSoundsWrapper().playSounds(Sounds.Name.PUT_EGGS);
-
-    }
-
-    private void eggToYolk(Actor egg, Table table){
-        Image yolkImage = new Image(assets.getTextures().get(Textures.Name.YOLK));
-        Vector2 position = new Vector2(egg.getX() + egg.getWidth() / 2, egg.getY() + egg.getHeight() / 2);
-        yolkImage.setPosition(position.x - yolkImage.getPrefWidth() / 2, position.y - yolkImage.getPrefHeight() / 2);
-        egg.clearActions();
-        egg.remove();
-
-        yolkImage.addListener(new ClickListener(){
+    private void putEggs(final ArrayList<Vector2> randoms, final float eachColWidth , final float eachRowHeight, final int totalCount){
+        Threadings.postRunnable(new Runnable() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                event.stop();
-                return super.touchDown(event, x, y, pointer, button);
+            public void run() {
+                for(int i = imageOneTable.getChildren().size - 1 ; i >=0; i--){
+                    Actor actor = imageOneTable.getChildren().get(i);
+                    if(actor.getName() != null && actor.getName().equals("egg")){
+                        actor.clearActions();
+                        actor.remove();
+                    }
+                }
+
+                for(int i = imageTwoTable.getChildren().size - 1 ; i >=0; i--){
+                    Actor actor = imageTwoTable.getChildren().get(i);
+                    if(actor.getName() != null && actor.getName().equals("egg")){
+                        actor.clearActions();
+                        actor.remove();
+                    }
+                }
+
+                Collections.shuffle(randoms);
+                for(int i = 0; i < totalCount; i++){
+                    final Image eggImage = new Image(assets.getTextures().get(Textures.Name.EGG));
+                    eggImage.setName("egg");
+                    eggImage.setOrigin(Align.center);
+                    Vector2 position = randoms.get(i);
+                    eggImage.setPosition(position.x * eachColWidth + eggImage.getWidth() / 4, position.y * eachRowHeight);
+                    eggImage.addAction(forever(sequence(rotateBy(-30, 0.5f),rotateBy(30, 0.5f))));
+                    imageOneTable.addActor(eggImage);
+                    eggImage.addListener(new ClickListener(){
+
+                        @Override
+                        public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                            event.stop();
+                            eggToYolk(eggImage, imageOneTable);
+                            return false;
+                        }
+
+                    });
+                }
+
+                Collections.shuffle(randoms);
+                for(int i = 0; i < totalCount; i++){
+                    Vector2 position = randoms.get(i);
+                    final Image eggImage2 = new Image(assets.getTextures().get(Textures.Name.EGG));
+                    eggImage2.setName("egg");
+                    eggImage2.setOrigin(Align.center);
+                    eggImage2.setPosition(position.x * eachColWidth + eggImage2.getWidth() / 4, position.y * eachRowHeight);
+                    eggImage2.addAction(forever(sequence(rotateBy(-30, 0.5f),rotateBy(30, 0.5f))));
+                    imageTwoTable.addActor(eggImage2);
+
+                    eggImage2.addListener(new ClickListener(){
+                        @Override
+                        public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                            event.stop();
+                            eggToYolk(eggImage2, imageTwoTable);
+                            return false;
+                        }
+                    });
+                }
+
+                services.getSoundsWrapper().playSounds(Sounds.Name.PUT_EGGS);
+
             }
         });
 
-        table.addActor(yolkImage);
+    }
 
-        services.getSoundsWrapper().playSounds(Sounds.Name.BREAK_EGG);
+    private void eggToYolk(final Actor egg, final Table table){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Image yolkImage = new Image(assets.getTextures().get(Textures.Name.YOLK));
+                Vector2 position = new Vector2(egg.getX() + egg.getWidth() / 2, egg.getY() + egg.getHeight() / 2);
+                yolkImage.setPosition(position.x - yolkImage.getPrefWidth() / 2, position.y - yolkImage.getPrefHeight() / 2);
+                egg.clearActions();
+                egg.remove();
+
+                yolkImage.addListener(new ClickListener(){
+                    @Override
+                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                        event.stop();
+                        return super.touchDown(event, x, y, pointer, button);
+                    }
+                });
+
+                table.addActor(yolkImage);
+
+                services.getSoundsWrapper().playSounds(Sounds.Name.BREAK_EGG);
+            }
+        });
     }
 
     public void covered(){
@@ -310,16 +320,26 @@ public class StageImagesActor {
     }
 
     public void wrinkle(){
-        Image wrinkleImage = new Image(assets.getTextures().get(Textures.Name.WRINKLE_BG));
-        wrinkleImage.getColor().a = 0.6f;
-        imageTwoTable.addActor(wrinkleImage);
-        services.getSoundsWrapper().playSounds(Sounds.Name.WRINKLE_PAPER);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Image wrinkleImage = new Image(assets.getTextures().get(Textures.Name.WRINKLE_BG));
+                wrinkleImage.getColor().a = 0.6f;
+                imageTwoTable.addActor(wrinkleImage);
+                services.getSoundsWrapper().playSounds(Sounds.Name.WRINKLE_PAPER);
+            }
+        });
     }
 
     public void inverted(){
-        imageTwoInnerTable.setOrigin(Align.center);
-        imageTwoInnerTable.setRotation(180);
-        services.getSoundsWrapper().playSounds(Sounds.Name.INVERTED);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                imageTwoInnerTable.setOrigin(Align.center);
+                imageTwoInnerTable.setRotation(180);
+                services.getSoundsWrapper().playSounds(Sounds.Name.INVERTED);
+            }
+        });
     }
 
     public void lighting(final String extra, final GameModel gameModel){
@@ -399,27 +419,42 @@ public class StageImagesActor {
     }
 
     private void lightBulbOnAnimation(){
-        lightBulbOn.clearActions();
-        blackBg.clearActions();
-        lightBulbOn.addAction(sequence(fadeIn(0.5f)));
-        blackBg.addAction(sequence(fadeOut(0.5f)));
-        services.getSoundsWrapper().playSounds(Sounds.Name.SWITCH_LIGHT);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                lightBulbOn.clearActions();
+                blackBg.clearActions();
+                lightBulbOn.addAction(sequence(fadeIn(0.5f)));
+                blackBg.addAction(sequence(fadeOut(0.5f)));
+                services.getSoundsWrapper().playSounds(Sounds.Name.SWITCH_LIGHT);
+            }
+        });
     }
 
     private void lightBulbOffAnimation(){
-        lightBulbOn.addAction(sequence(fadeOut(0.5f)));
-        blackBg.addAction(sequence(fadeIn(0.5f)));
-        services.getSoundsWrapper().playSounds(Sounds.Name.SWITCH_LIGHT);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                lightBulbOn.addAction(sequence(fadeOut(0.5f)));
+                blackBg.addAction(sequence(fadeIn(0.5f)));
+                services.getSoundsWrapper().playSounds(Sounds.Name.SWITCH_LIGHT);
+            }
+        });
     }
 
     private void lightBulbBreakAnimation(){
-        lightBulbOn.clearActions();
-        blackBg.clearActions();
-        blackBg.getColor().a = 1f;
-        lightBulbOn.setVisible(false);
-        lightBulbOff.setVisible(false);
-        lightBulbBreak.setVisible(true);
-        services.getSoundsWrapper().playSounds(Sounds.Name.BULB_BREAK);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                lightBulbOn.clearActions();
+                blackBg.clearActions();
+                blackBg.getColor().a = 1f;
+                lightBulbOn.setVisible(false);
+                lightBulbOff.setVisible(false);
+                lightBulbBreak.setVisible(true);
+                services.getSoundsWrapper().playSounds(Sounds.Name.BULB_BREAK);
+            }
+        });
     }
 
     public void looping(){
@@ -455,42 +490,50 @@ public class StageImagesActor {
     }
 
     public void endMemory(){
-        services.getSoundsWrapper().stopSoundLoop(Sounds.Name.MEMORY);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                services.getSoundsWrapper().stopSoundLoop(Sounds.Name.MEMORY);
 
-        Table blackBgTable = new Table();
-        blackBgTable.setTransform(true);
-        blackBgTable.setBackground(new TextureRegionDrawable(assets.getTextures().get(Textures.Name.FULL_BLACK_BG)));
-        blackBgTable.setSize(imageTwoTable.getWidth(), imageTwoTable.getHeight());
-        blackBgTable.setOrigin(Align.center);
-        blackBgTable.setScale(0, 1);
+                Table blackBgTable = new Table();
+                blackBgTable.setTransform(true);
+                blackBgTable.setBackground(new TextureRegionDrawable(assets.getTextures().get(Textures.Name.FULL_BLACK_BG)));
+                blackBgTable.setSize(imageTwoTable.getWidth(), imageTwoTable.getHeight());
+                blackBgTable.setOrigin(Align.center);
+                blackBgTable.setScale(0, 1);
 
-        Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR);
-        Label startLabel = new Label(services.getTexts().memoryStart(), labelStyle);
-        blackBgTable.add(startLabel);
+                Label.LabelStyle labelStyle = new Label.LabelStyle();
+                labelStyle.font = assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR);
+                Label startLabel = new Label(services.getTexts().memoryStart(), labelStyle);
+                blackBgTable.add(startLabel);
 
-        imageTwoTable.addActor(blackBgTable);
+                imageTwoTable.addActor(blackBgTable);
 
-        blackBgTable.addAction(scaleTo(1, 1, 1.35f, Interpolation.exp10Out));
+                blackBgTable.addAction(scaleTo(1, 1, 1.35f, Interpolation.exp10Out));
 
-        services.getSoundsWrapper().playSounds(Sounds.Name.MEMORY_END);
-
+                services.getSoundsWrapper().playSounds(Sounds.Name.MEMORY_END);
+            }
+        });
     }
 
     public void torchLight(){
-        Image vignetteImage = new Image(assets.getTextures().get(Textures.Name.VIGNETTE));
-        vignetteImage.setSize(vignetteImage.getPrefWidth(), vignetteImage.getPrefHeight());
-        vignetteImage.setPosition(-235 , -280);
-        imageTwoTable.addActor(vignetteImage);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Image vignetteImage = new Image(assets.getTextures().get(Textures.Name.VIGNETTE));
+                vignetteImage.setSize(vignetteImage.getPrefWidth(), vignetteImage.getPrefHeight());
+                vignetteImage.setPosition(-235 , -280);
+                imageTwoTable.addActor(vignetteImage);
 
-        vignetteImage.addAction(forever(sequence(moveTo(-375, -180, 2f),  moveTo(-95, -180, 4f),
-                                            moveTo(-375, -370, 4f), moveTo(-95, -280, 3f),
-                                            moveTo(-375, -280, 4f), moveTo(-375, -180, 2f),
-                                            moveTo(-375, -370, 4f),  moveTo(-95, -370, 4f),
-                                            moveTo(-95, -180, 4f), moveTo(-235, -280, 2f))));
+                vignetteImage.addAction(forever(sequence(moveTo(-375, -180, 2f),  moveTo(-95, -180, 4f),
+                        moveTo(-375, -370, 4f), moveTo(-95, -280, 3f),
+                        moveTo(-375, -280, 4f), moveTo(-375, -180, 2f),
+                        moveTo(-375, -370, 4f),  moveTo(-95, -370, 4f),
+                        moveTo(-95, -180, 4f), moveTo(-235, -280, 2f))));
 
-        services.getSoundsWrapper().playSounds(Sounds.Name.TORCH_LIGHT);
-
+                services.getSoundsWrapper().playSounds(Sounds.Name.TORCH_LIGHT);
+            }
+        });
     }
 
     public void distractions(String extra){
@@ -983,8 +1026,13 @@ public class StageImagesActor {
                     @Override
                     public void run() {
                         for(String index : sequence){
-                            NotifyRunnable runnable = runnables.get(Integer.valueOf(index));
-                            runnable.run();
+                            final NotifyRunnable runnable = runnables.get(Integer.valueOf(index));
+                            Threadings.postRunnable(new Runnable() {
+                                @Override
+                                public void run() {
+                                    runnable.run();
+                                }
+                            });
 
                             while (!runnable.isFinish()){
                                 Threadings.sleep(100);
@@ -998,57 +1046,80 @@ public class StageImagesActor {
     }
 
 
-    private void moveCat(float yOffset){
-        final Image catImage1 = new Image(assets.getTextures().get(Textures.Name.CAT));
-        catImage1.setPosition(-80, imageTwoTable.getHeight() / 2 - catImage1.getPrefHeight() / 2 + yOffset);
-        imageTwoTable.addActor(catImage1);
-
-        catImage1.addAction(sequence(moveBy(700, 0, 6f)));
-    }
-
-    private void moveToRandomPosition(Actor actor, final Runnable onFinish){
-        actor.addAction(sequence(moveTo(MathUtils.random(-100, imageTwoTable.getWidth()), MathUtils.random(-100, imageTwoTable.getHeight()), 1f), new RunnableAction(){
+    private void moveCat(final float yOffset){
+        Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                onFinish.run();
+                final Image catImage1 = new Image(assets.getTextures().get(Textures.Name.CAT));
+                catImage1.setPosition(-80, imageTwoTable.getHeight() / 2 - catImage1.getPrefHeight() / 2 + yOffset);
+                imageTwoTable.addActor(catImage1);
+
+                catImage1.addAction(sequence(moveBy(700, 0, 6f)));
             }
-        }));
+        });
+
     }
 
-    public void showDisallowClick(float x, float y, boolean isTableTwo){
-        Table touchTable = isTableTwo ? imageTwoInnerTable : imageOneInnerTable;
-        final Image stopImage = new Image(services.getAssets().getTextures().get(Textures.Name.STOP_ICON));
-        stopImage.setPosition(x - stopImage.getPrefWidth() / 2, y  - stopImage.getPrefHeight() / 2);
-        stopImage.setSize(stopImage.getPrefWidth(), stopImage.getPrefHeight());
-        touchTable.addActor(stopImage);
-
-        stopImage.addAction(sequence(delay(0.6f), fadeOut(0.3f), new RunnableAction(){
+    private void moveToRandomPosition(final Actor actor, final Runnable onFinish){
+        Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                stopImage.remove();
+                actor.addAction(sequence(moveTo(MathUtils.random(-100, imageTwoTable.getWidth()), MathUtils.random(-100, imageTwoTable.getHeight()), 1f), new RunnableAction(){
+                    @Override
+                    public void run() {
+                        onFinish.run();
+                    }
+                }));
             }
-        }));
+        });
+    }
 
-        services.getSoundsWrapper().playSounds(Sounds.Name.DISALLOW_CLICK);
+    public void showDisallowClick(final float x, final float y, final boolean isTableTwo){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Table touchTable = isTableTwo ? imageTwoInnerTable : imageOneInnerTable;
+                final Image stopImage = new Image(services.getAssets().getTextures().get(Textures.Name.STOP_ICON));
+                stopImage.setPosition(x - stopImage.getPrefWidth() / 2, y  - stopImage.getPrefHeight() / 2);
+                stopImage.setSize(stopImage.getPrefWidth(), stopImage.getPrefHeight());
+                touchTable.addActor(stopImage);
+
+                stopImage.addAction(sequence(delay(0.6f), fadeOut(0.3f), new RunnableAction(){
+                    @Override
+                    public void run() {
+                        stopImage.remove();
+                    }
+                }));
+
+                services.getSoundsWrapper().playSounds(Sounds.Name.DISALLOW_CLICK);
+            }
+        });
+
 
     }
 
     private void resetAllTable(){
-        for(int i = imageOneTable.getChildren().size - 1 ; i >=0; i--){
-            Actor actor = imageOneTable.getChildren().get(i);
-            if(actor.getName() == null || !actor.getName().equals("innerTable")){
-                actor.clearActions();
-                actor.remove();
-            }
-        }
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                for(int i = imageOneTable.getChildren().size - 1 ; i >=0; i--){
+                    Actor actor = imageOneTable.getChildren().get(i);
+                    if(actor.getName() == null || !actor.getName().equals("innerTable")){
+                        actor.clearActions();
+                        actor.remove();
+                    }
+                }
 
-        for(int i = imageTwoTable.getChildren().size - 1 ; i >=0; i--){
-            Actor actor = imageTwoTable.getChildren().get(i);
-            if(actor.getName() == null || !actor.getName().equals("innerTable")){
-                actor.clearActions();
-                actor.remove();
+                for(int i = imageTwoTable.getChildren().size - 1 ; i >=0; i--){
+                    Actor actor = imageTwoTable.getChildren().get(i);
+                    if(actor.getName() == null || !actor.getName().equals("innerTable")){
+                        actor.clearActions();
+                        actor.remove();
+                    }
+                }
             }
-        }
+        });
+
     }
 
 

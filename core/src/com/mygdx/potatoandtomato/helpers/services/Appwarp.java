@@ -1,6 +1,8 @@
 package com.mygdx.potatoandtomato.helpers.services;
 
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
+import com.mygdx.potatoandtomato.helpers.utils.Logs;
+import com.potatoandtomato.common.utils.ArrayUtils;
 import com.potatoandtomato.common.utils.JsonObj;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.mygdx.potatoandtomato.models.ChatMessage;
@@ -19,9 +21,7 @@ import com.shephertz.app42.gaming.multiplayer.client.listener.ZoneRequestListene
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by SiongLeng on 15/12/2015.
@@ -33,16 +33,22 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
     private String _secretKey = Terms.WARP_SECRET_KEY;
     private String _username, _realUsername, _roomId;
     private MultiHashMap<String, String> _msgPieces;
+    private MultiHashMap<String, byte[]> _bytePieces;
+    private HashMap<String, String> _bytePiecesOwner;
 
     public Appwarp(String appKey, String secretKey){
         _appKey = appKey;
         _secretKey = secretKey;
         _msgPieces = new MultiHashMap();
+        _bytePieces = new MultiHashMap();
+        _bytePiecesOwner = new HashMap();
         init();
     }
 
     public Appwarp() {
         _msgPieces = new MultiHashMap();
+        _bytePieces = new MultiHashMap();
+        _bytePiecesOwner = new HashMap();
        init();
     }
 
@@ -131,9 +137,9 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
         data.put("realUsername", _realUsername);
 
         String toSend = data.getJSONObject().toString();
-        if(toSend.length() > 800){
-            ArrayList<String> results = Strings.split(toSend, 800);
-            String id = Strings.generateRandomKey(10);
+        if(toSend.length() > 900){
+            ArrayList<String> results = Strings.split(toSend, 900);
+            String id = Strings.generateUniqueRandomKey(20);
             for(int i = 0; i < results.size(); i++){
                 _warpInstance.sendUpdatePeers(appendDataToPeerUpdate(results.get(i), i, results.size(), id).getBytes());
             }
@@ -141,6 +147,101 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
         else{
             _warpInstance.sendUpdatePeers(toSend.getBytes());
         }
+    }
+
+    @Override
+    public void updateRoomMates(byte identifier, byte[] bytes) {
+
+        int chunkSize = 900;
+        String unique = Strings.generateUniqueRandomKey(20);
+        byte[] uniqueArr = unique.getBytes();
+
+        List<byte[]> toSendBytes = ArrayUtils.divideArray(bytes, chunkSize);
+        ArrayList<byte[]> finalToSendBytes = new ArrayList();
+        int i = 0;
+        for(int q = 0; q < toSendBytes.size(); q++){
+            byte[] data = new byte[6];
+            data[0] = 98;
+            data[1] = 40;
+            data[2] = 25;
+            data[3] = identifier;
+            data[4] = (byte) (toSendBytes.size() + 1);        //plus one for meta
+            data[5] = (byte) i;
+
+            byte[] bytes1;
+            if(i == 0){
+                String username = _realUsername;
+                bytes1 = username.getBytes();
+                q = -1;
+            }
+            else{
+                bytes1 = toSendBytes.get(q);
+            }
+            byte[] finalBytes = ArrayUtils.concatAll(data, uniqueArr, bytes1);
+            finalToSendBytes.add(finalBytes);
+            i++;
+        }
+
+        for(byte[] toSend : finalToSendBytes){
+            _warpInstance.sendUpdatePeers(toSend);
+        }
+
+        Logs.show("Sending bytes chunks of size: " + finalToSendBytes.size());
+
+    }
+
+    public boolean checkIsBytesUpdate(UpdateEvent updateEvent){
+        byte[] data = updateEvent.getUpdate();
+        if(data.length > 6){
+            if(data[0] == 98 && data[1] == 40 && data[2] == 25){
+                byte identifier = data[3];
+                byte totalPieces = data[4];
+                byte pieceIndex = data[5];
+                byte[] unique = Arrays.copyOfRange(data, 6, 26);
+                String uniqueString = new String(unique);
+
+                if(pieceIndex == 0){
+                    byte[] userId = Arrays.copyOfRange(data, 26, data.length);
+                    String userIdString = new String(userId);
+                    _bytePiecesOwner.put(uniqueString, userIdString);
+                    _bytePieces.put(uniqueString, new byte[]{});
+                }
+                else{
+                    byte[] bytePiece =  Arrays.copyOfRange(data, 26, data.length);
+
+                    if(!_bytePieces.containsKey(uniqueString)){
+                        _bytePieces.put(uniqueString, bytePiece);
+                    }
+                    else{
+                        ArrayList<byte[]> currentPieces = _bytePieces.get(uniqueString);
+                        if(pieceIndex > currentPieces.size()){
+                            currentPieces.add(currentPieces.size(), bytePiece);
+                        }
+                        else{
+                            currentPieces.add(pieceIndex, bytePiece);
+                        }
+
+                        if(currentPieces.size() == totalPieces){
+                            byte[] result = new byte[]{};
+                            for(byte[] bytes : currentPieces){
+                                result = ArrayUtils.concatenate(result, bytes);
+                            }
+
+                            onUpdateRoomMatesReceived(identifier, result, _bytePiecesOwner.get(uniqueString));
+                            _bytePieces.remove(uniqueString);
+                            _bytePiecesOwner.remove(uniqueString);
+                        }
+                    }
+                }
+
+
+
+                return true;
+            }
+        }
+
+
+        return false;
     }
 
     private String appendDataToPeerUpdate(String input, int pieceIndex, int totalPieces, String id){
@@ -241,13 +342,15 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
     @Override
     public void onUpdatePeersReceived(UpdateEvent updateEvent) {
-        String msg = new String(updateEvent.getUpdate());
-        if(msg.startsWith("@PT")){
-            unAppendDataFromPeerMsg(new String(updateEvent.getUpdate()));
-        }
-        else{
-            JsonObj jsonObj = new JsonObj(msg);
-            onUpdateRoomMatesReceived(jsonObj.getInt("code"), jsonObj.getString("msg"), jsonObj.getString("realUsername"));
+        if(!checkIsBytesUpdate(updateEvent)){
+            String msg = new String(updateEvent.getUpdate());
+            if(msg.startsWith("@PT")){
+                unAppendDataFromPeerMsg(new String(updateEvent.getUpdate()));
+            }
+            else{
+                JsonObj jsonObj = new JsonObj(msg);
+                onUpdateRoomMatesReceived(jsonObj.getInt("code"), jsonObj.getString("msg"), jsonObj.getString("realUsername"));
+            }
         }
     }
 
@@ -259,6 +362,7 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
         String id = meta[1];
         int pieceIndex = Integer.valueOf(meta[2]);
         int totalPieces = Integer.valueOf(meta[3]);
+        Logs.show("Received appwarp update of total pieces: " + totalPieces);
 
         if(totalPieces == 1){
             JsonObj jsonObj = new JsonObj(realMsg);

@@ -1,18 +1,21 @@
 package com.mygdx.potatoandtomato.helpers.services;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.AudioDevice;
 import com.badlogic.gdx.audio.AudioRecorder;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.absintflis.recorder.RecordListener;
 import com.mygdx.potatoandtomato.helpers.utils.Logs;
+import com.potatoandtomato.common.utils.RunnableArgs;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.enums.Status;
 import ogg.OggFile;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -27,10 +30,15 @@ public class Recorder {
     short[] _results;
     long _startTime;
     boolean _recordSuccess;
+    SoundsPlayer _soundsPlayer;
     boolean _canRecord = true;
 
 
-    public void recordToFile(final FileHandle fileHandle, final RecordListener _listener){
+    public Recorder(SoundsPlayer _soundsPlayer) {
+        this._soundsPlayer = _soundsPlayer;
+    }
+
+    public void recordToFile(final String recordPath, final RecordListener _listener){
         if(!_canRecord) return;
         _startTime = System.currentTimeMillis();
         _recording = true;
@@ -48,25 +56,17 @@ public class Recorder {
                     short[] data = new short[_samples];
                     recorder.read(data, 0, data.length);
 
-//                    for(int i = 0; i < data.length; i++){
-//                        Logs.show("before:" + data[i]);
-//                        short after = (short) (data[i] * 1.1f);
-//                        boolean convert = true;
-//                        if(after < 0){
-//                            if(after < -15000){
-//                                convert = false;
-//                            }
-//                        }
-//                        if(after > 0){
-//                            if(after > 15000){
-//                                convert = false;
-//                            }
-//                        }
-//                        if(convert) data[i] = after;
-//                        Logs.show("after:" + data[i]);
-//                    }
-
                     datas.add(data);
+
+                    int max = 0;
+                    for(short each : data){
+                        max = Math.max(max, (Math.abs(each)));
+                    }
+
+                    double maxDouble = Short.MAX_VALUE;
+                    double currentMax = max;
+
+                    _listener.onRecording((int) Math.floor(currentMax / maxDouble * 5));
                 }
                 recorder.dispose();
                 _canRecord = true;
@@ -84,11 +84,18 @@ public class Recorder {
                     i++;
                 }
 
-                saveAudioToFile(_results, fileHandle);
-                _listener.onFinishedRecord(fileHandle, Status.SUCCESS);
-
-                Logs.show("end recording...........................................");
-
+                saveAudioToFile(_results, recordPath, new RunnableArgs() {
+                    @Override
+                    public void run() {
+                        if(this.getArgCount() > 0){
+                            FileHandle oggFile = (FileHandle) this.getArgs()[0];
+                            if(oggFile.exists()){
+                                _listener.onFinishedRecord(oggFile, Status.SUCCESS);
+                                Logs.show("end recording...........................................");
+                            }
+                        }
+                    }
+                });
             }
         });
     }
@@ -104,32 +111,39 @@ public class Recorder {
     }
 
     public void playBack(final FileHandle fileHandle, final Runnable onFinish){
-        Threadings.runInBackground(new Runnable() {
-            @Override
-            public void run() {
-                if(Global.ENABLE_SOUND){
-                    short[] data = getAudioDataFromFile(fileHandle);
-                    final AudioDevice player = Gdx.audio.newAudioDevice(_samples, _isMono);
-                    player.setVolume(1);
-                    player.writeSamples(data, 0, data.length);
-                    player.dispose();
+        if(Global.ENABLE_SOUND){
+            Music music = _soundsPlayer.playMusicFromFile(fileHandle);
+            music.setOnCompletionListener(new Music.OnCompletionListener() {
+                @Override
+                public void onCompletion(Music music) {
+                    music.dispose();
+                    onFinish.run();
                 }
-                onFinish.run();
-            }
-        });
+            });
+        }
     }
 
-    private short[] getAudioDataFromFile(FileHandle fileHandle) {
-        byte[] temp = fileHandle.readBytes(); // get all bytes from file
-        short[] data = new short[temp.length / 2]; // create short with half the length (short = 2 bytes)
-        ByteBuffer.wrap(temp).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(data); // cast a byte array to short array
-        return data;
-    }
+    private void saveAudioToFile(final short[] data, final String recordPath, final RunnableArgs onFinish) {
+        String fileName =  System.currentTimeMillis() + "_" + MathUtils.random(0, 10000);
+        FileHandle binFile = Gdx.files.local(recordPath + fileName + ".bin");
+        FileHandle oggFile = Gdx.files.local(recordPath + fileName + ".ogg");
+        try {
+            byte[] temp = new byte[data.length * 2]; //create a byte array to hold the data passed (short = 2 bytes)
+            ByteBuffer.wrap(temp).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().put(data); // cast a short array to byte array
+            binFile.writeBytes(temp, false); //save bytes to file
 
-    private void saveAudioToFile(short[] data, FileHandle file) {
-        byte[] temp = new byte[data.length * 2]; //create a byte array to hold the data passed (short = 2 bytes)
-        ByteBuffer.wrap(temp).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().put(data); // cast a short array to byte array
-        file.writeBytes(temp, false); //save bytes to file
+            oggFile.file().createNewFile();
+
+            OggFile oggFileConverter = new OggFile();
+            oggFileConverter.convertOggFile(binFile.file().getAbsolutePath(), oggFile.file().getAbsolutePath(), 2f);
+
+            binFile.delete();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        onFinish.run(oggFile);
+
     }
 
 

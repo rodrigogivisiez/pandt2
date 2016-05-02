@@ -84,6 +84,11 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             public void onUpdateRoomMatesReceived(int code, String msg, String senderId) {
                 updateReceived(code, msg, senderId);
             }
+
+            @Override
+            public void onUpdateRoomMatesReceived(byte identifier, byte[] data, String senderId) {
+
+            }
         });
 
         _services.getDatabase().monitorRoomById(_room.getId(), getClassTag(), new DatabaseListener<Room>(Room.class) {
@@ -109,20 +114,19 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             }
         });
 
-        Threadings.delay(1000, new Runnable() {
-            @Override
-            public void run() {
-                publishBroadcast(BroadcastEvent.LOAD_GAME_REQUEST, new GameCoordinator(_room.getGame().getFullLocalJarPath(),
-                        _room.getGame().getLocalAssetsPath(), _room.getGame().getBasePath(), _room.getTeams(),
-                        Positions.getWidth(), Positions.getHeight(), _screen.getGame(), _screen.getGame().getSpriteBatch(),
-                        _services.getProfile().getUserId(), _me, _services.getDatabase().getGameBelongDatabase(_room.getGame().getAbbr()),
-                        _room.getId(), _services.getSoundsPlayer(), getBroadcaster(), _services.getDownloader(), _services.getTutorials(),
-                        _services.getPreferences()));
-            }
-        });
-
         startHostUserReadyMonitor();
         startTimeoutThread();
+    }
+
+    @Override
+    public void onShown() {
+        super.onShown();
+        publishBroadcast(BroadcastEvent.LOAD_GAME_REQUEST, new GameCoordinator(_room.getGame().getFullLocalJarPath(),
+                _room.getGame().getLocalAssetsPath(), _room.getGame().getBasePath(), _room.getTeams(),
+                Positions.getWidth(), Positions.getHeight(), _screen.getGame(), _screen.getGame().getSpriteBatch(),
+                _services.getProfile().getUserId(), _me, _services.getDatabase().getGameBelongDatabase(_room.getGame().getAbbr()),
+                _room.getId(), _services.getSoundsPlayer(), getBroadcaster(), _services.getDownloader(), _services.getTutorials(),
+                _services.getPreferences(), Global.LEADERBOARD_COUNT));
     }
 
     private void initiateUserReady(){
@@ -131,7 +135,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             setUserTable(myProfile.getUserId(), false, false);
         }
         else{
-            for(RoomUser roomUser : _room.getRoomUsers().values()){
+            for(RoomUser roomUser : _room.getRoomUsersMap().values()){
                 ;Profile profile = roomUser.getProfile();
                 setUserTable(profile.getUserId(), false, false);
             }
@@ -261,7 +265,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             }
         };
 
-        for(RoomUser roomUser : _room.getRoomUsers().values()){
+        for(RoomUser roomUser : _room.getRoomUsersMap().values()){
             setUserTable(roomUser.getProfile().getUserId(), true, false);
         }
 
@@ -387,21 +391,22 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                 if(_room.getGame().getLeaderboardTypeEnum() == LeaderboardType.Accumulate){
                     for(final Team team : _room.getTeams()){
                         final Threadings.ThreadFragment threadFragment = new Threadings.ThreadFragment();
-                        _services.getDatabase().getAccLeaderBoardRecordAndStreak(_room, team.getPlayersUserIds(), new DatabaseListener<LeaderboardRecord>(LeaderboardRecord.class) {
-                            @Override
-                            public void onCallback(LeaderboardRecord record, Status st) {
-                                if(st == Status.SUCCESS){
-                                    team.setLeaderboardRecord(record);
-                                }
-                                threadFragment.setFinished(true);
-                            }
-                        });
+                        _services.getDatabase().getHighestLeaderBoardRecordAndStreak(_room.getGame(), team.getPlayersUserIds(),
+                                new DatabaseListener<LeaderboardRecord>(LeaderboardRecord.class) {
+                                    @Override
+                                    public void onCallback(LeaderboardRecord record, Status st) {
+                                        if (st == Status.SUCCESS) {
+                                            team.setLeaderboardRecord(record);
+                                        }
+                                        threadFragment.setFinished(true);
+                                    }
+                                });
                         threadsPool.addFragment(threadFragment);
                     }
                 }
 
                 //the purpose of this part is to complement with the above function, we cant use
-                //this function to get leaderboard and streak because user might not be in the leaderboard
+                //this function only to get leaderboard and streak because user might not be in the leaderboard
                 final Threadings.ThreadFragment allLeaderboardFragment = new Threadings.ThreadFragment();
                 _services.getDatabase().getLeaderBoardAndStreak(_room.getGame(), Global.LEADERBOARD_COUNT, new DatabaseListener<ArrayList<LeaderboardRecord>>(LeaderboardRecord.class) {
                     @Override
@@ -462,7 +467,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
 
     public ArrayList<Profile> getNotReadyUsers(){
         ArrayList<Profile> profiles = new ArrayList<Profile>();
-        for(RoomUser roomUser : _room.getRoomUsers().values()){
+        for(RoomUser roomUser : _room.getRoomUsersMap().values()){
             if(!_readyUserIds.contains(roomUser.getProfile().getUserId())){
                 profiles.add(roomUser.getProfile());
             }
@@ -512,22 +517,12 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     }
 
     public void setUserTable(final String userId, final boolean isReady, final boolean isFailed){
-        Threadings.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                _scene.setUser(userId, _room.getRoomUserByUserId(userId).getProfile().getDisplayName(15),
-                        isReady, isFailed, _room.getUserColorByUserId(userId));
-            }
-        });
+        _scene.setUser(userId, _room.getRoomUserByUserId(userId).getProfile().getDisplayName(15),
+                isReady, isFailed, _room.getUserColorByUserId(userId));
     }
 
     public void setRemainingTime(final int sec){
-        Threadings.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                _scene.setRemainingTime(sec);
-            }
-        });
+        _scene.setRemainingTime(sec);
     }
 
     @Override

@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
@@ -20,12 +21,14 @@ import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.services.Confirm;
 import com.mygdx.potatoandtomato.helpers.services.Texts;
+import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.scenes.boot_scene.BootLogic;
 import com.mygdx.potatoandtomato.scenes.create_game_scene.CreateGameLogic;
 import com.mygdx.potatoandtomato.scenes.game_list_scene.GameListLogic;
 import com.mygdx.potatoandtomato.scenes.game_sandbox_scene.GameSandboxLogic;
+import com.mygdx.potatoandtomato.scenes.game_sandbox_scene.GameSandboxScene;
 import com.mygdx.potatoandtomato.scenes.input_name_scene.InputNameLogic;
 import com.mygdx.potatoandtomato.scenes.invite_scene.InviteLogic;
 import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
@@ -93,16 +96,15 @@ public class PTScreen implements Screen, InputProcessor {
     //call this function to change scene
     public void toScene(final LogicAbstract logic, final SceneEnum sceneEnum, final Object... objs){
         logic.onInit();
-        Gdx.app.postRunnable(new Runnable() {
+        Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                if(_logicStacks.size() == 0){
+                if (_logicStacks.size() == 0) {
                     logic.onShow();
                     logic.onShown();
                     _stage.addActor(logic.getScene().getRoot());
                     _currentRoot = logic.getScene().getRoot();
-                }
-                else{
+                } else {
                     final LogicEnumPair logicOut = _logicStacks.peek();
                     logicOut.getLogic().onHide();
                     logic.onShow();
@@ -127,19 +129,16 @@ public class PTScreen implements Screen, InputProcessor {
 
     public void back(){
 
-
         final LogicEnumPair currentScene = _logicStacks.peek();
         if(currentScene.getLogic().getScene().getRoot().getActions().size > 0){
             return;
         }
 
-
-
-        Gdx.app.postRunnable(new Runnable() {
+        Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
 
-                if(_logicStacks.size() == 1){
+                if (_logicStacks.size() == 1) {
                     confirmQuitGame();
                     return;
                 }
@@ -147,7 +146,7 @@ public class PTScreen implements Screen, InputProcessor {
                 _logicStacks.peek().getLogic().onQuit(new OnQuitListener() {
                     @Override
                     public void onResult(Result result) {
-                        if(result == Result.YES){
+                        if (result == Result.YES) {
                             final LogicEnumPair current = _logicStacks.pop();
                             final LogicEnumPair previous = _logicStacks.peek();
                             current.getLogic().onHide();
@@ -155,13 +154,12 @@ public class PTScreen implements Screen, InputProcessor {
                             previous.getLogic().onShow();
                             sceneTransition(previous.getLogic().getScene().getRoot(), current.getLogic().getScene().getRoot(),
                                     previous.getLogic().getScene(), false, new Runnable() {
-                                @Override
-                                public void run() {
-                                    previous.getLogic().onShown();
-                                }
-                            });
-                        }
-                        else{
+                                        @Override
+                                        public void run() {
+                                            previous.getLogic().onShown();
+                                        }
+                                    });
+                        } else {
                         }
                     }
                 });
@@ -187,12 +185,7 @@ public class PTScreen implements Screen, InputProcessor {
             logicEnumPair.getLogic().onHide();
             logicEnumPair.getLogic().dispose();
         }
-        Threadings.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                toScene(SceneEnum.BOOT);
-            }
-        });
+        toScene(SceneEnum.BOOT);
     }
 
     public LogicAbstract newSceneLogic(SceneEnum sceneEnum, Object... objs){
@@ -238,37 +231,40 @@ public class PTScreen implements Screen, InputProcessor {
         return logic;
     }
 
-    private void sceneTransition(Actor _rootIn, final Actor _rootOut, SceneAbstract sceneToShow, boolean toRight, final Runnable onFinish){
-        float duration = 0.5f;
-        Threadings.renderFor(10f);
-
-
-        _rootIn.remove();
-        _rootOut.remove();
-        _rootIn.clearActions();
-        _rootOut.clearActions();
-        _rootIn.setName("root");
-        _stage.addActor(_rootIn);
-        _stage.addActor(_rootOut);
-        _currentRoot = _rootIn;
-
-        _rootIn.setPosition(toRight ? Positions.getWidth() : -Positions.getWidth(), 0);
-        _rootOut.setPosition(0, 0);
-
-        _services.getSoundsPlayer().playSoundEffect(Sounds.Name.SLIDING);
-
-        _rootIn.addAction(sequence(moveTo(0, 0, duration)));
-        _rootOut.addAction(sequence(moveBy(toRight ? -Positions.getWidth() : Positions.getWidth(), 0, duration), new Action() {
+    private void sceneTransition(final Actor _rootIn, final Actor _rootOut, final SceneAbstract sceneToShow, final boolean toRight, final Runnable onFinish){
+        Threadings.postRunnable(new Runnable() {
             @Override
-            public boolean act(float delta) {
+            public void run() {
+                Logs.show("scene changing");
+
+                float duration = 0.5f;
+
+                Threadings.renderFor(10f);
+
+                _rootIn.remove();
                 _rootOut.remove();
-                onFinish.run();
-                return false;
+                _rootIn.clearActions();
+                _rootOut.clearActions();
+                _rootIn.setName("root");
+                _stage.addActor(_rootIn);
+                _stage.addActor(_rootOut);
+                _currentRoot = _rootIn;
+
+                _rootIn.setPosition(toRight ? Positions.getWidth() : -Positions.getWidth(), 0);
+                _rootOut.setPosition(0, 0);
+
+                _services.getSoundsPlayer().playSoundEffect(Sounds.Name.SLIDING);
+
+                _rootIn.addAction(sequence(moveTo(0, 0, duration)));
+                _rootOut.addAction(sequence(moveBy(toRight ? -Positions.getWidth() : Positions.getWidth(), 0, duration), new RunnableAction() {
+                    @Override
+                    public void run() {
+                        _rootOut.remove();
+                        onFinish.run();
+                    }
+                }));
             }
-        }));
-
-
-
+        });
     }
 
     public void init(){

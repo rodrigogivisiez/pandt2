@@ -116,27 +116,30 @@ public class InviteLogic extends LogicAbstract {
             _services.getDatabase().getLeaderBoardAndStreak(_room.getGame(), Global.LEADERBOARD_COUNT, new DatabaseListener<ArrayList<LeaderboardRecord>>(LeaderboardRecord.class) {
                 @Override
                 public void onCallback(ArrayList<LeaderboardRecord> records, Status st) {
-                    if(st == Status.SUCCESS){
-                        if(records.size() == 0){
+                    if (st == Status.SUCCESS) {
+                        if (records.size() == 0) {
                             _scene.putMessageToTable(_texts.noRecords(), InviteScene.InviteType.Leaderboard);
-                        }
-                        else{
+                        } else {
                             _scene.clearTableContent(InviteScene.InviteType.Leaderboard);
                             int i = 1;
-                            for(final LeaderboardRecord record : records){
+                            ArrayList<String> processedUserIds = new ArrayList<String>();
+
+                            for (final LeaderboardRecord record : records) {
                                 for (Map.Entry<String, String> entry : record.getUserIdToNameMap().entrySet()) {
                                     String userId = entry.getKey();
-                                    String userName = entry.getValue();
-                                    Profile p = new Profile();
-                                    p.setUserId(userId);
-                                    p.setGameName(userName);
-                                    putProfileToTable(p, InviteScene.InviteType.Leaderboard, i, record.getScore(), record.getStreak());
+                                    if (!processedUserIds.contains(userId)) {
+                                        processedUserIds.add(userId);
+                                        String userName = entry.getValue();
+                                        Profile p = new Profile();
+                                        p.setUserId(userId);
+                                        p.setGameName(userName);
+                                        putProfileToTable(p, InviteScene.InviteType.Leaderboard, i, record.getScore(), record.getStreak());
+                                    }
                                 }
                                 i++;
                             }
                         }
-                    }
-                    else{
+                    } else {
                         _scene.putMessageToTable(_texts.requestFailed(), InviteScene.InviteType.Leaderboard);
                     }
                 }
@@ -180,9 +183,9 @@ public class InviteLogic extends LogicAbstract {
 
     }
 
-    private void putProfileToTable(final Profile profile, InviteScene.InviteType inviteType, Object... objs){
+    private void putProfileToTable(final Profile profile, final InviteScene.InviteType inviteType, final Object... objs){
         if(!profile.getUserId().equals(_services.getProfile().getUserId())){
-            _scene.putUserToTable(profile, inviteType, objs).addListener(new ClickListener(){
+            _scene.putUserToTable(profile, inviteType, objs).addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     super.clicked(event, x, y);

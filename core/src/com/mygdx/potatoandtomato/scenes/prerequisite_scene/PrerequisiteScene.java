@@ -12,6 +12,7 @@ import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.controls.BtnColor;
 import com.mygdx.potatoandtomato.helpers.controls.TopBar;
 import com.mygdx.potatoandtomato.models.Services;
+import com.potatoandtomato.common.utils.Threadings;
 
 /**
  * Created by SiongLeng on 15/12/2015.
@@ -54,14 +55,24 @@ public class PrerequisiteScene extends SceneAbstract {
         _root.add(_loadingTable);
     }
 
-    public void changeMessage(String text){
-        _msgLabel.setText(text);
-        _retryButton.setVisible(false);
+    public void changeMessage(final String text){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _msgLabel.setText(text);
+                _retryButton.setVisible(false);
+            }
+        });
     }
 
-    public void failedMessage(String text){
-        _msgLabel.setText(text);
-        _retryButton.setVisible(true);
+    public void failedMessage(final String text){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _msgLabel.setText(text);
+                _retryButton.setVisible(true);
+            }
+        });
     }
 
 

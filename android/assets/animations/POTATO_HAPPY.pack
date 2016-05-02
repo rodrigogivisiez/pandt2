@@ -1,75 +1,145 @@
 
 POTATO_HAPPY.png
 format: RGBA8888
-filter: Linear,Linear
+filter: Nearest,Nearest
 repeat: none
 potato_happy
   rotate: false
-  xy: 1, 1
+  xy: 0, 109
   size: 92, 107
   orig: 92, 107
   offset: 0, 0
   index: 0
 potato_happy
   rotate: false
-  xy: 95, 1
+  xy: 0, 0
   size: 92, 107
   orig: 92, 107
   offset: 0, 0
   index: 1
 potato_happy
   rotate: false
-  xy: 95, 1
+  xy: 0, 0
   size: 92, 107
   orig: 92, 107
   offset: 0, 0
-  index: 9
+  index: 19
 potato_happy
   rotate: false
-  xy: 189, 1
+  xy: 94, 109
   size: 92, 107
   orig: 92, 107
   offset: 0, 0
   index: 2
 potato_happy
   rotate: false
-  xy: 189, 1
+  xy: 94, 109
   size: 92, 107
   orig: 92, 107
   offset: 0, 0
-  index: 8
+  index: 18
 potato_happy
   rotate: false
-  xy: 283, 1
+  xy: 94, 0
   size: 92, 107
   orig: 92, 107
   offset: 0, 0
   index: 3
 potato_happy
   rotate: false
-  xy: 283, 1
+  xy: 94, 0
   size: 92, 107
   orig: 92, 107
   offset: 0, 0
-  index: 7
+  index: 17
 potato_happy
   rotate: false
-  xy: 377, 1
+  xy: 188, 109
   size: 92, 107
   orig: 92, 107
   offset: 0, 0
   index: 4
 potato_happy
   rotate: false
-  xy: 377, 1
+  xy: 188, 109
+  size: 92, 107
+  orig: 92, 107
+  offset: 0, 0
+  index: 16
+potato_happy
+  rotate: false
+  xy: 188, 0
+  size: 92, 107
+  orig: 92, 107
+  offset: 0, 0
+  index: 5
+potato_happy
+  rotate: false
+  xy: 188, 0
+  size: 92, 107
+  orig: 92, 107
+  offset: 0, 0
+  index: 15
+potato_happy
+  rotate: false
+  xy: 282, 109
   size: 92, 107
   orig: 92, 107
   offset: 0, 0
   index: 6
 potato_happy
   rotate: false
-  xy: 471, 1
+  xy: 282, 109
   size: 92, 107
   orig: 92, 107
   offset: 0, 0
-  index: 5
+  index: 14
+potato_happy
+  rotate: false
+  xy: 282, 0
+  size: 92, 107
+  orig: 92, 107
+  offset: 0, 0
+  index: 7
+potato_happy
+  rotate: false
+  xy: 282, 0
+  size: 92, 107
+  orig: 92, 107
+  offset: 0, 0
+  index: 13
+potato_happy
+  rotate: false
+  xy: 376, 109
+  size: 92, 107
+  orig: 92, 107
+  offset: 0, 0
+  index: 8
+potato_happy
+  rotate: false
+  xy: 376, 109
+  size: 92, 107
+  orig: 92, 107
+  offset: 0, 0
+  index: 12
+potato_happy
+  rotate: false
+  xy: 376, 0
+  size: 92, 107
+  orig: 92, 107
+  offset: 0, 0
+  index: 9
+potato_happy
+  rotate: false
+  xy: 376, 0
+  size: 92, 107
+  orig: 92, 107
+  offset: 0, 0
+  index: 11
+potato_happy
+  rotate: false
+  xy: 470, 109
+  size: 92, 107
+  orig: 92, 107
+  offset: 0, 0
+  index: 10

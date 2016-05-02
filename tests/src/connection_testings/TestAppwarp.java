@@ -89,9 +89,45 @@ public class TestAppwarp extends TestAbstract {
                 waiting[0] = false;
                 monitorCount[0]++;
             }
+
+            @Override
+            public void onUpdateRoomMatesReceived(byte identifier, byte[] data, String senderId) {
+
+            }
         });
 
         _gamingKit.updateRoomMates(code, finalMsg);
+
+        while(waiting[0]){
+            T_Threadings.sleep(100);
+        }
+
+        //test update peers by bytes
+        waiting[0] = true;
+        final byte[] result = new byte[2000];
+        for(int i = 0; i < result.length; i++){
+            result[i] = 99;
+        }
+        _gamingKit.addListener(getClassTag(), new UpdateRoomMatesListener() {
+            @Override
+            public void onUpdateRoomMatesReceived(int broadcastCode, String msg, String senderId) {
+
+            }
+
+            @Override
+            public void onUpdateRoomMatesReceived(byte identifier, byte[] data, String senderId) {
+                Assert.assertEquals(1, identifier);
+                for(int i = 0; i < data.length; i++){
+                    Assert.assertEquals(99, data[i]);
+                }
+                Assert.assertEquals(senderId, "random");
+                Assert.assertEquals(result.length, data.length);
+                waiting[0] = false;
+                monitorCount[0]++;
+            }
+        });
+
+        _gamingKit.updateRoomMates((byte) 1, result);
 
         while(waiting[0]){
             T_Threadings.sleep(100);
@@ -121,7 +157,7 @@ public class TestAppwarp extends TestAbstract {
 
         Threadings.sleep(1000);
 
-        Assert.assertEquals(1, monitorCount[0]);
+        Assert.assertEquals(2, monitorCount[0]);
 
     }
 

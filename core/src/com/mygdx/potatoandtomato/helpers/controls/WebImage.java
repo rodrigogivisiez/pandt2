@@ -11,6 +11,7 @@ import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.assets.Assets;
+import com.potatoandtomato.common.utils.Threadings;
 
 /**
  * Created by SiongLeng on 13/12/2015.
@@ -57,15 +58,25 @@ public class WebImage extends Table implements Disposable {
     }
 
     private void requestReceived(){
-        _image = new Image(_tempTexture);
-        _root.clear();
-        _root.add(_image).expand().fill();
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _image = new Image(_tempTexture);
+                _root.clear();
+                _root.add(_image).expand().fill();
+            }
+        });
     }
 
     private void requestFailed(){
-        _image = new Image(_assets.getTextures().get(Textures.Name.NO_IMAGE));
-        _root.clear();
-        _root.add(_image).expand().fill();
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _image = new Image(_assets.getTextures().get(Textures.Name.NO_IMAGE));
+                _root.clear();
+                _root.add(_image).expand().fill();
+            }
+        });
     }
 
 

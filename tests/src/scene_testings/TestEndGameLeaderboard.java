@@ -73,7 +73,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
             }
 
             @Override
-            public void getAccLeaderBoardRecordAndStreak(Room room, ArrayList<String> userIds, DatabaseListener<LeaderboardRecord> listener) {
+            public void getHighestLeaderBoardRecordAndStreak(Game game, ArrayList<String> teamUserIds, DatabaseListener<LeaderboardRecord> listener) {
                 listener.onCallback(leaderboardRecords.get(2), Status.SUCCESS);
             }
         };
@@ -124,6 +124,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
 
         EndGameResult endGameResult = endGameData.getEndGameResult();
         endGameResult.setWon(false);
+        endGameResult.getWinnersScoreDetails().clear();
 
         final ArrayList<LeaderboardRecord> leaderboardRecords = getSampleLeaderboardRecords();
         final boolean[] called = new boolean[1];
@@ -135,7 +136,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
             }
 
             @Override
-            public void getAccLeaderBoardRecordAndStreak(Room room, ArrayList<String> userIds, DatabaseListener<LeaderboardRecord> listener) {
+            public void getHighestLeaderBoardRecordAndStreak(Game game, ArrayList<String> teamUserIds, DatabaseListener<LeaderboardRecord> listener) {
                 listener.onCallback(leaderboardRecords.get(2), Status.SUCCESS);
             }
 
@@ -163,7 +164,6 @@ public class TestEndGameLeaderboard extends TestAbstract {
         services.setConfirm(mockConfirm);
 
         EndGameLeaderBoardLogic logic = Mockito.spy(new EndGameLeaderBoardLogic(mock(PTScreen.class), services, endGameData, endGameResult.getMyTeam()));
-
         logic.onShow();
 
         Threadings.sleep(500);
@@ -193,7 +193,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
             }
 
             @Override
-            public void getAccLeaderBoardRecordAndStreak(Room room, ArrayList<String> userIds, DatabaseListener<LeaderboardRecord> listener) {
+            public void getHighestLeaderBoardRecordAndStreak(Game game, ArrayList<String> teamUserIds,  DatabaseListener<LeaderboardRecord> listener) {
                 listener.onCallback(leaderboardRecords.get(2), Status.SUCCESS);
             }
 

@@ -64,6 +64,7 @@ public class TopBar {
         _root.padTop(_barHeight);
         _root.addActor(_topBarTable);
 
+
         _iconImg.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {

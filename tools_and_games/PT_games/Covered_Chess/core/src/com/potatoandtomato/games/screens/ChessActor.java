@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -27,6 +28,7 @@ import com.potatoandtomato.games.models.ChessModel;
 import com.potatoandtomato.games.services.SoundsWrapper;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.scaleBy;
 
 /**
  * Created by SiongLeng on 30/12/2015.
@@ -43,7 +45,7 @@ public class ChessActor extends Table {
     private Image _glowChess;
     private boolean _alreadySetAnimalChessBg;
     private SoundsWrapper _soundsWrapper;
-    private Table _statusTable;
+    private Table _statusTable, _defendSuccessTable;
     private Status _currentStatus;
     private boolean _previewing;
 
@@ -87,10 +89,18 @@ public class ChessActor extends Table {
         _statusTable.setTransform(true);
         _statusTable.setVisible(false);
 
+
+        _defendSuccessTable = new Table();
+        _defendSuccessTable.setBackground(new TextureRegionDrawable(assets.getTextures().get(Textures.Name.CHESS_SHIELD)));
+        _defendSuccessTable.setSize(65 ,65);
+        _defendSuccessTable.setPosition(-5, -5);
+        _defendSuccessTable.getColor().a = 0f;
+
         this.addActor(_glowChess);
         this.addActor(_animalChess);
         this.addActor(_previewChess);
         this.addActor(_coverChess);
+        this.addActor(_defendSuccessTable);
         this.addActor(_statusTable);
 
     }
@@ -218,6 +228,37 @@ public class ChessActor extends Table {
         _coverChess.setWidth(_coverChess.getWidth() + addedWidth);
         _coverChess.setHeight(_coverChess.getHeight() + addedHeight);
         _coverChess.setPosition(_coverChess.getX() + addedX, _coverChess.getY() + addedY);
+    }
+
+    public void defendSuccess(){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _defendSuccessTable.clearActions();
+                _defendSuccessTable.getColor().a = 1f;
+                final Image star1Image = new Image(_assets.getTextures().get(Textures.Name.STAR));
+                star1Image.setOrigin(Align.center);
+                star1Image.setPosition(-5, 30);
+                _defendSuccessTable.addActor(star1Image);
+                star1Image.addAction(sequence(scaleTo(0, 0), parallel(scaleTo(1.5f, 1.5f, 0.3f), fadeOut(0.9f))));
+
+                final Image star2Image = new Image(_assets.getTextures().get(Textures.Name.STAR));
+                star2Image.setOrigin(Align.center);
+                star2Image.setPosition(44, 50);
+                _defendSuccessTable.addActor(star2Image);
+                star2Image.addAction(sequence(scaleTo(0, 0), delay(0.5f), parallel(scaleTo(1.5f, 1.5f, 0.3f), fadeOut(0.6f)), new RunnableAction(){
+                    @Override
+                    public void run() {
+                        star1Image.remove();
+                        star2Image.remove();
+                        _defendSuccessTable.addAction(fadeOut(0.2f));
+                    }
+                }));
+
+                _soundsWrapper.playSounds(Sounds.Name.DEFEND_SUCCESS);
+
+            }
+        });
     }
 
     @Override

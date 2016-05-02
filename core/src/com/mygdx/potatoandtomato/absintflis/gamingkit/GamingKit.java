@@ -69,6 +69,12 @@ public abstract class GamingKit {
         }
     }
 
+    public void onUpdateRoomMatesReceived(byte identifier, byte[] data, String senderId){
+        for(UpdateRoomMatesListener listener : _updateRoomMatesListeners.values()){
+            listener.onUpdateRoomMatesReceived(identifier, data, senderId);
+        }
+    }
+
     public void onRoomMessageReceived(final ChatMessage msg, final String senderId){
         for(MessagingListener listener : _messagingListeners.values()) {
             listener.onRoomMessageReceived(msg, senderId);
@@ -100,6 +106,8 @@ public abstract class GamingKit {
     public abstract void leaveRoom();
 
     public abstract void updateRoomMates(int updateRoomMatesCode, String msg);
+
+    public abstract void updateRoomMates(byte identifier, byte[] bytes);
 
     public abstract void dispose();
 

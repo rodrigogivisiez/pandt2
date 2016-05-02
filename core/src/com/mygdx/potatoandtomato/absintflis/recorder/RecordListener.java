@@ -8,6 +8,8 @@ import com.potatoandtomato.common.enums.Status;
  */
 public abstract class RecordListener {
 
+    public abstract void onRecording(int volumeLevel);
+
     public abstract void onFinishedRecord(FileHandle resultFile, Status status);
 
 }

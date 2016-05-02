@@ -93,12 +93,17 @@ public class KingLogic{
                         if (newState == GameState.Playing) {
                             setPaused(false);
                         }
-                        else if(newState == GameState.Won || newState == GameState.Lose){
+                        else if(newState == GameState.Won){
                             setPaused(false);
-                            Threadings.postRunnable(new Runnable() {
+                            updateKingByGameState(newState);
+                        }
+                        else if(newState == GameState.Lose){
+                            setPaused(true);
+                            Threadings.delay(2500, new Runnable() {
                                 @Override
                                 public void run() {
                                     updateKingByGameState(newState);
+                                    setPaused(false);
                                 }
                             });
                         }

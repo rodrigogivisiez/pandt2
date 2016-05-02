@@ -11,6 +11,7 @@ import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.models.Services;
+import com.potatoandtomato.common.utils.Threadings;
 
 import java.util.HashMap;
 
@@ -55,49 +56,66 @@ public class GameSandboxScene extends SceneAbstract {
 
     }
 
-    public void setUser(String userId, String name, boolean isReady, boolean isFailed, Color color){
-        Table userTable;
-        Label userNameLabel;
-        Label statusLabel;
-        Label.LabelStyle labelNameStyle =  new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_S_SEMIBOLD), color);
-        Label.LabelStyle labelStatusStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_S_SEMIBOLD),
-                                    isFailed ? Color.RED : isReady ? Color.GREEN : Color.WHITE);
-        String status = isFailed ? _texts.failed() : isReady ? _texts.ready() : _texts.loading();
+    public void setUser(final String userId, final String name, final boolean isReady, final boolean isFailed, final Color color){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Table userTable;
+                Label userNameLabel;
+                Label statusLabel;
+                Label.LabelStyle labelNameStyle =  new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_S_SEMIBOLD), color);
+                Label.LabelStyle labelStatusStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_S_SEMIBOLD),
+                        isFailed ? Color.RED : isReady ? Color.GREEN : Color.WHITE);
+                String status = isFailed ? _texts.failed() : isReady ? _texts.ready() : _texts.loading();
 
-        if(_userTableMap.containsKey(userId)){
-            userTable = _userTableMap.get(userId);
-            userNameLabel = userTable.findActor("userNameLabel");
-            statusLabel = userTable.findActor("statusLabel");
-        }
-        else{
-            userTable = new Table();
-            userNameLabel = new Label(name, labelNameStyle);
-            userNameLabel.setName("userNameLabel");
-            statusLabel = new Label(status, labelStatusStyle);
-            statusLabel.setName("statusLabel");
-            userTable.add(userNameLabel).width(150);
-            userTable.add(statusLabel).width(100);
+                if(_userTableMap.containsKey(userId)){
+                    userTable = _userTableMap.get(userId);
+                    userNameLabel = userTable.findActor("userNameLabel");
+                    statusLabel = userTable.findActor("statusLabel");
+                }
+                else{
+                    userTable = new Table();
+                    userNameLabel = new Label(name, labelNameStyle);
+                    userNameLabel.setName("userNameLabel");
+                    statusLabel = new Label(status, labelStatusStyle);
+                    statusLabel.setName("statusLabel");
+                    userTable.add(userNameLabel).width(150);
+                    userTable.add(statusLabel).width(100);
 
-            _loadingTable.row();
-            _loadingTable.add(userTable).expandX().fillX().space(10);
+                    _loadingTable.row();
+                    _loadingTable.add(userTable).expandX().fillX().space(10);
 
-            _userTableMap.put(userId, userTable);
-        }
+                    _userTableMap.put(userId, userTable);
+                }
 
-        userNameLabel.setText(name);
-        statusLabel.setText(status);
-        statusLabel.setStyle(labelStatusStyle);
+                userNameLabel.setText(name);
+                statusLabel.setText(status);
+                statusLabel.setStyle(labelStatusStyle);
+            }
+        });
     }
 
-    public void setRemainingTime(int sec){
-        int minute = sec / 60;
+    public void setRemainingTime(final int sec){
+        final int minute = sec / 60;
         int seconds = sec % 60;
 
-        _remainingTimeLabel.setText(String.valueOf(minute) + ":" + String.format("%02d", sec));
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _remainingTimeLabel.setText(String.valueOf(minute) + ":" + String.format("%02d", sec));
+            }
+        });
+
+
     }
 
     public void clearRoot(){
-        _root.clear();
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _root.clear();
+            }
+        });
     }
 
 }

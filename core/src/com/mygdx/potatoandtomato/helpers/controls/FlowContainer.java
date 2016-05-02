@@ -7,12 +7,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.potatoandtomato.common.assets.Assets;
+import com.potatoandtomato.common.utils.Threadings;
 
 /**
  * Created by SiongLeng on 14/3/2016.
  */
 public class FlowContainer extends Table {
 
+    FlowContainer _this;
     private Actor actor;
     private float widthLimit;
     private float heightLimit;
@@ -20,6 +22,7 @@ public class FlowContainer extends Table {
     private float speed = 0;
 
     public FlowContainer(Actor actor, Assets assets) {
+        _this = this;
         this.actor = actor;
         this.assets = assets;
 
@@ -34,16 +37,21 @@ public class FlowContainer extends Table {
 
 
     public void sizeChange(){
-        this.layout();
-        if(this.getPrefWidth() > widthLimit){
-            this.clear();
-            Image image = new Image(assets.getTextures().get(Textures.Name.EMPTY));
-            this.add(image).width(widthLimit).height(heightLimit);
-            actor.setPosition(0, (heightLimit / 2) - (actor.getHeight() / 2));
-            this.addActor(actor);
-            this.setClip(true);
-            setListener();
-        }
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _this.layout();
+                if(_this.getPrefWidth() > widthLimit){
+                    _this.clear();
+                    Image image = new Image(assets.getTextures().get(Textures.Name.EMPTY));
+                    _this.add(image).width(widthLimit).height(heightLimit);
+                    actor.setPosition(0, (heightLimit / 2) - (actor.getHeight() / 2));
+                    _this.addActor(actor);
+                    _this.setClip(true);
+                    setListener();
+                }
+            }
+        });
     }
 
 

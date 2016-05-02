@@ -97,102 +97,115 @@ public class CreateGameScene extends SceneAbstract {
 
     }
 
-    public Actor populateGame(Game game){
-
+    public Actor populateGame(final Game game){
         final Table gameTable = new Table();
-        Table innerTable = new Table();
-        innerTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WOOD_BG_FAT)));
+        final Table innerTable = new Table();
+        final Actor gameIcon = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster());
 
-        Actor gameIcon = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster());
-        innerTable.add(gameIcon).size(90).right().expandX().fillX().padLeft(150).padTop(5).padBottom(10).padRight(15);
-        innerTable.getColor().a = 0;
-        innerTable.setSize(210, 110);
-        innerTable.setPosition(-200, 0);
-        gameTable.addActor(innerTable);
-        _gameList.add(gameTable).width(innerTable.getWidth()).height(innerTable.getHeight()).padLeft(-100).padBottom(7);
-        _gameList.row();
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                innerTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WOOD_BG_FAT)));
 
-        innerTable.addAction(sequence(fadeIn(0f), moveBy(200, 0, 1f, Interpolation.bounceOut)));
+                innerTable.add(gameIcon).size(90).right().expandX().fillX().padLeft(150).padTop(5).padBottom(10).padRight(15);
+                innerTable.getColor().a = 0;
+                innerTable.setSize(210, 110);
+                innerTable.setPosition(-200, 0);
+                gameTable.addActor(innerTable);
+                _gameList.add(gameTable).width(innerTable.getWidth()).height(innerTable.getHeight()).padLeft(-100).padBottom(7);
+                _gameList.row();
+
+                innerTable.addAction(sequence(fadeIn(0f), moveBy(200, 0, 1f, Interpolation.bounceOut)));
+            }
+        });
 
         return gameIcon;
 
     }
 
     public void showGameDetails(final Game game){
-
         Threadings.renderFor(2f);
-        _gameDetailsParent.addAction(sequence(moveBy( 260, 0, 1f, Interpolation.bounceOut), new Action() {
-                    @Override
-                    public boolean act(float delta) {
-                        changeGameDetails(game);
-                        return true;
-                    }
-                }
-        ));
-
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _gameDetailsParent.addAction(sequence(moveBy( 260, 0, 1f, Interpolation.bounceOut), new Action() {
+                            @Override
+                            public boolean act(float delta) {
+                                changeGameDetails(game);
+                                return true;
+                            }
+                        }
+                ));
+            }
+        });
     }
 
-    public void changeGameDetails(Game game){
-        _gameDetails.clear();
-        _gameDetails.align(Align.top);
+    public void changeGameDetails(final Game game){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _gameDetails.clear();
+                _gameDetails.align(Align.top);
 
-        Label.LabelStyle titleStyle = new Label.LabelStyle();
-        titleStyle.fontColor = Color.valueOf("573801");
-        titleStyle.font = _assets.getFonts().get(Fonts.FontId.HELVETICA_XL_CONDENSED_S_a05e00_1_1);
+                Label.LabelStyle titleStyle = new Label.LabelStyle();
+                titleStyle.fontColor = Color.valueOf("573801");
+                titleStyle.font = _assets.getFonts().get(Fonts.FontId.HELVETICA_XL_CONDENSED_S_a05e00_1_1);
 
-        Label.LabelStyle contentStyle1 = new Label.LabelStyle();
-        contentStyle1.fontColor = Color.valueOf("fff0bb");
-        contentStyle1.font = _assets.getFonts().get(Fonts.FontId.HELVETICA_M_BOLD);
+                Label.LabelStyle contentStyle1 = new Label.LabelStyle();
+                contentStyle1.fontColor = Color.valueOf("fff0bb");
+                contentStyle1.font = _assets.getFonts().get(Fonts.FontId.HELVETICA_M_BOLD);
 
-        Label.LabelStyle contentStyle2 = new Label.LabelStyle();
-        contentStyle2.fontColor = Color.valueOf("fff0bb");
-        contentStyle2.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_S_REGULAR);
+                Label.LabelStyle contentStyle2 = new Label.LabelStyle();
+                contentStyle2.fontColor = Color.valueOf("fff0bb");
+                contentStyle2.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_S_REGULAR);
 
-        WebImage gameLogo = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster());
-        Label detailsTitleLabel = new Label(_texts.details(), titleStyle);
+                WebImage gameLogo = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster());
+                Label detailsTitleLabel = new Label(_texts.details(), titleStyle);
 
-        Table detailsTable = new Table();
-        detailsTable.align(Align.left);
-        detailsTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
-        detailsTable.pad(10);
-        detailsTable.padRight(20);
-        Label nameLabel = new Label(game.getName(), contentStyle1);
-        Label playersLabel = new Label(String.format(_texts.xPlayers(), game.getMinPlayers(), game.getMaxPlayers()), contentStyle2);
-        Label versionAndUpdatedLabel = new Label(String.format(_texts.version(), game.getVersion()) +
-                                        " (" + game.getLastUpdatedAgo() + ")", contentStyle2);
-        Label gameSizeLabel = new Label(String.format(_texts.xMb(), game.getGameSizeInMb()), contentStyle2);
-        detailsTable.add(nameLabel).left();
-        detailsTable.row();
-        detailsTable.add(playersLabel).left();
-        detailsTable.row();
-        detailsTable.add(versionAndUpdatedLabel).left();
-        detailsTable.row();
-        detailsTable.add(gameSizeLabel).left();
+                Table detailsTable = new Table();
+                detailsTable.align(Align.left);
+                detailsTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
+                detailsTable.pad(10);
+                detailsTable.padRight(20);
+                Label nameLabel = new Label(game.getName(), contentStyle1);
+                Label playersLabel = new Label(String.format(_texts.xPlayers(), game.getMinPlayers(), game.getMaxPlayers()), contentStyle2);
+                Label versionAndUpdatedLabel = new Label(String.format(_texts.version(), game.getVersion()) +
+                        " (" + game.getLastUpdatedAgo() + ")", contentStyle2);
+                Label gameSizeLabel = new Label(String.format(_texts.xMb(), game.getGameSizeInMb()), contentStyle2);
+                detailsTable.add(nameLabel).left();
+                detailsTable.row();
+                detailsTable.add(playersLabel).left();
+                detailsTable.row();
+                detailsTable.add(versionAndUpdatedLabel).left();
+                detailsTable.row();
+                detailsTable.add(gameSizeLabel).left();
 
-        Label descriptionTitleLabel = new Label(_texts.description(), titleStyle);
-        Table descriptionTable = new Table();
-        descriptionTable.align(Align.left);
-        descriptionTable.pad(10);
-        descriptionTable.padRight(20);
-        descriptionTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
-        Label descriptionLabel = new Label(game.getDescription(), contentStyle2);
-        descriptionLabel.setWrap(true);
-        descriptionTable.add(descriptionLabel).fill().expand();
+                Label descriptionTitleLabel = new Label(_texts.description(), titleStyle);
+                Table descriptionTable = new Table();
+                descriptionTable.align(Align.left);
+                descriptionTable.pad(10);
+                descriptionTable.padRight(20);
+                descriptionTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
+                Label descriptionLabel = new Label(game.getDescription(), contentStyle2);
+                descriptionLabel.setWrap(true);
+                descriptionTable.add(descriptionLabel).fill().expand();
 
-        _gameDetails.padLeft(15).padBottom(25);
-        _gameDetails.add(gameLogo).size(120).padRight(20);
-        _gameDetails.row();
-        _gameDetails.add(detailsTitleLabel).left().padTop(5);
-        _gameDetails.row();
-        _gameDetails.add(detailsTable).expandX().fillX();
-        _gameDetails.row();
-        _gameDetails.add(descriptionTitleLabel).left().padTop(5);
-        _gameDetails.row();
-        _gameDetails.add(descriptionTable).expandX().fillX();
+                _gameDetails.padLeft(15).padBottom(25);
+                _gameDetails.add(gameLogo).size(120).padRight(20);
+                _gameDetails.row();
+                _gameDetails.add(detailsTitleLabel).left().padTop(5);
+                _gameDetails.row();
+                _gameDetails.add(detailsTable).expandX().fillX();
+                _gameDetails.row();
+                _gameDetails.add(descriptionTitleLabel).left().padTop(5);
+                _gameDetails.row();
+                _gameDetails.add(descriptionTable).expandX().fillX();
 
-        _gameDetails.invalidate();
-        _gameDetailsScroll.setScrollPercentY(0);
-        _createButton.setVisible(true);
+                _gameDetails.invalidate();
+                _gameDetailsScroll.setScrollPercentY(0);
+                _createButton.setVisible(true);
+            }
+        });
     }
 
 }

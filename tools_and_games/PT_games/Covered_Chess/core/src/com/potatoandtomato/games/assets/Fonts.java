@@ -30,9 +30,10 @@ public class Fonts extends FontAssets {
         MYRIAD_S_REGULAR,
         MYRIAD_M_REGULAR,
         MYRIAD_M_REGULAR_B_000000_588e54_1,             //dark green
+        MYRIAD_XXL_REGULAR,
 
         HELVETICA_XS_BlACKCONDENSEDITALIC,
-        HELVETICA_XXL_HEAVY,
+        HELVETICA_XL_HEAVY,
         HELVETICA_XXL_BlACKCONDENSEDITALIC_B_ffffff_56380a_1,
         HELVETICA_MAX_BlACKCONDENSEDITALIC_B_ffffff_f0c266_2_S_000000_1_1,         //orange border, black shadow
         HELVETICA_MAX_BlACKCONDENSEDITALIC_B_ffffff_f46767_2_S_000000_1_1,          //red border, black shadow

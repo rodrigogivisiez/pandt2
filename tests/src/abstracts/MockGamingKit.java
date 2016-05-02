@@ -54,6 +54,11 @@ public class MockGamingKit extends GamingKit {
     }
 
     @Override
+    public void updateRoomMates(byte identifier, byte[] bytes) {
+
+    }
+
+    @Override
     public void dispose() {
 
     }

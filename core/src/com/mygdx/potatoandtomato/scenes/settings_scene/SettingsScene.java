@@ -17,6 +17,7 @@ import com.mygdx.potatoandtomato.helpers.controls.BtnColor;
 import com.mygdx.potatoandtomato.helpers.controls.TopBar;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.statics.Global;
+import com.potatoandtomato.common.utils.Threadings;
 
 /**
  * Created by SiongLeng on 19/12/2015.
@@ -134,7 +135,12 @@ public class SettingsScene extends SceneAbstract {
     }
 
     public void changeSoundEnabledImage(){
-        _soundsEnabledImage.setDrawable(new TextureRegionDrawable(Global.ENABLE_SOUND ?
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _soundsEnabledImage.setDrawable(new TextureRegionDrawable(Global.ENABLE_SOUND ?
                         _assets.getTextures().get(Textures.Name.SELECT_BOX) : _assets.getTextures().get(Textures.Name.UNSELECT_BOX)));
+            }
+        });
     }
 }

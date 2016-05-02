@@ -1,75 +1,145 @@
 
 TOMATO_HAPPY.png
 format: RGBA8888
-filter: Linear,Linear
+filter: Nearest,Nearest
 repeat: none
 tomato_happy
   rotate: false
-  xy: 1, 1
+  xy: 0, 96
   size: 94, 94
   orig: 94, 94
   offset: 0, 0
   index: 0
 tomato_happy
   rotate: false
-  xy: 97, 1
+  xy: 0, 0
   size: 94, 94
   orig: 94, 94
   offset: 0, 0
   index: 1
 tomato_happy
   rotate: false
-  xy: 193, 1
+  xy: 96, 96
   size: 94, 94
   orig: 94, 94
   offset: 0, 0
   index: 2
 tomato_happy
   rotate: false
-  xy: 289, 1
+  xy: 96, 0
   size: 94, 94
   orig: 94, 94
   offset: 0, 0
   index: 3
 tomato_happy
   rotate: false
-  xy: 385, 1
+  xy: 192, 96
   size: 94, 94
   orig: 94, 94
   offset: 0, 0
   index: 4
 tomato_happy
   rotate: false
-  xy: 481, 1
+  xy: 192, 0
   size: 94, 94
   orig: 94, 94
   offset: 0, 0
   index: 5
 tomato_happy
   rotate: false
-  xy: 577, 1
+  xy: 288, 96
   size: 94, 94
   orig: 94, 94
   offset: 0, 0
   index: 6
 tomato_happy
   rotate: false
-  xy: 673, 1
+  xy: 288, 0
   size: 94, 94
   orig: 94, 94
   offset: 0, 0
   index: 7
 tomato_happy
   rotate: false
-  xy: 769, 1
+  xy: 384, 96
   size: 94, 94
   orig: 94, 94
   offset: 0, 0
   index: 8
 tomato_happy
   rotate: false
-  xy: 865, 1
+  xy: 384, 0
   size: 94, 94
   orig: 94, 94
   offset: 0, 0
   index: 9
+tomato_happy
+  rotate: false
+  xy: 480, 96
+  size: 94, 94
+  orig: 94, 94
+  offset: 0, 0
+  index: 10
+tomato_happy
+  rotate: false
+  xy: 480, 0
+  size: 94, 94
+  orig: 94, 94
+  offset: 0, 0
+  index: 11
+tomato_happy
+  rotate: false
+  xy: 576, 96
+  size: 94, 94
+  orig: 94, 94
+  offset: 0, 0
+  index: 12
+tomato_happy
+  rotate: false
+  xy: 576, 0
+  size: 94, 94
+  orig: 94, 94
+  offset: 0, 0
+  index: 13
+tomato_happy
+  rotate: false
+  xy: 672, 96
+  size: 94, 94
+  orig: 94, 94
+  offset: 0, 0
+  index: 14
+tomato_happy
+  rotate: false
+  xy: 672, 0
+  size: 94, 94
+  orig: 94, 94
+  offset: 0, 0
+  index: 15
+tomato_happy
+  rotate: false
+  xy: 768, 96
+  size: 94, 94
+  orig: 94, 94
+  offset: 0, 0
+  index: 16
+tomato_happy
+  rotate: false
+  xy: 768, 0
+  size: 94, 94
+  orig: 94, 94
+  offset: 0, 0
+  index: 17
+tomato_happy
+  rotate: false
+  xy: 864, 96
+  size: 94, 94
+  orig: 94, 94
+  offset: 0, 0
+  index: 18
+tomato_happy
+  rotate: false
+  xy: 864, 0
+  size: 94, 94
+  orig: 94, 94
+  offset: 0, 0
+  index: 19

@@ -1,6 +1,5 @@
 package com.potatoandtomato.games.screens.scores;
 
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Disposable;
@@ -14,11 +13,11 @@ import com.potatoandtomato.games.absintf.GameModelListener;
 import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.enums.CastleState;
 import com.potatoandtomato.games.enums.GameState;
+import com.potatoandtomato.games.enums.StageType;
 import com.potatoandtomato.games.helpers.Logs;
 import com.potatoandtomato.games.helpers.Positions;
 import com.potatoandtomato.games.models.GameModel;
 import com.potatoandtomato.games.models.Services;
-import com.potatoandtomato.games.models.SimpleRectangle;
 import com.potatoandtomato.games.screens.hints.HintsLogic;
 import com.potatoandtomato.games.screens.time_bar.CastleLogic;
 import com.potatoandtomato.games.screens.time_bar.KnightLogic;
@@ -76,10 +75,9 @@ public class ScoresLogic implements Disposable {
         Actor hintsActor = hintsLogic.getHintsActor();
         services.getSoundsWrapper().playSounds(Sounds.Name.WIN);
 
-        addScoreAndPopScoreOnActor(hintsActor, hintsLogic.getCurrentHintsLeft() * PER_HINT_LEFT_SCORE, new Runnable() {
+        final Runnable afterCalculateHintRunnable = new Runnable() {
             @Override
             public void run() {
-
                 Threadings.delay(600, new Runnable() {
                     @Override
                     public void run() {
@@ -111,7 +109,9 @@ public class ScoresLogic implements Disposable {
                                             @Override
                                             public void run() {
 
-                                                services.getSoundsWrapper().playSoundLoop(Sounds.Name.ADDING_SCORE);
+                                                if(remainingDistance > 0){
+                                                    services.getSoundsWrapper().playSoundLoop(Sounds.Name.ADDING_SCORE);
+                                                }
 
                                                 int totalSleepTime = 0;
                                                 int sleepTime = 8;
@@ -146,7 +146,7 @@ public class ScoresLogic implements Disposable {
                                                     Threadings.sleep(2000 - totalSleepTime);
                                                 }
 
-                                                gameModel.setGameState(GameState.Ended);
+                                                gameModel.setGameState(GameState.WaitingForNextStage);
                                             }
                                         });
                                     }
@@ -156,16 +156,45 @@ public class ScoresLogic implements Disposable {
                     }
                 });
             }
-        });
+        };
 
+
+        if(gameModel.getStageType() == StageType.Bonus){
+            services.getSoundsWrapper().stopMusic(Sounds.Name.BONUS_MUSIC);
+            popStringOnActor(hintsActor, services.getTexts().replenishHints(), new Runnable() {
+                @Override
+                public void run() {
+                    afterCalculateHintRunnable.run();
+                }
+            });
+        }
+        else{
+            addScoreAndPopScoreOnActor(hintsActor, hintsLogic.getCurrentHintsLeft() * PER_HINT_LEFT_SCORE, new Runnable() {
+                @Override
+                public void run() {
+                    afterCalculateHintRunnable.run();
+                }
+            });
+        }
     }
 
     public void addScoreAndPopScoreOnActor(Actor actor, final int score, final Runnable onFinish){
         Vector2 actorPosition = Positions.actorLocalToStageCoord(actor);
-        scoresActor.popScoreOnPosition(actorPosition.x + actor.getWidth() / 2, actorPosition.y + actor.getHeight() / 2, score, new Runnable() {
+        scoresActor.popScoreOnPosition(actorPosition.x + actor.getWidth() / 2, actorPosition.y + actor.getHeight() / 2,
+                String.valueOf(score), false, new Runnable() {
             @Override
             public void run() {
                 addScoreWithoutAnimation(score);
+                if(onFinish != null) onFinish.run();
+            }
+        });
+    }
+
+    public void popStringOnActor(Actor actor, String msg, final Runnable onFinish){
+        Vector2 actorPosition = Positions.actorLocalToStageCoord(actor);
+        scoresActor.popScoreOnPosition(actorPosition.x + actor.getWidth() / 2, actorPosition.y + actor.getHeight() / 2, msg, true, new Runnable() {
+            @Override
+            public void run() {
                 if(onFinish != null) onFinish.run();
             }
         });

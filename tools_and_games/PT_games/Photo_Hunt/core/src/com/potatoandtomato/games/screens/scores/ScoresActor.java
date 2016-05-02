@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.potatoandtomato.common.GameCoordinator;
+import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.assets.Fonts;
 import com.potatoandtomato.games.assets.MyAssets;
@@ -28,6 +29,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
  */
 public class ScoresActor extends Table {
 
+    private Table _this;
     private Services services;
     private MyAssets assets;
     private GameCoordinator gameCoordinator;
@@ -38,6 +40,7 @@ public class ScoresActor extends Table {
     private Stage stage;
 
     public ScoresActor(Services services, GameCoordinator gameCoordinator) {
+        _this = this;
         this.services = services;
         this.assets = services.getAssets();
         this.gameCoordinator = gameCoordinator;
@@ -95,68 +98,91 @@ public class ScoresActor extends Table {
         });
     }
 
-    public void popRulerScoreOnPosition(float x, float y, int width){
-        if(popRulerActor == null){
-            popRulerActor = new Table();
-            popRulerActor.setBackground(new NinePatchDrawable(assets.getPatches().get(Patches.Name.RED_ARROW)));
-
-            Label.LabelStyle meterLabelStyle = new Label.LabelStyle(assets.getFonts().get(Fonts.FontId.MYRIAD_XS_REGULAR_B_ffffff_000000_1),
-                        Color.valueOf("fc0000"));
-            Label meterLabel = new Label("", meterLabelStyle);
-            meterLabel.setName("meterLabel");
-            meterLabel.setAlignment(Align.center);
-            popRulerActor.add(meterLabel).padBottom(-20).expandX().fillX();
-
-            popRulerActor.setPosition(x, y);
-
-            if(stage == null) stage = this.getStage();
-            stage.addActor(popRulerActor);
-        }
-
-        popRulerActor.setSize(width, 10);
-        ((Label) popRulerActor.findActor("meterLabel")).setText(width + "m");
-    }
-
-    public void popScoreOnPosition(float x, float y, int score, final Runnable onFinish){
-        Label.LabelStyle scoreStyle = new Label.LabelStyle(
-                                    assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR_B_ffffff_000000_2), Color.WHITE);
-
-
-        Label scoreLabel = new Label("+" + String.valueOf(score), scoreStyle);
-
-        Container container = new Container();
-        container.setTransform(true);
-        container.setPosition(x, y);
-        container.setOrigin(Align.center);
-        container.setActor(scoreLabel);
-
-        if(score == 0){
-            container.getColor().a = 0f;
-        }
-
-        container.setScale(0, 0);
-
-        if(stage == null) stage = this.getStage();
-        stage.addActor(container);
-        container.addAction(sequence(parallel(Actions.rotateBy(720, 0.6f), Actions.scaleTo(1, 1, 0.8f, Interpolation.bounceOut)), new RunnableAction(){
+    public void popRulerScoreOnPosition(final float x, final float y, final int width){
+        Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                if(onFinish != null) onFinish.run();
-            }
-        }));
+                if(popRulerActor == null){
+                    popRulerActor = new Table();
+                    popRulerActor.setBackground(new NinePatchDrawable(assets.getPatches().get(Patches.Name.RED_ARROW)));
 
-        poppedActorsArray.add(container);
+                    Label.LabelStyle meterLabelStyle = new Label.LabelStyle(assets.getFonts().get(Fonts.FontId.MYRIAD_XS_REGULAR_B_ffffff_000000_1),
+                            Color.valueOf("fc0000"));
+                    Label meterLabel = new Label("", meterLabelStyle);
+                    meterLabel.setName("meterLabel");
+                    meterLabel.setAlignment(Align.center);
+                    popRulerActor.add(meterLabel).padBottom(-20).expandX().fillX();
+
+                    popRulerActor.setPosition(x, y);
+
+                    if(stage == null) stage = _this.getStage();
+                    stage.addActor(popRulerActor);
+                }
+
+                popRulerActor.setSize(width, 10);
+                ((Label) popRulerActor.findActor("meterLabel")).setText(width + "m");
+            }
+        });
+
+    }
+
+    public void popScoreOnPosition(final float x, final float y, final String msg, final boolean isSpecial, final Runnable onFinish){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Label.LabelStyle scoreStyle = new Label.LabelStyle(
+                        assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR_B_ffffff_000000_2),
+                        isSpecial ? Color.YELLOW : Color.WHITE);
+
+                boolean isZero = false;
+
+                String finalMsg = msg;
+                if(Strings.isNumeric(finalMsg)){
+                    if(finalMsg.equals("0")) isZero = true;
+                    finalMsg = "+" + finalMsg;
+                }
+
+                Label scoreLabel = new Label(finalMsg, scoreStyle);
+
+                Container container = new Container();
+                container.setTransform(true);
+                container.setPosition(x, y);
+                container.setOrigin(Align.center);
+                container.setActor(scoreLabel);
+
+                if(isZero){
+                    container.getColor().a = 0f;
+                }
+
+                container.setScale(0, 0);
+
+                if(stage == null) stage = _this.getStage();
+                stage.addActor(container);
+                container.addAction(sequence(parallel(Actions.rotateBy(720, 0.6f), Actions.scaleTo(1, 1, 0.8f, Interpolation.bounceOut)), new RunnableAction(){
+                    @Override
+                    public void run() {
+                        if(onFinish != null) onFinish.run();
+                    }
+                }));
+
+                poppedActorsArray.add(container);
+            }
+        });
     }
 
     public void clearAllPopScores(){
-        for(Actor actor : poppedActorsArray){
-            actor.remove();
-        }
-        poppedActorsArray.clear();
-        if(popRulerActor != null){
-            popRulerActor.remove();
-            popRulerActor = null;
-        }
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                for(Actor actor : poppedActorsArray){
+                    actor.remove();
+                }
+                poppedActorsArray.clear();
+                if(popRulerActor != null){
+                    popRulerActor.remove();
+                    popRulerActor = null;
+                }
+            }
+        });
     }
-
 }

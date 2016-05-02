@@ -28,8 +28,6 @@ public class SoundsWrapper implements Disposable {
         _themeSuddenDMusic = _assets.getSounds().getMusic(Sounds.Name.THEME_SUDDEN_D_MUSIC);
         _themeSuddenDMusic.setLooping(true);
 
-        _coordinator.getSoundsPlayer().addMusic(_themeMusic);
-        _coordinator.getSoundsPlayer().addMusic(_themeSuddenDMusic);
     }
 
     public void playTheme(){
@@ -58,7 +56,6 @@ public class SoundsWrapper implements Disposable {
 
     @Override
     public void dispose() {
-        _coordinator.getSoundsPlayer().disposeMusic(_themeMusic);
-        _coordinator.getSoundsPlayer().disposeMusic(_themeSuddenDMusic);
+        _coordinator.getSoundsPlayer().disposeAllExternalSounds();
     }
 }

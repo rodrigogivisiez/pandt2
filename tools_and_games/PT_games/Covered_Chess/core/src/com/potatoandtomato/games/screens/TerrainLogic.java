@@ -126,6 +126,7 @@ public class TerrainLogic {
                                 @Override
                                 public void run() {
                                     getTerrainActor().hideBattle();
+                                    if(!isFromWon) getChessLogic().getChessActor().defendSuccess();
                                     actionListener.changeTurnReady(ActionType.MOVE, winnerChessType, loserChessType, random);
                                     actionListener.onChessKilled(loserChessType);
                                 }

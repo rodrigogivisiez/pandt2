@@ -91,7 +91,7 @@ public class MockModel {
         scoreDetails.add(new ScoreDetails(1000, "5 win", true, true));
 
         ArrayList<Player> myTeams = new ArrayList<Player>();
-        myTeams.add(new Player("abc", "1", true, true, Color.BLACK));
+        myTeams.add(new Player("abc", "1", true, true, 0));
 
         Team team = new Team();
         team.setPlayers(myTeams);

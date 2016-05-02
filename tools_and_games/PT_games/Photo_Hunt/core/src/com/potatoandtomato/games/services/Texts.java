@@ -16,4 +16,7 @@ public class Texts {
     public String gameContinueFailed(){ return "Game continue failed as all your partners have disconnected."; }
 
     public String slowMessage() { return "Slow connection detected, please wait for next stage.";}
+    public String replenishHints(){ return "Replenish"; }
+
+
 }

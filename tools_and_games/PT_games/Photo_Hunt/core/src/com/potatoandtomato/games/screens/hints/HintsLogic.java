@@ -81,7 +81,6 @@ public class HintsLogic {
                     if(notYetHandledArea != null){
                         gameModel.minusHintLeft();
                         hintsLogicListener.onHintClicked(notYetHandledArea, gameModel.getHintsLeft());
-
                     }
                 }
 
@@ -92,7 +91,7 @@ public class HintsLogic {
 
             @Override
             public void onGameStateChanged(GameState newState) {
-                if(newState == GameState.Won && gameModel.getStageType() == StageType.Bonus){
+                if(newState == GameState.WaitingForNextStage && gameModel.getStageType() == StageType.Bonus){
                     reviveAllHints();
                 }
             }
@@ -115,7 +114,7 @@ public class HintsLogic {
             return 0;
         }
         else{
-            return currentHintsLeft;
+            return gameModel.getHintsLeft();
         }
     }
 

@@ -87,6 +87,11 @@ public class RoomLogic extends LogicAbstract {
             public void onUpdateRoomMatesReceived(int code, String msg, String senderId) {
                 receivedUpdateRoomMates(code, msg, senderId);
             }
+
+            @Override
+            public void onUpdateRoomMatesReceived(byte identifier, byte[] data, String senderId) {
+
+            }
         });
 
         if(!_isContinue){
@@ -189,6 +194,9 @@ public class RoomLogic extends LogicAbstract {
                     public void onCallback(Room roomObj, Status st) {
                         if(st == Status.SUCCESS){
                             if(_countDownThread != null) _countDownThread.kill();
+
+                            roomObj.setRoomUsersIndexIfNoIndex(_room);
+
                             ArrayList<RoomUser> justJoinedUsers = _room.getJustJoinedUsers(roomObj);
                             ArrayList<RoomUser> justLeftUsers = _room.getJustLeftUsers(roomObj);
 
@@ -213,7 +221,7 @@ public class RoomLogic extends LogicAbstract {
                             checkHostInRoom();
                             _userBadgeHelper.usersJoinedRoom(justJoinedUsers);
                             _userBadgeHelper.usersLeftRoom(justLeftUsers);
-                            _userBadgeHelper.addRoomUsersIfNotExist(_room.getRoomUsers().values());
+                            _userBadgeHelper.addRoomUsersIfNotExist(_room.getRoomUsersMap().values());
 
                             if(justJoinedUsers.size() > 0 || justLeftUsers.size() > 0){
                                 if(!_isContinue) selfUpdateRoomStatePush();
@@ -257,7 +265,7 @@ public class RoomLogic extends LogicAbstract {
         else{
             _room.addRoomUser(_services.getProfile(), true);
         }
-        _userBadgeHelper.usersJoinedRoom(_room.getRoomUsers().values());
+        _userBadgeHelper.usersJoinedRoom(_room.getRoomUsersMap().values());
         chatAddUserJustJoinedRoom(_services.getProfile());
         selfUpdateRoomStatePush();
 
@@ -362,11 +370,9 @@ public class RoomLogic extends LogicAbstract {
     }
 
     public void refreshRoomDesign(){
-        Gdx.app.postRunnable(new Runnable() {
+        Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                _scene.updateRoom(_room);
-
                 int i = 0;
                 for(final Table t : _scene.getSlotsTable()){
                     final int finalI = i;
@@ -423,8 +429,8 @@ public class RoomLogic extends LogicAbstract {
                                                         jsonObj.put("name", _room.getProfileByUserId(userId).getDisplayName(0));
                                                         sendUpdateRoomMates(UpdateRoomMatesCode.KICK_USER, jsonObj.toString());
                                                     }
-                                            }
-                                    });
+                                                }
+                                            });
                                 }
                             });
                         }
@@ -432,6 +438,9 @@ public class RoomLogic extends LogicAbstract {
                 }
             }
         });
+
+        _scene.updateRoom(_room);
+
 
     }
 
@@ -469,7 +478,6 @@ public class RoomLogic extends LogicAbstract {
 
         if(code == UpdateRoomMatesCode.JOIN_ROOM){
             if(isHost()){
-
                 _services.getDatabase().getProfileByUserId(senderId, new DatabaseListener<Profile>(Profile.class) {
                     @Override
                     public void onCallback(Profile obj, Status st) {
@@ -486,7 +494,7 @@ public class RoomLogic extends LogicAbstract {
         else if(code == UpdateRoomMatesCode.LEFT_ROOM){
             if(isHost()){
                 Room roomClone = _room.clone();
-                roomClone.getRoomUsers().remove(senderId);
+                roomClone.getRoomUsersMap().remove(senderId);
                 hostSaveRoom(roomClone, true, null);
             }
         }
@@ -503,7 +511,7 @@ public class RoomLogic extends LogicAbstract {
             String userId = jsonObj.getString("userId");
             String name = jsonObj.getString("name");
             if(isHost()){
-                _room.getRoomUsers().remove(userId);
+                _room.getRoomUsersMap().remove(userId);
                 hostSaveRoom(true, null);
             }
             _services.getChat().add(new ChatMessage(String.format(_texts.userKicked(), name), ChatMessage.FromType.SYSTEM, null), false);
@@ -542,20 +550,10 @@ public class RoomLogic extends LogicAbstract {
                 Map.Entry<String, String> entry = _noGameClientUsers.entrySet().iterator().next();  //first item
                 stopGameStartCountDown(_room.getProfileByUserId(entry.getKey()));
             }
-            Gdx.app.postRunnable(new Runnable() {
-                @Override
-                public void run() {
-                    _scene.updateDownloadPercentage(senderId, Integer.valueOf(msg));
-                }
-            });
+            _scene.updateDownloadPercentage(senderId, Integer.valueOf(msg));
         }
         else if(code == UpdateRoomMatesCode.START_GAME){
-           Threadings.postRunnable(new Runnable() {
-               @Override
-               public void run() {
-                   startGameCountDown();
-               }
-           });
+            startGameCountDown();
         }
         else if(code == UpdateRoomMatesCode.UPDATE_USER_READY){
             if(isHost()){           //only host can update db table
@@ -611,7 +609,7 @@ public class RoomLogic extends LogicAbstract {
 
 
         boolean found = false;
-        for(RoomUser roomUser : _room.getRoomUsers().values()){
+        for(RoomUser roomUser : _room.getRoomUsersMap().values()){
             if(roomUser.getProfile().equals(_room.getHost())){
                 found = true;
                 break;
@@ -660,7 +658,7 @@ public class RoomLogic extends LogicAbstract {
             push.setMessage(String.format(_texts.PUSHRoomUpdateContent(), _room.getRoomUsersCount(), _room.getGame().getMaxPlayers()));
             push.setSilentNotification(false);
             push.setSilentIfInGame(true);
-            for(RoomUser roomUser : _room.getRoomUsers().values()){
+            for(RoomUser roomUser : _room.getRoomUsersMap().values()){
                 _services.getGcmSender().send(roomUser.getProfile(), push);
             }
         }
@@ -737,10 +735,14 @@ public class RoomLogic extends LogicAbstract {
                 int i = 3;
                 _services.getChat().show();
                 _services.getChat().expanded();
+
+
                 while(i > 0){
                     _services.getSoundsPlayer().playSoundEffect(Sounds.Name.COUNT_DOWN);
                     _services.getChat().add(new ChatMessage(String.format(_texts.gameStartingIn(), i), ChatMessage.FromType.IMPORTANT, null), false);
+
                     Threadings.sleep(1500);
+
                     i--;
                     if(_countDownThread == null || _countDownThread.isKilled()){
                         _countDownThread = null;
@@ -755,6 +757,7 @@ public class RoomLogic extends LogicAbstract {
                 }
             }
         });
+
     }
 
     public void stopGameStartCountDown(Profile profile){
@@ -782,15 +785,9 @@ public class RoomLogic extends LogicAbstract {
         _services.getDatabase().savePlayedHistory(_services.getProfile(), _room, null);
         _services.getChat().add(new ChatMessage(_texts.gameStarted(), ChatMessage.FromType.SYSTEM, null), false);
 
-
-        Threadings.delay(1000, new Runnable() {
-            @Override
-            public void run() {
-                _services.getChat().hide();
-                _screen.toScene(SceneEnum.GAME_SANDBOX, _room, false);
-                _scene.getTeamsRoot().setTouchable(Touchable.enabled);
-            }
-        });
+        _services.getChat().hide();
+        _screen.toScene(SceneEnum.GAME_SANDBOX, _room, false);
+        _scene.getTeamsRoot().setTouchable(Touchable.enabled);
     }
 
     public void continueGame() {
@@ -798,7 +795,14 @@ public class RoomLogic extends LogicAbstract {
 
         selfUpdateRoomStatePush();
         _services.getChat().hide();
-        _screen.toScene(SceneEnum.GAME_SANDBOX, _room, true);
+
+        Threadings.delay(500, new Runnable() {
+            @Override
+            public void run() {
+                _screen.toScene(SceneEnum.GAME_SANDBOX, _room, true);
+            }
+        });
+
         _gameStarted = true;
         _isContinue = false;
     }
@@ -826,7 +830,7 @@ public class RoomLogic extends LogicAbstract {
     public void leaveRoom(){
         if(isHost()){
             _room.setOpen(false);
-            _room.getRoomUsers().remove(_services.getProfile().getUserId());
+            _room.getRoomUsersMap().remove(_services.getProfile().getUserId());
         }
 
         sendUpdateRoomMates(UpdateRoomMatesCode.LEFT_ROOM, "");

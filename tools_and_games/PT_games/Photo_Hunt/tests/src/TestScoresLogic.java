@@ -115,7 +115,7 @@ public class TestScoresLogic extends TestAbstract {
         gameModel.addGameModelListener(new GameModelListener() {
             @Override
             public void onGameStateChanged(GameState newState) {
-                if(newState == GameState.Ended){
+                if(newState == GameState.WaitingForNextStage){
                     Threadings.oneTaskFinish();
                 }
             }

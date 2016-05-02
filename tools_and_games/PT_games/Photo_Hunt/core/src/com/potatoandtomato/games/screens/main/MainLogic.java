@@ -29,6 +29,7 @@ import com.potatoandtomato.games.screens.user_counters.UserCountersLogic;
 import com.potatoandtomato.games.statics.Global;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by SiongLeng on 5/4/2016.
@@ -113,9 +114,6 @@ public class MainLogic extends GameLogic {
                     if(_gameModel.isNextStageBonus()){
                         stageType = StageType.Bonus;
                         bonusType = BonusType.random();
-
-                        bonusType = BonusType.LIGHTING;
-
                     }
                     String extra = StageImagesLogic.generateBonusTypeExtra(bonusType, getCoordinator().getPlayersByConnectionState(true));
 
@@ -130,14 +128,17 @@ public class MainLogic extends GameLogic {
     }
 
     public void goToNewStage(String id, final StageType stageType, final BonusType bonusType, final String extra){
+
+        if(_gameModel.getGameState() == GameState.Playing){
+            return;
+        }
+
         _currentDecisionMaker = getCoordinator().getDecisionMaker();
         _screen.clearAnnouncement();
         _gameModel.setImageDetails(null);
         _gameModel.clearHandledAreas();
         _gameModel.setStageType(stageType);
         _gameModel.addStageNumber();
-
-
 
         if(stageType == StageType.Normal){
             invalidateReviewLogic();
@@ -150,7 +151,8 @@ public class MainLogic extends GameLogic {
         }
         else if(stageType == StageType.Bonus){
             _gameModel.setGameState(GameState.Close);
-            _screen.showAnnouncement(new BonusAnnouncement(_services, bonusType));
+            Logs.show(extra);
+            _screen.showAnnouncement(new BonusAnnouncement(_services, bonusType, extra));
             Threadings.delay(Global.ClOSE_DOOR_BUFFER_TIME, new Runnable() {
                 @Override
                 public void run() {
@@ -274,14 +276,6 @@ public class MainLogic extends GameLogic {
         }
     }
 
-    private void gameLost(){
-        if(_gameModel.getStageType() == StageType.Normal){
-            gameOver();
-        }
-        else if(_gameModel.getStageType() == StageType.Bonus){
-            sendGoToNextStageIfIsDecisionMaker(-1);
-        }
-    }
 
     private void gameOver(){
         _screen.refreshGameState(GameState.Close);      //dont change lose state for continue player
@@ -365,7 +359,7 @@ public class MainLogic extends GameLogic {
 
             @Override
             public void onGameStateChanged(GameState newState) {
-                if(newState == GameState.Ended){
+                if(newState == GameState.WaitingForNextStage){
                     if(!Global.REVIEW_MODE){
                         Threadings.delay(1000, new Runnable() {
                             @Override
@@ -376,12 +370,22 @@ public class MainLogic extends GameLogic {
                     }
                 }
                 else if(newState == GameState.Lose){
-                    Threadings.postRunnable(new Runnable() {
-                        @Override
-                        public void run() {
-                            gameLost();
-                        }
-                    });
+                    if(_gameModel.getStageType() == StageType.Normal){
+                        Threadings.delay(5000, new Runnable() {
+                            @Override
+                            public void run() {
+                                gameOver();
+                            }
+                        });
+                    }
+                    else if(_gameModel.getStageType() == StageType.Bonus){
+                        Threadings.delay(5000, new Runnable() {
+                            @Override
+                            public void run() {
+                                sendGoToNextStageIfIsDecisionMaker(-1);
+                            }
+                        });
+                    }
                 }
                 _screen.refreshGameState(newState);
             }

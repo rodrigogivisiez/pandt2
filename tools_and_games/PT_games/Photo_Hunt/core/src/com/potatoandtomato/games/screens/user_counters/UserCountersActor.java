@@ -17,6 +17,7 @@ import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.assets.Fonts;
 import com.potatoandtomato.games.assets.MyAssets;
 import com.potatoandtomato.games.controls.DummyButton;
+import com.potatoandtomato.games.helpers.Logs;
 import com.potatoandtomato.games.models.Services;
 
 import java.util.ArrayList;

@@ -5,6 +5,6 @@ package com.potatoandtomato.games.enums;
  */
 public enum KnightState {
 
-    Walk, Run, Attack
+    Walk, Run, Attack, Won
 
 }

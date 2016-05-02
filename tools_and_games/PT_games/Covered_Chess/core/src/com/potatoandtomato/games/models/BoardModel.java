@@ -59,11 +59,11 @@ public class BoardModel extends Model {
     }
 
     public boolean isCrackStarting(){
-        return getAccTurnCount() >= 75;
+        return getAccTurnCount() >= 85;
     }
 
     public boolean isCrackHappened(){
-        return getAccTurnCount() >= 85;
+        return getAccTurnCount() >= 100;
     }
 
     public ChessColor getCurrentTurnChessColor(){

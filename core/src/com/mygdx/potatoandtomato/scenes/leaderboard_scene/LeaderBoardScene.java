@@ -15,6 +15,8 @@ import com.mygdx.potatoandtomato.assets.Animations;
 import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.assets.Textures;
+import com.mygdx.potatoandtomato.enums.BadgeType;
+import com.mygdx.potatoandtomato.helpers.controls.Badge;
 import com.potatoandtomato.common.controls.Animator;
 import com.mygdx.potatoandtomato.helpers.controls.FlowContainer;
 import com.mygdx.potatoandtomato.helpers.controls.TopBar;
@@ -42,14 +44,11 @@ public class LeaderBoardScene extends SceneAbstract {
     private Table _iconTable, _ranksTable, _animatingRecordTable, _mascotsTable, _loadingTable;
     private float _recordHeight, _animatingTableY;
     private Game _currentShowingGame;
-
-    public Label getTitleLabel() {
-        return _titleLabel;
-    }
+    private Button _nextButton, _prevButton;
+    private Table _nextPrevContainer;
 
     public LeaderBoardScene(Services services, PTScreen screen) {
         super(services, screen);
-
         _leaderboardScrolls = new HashMap<String, ScrollPane>();
     }
 
@@ -64,6 +63,26 @@ public class LeaderBoardScene extends SceneAbstract {
         Table leaderBoardRoot = new Table();
         leaderBoardRoot.align(Align.top);
         leaderBoardRoot.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.LEADER_BOARD_BG)));
+
+        ////////////////////////////////
+        //Next and prev button
+        ////////////////////////////////
+        Button.ButtonStyle nextButtonStyle = new Button.ButtonStyle();
+        nextButtonStyle.up = new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.NEXT_LEADERBOARD_NORMAL));
+        nextButtonStyle.down = new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.NEXT_LEADERBOARD_CLICKED));
+        _nextButton = new Button(nextButtonStyle);
+
+        Button.ButtonStyle prevButtonStyle = new Button.ButtonStyle();
+        prevButtonStyle.up = new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.PREV_LEADERBOARD_NORMAL));
+        prevButtonStyle.down = new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.PREV_LEADERBOARD_CLICKED));
+        _prevButton = new Button(prevButtonStyle);
+
+        _nextPrevContainer = new Table();
+        _nextPrevContainer.setSize(100, 100);
+        _nextPrevContainer.setVisible(false);
+        _nextPrevContainer.setPosition(50, Positions.getHeight() - 160);
+        _nextPrevContainer.add(_prevButton).padRight(10);
+        _nextPrevContainer.add(_nextButton);
 
         /////////////////////////////////
         //mascots
@@ -110,70 +129,95 @@ public class LeaderBoardScene extends SceneAbstract {
         ///////////////////////////////
         //population of root
         //////////////////////////////
+        _root.addActor(_nextPrevContainer);
+
         _root.add(mascotContainer).expandX().fillX().padTop(62);
         _root.row();
         _root.add(leaderBoardRoot).expand().fill();
         _root.row();
     }
 
-    public void showGameLeaderboard(Game game){
-        _currentShowingGame = game;
-        _iconTable.clear();
+    public void showGameLeaderboard(final Game game){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _currentShowingGame = game;
+                _iconTable.clear();
 
-        WebImage webImage = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster());
-        _iconTable.add(webImage).expand().fill();
-        _iconTable.addAction(sequence(fadeOut(0f), fadeIn(0.2f)));
+                WebImage webImage = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster());
+                _iconTable.add(webImage).expand().fill();
+                _iconTable.addAction(sequence(fadeOut(0f), fadeIn(0.2f)));
 
-        _titleLabel.setText(game.getName());
-        _titleLabel.addAction(sequence(fadeOut(0f), fadeIn(0.2f)));
+                _titleLabel.setText(game.getName());
+                _titleLabel.addAction(sequence(fadeOut(0f), fadeIn(0.2f)));
 
-        _ranksTable.clear();
-        _ranksTable.addAction(sequence(fadeOut(0f), fadeIn(0.2f)));
+                _ranksTable.clear();
+                _ranksTable.addAction(sequence(fadeOut(0f), fadeIn(0.2f)));
 
-        boolean found = _leaderboardScrolls.containsKey(game.getAbbr());
-        if(!found){
-            Table gameRanksTable = new Table();
-            gameRanksTable.padLeft(10).padRight(10).padBottom(50);
-            gameRanksTable.setName("ranksTable");
-            ScrollPane scroll = new ScrollPane(gameRanksTable);
-            scroll.setScrollingDisabled(true, false);
-            scroll.getColor().a = 0f;
+                boolean found = _leaderboardScrolls.containsKey(game.getAbbr());
+                if(!found){
+                    Table gameRanksTable = new Table();
+                    gameRanksTable.padLeft(10).padRight(10).padBottom(50);
+                    gameRanksTable.setName("ranksTable");
+                    ScrollPane scroll = new ScrollPane(gameRanksTable);
+                    scroll.setScrollingDisabled(true, false);
+                    scroll.getColor().a = 0f;
 
-            _leaderboardScrolls.put(game.getAbbr(), scroll);
-        }
+                    _leaderboardScrolls.put(game.getAbbr(), scroll);
+                }
 
-        _ranksTable.add(_leaderboardScrolls.get(game.getAbbr())).expand().fill();
+                _ranksTable.add(_leaderboardScrolls.get(game.getAbbr())).expand().fill();
 
-        if(!found){
-            Label loadingLabel = new Label(_texts.loading(), new Label.LabelStyle(
-                    _assets.getFonts().get(Fonts.FontId.MYRIAD_S_ITALIC), Color.BLACK));
-            _loadingTable = new Table();
-            _loadingTable.add(loadingLabel);
-            _loadingTable.setFillParent(true);
-            _ranksTable.addActor(_loadingTable);
-        }
-
+                if(!found){
+                    Label loadingLabel = new Label(_texts.loading(), new Label.LabelStyle(
+                            _assets.getFonts().get(Fonts.FontId.MYRIAD_S_ITALIC), Color.BLACK));
+                    _loadingTable = new Table();
+                    _loadingTable.add(loadingLabel);
+                    _loadingTable.setFillParent(true);
+                    _ranksTable.addActor(_loadingTable);
+                }
+            }
+        });
     }
 
-    public void leaderboardDataLoaded(final Game game, ArrayList<LeaderboardRecord> records){
-        final ScrollPane scrollPane = _leaderboardScrolls.get(game.getAbbr());
-        final Table ranksTable = scrollPane.findActor("ranksTable");
-        ranksTable.padBottom(20);
-        ranksTable.align(Align.top);
-        for(int i = 0; i < records.size(); i++){
-            ////////////////////////////////
-            //insert to ranks table
-            /////////////////////////////////
-            Table recordTable = getRecordTable(game, records.get(i), i);
-            ranksTable.add(recordTable).expandX().fillX();
-            ranksTable.row();
-        }
+    public void showNextPrevContainer(){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _nextPrevContainer.setVisible(true);
+            }
+        });
     }
 
-    public void changeRecordTableToUnknownRank(Game game, int rank){
-        Table rankTable = getRankTable(game);
-        Table recordTable = (Table) rankTable.getCells().get(rank).getActor();
-        ((Label) recordTable.findActor("countLabel")).setText("-");
+    public void leaderboardDataLoaded(final Game game, final ArrayList<LeaderboardRecord> records){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                final ScrollPane scrollPane = _leaderboardScrolls.get(game.getAbbr());
+                final Table ranksTable = scrollPane.findActor("ranksTable");
+                ranksTable.padBottom(20);
+                ranksTable.align(Align.top);
+                for(int i = 0; i < records.size(); i++){
+                    ////////////////////////////////
+                    //insert to ranks table
+                    /////////////////////////////////
+                    Table recordTable = getRecordTable(game, records.get(i), i);
+                    ranksTable.add(recordTable).expandX().fillX();
+                    ranksTable.row();
+                }
+            }
+        });
+    }
+
+    public void changeRecordTableToUnknownRank(final Game game, final int rank){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Table rankTable = getRankTable(game);
+                Table recordTable = (Table) rankTable.getCells().get(rank).getActor();
+                ((Label) recordTable.findActor("countLabel")).setText("-");
+            }
+        });
 
 //        Table newTable = new Table();
 //        Image verticalDotsImage = new Image(_assets.getTextures().get(Textures.Name.VERTICAL_DOTS));
@@ -248,163 +292,181 @@ public class LeaderBoardScene extends SceneAbstract {
         return recordTable;
     }
 
-    public void populateAnimateTable(final Game game, LeaderboardRecord record, int rank, boolean isLast){
-        ScrollPane scrollPane = _leaderboardScrolls.get(game.getAbbr());
-        final Table ranksTable = scrollPane.findActor("ranksTable");
+    public void populateAnimateTable(final Game game, final LeaderboardRecord record, final int rank, final boolean isLast){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                ScrollPane scrollPane = _leaderboardScrolls.get(game.getAbbr());
+                final Table ranksTable = scrollPane.findActor("ranksTable");
 
-        Label.LabelStyle style1 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HELVETICA_M_REGULAR), Color.valueOf("5b3000"));
-        Label.LabelStyle style3 = new Label.LabelStyle(
-                _assets.getFonts().get(Fonts.FontId.HELVETICA_L_HEAVY), Color.valueOf("5b3000"));
-        Label.LabelStyle style4 = new Label.LabelStyle(
-                _assets.getFonts().get(Fonts.FontId.HELVETICA_XL_HEAVYITALIC_B_ffffff_81562c_2), null);
+                Label.LabelStyle style1 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HELVETICA_M_REGULAR), Color.valueOf("5b3000"));
+                Label.LabelStyle style3 = new Label.LabelStyle(
+                        _assets.getFonts().get(Fonts.FontId.HELVETICA_L_HEAVY), Color.valueOf("5b3000"));
+                Label.LabelStyle style4 = new Label.LabelStyle(
+                        _assets.getFonts().get(Fonts.FontId.HELVETICA_XL_HEAVYITALIC_B_ffffff_81562c_2), null);
 
-        ////////////////////////
-        //Index label
-        //////////////////////////
-        Label countLabel = new Label((isLast ? "-" : (rank + 1) + ". ") ,style1);
+                ////////////////////////
+                //Index label
+                //////////////////////////
+                Label countLabel = new Label((isLast ? "-" : (rank + 1) + ". ") ,style1);
 
-        ////////////////////////
-        //name score table
-        ///////////////////////
-        Table nameScoreTable = new Table();
-        nameScoreTable.setName("nameScoreTable");
-        nameScoreTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.LEADERBOARD_ANIMATING_BASE)));
+                ////////////////////////
+                //name score table
+                ///////////////////////
+                Table nameScoreTable = new Table();
+                nameScoreTable.setName("nameScoreTable");
+                nameScoreTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.LEADERBOARD_ANIMATING_BASE)));
 
-        ////////////////////
-        //name label
-        /////////////////////
-        Label nameLabel = new Label(Strings.cutOff(record.getAllUsernameCommaSeparated(), 16), style3);
+                ////////////////////
+                //name label
+                /////////////////////
+                Label nameLabel = new Label(Strings.cutOff(record.getAllUsernameCommaSeparated(), 16), style3);
 
-        /////////////////////////
-        //score label
-        /////////////////////////
-        _animatingScoreLabel = new Label(Strings.formatNum((int) record.getScore()), style4);
+                /////////////////////////
+                //score label
+                /////////////////////////
+                _animatingScoreLabel = new Label(Strings.formatNum((int) record.getScore()), style4);
 
-        //////////////////////////////
-        //populate namescore table
-        ///////////////////////////
-        nameScoreTable.add(nameLabel).expandX().fillX().padLeft(10).center();
-        nameScoreTable.add(_animatingScoreLabel).right().padRight(10);
+                //////////////////////////////
+                //populate namescore table
+                ///////////////////////////
+                nameScoreTable.add(nameLabel).expandX().fillX().padLeft(10).center();
+                nameScoreTable.add(_animatingScoreLabel).right().padRight(10);
 
-        ////////////////////////////////
-        //populate record table
-        //////////////////////////////////
-        _animatingRecordTable = new Table();
-        _animatingRecordTable.setTransform(true);
-        _animatingRecordTable.padLeft(40).padRight(35);
-        _animatingRecordTable.add(countLabel).width(25).center();
-        _animatingRecordTable.add(nameScoreTable).expand().fill().center();
-        _animatingRecordTable.layout();
+                ////////////////////////////////
+                //populate record table
+                //////////////////////////////////
+                _animatingRecordTable = new Table();
+                _animatingRecordTable.setTransform(true);
+                _animatingRecordTable.padLeft(40).padRight(35);
+                _animatingRecordTable.add(countLabel).width(25).center();
+                _animatingRecordTable.add(nameScoreTable).expand().fill().center();
+                _animatingRecordTable.layout();
 
-        ///////////////////////////////////////
-        //insert to ranks table
-        ///////////////////////////////////////
-        ranksTable.add(_animatingRecordTable).expandX().fillX().height(_recordHeight);
-        ranksTable.row();
+                ///////////////////////////////////////
+                //insert to ranks table
+                ///////////////////////////////////////
+                ranksTable.add(_animatingRecordTable).expandX().fillX().height(_recordHeight);
+                ranksTable.row();
 
-        int count = ranksTable.getChildren().size;
-        if(count-1 != rank){
-            swapActorInTable(ranksTable, count - 1, rank);
-            ranksTable.getCells().get(count - 1).getActor().remove();
-        }
+                int count = ranksTable.getChildren().size;
+                if(count-1 != rank){
+                    swapActorInTable(ranksTable, count - 1, rank);
+                    ranksTable.getCells().get(count - 1).getActor().remove();
+                }
 
+            }
+        });
     }
 
     public void hideLoading(final Game game){
-        final ScrollPane scrollPane = _leaderboardScrolls.get(game.getAbbr());
-        if(_currentShowingGame.getAbbr().equals(game.getAbbr())){
-            _loadingTable.addAction(sequence(fadeOut(0.2f), new RunnableAction(){
-                @Override
-                public void run() {
-                    scrollPane.addAction(fadeIn(0.2f));
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                final ScrollPane scrollPane = _leaderboardScrolls.get(game.getAbbr());
+                if(_currentShowingGame.getAbbr().equals(game.getAbbr())){
+                    _loadingTable.addAction(sequence(fadeOut(0.2f), new RunnableAction(){
+                        @Override
+                        public void run() {
+                            scrollPane.addAction(fadeIn(0.2f));
+                        }
+                    }));
                 }
-            }));
-        }
-        else{
-            _loadingTable.setVisible(false);
-            scrollPane.getColor().a = 1f;
-        }
+                else{
+                    _loadingTable.setVisible(false);
+                    scrollPane.getColor().a = 1f;
+                }
+            }
+        });
     }
 
-    public void addScore(ScoreDetails scoreDetails, final Runnable onFinish){
-
-        if(_animatingTableY == 0){
-            Vector2 coords = Positions.actorLocalToStageCoord(_animatingRecordTable);
-            _animatingTableY = coords.y;
-        }
-
-        Color fontColor = scoreDetails.isAddOrMultiply() ? Color.valueOf("fff600") : Color.valueOf("ff7676");
-
-        Label.LabelStyle style5 = new Label.LabelStyle(
-                _assets.getFonts().get(Fonts.FontId.CARTER_S_REGULAR_B_ffffff_000000_1), null);
-        style5.font.getData().setLineHeight(13);
-        style5.fontColor = fontColor;
-
-        Label.LabelStyle style6 = new Label.LabelStyle(
-                _assets.getFonts().get(Fonts.FontId.CARTER_L_REGULAR_B_ffffff_000000_1), null);
-        style6.fontColor = fontColor;
-
-        ////////////////////////////////////////
-        //added score label
-        ///////////////////////////////////////
-        final Table addedScoreTable = new Table();
-        addedScoreTable.setTransform(true);
-        addedScoreTable.getColor().a = 0f;
-
-        Label addedScoreLabel = new Label((scoreDetails.isAddOrMultiply() ? "+" : "x") + (Strings.formatNum(scoreDetails.getValue())), style6);
-        addedScoreLabel.setAlignment(Align.center);
-        Label addedReasonLabel = new Label(scoreDetails.getReason(), style5);
-        addedReasonLabel.setAlignment(Align.center);
-        addedReasonLabel.setWrap(true);
-        addedScoreTable.add(addedScoreLabel).expandX().fillX();
-        addedScoreTable.row();
-        addedScoreTable.add(addedReasonLabel).minWidth(80).expandX().fillX().padTop(-10);
-        addedScoreTable.layout();
-        addedScoreTable.setSize(addedScoreTable.getPrefWidth(), 30);
-
-        addedScoreTable.setPosition(Positions.getWidth() - addedScoreTable.getPrefWidth() - 3, _animatingTableY);
-
-        _root.addActor(addedScoreTable);
-
-        float delayDuration = 1.6f;
-        if(scoreDetails.getReason().length() > 10) delayDuration = 2.3f;
-
-        addedScoreTable.setOrigin(addedScoreTable.getWidth()/2, addedScoreTable.getHeight()/2);
-
-
-        Image starImageOne = new Image(_assets.getTextures().get(Textures.Name.SMALL_STAR_ICON));
-        starImageOne.setSize(10, 10);
-        starImageOne.getColor().a = 0f;
-        starImageOne.setPosition(0, addedScoreTable.getHeight() - 10);
-        Image starImageTwo = new Image(_assets.getTextures().get(Textures.Name.SMALL_STAR_ICON));
-        starImageTwo.setSize(10, 10);
-        starImageTwo.getColor().a = 0f;
-        starImageTwo.setPosition(addedScoreTable.getWidth() - 10, addedScoreTable.getHeight() - 10);
-
-        addedScoreTable.addActor(starImageOne);
-        addedScoreTable.addActor(starImageTwo);
-
-        starImageOne.addAction(sequence(delay(0.3f), fadeIn(0f), moveBy(-5, 5, 0.3f), parallel(moveBy(-5, -5, 0.3f), fadeOut(0.3f))));
-        starImageTwo.addAction(sequence(delay(0.3f), fadeIn(0f), moveBy(5, 5, 0.3f), parallel(moveBy(5, -5, 0.3f), fadeOut(0.3f))));
-
-        addedScoreTable.setScale(0f, 0f);
-        addedScoreTable.getColor().a = 1f;
-
-        addedScoreTable.addAction(sequence(scaleTo(1, 1, 0.3f, Interpolation.exp5In), delay(delayDuration), fadeOut(0.1f),
-                new RunnableAction(){
-                    @Override
-                    public void run() {
-                        addedScoreTable.remove();
-                        onFinish.run();
-                    }
+    public void addScore(final ScoreDetails scoreDetails, final Runnable onFinish){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(_animatingTableY == 0){
+                    Vector2 coords = Positions.actorLocalToStageCoord(_animatingRecordTable);
+                    _animatingTableY = coords.y;
                 }
-        ));
 
+                Color fontColor = scoreDetails.isAddOrMultiply() ? Color.valueOf("fff600") : Color.valueOf("ff7676");
+
+                Label.LabelStyle style5 = new Label.LabelStyle(
+                        _assets.getFonts().get(Fonts.FontId.CARTER_S_REGULAR_B_ffffff_000000_1), null);
+                style5.font.getData().setLineHeight(13);
+                style5.fontColor = fontColor;
+
+                Label.LabelStyle style6 = new Label.LabelStyle(
+                        _assets.getFonts().get(Fonts.FontId.CARTER_L_REGULAR_B_ffffff_000000_1), null);
+                style6.fontColor = fontColor;
+
+                ////////////////////////////////////////
+                //added score label
+                ///////////////////////////////////////
+                final Table addedScoreTable = new Table();
+                addedScoreTable.setTransform(true);
+                addedScoreTable.getColor().a = 0f;
+
+                Label addedScoreLabel = new Label((scoreDetails.isAddOrMultiply() ? "+" : "x") + (Strings.formatNum(scoreDetails.getValue())), style6);
+                addedScoreLabel.setAlignment(Align.center);
+                Label addedReasonLabel = new Label(scoreDetails.getReason(), style5);
+                addedReasonLabel.setAlignment(Align.center);
+                addedReasonLabel.setWrap(true);
+                addedScoreTable.add(addedScoreLabel).expandX().fillX();
+                addedScoreTable.row();
+                addedScoreTable.add(addedReasonLabel).minWidth(80).expandX().fillX().padTop(-10);
+                addedScoreTable.layout();
+                addedScoreTable.setSize(addedScoreTable.getPrefWidth(), 30);
+
+                addedScoreTable.setPosition(Positions.getWidth() - addedScoreTable.getPrefWidth() - 3, _animatingTableY);
+
+                _root.addActor(addedScoreTable);
+
+                float delayDuration = 1.6f;
+                if(scoreDetails.getReason().length() > 10) delayDuration = 2.3f;
+
+                addedScoreTable.setOrigin(addedScoreTable.getWidth()/2, addedScoreTable.getHeight()/2);
+
+
+                Image starImageOne = new Image(_assets.getTextures().get(Textures.Name.SMALL_STAR_ICON));
+                starImageOne.setSize(10, 10);
+                starImageOne.getColor().a = 0f;
+                starImageOne.setPosition(0, addedScoreTable.getHeight() - 10);
+                Image starImageTwo = new Image(_assets.getTextures().get(Textures.Name.SMALL_STAR_ICON));
+                starImageTwo.setSize(10, 10);
+                starImageTwo.getColor().a = 0f;
+                starImageTwo.setPosition(addedScoreTable.getWidth() - 10, addedScoreTable.getHeight() - 10);
+
+                addedScoreTable.addActor(starImageOne);
+                addedScoreTable.addActor(starImageTwo);
+
+                starImageOne.addAction(sequence(delay(0.3f), fadeIn(0f), moveBy(-5, 5, 0.3f), parallel(moveBy(-5, -5, 0.3f), fadeOut(0.3f))));
+                starImageTwo.addAction(sequence(delay(0.3f), fadeIn(0f), moveBy(5, 5, 0.3f), parallel(moveBy(5, -5, 0.3f), fadeOut(0.3f))));
+
+                addedScoreTable.setScale(0f, 0f);
+                addedScoreTable.getColor().a = 1f;
+
+                addedScoreTable.addAction(sequence(scaleTo(1, 1, 0.3f, Interpolation.exp5In), delay(delayDuration), fadeOut(0.1f),
+                        new RunnableAction(){
+                            @Override
+                            public void run() {
+                                addedScoreTable.remove();
+                                onFinish.run();
+                            }
+                        }
+                ));
+            }
+        });
     }
 
 
-    public void setAnimatingScore(double value){
-        _animatingScoreLabel.setText(Strings.formatNum( (int) value));
+    public void setAnimatingScore(final double value){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _animatingScoreLabel.setText(Strings.formatNum( (int) value));
+            }
+        });
     }
 
     //current rank start from zero
@@ -434,7 +496,7 @@ public class LeaderBoardScene extends SceneAbstract {
             if(originalRank - toRank < 10) duration = 0.5f;
 
             final float finalDuration = duration;
-            Threadings.runInBackground(new Runnable() {
+            Threadings.postRunnable(new Runnable() {
                 @Override
                 public void run() {
                     final boolean[] finishMoving = {false};
@@ -442,7 +504,7 @@ public class LeaderBoardScene extends SceneAbstract {
 
                     _services.getSoundsPlayer().playSoundEffectLoop(Sounds.Name.MOVING_RANK);
 
-                    _animatingRecordTable.addAction(sequence(Actions.moveTo(toSwitchActor.getX(), toSwitchActor.getY(), finalDuration, Interpolation.exp10Out), new RunnableAction(){
+                    _animatingRecordTable.addAction(sequence(Actions.moveTo(toSwitchActor.getX(), toSwitchActor.getY(), finalDuration, Interpolation.exp10Out), new RunnableAction() {
                         @Override
                         public void run() {
                             finishMoving[0] = true;
@@ -454,6 +516,13 @@ public class LeaderBoardScene extends SceneAbstract {
                                         @Override
                                         public void run() {
                                             _services.getSoundsPlayer().playSoundEffect(Sounds.Name.MOVING_RANK_END);
+
+                                            if(ranksTable.getCells().size > maxSize){
+                                                for(int i = maxSize; i <ranksTable.getCells().size; i++){
+                                                    ranksTable.getCells().get(i).getActor().remove();
+                                                }
+                                            }
+
                                             onFinishMoved.run();
                                         }
                                     });
@@ -499,16 +568,13 @@ public class LeaderBoardScene extends SceneAbstract {
         nameLabel.setAlignment(Align.left);
 
         if(record.getStreak().hasValidStreak()){
-            Table streakTable = new Table();
-            streakTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.STREAK_ICON)));
-            Label streakLabel = new Label(String.valueOf(record.getStreak().getStreakCount()), style2);
-            streakTable.add(streakLabel).padTop(3).padLeft(2);
-            streakTable.setName("streakTable");
-            nameStreakTable.add(streakTable).padRight(5).width(15);
+            Badge streakBadge = new Badge(BadgeType.Streak, String.valueOf(record.getStreak().getStreakCount()), _assets);
+            streakBadge.setName("streakTable");
+            nameStreakTable.add(streakBadge).padRight(5);
 
             if(animate){
-                streakLabel.getColor().a = 0f;
-                streakLabel.addAction(fadeIn(0.2f));
+                streakBadge.getColor().a = 0f;
+                streakBadge.addAction(fadeIn(0.2f));
             }
         }
 
@@ -517,76 +583,112 @@ public class LeaderBoardScene extends SceneAbstract {
         return nameStreakTable;
     }
 
-    public void loseStreakAnimate(final Game game, int rank){
-        Table rankTable = getRankTable(game);
-        Table recordTable = (Table) rankTable.getCells().get(rank).getActor();
-        Table streakTable = recordTable.findActor("streakTable");
-        streakTable.addAction(fadeOut(0.2f));
-        _services.getSoundsPlayer().playSoundEffect(Sounds.Name.STREAK_DIED);
-    }
-
-    public void reviveStreakAnimate(final Game game, int rank){
-        Table rankTable = getRankTable(game);
-        Table recordTable = (Table) rankTable.getCells().get(rank).getActor();
-        Table streakTable = recordTable.findActor("streakTable");
-        streakTable.addAction(fadeIn(0.2f));
-        _services.getSoundsPlayer().playSoundEffect(Sounds.Name.STREAK);
-    }
-
-    private void movingEndedAnimate(Game game, Table ranksTable, LeaderboardRecord movingRecord, final int toRank, int maxSize, Runnable finishAnimate){
-        Table newRecordTable = getRecordTable(game, movingRecord, toRank);
-        if(toRank >= maxSize){
-            ((Label) newRecordTable.findActor("countLabel")).setText("-");
-        }
-        ranksTable.getCells().get(toRank).setActor(newRecordTable);
-        ranksTable.layout();
-        animateStarTrace(newRecordTable, finishAnimate);
-    }
-
-
-    private void animateStarTrace(Table actor, final Runnable finishAnimate){
-        Image starImageOne = new Image(_assets.getTextures().get(Textures.Name.SMALL_STAR_ICON));
-        starImageOne.setSize(10, 10);
-        starImageOne.setPosition(40, actor.getHeight() / 2  + 5);
-
-        Image starImageTwo = new Image(_assets.getTextures().get(Textures.Name.SMALL_STAR_ICON));
-        starImageTwo.setSize(10, 10);
-        starImageTwo.setPosition(actor.getWidth() - 40, actor.getHeight() / 2  + 5);
-
-        Image starImageThree = new Image(_assets.getTextures().get(Textures.Name.SMALL_STAR_ICON));
-        starImageThree.setSize(10, 10);
-        starImageThree.setPosition(actor.getWidth() / 2, actor.getHeight() / 2  + 5);
-
-        actor.addActor(starImageOne);
-        actor.addActor(starImageTwo);
-        actor.addActor(starImageThree);
-
-        starImageOne.addAction(sequence(moveBy(-5, 5, 0.3f), parallel(moveBy(-10, -10, 0.5f), fadeOut(0.5f))));
-        starImageTwo.addAction(sequence(moveBy(5, 5, 0.3f), parallel(moveBy(10, -10, 0.5f), fadeOut(0.5f))));
-
-        starImageThree.addAction(sequence(moveBy(0, 5, 0.3f), parallel(moveBy(10, -10, 0.5f), fadeOut(0.5f)), new RunnableAction(){
+    public void loseStreakAnimate(final Game game, final int rank){
+        Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                finishAnimate.run();
+                Table rankTable = getRankTable(game);
+                Table recordTable = (Table) rankTable.getCells().get(rank).getActor();
+                Table streakTable = recordTable.findActor("streakTable");
+                streakTable.addAction(fadeOut(0.2f));
+                _services.getSoundsPlayer().playSoundEffect(Sounds.Name.STREAK_DIED);
             }
-        }));
+        });
     }
 
-    public void scrollToAnimateRecord(Game game, int offset){
-        final ScrollPane scrollPane = _leaderboardScrolls.get(game.getAbbr());
-        scrollPane.scrollTo(0, _animatingRecordTable.getY() + offset, 0, _animatingRecordTable.getHeight());
+    public void reviveStreakAnimate(final Game game, final int rank){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Table rankTable = getRankTable(game);
+                Table recordTable = (Table) rankTable.getCells().get(rank).getActor();
+                Table streakTable = recordTable.findActor("streakTable");
+                streakTable.addAction(fadeIn(0.2f));
+                _services.getSoundsPlayer().playSoundEffect(Sounds.Name.STREAK);
+            }
+        });
     }
 
-    public void scrollToRecord(Game game, int rankNumber){
-        final ScrollPane scrollPane = _leaderboardScrolls.get(game.getAbbr());
-        final Table ranksTable = scrollPane.findActor("ranksTable");
-        scrollPane.scrollTo(0, ranksTable.getCells().get(rankNumber).getActorY() - 100, 0, ranksTable.getCells().get(rankNumber).getActorHeight());
+    private void movingEndedAnimate(final Game game, final Table ranksTable, final LeaderboardRecord movingRecord, final int toRank, final int maxSize, final Runnable finishAnimate){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Table newRecordTable = getRecordTable(game, movingRecord, toRank);
+                if(toRank >= maxSize){
+                    ((Label) newRecordTable.findActor("countLabel")).setText("-");
+                }
+                ranksTable.getCells().get(toRank).setActor(newRecordTable);
+                ranksTable.layout();
+                animateStarTrace(newRecordTable, finishAnimate);
+            }
+        });
+    }
+
+
+    private void animateStarTrace(final Table actor, final Runnable finishAnimate){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Image starImageOne = new Image(_assets.getTextures().get(Textures.Name.SMALL_STAR_ICON));
+                starImageOne.setSize(10, 10);
+                starImageOne.setPosition(40, actor.getHeight() / 2  + 5);
+
+                Image starImageTwo = new Image(_assets.getTextures().get(Textures.Name.SMALL_STAR_ICON));
+                starImageTwo.setSize(10, 10);
+                starImageTwo.setPosition(actor.getWidth() - 40, actor.getHeight() / 2  + 5);
+
+                Image starImageThree = new Image(_assets.getTextures().get(Textures.Name.SMALL_STAR_ICON));
+                starImageThree.setSize(10, 10);
+                starImageThree.setPosition(actor.getWidth() / 2, actor.getHeight() / 2  + 5);
+
+                actor.addActor(starImageOne);
+                actor.addActor(starImageTwo);
+                actor.addActor(starImageThree);
+
+                starImageOne.addAction(sequence(moveBy(-5, 5, 0.3f), parallel(moveBy(-10, -10, 0.5f), fadeOut(0.5f))));
+                starImageTwo.addAction(sequence(moveBy(5, 5, 0.3f), parallel(moveBy(10, -10, 0.5f), fadeOut(0.5f))));
+
+                starImageThree.addAction(sequence(moveBy(0, 5, 0.3f), parallel(moveBy(10, -10, 0.5f), fadeOut(0.5f)), new RunnableAction(){
+                    @Override
+                    public void run() {
+                        finishAnimate.run();
+                    }
+                }));
+            }
+        });
+    }
+
+    public void scrollToAnimateRecord(final Game game, final int offset){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                final ScrollPane scrollPane = _leaderboardScrolls.get(game.getAbbr());
+                scrollPane.scrollTo(0, _animatingRecordTable.getY() + offset, 0, _animatingRecordTable.getHeight());
+            }
+        });
+    }
+
+    public void scrollToRecord(final Game game, final int rankNumber){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                final ScrollPane scrollPane = _leaderboardScrolls.get(game.getAbbr());
+                final Table ranksTable = scrollPane.findActor("ranksTable");
+                scrollPane.scrollTo(0, ranksTable.getCells().get(rankNumber).getActorY() - 100, 0, ranksTable.getCells().get(rankNumber).getActorHeight());
+            }
+        });
     }
 
     public void moveDownOneRank(final Table ranksTable, final int startRank, final int endRank, final int maxSize, final Runnable onFinish){
 
         for(int i = startRank; i < endRank; i ++){
-            ranksTable.getChildren().get(i).addAction(moveBy(0, -_recordHeight, 0.2f));
+            final int finalI = i;
+            Threadings.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    ranksTable.getChildren().get(finalI).addAction(moveBy(0, -_recordHeight, 0.2f));
+                }
+            });
         }
         Threadings.delay(300, new Runnable() {
             @Override
@@ -625,110 +727,125 @@ public class LeaderBoardScene extends SceneAbstract {
         return ranksTable;
     }
 
-    private void swapActorInTable(Table table, int index1, int index2){
-        Actor actor1 = (Table) table.getCells().get(index1).getActor();
-        Actor actor2 = (Table) table.getCells().get(index2).getActor();
-        table.getCells().get(index1).setActor(null);
-        table.getCells().get(index2).setActor(null);
-        table.getCells().get(index1).setActor(actor2);
-        table.getCells().get(index2).setActor(actor1);
+    private void swapActorInTable(final Table table, final int index1, final int index2){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Actor actor1 = (Table) table.getCells().get(index1).getActor();
+                Actor actor2 = (Table) table.getCells().get(index2).getActor();
+                table.getCells().get(index1).setActor(null);
+                table.getCells().get(index2).setActor(null);
+                table.getCells().get(index1).setActor(actor2);
+                table.getCells().get(index2).setActor(actor1);
+            }
+        });
     }
 
     public void setMascots(final MascotType type){
-        _mascotsTable.clearActions();
-        _mascotsTable.addAction(sequence(alpha(0.5f, 0.2f), new RunnableAction() {
+        Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                _mascotsTable.clear();
-                if (type == MascotType.BORING) {
-                    Animator tomato = new Animator(0.3f, _assets.getAnimations().get(Animations.Name.TOMATO_BORING));
-                    tomato.setSize(tomato.getWidth(), tomato.getHeight());
-                    tomato.setPosition(-70, 15);
-                    tomato.setRotation(-15);
+                _mascotsTable.clearActions();
+                _mascotsTable.addAction(sequence(alpha(0.5f, 0.2f), new RunnableAction() {
+                    @Override
+                    public void run() {
+                        _mascotsTable.clear();
+                        if (type == MascotType.BORING) {
+                            Animator tomato = new Animator(0.3f, _assets.getAnimations().get(Animations.Name.TOMATO_BORING));
+                            tomato.setSize(tomato.getWidth(), tomato.getHeight());
+                            tomato.setPosition(-70, 15);
+                            tomato.setRotation(-15);
 
-                    Animator potato = new Animator(0.3f, _assets.getAnimations().get(Animations.Name.POTATO_BORING));
-                    potato.setSize(potato.getWidth(), potato.getHeight());
-                    potato.setPosition(-28, 8);
-                    potato.setRotation(-20);
+                            Animator potato = new Animator(0.3f, _assets.getAnimations().get(Animations.Name.POTATO_BORING));
+                            potato.setSize(potato.getWidth(), potato.getHeight());
+                            potato.setPosition(-28, 8);
+                            potato.setRotation(-20);
 
-                    _mascotsTable.addActor(tomato);
-                    _mascotsTable.addActor(potato);
+                            _mascotsTable.addActor(tomato);
+                            _mascotsTable.addActor(potato);
 
-                    _services.getSoundsPlayer().playSoundEffect(Sounds.Name.TOGETHER_BORED);
+                            _services.getSoundsPlayer().playSoundEffect(Sounds.Name.TOGETHER_BORED);
 
-                } else if (type == MascotType.FAILED) {
-                    Animator tomato = new Animator(0.3f, _assets.getAnimations().get(Animations.Name.TOMATO_FAILED));
-                    tomato.setSize(tomato.getWidth(), tomato.getHeight());
-                    tomato.setPosition(-70, 20);
-                    tomato.setRotation(-15);
+                        } else if (type == MascotType.FAILED) {
+                            Animator tomato = new Animator(0.3f, _assets.getAnimations().get(Animations.Name.TOMATO_FAILED));
+                            tomato.setSize(tomato.getWidth(), tomato.getHeight());
+                            tomato.setPosition(-70, 20);
+                            tomato.setRotation(-15);
 
-                    Animator potato = new Animator(0.3f, _assets.getAnimations().get(Animations.Name.POTATO_FAILED));
-                    potato.setSize(potato.getWidth(), potato.getHeight());
-                    potato.setPosition(-28, 8);
-                    potato.setRotation(-20);
+                            Animator potato = new Animator(0.3f, _assets.getAnimations().get(Animations.Name.POTATO_FAILED));
+                            potato.setSize(potato.getWidth(), potato.getHeight());
+                            potato.setPosition(-28, 8);
+                            potato.setRotation(-20);
 
-                    _mascotsTable.addActor(tomato);
-                    _mascotsTable.addActor(potato);
+                            _mascotsTable.addActor(tomato);
+                            _mascotsTable.addActor(potato);
 
-                    _services.getSoundsPlayer().playSoundEffect(Sounds.Name.TOGETHER_FAILED);
+                            _services.getSoundsPlayer().playSoundEffect(Sounds.Name.TOGETHER_FAILED);
 
-                } else if (type == MascotType.CRY) {
-                    Animator tomato = new Animator(0.3f, _assets.getAnimations().get(Animations.Name.TOMATO_CRY));
-                    tomato.setSize(tomato.getWidth(), tomato.getHeight());
-                    tomato.setPosition(-100, 0);
-                    tomato.setRotation(-5);
+                        } else if (type == MascotType.CRY) {
+                            Animator tomato = new Animator(0.3f, _assets.getAnimations().get(Animations.Name.TOMATO_CRY));
+                            tomato.setSize(tomato.getWidth(), tomato.getHeight());
+                            tomato.setPosition(-100, 0);
+                            tomato.setRotation(-5);
 
-                    Animator potato = new Animator(0.3f, _assets.getAnimations().get(Animations.Name.POTATO_CRY));
-                    potato.setSize(potato.getWidth(), potato.getHeight());
-                    potato.setPosition(-28, -15);
-                    potato.setRotation(-5);
+                            Animator potato = new Animator(0.3f, _assets.getAnimations().get(Animations.Name.POTATO_CRY));
+                            potato.setSize(potato.getWidth(), potato.getHeight());
+                            potato.setPosition(-28, -15);
+                            potato.setRotation(-5);
 
-                    _mascotsTable.addActor(tomato);
-                    _mascotsTable.addActor(potato);
+                            _mascotsTable.addActor(tomato);
+                            _mascotsTable.addActor(potato);
 
-                    _services.getSoundsPlayer().playSoundEffect(Sounds.Name.TOGETHER_CRY);
+                            _services.getSoundsPlayer().playSoundEffect(Sounds.Name.TOGETHER_CRY);
 
-                } else if (type == MascotType.HAPPY) {
-                    Animator tomato = new Animator(0.3f, _assets.getAnimations().get(Animations.Name.TOMATO_HAPPY));
-                    tomato.setSize(tomato.getWidth(), tomato.getHeight());
-                    tomato.setPosition(-70, 0);
-                    tomato.setRotation(0);
+                        } else if (type == MascotType.HAPPY) {
+                            Animator tomato = new Animator(0.1f, _assets.getAnimations().get(Animations.Name.TOMATO_HAPPY));
+                            tomato.setSize(tomato.getWidth(), tomato.getHeight());
+                            tomato.setPosition(-70, 0);
+                            tomato.setRotation(0);
 
-                    Animator potato = new Animator(0.3f, _assets.getAnimations().get(Animations.Name.POTATO_HAPPY));
-                    potato.setSize(potato.getWidth(), potato.getHeight());
-                    potato.setPosition(0, -5);
-                    potato.setRotation(0);
+                            Animator potato = new Animator(0.1f, _assets.getAnimations().get(Animations.Name.POTATO_HAPPY));
+                            potato.setSize(potato.getWidth(), potato.getHeight());
+                            potato.setPosition(0, -5);
+                            potato.setRotation(0);
 
-                    _mascotsTable.addActor(tomato);
-                    _mascotsTable.addActor(potato);
+                            _mascotsTable.addActor(tomato);
+                            _mascotsTable.addActor(potato);
 
-                    _services.getSoundsPlayer().playSoundEffect(Sounds.Name.TOGETHER_HAPPY);
+                            _services.getSoundsPlayer().playSoundEffect(Sounds.Name.TOGETHER_HAPPY);
 
-                } else if (type == MascotType.ANTICIPATE) {
-                    Animator tomato = new Animator(0.3f, _assets.getAnimations().get(Animations.Name.TOMATO_ANTICIPATE));
-                    tomato.setSize(tomato.getWidth(), tomato.getHeight());
-                    tomato.setPosition(-80, 13);
-                    tomato.setRotation(-5);
+                        } else if (type == MascotType.ANTICIPATE) {
+                            Animator tomato = new Animator(0.3f, _assets.getAnimations().get(Animations.Name.TOMATO_ANTICIPATE));
+                            tomato.setSize(tomato.getWidth(), tomato.getHeight());
+                            tomato.setPosition(-80, 13);
+                            tomato.setRotation(-5);
 
-                    Animator potato = new Animator(0.3f, _assets.getAnimations().get(Animations.Name.POTATO_ANTICIPATE));
-                    potato.setSize(potato.getWidth(), potato.getHeight());
-                    potato.setPosition(-10, -5);
-                    potato.setRotation(-5);
+                            Animator potato = new Animator(0.3f, _assets.getAnimations().get(Animations.Name.POTATO_ANTICIPATE));
+                            potato.setSize(potato.getWidth(), potato.getHeight());
+                            potato.setPosition(-10, -5);
+                            potato.setRotation(-5);
 
-                    _mascotsTable.addActor(tomato);
-                    _mascotsTable.addActor(potato);
+                            _mascotsTable.addActor(tomato);
+                            _mascotsTable.addActor(potato);
 
-                    _services.getSoundsPlayer().playSoundEffect(Sounds.Name.TOGETHER_ANTICIPATING);
-                }
-                _mascotsTable.addAction(sequence(fadeIn(0.1f)));
+                            _services.getSoundsPlayer().playSoundEffect(Sounds.Name.TOGETHER_ANTICIPATING);
+                        }
+                        _mascotsTable.addAction(sequence(fadeIn(0.1f)));
+                    }
+                }));
             }
-        }));
-
-
+        });
     }
 
     public enum MascotType{
         BORING, FAILED, CRY, HAPPY, ANTICIPATE
     }
 
+    public Button getPrevButton() {
+        return _prevButton;
+    }
+
+    public Button getNextButton() {
+        return _nextButton;
+    }
 }

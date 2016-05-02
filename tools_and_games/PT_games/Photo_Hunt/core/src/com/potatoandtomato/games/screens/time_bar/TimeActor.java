@@ -26,7 +26,7 @@ public class TimeActor extends Table {
     public void populate(KingActor kingActor, CastleActor castleActor, final KnightActor knightActor){
         this.clear();
         this.add(kingActor).width(30);
-        this.add(castleActor).padLeft(-5);
+        this.add(castleActor).padLeft(-5).size(70, 55);
         this.add(knightActor).expand().fill();
 
     }

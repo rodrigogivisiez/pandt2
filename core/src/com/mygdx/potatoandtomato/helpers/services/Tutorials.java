@@ -65,22 +65,27 @@ public class Tutorials implements ITutorials {
     }
 
     public void invalidate(){
-        if(_stage != null){
-            _game.removeInputProcessor(_stage);
-            _stage.dispose();
-            _root.remove();
-        }
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(_stage != null){
+                    _game.removeInputProcessor(_stage);
+                    _stage.dispose();
+                    _root.remove();
+                }
 
-        StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
-        _stage = new Stage(viewPort, _batch);
+                StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
+                _stage = new Stage(viewPort, _batch);
 
-        _root.setHeight(Positions.getHeight());
-        _root.setWidth(Global.IS_POTRAIT ? 300 : 500);
-        _root.setPosition(-_root.getWidth(), 0);
-        _root.invalidate();
+                _root.setHeight(Positions.getHeight());
+                _root.setWidth(Global.IS_POTRAIT ? 300 : 500);
+                _root.setPosition(-_root.getWidth(), 0);
+                _root.invalidate();
 
-        _stage.addActor(_root);
-        _game.addInputProcessor(_stage, 19);
+                _stage.addActor(_root);
+                _game.addInputProcessor(_stage, 19);
+            }
+        });
     }
 
 

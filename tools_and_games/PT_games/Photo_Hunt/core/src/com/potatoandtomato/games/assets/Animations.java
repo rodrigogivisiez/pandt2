@@ -15,7 +15,7 @@ public class Animations extends AnimationAssets {
 
 
     public enum Name{
-        KNIGHT_WALK, KNIGHT_RUN, KNIGHT_ATK,
+        KNIGHT_WALK, KNIGHT_RUN, KNIGHT_ATK, KNIGHT_WON,
         KING_NORMAL, KING_PANIC, KING_WIN, KING_LOSE
     }
 

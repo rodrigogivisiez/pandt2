@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.ConnectionChangedListener;
+import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.absintflis.socials.FacebookListener;
@@ -102,7 +103,6 @@ public class BootLogic extends LogicAbstract {
     }
 
     public void showLoginBox(){
-
         Logs.add();
         _bootScene.showSocialLogin();
         attachClickListenerToSocial();

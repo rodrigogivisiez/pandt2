@@ -94,8 +94,8 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
     }
 
     public void loserHandling(){
-        final int currentRank = _myRankRecordPair.getFirst();
-        final LeaderboardRecord leaderboardRecord = _myRankRecordPair.getSecond();
+        final int myCurrentRank = _myRankRecordPair.getFirst();
+        final LeaderboardRecord myLeaderboardRecord = _myRankRecordPair.getSecond();
 
         Threadings.postRunnable(new Runnable() {
             @Override
@@ -115,8 +115,8 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                 });
 
                 _scene.setMascots(LeaderBoardScene.MascotType.BORING);
-                if(currentRank != _leaderboardSize || leaderboardRecord.getScore() != 0){        //lose streak
-                    _scene.scrollToRecord(_game, currentRank);
+                if(myCurrentRank != _leaderboardSize || myLeaderboardRecord.getScore() != 0){        //lose streak
+                    _scene.scrollToRecord(_game, myCurrentRank);
                     Threadings.delay(50, new Runnable() {
                         @Override
                         public void run() {
@@ -125,10 +125,10 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                 Threadings.delay(2000, new Runnable() {
                                     @Override
                                     public void run() {
-                                        if(_room.getGame().isStreakEnabled() && leaderboardRecord.getStreak().hasValidStreak()){
-                                            _scene.loseStreakAnimate(_game, currentRank);
+                                        if(_room.getGame().isStreakEnabled() && myLeaderboardRecord.getStreak().hasValidStreak()){
+                                            _scene.loseStreakAnimate(_game, myCurrentRank);
 
-                                            if(leaderboardRecord.getStreak().canRevive()){
+                                            if(myLeaderboardRecord.getStreak().canRevive()){
                                                 _scene.setMascots(LeaderBoardScene.MascotType.FAILED);
                                                 Threadings.delay(2000, new Runnable() {
                                                     @Override
@@ -137,7 +137,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                                             @Override
                                                             public void onResult(Result result) {
                                                                 if(result == Result.YES){
-                                                                    _scene.reviveStreakAnimate(_game, currentRank);
+                                                                    _scene.reviveStreakAnimate(_game, myCurrentRank);
                                                                     _scene.setMascots(LeaderBoardScene.MascotType.HAPPY);
                                                                     _services.getDatabase().streakRevive(getMyTeamUserIds(), _room, null);
                                                                 }
@@ -197,6 +197,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                                         public void run() {
                                                             _myLeaderboardRecord.addScoresToRecord(_scoreDetails);
                                                             final int finalRank = getAfterRanking();
+
                                                             moveUpRankAnimation(currentRank, finalRank, new Runnable() {
                                                                     @Override
                                                                     public void run() {
@@ -248,21 +249,20 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
             public void onCallback(final ArrayList<LeaderboardRecord> records, Status st) {
                 if (st == Status.SUCCESS) {
                     _records = records;
-                    LeaderboardFiller.fillEmptyRecords(_records);
-                    _myRankRecordPair = generateRecordModel();
-                    _myLeaderboardRecord = _myRankRecordPair.getSecond();
+                    LeaderboardHelper.fillEmptyRecords(_records);
+                    onRecordsChanged();
                     if (_game.getLeaderboardTypeEnum() == LeaderboardType.Accumulate && _myRankRecordPair.getFirst() == _leaderboardSize) {
-                        _services.getDatabase().getAccLeaderBoardRecordAndStreak(_room, getMyTeamUserIds(), new DatabaseListener<LeaderboardRecord>(LeaderboardRecord.class) {
-                            @Override
-                            public void onCallback(LeaderboardRecord obj, Status st) {
-                                if (st == Status.SUCCESS && obj != null) {
-                                    _records.add(obj);
-                                    _myRankRecordPair = generateRecordModel();
-                                    _myLeaderboardRecord = _myRankRecordPair.getSecond();
-                                }
-                                _leaderboardReady = true;
-                            }
-                        });
+                        _services.getDatabase().getHighestLeaderBoardRecordAndStreak(_room.getGame(), getMyTeamUserIds(),
+                                new DatabaseListener<LeaderboardRecord>(LeaderboardRecord.class) {
+                                    @Override
+                                    public void onCallback(LeaderboardRecord obj, Status st) {
+                                        if (st == Status.SUCCESS && obj != null) {
+                                            _records.add(obj);
+                                            onRecordsChanged();
+                                        }
+                                        _leaderboardReady = true;
+                                    }
+                                });
                     }
                     else{
                         _leaderboardReady = true;
@@ -316,7 +316,10 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
 
                         Threadings.sleep(30);
                         int adding = 0;
-                        if (_scoreToAdd > 1000) {
+                        if (_scoreToAdd > 10000) {
+                            adding = _scoreToAdd / 10;
+                        }
+                        else if (_scoreToAdd > 1000) {
                             adding = MathUtils.random(100, 200);
                         } else if (_scoreToAdd > 500) {
                             adding = MathUtils.random(100, 200);
@@ -476,8 +479,15 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                 }
             }
         }
+
+        onRecordsChanged();
+
     }
 
+    public void onRecordsChanged(){
+        _myRankRecordPair = generateRecordModel();
+        _myLeaderboardRecord = _myRankRecordPair.getSecond();
+    }
 
     @Override
     public SceneAbstract getScene() {

@@ -6,6 +6,7 @@ import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
+import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.potatoandtomato.common.utils.Strings;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.enums.Status;
@@ -13,6 +14,7 @@ import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.common.utils.ThreadsPool;
 import com.potatoandtomato.common.models.LeaderboardRecord;
 import com.potatoandtomato.common.models.Streak;
+import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.*;
 
@@ -30,6 +32,7 @@ public class FirebaseDB implements IDatabase {
     private String _tableRoomNotifications = "roomNotifications";
     private String _tableGameBelongData = "gameBelongData";
     private String _tableLeaderboard = "leaderboard";
+    private String _tableUserLeaderboardLog = "userLeaderboardLog";
     private String _tableStreak = "streaks";
     private String _tableStreakReviveHistories = "streakReviveHistories";
     private String _tableServerTimeInfo = ".info/serverTimeOffset";
@@ -90,7 +93,7 @@ public class FirebaseDB implements IDatabase {
 
     @Override
     public void savePlayedHistory(Profile profile, Room room, DatabaseListener<String> listener) {
-        for(RoomUser u : room.getRoomUsers().values()){
+        for(RoomUser u : room.getRoomUsersMap().values()){
             if(!u.getProfile().equals(profile)){
                 GameHistory history = new GameHistory();
                 history.setPlayedWith(u.getProfile());
@@ -401,7 +404,9 @@ public class FirebaseDB implements IDatabase {
 
     @Override
     public void getUserStreak(Game game, String userId, DatabaseListener<Streak> listener) {
-        getSingleData(getTable(_tableStreak).child(game.getAbbr()).child(userId), listener);
+        if(userId != null){
+            getSingleData(getTable(_tableStreak).child(game.getAbbr()).child(userId), listener);
+        }
     }
 
     @Override
@@ -416,8 +421,17 @@ public class FirebaseDB implements IDatabase {
                     record.getStreak().setLastReviveRoundNumber(room.getRoundCounter());
                 }
 
+                HashMap<String, Object> map = new HashMap<String, Object>();
+                map.put(key, record.getScore());
+
                 for(String userId : record.getUserIds()){
                     getTable(_tableStreak).child(room.getGame().getAbbr()).child(userId).setValue(record.getStreak());
+
+                    getTable(_tableUserLeaderboardLog).child(room.getGame().getAbbr()).child(userId).updateChildren(map);
+                }
+
+                if(room.getGame().getLeaderboardTypeEnum() == LeaderboardType.Accumulate){
+                    getTable(_tableUserLeaderboardLog).child(room.getGame().getAbbr()).child(key).updateChildren(map);
                 }
 
                 getTable(_tableLeaderboard).child(room.getGame().getAbbr()).child(key).setValue(record, record.getScore(), new Firebase.CompletionListener() {
@@ -437,30 +451,44 @@ public class FirebaseDB implements IDatabase {
 
 
     @Override
-    public void getAccLeaderBoardRecordAndStreak(final Room room, final ArrayList<String> userIds, final DatabaseListener<LeaderboardRecord> listener) {
-        if(room.getGame().getLeaderboardTypeEnum() == LeaderboardType.Accumulate){
-            String key = getLeaderboardRecordKey(room, userIds);
-            getSingleData(getTable(_tableLeaderboard).child(room.getGame().getAbbr()).child(key), new DatabaseListener<LeaderboardRecord>(LeaderboardRecord.class) {
-                @Override
-                public void onCallback(final LeaderboardRecord record, Status st) {
-                    if(st == Status.SUCCESS && record != null){
-                        getUsernamesByUserIds(record.getUserIds(), new DatabaseListener<HashMap<String, String>>(String.class) {
-                            @Override
-                            public void onCallback(HashMap<String, String> obj, Status st) {
-                                if (st == Status.SUCCESS) {
-                                    record.setUserIdToNameMap(obj);
-                                }
-                                listener.onCallback(record, st);
-                            }
-                        });
+    public void getHighestLeaderBoardRecordAndStreak(final Game game, ArrayList<String> teamUserIds, final DatabaseListener<LeaderboardRecord> listener) {
+        getSingleData(getTable(_tableUserLeaderboardLog).child(game.getAbbr()).child(userIdsToKey(teamUserIds)).orderByValue().limitToLast(1), new DatabaseListener<HashMap<String, String>>(HashMap.class) {
+            @Override
+            public void onCallback(final HashMap<String, String> record, Status st) {
+                if (st == Status.SUCCESS && record != null && record.keySet().size() > 0) {
+                    for(String recordId : record.keySet()){
+                        getLeaderBoardRecordById(game, recordId, listener);
+                        break;
                     }
-                    else{
-                        listener.onCallback(record, st);
-                    }
-
+                } else {
+                    listener.onCallback(null, st);
                 }
-            });
-        }
+
+            }
+        });
+    }
+
+    @Override
+    public void getLeaderBoardRecordById(Game game, String leaderboardId, final DatabaseListener<LeaderboardRecord> listener) {
+        getSingleData(getTable(_tableLeaderboard).child(game.getAbbr()).child(leaderboardId), new DatabaseListener<LeaderboardRecord>(LeaderboardRecord.class) {
+            @Override
+            public void onCallback(final LeaderboardRecord record, Status st) {
+                if(st == Status.SUCCESS && record != null){
+                    getUsernamesByUserIds(record.getUserIds(), new DatabaseListener<HashMap<String, String>>(String.class) {
+                        @Override
+                        public void onCallback(HashMap<String, String> obj, Status st) {
+                            if (st == Status.SUCCESS) {
+                                record.setUserIdToNameMap(obj);
+                            }
+                            listener.onCallback(record, st);
+                        }
+                    });
+                }
+                else{
+                    listener.onCallback(record, st);
+                }
+            }
+        });
     }
 
     private String getLeaderboardRecordKey(Room room, ArrayList<String> userIds){

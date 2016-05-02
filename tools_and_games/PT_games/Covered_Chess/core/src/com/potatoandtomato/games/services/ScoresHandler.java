@@ -41,9 +41,9 @@ public class ScoresHandler implements Disposable{
     public static final int CATCH_UP_TRIGGERING_LOSE_STREAK_COUNT = 3;
     public static final int EZ_WIN_TRIGGERING_TIME_LEFT = 800;
     public static final int EZ_WIN_TRIGGERING_TURN_COUNT = 30;
-    public static final int PAWN_LEADERBOARD_TRIGGERING_RANK = 200;
-    public static final double KILL_STREAK_MULTIPLIER = 0.05;
-    public static final double CATCH_UP_MULTIPLIER = 2.5;
+    public static int PAWN_LEADERBOARD_TRIGGERING_RANK = 200;
+    public static final double KILL_STREAK_MULTIPLIER = 0.3;
+    public static final double CATCH_UP_MULTIPLIER = 1.20;
     public static final double EASY_WIN = 50;
     public static final double NORMAL_WIN = 300;
     public static final double HARD_WIN = 500;
@@ -52,6 +52,7 @@ public class ScoresHandler implements Disposable{
 
 
     public ScoresHandler(GameCoordinator coordinator, Database database, Texts texts, GameDataController gameDataController) {
+        this.PAWN_LEADERBOARD_TRIGGERING_RANK = coordinator.getLeaderboardSize();
         this.headToHeadMatchHistories = new HashMap<String, ArrayList<MatchHistory>>();
         this.lastMatchHistories = new HashMap<String, ArrayList<MatchHistory>>();
         this.coordinator = coordinator;
@@ -249,12 +250,13 @@ public class ScoresHandler implements Disposable{
     public boolean checkWinSituation(ArrayList<ScoreDetails> scoreDetails, BoardModel boardModel, GraveModel graveModel){
         double baseScore;
         boolean canAddStreak = false;
-        if(boardModel.isCrackHappened()){       //hard fought win
-            baseScore = HARD_WIN;
-            scoreDetails.add(new ScoreDetails(baseScore, texts.hardFoughtWin(), true, false));
-            canAddStreak = true;
-        }
-        else if(graveModel.getLeftTimeInt(winnerColor) >= EZ_WIN_TRIGGERING_TIME_LEFT    //easy win
+//        if(boardModel.isCrackHappened()){       //hard fought win
+//            baseScore = HARD_WIN;
+//            scoreDetails.add(new ScoreDetails(baseScore, texts.hardFoughtWin(), true, false));
+//            canAddStreak = true;
+//        }
+//        else
+        if(graveModel.getLeftTimeInt(winnerColor) >= EZ_WIN_TRIGGERING_TIME_LEFT    //easy win
                 || boardModel.getAccTurnCount() <= EZ_WIN_TRIGGERING_TURN_COUNT){
             baseScore = EASY_WIN;
             scoreDetails.add(new ScoreDetails(baseScore, texts.easyWin(), true, false));
@@ -295,7 +297,7 @@ public class ScoresHandler implements Disposable{
         /////////////////////////////
         boolean loserInLeaderboard = false;
 
-        if(loserTeam.getRank() <= PAWN_LEADERBOARD_TRIGGERING_RANK){
+        if(loserTeam.getRank() < PAWN_LEADERBOARD_TRIGGERING_RANK){
             loserInLeaderboard = true;
         }
 

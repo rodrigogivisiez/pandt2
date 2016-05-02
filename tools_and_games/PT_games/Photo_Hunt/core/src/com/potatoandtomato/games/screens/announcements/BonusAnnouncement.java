@@ -20,7 +20,7 @@ public class BonusAnnouncement extends Announcement {
     private Label labelBig, labelSmall;
 
 
-    public BonusAnnouncement(Services services, BonusType bonusType) {
+    public BonusAnnouncement(Services services, BonusType bonusType, String extra) {
         this.assets = services.getAssets();
         this.services = services;
 

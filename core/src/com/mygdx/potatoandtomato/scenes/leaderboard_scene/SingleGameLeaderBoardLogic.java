@@ -8,6 +8,7 @@ import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.utils.ArrayUtils;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.common.models.LeaderboardRecord;
 
@@ -43,33 +44,38 @@ public class SingleGameLeaderBoardLogic extends LogicAbstract {
             public void onCallback(ArrayList<LeaderboardRecord> records, Status st) {
                 if(st == Status.SUCCESS){
                     _records = records;
-                    Threadings.postRunnable(new Runnable() {
-                        @Override
-                        public void run() {
-                            dataReady();
-                        }
-                    });
+                    if(!LeaderboardHelper.isMyRecordInLeaderboard(_records, _services.getProfile().getUserId())){
+                        _services.getDatabase().getHighestLeaderBoardRecordAndStreak(_game,
+                                ArrayUtils.stringsToArray(_services.getProfile().getUserId()), new DatabaseListener<LeaderboardRecord>() {
+                            @Override
+                            public void onCallback(LeaderboardRecord record, Status st) {
+                                if(st == Status.SUCCESS && record != null){
+                                    _records.add(record);
+                                    dataReady();
+                                }
+                            }
+                        });
+
+                    }
+                    else{
+                        dataReady();
+                    }
+
                 }
             }
         });
     }
 
     private void dataReady(){
-        LeaderboardFiller.fillEmptyRecords(_records);
+        LeaderboardHelper.fillEmptyRecords(_records);
         _scene.leaderboardDataLoaded(_game, _records);
 
-        boolean found = false;
-        int i = 0;
-        for(LeaderboardRecord record : _records){
-            if(record.containUser(_services.getProfile().getUserId())){
-                found = true;
-                //_scene.scrollToRecord(_game, i);
-                break;
-            }
-            i++;
+        for(int i = Global.LEADERBOARD_COUNT; i < _records.size(); i++){
+            _scene.changeRecordTableToUnknownRank(_game, i);
         }
 
-        _scene.setMascots(found ? LeaderBoardScene.MascotType.HAPPY : LeaderBoardScene.MascotType.BORING);
+        _scene.setMascots(LeaderboardHelper.isMyRecordInLeaderboard(_records, _services.getProfile().getUserId()) ?
+                                    LeaderBoardScene.MascotType.HAPPY : LeaderBoardScene.MascotType.BORING);
 
         _scene.hideLoading(_game);
     }

@@ -37,7 +37,7 @@ public abstract class TestAbstract {
         _game.getCoordinator().setMyUserId("testUser");
         ArrayList<Team> teams = _game.getCoordinator().getTeams();
         Team team = new Team();
-        team.addPlayer(new Player("testUser", "testUser", true, true, Color.BLACK));
+        team.addPlayer(new Player("testUser", "testUser", true, true, 0));
         teams.add(team);
         _game.getCoordinator().userConnectionChanged("testUser", true);
     }

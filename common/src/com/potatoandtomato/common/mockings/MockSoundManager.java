@@ -40,8 +40,13 @@ public class MockSoundManager implements ISoundsPlayer {
     }
 
     @Override
-    public void stopMusic(Music music) {
-        music.stop();
+    public void stopMusic(final Music music) {
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                music.stop();
+            }
+        });
     }
 
     @Override
@@ -67,11 +72,16 @@ public class MockSoundManager implements ISoundsPlayer {
     }
 
     @Override
-    public void stopSoundLoop(Sound sound) {
-        if(_externalSoundIdsMap.containsKey(sound)){
-            sound.setLooping(_externalSoundIdsMap.get(sound), false);
-            _externalSoundIdsMap.remove(sound);
-        }
+    public void stopSoundLoop(final Sound sound) {
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(_externalSoundIdsMap.containsKey(sound)){
+                    sound.setLooping(_externalSoundIdsMap.get(sound), false);
+                    _externalSoundIdsMap.remove(sound);
+                }
+            }
+        });
     }
 
     @Override

@@ -6,7 +6,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
+import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.assets.MyAssets;
+import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.assets.Textures;
 import com.potatoandtomato.games.controls.DummyButton;
 import com.potatoandtomato.games.models.Services;
@@ -24,6 +26,7 @@ public class HintsActor extends Table {
     private Image hintOnImage1, hintOnImage2, hintOnImage3;
     private Image hintOffImage1, hintOffImage2, hintOffImage3;
     private Image hintBlock;
+    private Image recoverHintLightImage;
 
     public HintsActor(Services services) {
         this.services = services;
@@ -78,47 +81,58 @@ public class HintsActor extends Table {
         this.addActor(hintBlock);
     }
 
-    public void setHintBlockVisible(boolean visible){
-        if(visible){
-            hintBlock.addAction(moveTo(0, hintBlock.getY(), 1f));
-        }
-        else{
-            hintBlock.addAction(moveTo(-hintBlock.getWidth(), hintBlock.getY(), 1f));
-        }
+    public void setHintBlockVisible(final boolean visible){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(visible){
+                    hintBlock.addAction(moveTo(0, hintBlock.getY(), 1f));
+                }
+                else{
+                    hintBlock.addAction(moveTo(-hintBlock.getWidth(), hintBlock.getY(), 1f));
+                }
+                services.getSoundsWrapper().playSounds(Sounds.Name.MOVE_ROCK);
+            }
+        });
     }
 
-    public void refreshDesign(int leftHints){
-        boolean off1 = false, off2 = false, off3 = false;
-        if(leftHints == 0){
-            off1 = off2 = off3 = true;
-        }
-        else if(leftHints == 1){
-            off2 = off3 = true;
-        }
-        else if(leftHints == 2){
-            off3 = true;
-        }
+    public void refreshDesign(final int leftHints){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                boolean off1 = false, off2 = false, off3 = false;
+                if(leftHints == 0){
+                    off1 = off2 = off3 = true;
+                }
+                else if(leftHints == 1){
+                    off2 = off3 = true;
+                }
+                else if(leftHints == 2){
+                    off3 = true;
+                }
 
-        if(off1){
-            hintOnImage1.addAction(sequence(Actions.scaleTo(0, 0, 0.1f)));
-        }
-        else{
-            hintOnImage1.setScale(1, 1);
-        }
+                if(off1){
+                    hintOnImage1.addAction(sequence(Actions.scaleTo(0, 0, 0.1f)));
+                }
+                else{
+                    hintOnImage1.setScale(1, 1);
+                }
 
-        if(off2){
-            hintOnImage2.addAction(sequence(Actions.scaleTo(0, 0, 0.1f)));
-        }
-        else{
-            hintOnImage2.setScale(1, 1);
-        }
+                if(off2){
+                    hintOnImage2.addAction(sequence(Actions.scaleTo(0, 0, 0.1f)));
+                }
+                else{
+                    hintOnImage2.setScale(1, 1);
+                }
 
-        if(off3){
-            hintOnImage3.addAction(sequence(Actions.scaleTo(0, 0, 0.1f)));
-        }
-        else{
-            hintOnImage3.setScale(1, 1);
-        }
+                if(off3){
+                    hintOnImage3.addAction(sequence(Actions.scaleTo(0, 0, 0.1f)));
+                }
+                else{
+                    hintOnImage3.setScale(1, 1);
+                }
+            }
+        });
     }
 
 

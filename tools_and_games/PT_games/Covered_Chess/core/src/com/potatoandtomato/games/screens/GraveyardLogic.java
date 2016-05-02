@@ -32,7 +32,6 @@ public class GraveyardLogic implements Disposable {
     private GraveModel _graveModel;
     private GraveyardActor _graveyardActor;
     private SoundsWrapper _soundsWrapper;
-    private boolean _showed;
     private boolean _handledSuddenDeath;
     private SafeThread _countDownThread;
     private boolean _pauseTimer;
@@ -45,7 +44,7 @@ public class GraveyardLogic implements Disposable {
         this._graveModel = graveModel;
         this._soundsWrapper = soundsWrapper;
         this._services = services;
-        this._graveyardActor = new GraveyardActor(gameCoordinator, texts, assets);
+        this._graveyardActor = new GraveyardActor(gameCoordinator, texts, assets, _soundsWrapper);
         setListener();
     }
 
@@ -109,25 +108,40 @@ public class GraveyardLogic implements Disposable {
         return _graveyardActor;
     }
 
-    public boolean isShowed() {
-        return _showed;
-    }
-
     public void setListener(){
-        _graveyardActor.addListener(new ClickListener() {
+
+        _graveyardActor.getGraveIcon().addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                if(isShowed()){
-                    _graveyardActor.hide();
-                }
-                else{
-                    _graveyardActor.expand();
-                }
-                _showed = !_showed;
-                _soundsWrapper.playSounds(Sounds.Name.OPEN_SLIDE);
+                _graveyardActor.expand(true);
             }
         });
+
+        _graveyardActor.getTutorialIcon().addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                _graveyardActor.expand(false);
+            }
+        });
+
+        _graveyardActor.getGraveCloseImage().addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                _graveyardActor.hide();
+            }
+        });
+
+        _graveyardActor.getTutorialCloseImage().addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                _graveyardActor.hide();
+            }
+        });
+
 
         //for debug purpose only
         if(Gdx.app.getType() == Application.ApplicationType.Desktop){

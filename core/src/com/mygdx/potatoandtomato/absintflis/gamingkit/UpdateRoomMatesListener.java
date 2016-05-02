@@ -7,4 +7,7 @@ public abstract class UpdateRoomMatesListener {
 
     public abstract void onUpdateRoomMatesReceived(int code, String msg, String senderId);
 
+    public abstract void onUpdateRoomMatesReceived(byte identifier, byte[] data, String senderId);
+
+
 }

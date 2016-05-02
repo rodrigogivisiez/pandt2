@@ -167,45 +167,38 @@ public class GameListLogic extends LogicAbstract {
     }
 
     public void roomDataChanged(final Room room, final boolean playSound){
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                if(room.isOpen()){
-                    if(room.getHost().equals(_services.getProfile()) || room.getRoomUsersCount() == 0){      //orphan room fix
-                        if(isSceneVisible()){
-                            room.setOpen(false);
-                            _services.getDatabase().saveRoom(room, true, null);
-                        }
-                    }
-                    else{
-                        if(!_scene.alreadyContainsRoom(room) && playSound && isSceneVisible()){
-                            _services.getSoundsPlayer().playSoundEffect(Sounds.Name.GAME_CREATED);
-                        }
-                        final Actor clicked = _scene.updatedRoom(room);
-                        if(clicked != null){
-                            clicked.addListener(new ClickListener() {
-                                @Override
-                                public void clicked(InputEvent event, float x, float y) {
-                                    super.clicked(event, x, y);
-                                    _selectedRoom = room;
-                                    _scene.gameRowHighlight(clicked.getName());
-                                }
-                            });
-                        }
-                    }
-
-                }
-                else{
-                    if(_selectedRoom != null && _selectedRoom.getId().equals(room.getId())) {
-                        _selectedRoom = null;
-                        _scene.gameRowHighlight("-1");
-                    }
-                    _scene.removeRoom(room);
+        if(room.isOpen()){
+            if(room.getHost().equals(_services.getProfile()) || room.getRoomUsersCount() == 0){      //orphan room fix
+                if(isSceneVisible()){
+                    room.setOpen(false);
+                    _services.getDatabase().saveRoom(room, true, null);
                 }
             }
-        });
+            else{
+                if(!_scene.alreadyContainsRoom(room) && playSound && isSceneVisible()){
+                    _services.getSoundsPlayer().playSoundEffect(Sounds.Name.GAME_CREATED);
+                }
+                final Actor clicked = _scene.updatedRoom(room);
+                if(clicked != null){
+                    clicked.addListener(new ClickListener() {
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                            super.clicked(event, x, y);
+                            _selectedRoom = room;
+                            _scene.gameRowHighlight(clicked.getName());
+                        }
+                    });
+                }
+            }
 
-
+        }
+        else{
+            if(_selectedRoom != null && _selectedRoom.getId().equals(room.getId())) {
+                _selectedRoom = null;
+                _scene.gameRowHighlight("-1");
+            }
+            _scene.removeRoom(room);
+        }
     }
 
     @Override

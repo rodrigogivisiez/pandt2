@@ -132,7 +132,7 @@ public class MainScreen extends GameScreen {
 
         Table imagesContainer = new Table();
 
-        imagesContainer.add(_imageOneTable).expand().fill().space(2).uniform();
+        imagesContainer.add(_imageOneTable).expand().fill().space(6).uniform();
         imagesContainer.add(new Table()).expand().fill().uniform();
 
         imagesContainer.addActor(imageTwoContainer);
@@ -192,7 +192,7 @@ public class MainScreen extends GameScreen {
         _imageSize = new Vector2(_imageOneTable.getWidth(), _imageOneTable.getHeight());
 
         imageTwoContainer.setSize(_imageOneTable.getWidth(), _imageOneTable.getHeight());
-        imageTwoContainer.setPosition(_imageOneTable.getWidth() + 2, 0);
+        imageTwoContainer.setPosition(_imageOneTable.getWidth() + 6, 0);
         _imageTwoTable.setSize(_imageOneTable.getWidth(), _imageOneTable.getHeight());
 
         Image topBarShadow = new Image(_assets.getTextures().get(Textures.Name.TOP_BG_SHADOW));
@@ -254,6 +254,8 @@ public class MainScreen extends GameScreen {
 
                 _imageOneInnerTable.add(image1).expand().fill();
                 _imageTwoInnerTable.add(image2).expand().fill();
+
+                _services.getSoundsWrapper().playSounds(Sounds.Name.START_STAGE);
             }
         });
 
@@ -344,23 +346,28 @@ public class MainScreen extends GameScreen {
     }
 
     public void unCircleAll(){
-        for(int i = _imageOneInnerTable.getChildren().size - 1; i >=0; i--){
-            Actor circle = _imageOneInnerTable.getChildren().get(i);
-            if(circle instanceof Circle){
-                circle.remove();
-            }
-        }
-
-        for(Actor actor : _imageTwoTable.getChildren()){
-            if(actor instanceof Table){
-                Table innerTable = (Table) actor;
-                for(Actor circle : innerTable.getChildren()){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                for(int i = _imageOneInnerTable.getChildren().size - 1; i >=0; i--){
+                    Actor circle = _imageOneInnerTable.getChildren().get(i);
                     if(circle instanceof Circle){
                         circle.remove();
                     }
                 }
+
+                for(Actor actor : _imageTwoTable.getChildren()){
+                    if(actor instanceof Table){
+                        Table innerTable = (Table) actor;
+                        for(Actor circle : innerTable.getChildren()){
+                            if(circle instanceof Circle){
+                                circle.remove();
+                            }
+                        }
+                    }
+                }
             }
-        }
+        });
     }
 
 

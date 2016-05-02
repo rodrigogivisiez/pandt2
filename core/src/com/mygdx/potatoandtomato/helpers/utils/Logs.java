@@ -32,6 +32,7 @@ public class Logs {
         String TAG = "[" + callerClassName + "]";
 
         _logs.add(TAG + " [" + callerMethodName + "]");
+        Logs.show(TAG + " [" + callerMethodName + "]");
 
         ArrayList<String> clone = (ArrayList) _logs.clone();
 

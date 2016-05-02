@@ -1,5 +1,7 @@
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.absintf.GameModelListener;
+import com.potatoandtomato.games.enums.GameState;
+import com.potatoandtomato.games.enums.StageType;
 import com.potatoandtomato.games.models.GameModel;
 import com.potatoandtomato.games.screens.time_bar.CastleLogic;
 import com.potatoandtomato.games.screens.time_bar.KingLogic;
@@ -20,9 +22,6 @@ public class TestTimeLogic extends TestAbstract {
     public void testTimeOut(){
 
         GameModel gameModel = new GameModel();
-        gameModel.setRemainingMiliSecs(1000, true);
-
-        TimeLogic timeLogic = getTimeLogicAndRestart(gameModel);
 
         gameModel.addGameModelListener(new GameModelListener() {
             @Override
@@ -31,6 +30,9 @@ public class TestTimeLogic extends TestAbstract {
             }
         });
 
+        TimeLogic timeLogic = getTimeLogicAndRestart(gameModel);
+        gameModel.setRemainingMiliSecs(1000, true);
+
         Threadings.waitTasks(1);
     }
 
@@ -38,9 +40,9 @@ public class TestTimeLogic extends TestAbstract {
     public void testFreezed(){
 
         GameModel gameModel = Mockito.spy(new GameModel());
-        gameModel.setRemainingMiliSecs(1000, true);
 
         TimeLogic timeLogic = getTimeLogicAndRestart(gameModel);
+        gameModel.setRemainingMiliSecs(1000, true);
 
         gameModel.addFreezeMiliSecs();
 
@@ -64,9 +66,8 @@ public class TestTimeLogic extends TestAbstract {
     @Test
     public void testStopAndRestart(){
         GameModel gameModel = Mockito.spy(new GameModel());
-        gameModel.setRemainingMiliSecs(5000, true);
-
         TimeLogic timeLogic = getTimeLogicAndRestart(gameModel);
+        gameModel.setRemainingMiliSecs(5000, true);
 
         Threadings.sleep(500);
 
@@ -76,6 +77,7 @@ public class TestTimeLogic extends TestAbstract {
 
         gameModel.setRemainingMiliSecs(1000, true);
         timeLogic.restart();
+        gameModel.setGameState(GameState.Playing);
 
         gameModel.addGameModelListener(new GameModelListener() {
             @Override
@@ -95,7 +97,9 @@ public class TestTimeLogic extends TestAbstract {
 
         TimeLogic timeLogic = new TimeLogic(Mockings.mockServices(_game.getCoordinator()), _game.getCoordinator(),
                 Mockito.mock(KingLogic.class), Mockito.mock(CastleLogic.class), Mockito.mock(KnightLogic.class), gameModel);
-        timeLogic.restart();
+        gameModel.setStageType(StageType.Normal);
+        gameModel.addStageNumber();
+        gameModel.setGameState(GameState.Playing);
         return timeLogic;
     }
 

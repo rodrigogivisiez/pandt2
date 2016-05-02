@@ -79,7 +79,9 @@ public interface IDatabase {
 
      void saveLeaderBoardRecord(Room room, LeaderboardRecord record, DatabaseListener listener);
 
-     void getAccLeaderBoardRecordAndStreak(Room room, ArrayList<String> userIds, DatabaseListener<LeaderboardRecord> listener);
+     void getHighestLeaderBoardRecordAndStreak(Game game, ArrayList<String> teamUserIds, DatabaseListener<LeaderboardRecord> listener);
+
+     void getLeaderBoardRecordById(Game game, String leaderboardId, DatabaseListener<LeaderboardRecord> listener);
 
      void deleteLeaderBoard(Game game, DatabaseListener listener);
 

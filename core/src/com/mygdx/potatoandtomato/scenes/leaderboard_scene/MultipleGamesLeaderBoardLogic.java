@@ -6,10 +6,12 @@ import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.utils.ArrayUtils;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.common.models.LeaderboardRecord;
 
@@ -24,13 +26,14 @@ public class MultipleGamesLeaderBoardLogic extends LogicAbstract {
     private LeaderBoardScene _scene;
     private ArrayList<Game> _games;
     private int _current;
-    private HashMap<String, Boolean> _loadedGameAbbrs;
+    private HashMap<String, Boolean> _loadedGameAbbrToFoundInLeaderboardMap;
 
     public MultipleGamesLeaderBoardLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
         _scene = new LeaderBoardScene(_services, _screen);
+        _scene.showNextPrevContainer();
         _games = new ArrayList<Game>();
-        _loadedGameAbbrs = new HashMap<String, Boolean>();
+        _loadedGameAbbrToFoundInLeaderboardMap = new HashMap<String, Boolean>();
         setListeners();
         init();
     }
@@ -73,12 +76,23 @@ public class MultipleGamesLeaderBoardLogic extends LogicAbstract {
         showGame(_current);
     }
 
+    private void prevGame(){
+        if(_current - 1 >= 0){
+            _current--;
+        }
+        else{
+            _current = _games.size() - 1;
+        }
+        showGame(_current);
+    }
+
+
     private void showGame(int index){
         final Game game = _games.get(index);
         _scene.showGameLeaderboard(game);
 
-        if(_loadedGameAbbrs.containsKey(game.getAbbr())){
-            boolean found = _loadedGameAbbrs.get(game.getAbbr());
+        if(_loadedGameAbbrToFoundInLeaderboardMap.containsKey(game.getAbbr())){
+            boolean found = _loadedGameAbbrToFoundInLeaderboardMap.get(game.getAbbr());
             _scene.setMascots(found ? LeaderBoardScene.MascotType.HAPPY : LeaderBoardScene.MascotType.BORING);
         }
         else{
@@ -86,28 +100,41 @@ public class MultipleGamesLeaderBoardLogic extends LogicAbstract {
                 @Override
                 public void onCallback(final ArrayList<LeaderboardRecord> records, Status st) {
                     if(st == Status.SUCCESS){
-                        Threadings.postRunnable(new Runnable() {
+                        final boolean found = LeaderboardHelper.isMyRecordInLeaderboard(records, _services.getProfile().getUserId());
+
+                        final Runnable populateRunnable = new Runnable() {
                             @Override
                             public void run() {
-                                LeaderboardFiller.fillEmptyRecords(records);
+                                LeaderboardHelper.fillEmptyRecords(records);
                                 _scene.leaderboardDataLoaded(game, records);
-
-                                boolean found = false;
-                                for(LeaderboardRecord record : records){
-                                    if(record.containUser(_services.getProfile().getUserId())){
-                                        found = true;
-                                        break;
-                                    }
-                                }
 
                                 if(_games.get(_current).getAbbr().equals(game.getAbbr())){
                                     _scene.setMascots(found ? LeaderBoardScene.MascotType.HAPPY : LeaderBoardScene.MascotType.BORING);
                                 }
 
                                 _scene.hideLoading(game);
-                                _loadedGameAbbrs.put(game.getAbbr(), found);
+                                _loadedGameAbbrToFoundInLeaderboardMap.put(game.getAbbr(), found);
                             }
-                        });
+                        };
+
+                        if(!found){
+                            _services.getDatabase().getHighestLeaderBoardRecordAndStreak(game,
+                                    ArrayUtils.stringsToArray(_services.getProfile().getUserId()), new DatabaseListener<LeaderboardRecord>() {
+                                        @Override
+                                        public void onCallback(LeaderboardRecord record, Status st) {
+                                            if (st == Status.SUCCESS && record != null) {
+                                                records.add(record);
+                                            }
+                                            populateRunnable.run();
+                                        }
+                                    }
+                            );
+                        }
+                        else{
+                            populateRunnable.run();
+                        }
+
+
                     }
                 }
             });
@@ -116,11 +143,19 @@ public class MultipleGamesLeaderBoardLogic extends LogicAbstract {
 
 
     private void setListeners(){
-        _scene.getTitleLabel().addListener(new ClickListener(){
+        _scene.getNextButton().addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
                 nextGame();
+                _services.getSoundsPlayer().playSoundEffect(Sounds.Name.CLICK_BUTTON);
+            }
+        });
+
+        _scene.getPrevButton().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                prevGame();
+                _services.getSoundsPlayer().playSoundEffect(Sounds.Name.CLICK_BUTTON);
             }
         });
     }

@@ -1,16 +1,14 @@
 package com.potatoandtomato.games.screens.time_bar;
 
-import com.badlogic.gdx.math.Vector2;
 import com.potatoandtomato.common.GameCoordinator;
-import com.potatoandtomato.common.controls.Animator;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.absintf.GameModelListener;
+import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.enums.GameState;
 import com.potatoandtomato.games.enums.KnightState;
-import com.potatoandtomato.games.helpers.Logs;
+import com.potatoandtomato.games.enums.StageType;
 import com.potatoandtomato.games.models.GameModel;
 import com.potatoandtomato.games.models.Services;
-import com.potatoandtomato.games.statics.Global;
 
 /**
  * Created by SiongLeng on 12/4/2016.
@@ -26,6 +24,7 @@ public class KnightLogic {
     private float totalAtkMiliSecs;
     private float totalDistance;
     private boolean freezed;
+    private boolean playingMusic;
 
     public KnightLogic(GameModel gameModel, Services services, GameCoordinator gameCoordinator) {
         this.gameModel = gameModel;
@@ -39,7 +38,7 @@ public class KnightLogic {
     }
 
     public void reset(){
-        gameModel.setCastleAttackedCount(0);
+        //gameModel.setCastleAttackedCount(0);
         this.totalMiliSecs = gameModel.getThisStageTotalMiliSecs();
         this.totalMovingMiliSecs = gameModel.getThisStageTotalMovingMiliSecs();
         this.totalAtkMiliSecs = gameModel.getThisStageTotalAtkMiliSecs();
@@ -47,10 +46,20 @@ public class KnightLogic {
         knightActor.changeState(KnightState.Walk, false);
         setFreezed(false);
         knightActor.setKnightPositionX(totalDistance, false, false);
+        stopMusic();
     }
 
     public void updatePosition(float remainingMiliSecs){
-        knightActor.setKnightPositionX(getRemainingDistanceByRemainingTime(remainingMiliSecs), true, true);
+        float distance = getRemainingDistanceByRemainingTime(remainingMiliSecs);
+        knightActor.setKnightPositionX(distance, true, true);
+
+        if(distance <= 50 && gameModel.getStageType() != StageType.Bonus){
+            startMusic();
+        }
+    }
+
+    public void kingCapture(){
+        knightActor.changeState(KnightState.Won, true);
     }
 
     public void setFreezed(boolean freezed) {
@@ -63,6 +72,7 @@ public class KnightLogic {
     public void setPause(boolean pause){
         if(pause){
             knightActor.stopAnimation();
+            stopMusic();
         }
         else{
             knightActor.continueAnimation();
@@ -77,6 +87,18 @@ public class KnightLogic {
             if(remainingDistance < 0) remainingDistance = 0;
         }
         return remainingDistance;
+    }
+
+    public void stopMusic(){
+        if(playingMusic) services.getSoundsWrapper().stopMusic(Sounds.Name.ATTACKING_CASTLE_MUSIC);
+        playingMusic = false;
+    }
+
+    public void startMusic(){
+        if(!playingMusic){
+            services.getSoundsWrapper().playMusic(Sounds.Name.ATTACKING_CASTLE_MUSIC);
+            playingMusic = true;
+        }
     }
 
     public void setListeners(){
@@ -116,6 +138,10 @@ public class KnightLogic {
                     public void run() {
                         if(newState == GameState.Playing){
                             setPause(false);
+                        }
+                        else if(newState == GameState.Lose){
+                            setPause(true);
+                            kingCapture();
                         }
                         else{
                             setPause(true);
