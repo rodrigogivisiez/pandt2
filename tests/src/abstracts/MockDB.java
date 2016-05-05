@@ -98,6 +98,11 @@ public class MockDB implements IDatabase {
     }
 
     @Override
+    public void updateRoomPlayingState(Room room, boolean isPlaying, @Nullable DatabaseListener<String> listener) {
+
+    }
+
+    @Override
     public void saveRoom(Room room, boolean notify, @Nullable DatabaseListener<String> listener) {
         if(listener!= null) listener.onCallback(null, Status.SUCCESS);
     }
@@ -208,7 +213,12 @@ public class MockDB implements IDatabase {
     }
 
     @Override
-    public void getHighestLeaderBoardRecordAndStreak(Game game, ArrayList<String> teamUserIds, DatabaseListener<LeaderboardRecord> listener) {
+    public void getTeamHighestLeaderBoardRecordAndStreak(Game game, ArrayList<String> teamUserIds, DatabaseListener<LeaderboardRecord> listener) {
+
+    }
+
+    @Override
+    public void getUserHighestLeaderBoardRecordAndStreak(Game game, String userId, DatabaseListener<LeaderboardRecord> listener) {
 
     }
 

@@ -55,7 +55,7 @@ public class UserCountersLogic implements Disposable {
             userIdsSortedByRecord.add(userId);
         }
 
-        for(Player player : gameCoordinator.getIndexToPlayersMap().values()){
+        for(Player player : gameCoordinator.getIndexToPlayersConcurrentMap().values()){
             if(!userIdsSortedByRecord.contains(player.getUserId())){
                 userIdsSortedByRecord.add(player.getUserId());
             }

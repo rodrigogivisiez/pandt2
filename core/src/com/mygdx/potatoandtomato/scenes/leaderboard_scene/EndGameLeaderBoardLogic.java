@@ -9,7 +9,8 @@ import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
 import com.mygdx.potatoandtomato.helpers.services.Confirm;
-import com.mygdx.potatoandtomato.helpers.utils.OneTimeRunnable;
+import com.mygdx.potatoandtomato.helpers.utils.Scores;
+import com.potatoandtomato.common.utils.OneTimeRunnable;
 import com.mygdx.potatoandtomato.helpers.utils.Pair;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.statics.Global;
@@ -21,6 +22,7 @@ import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
 
+import javax.xml.bind.annotation.XmlElementDecl;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -75,14 +77,21 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                     _myLeaderboardRecord.resetStreak();
                 }
 
-                _scoreDetails = _endGameData.getEndGameResult().getMyTeamWinnerScoreDetails(_services.getProfile().getUserId());
-                processOtherTeamScoresAndStreaks();
+                if(_endGameData.getEndGameResult() != null){
+                    _scoreDetails = _endGameData.getEndGameResult().getMyTeamWinnerScoreDetails(_services.getProfile().getUserId());
+                    processOtherTeamScoresAndStreaks();
 
-                if (_endGameData.getEndGameResult().isWon()) {
-                    winnerHandling();
-                } else {
-                    loserHandling();
+                    if (_endGameData.getEndGameResult().isWon()) {
+                        winnerHandling();
+                    } else {
+                        loserHandling();
+                    }
                 }
+                else{
+                    noHandling();
+                }
+
+
             }
         });
     }
@@ -91,6 +100,12 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
     public void onHide() {
         super.onHide();
         Threadings.setContinuousRenderLock(false);
+    }
+
+    public void noHandling(){
+        _scene.leaderboardDataLoaded(_game, _records);
+        _scene.hideLoading(_game);
+        _scene.setMascots(LeaderBoardScene.MascotType.BORING);
     }
 
     public void loserHandling(){
@@ -188,54 +203,85 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                     Threadings.delay(2000, new Runnable() {
                                         @Override
                                         public void run() {
-                                            _score = _myLeaderboardRecord.getScore();
+                                            if (_room.getGame().getLeaderboardTypeEnum() == LeaderboardType.Accumulate) {
+                                                _score = _myLeaderboardRecord.getScore();
+                                            }
                                             addScoresRecur(0, new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    Threadings.delay(1000, new Runnable() {
+                                                    _scene.animateFakeLabelIfExist(new Runnable() {
                                                         @Override
                                                         public void run() {
-                                                            _myLeaderboardRecord.addScoresToRecord(_scoreDetails);
-                                                            final int finalRank = getAfterRanking();
-
-                                                            moveUpRankAnimation(currentRank, finalRank, new Runnable() {
-                                                                    @Override
-                                                                    public void run() {
-                                                                        Threadings.delay(500, new Runnable() {
-                                                                            @Override
-                                                                            public void run() {
-
-                                                                                if(getStreakToAdd() > 0){
-                                                                                    _services.getSoundsPlayer().playSoundEffect(Sounds.Name.STREAK);
-                                                                                    _myLeaderboardRecord.getStreak().addStreakCount(getStreakToAdd());
-                                                                                    _scene.invalidateNameStreakTable(_game, _myLeaderboardRecord,
-                                                                                            finalRank, true);
-                                                                                }
-
-                                                                                if(finalRank == _leaderboardSize){  //no enough pt to move up any rank
-                                                                                    _scene.setMascots(LeaderBoardScene.MascotType.BORING);
-                                                                                    _scene.changeRecordTableToUnknownRank(_game, finalRank);
-                                                                                }
-                                                                                else{
-                                                                                    _scene.setMascots(LeaderBoardScene.MascotType.HAPPY);
-                                                                                }
-
-                                                                                _services.getSoundsPlayer().playThemeMusic();
-                                                                            }
-                                                                        });
+                                                            Threadings.delay(1000, new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    if (_room.getGame().getLeaderboardTypeEnum() == LeaderboardType.Accumulate) {
+                                                                        _myLeaderboardRecord.addScoresToRecord(_scoreDetails);
                                                                     }
+                                                                    else if(_room.getGame().getLeaderboardTypeEnum() == LeaderboardType.Normal){
+                                                                        if(Scores.getTotalScoresInScoresArray(_scoreDetails) > _myLeaderboardRecord.getScore()){
+                                                                            _myLeaderboardRecord.setScore(0);
+                                                                            _myLeaderboardRecord.addScoresToRecord(_scoreDetails);
+                                                                        }
+                                                                    }
+
+                                                                    int finalRank = getAfterRanking();
+                                                                    if(finalRank > currentRank){        //can nvr be moving downward
+                                                                        finalRank = currentRank;
+                                                                    }
+
+                                                                    final int finalRank1 = finalRank;
+                                                                    moveUpRankAnimation(currentRank, finalRank, new Runnable() {
+                                                                        @Override
+                                                                        public void run() {
+                                                                            Threadings.delay(500, new Runnable() {
+                                                                                @Override
+                                                                                public void run() {
+                                                                                    if (getStreakToAdd() > 0) {
+                                                                                        _services.getSoundsPlayer().playSoundEffect(Sounds.Name.STREAK);
+                                                                                        _myLeaderboardRecord.getStreak().addStreakCount(getStreakToAdd());
+                                                                                        _scene.invalidateNameStreakTable(_game, _myLeaderboardRecord,
+                                                                                                finalRank1, true);
+                                                                                    }
+
+                                                                                    if (finalRank1 == _leaderboardSize) {  //no enough pt to move up any rank
+                                                                                        _scene.setMascots(LeaderBoardScene.MascotType.BORING);
+                                                                                        _scene.changeRecordTableToUnknownRank(_game, finalRank1);
+                                                                                    }
+                                                                                    else if(_room.getGame().getLeaderboardTypeEnum() == LeaderboardType.Normal &&
+                                                                                            Scores.getTotalScoresInScoresArray(_scoreDetails) < _myLeaderboardRecord.getScore()){
+                                                                                        _scene.setMascots(LeaderBoardScene.MascotType.BORING);
+                                                                                    }
+                                                                                    else {
+                                                                                        _scene.setMascots(LeaderBoardScene.MascotType.HAPPY);
+                                                                                    }
+
+                                                                                    _services.getSoundsPlayer().playThemeMusic();
+                                                                                }
+                                                                            });
+                                                                        }
+                                                                    });
+                                                                }
                                                             });
                                                         }
                                                     });
+                                                    }
                                                 }
-                                            });
+
+                                                );
+                                            }
                                         }
-                                    });
+
+                                        );
+                                    }
                                 }
-                            });
+
+                            );
+                            }
                         }
-                    });
-                } else {
+
+                    );
+                    }else {
                     _scene.hideLoading(_game);
                     _services.getSoundsPlayer().playThemeMusic();
                 }
@@ -251,8 +297,8 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                     _records = records;
                     LeaderboardHelper.fillEmptyRecords(_records);
                     onRecordsChanged();
-                    if (_game.getLeaderboardTypeEnum() == LeaderboardType.Accumulate && _myRankRecordPair.getFirst() == _leaderboardSize) {
-                        _services.getDatabase().getHighestLeaderBoardRecordAndStreak(_room.getGame(), getMyTeamUserIds(),
+                    if (_myRankRecordPair.getFirst() == _leaderboardSize) {
+                        _services.getDatabase().getTeamHighestLeaderBoardRecordAndStreak(_room.getGame(), getMyTeamUserIds(),
                                 new DatabaseListener<LeaderboardRecord>(LeaderboardRecord.class) {
                                     @Override
                                     public void onCallback(LeaderboardRecord obj, Status st) {
@@ -370,15 +416,13 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
     }
 
     private Pair<Integer, LeaderboardRecord> generateRecordModel(){
-        if(_game.getLeaderboardTypeEnum() == LeaderboardType.Accumulate){
-            ArrayList<String> playerIds = getMyTeamUserIds();
-            int i = 0;
-            for(LeaderboardRecord record : _records){
-                if(record.usersMatched(playerIds)){
-                    return new Pair<Integer, LeaderboardRecord>(i, record);
-                }
-                i++;
+        ArrayList<String> playerIds = getMyTeamUserIds();
+        int i = 0;
+        for(LeaderboardRecord record : _records){
+            if(record.usersMatched(playerIds)){
+                return new Pair<Integer, LeaderboardRecord>(i, record);
             }
+            i++;
         }
         return new Pair<Integer, LeaderboardRecord>(_leaderboardSize, new LeaderboardRecord(_myTeam));
     }
@@ -393,24 +437,14 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
 
     public int getAfterRanking(){
         int i = 0;
-        if(_game.getLeaderboardTypeEnum() == LeaderboardType.Accumulate){
-            boolean foundMine = false;
-            for(LeaderboardRecord record : _records){
-                if(record.usersMatched(_myLeaderboardRecord.getUserIds())) foundMine = true;
+        boolean foundMine = false;
+        for(LeaderboardRecord record : _records){
+            if(record.usersMatched(_myLeaderboardRecord.getUserIds())) foundMine = true;
 
-                if(record.getScore() < _myLeaderboardRecord.getScore()){
-                    return foundMine ? i -1 : i;
-                }
-                i++;
+            if(record.getScore() < _myLeaderboardRecord.getScore()){
+                return foundMine ? i -1 : i;
             }
-        }
-        else if(_game.getLeaderboardTypeEnum() == LeaderboardType.Normal){
-            for(LeaderboardRecord record : _records){
-                if(record.getScore() < _myLeaderboardRecord.getScore()){
-                    return i;
-                }
-                i++;
-            }
+            i++;
         }
         return i;
     }
@@ -444,16 +478,50 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
             if(!team.hasUser(_services.getProfile().getUserId())){
                 ArrayList<ScoreDetails> scoreDetails = winnersScoreDetails.get(team);
                 int i = 0;
+                if(_records.size() == 0){
+                    _records.add(scoreDetailsToNewLeaderboardRecord(team, scoreDetails));
+                    changedRecordIndexes.add(i);
+                }
+
+                boolean foundMatch = false;
+
                 for(LeaderboardRecord record : _records){
                     if(record.usersMatched(team.getPlayersUserIds())){
-                        record.addScoresToRecord(scoreDetails);
+                        if(_room.getGame().getLeaderboardTypeEnum() == LeaderboardType.Normal){
+                            if(record.getScore() < Scores.getTotalScoresInScoresArray(scoreDetails)){
+                                record.setScore(Scores.getTotalScoresInScoresArray(scoreDetails));
+                            }
+                        }
+                        else if(_room.getGame().getLeaderboardTypeEnum() == LeaderboardType.Accumulate){
+                            record.addScoresToRecord(scoreDetails);
+                        }
                         changedRecordIndexes.add(i);
                         if(_room.getGame().isStreakEnabled()){
                             record.addStreakToRecord(scoreDetails);
                         }
+                        foundMatch = true;
                     }
                     i++;
                 }
+
+                if(!foundMatch){
+                    boolean added = false;
+                    for(LeaderboardRecord record : _records){
+                        if(record.getScore() < Scores.getTotalScoresInScoresArray(scoreDetails)){
+                            added = true;
+                        }
+                    }
+                    if(added){
+                        _records.add(_records.size(), scoreDetailsToNewLeaderboardRecord(team, scoreDetails));
+                        changedRecordIndexes.add(_records.size() - 1);
+                    }
+                    else if(!added && _records.size() < Global.LEADERBOARD_COUNT){
+                        _records.add(_records.size(), scoreDetailsToNewLeaderboardRecord(team, scoreDetails));
+                        changedRecordIndexes.add(_records.size() - 1);
+                    }
+
+                }
+
             }
         }
 
@@ -480,8 +548,25 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
             }
         }
 
+        for(int i = _records.size(); i > Global.LEADERBOARD_COUNT; i--){
+            _records.remove(_records.get(Global.LEADERBOARD_COUNT));
+        }
+
         onRecordsChanged();
 
+    }
+
+    public LeaderboardRecord scoreDetailsToNewLeaderboardRecord(Team team, ArrayList<ScoreDetails> scoreDetails){
+        LeaderboardRecord leaderboardRecord = new LeaderboardRecord();
+        for(Player player : team.getPlayers()){
+            leaderboardRecord.addUserName(player.getUserId(), player.getName());
+            leaderboardRecord.addUserId(player.getUserId());
+        }
+        if(_room.getGame().isStreakEnabled()){
+            leaderboardRecord.addStreakToRecord(scoreDetails);
+        }
+        leaderboardRecord.addScoresToRecord(scoreDetails);
+        return leaderboardRecord;
     }
 
     public void onRecordsChanged(){

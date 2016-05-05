@@ -88,6 +88,8 @@ public class MultipleGamesLeaderBoardLogic extends LogicAbstract {
 
 
     private void showGame(int index){
+        if(_games.size() == 0) return;
+
         final Game game = _games.get(index);
         _scene.showGameLeaderboard(game);
 
@@ -118,11 +120,11 @@ public class MultipleGamesLeaderBoardLogic extends LogicAbstract {
                         };
 
                         if(!found){
-                            _services.getDatabase().getHighestLeaderBoardRecordAndStreak(game,
-                                    ArrayUtils.stringsToArray(_services.getProfile().getUserId()), new DatabaseListener<LeaderboardRecord>() {
+                            _services.getDatabase().getUserHighestLeaderBoardRecordAndStreak(game,
+                                    _services.getProfile().getUserId(), new DatabaseListener<LeaderboardRecord>() {
                                         @Override
                                         public void onCallback(LeaderboardRecord record, Status st) {
-                                            if (st == Status.SUCCESS && record != null) {
+                                            if (st == Status.SUCCESS && record != null && record.getScore() != 0) {
                                                 records.add(record);
                                             }
                                             populateRunnable.run();
@@ -143,19 +145,24 @@ public class MultipleGamesLeaderBoardLogic extends LogicAbstract {
 
 
     private void setListeners(){
-        _scene.getNextButton().addListener(new ClickListener(){
+        Threadings.postRunnable(new Runnable() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
-                nextGame();
-                _services.getSoundsPlayer().playSoundEffect(Sounds.Name.CLICK_BUTTON);
-            }
-        });
+            public void run() {
+                _scene.getNextButton().addListener(new ClickListener(){
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        nextGame();
+                        _services.getSoundsPlayer().playSoundEffect(Sounds.Name.CLICK_BUTTON);
+                    }
+                });
 
-        _scene.getPrevButton().addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                prevGame();
-                _services.getSoundsPlayer().playSoundEffect(Sounds.Name.CLICK_BUTTON);
+                _scene.getPrevButton().addListener(new ClickListener(){
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        prevGame();
+                        _services.getSoundsPlayer().playSoundEffect(Sounds.Name.CLICK_BUTTON);
+                    }
+                });
             }
         });
     }

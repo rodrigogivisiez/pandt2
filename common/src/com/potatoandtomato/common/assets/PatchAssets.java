@@ -2,13 +2,14 @@ package com.potatoandtomato.common.assets;
 
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.utils.Disposable;
 
 import java.util.HashMap;
 
 /**
  * Created by SiongLeng on 29/3/2016.
  */
-public abstract class PatchAssets {
+public abstract class PatchAssets implements Disposable {
 
     private HashMap<String, NinePatch> _patches;
 
@@ -28,4 +29,8 @@ public abstract class PatchAssets {
         }
     }
 
+    @Override
+    public void dispose() {
+        _patches.clear();
+    }
 }

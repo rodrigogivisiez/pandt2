@@ -30,7 +30,7 @@ public abstract class TextureAssets implements IAssetFragment {
 
     @Override
     public void dispose() {
-
+        _regions.clear();
     }
 
     public TextureRegion get(Object object){

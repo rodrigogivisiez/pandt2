@@ -2,6 +2,7 @@ package com.potatoandtomato.common.absints;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.potatoandtomato.common.GameCoordinator;
 
@@ -32,7 +33,7 @@ public abstract class GameScreen implements Screen{
 
     @Override
     public void render(float delta) {
-        if (Gdx.input.isKeyPressed(Input.Keys.BACK)){
+        if (Gdx.input.isKeyPressed(Input.Keys.BACK) || Gdx.input.isKeyPressed(Input.Keys.ESCAPE)){
             if(_backKeyListener != null) _backKeyListener.backPressed();
         }
     }

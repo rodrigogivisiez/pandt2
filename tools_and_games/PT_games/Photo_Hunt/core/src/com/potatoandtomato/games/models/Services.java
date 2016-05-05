@@ -1,5 +1,7 @@
 package com.potatoandtomato.games.models;
 
+import com.badlogic.gdx.scenes.scene2d.utils.Disableable;
+import com.badlogic.gdx.utils.Disposable;
 import com.potatoandtomato.games.assets.MyAssets;
 import com.potatoandtomato.games.services.Database;
 import com.potatoandtomato.games.services.RoomMsgHandler;
@@ -9,7 +11,7 @@ import com.potatoandtomato.games.services.Texts;
 /**
  * Created by SiongLeng on 6/4/2016.
  */
-public class Services {
+public class Services implements Disposable {
 
     private MyAssets assets;
     private SoundsWrapper soundsWrapper;
@@ -51,5 +53,11 @@ public class Services {
 
     public void setDatabase(Database database) {
         this.database = database;
+    }
+
+    @Override
+    public void dispose() {
+        assets.dispose();
+        soundsWrapper.dispose();
     }
 }

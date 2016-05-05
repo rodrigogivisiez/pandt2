@@ -63,7 +63,8 @@ public abstract class FontAssets implements IAssetFragment {
 
     @Override
     public void dispose() {
-
+        _storage.clear();
+        _preloadParameters.clear();
     }
 
     public BitmapFont get(Object key){

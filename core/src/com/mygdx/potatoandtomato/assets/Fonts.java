@@ -50,6 +50,8 @@ public class Fonts extends FontAssets {
 
         HELVETICA_XS_REGULAR,
         HELVETICA_XS_BOLD,
+        HELVETICA_S_HEAVYITALIC_B_ffffff_81562c_2,         //dark brown
+        HELVETICA_S_HEAVYITALIC_B_ffffff_9e9d9c_2,          //gray
         HELVETICA_M_REGULAR,
         HELVETICA_M_BOLD,
         HELVETICA_M_HEAVY,

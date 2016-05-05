@@ -23,6 +23,7 @@ import com.potatoandtomato.games.models.Services;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
@@ -60,7 +61,7 @@ public class UserCountersActor extends Table {
         nameLabelStyle.font = assets.getFonts().get(Fonts.FontId.MYRIAD_XS_REGULAR);
         nameLabelStyle.fontColor = Color.BLACK;
 
-        HashMap<Integer, Player> playerHashMap = gameCoordinator.getIndexToPlayersMap();
+        ConcurrentHashMap<Integer, Player> playerHashMap = gameCoordinator.getIndexToPlayersConcurrentMap();
 
         for (int i = 0; i < 8 ; i++) {
             Table userTable = new Table();

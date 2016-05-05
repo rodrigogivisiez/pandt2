@@ -27,6 +27,7 @@ import com.potatoandtomato.common.controls.Animator;
 import com.potatoandtomato.common.utils.Threadings;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -191,7 +192,7 @@ public class RoomScene extends SceneAbstract {
         });
     }
 
-    public void populateTeamTables(final int totalTeams, final int teamMaxPlayers, final HashMap<String, RoomUser> roomUsers, final boolean isHost){
+    public void populateTeamTables(final int totalTeams, final int teamMaxPlayers, final ConcurrentHashMap<String, RoomUser> roomUsers, final boolean isHost){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {

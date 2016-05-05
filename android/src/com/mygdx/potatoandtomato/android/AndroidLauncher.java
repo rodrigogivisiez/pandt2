@@ -13,6 +13,7 @@ import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.firebase.client.Firebase;
 import com.mygdx.potatoandtomato.PTGame;
+import com.mygdx.potatoandtomato.absintflis.entrance.EntranceLoaderListener;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.*;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
@@ -103,37 +104,25 @@ public class AndroidLauncher extends AndroidApplication {
 	public void subscribeLoadGameRequest(){
 		_broadcaster.subscribe(BroadcastEvent.LOAD_GAME_REQUEST, new BroadcastListener<GameCoordinator>() {
 			@Override
-			public void onCallback(GameCoordinator obj, Status st) {
+			public void onCallback(final GameCoordinator obj, Status st) {
 				boolean errored = false;
 				JarLoader loader = new JarLoader(_this);
 				try {
-					obj = loader.load(obj);
+					loader.load(obj, new EntranceLoaderListener() {
+						@Override
+						public void onLoadedSuccess() {
+							_broadcaster.broadcast(BroadcastEvent.LOAD_GAME_RESPONSE, obj, Status.SUCCESS);
+						}
+
+						@Override
+						public void onLoadedFailed() {
+							_broadcaster.broadcast(BroadcastEvent.LOAD_GAME_RESPONSE, null, Status.FAILED);
+						}
+					});
 				} catch (ClassNotFoundException e) {
 					e.printStackTrace();
-					errored = true;
-				}catch (NullPointerException e){
-					e.printStackTrace();
-					errored = true;
-				} catch (NoSuchMethodException e) {
-					e.printStackTrace();
-					errored = true;
-				} catch (InstantiationException e) {
-					e.printStackTrace();
-					errored = true;
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-					errored = true;
-				} catch (InvocationTargetException e) {
-					e.printStackTrace();
-					errored = true;
-				}
-				if(!errored){
-					_broadcaster.broadcast(BroadcastEvent.LOAD_GAME_RESPONSE, obj, Status.SUCCESS);
-				}
-				else{
 					_broadcaster.broadcast(BroadcastEvent.LOAD_GAME_RESPONSE, null, Status.FAILED);
 				}
-
 			}
 		});
 	}

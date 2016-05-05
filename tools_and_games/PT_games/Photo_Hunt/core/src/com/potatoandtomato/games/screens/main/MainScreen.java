@@ -73,6 +73,7 @@ public class MainScreen extends GameScreen {
 
         _root = new Table();
         _root.setFillParent(true);
+        _root.getColor().a = 0f;
         _stage.addActor(_root);
 
         _blockTable = new Table();
@@ -82,6 +83,10 @@ public class MainScreen extends GameScreen {
         _blockTable.setVisible(false);
         _stage.addActor(_blockTable);
 
+    }
+
+    public void readyToStart(){
+        _root.getColor().a = 1f;
     }
 
     public void populate(TimeActor timeActor, HintsActor hintsActor, UserCountersActor userCountersActor, StageCounterActor stageCounterActor,

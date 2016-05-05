@@ -1,9 +1,11 @@
 package com.mygdx.potatoandtomato.android;
 
 import android.content.Context;
+import com.mygdx.potatoandtomato.absintflis.entrance.EntranceLoaderListener;
 import com.mygdx.potatoandtomato.helpers.utils.JarUtils;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
 import com.potatoandtomato.common.GameCoordinator;
+import com.potatoandtomato.common.utils.Threadings;
 import dalvik.system.DexClassLoader;
 
 import java.io.File;
@@ -20,17 +22,17 @@ public class JarLoader {
         this.context = context;
     }
 
-    public GameCoordinator load(GameCoordinator gameCoordinator) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void load(GameCoordinator gameCoordinator, EntranceLoaderListener listener) throws ClassNotFoundException {
         Class<?> loadedClass = null;
 
         loadedClass = loadClassDynamically(Terms.GAME_ENTRANCE,
                 gameCoordinator.getJarPath(), context);
 
-        return JarUtils.fillGameEntrance(loadedClass, gameCoordinator);
+        JarUtils.fillGameEntrance(loadedClass, gameCoordinator, listener);
     }
 
 
-    private Class<?> loadClassDynamically(String fullClassName, String fullPathToApk, Context context) throws ClassNotFoundException, NullPointerException {
+    private Class<?> loadClassDynamically(final String fullClassName, String fullPathToApk, Context context) throws ClassNotFoundException, NullPointerException {
 
         if(!new File(fullPathToApk).exists()){
             throw new NullPointerException();
@@ -38,7 +40,7 @@ public class JarLoader {
 
         File dexOutputDir = context.getDir("dex", Context.MODE_PRIVATE);
 
-        DexClassLoader dexLoader = new DexClassLoader(fullPathToApk,
+        final DexClassLoader dexLoader = new DexClassLoader(fullPathToApk,
                 dexOutputDir.getAbsolutePath(),
                 null,
                 context.getClassLoader());

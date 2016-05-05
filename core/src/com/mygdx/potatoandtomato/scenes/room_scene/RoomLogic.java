@@ -21,6 +21,7 @@ import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.helpers.services.Confirm;
 import com.mygdx.potatoandtomato.helpers.services.VersionControl;
+import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.potatoandtomato.common.utils.JsonObj;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Strings;
@@ -370,6 +371,8 @@ public class RoomLogic extends LogicAbstract {
     }
 
     public void refreshRoomDesign(){
+        _scene.updateRoom(_room);
+
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -438,9 +441,6 @@ public class RoomLogic extends LogicAbstract {
                 }
             }
         });
-
-        _scene.updateRoom(_room);
-
 
     }
 

@@ -7,15 +7,14 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
-import com.mygdx.potatoandtomato.assets.Animations;
-import com.mygdx.potatoandtomato.assets.Fonts;
-import com.mygdx.potatoandtomato.assets.Sounds;
-import com.mygdx.potatoandtomato.assets.Textures;
+import com.mygdx.potatoandtomato.assets.*;
 import com.mygdx.potatoandtomato.enums.BadgeType;
+import com.mygdx.potatoandtomato.enums.LeaderboardType;
 import com.mygdx.potatoandtomato.helpers.controls.Badge;
 import com.potatoandtomato.common.controls.Animator;
 import com.mygdx.potatoandtomato.helpers.controls.FlowContainer;
@@ -40,8 +39,8 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 public class LeaderBoardScene extends SceneAbstract {
 
     private HashMap<String, ScrollPane> _leaderboardScrolls;
-    private Label _titleLabel, _animatingScoreLabel;
-    private Table _iconTable, _ranksTable, _animatingRecordTable, _mascotsTable, _loadingTable;
+    private Label _titleLabel, _animatingScoreLabel, _originalScoreLabel, _fakeScoreLabel;
+    private Table _iconTable, _ranksTable, _animatingRecordTable, _mascotsTable, _loadingTable, _scoresTable, _fakeScoreTable;
     private float _recordHeight, _animatingTableY;
     private Game _currentShowingGame;
     private Button _nextButton, _prevButton;
@@ -54,87 +53,92 @@ public class LeaderBoardScene extends SceneAbstract {
 
     @Override
     public void populateRoot() {
-        new TopBar(_root, _texts.leaderBoards(), false, _assets, _screen);
-        _root.align(Align.top);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                new TopBar(_root, _texts.leaderBoards(), false, _assets, _screen);
+                _root.align(Align.top);
 
-        ////////////////////////
-        //leaderboard root
-        ////////////////////////
-        Table leaderBoardRoot = new Table();
-        leaderBoardRoot.align(Align.top);
-        leaderBoardRoot.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.LEADER_BOARD_BG)));
+                ////////////////////////
+                //leaderboard root
+                ////////////////////////
+                Table leaderBoardRoot = new Table();
+                leaderBoardRoot.align(Align.top);
+                leaderBoardRoot.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.LEADER_BOARD_BG)));
 
-        ////////////////////////////////
-        //Next and prev button
-        ////////////////////////////////
-        Button.ButtonStyle nextButtonStyle = new Button.ButtonStyle();
-        nextButtonStyle.up = new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.NEXT_LEADERBOARD_NORMAL));
-        nextButtonStyle.down = new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.NEXT_LEADERBOARD_CLICKED));
-        _nextButton = new Button(nextButtonStyle);
+                ////////////////////////////////
+                //Next and prev button
+                ////////////////////////////////
+                Button.ButtonStyle nextButtonStyle = new Button.ButtonStyle();
+                nextButtonStyle.up = new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.NEXT_LEADERBOARD_NORMAL));
+                nextButtonStyle.down = new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.NEXT_LEADERBOARD_CLICKED));
+                _nextButton = new Button(nextButtonStyle);
 
-        Button.ButtonStyle prevButtonStyle = new Button.ButtonStyle();
-        prevButtonStyle.up = new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.PREV_LEADERBOARD_NORMAL));
-        prevButtonStyle.down = new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.PREV_LEADERBOARD_CLICKED));
-        _prevButton = new Button(prevButtonStyle);
+                Button.ButtonStyle prevButtonStyle = new Button.ButtonStyle();
+                prevButtonStyle.up = new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.PREV_LEADERBOARD_NORMAL));
+                prevButtonStyle.down = new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.PREV_LEADERBOARD_CLICKED));
+                _prevButton = new Button(prevButtonStyle);
 
-        _nextPrevContainer = new Table();
-        _nextPrevContainer.setSize(100, 100);
-        _nextPrevContainer.setVisible(false);
-        _nextPrevContainer.setPosition(50, Positions.getHeight() - 160);
-        _nextPrevContainer.add(_prevButton).padRight(10);
-        _nextPrevContainer.add(_nextButton);
+                _nextPrevContainer = new Table();
+                _nextPrevContainer.setSize(100, 100);
+                _nextPrevContainer.setVisible(false);
+                _nextPrevContainer.setPosition(50, Positions.getHeight() - 160);
+                _nextPrevContainer.add(_prevButton).padRight(10);
+                _nextPrevContainer.add(_nextButton);
 
-        /////////////////////////////////
-        //mascots
-        ////////////////////////////////
-        _mascotsTable = new Table();
-        _mascotsTable.setTransform(true);
-        _mascotsTable.setSize(100, 80);
-        _mascotsTable.setPosition(260, -30);
+                /////////////////////////////////
+                //mascots
+                ////////////////////////////////
+                _mascotsTable = new Table();
+                _mascotsTable.setTransform(true);
+                _mascotsTable.setSize(100, 80);
+                _mascotsTable.setPosition(260, -30);
 
-        Table mascotContainer = new Table();
-        mascotContainer.addActor(_mascotsTable);
+                Table mascotContainer = new Table();
+                mascotContainer.addActor(_mascotsTable);
 
-        //////////////////////////////////
-        //icon
-        /////////////////////////////////
-        _iconTable = new Table();
-        _iconTable.setTransform(true);
-        _iconTable.setRotation(15);
+                //////////////////////////////////
+                //icon
+                /////////////////////////////////
+                _iconTable = new Table();
+                _iconTable.setTransform(true);
+                _iconTable.setRotation(15);
 
-        //////////////////////////////////
-        //Title
-        /////////////////////////////////
-        Table titleTable = new Table();
+                //////////////////////////////////
+                //Title
+                /////////////////////////////////
+                Table titleTable = new Table();
 
-        _titleLabel = new Label(_texts.loading(), new Label.LabelStyle(
-                _assets.getFonts().get(Fonts.FontId.PIZZA_XXL_REGULAR_B_ffffff_0f5673_1_S_0e516c_1_3), null));
-        _titleLabel.setWrap(true);
-        _titleLabel.setAlignment(Align.center);
-        titleTable.add(_titleLabel).expand().fill();
+                _titleLabel = new Label(_texts.loading(), new Label.LabelStyle(
+                        _assets.getFonts().get(Fonts.FontId.PIZZA_XXL_REGULAR_B_ffffff_0f5673_1_S_0e516c_1_3), null));
+                _titleLabel.setWrap(true);
+                _titleLabel.setAlignment(Align.center);
+                titleTable.add(_titleLabel).expand().fill();
 
-        ///////////////////////////////////
-        //Ranks table
-        //////////////////////////////////
-        _ranksTable = new Table();
+                ///////////////////////////////////
+                //Ranks table
+                //////////////////////////////////
+                _ranksTable = new Table();
 
-        /////////////////////////////////////
-        //population of leaderboard
-        ///////////////////////////////////
-        leaderBoardRoot.add(_iconTable).width(64).height(60).padLeft(54).padTop(25);
-        leaderBoardRoot.add(titleTable).expandX().fillX().padLeft(15).padRight(75).height(60).padTop(20);
-        leaderBoardRoot.row();
-        leaderBoardRoot.add(_ranksTable).expand().fill().colspan(2).padTop(30);
+                /////////////////////////////////////
+                //population of leaderboard
+                ///////////////////////////////////
+                leaderBoardRoot.add(_iconTable).width(64).height(60).padLeft(54).padTop(25);
+                leaderBoardRoot.add(titleTable).expandX().fillX().padLeft(15).padRight(75).height(60).padTop(20);
+                leaderBoardRoot.row();
+                leaderBoardRoot.add(_ranksTable).expand().fill().colspan(2).padTop(30);
 
-        ///////////////////////////////
-        //population of root
-        //////////////////////////////
-        _root.addActor(_nextPrevContainer);
+                ///////////////////////////////
+                //population of root
+                //////////////////////////////
+                _root.addActor(_nextPrevContainer);
 
-        _root.add(mascotContainer).expandX().fillX().padTop(62);
-        _root.row();
-        _root.add(leaderBoardRoot).expand().fill();
-        _root.row();
+                _root.add(mascotContainer).expandX().fillX().padTop(62);
+                _root.row();
+                _root.add(leaderBoardRoot).expand().fill();
+                _root.row();
+            }
+        });
     }
 
     public void showGameLeaderboard(final Game game){
@@ -304,6 +308,10 @@ public class LeaderBoardScene extends SceneAbstract {
                         _assets.getFonts().get(Fonts.FontId.HELVETICA_L_HEAVY), Color.valueOf("5b3000"));
                 Label.LabelStyle style4 = new Label.LabelStyle(
                         _assets.getFonts().get(Fonts.FontId.HELVETICA_XL_HEAVYITALIC_B_ffffff_81562c_2), null);
+                Label.LabelStyle style5 = new Label.LabelStyle(
+                        _assets.getFonts().get(Fonts.FontId.HELVETICA_S_HEAVYITALIC_B_ffffff_81562c_2), null);
+                Label.LabelStyle style6 = new Label.LabelStyle(
+                        _assets.getFonts().get(Fonts.FontId.HELVETICA_S_HEAVYITALIC_B_ffffff_9e9d9c_2), null);
 
                 ////////////////////////
                 //Index label
@@ -315,23 +323,55 @@ public class LeaderBoardScene extends SceneAbstract {
                 ///////////////////////
                 Table nameScoreTable = new Table();
                 nameScoreTable.setName("nameScoreTable");
-                nameScoreTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.LEADERBOARD_ANIMATING_BASE)));
+                nameScoreTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.LEADERBOARD_ANIMATING_BASE)));
 
                 ////////////////////
                 //name label
                 /////////////////////
                 Label nameLabel = new Label(Strings.cutOff(record.getAllUsernameCommaSeparated(), 16), style3);
 
+
+                ///////////////////////
+                //score table
+                /////////////////////
+                _scoresTable = new Table();
+                boolean useFakeScoreLabel = false;
+                if(game.getLeaderboardTypeEnum() == LeaderboardType.Normal && record.getScore() != 0){
+                    useFakeScoreLabel = true;
+                }
+
+                /////////////////////////////
+                //original score label
+                //////////////////////////////
+                if(useFakeScoreLabel){
+                    _fakeScoreLabel = new Label(Strings.formatNum((int) record.getScore()), style4);
+                    _fakeScoreLabel.setAlignment(Align.right);
+                    _fakeScoreTable = new Table();
+                    _fakeScoreTable.setFillParent(true);
+                    _fakeScoreTable.add(_fakeScoreLabel).expand().fill();
+                    _fakeScoreTable.setVisible(false);
+
+                    _originalScoreLabel = new Label(Strings.formatNum((int) record.getScore()), style6);
+                    _originalScoreLabel.setAlignment(Align.right);
+                    _scoresTable.add(_originalScoreLabel).right().expand().fill().row();
+
+                    _scoresTable.addActor(_fakeScoreTable);
+                }
+
                 /////////////////////////
                 //score label
                 /////////////////////////
-                _animatingScoreLabel = new Label(Strings.formatNum((int) record.getScore()), style4);
+                _animatingScoreLabel = new Label(useFakeScoreLabel ? "0" : Strings.formatNum((int) record.getScore()),
+                                        !useFakeScoreLabel ? style4 : style5);
+                _animatingScoreLabel.setAlignment(Align.right);
+                _scoresTable.add(_animatingScoreLabel).right().expand().fill();
+
 
                 //////////////////////////////
                 //populate namescore table
                 ///////////////////////////
                 nameScoreTable.add(nameLabel).expandX().fillX().padLeft(10).center();
-                nameScoreTable.add(_animatingScoreLabel).right().padRight(10);
+                nameScoreTable.add(_scoresTable).expand().fill().padRight(10);
 
                 ////////////////////////////////
                 //populate record table
@@ -469,6 +509,60 @@ public class LeaderBoardScene extends SceneAbstract {
         });
     }
 
+    public void animateFakeLabelIfExist(final Runnable onFinish){
+        if(_fakeScoreLabel != null) {
+            Threadings.delay(1000, new Runnable() {
+                @Override
+                public void run() {
+
+                    Actor discardActor;
+                    final Actor remainActor;
+                    final float remainActorMoveY;
+
+                    boolean isOriginalHigher = Double.valueOf(_originalScoreLabel.getText().toString().replace(",", "")) > Double.valueOf(_animatingScoreLabel.getText().toString().replace(",", ""));
+                    if(isOriginalHigher){
+                        _fakeScoreLabel.setText(_originalScoreLabel.getText());
+                        discardActor = _animatingScoreLabel;
+                        remainActor = _originalScoreLabel;
+                        remainActorMoveY = -_originalScoreLabel.getPrefHeight() / 2;
+                    }
+                    else{
+                        _fakeScoreLabel.setText(_animatingScoreLabel.getText());
+                        discardActor = _originalScoreLabel;
+                        remainActor = _animatingScoreLabel;
+                        remainActorMoveY = _animatingScoreLabel.getPrefHeight() / 2;
+                    }
+
+
+                    discardActor.addAction(sequence(fadeOut(0.2f), delay(0.8f), new RunnableAction(){
+                        @Override
+                        public void run() {
+                            remainActor.addAction(sequence(Actions.moveBy(0, remainActorMoveY, 0.2f)));
+
+                            _fakeScoreTable.getColor().a = 0f;
+                            _fakeScoreTable.setVisible(true);
+                            remainActor.addAction(fadeOut(0.4f));
+                            _fakeScoreTable.addAction(sequence(fadeIn(0.4f), new RunnableAction(){
+                                @Override
+                                public void run() {
+                                    onFinish.run();
+                                }
+                            }));
+
+                            _services.getSoundsPlayer().playSoundEffect(Sounds.Name.APPEAR);
+
+                        }
+                    }));
+
+                }
+            });
+        }
+        else{
+            onFinish.run();
+        }
+
+    }
+
     //current rank start from zero
     public void moveUpRank(final Game game, final int toRank, final int originalRank,
                            final LeaderboardRecord movingRecord, final int maxSize, final Runnable finishAnimate){
@@ -515,11 +609,12 @@ public class LeaderBoardScene extends SceneAbstract {
                                     Threadings.delay(500, new Runnable() {
                                         @Override
                                         public void run() {
-                                            _services.getSoundsPlayer().playSoundEffect(Sounds.Name.MOVING_RANK_END);
 
                                             if(ranksTable.getCells().size > maxSize){
                                                 for(int i = maxSize; i <ranksTable.getCells().size; i++){
-                                                    ranksTable.getCells().get(i).getActor().remove();
+                                                    if(ranksTable.getCells().get(i).getActor() != null){
+                                                        ranksTable.getCells().get(i).getActor().remove();
+                                                    }
                                                 }
                                             }
 
@@ -654,6 +749,8 @@ public class LeaderBoardScene extends SceneAbstract {
                         finishAnimate.run();
                     }
                 }));
+
+                _services.getSoundsPlayer().playSoundEffect(Sounds.Name.MOVING_RANK_END);
             }
         });
     }

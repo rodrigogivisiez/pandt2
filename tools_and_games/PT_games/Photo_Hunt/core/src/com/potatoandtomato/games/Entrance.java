@@ -3,7 +3,10 @@ package com.potatoandtomato.games;
 import com.badlogic.gdx.assets.AssetManager;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.absints.GameEntrance;
+import com.potatoandtomato.common.absints.PTAssetsManager;
+import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.assets.*;
+import com.potatoandtomato.games.helpers.Logs;
 import com.potatoandtomato.games.models.GameModel;
 import com.potatoandtomato.games.models.Services;
 import com.potatoandtomato.games.screens.hints.HintsLogic;
@@ -53,7 +56,7 @@ public class Entrance extends GameEntrance {
 
         initAssets();
 
-        _assets.loadBasic(new Runnable() {
+        _assets.loadAsync(new Runnable() {
             @Override
             public void run() {
 
@@ -73,8 +76,9 @@ public class Entrance extends GameEntrance {
                 _stageImagesLogic = new StageImagesLogic(_coordinator, getServices(), _gameModel);
 
                 _mainLogic = new MainLogic(getGameCoordinator(), getServices(), _timeLogic, _hintsLogic, _reviewLogic,
-                                                _userCountersLogic, _stageCounterLogic, _scoresLogic, _imageStorage, _gameModel,
+                        _userCountersLogic, _stageCounterLogic, _scoresLogic, _imageStorage, _gameModel,
                         _stageImagesLogic);
+
 
                 getGameCoordinator().finishLoading();
             }
@@ -98,15 +102,18 @@ public class Entrance extends GameEntrance {
 
     @Override
     public void dispose() {
-//        _services.getSoundsWrapper().dispose();
-//        _services.getScoresHandler().dispose();
-//        _services.getAssets().dispose();
+        if(_assets != null) _assets.dispose();
+        if(_services != null) _services.dispose();
         if(_mainLogic != null) _mainLogic.dispose();
         if(_stageImagesLogic != null) _stageImagesLogic.dispose();
+        if(_timeLogic != null) _timeLogic.dispose();
+        if(_userCountersLogic != null) _userCountersLogic.dispose();
+        if(_imageStorage != null) _imageStorage.dispose();
+        if(_scoresLogic != null) _scoresLogic.dispose();
     }
 
     private void initAssets(){
-        AssetManager manager = _coordinator.getAssetManager(true);
+        PTAssetsManager manager = _coordinator.getPTAssetManager(true);
         Fonts fonts = new Fonts(manager);
         Patches patches = new Patches();
         Sounds sounds = new Sounds(manager);

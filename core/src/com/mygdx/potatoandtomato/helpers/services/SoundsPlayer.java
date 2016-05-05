@@ -14,6 +14,7 @@ import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.Threadings;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -102,12 +103,14 @@ public class SoundsPlayer implements ISoundsPlayer {
 
     @Override
     public void playSound(final Sound sound) {
-        Threadings.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                sound.play(_volume);
-            }
-        });
+        if(sound != null){
+            Threadings.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    sound.play(_volume);
+                }
+            });
+        }
     }
 
     public void playSound(final Sound sound, final float volume) {
@@ -121,32 +124,38 @@ public class SoundsPlayer implements ISoundsPlayer {
 
     @Override
     public void playSoundLoop(final Sound sound) {
-        Threadings.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                long id = sound.loop(_volume);
-                //sound.setLooping(id, true);
-                _externalSoundIdsMap.put(sound, id);
-            }
-        });
+        if(sound != null){
+            Threadings.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    long id = sound.loop(_volume);
+                    //sound.setLooping(id, true);
+                    _externalSoundIdsMap.put(sound, id);
+                }
+            });
+        }
     }
 
     @Override
     public void stopSoundLoop(final Sound sound) {
-        Threadings.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                if(_externalSoundIdsMap.containsKey(sound)){
-                    sound.stop();
-                    _externalSoundIdsMap.remove(sound);
+        if(sound != null){
+            Threadings.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    if(_externalSoundIdsMap.containsKey(sound)){
+                        sound.stop();
+                        _externalSoundIdsMap.remove(sound);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     @Override
     public void playMusic(final Music music) {
-        playMusic(music, true);
+        if(music != null){
+            playMusic(music, true);
+        }
     }
 
     public void playMusic(final Music music, boolean external) {
@@ -176,12 +185,14 @@ public class SoundsPlayer implements ISoundsPlayer {
 
     @Override
     public void stopMusic(final Music music) {
-        Threadings.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                music.stop();
-            }
-        });
+        if(music != null){
+            Threadings.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    music.stop();
+                }
+            });
+        }
     }
 
     @Override
@@ -207,11 +218,17 @@ public class SoundsPlayer implements ISoundsPlayer {
         }
         _externalSoundIdsMap.clear();
 
+        ArrayList<Music> disposedMusic = new ArrayList();
         for(Music music : _musicMap.keySet()){
             if(_musicMap.get(music)){
-                music.stop();
-                music.dispose();
+                disposedMusic.add(music);
+
             }
+        }
+
+        for(Music music : disposedMusic){
+            music.stop();
+            music.dispose();
             _musicMap.remove(music);
         }
     }

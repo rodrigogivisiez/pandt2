@@ -4,38 +4,27 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
-import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
-import com.mygdx.potatoandtomato.assets.*;
-import com.mygdx.potatoandtomato.enums.LeaderboardType;
-import com.mygdx.potatoandtomato.models.*;
-import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
-import com.mygdx.potatoandtomato.statics.Global;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
+import com.mygdx.potatoandtomato.assets.*;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.helpers.services.Chat;
-import com.mygdx.potatoandtomato.helpers.services.Confirm;
-import com.mygdx.potatoandtomato.helpers.services.Notification;
 import com.mygdx.potatoandtomato.helpers.services.*;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
+import com.mygdx.potatoandtomato.models.Profile;
+import com.mygdx.potatoandtomato.models.Services;
+import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.absints.IDownloader;
 import com.potatoandtomato.common.absints.IPTGame;
+import com.potatoandtomato.common.absints.PTAssetsManager;
 import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
-import com.potatoandtomato.common.models.EndGameResult;
-import com.potatoandtomato.common.models.Player;
-import com.potatoandtomato.common.models.ScoreDetails;
-import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.utils.Downloader;
 import com.potatoandtomato.common.utils.Threadings;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,6 +48,7 @@ public class PTGame extends Game implements IPTGame {
 	Broadcaster _broadcaster;
 	Preferences _preferences;
 	Tutorials _tutorials;
+	PTAssetsManager _monitoringPTAssetsManager;
 
 	public PTGame(Broadcaster broadcaster) {
 		_broadcaster = broadcaster;
@@ -76,7 +66,7 @@ public class PTGame extends Game implements IPTGame {
 		initiateAssets();
 
 		//run when assets done loading
-		_assets.loadBasic(new Runnable() {
+		_assets.loadAsync(new Runnable() {
 			@Override
 			public void run() {
 
@@ -104,6 +94,8 @@ public class PTGame extends Game implements IPTGame {
 				setScreen(_screen);
 
 				_screen.toScene(SceneEnum.BOOT);
+
+
 			}
 		});
 	}
@@ -111,17 +103,17 @@ public class PTGame extends Game implements IPTGame {
 	@Override
 	public void resize(int width, int height) {
 		super.resize(width, height);
-		_chat.resize(width, height);
-		_notification.resize(width, height);
-		_confirm.resize(width, height);
-		_tutorials.resize(width, height);
+		if(_chat != null) _chat.resize(width, height);
+		if(_notification != null) _notification.resize(width, height);
+		if(_confirm != null) _confirm.resize(width, height);
+		if(_tutorials != null) _tutorials.resize(width, height);
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
 		_broadcaster.broadcast(BroadcastEvent.DESTROY_ROOM);
-		_services.getAssets().dispose();
+		if(_services != null && _services.getAssets() != null) _services.getAssets().dispose();
 	}
 
 
@@ -136,15 +128,20 @@ public class PTGame extends Game implements IPTGame {
 	@Override
 	public void render() {
 		super.render();
-		if(Gdx.input.justTouched())
-		{
-			_chat.screenTouched(Gdx.input.getX(), Gdx.input.getY());
+
+		if(_monitoringPTAssetsManager != null && !_monitoringPTAssetsManager.isFinishLoading() && _monitoringPTAssetsManager.update()) {
+			_monitoringPTAssetsManager.setFinishLoading(true);
 		}
 
-		_chat.render(Gdx.graphics.getDeltaTime());
-		_tutorials.render(Gdx.graphics.getDeltaTime());
-		_confirm.render(Gdx.graphics.getDeltaTime());
-		_notification.render(Gdx.graphics.getDeltaTime());
+		if(Gdx.input.justTouched())
+		{
+			if(_chat != null) _chat.screenTouched(Gdx.input.getX(), Gdx.input.getY());
+		}
+
+		if(_chat != null) _chat.render(Gdx.graphics.getDeltaTime());
+		if(_tutorials != null) _tutorials.render(Gdx.graphics.getDeltaTime());
+		if(_confirm != null) _confirm.render(Gdx.graphics.getDeltaTime());
+		if(_notification != null) _notification.render(Gdx.graphics.getDeltaTime());
 	}
 
 	@Override
@@ -193,7 +190,7 @@ public class PTGame extends Game implements IPTGame {
 	}
 
 	private void initiateAssets(){
-		AssetManager manager = new AssetManager(new InternalFileHandleResolver());
+		PTAssetsManager manager = new PTAssetsManager(new InternalFileHandleResolver(), this);
 		Animations animations = new Animations(manager);
 		Patches patches = new Patches();
 		Sounds sounds = new Sounds(manager);
@@ -203,6 +200,10 @@ public class PTGame extends Game implements IPTGame {
 		_assets = new Assets(manager, fonts, animations, sounds, patches, textures);
 	}
 
+	@Override
+	public void monitorPTAssetManager(PTAssetsManager ptAssetsManager){
+		_monitoringPTAssetsManager = ptAssetsManager;
+	}
 
 
 }

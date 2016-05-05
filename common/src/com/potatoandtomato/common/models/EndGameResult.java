@@ -50,7 +50,7 @@ public class EndGameResult {
     }
 
     public ArrayList<ScoreDetails> getMyTeamWinnerScoreDetails(String userId){
-        for(Team winnerTeam : _winnersScoreDetails.keySet()){
+        for(Team winnerTeam : getWinnersScoreDetails().keySet()){
             if(winnerTeam.hasUser(userId)){
                 return _winnersScoreDetails.get(winnerTeam);
             }

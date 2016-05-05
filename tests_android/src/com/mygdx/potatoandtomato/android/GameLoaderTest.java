@@ -133,7 +133,7 @@ public class GameLoaderTest extends ActivityInstrumentationTestCase2<AndroidLaun
         Preferences preferences = new Preferences("potatoandtomato_test");
         preferences.deleteAll();
         Assets assets = new Assets(null, null, null, null, null, null);
-        //assets.loadBasic(null);
+        //assets.loadAsync(null);
 
         return new Services(assets, new Texts(), preferences,
                 new Profile(), null, new Shaders(), null, new Downloader(), new Chat(null, null, null, null, null, null, null, null, broadcaster),

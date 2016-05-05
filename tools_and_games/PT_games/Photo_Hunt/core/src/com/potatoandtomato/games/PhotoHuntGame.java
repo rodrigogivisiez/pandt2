@@ -2,10 +2,12 @@ package com.potatoandtomato.games;
 
 import com.potatoandtomato.common.absints.DownloaderListener;
 import com.potatoandtomato.common.absints.IDownloader;
+import com.potatoandtomato.common.absints.PTAssetsManager;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.mockings.MockGame;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Strings;
+import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.absintf.DatabaseListener;
 import com.potatoandtomato.games.absintf.mockings.MockModel;
 import com.potatoandtomato.games.models.ImageDetails;
@@ -22,6 +24,7 @@ import java.nio.file.Paths;
 public class PhotoHuntGame extends MockGame {
 
 	private boolean _initialized;
+	private Entrance entrance;
 
 	public boolean isContinue;
 
@@ -32,14 +35,16 @@ public class PhotoHuntGame extends MockGame {
 	@Override
 	public void create() {
 		super.create();
-		initiateMockGamingKit(1, 2, Global.DEBUG);
+
+		initiateMockGamingKit(1, 2, 0, Global.DEBUG);
 	}
 
 	@Override
 	public void onReady() {
 		if(!_initialized){
 			_initialized = true;
-			Entrance entrance = new Entrance(getCoordinator()){
+
+			entrance = new Entrance(getCoordinator()){
 				@Override
 				public Services getServices() {
 					Services services =  super.getServices();
@@ -86,15 +91,33 @@ public class PhotoHuntGame extends MockGame {
 				}
 			};
 
+			Threadings.runInBackground(new Runnable() {
+				@Override
+				public void run() {
+					while (!entrance.getServices().getAssets().getPTAssetsManager().isFinishLoading()){
+						Threadings.sleep(100);
+					}
+
+					Threadings.postRunnable(new Runnable() {
+						@Override
+						public void run() {
+							if(!isContinue){
+								entrance.init();
+							}
+							else{
+								entrance.onContinue();
+							}
+						}
+					});
 
 
-			if(!isContinue){
-				entrance.init();
-			}
-			else{
-				entrance.onContinue();
-			}
+				}
+			});
+
+
+
 		}
 
 	}
+
 }

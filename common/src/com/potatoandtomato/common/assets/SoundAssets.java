@@ -50,7 +50,8 @@ public abstract class SoundAssets implements IAssetFragment {
 
     @Override
     public void dispose() {
-
+        _soundsMap.clear();
+        _musicsMap.clear();
     }
 
     @Override

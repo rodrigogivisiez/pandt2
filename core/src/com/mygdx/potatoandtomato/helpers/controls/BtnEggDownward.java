@@ -68,7 +68,7 @@ public class BtnEggDownward extends Table {
                     }
                 });
 
-                _soundsWrapper.playSoundEffect(Sounds.Name.BUTTON_CLICKED);
+                if(_enabled) _soundsWrapper.playSoundEffect(Sounds.Name.BUTTON_CLICKED);
                 return super.touchDown(event, x, y, pointer, button);
             }
         });

@@ -14,5 +14,6 @@ public interface IPTGame {
 
     void setScreen(Screen screen);
 
+    void monitorPTAssetManager(PTAssetsManager ptAssetsManager);
 
 }

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by SiongLeng on 16/12/2015.
@@ -21,8 +22,8 @@ import java.util.Map;
 public class IntProfileMapDeserializer extends JsonDeserializer<Map<String, RoomUser>> {
 
     @Override
-    public HashMap<String, RoomUser> deserialize(JsonParser jsonParser, DeserializationContext ctxt) throws IOException {
-        HashMap<String, RoomUser> result = new HashMap();
+    public ConcurrentHashMap<String, RoomUser> deserialize(JsonParser jsonParser, DeserializationContext ctxt) throws IOException {
+        ConcurrentHashMap<String, RoomUser> result = new ConcurrentHashMap();
         ObjectCodec oc = jsonParser.getCodec();
 
         JsonNode node = oc.readTree(jsonParser);

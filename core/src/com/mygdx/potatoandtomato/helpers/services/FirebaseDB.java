@@ -2,6 +2,7 @@ package com.mygdx.potatoandtomato.helpers.services;
 
 import com.badlogic.gdx.utils.Array;
 import com.firebase.client.*;
+import com.firebase.client.annotations.Nullable;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
@@ -17,6 +18,7 @@ import com.potatoandtomato.common.models.Streak;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by SiongLeng on 9/12/2015.
@@ -33,6 +35,7 @@ public class FirebaseDB implements IDatabase {
     private String _tableGameBelongData = "gameBelongData";
     private String _tableLeaderboard = "leaderboard";
     private String _tableUserLeaderboardLog = "userLeaderboardLog";
+    private String _tableTeamLeaderboardLog = "teamLeaderboardLog";
     private String _tableStreak = "streaks";
     private String _tableStreakReviveHistories = "streakReviveHistories";
     private String _tableServerTimeInfo = ".info/serverTimeOffset";
@@ -205,7 +208,7 @@ public class FirebaseDB implements IDatabase {
             getUsernameByUserId(userId, new DatabaseListener<String>(String.class) {
                 @Override
                 public void onCallback(String name, Status st) {
-                    if(st == Status.SUCCESS){
+                    if(st == Status.SUCCESS && name != null){
                         result.put(userId, name);
                     }
                     count[0]++;
@@ -269,6 +272,21 @@ public class FirebaseDB implements IDatabase {
                         listener.onCallback(result, st);
                     }
                 });
+    }
+
+    @Override
+    public void updateRoomPlayingState(Room room, boolean isPlaying, @Nullable final DatabaseListener<String> listener) {
+        getTable(_tableRooms).child(room.getId()).child("playing").setValue(isPlaying, new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                if(firebaseError == null){
+                    if(listener != null) listener.onCallback(null, Status.SUCCESS);
+                }
+                else{
+                    if(listener != null)  listener.onCallback(null, Status.FAILED);
+                }
+            }
+        });
     }
 
     @Override
@@ -353,7 +371,7 @@ public class FirebaseDB implements IDatabase {
                                     @Override
                                     public void onCallback(HashMap<String, String> obj, Status st) {
                                         if (st == Status.SUCCESS) {
-                                            record.setUserIdToNameMap(obj);
+                                            record.setUserIdToNameMap(new ConcurrentHashMap<String, String>(obj));
                                         }
                                         fragment1.setFinished(true);
                                     }
@@ -411,7 +429,7 @@ public class FirebaseDB implements IDatabase {
 
     @Override
     public void saveLeaderBoardRecord(final Room room, final LeaderboardRecord record, final DatabaseListener listener) {
-        final String key = getLeaderboardRecordKey(room, record.getUserIds());
+        final String key = userIdsToKey(record.getUserIds());
 
         isStreakRevived(record.getUserIds(), room, new DatabaseListener<Boolean>() {
             @Override
@@ -430,9 +448,7 @@ public class FirebaseDB implements IDatabase {
                     getTable(_tableUserLeaderboardLog).child(room.getGame().getAbbr()).child(userId).updateChildren(map);
                 }
 
-                if(room.getGame().getLeaderboardTypeEnum() == LeaderboardType.Accumulate){
-                    getTable(_tableUserLeaderboardLog).child(room.getGame().getAbbr()).child(key).updateChildren(map);
-                }
+                getTable(_tableTeamLeaderboardLog).child(room.getGame().getAbbr()).child(key).updateChildren(map);
 
                 getTable(_tableLeaderboard).child(room.getGame().getAbbr()).child(key).setValue(record, record.getScore(), new Firebase.CompletionListener() {
                     @Override
@@ -449,10 +465,27 @@ public class FirebaseDB implements IDatabase {
         });
     }
 
+    @Override
+    public void getTeamHighestLeaderBoardRecordAndStreak(final Game game, ArrayList<String> teamUserIds, final DatabaseListener<LeaderboardRecord> listener) {
+        getSingleData(getTable(_tableTeamLeaderboardLog).child(game.getAbbr()).child(userIdsToKey(teamUserIds)).orderByValue().limitToLast(1), new DatabaseListener<HashMap<String, String>>(HashMap.class) {
+            @Override
+            public void onCallback(final HashMap<String, String> record, Status st) {
+                if (st == Status.SUCCESS && record != null && record.keySet().size() > 0) {
+                    for(String recordId : record.keySet()){
+                        getLeaderBoardRecordById(game, recordId, listener);
+                        break;
+                    }
+                } else {
+                    listener.onCallback(null, st);
+                }
+
+            }
+        });
+    }
 
     @Override
-    public void getHighestLeaderBoardRecordAndStreak(final Game game, ArrayList<String> teamUserIds, final DatabaseListener<LeaderboardRecord> listener) {
-        getSingleData(getTable(_tableUserLeaderboardLog).child(game.getAbbr()).child(userIdsToKey(teamUserIds)).orderByValue().limitToLast(1), new DatabaseListener<HashMap<String, String>>(HashMap.class) {
+    public void getUserHighestLeaderBoardRecordAndStreak(final Game game, String userId, final DatabaseListener<LeaderboardRecord> listener) {
+        getSingleData(getTable(_tableUserLeaderboardLog).child(game.getAbbr()).child(userId).orderByValue().limitToLast(1), new DatabaseListener<HashMap<String, String>>(HashMap.class) {
             @Override
             public void onCallback(final HashMap<String, String> record, Status st) {
                 if (st == Status.SUCCESS && record != null && record.keySet().size() > 0) {
@@ -478,7 +511,7 @@ public class FirebaseDB implements IDatabase {
                         @Override
                         public void onCallback(HashMap<String, String> obj, Status st) {
                             if (st == Status.SUCCESS) {
-                                record.setUserIdToNameMap(obj);
+                                record.setUserIdToNameMap(new ConcurrentHashMap<String, String>(obj));
                             }
                             listener.onCallback(record, st);
                         }
@@ -489,17 +522,6 @@ public class FirebaseDB implements IDatabase {
                 }
             }
         });
-    }
-
-    private String getLeaderboardRecordKey(Room room, ArrayList<String> userIds){
-        String key = "";
-        if(room.getGame().getLeaderboardTypeEnum() == LeaderboardType.Accumulate){
-            key = userIdsToKey(userIds);
-        }
-        else if(room.getGame().getLeaderboardTypeEnum() == LeaderboardType.Normal){
-            key = roomToKey(room);
-        }
-        return key;
     }
 
     private String userIdsToKey(ArrayList<String> userIds){
@@ -518,18 +540,37 @@ public class FirebaseDB implements IDatabase {
     }
 
     @Override
-    public void deleteLeaderBoard(Game game, final DatabaseListener listener) {
-        getTable(_tableLeaderboard).child(game.getAbbr()).removeValue(new Firebase.CompletionListener() {
+    public void deleteLeaderBoard(final Game game, final DatabaseListener listener) {
+
+        Threadings.runInBackground(new Runnable() {
             @Override
-            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                if(firebaseError == null){
-                    if(listener != null)  listener.onCallback(null, Status.SUCCESS);
-                }
-                else{
-                    if(listener != null)  listener.onCallback(null, Status.FAILED);
-                }
+            public void run() {
+                getTable(_tableLeaderboard).child(game.getAbbr()).removeValue(new Firebase.CompletionListener() {
+                    @Override
+                    public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+
+                    }
+                });
+
+                getTable(_tableTeamLeaderboardLog).child(game.getAbbr()).removeValue(new Firebase.CompletionListener() {
+                    @Override
+                    public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+
+                    }
+                });
+
+                getTable(_tableUserLeaderboardLog).child(game.getAbbr()).removeValue(new Firebase.CompletionListener() {
+                    @Override
+                    public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                        listener.onCallback(null, Status.SUCCESS);
+                    }
+                });
+
             }
         });
+
+
+
     }
 
     @Override

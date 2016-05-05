@@ -10,6 +10,7 @@ import com.potatoandtomato.common.models.Team;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by SiongLeng on 16/12/2015.
@@ -56,7 +57,7 @@ public class MockModel {
         r.setWarpRoomId("12");
         r.setRoundCounter(0);
         if(id != null) r.setId(id);
-        HashMap<String, RoomUser> roomUsers = new HashMap();
+        ConcurrentHashMap<String, RoomUser> roomUsers = new ConcurrentHashMap();
         RoomUser user1 = new RoomUser();
         RoomUser user2 = new RoomUser();
         user1.setProfile(mockProfile());

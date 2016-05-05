@@ -11,9 +11,11 @@ import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
 import com.mygdx.potatoandtomato.helpers.services.Confirm;
+import com.mygdx.potatoandtomato.helpers.utils.Scores;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
 import com.mygdx.potatoandtomato.scenes.leaderboard_scene.LeaderBoardScene;
+import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.absints.IPTGame;
 import com.potatoandtomato.common.enums.Status;
@@ -40,7 +42,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
         EndGameLeaderBoardLogic logic = new EndGameLeaderBoardLogic(mock(PTScreen.class), T_Services.mockServices(), MockModel.mockEndGameData(),
                 MockModel.mockEndGameData().getEndGameResult().getMyTeam());
         LeaderBoardScene scene = (LeaderBoardScene) logic.getScene();
-        Assert.assertEquals(true, ((Table) scene.getRoot()).hasChildren());
+        Assert.assertEquals(false, ((Table) scene.getRoot()).hasChildren());        //false becoz is postrunnable populate
     }
 
 
@@ -55,7 +57,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
 
         Profile profile = MockModel.mockProfile();
         Team team = new Team();
-        team.addPlayer(new Player(profile.getGameName(), profile.getUserId(), true, true, Color.BLACK));
+        team.addPlayer(new Player(profile.getGameName(), profile.getUserId(), true, true, 0));
 
         ArrayList<ScoreDetails> scoreDetails = new ArrayList<ScoreDetails>();
         scoreDetails.add(new ScoreDetails(900, "test", true, true));
@@ -64,7 +66,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
         winnerScoreDetails.put(team, scoreDetails);
         endGameResult.setWinnersScoreDetails(winnerScoreDetails);
 
-        final ArrayList<LeaderboardRecord> leaderboardRecords = getSampleLeaderboardRecords();
+        final ArrayList<LeaderboardRecord> leaderboardRecords = getSampleLeaderboardRecords(false);
 
         MockDB mockDB = new MockDB(){
             @Override
@@ -73,7 +75,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
             }
 
             @Override
-            public void getHighestLeaderBoardRecordAndStreak(Game game, ArrayList<String> teamUserIds, DatabaseListener<LeaderboardRecord> listener) {
+            public void getTeamHighestLeaderBoardRecordAndStreak(Game game, ArrayList<String> teamUserIds, DatabaseListener<LeaderboardRecord> listener) {
                 listener.onCallback(leaderboardRecords.get(2), Status.SUCCESS);
             }
         };
@@ -126,7 +128,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
         endGameResult.setWon(false);
         endGameResult.getWinnersScoreDetails().clear();
 
-        final ArrayList<LeaderboardRecord> leaderboardRecords = getSampleLeaderboardRecords();
+        final ArrayList<LeaderboardRecord> leaderboardRecords = getSampleLeaderboardRecords(false);
         final boolean[] called = new boolean[1];
 
         MockDB mockDB = new MockDB(){
@@ -136,7 +138,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
             }
 
             @Override
-            public void getHighestLeaderBoardRecordAndStreak(Game game, ArrayList<String> teamUserIds, DatabaseListener<LeaderboardRecord> listener) {
+            public void getTeamHighestLeaderBoardRecordAndStreak(Game game, ArrayList<String> teamUserIds, DatabaseListener<LeaderboardRecord> listener) {
                 listener.onCallback(leaderboardRecords.get(2), Status.SUCCESS);
             }
 
@@ -183,7 +185,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
         EndGameResult endGameResult = endGameData.getEndGameResult();
         endGameResult.setWon(false);
 
-        final ArrayList<LeaderboardRecord> leaderboardRecords = getSampleLeaderboardRecords();
+        final ArrayList<LeaderboardRecord> leaderboardRecords = getSampleLeaderboardRecords(false);
         final boolean[] called = new boolean[1];
 
         MockDB mockDB = new MockDB(){
@@ -193,7 +195,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
             }
 
             @Override
-            public void getHighestLeaderBoardRecordAndStreak(Game game, ArrayList<String> teamUserIds,  DatabaseListener<LeaderboardRecord> listener) {
+            public void getTeamHighestLeaderBoardRecordAndStreak(Game game, ArrayList<String> teamUserIds,  DatabaseListener<LeaderboardRecord> listener) {
                 listener.onCallback(leaderboardRecords.get(2), Status.SUCCESS);
             }
 
@@ -230,24 +232,88 @@ public class TestEndGameLeaderboard extends TestAbstract {
     }
 
     @Test
-    public void testProcessOtherTeamAndSorting(){
+    public void testProcessOtherTeamAndSortingAccumulate(){
+        ArrayList<LeaderboardRecord> afterLeaderboardRecords = testProcessOtherTeam(LeaderboardType.Accumulate, getSampleLeaderboardRecords(false));
+
+        Assert.assertEquals(true, afterLeaderboardRecords.get(0).getUserIds().contains("0"));
+        Assert.assertEquals(true, afterLeaderboardRecords.get(1).getUserIds().contains("1"));
+        Assert.assertEquals(2000, afterLeaderboardRecords.get(1).getScore(), 0);
+        Assert.assertEquals(true, afterLeaderboardRecords.get(2).getUserIds().contains("3"));
+    }
+
+    @Test
+    public void testProcessOtherTeamAndSortingNormal(){
+        ArrayList<LeaderboardRecord> afterLeaderboardRecords = testProcessOtherTeam(LeaderboardType.Normal, getSampleLeaderboardRecords(false));
+
+        Assert.assertEquals(true, afterLeaderboardRecords.get(0).getUserIds().contains("0"));
+        Assert.assertEquals(true, afterLeaderboardRecords.get(1).getUserIds().contains("3"));
+        Assert.assertEquals(true, afterLeaderboardRecords.get(2).getUserIds().contains("1"));
+        Assert.assertEquals(1000, afterLeaderboardRecords.get(2).getScore(), 0);
+    }
+
+
+    @Test
+    public void testProcessOtherTeamWithTeamNotInLeaderboard(){
+        ArrayList<LeaderboardRecord> afterLeaderboardRecords = testProcessOtherTeam(LeaderboardType.Normal, new ArrayList());
+
+        Assert.assertEquals(true, afterLeaderboardRecords.get(0).getUserIds().contains("1"));
+        Assert.assertEquals(1000, afterLeaderboardRecords.get(0).getScore(), 0);
+        Assert.assertEquals(1, afterLeaderboardRecords.size());
+
+    }
+
+    @Test
+    public void testProcessOtherTeamWithTeamNotInLeaderboard2(){
+        ArrayList<LeaderboardRecord> records = getSampleLeaderboardRecords(false);
+        records.remove(records.get(2));
+        ArrayList<LeaderboardRecord> afterLeaderboardRecords2 = testProcessOtherTeam(LeaderboardType.Normal, records);
+        Assert.assertEquals(true, afterLeaderboardRecords2.get(2).getUserIds().contains("1"));
+        Assert.assertEquals(1000, afterLeaderboardRecords2.get(2).getScore(), 0);
+        Assert.assertEquals(3, afterLeaderboardRecords2.size());
+    }
+
+    @Test
+    public void testProcessOtherTeamWithTeamNotInLeaderboard3(){
+        ArrayList<LeaderboardRecord> records = getSampleLeaderboardRecords(true);
+        records.remove(records.get(2));
+        ArrayList<LeaderboardRecord> afterLeaderboardRecords2 = testProcessOtherTeam(LeaderboardType.Normal, records);
+        Assert.assertEquals(true, afterLeaderboardRecords2.get(0).getUserIds().contains("1"));
+        Assert.assertEquals(1000, afterLeaderboardRecords2.get(0).getScore(), 0);
+        Assert.assertEquals(3, afterLeaderboardRecords2.size());
+    }
+
+    @Test
+    public void testProcessOtherTeamWithTeamNotInLeaderboard4(){
+        int original =  Global.LEADERBOARD_COUNT;
+        Global.LEADERBOARD_COUNT = 2;
+
+        ArrayList<LeaderboardRecord> afterLeaderboardRecords = testProcessOtherTeam(LeaderboardType.Normal, getSampleLeaderboardRecords(true));
+
+        Assert.assertEquals(true, afterLeaderboardRecords.get(0).getUserIds().contains("1"));
+        Assert.assertEquals(1000, afterLeaderboardRecords.get(0).getScore(), 0);
+        Assert.assertEquals(true, afterLeaderboardRecords.get(1).getUserIds().contains("0"));
+        Assert.assertEquals(2, afterLeaderboardRecords.size());
+
+        Global.LEADERBOARD_COUNT = original;
+    }
+
+
+    private ArrayList<LeaderboardRecord> testProcessOtherTeam(LeaderboardType leaderboardType, ArrayList<LeaderboardRecord> leaderboardRecords){
         final EndGameData endGameData = MockModel.mockEndGameData();
-        endGameData.getRoom().getGame().setLeaderbordTypeEnum(LeaderboardType.Normal);
+        endGameData.getRoom().getGame().setLeaderbordTypeEnum(leaderboardType);
         endGameData.getRoom().getGame().setStreakEnabled(false);
 
         EndGameResult endGameResult = endGameData.getEndGameResult();
         endGameResult.setWon(false);
 
         Team myTeam = new Team();
-        myTeam.addPlayer(new Player("", MockModel.mockProfile().getUserId(), true, true, Color.BLACK));
+        myTeam.addPlayer(new Player("", MockModel.mockProfile().getUserId(), true, true, 0));
         endGameResult.setMyTeam(myTeam.getPlayers());
 
         ArrayList<Team> losersTeam = new ArrayList<>();
         losersTeam.add(myTeam);
 
         endGameResult.setLoserTeams(losersTeam);
-
-        final ArrayList<LeaderboardRecord> leaderboardRecords = getSampleLeaderboardRecords();
 
         Services services = T_Services.mockServices();
 
@@ -259,32 +325,25 @@ public class TestEndGameLeaderboard extends TestAbstract {
 
         logic.setLeaderboardRecords(leaderboardRecords);
         logic.processOtherTeamScoresAndStreaks();
-
-        ArrayList<LeaderboardRecord> afterLeaderboardRecords = logic.getLeaderboardRecords();
-
-        Assert.assertEquals(true, afterLeaderboardRecords.get(0).getUserIds().contains("0"));
-        Assert.assertEquals(true, afterLeaderboardRecords.get(1).getUserIds().contains("1"));
-        Assert.assertEquals(2000, afterLeaderboardRecords.get(1).getScore(), 0);
-        Assert.assertEquals(true, afterLeaderboardRecords.get(2).getUserIds().contains("3"));
-
+        return  logic.getLeaderboardRecords();
     }
 
 
-    private ArrayList<LeaderboardRecord> getSampleLeaderboardRecords(){
+    private ArrayList<LeaderboardRecord> getSampleLeaderboardRecords(boolean lowMark){
         final LeaderboardRecord leaderboardRecord1 = new LeaderboardRecord();
         leaderboardRecord1.addUserId("0");
         leaderboardRecord1.addUserName("0", "0");
-        leaderboardRecord1.setScore(2000);
+        leaderboardRecord1.setScore(lowMark ? 200 : 2000);
 
         final LeaderboardRecord leaderboardRecord3 = new LeaderboardRecord();
         leaderboardRecord3.addUserId("3");
         leaderboardRecord3.addUserName("3", "3");
-        leaderboardRecord3.setScore(1500);
+        leaderboardRecord3.setScore(lowMark ? 150 : 1500);
 
         final LeaderboardRecord leaderboardRecord2 = new LeaderboardRecord();
         leaderboardRecord2.addUserId("1");
         leaderboardRecord2.addUserName("1", "1");
-        leaderboardRecord2.setScore(1000);
+        leaderboardRecord2.setScore(lowMark ? 100 : 1000);
         leaderboardRecord2.getStreak().setStreakCount(10);
 
         ArrayList<LeaderboardRecord> records = new ArrayList<LeaderboardRecord>();

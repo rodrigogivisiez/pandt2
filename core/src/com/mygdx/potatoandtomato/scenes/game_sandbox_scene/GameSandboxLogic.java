@@ -15,6 +15,7 @@ import com.mygdx.potatoandtomato.helpers.services.Notification;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
 import com.mygdx.potatoandtomato.statics.Global;
+import com.potatoandtomato.common.utils.JsonObj;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.*;
@@ -64,6 +65,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         _isContinue = (Boolean) objs[1];
         initiateUserReady();
         initiateEndGameEssential();
+        Threadings.setContinuousRenderLock(true);
     }
 
     @Override
@@ -272,7 +274,6 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         Threadings.delay(500, new Runnable() {
             @Override
             public void run() {
-                Threadings.setContinuousRenderLock(true);
                 _screen.switchToGameScreen();
                 if(!_isContinue){
                     _coordinator.getGameEntrance().init();
@@ -388,24 +389,22 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             @Override
             public void run() {
                 ThreadsPool threadsPool = new ThreadsPool();
-                if(_room.getGame().getLeaderboardTypeEnum() == LeaderboardType.Accumulate){
-                    for(final Team team : _room.getTeams()){
-                        final Threadings.ThreadFragment threadFragment = new Threadings.ThreadFragment();
-                        _services.getDatabase().getHighestLeaderBoardRecordAndStreak(_room.getGame(), team.getPlayersUserIds(),
-                                new DatabaseListener<LeaderboardRecord>(LeaderboardRecord.class) {
-                                    @Override
-                                    public void onCallback(LeaderboardRecord record, Status st) {
-                                        if (st == Status.SUCCESS) {
-                                            team.setLeaderboardRecord(record);
-                                        }
-                                        threadFragment.setFinished(true);
+                for(final Team team : _room.getTeams()){
+                    final Threadings.ThreadFragment threadFragment = new Threadings.ThreadFragment();
+                    _services.getDatabase().getTeamHighestLeaderBoardRecordAndStreak(_room.getGame(), team.getPlayersUserIds(),
+                            new DatabaseListener<LeaderboardRecord>(LeaderboardRecord.class) {
+                                @Override
+                                public void onCallback(LeaderboardRecord record, Status st) {
+                                    if (st == Status.SUCCESS && record != null && team.matchedUsers(record.getUserIds())) {
+                                        team.setLeaderboardRecord(record);
                                     }
-                                });
-                        threadsPool.addFragment(threadFragment);
-                    }
+                                    threadFragment.setFinished(true);
+                                }
+                            });
+                    threadsPool.addFragment(threadFragment);
                 }
 
-                //the purpose of this part is to complement with the above function, we cant use
+                //the purpose of above function is to complement with this part, we cant use
                 //this function only to get leaderboard and streak because user might not be in the leaderboard
                 final Threadings.ThreadFragment allLeaderboardFragment = new Threadings.ThreadFragment();
                 _services.getDatabase().getLeaderBoardAndStreak(_room.getGame(), Global.LEADERBOARD_COUNT, new DatabaseListener<ArrayList<LeaderboardRecord>>(LeaderboardRecord.class) {
@@ -456,6 +455,14 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         else if(code == UpdateRoomMatesCode.LOAD_FAILED){
             failLoad(senderId);
         }
+        else if(code == UpdateRoomMatesCode.KICK_USER){
+            JsonObj jsonObj = new JsonObj(msg);
+            String kickedUserId = jsonObj.getString("userId");
+            if(kickedUserId.equals(_services.getProfile().getUserId())){
+                _notification.important(_texts.notificationKicked());
+                exitSandbox();
+            }
+        }
     }
 
     public void askForUserIsReady(){
@@ -482,7 +489,6 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         _services.getChat().add(new ChatMessage(_texts.gameEnded(),
                 ChatMessage.FromType.SYSTEM, null), false);
         redirectExitedSandbox();
-        Threadings.setContinuousRenderLock(false);
     }
 
     private void redirectExitedSandbox(){
@@ -514,6 +520,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             _services.getBroadcaster().broadcast(BroadcastEvent.DEVICE_ORIENTATION, 0);
             _coordinator.dispose();
         }
+        Threadings.setContinuousRenderLock(false);
     }
 
     public void setUserTable(final String userId, final boolean isReady, final boolean isFailed){
@@ -591,12 +598,12 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
 
     @Override       //only decision maker will call this
     public void updateScores(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers) {
+        _services.getDatabase().updateRoomPlayingState(_room, false, null);
+
         if(_room.getGame().hasLeaderboard()){
             UpdateScoreLogic updateScoreLogic = new UpdateScoreLogic(_services, _room);
             updateScoreLogic.update(winners, losers);
             _leaderboardLogic.setStreakResetted(updateScoreLogic.isTeamReset(_coordinator.getMyTeam()));
         }
     }
-
-
 }

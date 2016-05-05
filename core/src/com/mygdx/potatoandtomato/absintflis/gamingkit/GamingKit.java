@@ -4,22 +4,23 @@ import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.models.Profile;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by SiongLeng on 15/12/2015.
  */
 public abstract class GamingKit {
 
-    private HashMap<String, ConnectionChangedListener> _connectionChangedListeners;
-    private HashMap<String, JoinRoomListener> _joinRoomListeners;
-    private HashMap<String, UpdateRoomMatesListener> _updateRoomMatesListeners;
-    private HashMap<String, MessagingListener> _messagingListeners;
+    private ConcurrentHashMap<String, ConnectionChangedListener> _connectionChangedListeners;
+    private ConcurrentHashMap<String, JoinRoomListener> _joinRoomListeners;
+    private ConcurrentHashMap<String, UpdateRoomMatesListener> _updateRoomMatesListeners;
+    private ConcurrentHashMap<String, MessagingListener> _messagingListeners;
 
     public GamingKit() {
-        _connectionChangedListeners = new HashMap();
-        _joinRoomListeners = new HashMap();
-        _updateRoomMatesListeners = new HashMap();
-        _messagingListeners = new HashMap();
+        _connectionChangedListeners = new ConcurrentHashMap();
+        _joinRoomListeners = new ConcurrentHashMap();
+        _updateRoomMatesListeners = new ConcurrentHashMap();
+        _messagingListeners = new ConcurrentHashMap();
     }
 
     public void addListener(String classTag, Object listener){
@@ -81,15 +82,15 @@ public abstract class GamingKit {
         }
     }
 
-    public HashMap<String, ConnectionChangedListener> getConnectionChangedListeners() {
+    public ConcurrentHashMap<String, ConnectionChangedListener> getConnectionChangedListeners() {
         return _connectionChangedListeners;
     }
 
-    public HashMap<String, JoinRoomListener> getJoinRoomListeners() {
+    public ConcurrentHashMap<String, JoinRoomListener> getJoinRoomListeners() {
         return _joinRoomListeners;
     }
 
-    public HashMap<String, UpdateRoomMatesListener> getUpdateRoomMatesListeners() {
+    public ConcurrentHashMap<String, UpdateRoomMatesListener> getUpdateRoomMatesListeners() {
         return _updateRoomMatesListeners;
     }
 

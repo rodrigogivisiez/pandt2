@@ -14,6 +14,7 @@ import com.mygdx.potatoandtomato.assets.*;
 import com.mygdx.potatoandtomato.helpers.services.*;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
+import com.potatoandtomato.common.absints.PTAssetsManager;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.absints.IDownloader;
 import com.potatoandtomato.common.absints.IPTGame;
@@ -43,7 +44,7 @@ public class T_Services {
         Preferences preferences = new Preferences("potatoandtomato_test");
         preferences.deleteAll();
 
-        AssetManager manager = new AssetManager(new InternalFileHandleResolver());
+        PTAssetsManager manager = new PTAssetsManager(new InternalFileHandleResolver(), mock(PTGame.class));
         Animations animations = new Animations(manager);
         Patches patches = new Patches();
         Sounds sounds = new Sounds(manager);
@@ -52,7 +53,7 @@ public class T_Services {
 
         Assets assets  = new Assets(manager, fonts, animations, sounds, patches, textures);
 
-        assets.loadBasic(null);
+        assets.loadSync(null);
         MockGamingKit gamingKit = new MockGamingKit();
         Broadcaster broadcaster = new Broadcaster();
         Profile profile = MockModel.mockProfile();

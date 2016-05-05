@@ -264,6 +264,9 @@ public class TestRoom extends TestAbstract {
         verify(logic, times(0)).checkHostInRoom();
         verify(logic, times(1)).continueGame();
         verify(logic, times(0)).gameStarted();
+
+        Threadings.sleep(1000);
+
         verify(screen, times(1)).toScene(eq(SceneEnum.GAME_SANDBOX), any(Room.class), eq(true));
         Assert.assertEquals(false, _room.isOpen());
 

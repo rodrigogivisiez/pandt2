@@ -37,6 +37,8 @@ public interface IDatabase {
 
      void getAllGames(DatabaseListener<ArrayList<Game>> listener);
 
+     void updateRoomPlayingState(Room room, boolean isPlaying, @Nullable DatabaseListener<String> listener);
+
      void saveRoom(Room room, boolean notify, @Nullable DatabaseListener<String> listener);    //except slot index
 
      void addUserToRoom(Room room, Profile user, DatabaseListener<String> listener);
@@ -79,7 +81,9 @@ public interface IDatabase {
 
      void saveLeaderBoardRecord(Room room, LeaderboardRecord record, DatabaseListener listener);
 
-     void getHighestLeaderBoardRecordAndStreak(Game game, ArrayList<String> teamUserIds, DatabaseListener<LeaderboardRecord> listener);
+     void getTeamHighestLeaderBoardRecordAndStreak(Game game, ArrayList<String> teamUserIds, DatabaseListener<LeaderboardRecord> listener);
+
+     void getUserHighestLeaderBoardRecordAndStreak(Game game, String userId, DatabaseListener<LeaderboardRecord> listener);
 
      void getLeaderBoardRecordById(Game game, String leaderboardId, DatabaseListener<LeaderboardRecord> listener);
 

@@ -5,6 +5,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import com.mygdx.potatoandtomato.PTGame;
+import com.mygdx.potatoandtomato.absintflis.entrance.EntranceLoaderListener;
 import com.mygdx.potatoandtomato.helpers.utils.JarUtils;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.helpers.utils.Terms;
@@ -14,6 +15,7 @@ import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.utils.Threadings;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -71,7 +73,12 @@ public class DesktopLauncher {
 			@Override
 			public void onCallback(Integer obj, Status st) {
 				Global.IS_POTRAIT = (obj == 0);
-				application.getGraphics().setWindowedMode(Positions.getWidth(), Positions.getHeight());
+				Threadings.postRunnable(new Runnable() {
+					@Override
+					public void run() {
+						application.getGraphics().setWindowedMode(Positions.getWidth(), Positions.getHeight());
+					}
+				});
 			}
 		});
 	}
@@ -79,7 +86,7 @@ public class DesktopLauncher {
 	public static void subscribeLoadGameRequest(){
 		_broadcaster.subscribe(BroadcastEvent.LOAD_GAME_REQUEST, new BroadcastListener<GameCoordinator>() {
 			@Override
-			public void onCallback(GameCoordinator obj, Status st) {
+			public void onCallback(final GameCoordinator obj, Status st) {
 				String jarPath = "file:///" + obj.getJarPath();
 				URLClassLoader child = null;
 				Class classToLoad = null;
@@ -87,32 +94,24 @@ public class DesktopLauncher {
 				try {
 					child = new URLClassLoader(new URL[]{new URL(jarPath)}, this.getClass().getClassLoader());
 					classToLoad = Class.forName (Terms.GAME_ENTRANCE, true, child);
-					obj = JarUtils.fillGameEntrance(classToLoad, obj);
+					JarUtils.fillGameEntrance(classToLoad, obj, new EntranceLoaderListener() {
+						@Override
+						public void onLoadedSuccess() {
+							_broadcaster.broadcast(BroadcastEvent.LOAD_GAME_RESPONSE, obj, Status.SUCCESS);
+						}
+
+						@Override
+						public void onLoadedFailed() {
+							_broadcaster.broadcast(BroadcastEvent.LOAD_GAME_RESPONSE, null, Status.FAILED);
+						}
+					});
 				    success = true;
 				} catch (MalformedURLException e) {
-					success = false;
+					_broadcaster.broadcast(BroadcastEvent.LOAD_GAME_RESPONSE, null, Status.FAILED);
 				} catch (ClassNotFoundException e) {
-					success = false;
-				} catch (InvocationTargetException e) {
-					e.printStackTrace();
-					success = false;
-				} catch (NoSuchMethodException e) {
-					e.printStackTrace();
-					success = false;
-				} catch (InstantiationException e) {
-					e.printStackTrace();
-					success = false;
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-					success = false;
-				}
-
-				if(success){
-					_broadcaster.broadcast(BroadcastEvent.LOAD_GAME_RESPONSE, obj, Status.SUCCESS);
-				}
-				else{
 					_broadcaster.broadcast(BroadcastEvent.LOAD_GAME_RESPONSE, null, Status.FAILED);
 				}
+
 
 			}
 		});

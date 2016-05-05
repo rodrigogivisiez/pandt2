@@ -80,6 +80,7 @@ public class MainLogic extends GameLogic {
     }
 
     public void init(){
+        _screen.readyToStart();
         _currentDecisionMaker = getCoordinator().getDecisionMaker();
         _imageStorage.startMonitor();
         _gameModel.setGameState(GameState.Close);
@@ -95,6 +96,7 @@ public class MainLogic extends GameLogic {
     }
 
     public void onContinue(){
+        _screen.readyToStart();
         _waitingContinue = true;
         _imageStorage.startMonitor();
         _gameModel.setGameState(GameState.Close);
@@ -224,11 +226,12 @@ public class MainLogic extends GameLogic {
             }
         }
         else if(!_gameModel.isAreaAlreadyConfirmClicked(correctRect)) {
+            _gameModel.setHintsLeft(hintLeft);
+            Logs.show(_gameModel.getHintsLeft() +" hint left in gameModel");
             boolean alreadyHandled = _gameModel.addHandledArea(correctRect, remainingMiliSecs);
             _gameModel.setConfirmAreaClickedBy(correctRect, userId);
             _screen.circle(correctRect, userId, alreadyHandled ? -1 : _gameModel.getHandledAreas().size());
             _gameModel.addUserClickedCount(userId);
-            _gameModel.setHintsLeft(hintLeft);
         }
     }
 
@@ -271,7 +274,7 @@ public class MainLogic extends GameLogic {
             _gameModel.setGameState(GameState.Pause);
             if(meIsThisStageDecisionMaker()){
                 _services.getRoomMsgHandler().sendWon(new WonStageModel(_gameModel.getStageNumber(),
-                                        _gameModel.getScore(), remainingSecs, "0", StageType.Normal));
+                                        _gameModel.getScore(), remainingSecs, _gameModel.getHintsLeft(), "0", StageType.Normal));
             }
         }
     }
@@ -455,6 +458,7 @@ public class MainLogic extends GameLogic {
             public void onWon(WonStageModel wonStageModel) {
                 if(!_waitingContinue) {
                     _gameModel.setRemainingMiliSecs(wonStageModel.getRemainingSecs(), false);
+                    _gameModel.setHintsLeft(wonStageModel.getHintsLeft());
                     _gameModel.setGameState(GameState.Won);
 
                     Logs.show("You win, time is: " + wonStageModel.getRemainingSecs());

@@ -138,6 +138,9 @@ public class BootScene extends SceneAbstract {
     }
 
     public void showSocialLogin(){
+        _tickIcon = new Image(_assets.getTextures().get(Textures.Name.TICK_ICON));
+        _crossIcon = new Image(_assets.getTextures().get(Textures.Name.CROSS_ICON));
+
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -203,8 +206,6 @@ public class BootScene extends SceneAbstract {
                 /////////////////////////////////
                 Table choicesTable = new Table();
                 choicesTable.setName("choicesTable");
-                _tickIcon = new Image(_assets.getTextures().get(Textures.Name.TICK_ICON));
-                _crossIcon = new Image(_assets.getTextures().get(Textures.Name.CROSS_ICON));
                 choicesTable.add(_tickIcon).size(50, 50).padRight(20);
                 choicesTable.add(_crossIcon).size(50, 50).padLeft(20);
 

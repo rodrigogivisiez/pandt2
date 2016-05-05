@@ -160,11 +160,13 @@ public class GameListScene extends SceneAbstract {
 
     public Actor addNewRoomRow(final Room room, final boolean isInvited){
         final Button dummyButton = new Button(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
+        final Table gameRowTable = new Table();
+        _gameRowsTableMap.put(room.getId(), gameRowTable);
 
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                Table gameRowTable = new Table();
+
                 Label.LabelStyle contentLabelStyle = new Label.LabelStyle();
                 contentLabelStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_S_BOLD);
 
@@ -194,7 +196,7 @@ public class GameListScene extends SceneAbstract {
                 _scrollTable.row();
 
                 dummyButton.setName(String.valueOf(room.getId()));
-                _gameRowsTableMap.put(room.getId(), gameRowTable);
+
             }
         });
 
@@ -256,7 +258,13 @@ public class GameListScene extends SceneAbstract {
 
     public void removeRoom(Room room){
         if(_gameRowsTableMap.containsKey(room.getId())){
-            _gameRowsTableMap.get(room.getId()).remove();
+            final Actor actor = _gameRowsTableMap.get(room.getId());
+            Threadings.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    actor.remove();
+                }
+            });
             _gameRowsTableMap.remove(room.getId());
         }
     }

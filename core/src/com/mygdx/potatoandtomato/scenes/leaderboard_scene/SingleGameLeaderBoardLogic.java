@@ -45,19 +45,18 @@ public class SingleGameLeaderBoardLogic extends LogicAbstract {
                 if(st == Status.SUCCESS){
                     _records = records;
                     if(!LeaderboardHelper.isMyRecordInLeaderboard(_records, _services.getProfile().getUserId())){
-                        _services.getDatabase().getHighestLeaderBoardRecordAndStreak(_game,
-                                ArrayUtils.stringsToArray(_services.getProfile().getUserId()), new DatabaseListener<LeaderboardRecord>() {
-                            @Override
-                            public void onCallback(LeaderboardRecord record, Status st) {
-                                if(st == Status.SUCCESS && record != null){
-                                    _records.add(record);
-                                    dataReady();
-                                }
-                            }
-                        });
+                        _services.getDatabase().getUserHighestLeaderBoardRecordAndStreak(_game,
+                                _services.getProfile().getUserId(), new DatabaseListener<LeaderboardRecord>() {
+                                    @Override
+                                    public void onCallback(LeaderboardRecord record, Status st) {
+                                        if (st == Status.SUCCESS && record != null && record.getScore() != 0) {
+                                            _records.add(record);
+                                        }
+                                        dataReady();
+                                    }
+                                });
 
-                    }
-                    else{
+                    } else{
                         dataReady();
                     }
 

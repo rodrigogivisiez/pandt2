@@ -1,5 +1,7 @@
 package com.mygdx.potatoandtomato.scenes.game_sandbox_scene;
 
+import com.mygdx.potatoandtomato.enums.LeaderboardType;
+import com.mygdx.potatoandtomato.helpers.utils.Scores;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
 import com.potatoandtomato.common.models.ScoreDetails;
@@ -39,7 +41,16 @@ public class UpdateScoreLogic {
     }
 
     private void updateWinnerTeam(Team winnerTeam, ArrayList<ScoreDetails> scoreDetails){
-        winnerTeam.getLeaderboardRecord().addScoresToRecord(scoreDetails);
+        if(_room.getGame().getLeaderboardTypeEnum() == LeaderboardType.Normal){
+            if(winnerTeam.getLeaderboardRecord().getScore() < Scores.getTotalScoresInScoresArray(scoreDetails)){
+                winnerTeam.getLeaderboardRecord().setScore(0);
+                winnerTeam.getLeaderboardRecord().addScoresToRecord(scoreDetails);
+            }
+        }
+        else if(_room.getGame().getLeaderboardTypeEnum() == LeaderboardType.Accumulate){
+            winnerTeam.getLeaderboardRecord().addScoresToRecord(scoreDetails);
+        }
+
 
         int addingStreak = 0;
         for(ScoreDetails detail : scoreDetails){

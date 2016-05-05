@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
@@ -18,9 +17,11 @@ import com.potatoandtomato.common.helpers.ConnectionMonitor;
 import com.potatoandtomato.common.models.*;
 import com.potatoandtomato.common.utils.DecisionsMaker;
 import com.potatoandtomato.common.utils.MyFileResolver;
+import com.potatoandtomato.common.utils.Threadings;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by SiongLeng on 25/12/2015.
@@ -41,7 +42,7 @@ public class GameCoordinator implements Disposable {
     private Object database;
     private String roomId;
     private ISoundsPlayer soundsPlayer;
-    private AssetManager assetsManager;
+    private PTAssetsManager ptAssetsManager;
     private Broadcaster broadcaster;
     private DecisionsMaker decisionsMaker;
     private IDownloader downloader;
@@ -339,8 +340,8 @@ public class GameCoordinator implements Disposable {
         return decisionsMaker.getDecisionMaker();
     }
 
-    public HashMap<Integer, Player> getIndexToPlayersMap(){
-        HashMap<Integer, Player> playerHashMap = new HashMap();
+    public ConcurrentHashMap<Integer, Player> getIndexToPlayersConcurrentMap(){
+        ConcurrentHashMap<Integer, Player> playerHashMap = new ConcurrentHashMap();
 
         for(Team team : teams){
             for(Player player : team.getPlayers()){
@@ -436,13 +437,13 @@ public class GameCoordinator implements Disposable {
         });
     }
 
-    public AssetManager getAssetManager(boolean singleton){
-        if(assetsManager == null) assetsManager = new AssetManager(new MyFileResolver(this));
+    public PTAssetsManager getPTAssetManager(boolean singleton){
+        if(ptAssetsManager == null) ptAssetsManager = new PTAssetsManager(new MyFileResolver(this), game);
         if(singleton){
-            return assetsManager;
+            return ptAssetsManager;
         }
         else{
-            return new AssetManager(new MyFileResolver(this));
+            return new PTAssetsManager(new MyFileResolver(this), game);
         }
     }
 
@@ -536,7 +537,14 @@ public class GameCoordinator implements Disposable {
         broadcaster.unsubscribe(_broadcastSubscribedId);
         userStateListener = null;
         _inGameUpdateListeners.clear();
-        if(assetsManager != null) assetsManager.dispose();
+        if(ptAssetsManager != null) {
+            Threadings.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    ptAssetsManager.dispose();
+                }
+            });
+        }
         broadcaster.broadcast(BroadcastEvent.DEVICE_ORIENTATION, 0);
         for(InputProcessor processor : _processors){
             getGame().removeInputProcessor(processor);

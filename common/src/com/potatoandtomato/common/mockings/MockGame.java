@@ -9,10 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.firebase.client.Firebase;
 import com.potatoandtomato.common.*;
-import com.potatoandtomato.common.absints.GamePreferencesAbstract;
-import com.potatoandtomato.common.absints.IGameSandBox;
-import com.potatoandtomato.common.absints.IPTGame;
-import com.potatoandtomato.common.absints.ITutorials;
+import com.potatoandtomato.common.absints.*;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.controls.DisposableActor;
 import com.potatoandtomato.common.models.Player;
@@ -22,6 +19,7 @@ import com.potatoandtomato.common.statics.CommonVersion;
 import com.potatoandtomato.common.utils.ColorUtils;
 import com.potatoandtomato.common.utils.Downloader;
 import com.potatoandtomato.common.utils.Strings;
+import com.potatoandtomato.common.utils.Threadings;
 
 import javax.xml.bind.annotation.XmlElementDecl;
 import java.io.FileNotFoundException;
@@ -40,6 +38,7 @@ public abstract class MockGame extends Game implements IPTGame {
     GameCoordinator _gameCoordinator;
     Broadcaster _broadcaster;
     Downloader _downloader;
+    PTAssetsManager _monitoringPTAssetsManager;
 
     public MockGame(String gameId) {
 
@@ -117,8 +116,8 @@ public abstract class MockGame extends Game implements IPTGame {
         }, 20);
     }
 
-    public void initiateMockGamingKit(final int expectedTeamCount, final int eachTeamExpectedPlayers, final boolean debugging){
-        _mockGamingKit = new MockGamingKit(_gameCoordinator, expectedTeamCount, !debugging ? eachTeamExpectedPlayers : 0, _broadcaster, new Runnable() {
+    public void initiateMockGamingKit(final int expectedTeamCount, final int eachTeamExpectedPlayers, int delay, final boolean debugging){
+        _mockGamingKit = new MockGamingKit(_gameCoordinator, expectedTeamCount, !debugging ? eachTeamExpectedPlayers : 0, delay, _broadcaster, new Runnable() {
             @Override
             public void run() {
                 _gameCoordinator.setMyUserId(_mockGamingKit.getUserId());
@@ -140,7 +139,24 @@ public abstract class MockGame extends Game implements IPTGame {
 
                     _gameCoordinator.setTeams(teams);
                 }
-                onReady();
+
+
+                Threadings.runInBackground(new Runnable() {
+                    @Override
+                    public void run() {
+                        while (_monitoringPTAssetsManager != null && !_monitoringPTAssetsManager.isFinishLoading()){
+                            Threadings.sleep(100);
+                        }
+
+                        Threadings.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                onReady();
+                            }
+                        });
+
+                    }
+                });
             }
         });
     }
@@ -185,4 +201,16 @@ public abstract class MockGame extends Game implements IPTGame {
 
     public abstract void onReady();
 
+    @Override
+    public void render() {
+        super.render();
+        if(_monitoringPTAssetsManager != null && !_monitoringPTAssetsManager.isFinishLoading() && _monitoringPTAssetsManager.update()) {
+            _monitoringPTAssetsManager.setFinishLoading(true);
+        }
+    }
+
+    @Override
+    public void monitorPTAssetManager(PTAssetsManager ptAssetsManager) {
+        _monitoringPTAssetsManager = ptAssetsManager;
+    }
 }

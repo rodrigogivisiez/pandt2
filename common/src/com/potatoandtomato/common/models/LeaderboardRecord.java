@@ -6,6 +6,7 @@ import com.shaded.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by SiongLeng on 9/3/2016.
@@ -18,11 +19,11 @@ public class LeaderboardRecord {
     private Streak streak;
 
     @JsonIgnore
-    private HashMap<String, String> userIdToNameMap;
+    private ConcurrentHashMap<String, String> userIdToNameMap;
 
     public LeaderboardRecord(ArrayList<Player> players){
         userIds = new ArrayList<String>();
-        userIdToNameMap = new HashMap<String, String>();
+        userIdToNameMap = new ConcurrentHashMap<String, String>();
         for(Player player :  players){
             userIds.add(player.getUserId());
             userIdToNameMap.put(player.getUserId(), player.getName());
@@ -31,7 +32,7 @@ public class LeaderboardRecord {
 
     public LeaderboardRecord() {
         userIds = new ArrayList<String>();
-        userIdToNameMap = new HashMap<String, String>();
+        userIdToNameMap = new ConcurrentHashMap<String, String>();
     }
 
     @JsonIgnore
@@ -47,12 +48,12 @@ public class LeaderboardRecord {
     }
 
     @JsonIgnore
-    public HashMap<String, String> getUserIdToNameMap() {
+    public ConcurrentHashMap<String, String> getUserIdToNameMap() {
         return userIdToNameMap;
     }
 
     @JsonIgnore
-    public void setUserIdToNameMap(HashMap<String, String> userNames) {
+    public void setUserIdToNameMap(ConcurrentHashMap<String, String> userNames) {
         this.userIdToNameMap = userNames;
     }
 
@@ -72,7 +73,7 @@ public class LeaderboardRecord {
         return score;
     }
 
-    public void setScore(long score) {
+    public void setScore(double score) {
         this.score = score;
     }
 

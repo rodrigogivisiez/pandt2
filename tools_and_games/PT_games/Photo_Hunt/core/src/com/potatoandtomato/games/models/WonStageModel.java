@@ -10,18 +10,28 @@ public class WonStageModel {
     public int stageNumber;
     public int beforeScore;
     public int remainingSecs;
+    public int hintsLeft;
     public String nextStageId;
     public StageType nextStageType;
 
     public WonStageModel() {
     }
 
-    public WonStageModel(int stageNumber, int beforeScore, int remainingSecs, String nextStageId, StageType nextStageType) {
+    public WonStageModel(int stageNumber, int beforeScore, int remainingSecs, int hintsLeft, String nextStageId, StageType nextStageType) {
         this.stageNumber = stageNumber;
         this.beforeScore = beforeScore;
         this.remainingSecs = remainingSecs;
+        this.hintsLeft = hintsLeft;
         this.nextStageId = nextStageId;
         this.nextStageType = nextStageType;
+    }
+
+    public int getHintsLeft() {
+        return hintsLeft;
+    }
+
+    public void setHintsLeft(int hintsLeft) {
+        this.hintsLeft = hintsLeft;
     }
 
     public StageType getNextStageType() {

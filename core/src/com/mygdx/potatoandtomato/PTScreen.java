@@ -235,8 +235,6 @@ public class PTScreen implements Screen, InputProcessor {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                Logs.show("scene changing");
-
                 float duration = 0.5f;
 
                 Threadings.renderFor(10f);

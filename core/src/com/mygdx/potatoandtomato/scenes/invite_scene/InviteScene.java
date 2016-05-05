@@ -167,26 +167,20 @@ public class InviteScene extends SceneAbstract {
         if(!_containersMap.containsKey(inviteType)){
 
             final Table rootTable = new Table();
-            Threadings.postRunnable(new Runnable() {
-                @Override
-                public void run() {
-                    rootTable.align(Align.top);
-                    rootTable.setName("rootTable");
-                    Table titleTable = new Table();
-                    titleTable.setName("titleTable");
+            rootTable.align(Align.top);
+            rootTable.setName("rootTable");
+            Table titleTable = new Table();
+            titleTable.setName("titleTable");
 
-                    Table contentTable = new Table();
-                    contentTable.setName("contentTable");
-                    contentTable.align(Align.top);
+            Table contentTable = new Table();
+            contentTable.setName("contentTable");
+            contentTable.align(Align.top);
 
-                    ScrollPane scrollPane = new ScrollPane(contentTable);
+            ScrollPane scrollPane = new ScrollPane(contentTable);
 
-                    rootTable.add(titleTable).expandX().fillX();
-                    rootTable.row();
-                    rootTable.add(scrollPane).expand().fill();
-
-                }
-            });
+            rootTable.add(titleTable).expandX().fillX();
+            rootTable.row();
+            rootTable.add(scrollPane).expand().fill();
             _containersMap.put(inviteType, rootTable);
         }
         return _containersMap.get(inviteType);
@@ -221,6 +215,7 @@ public class InviteScene extends SceneAbstract {
 
     public Table putUserToTable(final Profile profile, final InviteScene.InviteType inviteType, final Object... objs){
         final Table userTable = new Table();
+        userTable.setName("unselected");
 
         Threadings.postRunnable(new Runnable() {
             @Override
@@ -232,7 +227,6 @@ public class InviteScene extends SceneAbstract {
 
                 Table contentTable = getContainerContentTable(inviteType);
 
-                userTable.setName("unselected");
                 userTable.padLeft(10).padRight(10).padTop(5);
                 new DummyButton(userTable, _assets);
 
@@ -289,11 +283,10 @@ public class InviteScene extends SceneAbstract {
                 contentTable.add(userTable).expandX().fillX();
                 contentTable.row();
 
-                _usersHashMap.put(profile.getUserId(), userTable);
             }
         });
 
-
+        _usersHashMap.put(profile.getUserId(), userTable);
 
         return userTable;
     }
@@ -304,7 +297,7 @@ public class InviteScene extends SceneAbstract {
         boolean result = false;
         for(Table userTable : _usersHashMap.get(user.getUserId())){
             final Image selectBox =  userTable.findActor("selectbox");
-            if(userTable.getName().equals("selected")){
+            if (userTable.getName().equals("selected")){
                 userTable.setName("unselected");
                 Threadings.postRunnable(new Runnable() {
                     @Override

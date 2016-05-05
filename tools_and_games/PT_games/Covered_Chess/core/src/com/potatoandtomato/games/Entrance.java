@@ -4,6 +4,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.firebase.client.Firebase;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.absints.GameEntrance;
+import com.potatoandtomato.common.absints.PTAssetsManager;
 import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.games.assets.*;
 import com.potatoandtomato.games.models.Services;
@@ -26,7 +27,7 @@ public class Entrance extends GameEntrance {
 
         initAssets();
 
-        _assets.loadBasic(new Runnable() {
+        _assets.loadAsync(new Runnable() {
             @Override
             public void run() {
                 Database database = new Database(_coordinator);
@@ -66,7 +67,7 @@ public class Entrance extends GameEntrance {
     }
 
     private void initAssets(){
-        AssetManager manager = _coordinator.getAssetManager(true);
+        PTAssetsManager manager = _coordinator.getPTAssetManager(true);
         Fonts fonts = new Fonts(manager);
         Patches patches = new Patches();
         Sounds sounds = new Sounds(manager);
@@ -77,5 +78,7 @@ public class Entrance extends GameEntrance {
 
     }
 
-
+    public MyAssets getAssets() {
+        return _assets;
+    }
 }

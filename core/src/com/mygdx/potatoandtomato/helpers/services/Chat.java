@@ -27,6 +27,7 @@ import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.helpers.controls.DummyButton;
 import com.mygdx.potatoandtomato.helpers.controls.DummyKeyboard;
+import com.mygdx.potatoandtomato.helpers.utils.Files;
 import com.mygdx.potatoandtomato.helpers.utils.Logs;
 import com.mygdx.potatoandtomato.helpers.utils.Positions;
 import com.mygdx.potatoandtomato.models.ChatMessage;
@@ -47,9 +48,6 @@ import com.shephertz.app42.gaming.multiplayer.client.util.Base64;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -339,14 +337,7 @@ public class Chat {
 
     public void collapsed(){
         _expanded = false;
-        Threadings.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                _stage.setKeyboardFocus(_stage.getActors().get(0));
-                _textFieldNotFocusImage.setVisible(true);
-                _textFieldFocusImage.setVisible(false);
-            }
-        });
+        unfocus();
 
         if(_mode == 2){
             fadeOutMode2();
@@ -365,6 +356,17 @@ public class Chat {
             _visible = true;
             _game.addInputProcessor(_stage, 10);
         }
+    }
+
+    public void unfocus(){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _stage.setKeyboardFocus(_stage.getActors().get(0));
+                _textFieldNotFocusImage.setVisible(true);
+                _textFieldFocusImage.setVisible(false);
+            }
+        });
     }
 
     public void animateHideForMode2(){
@@ -454,6 +456,7 @@ public class Chat {
                     try {
                         if(!senderId.equals(_userId)){
                             FileHandle oggFile = Gdx.files.local(_recordsPath + Strings.generateUniqueRandomKey(15) + ".ogg");
+                            Files.createIfNotExist(oggFile);
                             FileOutputStream fos = new FileOutputStream(oggFile.file().getAbsolutePath());
                             fos.write(data);
                             fos.close();
@@ -552,6 +555,7 @@ public class Chat {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 micTouchUp();
                 super.touchUp(event, x, y, pointer, button);
+
             }
 
             @Override
@@ -672,13 +676,8 @@ public class Chat {
 
     public void sendVoiceMessage(final FileHandle file){
 
-        Path path = Paths.get(file.file().getAbsolutePath());
-        try {
-            byte[] data = Files.readAllBytes(path);
-            _gamingKit.updateRoomMates((byte) UpdateRoomMatesCode.AUDIO_CHAT, data);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        byte[] data = Files.fileToByte(file.file());
+        _gamingKit.updateRoomMates((byte) UpdateRoomMatesCode.AUDIO_CHAT, data);
 
         final ChatMessage c = new ChatMessage(file.file().getName(), ChatMessage.FromType.USER_VOICE, _userId);
         add(c, true);

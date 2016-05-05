@@ -34,10 +34,11 @@ public class MockGamingKit {
     private GameCoordinator _coordinator;
     private Broadcaster _broadcaster;
     private MultiHashMap<String, String> _msgPieces;
+    private int _delay;
 
 
     public MockGamingKit(GameCoordinator coordinator, int expectedTeamCount,
-                         int eachTeamExpectedPlayers,
+                         int eachTeamExpectedPlayers, int delay,
                          Broadcaster broadcaster, Runnable onReady) {
         this._onReady = onReady;
         this._broadcaster = broadcaster;
@@ -45,6 +46,7 @@ public class MockGamingKit {
         this._eachTeamExpectedPlayers = eachTeamExpectedPlayers;
         this._coordinator = coordinator;
         this._msgPieces = new MultiHashMap();
+        this._delay = delay;
 
         long unixTime = System.currentTimeMillis() / 1000L;
         _userId = String.valueOf(unixTime);
@@ -88,7 +90,7 @@ public class MockGamingKit {
         }
 
         if(_eachTeamExpectedPlayers == 0 || _expectedTeamCount == 0){
-            Threadings.runInBackground(new Runnable() {
+            Threadings.delay(_delay, new Runnable() {
                 @Override
                 public void run() {
                     _broadcaster.broadcast(BroadcastEvent.INGAME_UPDATE_RESPONSE,
@@ -248,10 +250,12 @@ public class MockGamingKit {
 
                 Collections.sort(users);
 
+                int slotIndex = 0;
                 for(String user : users) {
-                    team.addPlayer(new Player(user, user, isHost, true, i));
+                    team.addPlayer(new Player(user, user, isHost, true, slotIndex));
                     isHost = false;
                     i++;
+                    slotIndex++;
                     if(i == _eachTeamExpectedPlayers){
                         teams.add(team);
                         team = new Team();

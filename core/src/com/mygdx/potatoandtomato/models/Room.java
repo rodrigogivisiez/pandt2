@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by SiongLeng on 16/12/2015.
@@ -35,7 +36,7 @@ public class Room {
     ArrayList<Team> teams;
 
     @JsonDeserialize(using = IntProfileMapDeserializer.class)
-    HashMap<String, RoomUser> roomUsers;
+    ConcurrentHashMap<String, RoomUser> roomUsers;
 
 
 
@@ -90,8 +91,10 @@ public class Room {
         this.originalRoomUsers = originalRoomUsers;
     }
 
+
+    @JsonIgnore
     public ArrayList<RoomUser> getRoomUsersSortBySlotIndex() {
-        HashMap<String, RoomUser> roomUserHashMap = getRoomUsersMap();
+        ConcurrentHashMap<String, RoomUser> roomUserHashMap = getRoomUsersMap();
         ArrayList<RoomUser> results = new ArrayList();
 
         for(RoomUser roomUser : roomUserHashMap.values()){
@@ -103,15 +106,20 @@ public class Room {
         return results;
     }
 
-    public HashMap<String, RoomUser> getRoomUsersMap() {
+    @JsonIgnore
+    public ConcurrentHashMap<String, RoomUser> getRoomUsersMap() {
         if(roomUsers == null){
-            roomUsers = new HashMap();
+            roomUsers = new ConcurrentHashMap();
         }
         return roomUsers;
     }
 
-    public void setRoomUsers(HashMap<String, RoomUser> roomUsers) {
+    public void setRoomUsers(ConcurrentHashMap<String, RoomUser> roomUsers) {
         this.roomUsers = roomUsers;
+    }
+
+    public ConcurrentHashMap<String, RoomUser> getRoomUsers() {
+        return roomUsers;
     }
 
     public ArrayList<Profile> getInvitedUsers() {
@@ -149,6 +157,7 @@ public class Room {
         this.teams = teams;
     }
 
+    @JsonIgnore
     public Team getUserTeam(String userId){
         for(Team team : getTeams()){
             if(team.hasUser(userId)){
@@ -204,7 +213,7 @@ public class Room {
 
     @JsonIgnore
     public void addRoomUser(Profile user, boolean isReady){
-        if(roomUsers == null) roomUsers = new HashMap();
+        if(roomUsers == null) roomUsers = new ConcurrentHashMap();
 
         if(getSlotIndexByUserId(user.getUserId()) != -1) return;
 

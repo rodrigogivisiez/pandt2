@@ -28,7 +28,7 @@ public class Database {
         getSingleData(getTable(_adminTable).child(userId), new DatabaseListener<String>(String.class) {
             @Override
             public void onCallback(String obj, Status st) {
-                if(st == Status.SUCCESS && obj.equals("yes")){
+                if(st == Status.SUCCESS && obj != null && obj.equals("yes")){
                     listener.onCallback(true, Status.SUCCESS);
                 }
                 else{

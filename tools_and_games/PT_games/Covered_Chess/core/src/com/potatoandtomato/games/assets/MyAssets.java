@@ -1,6 +1,7 @@
 package com.potatoandtomato.games.assets;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.potatoandtomato.common.absints.PTAssetsManager;
 import com.potatoandtomato.common.assets.*;
 
 /**
@@ -10,7 +11,7 @@ public class MyAssets extends Assets {
 
     private Textures textures;
 
-    public MyAssets(AssetManager manager, FontAssets fontAssets, AnimationAssets animationAssets,
+    public MyAssets(PTAssetsManager manager, FontAssets fontAssets, AnimationAssets animationAssets,
                     SoundAssets soundAssets, PatchAssets patchAssets, Textures textureAssets) {
         super(manager, fontAssets, animationAssets, soundAssets, patchAssets, textureAssets);
         this.textures = textureAssets;

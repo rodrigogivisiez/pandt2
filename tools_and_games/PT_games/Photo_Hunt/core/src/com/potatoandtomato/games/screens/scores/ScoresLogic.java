@@ -52,6 +52,7 @@ public class ScoresLogic implements Disposable {
         this.castleLogic = castleLogic;
         this.hintsLogic = hintsLogic;
         this.gameModel = gameModel;
+        this.leaderboardRecords = new ArrayList();
 
         this.scoresActor = new ScoresActor(services, gameCoordinator);
         scoresActor.populate(gameModel.getScore());
@@ -169,6 +170,7 @@ public class ScoresLogic implements Disposable {
             });
         }
         else{
+            Logs.show(hintsLogic.getCurrentHintsLeft() +" hint left");
             addScoreAndPopScoreOnActor(hintsActor, hintsLogic.getCurrentHintsLeft() * PER_HINT_LEFT_SCORE, new Runnable() {
                 @Override
                 public void run() {
