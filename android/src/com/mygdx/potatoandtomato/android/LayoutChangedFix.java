@@ -2,7 +2,7 @@ package com.mygdx.potatoandtomato.android;
 
 import android.graphics.Rect;
 import android.view.View;
-import com.mygdx.potatoandtomato.helpers.utils.Positions;
+import com.mygdx.potatoandtomato.utils.Positions;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;

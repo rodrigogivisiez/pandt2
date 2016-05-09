@@ -5,7 +5,7 @@ import com.facebook.*;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.potatoandtomato.common.utils.JsonObj;
-import com.mygdx.potatoandtomato.helpers.utils.Terms;
+import com.mygdx.potatoandtomato.utils.Terms;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.FacebookProfile;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;

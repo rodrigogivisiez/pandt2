@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -263,8 +264,18 @@ public class MainScreen extends GameScreen {
                 _services.getSoundsWrapper().playSounds(Sounds.Name.START_STAGE);
             }
         });
-
     }
+
+    public void onResumeRefreshImages(final Texture texture1, final Texture texture2){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                ((Image) _imageOneInnerTable.findActor("image")).setDrawable(new TextureRegionDrawable(new TextureRegion(texture1)));
+                ((Image) _imageTwoInnerTable.findActor("image")).setDrawable(new TextureRegionDrawable(new TextureRegion(texture2)));
+            }
+        });
+    }
+
 
     public void cross(final float x, final float y, final String userId){
         Threadings.postRunnable(new Runnable() {

@@ -115,7 +115,7 @@ public class Entrance extends GameEntrance {
     private void initAssets(){
         PTAssetsManager manager = _coordinator.getPTAssetManager(true);
         Fonts fonts = new Fonts(manager);
-        Patches patches = new Patches();
+        Patches patches = new Patches(manager);
         Sounds sounds = new Sounds(manager);
         Textures textures = new Textures(manager, "pack.atlas");
         Animations animations = new Animations(manager);

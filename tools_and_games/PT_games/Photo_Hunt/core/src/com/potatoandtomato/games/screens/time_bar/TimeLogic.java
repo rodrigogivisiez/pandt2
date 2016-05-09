@@ -82,7 +82,6 @@ public class TimeLogic implements Disposable {
                             gameModel.setRemainingMiliSecs(gameModel.getRemainingMiliSecs() - renderPeriodMiliSecs, true);
                         }
 
-                        Logs.show(String.valueOf(gameModel.getRemainingMiliSecs()));
 
                     }
                 }

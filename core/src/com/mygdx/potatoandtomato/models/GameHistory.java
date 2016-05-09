@@ -1,6 +1,6 @@
 package com.mygdx.potatoandtomato.models;
 
-import com.mygdx.potatoandtomato.helpers.utils.DateTimes;
+import com.mygdx.potatoandtomato.utils.DateTimes;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
 
 /**

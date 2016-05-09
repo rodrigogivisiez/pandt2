@@ -1,7 +1,7 @@
 package com.mygdx.potatoandtomato.scenes.game_sandbox_scene;
 
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
-import com.mygdx.potatoandtomato.helpers.utils.Scores;
+import com.mygdx.potatoandtomato.utils.Scores;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
 import com.potatoandtomato.common.models.ScoreDetails;

@@ -1,7 +1,7 @@
 package com.mygdx.potatoandtomato.android;
 
 import android.test.ActivityInstrumentationTestCase2;
-import com.mygdx.potatoandtomato.helpers.services.GCMSender;
+import com.mygdx.potatoandtomato.services.GCMSender;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.PushNotification;

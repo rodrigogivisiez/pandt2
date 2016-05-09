@@ -1,6 +1,5 @@
 package com.mygdx.potatoandtomato.scenes.game_list_scene;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -12,7 +11,7 @@ import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.helpers.services.Confirm;
+import com.mygdx.potatoandtomato.services.Confirm;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
@@ -168,7 +167,7 @@ public class GameListLogic extends LogicAbstract {
 
     public void roomDataChanged(final Room room, final boolean playSound){
         if(room.isOpen()){
-            if(room.getHost().equals(_services.getProfile()) || room.getRoomUsersCount() == 0){      //orphan room fix
+            if(room.getHost().equals(_services.getProfile())){      //orphan room fix
                 if(isSceneVisible()){
                     room.setOpen(false);
                     _services.getDatabase().saveRoom(room, true, null);

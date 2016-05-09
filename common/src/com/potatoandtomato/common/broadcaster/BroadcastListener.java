@@ -1,6 +1,7 @@
 package com.potatoandtomato.common.broadcaster;
 
 import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.utils.Strings;
 
 import java.io.Serializable;
 import java.util.Random;
@@ -13,7 +14,7 @@ public abstract class BroadcastListener<T> implements Serializable {
     private String id;
 
     public BroadcastListener() {
-        this.id = randomString(10);
+        this.id = Strings.generateUniqueRandomKey(40);
     }
 
     public String getId() {
@@ -21,15 +22,4 @@ public abstract class BroadcastListener<T> implements Serializable {
     }
 
     public abstract void onCallback(T obj, Status st);
-
-    public String randomString(int len)
-    {
-        final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-        Random rnd = new Random();
-        StringBuilder sb = new StringBuilder( len );
-        for( int i = 0; i < len; i++ )
-            sb.append( AB.charAt( rnd.nextInt(AB.length()) ) );
-        return sb.toString();
-    }
-
 }

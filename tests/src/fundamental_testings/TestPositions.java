@@ -1,7 +1,7 @@
 package fundamental_testings;
 
 import abstracts.TestAbstract;
-import com.mygdx.potatoandtomato.helpers.utils.Positions;
+import com.mygdx.potatoandtomato.utils.Positions;
 import org.junit.Assert;
 import org.junit.Test;
 

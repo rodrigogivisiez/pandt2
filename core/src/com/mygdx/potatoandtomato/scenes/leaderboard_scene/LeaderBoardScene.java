@@ -1,5 +1,6 @@
 package com.mygdx.potatoandtomato.scenes.leaderboard_scene;
 
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
@@ -15,12 +16,13 @@ import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.*;
 import com.mygdx.potatoandtomato.enums.BadgeType;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
-import com.mygdx.potatoandtomato.helpers.controls.Badge;
+import com.mygdx.potatoandtomato.controls.Badge;
 import com.potatoandtomato.common.controls.Animator;
-import com.mygdx.potatoandtomato.helpers.controls.FlowContainer;
-import com.mygdx.potatoandtomato.helpers.controls.TopBar;
-import com.mygdx.potatoandtomato.helpers.controls.WebImage;
-import com.mygdx.potatoandtomato.helpers.utils.Positions;
+import com.mygdx.potatoandtomato.controls.FlowContainer;
+import com.mygdx.potatoandtomato.controls.TopBar;
+import com.mygdx.potatoandtomato.controls.WebImage;
+import com.mygdx.potatoandtomato.utils.Positions;
+import com.potatoandtomato.common.controls.AutoDisposeTable;
 import com.potatoandtomato.common.utils.Strings;
 import com.mygdx.potatoandtomato.models.Game;
 import com.potatoandtomato.common.models.LeaderboardRecord;
@@ -40,11 +42,13 @@ public class LeaderBoardScene extends SceneAbstract {
 
     private HashMap<String, ScrollPane> _leaderboardScrolls;
     private Label _titleLabel, _animatingScoreLabel, _originalScoreLabel, _fakeScoreLabel;
-    private Table _iconTable, _ranksTable, _animatingRecordTable, _mascotsTable, _loadingTable, _scoresTable, _fakeScoreTable;
+    private Table _ranksTable, _animatingRecordTable, _mascotsTable, _loadingTable, _scoresTable, _fakeScoreTable;
+    private AutoDisposeTable _iconTable;
     private float _recordHeight, _animatingTableY;
     private Game _currentShowingGame;
     private Button _nextButton, _prevButton;
     private Table _nextPrevContainer;
+    private WebImage _webImage;
 
     public LeaderBoardScene(Services services, PTScreen screen) {
         super(services, screen);
@@ -100,7 +104,7 @@ public class LeaderBoardScene extends SceneAbstract {
                 //////////////////////////////////
                 //icon
                 /////////////////////////////////
-                _iconTable = new Table();
+                _iconTable = new AutoDisposeTable();
                 _iconTable.setTransform(true);
                 _iconTable.setRotation(15);
 
@@ -148,8 +152,8 @@ public class LeaderBoardScene extends SceneAbstract {
                 _currentShowingGame = game;
                 _iconTable.clear();
 
-                WebImage webImage = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster());
-                _iconTable.add(webImage).expand().fill();
+                _webImage = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster(), _ptGame);
+                _iconTable.add(_webImage).expand().fill();
                 _iconTable.addAction(sequence(fadeOut(0f), fadeIn(0.2f)));
 
                 _titleLabel.setText(game.getName());
@@ -944,5 +948,9 @@ public class LeaderBoardScene extends SceneAbstract {
 
     public Button getNextButton() {
         return _nextButton;
+    }
+
+    public WebImage getWebImage() {
+        return _webImage;
     }
 }

@@ -1,6 +1,7 @@
 package com.potatoandtomato.games.screens.main;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -11,7 +12,9 @@ import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.absints.BackKeyListener;
 import com.potatoandtomato.common.absints.GameLogic;
 import com.potatoandtomato.common.absints.UserStateListener;
+import com.potatoandtomato.common.absints.WebImageListener;
 import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.absintf.*;
 import com.potatoandtomato.games.enums.BonusType;
@@ -45,11 +48,13 @@ public class MainLogic extends GameLogic {
     private StageCounterLogic _stageCounterLogic;
     private ScoresLogic _scoresLogic;
     private GameModel _gameModel;
+    private ImagePair _currentImagePair;
     private ImageStorage _imageStorage;
     private StageImagesLogic _stageImagesLogic;
     private String _currentDecisionMaker;
     private boolean _waitingContinue;
     private boolean _attachGameModelOnFinish;
+    private SafeThread _safeThread;
 
     public MainLogic(GameCoordinator gameCoordinator, Services _services,
                      TimeLogic _timeLogic, HintsLogic _hintsLogic, ReviewLogic _reviewLogic, UserCountersLogic _userCounterLogic,
@@ -135,9 +140,11 @@ public class MainLogic extends GameLogic {
             return;
         }
 
+        if(_safeThread != null) _safeThread.kill();
         _currentDecisionMaker = getCoordinator().getDecisionMaker();
         _screen.clearAnnouncement();
         _gameModel.setImageDetails(null);
+        _currentImagePair = null;
         _gameModel.clearHandledAreas();
         _gameModel.setStageType(stageType);
         _gameModel.addStageNumber();
@@ -174,6 +181,8 @@ public class MainLogic extends GameLogic {
                             _screen.showMessages(_services.getTexts().slowMessage());
                             return;
                         }
+
+                        _currentImagePair = imagePair;
 
                         imagePair.getImageDetails().setGameImageSize((int) _screen.getImageSize().x, (int) _screen.getImageSize().y);
                         _gameModel.setImageDetails(imagePair.getImageDetails());
@@ -226,8 +235,7 @@ public class MainLogic extends GameLogic {
             }
         }
         else if(!_gameModel.isAreaAlreadyConfirmClicked(correctRect)) {
-            _gameModel.setHintsLeft(hintLeft);
-            Logs.show(_gameModel.getHintsLeft() +" hint left in gameModel");
+            if(!userId.equals(getCoordinator().getMyUserId())) _gameModel.setHintsLeft(hintLeft);
             boolean alreadyHandled = _gameModel.addHandledArea(correctRect, remainingMiliSecs);
             _gameModel.setConfirmAreaClickedBy(correctRect, userId);
             _screen.circle(correctRect, userId, alreadyHandled ? -1 : _gameModel.getHandledAreas().size());
@@ -499,6 +507,48 @@ public class MainLogic extends GameLogic {
             }
         });
 
+        getCoordinator().addOnResumeRunnable(new Runnable() {
+            @Override
+            public void run() {
+
+                _imageStorage.onResume();
+
+                if(_currentImagePair == null) return;
+
+                _safeThread = new SafeThread();
+
+                Threadings.runInBackground(new Runnable() {
+                    @Override
+                    public void run() {
+                        final int[] waitingImageCount = {0};
+
+                        getCoordinator().getRemoteImage(_currentImagePair.getImageDetails().getImageOneUrl(), new WebImageListener() {
+                            @Override
+                            public void onLoaded(Texture texture) {
+                                waitingImageCount[0]++;
+                                _currentImagePair.setImageOne(texture);
+                            }
+                        });
+                        getCoordinator().getRemoteImage(_currentImagePair.getImageDetails().getImageTwoUrl(), new WebImageListener() {
+                            @Override
+                            public void onLoaded(Texture texture) {
+                                waitingImageCount[0]++;
+                                _currentImagePair.setImageTwo(texture);
+                            }
+                        });
+
+                        while (waitingImageCount[0] < 2 && !_safeThread.isKilled()){
+                            Threadings.sleep(200);
+                        }
+
+                        if(!_safeThread.isKilled()){
+                            _screen.onResumeRefreshImages(_currentImagePair.getImageOne(), _currentImagePair.getImageTwo());
+                        }
+                    }
+                });
+            }
+        });
+
         getCoordinator().setUserStateListener(new UserStateListener() {
             @Override
             public void userAbandoned(String s) {
@@ -557,6 +607,7 @@ public class MainLogic extends GameLogic {
 
     @Override
     public void dispose() {
+        if(_safeThread != null) _safeThread.kill();
     }
 
     public MainScreen getMainScreen() {

@@ -19,16 +19,14 @@ import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.helpers.services.Confirm;
-import com.mygdx.potatoandtomato.helpers.services.Texts;
-import com.mygdx.potatoandtomato.helpers.utils.Logs;
-import com.mygdx.potatoandtomato.helpers.utils.Positions;
+import com.mygdx.potatoandtomato.services.Confirm;
+import com.mygdx.potatoandtomato.services.Texts;
+import com.mygdx.potatoandtomato.utils.Positions;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.scenes.boot_scene.BootLogic;
 import com.mygdx.potatoandtomato.scenes.create_game_scene.CreateGameLogic;
 import com.mygdx.potatoandtomato.scenes.game_list_scene.GameListLogic;
 import com.mygdx.potatoandtomato.scenes.game_sandbox_scene.GameSandboxLogic;
-import com.mygdx.potatoandtomato.scenes.game_sandbox_scene.GameSandboxScene;
 import com.mygdx.potatoandtomato.scenes.input_name_scene.InputNameLogic;
 import com.mygdx.potatoandtomato.scenes.invite_scene.InviteLogic;
 import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
@@ -150,12 +148,12 @@ public class PTScreen implements Screen, InputProcessor {
                             final LogicEnumPair current = _logicStacks.pop();
                             final LogicEnumPair previous = _logicStacks.peek();
                             current.getLogic().onHide();
-                            current.getLogic().dispose();
                             previous.getLogic().onShow();
                             sceneTransition(previous.getLogic().getScene().getRoot(), current.getLogic().getScene().getRoot(),
                                     previous.getLogic().getScene(), false, new Runnable() {
                                         @Override
                                         public void run() {
+                                            current.getLogic().dispose();
                                             previous.getLogic().onShown();
                                         }
                                     });
@@ -395,12 +393,11 @@ public class PTScreen implements Screen, InputProcessor {
 
     @Override
     public void hide() {
-
     }
 
     @Override
     public void dispose() {
-
+        _ptGame.dispose();
     }
 
     @Override

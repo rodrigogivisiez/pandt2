@@ -3,10 +3,13 @@ package com.potatoandtomato.games;
 import com.potatoandtomato.common.absints.DownloaderListener;
 import com.potatoandtomato.common.absints.IDownloader;
 import com.potatoandtomato.common.absints.PTAssetsManager;
+import com.potatoandtomato.common.absints.WebImageListener;
 import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.helpers.RemoteHelper;
 import com.potatoandtomato.common.mockings.MockGame;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Strings;
+import com.potatoandtomato.common.utils.TextureUtils;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.absintf.DatabaseListener;
 import com.potatoandtomato.games.absintf.mockings.MockModel;
@@ -66,18 +69,19 @@ public class PhotoHuntGame extends MockGame {
 								listener.onCallback(MockModel.mockImageDetails(id), Status.SUCCESS);
 							}
 						});
-						getCoordinator().setDownloader(new IDownloader() {
-							@Override
-							public SafeThread downloadFileToPath(String s, File file, DownloaderListener downloaderListener) {
-								return null;
-							}
 
+						getCoordinator().setRemoteHelper(new RemoteHelper(null){
 							@Override
-							public void downloadData(String s, DownloaderListener downloaderListener) {
-								Path path = Paths.get(String.format("testings/%s.jpg", s.equals("1") ? "ONE" : "TWO"));
+							public void getRemoteImage(String url, final WebImageListener listener) {
+								Path path = Paths.get(String.format("testings/%s.jpg", url.equals("1") ? "ONE" : "TWO"));
 								try {
-									byte[] data = Files.readAllBytes(path);
-									downloaderListener.onCallback(data, Status.SUCCESS);
+									final byte[] data = Files.readAllBytes(path);
+									Threadings.postRunnable(new Runnable() {
+										@Override
+										public void run() {
+											listener.onLoaded(TextureUtils.bytesToTexture(data));
+										}
+									});
 								} catch (IOException e) {
 									e.printStackTrace();
 								}

@@ -15,11 +15,12 @@ import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.assets.Textures;
-import com.mygdx.potatoandtomato.helpers.controls.BtnEggDownward;
-import com.mygdx.potatoandtomato.helpers.controls.TopBar;
-import com.mygdx.potatoandtomato.helpers.controls.WebImage;
-import com.mygdx.potatoandtomato.helpers.utils.Positions;
-import com.mygdx.potatoandtomato.helpers.utils.Sizes;
+import com.mygdx.potatoandtomato.controls.BtnEggDownward;
+import com.mygdx.potatoandtomato.controls.TopBar;
+import com.mygdx.potatoandtomato.controls.WebImage;
+import com.mygdx.potatoandtomato.utils.Positions;
+import com.mygdx.potatoandtomato.utils.Sizes;
+import com.potatoandtomato.common.controls.AutoDisposeTable;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Services;
@@ -32,7 +33,8 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 public class CreateGameScene extends SceneAbstract {
 
     Table _gameList;
-    Table _gameDetailsParent, _gameDetails;
+    Table _gameDetailsParent;
+    AutoDisposeTable _gameDetails;
     ScrollPane _gameDetailsScroll;
     BtnEggDownward _createButton;
 
@@ -68,7 +70,7 @@ public class CreateGameScene extends SceneAbstract {
         _gameDetailsParent.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WOOD_BG_TALL)));
         _gameDetailsParent.align(Align.topLeft);
         _gameDetailsParent.padRight(75).padLeft(10).padTop(10).padBottom(15);
-        _gameDetails = new Table();
+        _gameDetails = new AutoDisposeTable();
         _gameDetailsScroll = new ScrollPane(_gameDetails);
         _gameDetailsScroll.setScrollingDisabled(true, false);
         _gameDetailsParent.add(_gameDetailsScroll).expand().fill().padBottom(20);
@@ -100,7 +102,7 @@ public class CreateGameScene extends SceneAbstract {
     public Actor populateGame(final Game game){
         final Table gameTable = new Table();
         final Table innerTable = new Table();
-        final Actor gameIcon = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster());
+        final Actor gameIcon = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster(), _ptGame);
 
         Threadings.postRunnable(new Runnable() {
             @Override
@@ -159,7 +161,7 @@ public class CreateGameScene extends SceneAbstract {
                 contentStyle2.fontColor = Color.valueOf("fff0bb");
                 contentStyle2.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_S_REGULAR);
 
-                WebImage gameLogo = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster());
+                WebImage gameLogo = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster(), _ptGame);
                 Label detailsTitleLabel = new Label(_texts.details(), titleStyle);
 
                 Table detailsTable = new Table();

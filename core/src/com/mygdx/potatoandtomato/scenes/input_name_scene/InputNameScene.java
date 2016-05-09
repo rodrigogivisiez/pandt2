@@ -12,7 +12,7 @@ import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.assets.Patches;
 import com.mygdx.potatoandtomato.assets.Textures;
-import com.mygdx.potatoandtomato.helpers.controls.BtnColor;
+import com.mygdx.potatoandtomato.controls.BtnColor;
 import com.mygdx.potatoandtomato.models.Services;
 
 /**

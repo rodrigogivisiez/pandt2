@@ -3,6 +3,7 @@ package com.mygdx.potatoandtomato.assets;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
+import com.potatoandtomato.common.absints.PTAssetsManager;
 import com.potatoandtomato.common.assets.AnimationAssets;
 
 /**
@@ -10,7 +11,7 @@ import com.potatoandtomato.common.assets.AnimationAssets;
  */
 public class Animations extends AnimationAssets {
 
-    public Animations(AssetManager assetManager) {
+    public Animations(PTAssetsManager assetManager) {
         super(assetManager);
     }
 

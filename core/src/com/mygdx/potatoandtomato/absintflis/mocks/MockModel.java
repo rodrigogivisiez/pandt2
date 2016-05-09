@@ -1,6 +1,5 @@
 package com.mygdx.potatoandtomato.absintflis.mocks;
 
-import com.badlogic.gdx.graphics.Color;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.models.EndGameResult;
@@ -68,7 +67,7 @@ public class MockModel {
         user2.setReady(true);
         roomUsers.put(user1.getProfile().getUserId(), user1);
         roomUsers.put(user2.getProfile().getUserId(), user2);
-        r.setRoomUsers(roomUsers);
+        r.setRoomUsersMap(roomUsers);
         r.convertRoomUsersToTeams();
         r.storeRoomUsersToOriginalRoomUserIds();
         return r;

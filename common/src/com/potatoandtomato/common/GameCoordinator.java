@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
@@ -14,9 +15,11 @@ import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.helpers.ConnectionMonitor;
+import com.potatoandtomato.common.helpers.RemoteHelper;
 import com.potatoandtomato.common.models.*;
 import com.potatoandtomato.common.utils.DecisionsMaker;
 import com.potatoandtomato.common.utils.MyFileResolver;
+import com.potatoandtomato.common.utils.Pair;
 import com.potatoandtomato.common.utils.Threadings;
 
 import java.util.ArrayList;
@@ -60,6 +63,8 @@ public class GameCoordinator implements Disposable {
 
     private EndGameResult _endGameResult;
     private ConnectionMonitor _connectionMonitor;
+    private RemoteHelper _remoteHelper;
+    private ArrayList<Runnable> _onResumeRunnables;
 
     public GameCoordinator(String jarPath, String assetsPath,
                            String basePath, ArrayList<Team> teams,
@@ -91,6 +96,8 @@ public class GameCoordinator implements Disposable {
         this.decisionsMaker = new DecisionsMaker(this.teams);
         this.leaderboardSize = leaderboardSize;
 
+        _remoteHelper = new RemoteHelper(broadcaster);
+        _onResumeRunnables = new ArrayList();
         _gameLeaderboardRecords = new ArrayList<LeaderboardRecord>();
         _subscribedIds = new ArrayList<String>();
         _processors = new Array<InputProcessor>();
@@ -118,6 +125,14 @@ public class GameCoordinator implements Disposable {
 
     public void setGameLeaderboardRecords(ArrayList<LeaderboardRecord> _gameLeaderboardRecords) {
         this._gameLeaderboardRecords = _gameLeaderboardRecords;
+    }
+
+    public RemoteHelper getRemoteHelper() {
+        return _remoteHelper;
+    }
+
+    public void setRemoteHelper(RemoteHelper _remoteHelper) {
+        this._remoteHelper = _remoteHelper;
     }
 
     public ITutorials getTutorials() {
@@ -277,17 +292,15 @@ public class GameCoordinator implements Disposable {
     }
 
     public void abandon(){
-        abandon(null, null);
+        abandon(null, null, null);
     }
 
-    public void abandon(final HashMap<Team, ArrayList<ScoreDetails>> winners, final Runnable confirmedAbandon){
+    public void abandon(final HashMap<Team, ArrayList<ScoreDetails>> winners, final ArrayList<Team> loserTeams, final Runnable confirmedAbandon){
         getGameSandBox().useConfirm("PTTEXT_ABANDON", new Runnable() {
             @Override
             public void run() {     //yes
                 getGameSandBox().userAbandoned(getMyUserId());
-                ArrayList<Team> losersTeam = new ArrayList<Team>();
-                losersTeam.add(getMyTeam());
-                beforeEndGame(winners, losersTeam);
+                beforeEndGame(winners, loserTeams);
                 if(confirmedAbandon != null) confirmedAbandon.run();
                 endGame();
             }
@@ -438,12 +451,12 @@ public class GameCoordinator implements Disposable {
     }
 
     public PTAssetsManager getPTAssetManager(boolean singleton){
-        if(ptAssetsManager == null) ptAssetsManager = new PTAssetsManager(new MyFileResolver(this), game);
+        if(ptAssetsManager == null) ptAssetsManager = new PTAssetsManager(new MyFileResolver(this), game, broadcaster);
         if(singleton){
             return ptAssetsManager;
         }
         else{
-            return new PTAssetsManager(new MyFileResolver(this), game);
+            return new PTAssetsManager(new MyFileResolver(this), game, broadcaster);
         }
     }
 
@@ -498,6 +511,21 @@ public class GameCoordinator implements Disposable {
         return _endGameResult;
     }
 
+    public void getRemoteImage(final String url, final WebImageListener listener){
+        getRemoteHelper().getRemoteImage(url, listener);
+    }
+
+    public void addOnResumeRunnable(Runnable runnable){
+        _onResumeRunnables.add(runnable);
+        game.addOnResumeRunnable(runnable);
+    }
+
+    public void removeOnResumeRunnable(Runnable runnable){
+        _onResumeRunnables.remove(runnable);
+        game.removeOnResumeRunnable(runnable);
+    }
+
+
     public void beforeEndGame(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers){
         if(winners == null && losers == null){
             this._endGameResult = new EndGameResult();
@@ -549,5 +577,14 @@ public class GameCoordinator implements Disposable {
         for(InputProcessor processor : _processors){
             getGame().removeInputProcessor(processor);
         }
+        _processors.clear();
+
+        for(Runnable runnable : _onResumeRunnables){
+            getGame().removeOnResumeRunnable(runnable);
+        }
+        _onResumeRunnables.clear();
+
+        _remoteHelper.dispose();
+
     }
 }

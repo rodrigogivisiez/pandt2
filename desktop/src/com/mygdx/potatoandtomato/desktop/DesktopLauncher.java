@@ -6,18 +6,18 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import com.mygdx.potatoandtomato.PTGame;
 import com.mygdx.potatoandtomato.absintflis.entrance.EntranceLoaderListener;
-import com.mygdx.potatoandtomato.helpers.utils.JarUtils;
-import com.mygdx.potatoandtomato.helpers.utils.Positions;
-import com.mygdx.potatoandtomato.helpers.utils.Terms;
+import com.mygdx.potatoandtomato.utils.JarUtils;
+import com.mygdx.potatoandtomato.utils.Positions;
+import com.mygdx.potatoandtomato.utils.Terms;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.*;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.helpers.DesktopImageLoader;
 import com.potatoandtomato.common.utils.Threadings;
 
-import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -25,13 +25,13 @@ import java.net.URLClassLoader;
 public class DesktopLauncher {
 
 	private static LwjglApplication application;
-	private static ImageLoader _imageLoader;
+	private static DesktopImageLoader _desktopImageLoader;
 	public static Broadcaster _broadcaster;
 
 	public static void main (String[] arg) {
 
 		_broadcaster = new Broadcaster();
-		_imageLoader = new ImageLoader(_broadcaster);
+		_desktopImageLoader = new DesktopImageLoader(_broadcaster);
 
 		Global.DEBUG = true;
 

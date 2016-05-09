@@ -15,7 +15,6 @@ public class Assets implements Disposable {
     SoundAssets soundAssets;
     AnimationAssets animationAssets;
     FontAssets fontAssets;
-    boolean finishLoading;
     Runnable onFinish;
     boolean disposed;
 

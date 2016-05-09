@@ -6,12 +6,14 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.absints.DownloaderListener;
+import com.potatoandtomato.common.absints.WebImageListener;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.common.utils.ThreadsPool;
 import com.potatoandtomato.games.absintf.DatabaseListener;
 import com.potatoandtomato.games.absintf.ImageStorageListener;
+import com.potatoandtomato.games.helpers.Logs;
 import com.potatoandtomato.games.models.ImageDetails;
 import com.potatoandtomato.games.models.ImagePair;
 import com.potatoandtomato.games.models.Services;
@@ -180,34 +182,26 @@ public class ImageStorage implements Disposable {
                     threadsPool.addFragment(threadFragment1);
                     threadsPool.addFragment(threadFragment2);
 
-                    gameCoordinator.getDownloader().downloadData(imageDetails.getImageOneUrl(), new DownloaderListener() {
+                    gameCoordinator.getRemoteImage(imageDetails.getImageOneUrl(), new WebImageListener() {
                         @Override
-                        public void onCallback(final byte[] bytes, final Status status) {
-                            Threadings.postRunnable(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if(status == Status.SUCCESS){
-                                        image1[0] = processTextureBytes(bytes);
-                                    }
-                                    threadFragment1.setFinished(true);
-                                }
-                            });
+                        public void onLoaded(Texture texture) {
+                            if(texture != null){
+                                image1[0] = texture;
+                            }
+                            threadFragment1.setFinished(true);
                         }
                     });
-                    gameCoordinator.getDownloader().downloadData(imageDetails.getImageTwoUrl(), new DownloaderListener() {
+
+                    gameCoordinator.getRemoteImage(imageDetails.getImageTwoUrl(), new WebImageListener() {
                         @Override
-                        public void onCallback(final byte[] bytes, final Status status) {
-                            Threadings.postRunnable(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if(status == Status.SUCCESS){
-                                        image2[0] = processTextureBytes(bytes);
-                                    }
-                                    threadFragment2.setFinished(true);
-                                }
-                            });
+                        public void onLoaded(Texture texture) {
+                            if(texture != null){
+                                image2[0] = texture;
+                            }
+                            threadFragment2.setFinished(true);
                         }
                     });
+
 
                     while (!threadsPool.allFinished()){
                         Threadings.sleep(100);
@@ -235,21 +229,26 @@ public class ImageStorage implements Disposable {
         }
     }
 
-    public Texture processTextureBytes(byte[] textureBytes) {
-        if(textureBytes != null){
-            try {
-                Pixmap pixmap = new Pixmap(textureBytes, 0, textureBytes.length);
-                Texture texture = new Texture(pixmap);
-                texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-                pixmap.dispose();
-                return texture;
+    public void onResume(){
+        for(final ImagePair imagePair : imagePairs){
+            gameCoordinator.getRemoteImage(imagePair.getImageDetails().getImageOneUrl(), new WebImageListener() {
+                @Override
+                public void onLoaded(Texture texture) {
+                    if(texture != null){
+                        imagePair.setImageOne(texture);
+                    }
+                }
+            });
 
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
+            gameCoordinator.getRemoteImage(imagePair.getImageDetails().getImageTwoUrl(), new WebImageListener() {
+                @Override
+                public void onLoaded(Texture texture) {
+                    if(texture != null){
+                        imagePair.setImageTwo(texture);
+                    }
+                }
+            });
         }
-
-        return null;
     }
 
     public void peek(final ImageStorageListener listener){

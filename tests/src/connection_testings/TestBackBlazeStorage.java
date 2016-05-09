@@ -1,7 +1,7 @@
 package connection_testings;
 
 import abstracts.TestAbstract;
-import com.mygdx.potatoandtomato.helpers.services.BackBlazeStorage;
+import com.mygdx.potatoandtomato.services.BackBlazeStorage;
 import com.potatoandtomato.common.utils.Downloader;
 import org.junit.Test;
 

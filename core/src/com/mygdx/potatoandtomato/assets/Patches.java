@@ -2,6 +2,7 @@ package com.mygdx.potatoandtomato.assets;
 
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.potatoandtomato.common.absints.PTAssetsManager;
 import com.potatoandtomato.common.assets.PatchAssets;
 
 import java.util.HashMap;
@@ -10,6 +11,10 @@ import java.util.HashMap;
  * Created by SiongLeng on 9/2/2016.
  */
 public class Patches extends PatchAssets{
+
+    public Patches(PTAssetsManager assetsManager) {
+        super(assetsManager);
+    }
 
     public enum Name{
         CHAT_BOX, POPUP_BG,

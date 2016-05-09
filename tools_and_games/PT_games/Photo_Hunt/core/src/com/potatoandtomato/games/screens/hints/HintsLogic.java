@@ -62,10 +62,10 @@ public class HintsLogic {
         this.hintsActor.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x1, float y1) {
-                if(usedCount > 3){      //hotfix for fast consecutive click can use more than 3 hints bug
-                    return;
-                }
-                usedCount++;
+//                if(usedCount > 3){      //hotfix for fast consecutive click can use more than 3 hints bug
+//                    return;
+//                }
+//                usedCount++;
 
                 if(gameModel.isPlaying() && gameModel.getHintsLeft() > 0 && !isHintBlocked){
                     int i = 0;

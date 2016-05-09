@@ -1,6 +1,7 @@
 package com.potatoandtomato.games.assets;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.potatoandtomato.common.absints.PTAssetsManager;
 import com.potatoandtomato.common.assets.SoundAssets;
 
 /**
@@ -8,7 +9,7 @@ import com.potatoandtomato.common.assets.SoundAssets;
  */
 public class Sounds extends SoundAssets {
 
-    public Sounds(AssetManager _manager) {
+    public Sounds(PTAssetsManager _manager) {
         super(_manager);
     }
 

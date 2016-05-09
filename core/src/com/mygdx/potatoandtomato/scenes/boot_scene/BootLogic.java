@@ -6,23 +6,21 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.ConnectionChangedListener;
-import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.absintflis.socials.FacebookListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.helpers.services.Confirm;
-import com.mygdx.potatoandtomato.helpers.utils.Logs;
+import com.mygdx.potatoandtomato.services.Confirm;
+import com.mygdx.potatoandtomato.utils.Logs;
 import com.mygdx.potatoandtomato.models.FacebookProfile;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
-import com.mygdx.potatoandtomato.helpers.utils.Terms;
+import com.mygdx.potatoandtomato.utils.Terms;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.Strings;
-import ogg.OggFile;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 

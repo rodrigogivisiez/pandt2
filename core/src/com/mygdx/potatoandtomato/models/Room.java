@@ -1,8 +1,8 @@
 package com.mygdx.potatoandtomato.models;
 
 import com.badlogic.gdx.graphics.Color;
-import com.mygdx.potatoandtomato.comparators.RoomUserSlotIndexComparator;
-import com.mygdx.potatoandtomato.helpers.serializings.IntProfileMapDeserializer;
+import com.mygdx.potatoandtomato.miscs.comparators.RoomUserSlotIndexComparator;
+import com.mygdx.potatoandtomato.miscs.serializings.IntProfileMapDeserializer;
 import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.utils.ColorUtils;
@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -36,7 +35,7 @@ public class Room {
     ArrayList<Team> teams;
 
     @JsonDeserialize(using = IntProfileMapDeserializer.class)
-    ConcurrentHashMap<String, RoomUser> roomUsers;
+    ConcurrentHashMap<String, RoomUser> roomUsersMap;
 
 
 
@@ -91,7 +90,6 @@ public class Room {
         this.originalRoomUsers = originalRoomUsers;
     }
 
-
     @JsonIgnore
     public ArrayList<RoomUser> getRoomUsersSortBySlotIndex() {
         ConcurrentHashMap<String, RoomUser> roomUserHashMap = getRoomUsersMap();
@@ -106,20 +104,15 @@ public class Room {
         return results;
     }
 
-    @JsonIgnore
     public ConcurrentHashMap<String, RoomUser> getRoomUsersMap() {
-        if(roomUsers == null){
-            roomUsers = new ConcurrentHashMap();
+        if(roomUsersMap == null){
+            roomUsersMap = new ConcurrentHashMap();
         }
-        return roomUsers;
+        return roomUsersMap;
     }
 
-    public void setRoomUsers(ConcurrentHashMap<String, RoomUser> roomUsers) {
-        this.roomUsers = roomUsers;
-    }
-
-    public ConcurrentHashMap<String, RoomUser> getRoomUsers() {
-        return roomUsers;
+    public void setRoomUsersMap(ConcurrentHashMap<String, RoomUser> roomUsersMap) {
+        this.roomUsersMap = roomUsersMap;
     }
 
     public ArrayList<Profile> getInvitedUsers() {
@@ -178,8 +171,8 @@ public class Room {
 
     @JsonIgnore
     public int getRoomUsersCount(){
-        if(roomUsers == null) return 0;
-        else return roomUsers.size();
+        if(roomUsersMap == null) return 0;
+        else return roomUsersMap.size();
     }
 
     @JsonIgnore
@@ -213,7 +206,7 @@ public class Room {
 
     @JsonIgnore
     public void addRoomUser(Profile user, boolean isReady){
-        if(roomUsers == null) roomUsers = new ConcurrentHashMap();
+        if(roomUsersMap == null) roomUsersMap = new ConcurrentHashMap();
 
         if(getSlotIndexByUserId(user.getUserId()) != -1) return;
 
@@ -223,7 +216,7 @@ public class Room {
                 r.setProfile(user);
                 r.setSlotIndex(i);
                 r.setReady(isReady);
-                roomUsers.put(user.getUserId(), r);
+                roomUsersMap.put(user.getUserId(), r);
                 break;
             }
         }
@@ -248,7 +241,7 @@ public class Room {
         r.setProfile(user);
         r.setSlotIndex(index);
         r.setReady(isReady);
-        roomUsers.put(user.getUserId(), r);
+        roomUsersMap.put(user.getUserId(), r);
     }
 
     @JsonIgnore
@@ -427,7 +420,7 @@ public class Room {
     @JsonIgnore
     public int getNotYetReadyCount(){
         int count = 0;
-        for(RoomUser roomUser : this.roomUsers.values()){
+        for(RoomUser roomUser : this.roomUsersMap.values()){
             if(!roomUser.getReady()) count++;
         }
         return count;
@@ -435,7 +428,7 @@ public class Room {
 
     @JsonIgnore
     public void setRoomUserReady(String userId, boolean isReady){
-        for(RoomUser roomUser : this.roomUsers.values()){
+        for(RoomUser roomUser : this.roomUsersMap.values()){
             if(roomUser.getProfile().getUserId().equals(userId)){
                 roomUser.setReady(isReady);
                 break;

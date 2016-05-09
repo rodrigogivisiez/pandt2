@@ -10,7 +10,7 @@ import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
-import com.mygdx.potatoandtomato.helpers.utils.Terms;
+import com.mygdx.potatoandtomato.utils.Terms;
 import com.mygdx.potatoandtomato.scenes.boot_scene.BootLogic;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;

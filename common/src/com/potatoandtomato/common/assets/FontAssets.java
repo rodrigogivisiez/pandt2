@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.potatoandtomato.common.absints.IAssetFragment;
+import com.potatoandtomato.common.absints.PTAssetsManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,12 +17,12 @@ import java.util.HashMap;
  */
 public abstract class FontAssets implements IAssetFragment {
 
-    private AssetManager _manager;
+    private PTAssetsManager _manager;
     private HashMap<String, BitmapFont> _storage;
     private ArrayList<MyFreetypeFontLoader.FreeTypeFontLoaderParameter> _preloadParameters;
     protected FontDetailsGenerator fontDetailsGenerator;
 
-    public FontAssets(AssetManager _manager) {
+    public FontAssets(PTAssetsManager _manager) {
         this._manager = _manager;
         this._preloadParameters = new ArrayList<MyFreetypeFontLoader.FreeTypeFontLoaderParameter>();
         this._storage = new HashMap<String, BitmapFont>();

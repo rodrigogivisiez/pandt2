@@ -19,9 +19,8 @@ import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.helpers.services.Confirm;
-import com.mygdx.potatoandtomato.helpers.services.VersionControl;
-import com.mygdx.potatoandtomato.helpers.utils.Logs;
+import com.mygdx.potatoandtomato.services.Confirm;
+import com.mygdx.potatoandtomato.services.VersionControl;
 import com.potatoandtomato.common.utils.JsonObj;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Strings;
@@ -339,6 +338,8 @@ public class RoomLogic extends LogicAbstract {
         }
 
     }
+
+
 
     @Override
     public void onShown() {
@@ -785,7 +786,6 @@ public class RoomLogic extends LogicAbstract {
         _services.getDatabase().savePlayedHistory(_services.getProfile(), _room, null);
         _services.getChat().add(new ChatMessage(_texts.gameStarted(), ChatMessage.FromType.SYSTEM, null), false);
 
-        _services.getChat().hide();
         _screen.toScene(SceneEnum.GAME_SANDBOX, _room, false);
         _scene.getTeamsRoot().setTouchable(Touchable.enabled);
     }
@@ -794,7 +794,6 @@ public class RoomLogic extends LogicAbstract {
         if (_gameStarted) return;
 
         selfUpdateRoomStatePush();
-        _services.getChat().hide();
 
         Threadings.delay(500, new Runnable() {
             @Override
@@ -823,6 +822,7 @@ public class RoomLogic extends LogicAbstract {
         _userBadgeHelper.setPaused(true);
         _confirm.setStateChangedListener(null);
         _onScreen = false;
+        _services.getChat().hide();
         if(!_quiting)  sendIsReadyUpdate(false);
 
     }
@@ -847,7 +847,6 @@ public class RoomLogic extends LogicAbstract {
         Gdx.files.local("records").deleteDirectory();
         if(_checkMonitorSuccessThread != null) _checkMonitorSuccessThread.kill();
         _checkReadyThread.kill();
-        _services.getChat().hide();
         _services.getChat().resetChat();
         if(_gameFileChecker != null) _gameFileChecker.dispose();
     }

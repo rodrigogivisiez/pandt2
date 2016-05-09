@@ -10,9 +10,9 @@ import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.helpers.services.Confirm;
-import com.mygdx.potatoandtomato.helpers.services.Notification;
-import com.mygdx.potatoandtomato.helpers.utils.Positions;
+import com.mygdx.potatoandtomato.services.Confirm;
+import com.mygdx.potatoandtomato.services.Notification;
+import com.mygdx.potatoandtomato.utils.Positions;
 import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.utils.JsonObj;
@@ -48,6 +48,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     boolean _isReady;
     boolean _gameStarted;
     boolean _failed;
+    boolean _exiting;
     ArrayList<String> _monitorRetrievedUserId;
     EndGameData _endGameData;
     EndGameLeaderBoardLogic _leaderboardLogic;
@@ -486,21 +487,24 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         _screen.switchToPTScreen();
         _services.getBroadcaster().broadcast(BroadcastEvent.DEVICE_ORIENTATION, 0);
         _services.getChat().setMode(1);
-        _services.getChat().add(new ChatMessage(_texts.gameEnded(),
-                ChatMessage.FromType.SYSTEM, null), false);
         redirectExitedSandbox();
     }
 
     private void redirectExitedSandbox(){
-        //_gameStarted variable for failed loading case
-        if(_room.getGame().getLeaderboardTypeEnum() != LeaderboardType.None && _gameStarted){
-            _endGameData.setEndGameResult(_coordinator.getEndGameResult());
-            _services.getChat().hide();
-            _screen.toScene(_leaderboardLogic, SceneEnum.END_GAME_LEADER_BOARD);
-        }
-        else{
-            _screen.back();
-            _services.getSoundsPlayer().playThemeMusic();
+        if(!_exiting){
+            _exiting = true;
+            _services.getChat().add(new ChatMessage(_texts.gameEnded(),
+                    ChatMessage.FromType.SYSTEM, null), false);
+            //_gameStarted variable for failed loading case
+            if(_room.getGame().getLeaderboardTypeEnum() != LeaderboardType.None && _gameStarted){
+                _endGameData.setEndGameResult(_coordinator.getEndGameResult());
+                _services.getChat().hide();
+                _screen.toScene(_leaderboardLogic, SceneEnum.END_GAME_LEADER_BOARD);
+            }
+            else{
+                _screen.back();
+                _services.getSoundsPlayer().playThemeMusic();
+            }
         }
     }
 

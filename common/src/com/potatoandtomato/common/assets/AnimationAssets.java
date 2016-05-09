@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 import com.potatoandtomato.common.absints.IAssetFragment;
+import com.potatoandtomato.common.absints.PTAssetsManager;
 
 import java.util.HashMap;
 
@@ -16,9 +17,9 @@ import java.util.HashMap;
 public abstract class AnimationAssets implements IAssetFragment {
 
     private HashMap<String, TextureAtlas> _animationAtlases;
-    private AssetManager _assetManager;
+    private PTAssetsManager _assetManager;
 
-    public AnimationAssets(AssetManager assetManager) {
+    public AnimationAssets(PTAssetsManager assetManager) {
         this._assetManager = assetManager;
         _animationAtlases = new HashMap<String, TextureAtlas>();
     }
@@ -51,9 +52,12 @@ public abstract class AnimationAssets implements IAssetFragment {
     public Array<? extends TextureRegion> get(Object object){
         String name = object.toString();
         if(!_animationAtlases.containsKey(name)){
-            TextureAtlas atlas = new TextureAtlas(_assetManager.getFileHandleResolver().resolve("animations/" + name + ".pack"));;
+            _assetManager.load("animations/" + name + ".pack", TextureAtlas.class);
+            _assetManager.finishLoading();
+            TextureAtlas atlas = _assetManager.get("animations/" + name + ".pack", TextureAtlas.class);
             _animationAtlases.put(name, atlas);
         }
+
         return _animationAtlases.get(name).getRegions();
     }
 

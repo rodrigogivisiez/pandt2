@@ -18,7 +18,7 @@ import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.assets.Patches;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.enums.BadgeType;
-import com.mygdx.potatoandtomato.helpers.controls.*;
+import com.mygdx.potatoandtomato.controls.*;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.RoomUser;
@@ -141,7 +141,7 @@ public class RoomScene extends SceneAbstract {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                WebImage gameImg = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster());
+                WebImage gameImg = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster(), _ptGame);
 
                 Image separatorImage = new Image(_assets.getTextures().get(Textures.Name.ORANGE_VERTICAL_LINE));
 

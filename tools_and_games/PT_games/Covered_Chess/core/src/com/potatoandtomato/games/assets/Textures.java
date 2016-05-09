@@ -2,6 +2,7 @@ package com.potatoandtomato.games.assets;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.potatoandtomato.common.absints.PTAssetsManager;
 import com.potatoandtomato.common.assets.TextureAssets;
 import com.potatoandtomato.games.enums.ChessType;
 import com.potatoandtomato.games.enums.Status;
@@ -11,7 +12,7 @@ import com.potatoandtomato.games.enums.Status;
  */
 public class Textures extends TextureAssets {
 
-    public Textures(AssetManager _manager, String packPath) {
+    public Textures(PTAssetsManager _manager, String packPath) {
         super(_manager, packPath);
     }
 

@@ -3,6 +3,7 @@ package com.mygdx.potatoandtomato.assets;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.potatoandtomato.common.absints.PTAssetsManager;
 import com.potatoandtomato.common.assets.FontAssets;
 import com.potatoandtomato.common.assets.FontDetailsGenerator;
 import com.potatoandtomato.common.assets.MyFreetypeFontLoader;
@@ -13,7 +14,7 @@ import com.potatoandtomato.common.assets.MyFreetypeFontLoader;
 public class Fonts extends FontAssets {
 
 
-    public Fonts(AssetManager _manager) {
+    public Fonts(PTAssetsManager _manager) {
         super(_manager);
     }
 

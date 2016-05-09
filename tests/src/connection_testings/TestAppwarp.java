@@ -2,7 +2,7 @@ package connection_testings;
 
 import abstracts.TestAbstract;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.*;
-import com.mygdx.potatoandtomato.helpers.services.Appwarp;
+import com.mygdx.potatoandtomato.services.Appwarp;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;

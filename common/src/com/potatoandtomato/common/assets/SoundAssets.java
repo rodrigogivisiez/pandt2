@@ -6,6 +6,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.potatoandtomato.common.absints.IAssetFragment;
+import com.potatoandtomato.common.absints.PTAssetsManager;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -16,13 +17,13 @@ import java.util.HashMap;
  */
 public abstract class SoundAssets implements IAssetFragment {
 
-    private AssetManager _manager;
+    private PTAssetsManager _manager;
 
     FileHandle _soundsDirectory;
     private HashMap<String, Sound> _soundsMap;
     private HashMap<String, Music> _musicsMap;
 
-    public SoundAssets(AssetManager _manager) {
+    public SoundAssets(PTAssetsManager _manager) {
         this._manager = _manager;
         _soundsMap = new HashMap<String, Sound>();
         _musicsMap = new HashMap<String, Music>();

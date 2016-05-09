@@ -3,9 +3,9 @@ package com.mygdx.potatoandtomato.absintflis.scenes;
 import com.badlogic.gdx.utils.Disposable;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
-import com.mygdx.potatoandtomato.helpers.services.Confirm;
-import com.mygdx.potatoandtomato.helpers.services.Texts;
-import com.mygdx.potatoandtomato.helpers.utils.Logs;
+import com.mygdx.potatoandtomato.services.Confirm;
+import com.mygdx.potatoandtomato.services.Texts;
+import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Services;
@@ -162,6 +162,7 @@ public abstract class LogicAbstract implements Disposable {
             _broadcaster.unsubscribe(id);
         }
         _broadcastSubscribes.clear();
+        if(getScene() != null) getScene().dispose();
     }
 
 }

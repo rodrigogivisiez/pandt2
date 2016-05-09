@@ -582,7 +582,7 @@ public class BoardLogic implements Disposable{
                 _services.getScoresHandler().process(new ScoresListener() {
                     @Override
                     public void onCallBack(HashMap<Team, ArrayList<ScoreDetails>> winnerResult, ArrayList<Team> losers) {
-                        _coordinator.abandon(winnerResult, new Runnable() {
+                        _coordinator.abandon(winnerResult, losers, new Runnable() {
                             @Override
                             public void run() {
                                 _services.getScoresHandler().updateMatchHistory();

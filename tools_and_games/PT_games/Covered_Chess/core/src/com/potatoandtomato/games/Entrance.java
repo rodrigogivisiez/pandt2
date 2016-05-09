@@ -49,7 +49,6 @@ public class Entrance extends GameEntrance {
     public void init() {
         _logic.init();
         getGameCoordinator().getGame().setScreen((_logic.getScreen()));
-        Firebase db = getGameCoordinator().getFirebase();
     }
 
     @Override
@@ -60,16 +59,19 @@ public class Entrance extends GameEntrance {
 
     @Override
     public void dispose() {
-        _services.getSoundsWrapper().dispose();
-        _services.getScoresHandler().dispose();
-        _services.getAssets().dispose();
+        _assets.dispose();
+        if(_services != null){
+            _services.getSoundsWrapper().dispose();
+            _services.getScoresHandler().dispose();
+        }
+
         if(_logic != null) _logic.dispose();
     }
 
     private void initAssets(){
         PTAssetsManager manager = _coordinator.getPTAssetManager(true);
         Fonts fonts = new Fonts(manager);
-        Patches patches = new Patches();
+        Patches patches = new Patches(manager);
         Sounds sounds = new Sounds(manager);
         Textures textures = new Textures(manager, "pack.atlas");
 

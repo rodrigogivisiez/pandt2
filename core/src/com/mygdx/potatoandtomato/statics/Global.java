@@ -1,7 +1,7 @@
 package com.mygdx.potatoandtomato.statics;
 
-import com.mygdx.potatoandtomato.helpers.services.Preferences;
-import com.mygdx.potatoandtomato.helpers.utils.Terms;
+import com.mygdx.potatoandtomato.services.Preferences;
+import com.mygdx.potatoandtomato.utils.Terms;
 
 /**
  * Created by SiongLeng on 20/1/2016.

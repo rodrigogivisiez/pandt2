@@ -8,7 +8,7 @@ import android.opengl.GLUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.mygdx.potatoandtomato.helpers.utils.Pair;
+import com.potatoandtomato.common.utils.Pair;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
@@ -46,46 +46,48 @@ public class ImageLoader {
     }
 
     private void load(final String url){
-        Target loadtarget = new Target() {
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                _requestMap.remove(url);
-                _retriedUrl.remove(url);
-                imageLoaded(bitmap, url);
-            }
-
-            @Override
-            public void onBitmapFailed(Drawable drawable) {
-                if(_retriedUrl.contains(url)){
-                    _requestMap.remove(url);
-                    imageFailed(url);
-                    _retriedUrl.remove(url);
-                }
-                else{
-                    _retriedUrl.add(url);
-                    _activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Picasso.with(_activity)
-                                    .load(url)
-                                    .into(_requestMap.get(url));
-                        }
-                    });
-
-                }
-            }
-
-            @Override
-            public void onPrepareLoad(Drawable drawable) {
-
-            }
-        };
-
-        _requestMap.put(url, loadtarget);
-
         _activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+
+                Target loadtarget = new Target() {
+                    @Override
+                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                        _requestMap.remove(url);
+                        _retriedUrl.remove(url);
+                        imageLoaded(bitmap, url);
+                    }
+
+                    @Override
+                    public void onBitmapFailed(Drawable drawable) {
+                        if(_retriedUrl.contains(url)){
+                            _requestMap.remove(url);
+                            imageFailed(url);
+                            _retriedUrl.remove(url);
+                        }
+                        else{
+                            _retriedUrl.add(url);
+                            _activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Picasso.with(_activity)
+                                            .load(url)
+                                            .into(_requestMap.get(url));
+                                }
+                            });
+
+                        }
+                    }
+
+                    @Override
+                    public void onPrepareLoad(Drawable drawable) {
+
+                    }
+                };
+
+                _requestMap.put(url, loadtarget);
+
+
                 Picasso.with(_activity)
                         .load(url)
                         .networkPolicy(NetworkPolicy.OFFLINE)

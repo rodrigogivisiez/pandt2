@@ -4,7 +4,7 @@ import abstracts.TestAbstract;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.mygdx.potatoandtomato.absintflis.uploader.UploadListener;
-import com.mygdx.potatoandtomato.helpers.services.App42Uploader;
+import com.mygdx.potatoandtomato.services.App42Uploader;
 import com.potatoandtomato.common.utils.Downloader;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.common.enums.Status;

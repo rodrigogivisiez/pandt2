@@ -12,6 +12,7 @@ import com.potatoandtomato.common.*;
 import com.potatoandtomato.common.absints.*;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.controls.DisposableActor;
+import com.potatoandtomato.common.helpers.DesktopImageLoader;
 import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.models.ScoreDetails;
 import com.potatoandtomato.common.models.Team;
@@ -39,11 +40,16 @@ public abstract class MockGame extends Game implements IPTGame {
     Broadcaster _broadcaster;
     Downloader _downloader;
     PTAssetsManager _monitoringPTAssetsManager;
+    ArrayList<Runnable> _onResumeRunnables;
+    DesktopImageLoader _desktopImageLoader;
+
 
     public MockGame(String gameId) {
 
+        _onResumeRunnables = new ArrayList();
         _broadcaster = new Broadcaster();
         _downloader = new Downloader();
+        _desktopImageLoader = new DesktopImageLoader(_broadcaster);
 
         try {
             PrintWriter out = new PrintWriter("common_version.txt");
@@ -54,7 +60,6 @@ public abstract class MockGame extends Game implements IPTGame {
         }
 
         Firebase _ref = new Firebase("https://pttestgame.firebaseio.com");
-
 
         _processors = new Array<InputProcessor>();
         _gameCoordinator = new GameCoordinator("", "", "", new ArrayList<Team>(), 360, 640, this, _spriteBatch, "", new IGameSandBox() {
@@ -212,5 +217,24 @@ public abstract class MockGame extends Game implements IPTGame {
     @Override
     public void monitorPTAssetManager(PTAssetsManager ptAssetsManager) {
         _monitoringPTAssetsManager = ptAssetsManager;
+    }
+
+
+    @Override
+    public void resume() {
+        super.resume();
+        for(Runnable runnable : _onResumeRunnables){
+            runnable.run();
+        }
+    }
+
+    @Override
+    public void addOnResumeRunnable(Runnable toRun) {
+        _onResumeRunnables.add(toRun);
+    }
+
+    @Override
+    public void removeOnResumeRunnable(Runnable toRun) {
+        _onResumeRunnables.remove(toRun);
     }
 }

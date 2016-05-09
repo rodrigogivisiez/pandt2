@@ -8,10 +8,10 @@ import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
-import com.mygdx.potatoandtomato.helpers.services.Confirm;
-import com.mygdx.potatoandtomato.helpers.utils.Scores;
+import com.mygdx.potatoandtomato.services.Confirm;
+import com.mygdx.potatoandtomato.utils.Scores;
 import com.potatoandtomato.common.utils.OneTimeRunnable;
-import com.mygdx.potatoandtomato.helpers.utils.Pair;
+import com.potatoandtomato.common.utils.Pair;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.enums.Status;
@@ -22,7 +22,6 @@ import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
 
-import javax.xml.bind.annotation.XmlElementDecl;
 import java.util.ArrayList;
 import java.util.HashMap;
 

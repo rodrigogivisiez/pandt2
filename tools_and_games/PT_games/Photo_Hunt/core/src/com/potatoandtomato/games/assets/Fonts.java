@@ -1,6 +1,7 @@
 package com.potatoandtomato.games.assets;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.potatoandtomato.common.absints.PTAssetsManager;
 import com.potatoandtomato.common.assets.FontAssets;
 import com.potatoandtomato.common.assets.FontDetailsGenerator;
 
@@ -9,7 +10,7 @@ import com.potatoandtomato.common.assets.FontDetailsGenerator;
  */
 public class Fonts extends FontAssets {
 
-    public Fonts(AssetManager _manager) {
+    public Fonts(PTAssetsManager _manager) {
         super(_manager);
     }
 

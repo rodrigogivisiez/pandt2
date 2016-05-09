@@ -11,8 +11,9 @@ import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
 import com.mygdx.potatoandtomato.assets.*;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.helpers.services.*;
-import com.mygdx.potatoandtomato.helpers.utils.Terms;
+import com.mygdx.potatoandtomato.services.*;
+import com.mygdx.potatoandtomato.utils.Logs;
+import com.mygdx.potatoandtomato.utils.Terms;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.statics.Global;
@@ -25,6 +26,7 @@ import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.utils.Downloader;
 import com.potatoandtomato.common.utils.Threadings;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,10 +51,11 @@ public class PTGame extends Game implements IPTGame {
 	Preferences _preferences;
 	Tutorials _tutorials;
 	PTAssetsManager _monitoringPTAssetsManager;
+	ArrayList<Runnable> _onResumeRunnables;
 
 	public PTGame(Broadcaster broadcaster) {
 		_broadcaster = broadcaster;
-
+		_onResumeRunnables = new ArrayList();
 	}
 
 	@Override
@@ -95,6 +98,8 @@ public class PTGame extends Game implements IPTGame {
 
 				_screen.toScene(SceneEnum.BOOT);
 
+				//_services.getChat().show();
+
 
 			}
 		});
@@ -125,12 +130,22 @@ public class PTGame extends Game implements IPTGame {
 		this._batch = _batch;
 	}
 
+
+	@Override
+	public void resume() {
+		super.resume();
+		for(Runnable runnable : _onResumeRunnables){
+			runnable.run();
+		}
+	}
+
 	@Override
 	public void render() {
 		super.render();
 
 		if(_monitoringPTAssetsManager != null && !_monitoringPTAssetsManager.isFinishLoading() && _monitoringPTAssetsManager.update()) {
 			_monitoringPTAssetsManager.setFinishLoading(true);
+			_monitoringPTAssetsManager = null;
 		}
 
 		if(Gdx.input.justTouched())
@@ -190,9 +205,9 @@ public class PTGame extends Game implements IPTGame {
 	}
 
 	private void initiateAssets(){
-		PTAssetsManager manager = new PTAssetsManager(new InternalFileHandleResolver(), this);
+		PTAssetsManager manager = new PTAssetsManager(new InternalFileHandleResolver(), this, _broadcaster);
 		Animations animations = new Animations(manager);
-		Patches patches = new Patches();
+		Patches patches = new Patches(manager);
 		Sounds sounds = new Sounds(manager);
 		Textures textures = new Textures(manager, "ui_pack.atlas");
 		Fonts fonts = new Fonts(manager);
@@ -205,5 +220,13 @@ public class PTGame extends Game implements IPTGame {
 		_monitoringPTAssetsManager = ptAssetsManager;
 	}
 
+	@Override
+	public void addOnResumeRunnable(Runnable toRun) {
+		_onResumeRunnables.add(toRun);
+	}
 
+	@Override
+	public void removeOnResumeRunnable(Runnable toRun) {
+		_onResumeRunnables.remove(toRun);
+	}
 }

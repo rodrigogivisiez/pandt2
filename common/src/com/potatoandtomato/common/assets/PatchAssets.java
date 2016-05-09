@@ -3,6 +3,7 @@ package com.potatoandtomato.common.assets;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Disposable;
+import com.potatoandtomato.common.absints.PTAssetsManager;
 
 import java.util.HashMap;
 
@@ -12,8 +13,10 @@ import java.util.HashMap;
 public abstract class PatchAssets implements Disposable {
 
     private HashMap<String, NinePatch> _patches;
+    private PTAssetsManager assetsManager;
 
-    public PatchAssets() {
+    public PatchAssets(PTAssetsManager assetsManager) {
+        this.assetsManager = assetsManager;
         _patches = new HashMap<String, NinePatch>();
     }
 

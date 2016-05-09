@@ -2,7 +2,6 @@ package scene_testings;
 
 import abstracts.MockDB;
 import abstracts.TestAbstract;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.mygdx.potatoandtomato.PTScreen;
@@ -10,8 +9,7 @@ import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
-import com.mygdx.potatoandtomato.helpers.services.Confirm;
-import com.mygdx.potatoandtomato.helpers.utils.Scores;
+import com.mygdx.potatoandtomato.services.Confirm;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
 import com.mygdx.potatoandtomato.scenes.leaderboard_scene.LeaderBoardScene;

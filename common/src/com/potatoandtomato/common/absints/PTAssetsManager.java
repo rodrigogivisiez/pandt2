@@ -2,8 +2,8 @@ package com.potatoandtomato.common.absints;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
+import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.utils.OneTimeRunnable;
-import com.potatoandtomato.common.utils.Threadings;
 
 /**
  * Created by SiongLeng on 4/5/2016.
@@ -13,19 +13,23 @@ public class PTAssetsManager extends AssetManager {
     private IPTGame iptGame;
     private boolean finishLoading;
     private OneTimeRunnable onFinish;
+    private Broadcaster broadcaster;
 
-    public PTAssetsManager(IPTGame iptGame) {
+    public PTAssetsManager(IPTGame iptGame, Broadcaster broadcaster) {
         this.iptGame = iptGame;
+        this.broadcaster = broadcaster;
     }
 
-    public PTAssetsManager(FileHandleResolver resolver, IPTGame iptGame) {
+    public PTAssetsManager(FileHandleResolver resolver, IPTGame iptGame, Broadcaster broadcaster) {
         super(resolver);
         this.iptGame = iptGame;
+        this.broadcaster = broadcaster;
     }
 
-    public PTAssetsManager(FileHandleResolver resolver, boolean defaultLoaders, IPTGame iptGame) {
+    public PTAssetsManager(FileHandleResolver resolver, boolean defaultLoaders, IPTGame iptGame, Broadcaster broadcaster) {
         super(resolver, defaultLoaders);
         this.iptGame = iptGame;
+        this.broadcaster = broadcaster;
     }
 
     public synchronized boolean isFinishLoading() {
@@ -38,8 +42,12 @@ public class PTAssetsManager extends AssetManager {
     }
 
     public void startMonitor(OneTimeRunnable onFinish){
+        finishLoading = false;
         this.onFinish = onFinish;
         iptGame.monitorPTAssetManager(this);
     }
 
+    public Broadcaster getBroadcaster() {
+        return broadcaster;
+    }
 }

@@ -2,7 +2,7 @@ package com.mygdx.potatoandtomato.models;
 
 import com.badlogic.gdx.Gdx;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
-import com.mygdx.potatoandtomato.helpers.utils.DateTimes;
+import com.mygdx.potatoandtomato.utils.DateTimes;
 import com.potatoandtomato.common.utils.Strings;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnoreProperties;

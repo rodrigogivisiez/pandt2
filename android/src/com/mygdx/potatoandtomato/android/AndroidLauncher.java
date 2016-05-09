@@ -1,11 +1,15 @@
 package com.mygdx.potatoandtomato.android;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -15,11 +19,14 @@ import com.firebase.client.Firebase;
 import com.mygdx.potatoandtomato.PTGame;
 import com.mygdx.potatoandtomato.absintflis.entrance.EntranceLoaderListener;
 import com.mygdx.potatoandtomato.statics.Global;
+import com.mygdx.potatoandtomato.utils.Terms;
 import com.potatoandtomato.common.*;
+import com.potatoandtomato.common.absints.PTAssetsManager;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.utils.Threadings;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -35,6 +42,7 @@ public class AndroidLauncher extends AndroidApplication {
 	private VibrateManager _vibrator;
 	private View _view;
 	private Broadcaster _broadcaster;
+	private PTGame _ptGame;
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
@@ -53,16 +61,18 @@ public class AndroidLauncher extends AndroidApplication {
 		_gcm = new GCMClientManager(this, _broadcaster);
 		Firebase.setAndroidContext(this);
 		_layoutChangedFix = new LayoutChangedFix(this.getWindow().getDecorView().getRootView(), _broadcaster);
-
+		_ptGame = new PTGame(_broadcaster);
 
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-		_view = initializeForView(new PTGame(_broadcaster), config);
+		_view = initializeForView(_ptGame, config);
 		_textFieldFix = new TextFieldFix(this, (EditText) findViewById(R.id.dummyText), _view, _broadcaster);
 		lg.addView(_view);
 
 		subscribeLoadGameRequest();
 		roomAliveRelated();
 		subscribeOrientationChanged();
+
+		startService(new Intent(getBaseContext(), OnClearFromRecentService.class));
 	}
 
 	private void setBuildNumber(){
@@ -131,6 +141,7 @@ public class AndroidLauncher extends AndroidApplication {
 		RoomAliveHelper.dispose(_this);
 	}
 
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -173,6 +184,7 @@ public class AndroidLauncher extends AndroidApplication {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		stopService(new Intent(getBaseContext(), OnClearFromRecentService.class));
 		reset();
 	}
 
@@ -190,6 +202,8 @@ public class AndroidLauncher extends AndroidApplication {
 	protected void onStop() {
 		super.onStop();
 	}
+
+
 
 	public static boolean isVisible() {
 		return _isVisible;

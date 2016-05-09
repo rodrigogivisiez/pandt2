@@ -3,7 +3,7 @@ package com.mygdx.potatoandtomato.models;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
-import com.mygdx.potatoandtomato.helpers.services.*;
+import com.mygdx.potatoandtomato.services.*;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.absints.IDownloader;
 import com.potatoandtomato.common.absints.ITutorials;

@@ -14,6 +14,7 @@ import android.os.IBinder;
 import android.util.Log;
 import com.mygdx.potatoandtomato.absintflis.push_notifications.PushCode;
 import com.mygdx.potatoandtomato.models.PushNotification;
+import com.mygdx.potatoandtomato.utils.Logs;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 
 public class KeepAliveService extends Service {
@@ -78,6 +79,7 @@ public class KeepAliveService extends Service {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         stopRoomAlive();
+        Logs.show("tasks removed");
         super.onTaskRemoved(rootIntent);
     }
 

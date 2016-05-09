@@ -1,6 +1,7 @@
 package com.potatoandtomato.games.assets;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.potatoandtomato.common.absints.PTAssetsManager;
 import com.potatoandtomato.common.assets.AnimationAssets;
 
 /**
@@ -9,7 +10,7 @@ import com.potatoandtomato.common.assets.AnimationAssets;
 public class Animations extends AnimationAssets {
 
 
-    public Animations(AssetManager assetManager) {
+    public Animations(PTAssetsManager assetManager) {
         super(assetManager);
     }
 

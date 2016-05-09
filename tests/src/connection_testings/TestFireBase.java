@@ -5,7 +5,7 @@ import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
-import com.mygdx.potatoandtomato.helpers.services.FirebaseDB;
+import com.mygdx.potatoandtomato.services.FirebaseDB;
 import com.potatoandtomato.common.utils.ArrayUtils;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.*;

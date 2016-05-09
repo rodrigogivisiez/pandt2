@@ -16,4 +16,6 @@ public interface IPTGame {
 
     void monitorPTAssetManager(PTAssetsManager ptAssetsManager);
 
+    void addOnResumeRunnable(Runnable toRun);
+    void removeOnResumeRunnable(Runnable toRun);
 }
