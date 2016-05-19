@@ -1,6 +1,9 @@
 package com.potatoandtomato.common.utils;
 
 import java.io.*;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.zip.GZIPInputStream;
@@ -155,6 +158,22 @@ public class Strings {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public static String getHash(String input){
+        MessageDigest m = null;
+        try {
+            m = MessageDigest.getInstance("MD5");
+            m.reset();
+            m.update(input.getBytes());
+            byte[] digest = m.digest();
+            BigInteger bigInt = new BigInteger(1,digest);
+            String hashtext = bigInt.toString(16);
+            return hashtext;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "nohash";
     }
 
 

@@ -3,11 +3,13 @@ package helpers;
 import abstracts.MockDB;
 import abstracts.MockDownloader;
 import abstracts.MockGamingKit;
+import abstracts.MockRestfulApi;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.potatoandtomato.PTGame;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
+import com.mygdx.potatoandtomato.absintflis.services.IRestfulApi;
 import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
 import com.mygdx.potatoandtomato.assets.*;
 import com.mygdx.potatoandtomato.services.*;
@@ -43,9 +45,11 @@ public class T_Services {
         Preferences preferences = new Preferences("potatoandtomato_test");
         preferences.deleteAll();
 
-        PTAssetsManager manager = new PTAssetsManager(new InternalFileHandleResolver(), mock(PTGame.class));
+        Broadcaster broadcaster = new Broadcaster();
+
+        PTAssetsManager manager = new PTAssetsManager(new InternalFileHandleResolver(), mock(PTGame.class), broadcaster);
         Animations animations = new Animations(manager);
-        Patches patches = new Patches();
+        Patches patches = new Patches(manager);
         Sounds sounds = new Sounds(manager);
         Textures textures = new Textures(manager, "ui_pack.atlas");
         Fonts fonts = new Fonts(manager);
@@ -54,16 +58,16 @@ public class T_Services {
 
         assets.loadSync(null);
         MockGamingKit gamingKit = new MockGamingKit();
-        Broadcaster broadcaster = new Broadcaster();
+
         Profile profile = MockModel.mockProfile();
 
         return new Services(assets, new Texts(), preferences,
                 profile, databases, new Shaders(), gamingKit, downloader,
-                new Chat(gamingKit, new Texts(), assets, mock(SpriteBatch.class), mock(IPTGame.class),
-                        mock(Recorder.class), mock(IUploader.class), mock(SoundsPlayer.class), broadcaster),
+                new Chat(broadcaster, gamingKit, new Texts(), assets, mock(SoundsPlayer.class), mock(Recorder.class),
+                        mock(SpriteBatch.class), mock(PTGame.class), preferences),
                 new Socials(preferences, broadcaster), new GCMSender(), new Confirm(mock(SpriteBatch.class), mock(PTGame.class), assets, broadcaster),
                 new Notification(mock(SpriteBatch.class), assets, mock(PTGame.class), broadcaster), mock(Recorder.class), mock(IUploader.class),
-                mock(SoundsPlayer.class), mock(VersionControl.class), broadcaster, mock(ITutorials.class));
+                mock(SoundsPlayer.class), mock(VersionControl.class), broadcaster, mock(ITutorials.class), new MockRestfulApi());
     }
 
 }

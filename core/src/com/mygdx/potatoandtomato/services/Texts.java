@@ -75,6 +75,7 @@ public class Texts {
 
 
     public String loading() { return "Loading..."; }
+    public String updatingScores() { return "Updating Scores..."; }
 
     public String generalError() { return "Unexpected error occurred, please try again.";}
     public String duplicateNameError() { return "This name has already been taken, please use another name.";}

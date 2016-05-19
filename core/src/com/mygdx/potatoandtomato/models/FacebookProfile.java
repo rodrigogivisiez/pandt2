@@ -7,11 +7,17 @@ public class FacebookProfile {
 
     public String name;
     public String userId;
+    public String token;
 
 
-    public FacebookProfile(String name, String userId) {
+    public FacebookProfile(String name, String userId, String token) {
         this.name = name;
         this.userId = userId;
+        this.token = token;
+    }
+
+    public String getToken() {
+        return token;
     }
 
     public String getName() {

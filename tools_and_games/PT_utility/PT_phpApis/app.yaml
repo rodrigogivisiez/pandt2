@@ -1,0 +1,22 @@
+application: pandt-1050
+version: 1
+runtime: php55
+api_version: 1
+threadsafe: yes
+
+handlers:
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+
+- url: /create_user
+  script: create_user.php
+  secure: always
+  
+- url: /login_user
+  script: login_user.php
+  secure: always
+
+- url: /save_score
+  script: save_score.php
+  secure: always

@@ -1,6 +1,10 @@
 package com.potatoandtomato.common.models;
 
+import com.potatoandtomato.common.utils.Strings;
+import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by SiongLeng on 25/12/2015.
@@ -20,19 +24,22 @@ public class Team {
     }
 
     public ArrayList<Player> getPlayers() {
+        if(players == null) return new ArrayList();
         return players;
     }
 
+    public void setPlayers(ArrayList<Player> players) {
+        this.players = players;
+    }
+
+    @JsonIgnore
     public ArrayList<String> getPlayersUserIds(){
         ArrayList<String> result = new ArrayList<String>();
         for(Player p : players){
             result.add(p.getUserId());
         }
+        Collections.sort(result);
         return result;
-    }
-
-    public void setPlayers(ArrayList<Player> players) {
-        this.players = players;
     }
 
     public boolean hasUser(String userId){
@@ -48,6 +55,7 @@ public class Team {
         return userIds.size() == this.getPlayersUserIds().size();
     }
 
+    @JsonIgnore
     public Player getPlayerByUserId(String userId){
         for(Player player : players){
             if(player.getUserId().equals(userId)){
@@ -57,19 +65,33 @@ public class Team {
         return null;
     }
 
+    @JsonIgnore
+    public String getPlayersIdsString(){
+        ArrayList<String> userIdsClone = new ArrayList();
+        for(Player player : players){
+            userIdsClone.add(player.getUserId());
+        }
+        Collections.sort(userIdsClone);
+        return Strings.joinArr(userIdsClone, ",");
+    }
+
+    @JsonIgnore
     public LeaderboardRecord getLeaderboardRecord() {
         if(leaderboardRecord == null) leaderboardRecord = new LeaderboardRecord(this.getPlayers());
         return leaderboardRecord;
     }
 
+    @JsonIgnore
     public void setLeaderboardRecord(LeaderboardRecord leaderboardRecord) {
         this.leaderboardRecord = leaderboardRecord;
     }
 
+    @JsonIgnore
     public int getRank() {
         return rank;
     }
 
+    @JsonIgnore
     public void setRank(int rank) {
         this.rank = rank;
     }

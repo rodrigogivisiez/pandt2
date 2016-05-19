@@ -41,13 +41,12 @@ public class TestChat extends TestAbstract{
 
         Chat _chat = services.getChat();
 
-        _chat.show();
-        _chat.setUserId(MockModel.mockProfile().getUserId());
-        _chat.setMessage("testing");
-        _chat.sendMessage();
         Room _room = MockModel.mockRoom("1");
-        _chat.setRoom(_room);
-        _chat.add(new ChatMessage("test", ChatMessage.FromType.USER, MockModel.mockProfile().getUserId()), true);
+        _chat.showChat();
+        _chat.initChat(_room, MockModel.mockProfile().getUserId());
+        _chat.sendMessage("testing");
+
+        _chat.newMessage(new ChatMessage("testing", ChatMessage.FromType.USER, MockModel.mockProfile().getUserId(), ""));
 
         while (waiting[0]){
             Threadings.sleep(1000);
@@ -64,8 +63,8 @@ public class TestChat extends TestAbstract{
         Services services = T_Services.mockServices();
         Chat _chat = services.getChat();
         _chat.setMode(2);
-        _chat.setRoom(MockModel.mockRoom("1"));
-        _chat.add(new ChatMessage("test", ChatMessage.FromType.USER, MockModel.mockProfile().getUserId()), true);
+        _chat.initChat(MockModel.mockRoom("1"), MockModel.mockProfile().getUserId());
+        _chat.newMessage(new ChatMessage("test", ChatMessage.FromType.USER, MockModel.mockProfile().getUserId(), ""));
 
     }
 

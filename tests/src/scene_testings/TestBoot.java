@@ -10,7 +10,7 @@ import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
-import com.mygdx.potatoandtomato.utils.Terms;
+import com.mygdx.potatoandtomato.statics.Terms;
 import com.mygdx.potatoandtomato.scenes.boot_scene.BootLogic;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
@@ -62,7 +62,7 @@ public class TestBoot extends TestAbstract {
         BootLogic logic = new BootLogic(mock(PTScreen.class), _services);
         logic.onShow();
         logic.showLoginBox();
-        logic.loginPT();
+        logic.afterFacebookPhase();
         Assert.assertEquals(true, _services.getSocials().getFacebookProfile() == null);
         Assert.assertEquals(false, _services.getProfile().getUserId() == null);
     }
@@ -73,7 +73,7 @@ public class TestBoot extends TestAbstract {
         BootLogic logic = new BootLogic(mock(PTScreen.class), _services);
         logic.onShow();
         logic.showLoginBox();
-        logic.loginPT();
+        logic.retrieveUserToken();
         Assert.assertEquals("999", _services.getProfile().getUserId());
     }
 
@@ -83,34 +83,6 @@ public class TestBoot extends TestAbstract {
         logic.onShow();
         logic.showLoginBox();
         logic.retrieveUserFailed();
-    }
-
-    @Test
-    public void testLoginSuccessUpdateFbId(){
-
-        IDatabase mockDatabase = mock(IDatabase.class);
-        _services.setDatabase(mockDatabase);
-        final boolean[] called = {false};
-        doAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
-                Object[] arguments = invocation.getArguments();
-                Profile p = ((Profile) arguments[0]);
-                if(p.getFacebookUserId().equals("999") && p.getFacebookName().equals("andy")){
-                    called[0] = true;
-                }
-                return null;
-            }
-        }).when(mockDatabase).updateProfile(any(Profile.class), any(DatabaseListener.class));
-        _services.getPreferences().put(Terms.FACEBOOK_USERID, "999");
-        _services.getPreferences().put(Terms.FACEBOOK_USERNAME, "andy");
-        BootLogic logic = new BootLogic(mock(PTScreen.class), _services);
-        logic.loginPTSuccess();
-        Assert.assertEquals(false, _services.getSocials().getFacebookProfile() == null);
-        Assert.assertEquals(true, _services.getSocials().isFacebookLogon());
-        Assert.assertEquals("999", _services.getProfile().getFacebookUserId());
-        Assert.assertEquals("andy", _services.getProfile().getFacebookName());
-        Assert.assertEquals(true, called[0]);
     }
 
     @Test

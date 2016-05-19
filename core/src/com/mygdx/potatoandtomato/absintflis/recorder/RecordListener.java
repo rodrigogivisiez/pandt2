@@ -10,6 +10,6 @@ public abstract class RecordListener {
 
     public abstract void onRecording(int volumeLevel);
 
-    public abstract void onFinishedRecord(FileHandle resultFile, Status status);
+    public abstract void onFinishedRecord(FileHandle resultFile, int totalSecs, Status status);
 
 }

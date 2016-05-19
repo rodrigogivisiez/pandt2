@@ -3,9 +3,6 @@ package com.mygdx.potatoandtomato.android;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
-import com.mygdx.potatoandtomato.utils.Terms;
 
 /**
  * Created by SiongLeng on 7/5/2016.

@@ -55,19 +55,19 @@ public class ScoresLogic implements Disposable {
         this.leaderboardRecords = new ArrayList();
 
         this.scoresActor = new ScoresActor(services, gameCoordinator);
-        scoresActor.populate(gameModel.getScore());
+        scoresActor.populate(gameModel.getScore().intValue());
         setListeners();
     }
 
     public void refreshAllScores(){
         this.leaderboardRecords = gameCoordinator.getGameLeaderboardRecords();
-        scoresActor.setMainScore(gameModel.getScore());
+        scoresActor.setMainScore(gameModel.getScore().intValue());
         scoresActor.setNextHighScore(getNextLeaderboardScore());
     }
 
     public void addScoreWithoutAnimation(int addingScore){
         gameModel.setScore(gameModel.getScore() + addingScore);
-        scoresActor.setMainScore(gameModel.getScore());
+        scoresActor.setMainScore(gameModel.getScore().intValue());
         scoresActor.setNextHighScore(getNextLeaderboardScore());
     }
 
@@ -98,8 +98,8 @@ public class ScoresLogic implements Disposable {
                                     @Override
                                     public void run() {
                                         final int remainingDistance = (int) knightLogic.getRemainingDistanceByRemainingTime(gameModel.getRemainingMiliSecs());
-                                        final int[] originalScore = {gameModel.getScore()};
-                                        gameModel.setScore(originalScore[0] + ((int) (remainingDistance * PER_METER_DISTANCE_SCORE)));
+                                        final int[] originalScore = {gameModel.getScore().intValue()};
+                                        gameModel.setScore((double) originalScore[0] + ((int) (remainingDistance * PER_METER_DISTANCE_SCORE)));
                                         final Vector2 knightActorPosition = new Vector2(knightLogic.getKnightActor().getPositionOnStage().x,
                                                 knightLogic.getKnightActor().getPositionOnStage().y);
                                         knightActorPosition.y = knightActorPosition.y + knightLogic.getKnightActor().getHeight() / 2;
@@ -132,7 +132,7 @@ public class ScoresLogic implements Disposable {
                                                     originalScore[0] += PER_METER_DISTANCE_SCORE;
                                                 }
 
-                                                scoresActor.setMainScore(gameModel.getScore());
+                                                scoresActor.setMainScore(gameModel.getScore().intValue());
 
                                                 services.getSoundsWrapper().stopSoundLoop(Sounds.Name.ADDING_SCORE);
 

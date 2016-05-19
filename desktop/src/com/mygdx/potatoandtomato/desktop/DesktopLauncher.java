@@ -8,7 +8,7 @@ import com.mygdx.potatoandtomato.PTGame;
 import com.mygdx.potatoandtomato.absintflis.entrance.EntranceLoaderListener;
 import com.mygdx.potatoandtomato.utils.JarUtils;
 import com.mygdx.potatoandtomato.utils.Positions;
-import com.mygdx.potatoandtomato.utils.Terms;
+import com.mygdx.potatoandtomato.statics.Terms;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.*;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;

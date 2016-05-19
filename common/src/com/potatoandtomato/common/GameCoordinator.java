@@ -527,16 +527,14 @@ public class GameCoordinator implements Disposable {
 
 
     public void beforeEndGame(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers){
-        if(winners == null && losers == null){
-            this._endGameResult = new EndGameResult();
-            return;
-        }
-
         if(winners == null) winners = new HashMap<Team, ArrayList<ScoreDetails>>();
         if(losers == null) losers = new ArrayList<Team>();
 
-        if(meIsDecisionMaker()){
-            gameSandBox.updateScores(winners, losers);
+        gameSandBox.updateScores(winners, losers);
+
+        if(winners.size() == 0 && losers.size() == 0){
+            this._endGameResult = new EndGameResult();
+            return;
         }
 
         this._endGameResult = new EndGameResult();

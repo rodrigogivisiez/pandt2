@@ -179,11 +179,21 @@ public class LeaderBoardScene extends SceneAbstract {
                 if(!found){
                     Label loadingLabel = new Label(_texts.loading(), new Label.LabelStyle(
                             _assets.getFonts().get(Fonts.FontId.MYRIAD_S_ITALIC), Color.BLACK));
+                    loadingLabel.setName("loadingLabel");
                     _loadingTable = new Table();
                     _loadingTable.add(loadingLabel);
                     _loadingTable.setFillParent(true);
                     _ranksTable.addActor(_loadingTable);
                 }
+            }
+        });
+    }
+
+    public void setLoadingToUpdatingScores(){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                ((Label) _loadingTable.findActor("loadingLabel")).setText(_texts.updatingScores());
             }
         });
     }
@@ -667,7 +677,7 @@ public class LeaderBoardScene extends SceneAbstract {
         nameLabel.setAlignment(Align.left);
 
         if(record.getStreak().hasValidStreak()){
-            Badge streakBadge = new Badge(BadgeType.Streak, String.valueOf(record.getStreak().getStreakCount()), _assets);
+            Badge streakBadge = new Badge(BadgeType.Streak, String.valueOf(record.getStreak()), _assets);
             streakBadge.setName("streakTable");
             nameStreakTable.add(streakBadge).padRight(5);
 

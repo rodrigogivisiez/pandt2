@@ -217,10 +217,10 @@ public class ScoresHandler implements Disposable{
         ////////////////////////////////////
         Streak winnerStreak = this.winnerTeam.getLeaderboardRecord().getStreak().clone();
         Streak loserStreak = this.loserTeam.getLeaderboardRecord().getStreak().clone();
-        if(canAddStreak ){
-            winnerStreak.addStreakCount();
+        if(canAddStreak){
+            winnerStreak.addStreak(1);
         }
-        loserStreak.addStreakCount();
+        loserStreak.addStreak(1);
         int winnerStreakCount = 0, loserStreakCount = 0;
 
         if(winnerStreak.hasValidStreak()){

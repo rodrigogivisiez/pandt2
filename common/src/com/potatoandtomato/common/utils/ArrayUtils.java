@@ -55,4 +55,20 @@ public class ArrayUtils {
         return results;
     }
 
+    public static ArrayList<Integer> stringArrayToIntegerArray(ArrayList<String> arr){
+        ArrayList<Integer> integersList = new ArrayList();
+        for(String item : arr){
+            integersList.add(Integer.valueOf(item));
+        }
+        return integersList;
+    }
+
+    public static ArrayList<String> integerArrayToStringArray(ArrayList<Integer> arr){
+        ArrayList<String> stringList = new ArrayList();
+        for(Integer integer : arr){
+            stringList.add(String.valueOf(integer));
+        }
+        return stringList;
+    }
+
 }

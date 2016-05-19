@@ -52,6 +52,8 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     ArrayList<String> _monitorRetrievedUserId;
     EndGameData _endGameData;
     EndGameLeaderBoardLogic _leaderboardLogic;
+    HashMap<Team, ArrayList<ScoreDetails>> _winners;
+    ArrayList<Team> _losers;
 
     public GameSandboxLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
@@ -80,12 +82,17 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
 
         _services.getPreferences().setGameAbbr(_room.getGame().getAbbr());
 
-        _services.getChat().hide();
+        _services.getChat().hideChat();
 
         _services.getGamingKit().addListener(getClassTag(), new UpdateRoomMatesListener() {
             @Override
             public void onUpdateRoomMatesReceived(int code, String msg, String senderId) {
-                updateReceived(code, msg, senderId);
+                if(code == UpdateRoomMatesCode.LOCK_PROPERTY){
+                    onLockUpdateScorePropertyResult(msg);
+                }
+                else {
+                    updateReceived(code, msg, senderId);
+                }
             }
 
             @Override
@@ -241,8 +248,8 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                                                     public void run() {
                                                         if (userPlayingState.getAbandon()) {
                                                             //user abandoned
-                                                            _services.getChat().add(new ChatMessage(String.format(_texts.notificationAbandon(),
-                                                                    obj.getDisplayName(0)), ChatMessage.FromType.IMPORTANT, null), false);
+                                                            _services.getChat().newMessage(new ChatMessage(String.format(_texts.notificationAbandon(),
+                                                                    obj.getDisplayName(0)), ChatMessage.FromType.IMPORTANT, null, ""));
                                                             _notification.important(String.format(_texts.notificationAbandon(), obj.getDisplayName(15)));
                                                             _coordinator.userAbandon(obj.getUserId());
                                                         } else if (userPlayingState.getConnected()) {
@@ -285,15 +292,9 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                 _scene.clearRoot();
                 _services.getChat().setMode(2);
                 _services.getChat().resetChat();
-                _services.getChat().show();
+                _services.getChat().showChat();
                 if(_coordinator.isLandscape()){
                     _services.getBroadcaster().broadcast(BroadcastEvent.DEVICE_ORIENTATION, 1);
-                    Threadings.delay(500, new Runnable() {
-                        @Override
-                        public void run() {
-                            _services.getChat().animateHideForMode2();
-                        }
-                    });
                 }
                 _gameStarted = true;
                 dbMonitor.run();
@@ -316,8 +317,8 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
 
     public void userLeftRoom(String userId){
         _failed = true;
-        _services.getChat().add(new ChatMessage(_texts.playerLeftCauseGameCancel(),
-                ChatMessage.FromType.IMPORTANT, null), false);
+        _services.getChat().newMessage(new ChatMessage(_texts.playerLeftCauseGameCancel(),
+                ChatMessage.FromType.IMPORTANT, null, ""));
 
         setUserTable(userId, false, true);
 
@@ -338,8 +339,8 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         }
 
         if(userId != null){
-            _services.getChat().add(new ChatMessage(_texts.loadGameFailed(),
-                    ChatMessage.FromType.IMPORTANT, null), false);
+            _services.getChat().newMessage(new ChatMessage(_texts.loadGameFailed(),
+                    ChatMessage.FromType.IMPORTANT, null, ""));
 
             setUserTable(userId, false, true);
 
@@ -493,12 +494,12 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     private void redirectExitedSandbox(){
         if(!_exiting){
             _exiting = true;
-            _services.getChat().add(new ChatMessage(_texts.gameEnded(),
-                    ChatMessage.FromType.SYSTEM, null), false);
+            _services.getChat().newMessage(new ChatMessage(_texts.gameEnded(),
+                    ChatMessage.FromType.SYSTEM, null, ""));
             //_gameStarted variable for failed loading case
             if(_room.getGame().getLeaderboardTypeEnum() != LeaderboardType.None && _gameStarted){
                 _endGameData.setEndGameResult(_coordinator.getEndGameResult());
-                _services.getChat().hide();
+                _services.getChat().hideChat();
                 _screen.toScene(_leaderboardLogic, SceneEnum.END_GAME_LEADER_BOARD);
             }
             else{
@@ -570,23 +571,11 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     public void userAbandoned(final String userId) {
         _coordinator.userConnectionChanged(_services.getProfile().getUserId(), false);
 
-        _services.getDatabase().getProfileByUserId(userId, new DatabaseListener<Profile>(Profile.class) {
-            @Override
-            public void onCallback(Profile profile, Status st) {
-                if(st == Status.SUCCESS){
-                    UserPlayingState userPlayingState = profile.getUserPlayingState();
-                    if(userPlayingState.getRoomId().equals(_room.getId()) &&
-                             userPlayingState.getRoundCounter() == _room.getRoundCounter()){
-                        userPlayingState.setAbandon(true);
-                        userPlayingState.setConnected(false);
-                        profile.setUserPlayingState(userPlayingState);
-                        _services.getDatabase().updateProfile(profile, null);
-                    }
-                }
-            }
-        });
-
-
+        if(userId.equals(_services.getProfile().getUserId())){
+            _services.getProfile().getUserPlayingState().setAbandon(true);
+            _services.getProfile().getUserPlayingState().setConnected(false);
+            _services.getDatabase().updateProfile(_services.getProfile(), null);
+        }
 
     }
 
@@ -600,14 +589,22 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         _services.getGamingKit().updateRoomMates(UpdateRoomMatesCode.IN_GAME_UPDATE, msg);
     }
 
-    @Override       //only decision maker will call this
+
+    @Override       //everyone will call this
     public void updateScores(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers) {
+        this._winners = winners;
+        this._losers = losers;
         _services.getDatabase().updateRoomPlayingState(_room, false, null);
 
         if(_room.getGame().hasLeaderboard()){
-            UpdateScoreLogic updateScoreLogic = new UpdateScoreLogic(_services, _room);
-            updateScoreLogic.update(winners, losers);
-            _leaderboardLogic.setStreakResetted(updateScoreLogic.isTeamReset(_coordinator.getMyTeam()));
+            _services.getGamingKit().lockProperty(_room.getId() + "_" + _room.getRoundCounter(), "1");
         }
     }
+
+    public void onLockUpdateScorePropertyResult(String result){
+        if(result.equals("0")){
+            _services.getRestfulApi().updateScores(_winners, _losers, _room, _services.getProfile(), null);
+        }
+    }
+
 }

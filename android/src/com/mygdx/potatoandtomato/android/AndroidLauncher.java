@@ -1,34 +1,33 @@
 package com.mygdx.potatoandtomato.android;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.media.MediaRecorder;
 import android.os.Bundle;
 
-import android.support.v4.content.LocalBroadcastManager;
+import android.os.Environment;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.badlogic.gdx.files.FileHandle;
 import com.firebase.client.Firebase;
 import com.mygdx.potatoandtomato.PTGame;
 import com.mygdx.potatoandtomato.absintflis.entrance.EntranceLoaderListener;
 import com.mygdx.potatoandtomato.statics.Global;
-import com.mygdx.potatoandtomato.utils.Terms;
 import com.potatoandtomato.common.*;
-import com.potatoandtomato.common.absints.PTAssetsManager;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.Threadings;
 
-import java.lang.reflect.InvocationTargetException;
+import java.io.File;
+import java.io.IOException;
 
 public class AndroidLauncher extends AndroidApplication {
 
@@ -43,6 +42,7 @@ public class AndroidLauncher extends AndroidApplication {
 	private View _view;
 	private Broadcaster _broadcaster;
 	private PTGame _ptGame;
+	private AudioRecorder _audioRecorder;
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
@@ -59,6 +59,7 @@ public class AndroidLauncher extends AndroidApplication {
 		_imageLoader = new ImageLoader(_this, _broadcaster);
 		_facebookConnector = new FacebookConnector(this, _broadcaster);
 		_gcm = new GCMClientManager(this, _broadcaster);
+		_audioRecorder = new AudioRecorder(_broadcaster);
 		Firebase.setAndroidContext(this);
 		_layoutChangedFix = new LayoutChangedFix(this.getWindow().getDecorView().getRootView(), _broadcaster);
 		_ptGame = new PTGame(_broadcaster);
@@ -73,7 +74,10 @@ public class AndroidLauncher extends AndroidApplication {
 		subscribeOrientationChanged();
 
 		startService(new Intent(getBaseContext(), OnClearFromRecentService.class));
+
 	}
+
+
 
 	private void setBuildNumber(){
 		PackageInfo pInfo = null;

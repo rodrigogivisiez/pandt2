@@ -26,7 +26,7 @@ public class Database {
     }
 
     private Firebase getInfoTable(){
-        return  _ref.child(_coordinator.getRoomId()).child("info");
+        return  _ref.child("infos").child(_coordinator.getRoomId()).child("info");
     }
 
     private Firebase getMatchHistoriesTable(){
@@ -50,7 +50,7 @@ public class Database {
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                listener.onCallback(0, Status.FAILED);
+                listener.onCallback(null, Status.FAILED);
             }
         });
     }
@@ -125,7 +125,7 @@ public class Database {
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                listener.onCallback(0, Status.FAILED);
+                listener.onCallback(null, Status.FAILED);
             }
         });
     }

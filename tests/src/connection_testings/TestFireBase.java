@@ -12,9 +12,9 @@ import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.enums.Status;
 import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import com.potatoandtomato.common.models.LeaderboardRecord;
-import com.potatoandtomato.common.models.Streak;
 import helpers.T_Threadings;
 import org.junit.*;
+import org.mockito.Mock;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -40,23 +40,6 @@ public class TestFireBase extends TestAbstract {
     public void tearDown() throws Exception {
         super.tearDown();
         databases.clearAllListeners();
-    }
-
-    @Test
-    public void testConnectFirebase(){
-        final boolean[] waiting = {true};
-        databases.getTestTableCount(new DatabaseListener<Integer>() {
-            @Override
-            public void onCallback(Integer obj, Status st) {
-                waiting[0] = false;
-                Assert.assertEquals(Status.SUCCESS, st);
-                Assert.assertEquals(true, obj > 0);
-            }
-        });
-
-        while(waiting[0]){
-            T_Threadings.sleep(100);
-        }
     }
 
     @Test
@@ -142,41 +125,33 @@ public class TestFireBase extends TestAbstract {
     public void testCreateUserAndMonitorUser(){
         final int[] count = {0};
 
-        databases.loginAnonymous(new DatabaseListener<Profile>() {
+        final Profile p = MockModel.mockProfile();
+        databases.updateProfile(p, new DatabaseListener() {
             @Override
-            public void onCallback(Profile obj, Status st) {
+            public void onCallback(Object obj, Status st) {
                 Assert.assertEquals(false, st == Status.FAILED);
-                Assert.assertEquals(false, obj == null);
-                databases.createUserByUserId(obj.getUserId(), new DatabaseListener<Profile>() {
+                databases.getProfileByUserId(p.getUserId(), new DatabaseListener<Profile>(Profile.class) {
                     @Override
                     public void onCallback(Profile obj, Status st) {
                         Assert.assertEquals(false, st == Status.FAILED);
                         Assert.assertEquals(false, obj == null);
-                        databases.getProfileByUserId(obj.getUserId(), new DatabaseListener<Profile>(Profile.class) {
+                        Assert.assertEquals(false, obj.getUserId() == null);
+
+
+                        databases.monitorProfileByUserId(obj.getUserId(), getClassTag(),  new DatabaseListener<Profile>(Profile.class) {
                             @Override
                             public void onCallback(Profile obj, Status st) {
-                                Assert.assertEquals(false, st == Status.FAILED);
-                                Assert.assertEquals(false, obj == null);
-                                Assert.assertEquals(false, obj.getUserId() == null);
-
-
-                                databases.monitorProfileByUserId(obj.getUserId(), getClassTag(),  new DatabaseListener<Profile>(Profile.class) {
-                                    @Override
-                                    public void onCallback(Profile obj, Status st) {
-                                        if(obj.getUserPlayingState() != null)
-                                            Assert.assertEquals("1", obj.getUserPlayingState().getRoomId());
-                                            Assert.assertEquals(true, obj.getUserPlayingState().getConnected());
-                                            count[0] = 2;
-                                        }
-                                });
-
-                                obj.setUserPlayingState(new UserPlayingState("1", true, 0));
-                                databases.updateProfile(obj, null);
+                                if(obj.getUserPlayingState() != null)
+                                    Assert.assertEquals("1", obj.getUserPlayingState().getRoomId());
+                                Assert.assertEquals(true, obj.getUserPlayingState().getConnected());
+                                count[0] = 2;
                             }
                         });
+
+                        obj.setUserPlayingState(new UserPlayingState("1", true, 0));
+                        databases.updateProfile(obj, null);
                     }
                 });
-
             }
         });
 
@@ -333,7 +308,7 @@ public class TestFireBase extends TestAbstract {
             T_Threadings.sleep(100);
         }
 
-        Assert.assertEquals(2, monitorCount[0]);
+        Assert.assertEquals(3, monitorCount[0]);
 
         waiting[0] = true;
 
@@ -348,7 +323,7 @@ public class TestFireBase extends TestAbstract {
         while(waiting[0]){
             T_Threadings.sleep(100);
         }
-        Assert.assertEquals(3, monitorCount[0]);
+        Assert.assertEquals(4, monitorCount[0]);
     }
 
     @Test
@@ -576,431 +551,4 @@ public class TestFireBase extends TestAbstract {
         }
 
     }
-
-
-    @Test
-    public void testLeaderboardWithAccumulate(){
-        Room room = MockModel.mockRoom("1");
-        Game game = MockModel.mockGame();
-        game.setLeaderbordTypeEnum(LeaderboardType.Accumulate);
-        room.setGame(game);
-
-        final Profile user1 = MockModel.mockProfile();
-        user1.setGameName("user1");
-        final Profile user2 = MockModel.mockProfile("user2");
-        user2.setGameName("user2");
-
-        databases.updateProfile(user1, new DatabaseListener() {
-            @Override
-            public void onCallback(Object obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        databases.updateProfile(user2, new DatabaseListener() {
-            @Override
-            public void onCallback(Object obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        databases.deleteLeaderBoard(game, new DatabaseListener() {
-            @Override
-            public void onCallback(Object obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        T_Threadings.waitTasks(3);
-
-        final LeaderboardRecord leaderboardRecord = new LeaderboardRecord();
-        leaderboardRecord.setScore(1000);
-        leaderboardRecord.addUserId(user1.getUserId());
-        leaderboardRecord.addUserId(user2.getUserId());
-
-        Streak streak = new Streak();
-        streak.setStreakCount(5);
-        leaderboardRecord.setStreak(streak);
-
-
-        databases.saveLeaderBoardRecord(room, leaderboardRecord, new DatabaseListener() {
-            @Override
-            public void onCallback(Object obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        T_Threadings.waitTasks(1);
-
-        databases.getLeaderBoardAndStreak(game, 100, new DatabaseListener<ArrayList<LeaderboardRecord>>(LeaderboardRecord.class) {
-            @Override
-            public void onCallback(ArrayList<LeaderboardRecord> obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                Assert.assertEquals(1, obj.size());
-                Assert.assertEquals(true, obj.get(0).getUserIds().contains(user1.getUserId()));
-                Assert.assertEquals(true, obj.get(0).getUserIds().contains(user2.getUserId()));
-                Assert.assertEquals(1000, obj.get(0).getScore(), 0);
-                Assert.assertEquals(5, obj.get(0).getStreak().getStreakCount());
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        T_Threadings.waitTasks(1);
-
-        leaderboardRecord.getStreak().addStreakCount();
-        leaderboardRecord.setScore(1100);
-
-        databases.saveLeaderBoardRecord(room, leaderboardRecord, new DatabaseListener() {
-            @Override
-            public void onCallback(Object obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        T_Threadings.waitTasks(1);
-
-        databases.getLeaderBoardAndStreak(game, 100, new DatabaseListener<ArrayList<LeaderboardRecord>>(LeaderboardRecord.class) {
-            @Override
-            public void onCallback(ArrayList<LeaderboardRecord> obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                Assert.assertEquals(1, obj.size());
-                Assert.assertEquals(true, obj.get(0).getUserIds().contains(user1.getUserId()));
-                Assert.assertEquals(true, obj.get(0).getUserIds().contains(user2.getUserId()));
-                Assert.assertEquals(1100, obj.get(0).getScore(), 0);
-                Assert.assertEquals(6, obj.get(0).getStreak().getStreakCount());
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        T_Threadings.waitTasks(1);
-
-
-        databases.getTeamHighestLeaderBoardRecordAndStreak(room.getGame(), leaderboardRecord.getUserIds(),
-                new DatabaseListener<LeaderboardRecord>(LeaderboardRecord.class) {
-                    @Override
-                    public void onCallback(LeaderboardRecord obj, Status st) {
-                        Assert.assertEquals(Status.SUCCESS, st);
-                        Assert.assertEquals(true, obj.getUserIds().contains(user1.getUserId()));
-                        Assert.assertEquals(true, obj.getUserIds().contains(user2.getUserId()));
-                        Assert.assertEquals(1100, obj.getScore(), 0);
-                        Assert.assertEquals(6, obj.getStreak().getStreakCount());
-                        T_Threadings.oneTaskFinish();
-                    }
-                });
-
-        T_Threadings.waitTasks(1);
-
-    }
-
-
-    @Test
-    public void testLeaderboardNormal(){
-        Room room = MockModel.mockRoom("1");
-        Game game = MockModel.mockGame();
-        game.setLeaderbordTypeEnum(LeaderboardType.Normal);
-        room.setGame(game);
-
-        final Profile user1 = MockModel.mockProfile();
-        user1.setGameName("user1");
-        final Profile user2 = MockModel.mockProfile("user2");
-        user2.setGameName("user2");
-
-        databases.updateProfile(user1, new DatabaseListener() {
-            @Override
-            public void onCallback(Object obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        databases.updateProfile(user2, new DatabaseListener() {
-            @Override
-            public void onCallback(Object obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        databases.deleteLeaderBoard(game, new DatabaseListener() {
-            @Override
-            public void onCallback(Object obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        T_Threadings.waitTasks(3);
-
-        final LeaderboardRecord leaderboardRecord = new LeaderboardRecord();
-        leaderboardRecord.setScore(1000);
-        leaderboardRecord.addUserId(user1.getUserId());
-        leaderboardRecord.addUserId(user2.getUserId());
-
-        databases.saveLeaderBoardRecord(room, leaderboardRecord, new DatabaseListener() {
-            @Override
-            public void onCallback(Object obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        T_Threadings.waitTasks(1);
-
-        leaderboardRecord.setScore(1100);
-
-        databases.saveLeaderBoardRecord(room, leaderboardRecord, new DatabaseListener() {
-            @Override
-            public void onCallback(Object obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        T_Threadings.waitTasks(1);
-
-        leaderboardRecord.setScore(500);
-
-        room.setId("2");
-        databases.saveLeaderBoardRecord(room, leaderboardRecord, new DatabaseListener() {
-            @Override
-            public void onCallback(Object obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        T_Threadings.waitTasks(1);
-
-        leaderboardRecord.setScore(1200);
-
-        room.setId("3");
-        databases.saveLeaderBoardRecord(room, leaderboardRecord, new DatabaseListener() {
-            @Override
-            public void onCallback(Object obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        T_Threadings.waitTasks(1);
-
-
-        leaderboardRecord.setScore(100);
-
-        room.setId("4");
-        databases.saveLeaderBoardRecord(room, leaderboardRecord, new DatabaseListener() {
-            @Override
-            public void onCallback(Object obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        T_Threadings.waitTasks(1);
-
-        databases.getLeaderBoardAndStreak(game, 100, new DatabaseListener<ArrayList<LeaderboardRecord>>(LeaderboardRecord.class) {
-            @Override
-            public void onCallback(ArrayList<LeaderboardRecord> obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                Assert.assertEquals(1, obj.size());
-                Assert.assertEquals(true, obj.get(0).getUserIds().contains(user1.getUserId()));
-                Assert.assertEquals(true, obj.get(0).getUserIds().contains(user2.getUserId()));
-                Assert.assertEquals(true, obj.get(0).getUserNames().contains(user1.getGameName()));
-                Assert.assertEquals(true, obj.get(0).getUserNames().contains(user2.getGameName()));
-                Assert.assertEquals(100, obj.get(0).getScore(), 0);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        T_Threadings.waitTasks(1);
-
-
-        databases.getLeaderBoardAndStreak(game, 1, new DatabaseListener<ArrayList<LeaderboardRecord>>(LeaderboardRecord.class) {
-            @Override
-            public void onCallback(ArrayList<LeaderboardRecord> obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                Assert.assertEquals(1, obj.size());
-                Assert.assertEquals(100, obj.get(0).getScore(), 0);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        T_Threadings.waitTasks(1);
-
-        databases.getTeamHighestLeaderBoardRecordAndStreak(room.getGame(), ArrayUtils.stringsToArray(user1.getUserId()), new DatabaseListener<LeaderboardRecord>(LeaderboardRecord.class) {
-            @Override
-            public void onCallback(LeaderboardRecord obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                Assert.assertEquals(true, obj == null);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        T_Threadings.waitTasks(1);
-
-        databases.getUserHighestLeaderBoardRecordAndStreak(room.getGame(), user1.getUserId(), new DatabaseListener<LeaderboardRecord>(LeaderboardRecord.class) {
-            @Override
-            public void onCallback(LeaderboardRecord obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                Assert.assertEquals(2, obj.getUserIds().size());
-                Assert.assertEquals(100, obj.getScore(), 0);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        T_Threadings.waitTasks(1);
-
-
-    }
-
-
-    @Test
-    public void testStreaks(){
-        final Room room = MockModel.mockRoom(String.valueOf(System.currentTimeMillis() / 1000L));
-        Game game = MockModel.mockGame();
-        game.setLeaderbordTypeEnum(LeaderboardType.Accumulate);
-        room.setGame(game);
-
-        final Profile user1 = MockModel.mockProfile();
-        user1.setGameName("user1");
-        final Profile user2 = MockModel.mockProfile("user2");
-        user2.setGameName("user2");
-
-        databases.updateProfile(user1, new DatabaseListener() {
-            @Override
-            public void onCallback(Object obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        databases.updateProfile(user2, new DatabaseListener() {
-            @Override
-            public void onCallback(Object obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        databases.deleteLeaderBoard(game, new DatabaseListener() {
-            @Override
-            public void onCallback(Object obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        T_Threadings.waitTasks(3);
-
-        final LeaderboardRecord leaderboardRecord = new LeaderboardRecord();
-        leaderboardRecord.setScore(1000);
-        leaderboardRecord.addUserId(user1.getUserId());
-        leaderboardRecord.addUserId(user2.getUserId());
-        leaderboardRecord.resetStreak();
-
-        databases.saveLeaderBoardRecord(room, leaderboardRecord, new DatabaseListener() {
-            @Override
-            public void onCallback(Object obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        T_Threadings.waitTasks(1);
-
-        databases.isStreakRevived(leaderboardRecord.getUserIds(), room, new DatabaseListener<Boolean>() {
-            @Override
-            public void onCallback(Boolean obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                Assert.assertEquals(false, obj);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        T_Threadings.waitTasks(1);
-
-        databases.streakRevive(leaderboardRecord.getUserIds(), room, new DatabaseListener() {
-            @Override
-            public void onCallback(Object obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        T_Threadings.waitTasks(1);
-
-        databases.isStreakRevived(leaderboardRecord.getUserIds(), room, new DatabaseListener<Boolean>() {
-            @Override
-            public void onCallback(Boolean obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                Assert.assertEquals(true, obj);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        T_Threadings.waitTasks(1);
-
-        final Streak streak = leaderboardRecord.getStreak();
-        streak.setStreakCount(5);
-        streak.setLastLoseRoomId(room.getId());
-        streak.setLastLoseRoundNumber(room.getRoundCounter());
-        Assert.assertEquals(false, streak.hasValidStreak());
-
-        databases.saveLeaderBoardRecord(room, leaderboardRecord, new DatabaseListener() {
-            @Override
-            public void onCallback(Object obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        T_Threadings.waitTasks(1);
-
-        databases.getTeamHighestLeaderBoardRecordAndStreak(room.getGame(), leaderboardRecord.getUserIds(), new DatabaseListener<LeaderboardRecord>() {
-            @Override
-            public void onCallback(LeaderboardRecord result, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                Assert.assertEquals(true, result.getStreak().hasValidStreak());
-                Assert.assertEquals(streak.getStreakCount(), result.getStreak().getStreakCount());
-                Assert.assertEquals(room.getRoundCounter(), result.getStreak().getLastReviveRoundNumber());
-                Assert.assertEquals(room.getId(), result.getStreak().getLastReviveRoomId());
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        T_Threadings.waitTasks(1);
-
-        databases.getUserStreak(room.getGame(), user1.getUserId(), new DatabaseListener<Streak>(Streak.class) {
-            @Override
-            public void onCallback(Streak obj, Status st) {
-                Assert.assertEquals(Status.SUCCESS, st);
-                Assert.assertEquals(room.getId(), obj.getLastLoseRoomId());
-                T_Threadings.oneTaskFinish();
-            }
-        });
-
-        T_Threadings.waitTasks(1);
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

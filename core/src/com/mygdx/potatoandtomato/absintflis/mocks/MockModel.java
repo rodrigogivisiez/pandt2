@@ -74,7 +74,7 @@ public class MockModel {
     }
 
     public static ChatMessage mockChatMessage(){
-        ChatMessage c = new ChatMessage("test message", ChatMessage.FromType.USER, MockModel.mockProfile().getUserId());
+        ChatMessage c = new ChatMessage("test message", ChatMessage.FromType.USER, MockModel.mockProfile().getUserId(), "");
         return c;
     }
 

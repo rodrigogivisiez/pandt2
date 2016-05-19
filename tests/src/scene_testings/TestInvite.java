@@ -61,7 +61,7 @@ public class TestInvite extends TestAbstract {
         logic.dispose();
         Threadings.sleep(100);
         verify(services.getGcmSender(), times(1)).send(any(Profile.class), any(PushNotification.class));
-        verify(services.getChat(), times(1)).add(any(ChatMessage.class), anyBoolean());
+        verify(services.getChat(), times(1)).newMessage(any(ChatMessage.class));
         Threadings.sleep(1000);
         Assert.assertEquals(false, logic.isAlive());
     }

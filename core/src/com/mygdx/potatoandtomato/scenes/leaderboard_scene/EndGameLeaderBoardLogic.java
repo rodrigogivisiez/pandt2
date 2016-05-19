@@ -44,7 +44,8 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
     private ArrayList<LeaderboardRecord> _records;
     private Pair<Integer, LeaderboardRecord> _myRankRecordPair;
     private LeaderboardRecord _myLeaderboardRecord;
-    private boolean _leaderboardReady, _streakResetted;
+    private boolean _leaderboardReady, _scoreUpdated;
+    private SafeThread safeThread;
     private OneTimeRunnable _addScoreOnePartDoneRunnable;
 
     public EndGameLeaderBoardLogic(PTScreen screen, Services services, Object... objs) {
@@ -64,19 +65,23 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
         super.onShow();
 
         Threadings.setContinuousRenderLock(true);
+        _scene.setLoadingToUpdatingScores();
 
         Threadings.runInBackground(new Runnable() {
             @Override
             public void run() {
+                safeThread = new SafeThread();
                 while (!_leaderboardReady) {
-                    Threadings.sleep(1000);
+                    Threadings.sleep(200);
+                    if(safeThread.isKilled()) return;
                 }
 
-                if(_streakResetted){
-                    _myLeaderboardRecord.resetStreak();
+                if((_endGameData.getEndGameResult() == null) ||
+                        (_endGameData.getEndGameResult().getWinnersScoreDetails().size() == 0
+                        && _endGameData.getEndGameResult().getLoserTeams().size() == 0)){
+                    noHandling();
                 }
-
-                if(_endGameData.getEndGameResult() != null){
+                else{
                     _scoreDetails = _endGameData.getEndGameResult().getMyTeamWinnerScoreDetails(_services.getProfile().getUserId());
                     processOtherTeamScoresAndStreaks();
 
@@ -85,9 +90,6 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                     } else {
                         loserHandling();
                     }
-                }
-                else{
-                    noHandling();
                 }
 
 
@@ -105,6 +107,12 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
         _scene.leaderboardDataLoaded(_game, _records);
         _scene.hideLoading(_game);
         _scene.setMascots(LeaderBoardScene.MascotType.BORING);
+        Threadings.delay(1000, new Runnable() {
+            @Override
+            public void run() {
+                _services.getSoundsPlayer().playThemeMusic();
+            }
+        });
     }
 
     public void loserHandling(){
@@ -142,30 +150,30 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                         if(_room.getGame().isStreakEnabled() && myLeaderboardRecord.getStreak().hasValidStreak()){
                                             _scene.loseStreakAnimate(_game, myCurrentRank);
 
-                                            if(myLeaderboardRecord.getStreak().canRevive()){
-                                                _scene.setMascots(LeaderBoardScene.MascotType.FAILED);
-                                                Threadings.delay(2000, new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        _services.getConfirm().show("Revive your streak?", Confirm.Type.YESNO, new ConfirmResultListener() {
-                                                            @Override
-                                                            public void onResult(Result result) {
-                                                                if(result == Result.YES){
-                                                                    _scene.reviveStreakAnimate(_game, myCurrentRank);
-                                                                    _scene.setMascots(LeaderBoardScene.MascotType.HAPPY);
-                                                                    _services.getDatabase().streakRevive(getMyTeamUserIds(), _room, null);
-                                                                }
-                                                                else{
-                                                                    _scene.setMascots(LeaderBoardScene.MascotType.CRY);
-                                                                }
-                                                            }
-                                                        });
-                                                    }
-                                                });
-                                            }
-                                            else{
+//                                            if(myLeaderboardRecord.getStreak().canRevive()){
+//                                                _scene.setMascots(LeaderBoardScene.MascotType.FAILED);
+//                                                Threadings.delay(2000, new Runnable() {
+//                                                    @Override
+//                                                    public void run() {
+//                                                        _services.getConfirm().show("Revive your streak?", Confirm.Type.YESNO, new ConfirmResultListener() {
+//                                                            @Override
+//                                                            public void onResult(Result result) {
+//                                                                if(result == Result.YES){
+//                                                                    _scene.reviveStreakAnimate(_game, myCurrentRank);
+//                                                                    _scene.setMascots(LeaderBoardScene.MascotType.HAPPY);
+//                                                                    _services.getDatabase().streakRevive(getMyTeamUserIds(), _room, null);
+//                                                                }
+//                                                                else{
+//                                                                    _scene.setMascots(LeaderBoardScene.MascotType.CRY);
+//                                                                }
+//                                                            }
+//                                                        });
+//                                                    }
+//                                                });
+//                                            }
+//                                            else{
                                                 _scene.setMascots(LeaderBoardScene.MascotType.CRY);
-                                            }
+                                            //}
                                         }
                                     }
                                 });
@@ -238,7 +246,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                                                                 public void run() {
                                                                                     if (getStreakToAdd() > 0) {
                                                                                         _services.getSoundsPlayer().playSoundEffect(Sounds.Name.STREAK);
-                                                                                        _myLeaderboardRecord.getStreak().addStreakCount(getStreakToAdd());
+                                                                                        _myLeaderboardRecord.getStreak().addStreak(getStreakToAdd());
                                                                                         _scene.invalidateNameStreakTable(_game, _myLeaderboardRecord,
                                                                                                 finalRank1, true);
                                                                                     }
@@ -407,7 +415,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
     private int getStreakToAdd(){
         int toAdd = 0;
         for(ScoreDetails details : _scoreDetails){
-            if(details.canAddStreak()) {
+            if(details.isCanAddStreak()) {
                 toAdd++;
             }
         }
@@ -529,7 +537,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                 if(!team.hasUser(_services.getProfile().getUserId())){
                     for(LeaderboardRecord record : _records){
                         if(record.usersMatched(team.getPlayersUserIds())){
-                            record.resetStreak();
+                            record.getStreak().resetStreak();
                         }
                     }
                 }
@@ -573,17 +581,30 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
         _myLeaderboardRecord = _myRankRecordPair.getSecond();
     }
 
+    public void checkScoreUpdated(){
+        _services.getDatabase().checkScoreUpdated(_room, new DatabaseListener<Boolean>() {
+            @Override
+            public void onCallback(Boolean obj, Status st) {
+                if(st == Status.SUCCESS){
+                    _scoreUpdated = obj;
+                }
+            }
+        });
+    }
+
     @Override
     public SceneAbstract getScene() {
         return _scene;
     }
 
-    public LeaderboardRecord getMyLeaderboardRecord() {
-        return _myLeaderboardRecord;
+    @Override
+    public void dispose() {
+        super.dispose();
+        if(safeThread != null) safeThread.kill();
     }
 
-    public void setStreakResetted(boolean _streakResetted) {
-        this._streakResetted = _streakResetted;
+    public LeaderboardRecord getMyLeaderboardRecord() {
+        return _myLeaderboardRecord;
     }
 
     public void setLeaderboardRecords(ArrayList<LeaderboardRecord> _records) {

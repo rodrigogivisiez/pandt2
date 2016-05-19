@@ -59,6 +59,11 @@ public class MockGamingKit extends GamingKit {
     }
 
     @Override
+    public void lockProperty(String key, String value) {
+
+    }
+
+    @Override
     public void dispose() {
 
     }

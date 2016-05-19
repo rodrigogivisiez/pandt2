@@ -8,7 +8,7 @@ import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.socials.FacebookListener;
 import com.mygdx.potatoandtomato.services.Socials;
-import com.mygdx.potatoandtomato.utils.Terms;
+import com.mygdx.potatoandtomato.statics.Terms;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.scenes.settings_scene.SettingsLogic;
@@ -85,7 +85,6 @@ public class TestSettings extends TestAbstract {
     @Test
     public void testLogonFacebookLogoutRequest(){
         Services services = T_Services.mockServices();
-        services.getPreferences().put(Terms.FACEBOOK_USERNAME, "testing");
         services.getPreferences().put(Terms.FACEBOOK_USERID, "123");
         PTScreen ptScreen = Mockito.mock(PTScreen.class);
         Socials socials = Mockito.spy(new Socials(services.getPreferences(), services.getBroadcaster()));
@@ -103,7 +102,6 @@ public class TestSettings extends TestAbstract {
 
         verify(ptScreen, times(1)).backToBoot();
         Assert.assertEquals(null, services.getPreferences().get(Terms.FACEBOOK_USERID));
-        Assert.assertEquals(null, services.getPreferences().get(Terms.FACEBOOK_USERNAME));
     }
 
     @Test

@@ -1,7 +1,7 @@
 package com.mygdx.potatoandtomato.services;
 
 import com.badlogic.gdx.Gdx;
-import com.mygdx.potatoandtomato.utils.Terms;
+import com.mygdx.potatoandtomato.statics.Terms;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.absints.GamePreferencesAbstract;
 

@@ -1,23 +1,28 @@
 package com.potatoandtomato.common.models;
 
+import com.potatoandtomato.common.utils.SafeDouble;
+
 /**
  * Created by SiongLeng on 14/3/2016.
  */
 public class ScoreDetails {
 
-    double value;
+    SafeDouble value;
     String reason;
     boolean addOrMultiply;
     boolean canAddStreak;
 
+    public ScoreDetails() {
+    }
+
     public ScoreDetails(double value, String reason, boolean addOrMultiply, boolean canAddStreak) {
-        this.value = value;
+        this.value = new SafeDouble(value);
         this.reason = reason;
         this.addOrMultiply = addOrMultiply;
         this.canAddStreak = canAddStreak;
     }
 
-    public boolean canAddStreak() {
+    public boolean isCanAddStreak() {
         return canAddStreak;
     }
 
@@ -26,11 +31,19 @@ public class ScoreDetails {
     }
 
     public double getValue() {
-        return value;
+        if(this.value == null){
+            this.value = new SafeDouble(0.0);
+        }
+        return value.getValue();
     }
 
     public void setValue(double value) {
-        this.value = value;
+        if(this.value == null){
+            this.value = new SafeDouble(value);
+        }
+        else{
+            this.value.setValue(value);
+        }
     }
 
     public String getReason() {

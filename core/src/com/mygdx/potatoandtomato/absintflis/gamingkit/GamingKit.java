@@ -110,6 +110,8 @@ public abstract class GamingKit {
 
     public abstract void updateRoomMates(byte identifier, byte[] bytes);
 
+    public abstract void lockProperty(String key, String value);
+
     public abstract void dispose();
 
 }

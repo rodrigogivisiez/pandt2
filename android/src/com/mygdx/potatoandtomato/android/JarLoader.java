@@ -3,7 +3,7 @@ package com.mygdx.potatoandtomato.android;
 import android.content.Context;
 import com.mygdx.potatoandtomato.absintflis.entrance.EntranceLoaderListener;
 import com.mygdx.potatoandtomato.utils.JarUtils;
-import com.mygdx.potatoandtomato.utils.Terms;
+import com.mygdx.potatoandtomato.statics.Terms;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.utils.Files;
 import dalvik.system.DexClassLoader;

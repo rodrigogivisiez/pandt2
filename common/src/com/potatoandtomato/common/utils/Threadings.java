@@ -130,7 +130,12 @@ public class Threadings {
     }
 
     public static void oneTaskFinish(){
-        waitingTaskCount++;
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                waitingTaskCount++;
+            }
+        });
     }
 
 

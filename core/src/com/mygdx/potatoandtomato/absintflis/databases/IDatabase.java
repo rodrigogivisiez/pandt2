@@ -15,9 +15,7 @@ public interface IDatabase {
 
      void saveLog(String msg);
 
-     void getTestTableCount(DatabaseListener<Integer> listener);
-
-     void loginAnonymous(DatabaseListener<Profile> listener);
+     void authenticateUserByToken(String token, DatabaseListener<Profile> listener);
 
      void getProfileByGameNameLower(String gameName, DatabaseListener<Profile> listener);
 
@@ -33,8 +31,6 @@ public interface IDatabase {
 
      void updateProfile(Profile profile, DatabaseListener listener);
 
-     void createUserByUserId(String userId, DatabaseListener<Profile> listener);
-
      void getAllGames(DatabaseListener<ArrayList<Game>> listener);
 
      void updateRoomPlayingState(Room room, boolean isPlaying, @Nullable DatabaseListener<String> listener);
@@ -42,8 +38,6 @@ public interface IDatabase {
      void saveRoom(Room room, boolean notify, @Nullable DatabaseListener<String> listener);    //except slot index
 
      void addUserToRoom(Room room, Profile user, DatabaseListener<String> listener);
-
-     void changeSlotIndex(Room room, Profile user, Integer newIndex, DatabaseListener<String> listener);
 
      void monitorRoomById(String id, String classTag, DatabaseListener<Room> listener);
 
@@ -75,22 +69,17 @@ public interface IDatabase {
 
      Object getGameBelongDatabase(String abbr);
 
-     void getUserStreak(Game game, String userId, DatabaseListener<Streak> listener);
+     void getTeamStreak(Game game, ArrayList<String> userIds, DatabaseListener<Streak> listener);
 
      void getLeaderBoardAndStreak(Game game, int expectedCount, DatabaseListener<ArrayList<LeaderboardRecord>> listener);
-
-     void saveLeaderBoardRecord(Room room, LeaderboardRecord record, DatabaseListener listener);
 
      void getTeamHighestLeaderBoardRecordAndStreak(Game game, ArrayList<String> teamUserIds, DatabaseListener<LeaderboardRecord> listener);
 
      void getUserHighestLeaderBoardRecordAndStreak(Game game, String userId, DatabaseListener<LeaderboardRecord> listener);
 
-     void getLeaderBoardRecordById(Game game, String leaderboardId, DatabaseListener<LeaderboardRecord> listener);
+     void getLeaderBoardRecordAndStreakById(Game game, String leaderboardId, DatabaseListener<LeaderboardRecord> listener);
 
      void deleteLeaderBoard(Game game, DatabaseListener listener);
 
-     void streakRevive(ArrayList<String> userIds, Room room, DatabaseListener listener);
-
-     void isStreakRevived(ArrayList<String> userIds, Room room, DatabaseListener<Boolean> listener);
-
+     void checkScoreUpdated(Room room, DatabaseListener<Boolean> listener);
 }

@@ -1,6 +1,7 @@
 package com.potatoandtomato.games.models;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.potatoandtomato.common.utils.SafeDouble;
 import com.potatoandtomato.games.absintf.GameModelListener;
 import com.potatoandtomato.games.enums.GameState;
 import com.potatoandtomato.games.enums.StageType;
@@ -20,7 +21,7 @@ public class GameModel {
 
     private int stageNumber;
     private HashMap<String, Integer> userRecords;
-    private int score;
+    private SafeDouble score;
     private GameState gameState;
     private ArrayList<SimpleRectangle> handledAreas;
     private int remainingMiliSecs;
@@ -31,9 +32,9 @@ public class GameModel {
     private StageType stageType;
     private ArrayList<GameModelListener> listeners;
 
-    public GameModel(int stageNumber, int score) {
+    public GameModel(int stageNumber, double score) {
         this.stageNumber = stageNumber;
-        this.score = score;
+        this.score = new SafeDouble(score);
         this.userRecords = new HashMap();
         this.handledAreas = new ArrayList();
         this.hintsLeft = 3;
@@ -186,12 +187,21 @@ public class GameModel {
         }
     }
 
-    public int getScore() {
-        return score;
+    public Double getScore() {
+        if(this.score == null){
+            this.score = new SafeDouble(0.0);
+        }
+        return score.getValue();
     }
 
-    public void setScore(int score) {
-        this.score = score;
+    public void setScore(Double score) {
+        if(this.score == null){
+            this.score = new SafeDouble(score);
+        }
+        else{
+            this.score.setValue(score);
+        }
+
     }
 
     public int getStageNumber() {

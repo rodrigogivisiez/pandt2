@@ -16,6 +16,7 @@ public class Profile {
     String gcmId;
     UserPlayingState userPlayingState;
     String gameNameLower;
+    String token;
 
     public Profile() {
     }
@@ -93,6 +94,16 @@ public class Profile {
 
     public void setGcmId(String gcmId) {
         this.gcmId = gcmId;
+    }
+
+    @JsonIgnore
+    public String getToken() {
+        return token;
+    }
+
+    @JsonIgnore
+    public void setToken(String token) {
+        this.token = token;
     }
 
     @Override

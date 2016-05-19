@@ -1,9 +1,6 @@
 package com.ptuploader.process;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+import com.firebase.client.*;
 import com.ptuploader.process.Details;
 import com.ptuploader.utils.Logs;
 
@@ -15,11 +12,26 @@ public class FireDB {
     private Firebase _ref;
     private final String URL = "https://glaring-inferno-8572.firebaseIO.com";
     private final String TEST_URL = "https://ptapptest.firebaseio.com/";
+    private final String SECRET = "UogxKt0DL9RgHnadZ3nmcrPwJQBT3b699vjMOpPO";
+    private final String TEST_SECRET = "xU62Y6naxtpRUZZad429zIPu7f3rSVcVrjG4MOMp";
     private Logs _logs;
 
     public FireDB(boolean isTesting, Logs logs) {
         _logs = logs;
         _ref = new Firebase(isTesting ? TEST_URL : URL).child("games");
+
+        _ref.authWithCustomToken(isTesting ? TEST_SECRET : SECRET, new Firebase.AuthResultHandler() {
+            @Override
+            public void onAuthenticated(AuthData authData) {
+                _logs.write("Successfully login to firebase.");
+            }
+
+            @Override
+            public void onAuthenticationError(FirebaseError firebaseError) {
+                _logs.write("Failed to login to firebase.");
+            }
+        });
+
     }
 
     public void save(Details details, final Runnable onFinish) {

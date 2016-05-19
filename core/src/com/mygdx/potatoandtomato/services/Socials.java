@@ -2,7 +2,7 @@ package com.mygdx.potatoandtomato.services;
 
 import com.mygdx.potatoandtomato.absintflis.socials.FacebookListener;
 import com.potatoandtomato.common.utils.JsonObj;
-import com.mygdx.potatoandtomato.utils.Terms;
+import com.mygdx.potatoandtomato.statics.Terms;
 import com.mygdx.potatoandtomato.models.FacebookProfile;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
@@ -16,10 +16,12 @@ public class Socials {
 
     Preferences _pref;
     Broadcaster _broadcaster;
+    String fbUserId, fbUsername, fbToken;
 
     public Socials(Preferences _pref, Broadcaster _broadcaster) {
         this._broadcaster = _broadcaster;
         this._pref = _pref;
+        fbUserId = _pref.get(Terms.FACEBOOK_USERID);
     }
 
     public void loginFacebook(final FacebookListener listener){
@@ -29,11 +31,11 @@ public class Socials {
                 //login success
                 if (st == Status.SUCCESS) {
                     if (obj != null) {
-                        String fbUserId = obj.getString(Terms.FACEBOOK_USERID);
-                        String fbUsername = obj.getString(Terms.FACEBOOK_USERNAME);
+                        fbUserId = obj.getString(Terms.FACEBOOK_USERID);
+                        fbUsername = obj.getString(Terms.FACEBOOK_USERNAME);
+                        fbToken = obj.getString(Terms.FACEBOOK_TOKEN);
+                        _pref.put(Terms.FACEBOOK_USERID, fbUserId);
                         if (fbUserId != null) {
-                            _pref.put(Terms.FACEBOOK_USERID, fbUserId);
-                            _pref.put(Terms.FACEBOOK_USERNAME, fbUsername);
                             listener.onLoginComplete(FacebookListener.Result.SUCCESS);
                             return;
                         }
@@ -41,6 +43,8 @@ public class Socials {
                 }
 
                 //user canceled facebook login / login failed
+                _pref.delete(Terms.FACEBOOK_USERID);
+                fbUserId = null;
                 listener.onLoginComplete(FacebookListener.Result.FAILED);
             }
         });
@@ -53,8 +57,9 @@ public class Socials {
             public void onCallback(JsonObj obj, Status st) {
                 //logout success success
                 if (st == Status.SUCCESS) {
+                    fbUserId = null;
+                    fbUsername = null;
                     _pref.delete(Terms.FACEBOOK_USERID);
-                    _pref.delete(Terms.FACEBOOK_USERNAME);
                     listener.onLogoutComplete(FacebookListener.Result.SUCCESS);
                     return;
                 }
@@ -66,13 +71,13 @@ public class Socials {
     }
 
     public boolean isFacebookLogon(){
-        return (_pref.get(Terms.FACEBOOK_USERID) != null);
+        return (fbUserId != null && !fbUserId.equals(""));
     }
 
     public FacebookProfile getFacebookProfile(){
         if(!isFacebookLogon()) return null;
         else{
-            return new FacebookProfile(_pref.get(Terms.FACEBOOK_USERNAME), _pref.get(Terms.FACEBOOK_USERID));
+            return new FacebookProfile(fbUsername, fbUserId, fbToken);
         }
     }
 

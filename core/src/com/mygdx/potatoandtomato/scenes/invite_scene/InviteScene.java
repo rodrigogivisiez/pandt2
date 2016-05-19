@@ -12,16 +12,15 @@ import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.assets.Patches;
 import com.mygdx.potatoandtomato.assets.Textures;
-import com.mygdx.potatoandtomato.enums.BadgeType;
 import com.mygdx.potatoandtomato.controls.Badge;
 import com.mygdx.potatoandtomato.controls.BtnEggDownward;
 import com.mygdx.potatoandtomato.controls.DummyButton;
 import com.mygdx.potatoandtomato.controls.TopBar;
-import com.potatoandtomato.common.utils.MultiHashMap;
+import com.mygdx.potatoandtomato.enums.BadgeType;
 import com.mygdx.potatoandtomato.models.GameHistory;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
-import com.potatoandtomato.common.models.Streak;
+import com.potatoandtomato.common.utils.MultiHashMap;
 import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
 
@@ -248,7 +247,7 @@ public class InviteScene extends SceneAbstract {
                     case Leaderboard:
                         Integer rankNumber = (Integer) objs[0];
                         double score = (Double) objs[1];
-                        Streak streak = (Streak) objs[2];
+                        int streak = (Integer) objs[2];
 
                         Badge rankBadge = new Badge(BadgeType.Rank, String.valueOf(rankNumber), _assets, 2);
 
@@ -260,8 +259,8 @@ public class InviteScene extends SceneAbstract {
                         nameScoreTable.add(scoreLabel).expandX().fillX();
 
                         detailsTable.add(rankBadge).padRight(5);
-                        if(streak.hasValidStreak()){
-                            Badge streakBadge = new Badge(BadgeType.Streak, String.valueOf(streak.getStreakCount()), _assets, 2);
+                        if(streak >= 3){
+                            Badge streakBadge = new Badge(BadgeType.Streak, String.valueOf(streak), _assets, 2);
                             detailsTable.add(streakBadge).size(28, 30).padRight(5);
                         }
                         detailsTable.add(nameScoreTable).expandX().fillX();

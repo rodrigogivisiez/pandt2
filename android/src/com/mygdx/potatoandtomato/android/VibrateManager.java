@@ -36,6 +36,10 @@ public class VibrateManager {
         long period = (long) (periodInMili);
         Vibrator v = (Vibrator) _context.getSystemService(Context.VIBRATOR_SERVICE);
         v.vibrate(period);
+
+
+
+
     }
 
 

@@ -25,7 +25,6 @@ public class SingleGameLeaderBoardLogic extends LogicAbstract {
 
     public SingleGameLeaderBoardLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
-        _services.getChat().hide();
         _game = (Game) objs[0];
         _scene = new LeaderBoardScene(services, screen);
         _scene.showGameLeaderboard(_game);
@@ -82,7 +81,6 @@ public class SingleGameLeaderBoardLogic extends LogicAbstract {
     @Override
     public void onHide() {
         super.onHide();
-        _services.getChat().show();
         Threadings.setContinuousRenderLock(false);
     }
 

@@ -8,21 +8,21 @@ import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.ConnectionChangedListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.absintflis.services.RestfulApiListener;
 import com.mygdx.potatoandtomato.absintflis.socials.FacebookListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.services.Confirm;
-import com.mygdx.potatoandtomato.utils.Logs;
 import com.mygdx.potatoandtomato.models.FacebookProfile;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
-import com.mygdx.potatoandtomato.utils.Terms;
+import com.mygdx.potatoandtomato.models.UserIdSecretModel;
+import com.mygdx.potatoandtomato.services.Confirm;
+import com.mygdx.potatoandtomato.statics.Terms;
+import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.Strings;
-
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 
 /**
  * Created by SiongLeng on 2/12/2015.
@@ -98,10 +98,11 @@ public class BootLogic extends LogicAbstract {
         });
 
         super.onShow();
+
+
     }
 
     public void showLoginBox(){
-        Logs.add();
         _bootScene.showSocialLogin();
         attachClickListenerToSocial();
         if(_services.getSocials().isFacebookLogon()){    //user already logged in facebook before, log in again now
@@ -115,7 +116,7 @@ public class BootLogic extends LogicAbstract {
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 if(!_fbStepPast) loginFacebook();
-                else loginPT();
+                else afterFacebookPhase();
             }
         });
 
@@ -123,7 +124,7 @@ public class BootLogic extends LogicAbstract {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                if(!_fbStepPast) loginPT();
+                if(!_fbStepPast) afterFacebookPhase();
                 else Gdx.app.exit();
             }
         });
@@ -137,7 +138,7 @@ public class BootLogic extends LogicAbstract {
             @Override
             public void onLoginComplete(Result result) {
                 if(result == Result.SUCCESS){
-                    loginPT();
+                    afterFacebookPhase();
                 }
                 else{
                     _bootScene.showSocialLoginFailed();
@@ -146,32 +147,36 @@ public class BootLogic extends LogicAbstract {
         });
     }
 
-    public void loginPT(){
+    public void afterFacebookPhase(){
         _fbStepPast = true;
+        _bootScene.showPTLoggingIn();
         String userId = _services.getPreferences().get(Terms.USERID);
-        if(userId != null){
-            loginPTWithExistingUser(userId);
+
+        if(!Strings.isEmpty(userId)){
+            retrieveUserToken();
         }
         else{
             createNewUser();
         }
     }
 
-    public void loginPTWithExistingUser(String userId){
-         _bootScene.showPTLoggingIn();
-        _services.getDatabase().getProfileByUserId(userId, new DatabaseListener<Profile>(Profile.class) {
+    public void retrieveUserToken(){
+        final String userId = _services.getPreferences().get(Terms.USERID);
+        final String userSecret = _services.getPreferences().get(Terms.USER_SECRET);
+
+        _services.getRestfulApi().loginUser(userId, userSecret, new RestfulApiListener<String>() {
             @Override
-            public void onCallback(Profile obj, Status st) {
-                if(st == Status.FAILED) retrieveUserFailed();
+            public void onCallback(String token, Status st) {
+                if(st == Status.FAILED && token.equals("USER_NOT_FOUND")){
+                    _services.getPreferences().delete(Terms.USERID);
+                    _services.getPreferences().delete(Terms.USER_SECRET);
+                    createNewUser();
+                }
+                else if(st == Status.FAILED){
+                    retrieveUserFailed();
+                }
                 else{
-                    if(obj == null){        //user doesnt exist in database, create a new one
-                        _services.getPreferences().delete(Terms.USERID);
-                        createNewUser();
-                    }
-                    else{
-                        _services.setProfile(obj);
-                        loginGCM();
-                    }
+                    loginPTWithToken(token);
                 }
             }
         });
@@ -179,24 +184,44 @@ public class BootLogic extends LogicAbstract {
 
     public void createNewUser(){
         _bootScene.showPTCreatingUser();
-        _services.getDatabase().loginAnonymous(new DatabaseListener<Profile>() {
-            @Override
-            public void onCallback(Profile obj, Status st) {
-                if(st == Status.FAILED || obj == null) retrieveUserFailed();
-                else{
-                    createUserByUserId(obj.getUserId());
+        if(_services.getSocials().isFacebookLogon()){
+            _services.getRestfulApi().createNewUserWithFacebookProfile(_services.getSocials().getFacebookProfile(), new RestfulApiListener<UserIdSecretModel>() {
+                @Override
+                public void onCallback(UserIdSecretModel obj, Status st) {
+                    if(st == Status.FAILED){
+                        retrieveUserFailed();
+                    }
+                    else{
+                        _services.getPreferences().put(Terms.USERID, obj.getUserId());
+                        _services.getPreferences().put(Terms.USER_SECRET, obj.getSecret());
+                        afterFacebookPhase();
+                    }
                 }
-            }
-        });
+            });
+        }
+        else{
+            _services.getRestfulApi().createNewUser(new RestfulApiListener<UserIdSecretModel>() {
+                @Override
+                public void onCallback(UserIdSecretModel obj, Status st) {
+                    if (st == Status.FAILED) {
+                        retrieveUserFailed();
+                    } else {
+                        _services.getPreferences().put(Terms.USERID, obj.getUserId());
+                        _services.getPreferences().put(Terms.USER_SECRET, obj.getSecret());
+                        retrieveUserToken();
+                    }
+                }
+            });
+        }
     }
 
-    public void createUserByUserId(String userId){
-        _services.getDatabase().createUserByUserId(userId, new DatabaseListener<Profile>() {
+    public void loginPTWithToken(final String token){
+        _services.getDatabase().authenticateUserByToken(token, new DatabaseListener<Profile>(Profile.class) {
             @Override
             public void onCallback(Profile obj, Status st) {
-                if(st == Status.FAILED || obj == null) retrieveUserFailed();
-                else{
-                    _services.getPreferences().put(Terms.USERID, obj.getUserId());
+                if (st == Status.FAILED || obj == null) retrieveUserFailed();
+                else {
+                    obj.setToken(token);
                     _services.setProfile(obj);
                     loginGCM();
                 }
@@ -225,19 +250,9 @@ public class BootLogic extends LogicAbstract {
 
 
     public void loginPTSuccess(){
-        FacebookProfile facebookProfile = _services.getSocials().getFacebookProfile();
-        if(facebookProfile != null){
-            _services.getProfile().setFacebookUserId(facebookProfile.getUserId());
-            _services.getProfile().setFacebookName(facebookProfile.getName());
-        }
-        else{
-            _services.getProfile().setFacebookUserId(null);
-            _services.getProfile().setFacebookName(null);
-        }
         _services.getDatabase().updateProfile(_services.getProfile(), null);
         _services.getGamingKit().connect(_services.getProfile());
         _services.getDatabase().onDcSetGameStateDisconnected(_services.getProfile(), null);
-        _services.getChat().setUserId(_services.getProfile().getUserId());
     }
 
     private void checkCrashedBefore(){

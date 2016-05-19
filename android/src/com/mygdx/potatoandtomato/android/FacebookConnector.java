@@ -5,7 +5,7 @@ import com.facebook.*;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.potatoandtomato.common.utils.JsonObj;
-import com.mygdx.potatoandtomato.utils.Terms;
+import com.mygdx.potatoandtomato.statics.Terms;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.FacebookProfile;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
@@ -75,7 +75,7 @@ public class FacebookConnector {
                                     JSONObject c= null;
                                     try {
                                         c = jsonArray.getJSONObject(i);
-                                        FacebookProfile profile = new FacebookProfile(c.getString("name"), c.getString("id"));
+                                        FacebookProfile profile = new FacebookProfile(c.getString("name"), c.getString("id"), "");
                                         friendsList.add(profile);
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -114,22 +114,25 @@ public class FacebookConnector {
                                 @Override
                                 protected void onCurrentProfileChanged(Profile profile, Profile profile2) {
                                     mProfileTracker.stopTracking();
-                                    successRetrieved(loginResult.getAccessToken().getUserId(), profile2.getName());
+                                    successRetrieved(loginResult.getAccessToken().getToken(),
+                                                            loginResult.getAccessToken().getUserId(), profile2.getName());
                                 }
                             };
                             mProfileTracker.startTracking();
                         }
                         else {
                             Profile profile = Profile.getCurrentProfile();
-                            successRetrieved(loginResult.getAccessToken().getUserId(), profile.getName());
+                            successRetrieved(loginResult.getAccessToken().getToken(),
+                                    loginResult.getAccessToken().getUserId(), profile.getName());
                         }
 
 
 
                     }
 
-                    private void successRetrieved(String fbUserId, String fbUsername){
+                    private void successRetrieved(String token, String fbUserId, String fbUsername){
                         JsonObj json = new JsonObj();
+                        json.put(Terms.FACEBOOK_TOKEN, token);
                         json.put(Terms.FACEBOOK_USERID, fbUserId);
                         json.put(Terms.FACEBOOK_USERNAME, fbUsername);
                         _broadcaster.broadcast(BroadcastEvent.LOGIN_FACEBOOK_CALLBACK,

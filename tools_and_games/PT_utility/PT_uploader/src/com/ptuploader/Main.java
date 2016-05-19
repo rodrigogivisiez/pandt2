@@ -12,6 +12,7 @@ public class Main {
         Logs logs = new Logs();
         boolean testing = askForIsTest(logs);
 
+        FireDB fireDB = new FireDB(testing, logs);
         Thread.sleep(2000);
 
         Paths paths = new Paths(logs);
@@ -51,7 +52,6 @@ public class Main {
 
         final boolean[] fireDBEnded = new boolean[1];
 
-        FireDB fireDB = new FireDB(testing, logs);
         fireDB.save(details, new Runnable() {
             @Override
             public void run() {

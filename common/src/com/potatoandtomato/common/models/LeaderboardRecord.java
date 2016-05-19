@@ -99,19 +99,7 @@ public class LeaderboardRecord {
         this.score += value;
     }
 
-    public Streak getStreak() {
-        if(streak == null) streak = new Streak();
-        return streak;
-    }
-
-    public void setStreak(Streak streak) {
-        this.streak = streak;
-    }
-
-    public void resetStreak(){
-        this.setStreak(new Streak());
-    }
-
+    @JsonIgnore
     public void addScoresToRecord(ArrayList<ScoreDetails> scoreDetails){
         for(ScoreDetails detail : scoreDetails){
             if(detail.isAddOrMultiply()){
@@ -120,10 +108,22 @@ public class LeaderboardRecord {
         }
     }
 
+    @JsonIgnore
+    public Streak getStreak() {
+        if(streak == null) streak = new Streak(0, 0);
+        return streak;
+    }
+
+    @JsonIgnore
+    public void setStreak(Streak streak) {
+        this.streak = streak;
+    }
+
+    @JsonIgnore
     public void addStreakToRecord(ArrayList<ScoreDetails> scoreDetails){
         for(ScoreDetails detail : scoreDetails){
-            if(detail.canAddStreak()){
-                this.getStreak().addStreakCount();
+            if(detail.isCanAddStreak()){
+                this.getStreak().addStreak(1);
             }
         }
     }

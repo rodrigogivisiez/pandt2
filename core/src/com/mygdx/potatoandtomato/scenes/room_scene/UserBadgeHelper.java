@@ -7,11 +7,12 @@ import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.RoomUser;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.statics.Global;
-import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.enums.Status;
-import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.common.models.LeaderboardRecord;
 import com.potatoandtomato.common.models.Streak;
+import com.potatoandtomato.common.utils.ArrayUtils;
+import com.potatoandtomato.common.utils.SafeThread;
+import com.potatoandtomato.common.utils.Threadings;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,7 +29,7 @@ public class UserBadgeHelper implements Disposable {
     private Game _game;
     private ArrayList<RoomUser> _roomUsers;
     private HashMap<String, SafeThread> _runningThreads;
-    private HashMap<String, Streak> _streaksMap;
+    private HashMap<String, Integer> _streaksMap;
     private HashMap<String, Integer> _rankMap;
     private HashMap<String, BadgeType> _currentBadge;
     private ArrayList<LeaderboardRecord> _records;
@@ -39,7 +40,7 @@ public class UserBadgeHelper implements Disposable {
         this._roomScene = _roomScene;
         this._game = _game;
         this._runningThreads= new HashMap<String, SafeThread>();
-        this._streaksMap = new HashMap<String, Streak>();
+        this._streaksMap = new HashMap<String, Integer>();
         this._rankMap = new HashMap<String, Integer>();
         this._roomUsers = new ArrayList<RoomUser>();
         this._currentBadge = new HashMap<String, BadgeType>();
@@ -132,7 +133,7 @@ public class UserBadgeHelper implements Disposable {
 
                             if(!showingRank && _records != null){
                                 if(_streaksMap.containsKey(userId)){
-                                    reRun = !setBadge(userId, BadgeType.Streak, _streaksMap.get(userId).getStreakCount());
+                                    reRun = !setBadge(userId, BadgeType.Streak, _streaksMap.get(userId));
                                 }
                             }
                             else{
@@ -187,12 +188,12 @@ public class UserBadgeHelper implements Disposable {
     public void fillStreaksMap(){
         for(final RoomUser roomUser : _roomUsers){
             if(!_streaksMap.containsKey(roomUser.getProfile().getUserId())){
-                _services.getDatabase().getUserStreak(_game, roomUser.getProfile().getUserId(), new DatabaseListener<Streak>(Streak.class) {
+                _services.getDatabase().getTeamStreak(_game, ArrayUtils.stringsToArray(roomUser.getProfile().getUserId()), new DatabaseListener<Streak>(Streak.class) {
                     @Override
-                    public void onCallback(Streak obj, Status st) {
-                        if(st == Status.SUCCESS && obj != null){
-                            if(obj.hasValidStreak()){
-                                _streaksMap.put(roomUser.getProfile().getUserId(), obj);
+                    public void onCallback(Streak streak, Status st) {
+                        if (st == Status.SUCCESS && streak != null) {
+                            if (streak.hasValidStreak()) {
+                                _streaksMap.put(roomUser.getProfile().getUserId(), streak.getStreakCount());
                             }
                         }
                     }

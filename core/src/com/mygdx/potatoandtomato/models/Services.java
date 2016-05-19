@@ -2,6 +2,7 @@ package com.mygdx.potatoandtomato.models;
 
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
+import com.mygdx.potatoandtomato.absintflis.services.IRestfulApi;
 import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
 import com.mygdx.potatoandtomato.services.*;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
@@ -33,12 +34,13 @@ public class Services {
     VersionControl _versionControl;
     Broadcaster _broadcaster;
     ITutorials _tutorials;
+    IRestfulApi _restfulApi;
 
     public Services(Assets assets, Texts texts, Preferences preferences,
                     Profile profile, IDatabase database, Shaders shaders, GamingKit gamingKit, IDownloader downloader,
                     Chat chat, Socials socials, GCMSender gcmSender, Confirm confirm, Notification notification,
                     Recorder recorder, IUploader uploader, SoundsPlayer soundsPlayer, VersionControl versionControl,
-                    Broadcaster broadcaster, ITutorials tutorials) {
+                    Broadcaster broadcaster, ITutorials tutorials, IRestfulApi restfulApi) {
         _texts = texts;
         _assets = assets;
         _preferences = preferences;
@@ -58,6 +60,15 @@ public class Services {
         _versionControl = versionControl;
         _broadcaster = broadcaster;
         _tutorials = tutorials;
+        _restfulApi = restfulApi;
+    }
+
+    public IRestfulApi getRestfulApi() {
+        return _restfulApi;
+    }
+
+    public void setRestfulApi(IRestfulApi _restfulApi) {
+        this._restfulApi = _restfulApi;
     }
 
     public ITutorials getTutorials() {

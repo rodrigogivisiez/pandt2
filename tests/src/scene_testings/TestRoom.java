@@ -21,6 +21,7 @@ import com.mygdx.potatoandtomato.scenes.room_scene.RoomLogic;
 import com.mygdx.potatoandtomato.scenes.room_scene.RoomScene;
 import com.potatoandtomato.common.enums.Status;
 import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
+import helpers.Mockings;
 import helpers.T_Services;
 import org.junit.Assert;
 import org.junit.Before;
@@ -60,7 +61,7 @@ public class TestRoom extends TestAbstract {
     @Test
     public void testRoomLogicScene(){
         setPreferenceHasGame();
-        RoomLogic logic = new RoomLogic(mock(PTScreen.class), _services, _room, false);
+        RoomLogic logic = new RoomLogic(Mockings.mockPTScreen(), _services, _room, false);
         logic.onShow();
         RoomScene scene = (RoomScene) logic.getScene();
         Assert.assertEquals(true, ((Table) scene.getRoot()).hasChildren());
@@ -68,7 +69,7 @@ public class TestRoom extends TestAbstract {
 
     @Test
     public void testDownloadGame(){
-        RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room, false));
+        RoomLogic logic = Mockito.spy(new RoomLogic(Mockings.mockPTScreen(), _services, _room, false));
         _services.setDownloader(new IDownloader() {
             @Override
             public SafeThread downloadFileToPath(String urlString, File targetFile, DownloaderListener listener) {
@@ -97,7 +98,7 @@ public class TestRoom extends TestAbstract {
 
     @Test
     public void testStartGameCheck(){
-        RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room, false));
+        RoomLogic logic = Mockito.spy(new RoomLogic(Mockings.mockPTScreen(), _services, _room, false));
         logic.onInit();
 
         Assert.assertEquals(1, logic.startGameCheck(true));
@@ -130,7 +131,7 @@ public class TestRoom extends TestAbstract {
             }
         });
 
-        RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room, false));
+        RoomLogic logic = Mockito.spy(new RoomLogic(Mockings.mockPTScreen(), _services, _room, false));
         logic.onInit();
         verify(logic, times(1)).checkHostInRoom();
         Assert.assertEquals(false, logic.checkHostInRoom());
@@ -167,7 +168,7 @@ public class TestRoom extends TestAbstract {
         Assert.assertEquals(2, _room.getTeams().size());
         Assert.assertEquals(1, _room.getTeams().get(0).getPlayers().size());
         Assert.assertEquals(1, _room.getTeams().get(1).getPlayers().size());
-        RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room, false));
+        RoomLogic logic = Mockito.spy(new RoomLogic(Mockings.mockPTScreen(), _services, _room, false));
         logic.onInit();
         logic.hostSendStartGame();
 
@@ -200,7 +201,7 @@ public class TestRoom extends TestAbstract {
         });
 
         _services.setDatabase(database);
-        RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room, false));
+        RoomLogic logic = Mockito.spy(new RoomLogic(Mockings.mockPTScreen(), _services, _room, false));
         logic.onInit();
 
         Assert.assertEquals(0, _room.getRoundCounter());
@@ -232,7 +233,7 @@ public class TestRoom extends TestAbstract {
     public void testPushNotificationSent(){
         GCMSender gcmSender = mock(GCMSender.class);
         _services.setGcmSender(gcmSender);
-        RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room, false));
+        RoomLogic logic = Mockito.spy(new RoomLogic(Mockings.mockPTScreen(), _services, _room, false));
         _room.getRoomUsersMap().remove("another");
         _room.addRoomUser(MockModel.mockProfile("another"), 1, true);
 
@@ -253,7 +254,7 @@ public class TestRoom extends TestAbstract {
     public void testContinueGame(){
         GamingKit mockKit = Mockito.spy(new MockGamingKit());
         _services.setGamingKit(mockKit);
-        PTScreen screen = mock(PTScreen.class);
+        PTScreen screen = Mockings.mockPTScreen();
 
         _room.setOpen(false);
         _room.setPlaying(true);
@@ -279,7 +280,7 @@ public class TestRoom extends TestAbstract {
 
         GamingKit mockKit = Mockito.spy(new MockGamingKit());
         _services.setGamingKit(mockKit);
-        RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room, false));
+        RoomLogic logic = Mockito.spy(new RoomLogic(Mockings.mockPTScreen(), _services, _room, false));
         logic.onShow();
 
         logic.leaveRoom();
@@ -298,7 +299,7 @@ public class TestRoom extends TestAbstract {
         _room.setOpen(true);
         _services.setGamingKit(mockKit);
         _services.setProfile(MockModel.mockProfile("another"));
-        RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room, false));
+        RoomLogic logic = Mockito.spy(new RoomLogic(Mockings.mockPTScreen(), _services, _room, false));
         logic.onShow();
 
         logic.leaveRoom();
@@ -325,7 +326,7 @@ public class TestRoom extends TestAbstract {
         _room.getRoomUserByUserId(profile.getUserId()).setReady(false);
         Assert.assertEquals(false, _room.getRoomUserByUserId(profile.getUserId()).getReady());
 
-        RoomLogic logic = Mockito.spy(new RoomLogic(mock(PTScreen.class), _services, _room, false));
+        RoomLogic logic = Mockito.spy(new RoomLogic(Mockings.mockPTScreen(), _services, _room, false));
         logic.onInit();
         logic.onShow();
 

@@ -1,7 +1,7 @@
 package com.mygdx.potatoandtomato.services;
 
 import com.badlogic.gdx.files.FileHandle;
-import com.mygdx.potatoandtomato.utils.Terms;
+import com.mygdx.potatoandtomato.statics.Terms;
 import com.potatoandtomato.common.absints.DownloaderListener;
 import com.potatoandtomato.common.absints.IDownloader;
 import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
@@ -19,8 +19,8 @@ import com.shephertz.app42.paas.sdk.android.upload.UploadService;
  */
 public class App42Uploader implements IUploader {
 
-    private String _appKey = Terms.WARP_API_KEY;
-    private String _secretKey = Terms.WARP_SECRET_KEY;
+    private String _appKey = Terms.WARP_API_KEY();
+    private String _secretKey = Terms.WARP_SECRET_KEY();
     private UploadService _uploadService;
     private IDownloader _downloader;
 

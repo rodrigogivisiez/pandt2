@@ -12,14 +12,24 @@ public class ChatMessage {
     public String _message;
     public FromType _fromType;
     public String _senderId;
+    public String _extra;
 
     public ChatMessage() {
     }
 
-    public ChatMessage(String _message, FromType _fromType, String _senderId) {
+    public ChatMessage(String _message, FromType _fromType, String _senderId, String _extra) {
         this._message = _message;
         this._fromType = _fromType;
         this._senderId = _senderId;
+        this._extra = _extra;
+    }
+
+    public String getExtra() {
+        return _extra;
+    }
+
+    public void setExtra(String _extra) {
+        this._extra = _extra;
     }
 
     public String getMessage() {

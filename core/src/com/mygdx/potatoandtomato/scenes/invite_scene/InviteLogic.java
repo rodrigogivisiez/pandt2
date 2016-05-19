@@ -51,8 +51,6 @@ public class InviteLogic extends LogicAbstract {
     public void onInit() {
         super.onInit();
 
-        _services.getChat().hide();
-
         _scene.putMessageToTable(_services.getTexts().loading(), InviteScene.InviteType.Recent);
 
         _scene.putMessageToTable(_services.getSocials().isFacebookLogon() ? _texts.loading() : _texts.facebookCannotGetFriends(),
@@ -241,14 +239,14 @@ public class InviteLogic extends LogicAbstract {
                                         _services.getGcmSender().send(user, push);
 
                                         ChatMessage chatMessage = new ChatMessage(String.format(_texts.xInvitedX(),
-                                                _services.getProfile().getDisplayName(0), user.getDisplayName(0)), ChatMessage.FromType.SYSTEM, null);
-                                        _services.getChat().add(chatMessage, true);
+                                                _services.getProfile().getDisplayName(0), user.getDisplayName(0)), ChatMessage.FromType.SYSTEM, null, "");
+                                        _services.getChat().newMessage(chatMessage);
                                         _services.getGamingKit().sendRoomMessage(chatMessage);
                                     }
                                     else{
                                         ChatMessage chatMessage = new ChatMessage(String.format(_texts.xInvitedXFailed(),
-                                                _services.getProfile().getDisplayName(0), user.getDisplayName(0)), ChatMessage.FromType.IMPORTANT, null);
-                                        _services.getChat().add(chatMessage, true);
+                                                _services.getProfile().getDisplayName(0), user.getDisplayName(0)), ChatMessage.FromType.IMPORTANT, null, "");
+                                        _services.getChat().newMessage(chatMessage);
                                         _services.getGamingKit().sendRoomMessage(chatMessage);
                                     }
                                     done[0]++;

@@ -20,6 +20,7 @@ import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.models.*;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.common.assets.Assets;
+import helpers.Mockings;
 import helpers.T_Services;
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,7 +38,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
 
     @Test
     public void testEndGameLeaderboardLogicScene(){
-        EndGameLeaderBoardLogic logic = new EndGameLeaderBoardLogic(mock(PTScreen.class), T_Services.mockServices(), MockModel.mockEndGameData(),
+        EndGameLeaderBoardLogic logic = new EndGameLeaderBoardLogic(Mockings.mockPTScreen(), T_Services.mockServices(), MockModel.mockEndGameData(),
                 MockModel.mockEndGameData().getEndGameResult().getMyTeam());
         LeaderBoardScene scene = (LeaderBoardScene) logic.getScene();
         Assert.assertEquals(false, ((Table) scene.getRoot()).hasChildren());        //false becoz is postrunnable populate
@@ -93,7 +94,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
         services.setDatabase(mockDB);
         services.setConfirm(mockConfirm);
 
-        EndGameLeaderBoardLogic logic = Mockito.spy(new EndGameLeaderBoardLogic(mock(PTScreen.class), services, endGameData, endGameResult.getMyTeam()){
+        EndGameLeaderBoardLogic logic = Mockito.spy(new EndGameLeaderBoardLogic(Mockings.mockPTScreen(), services, endGameData, endGameResult.getMyTeam()){
             @Override
             public void addScoresRecur(int index, Runnable onFinish) {
                 onFinish.run();
@@ -117,61 +118,55 @@ public class TestEndGameLeaderboard extends TestAbstract {
 
     }
 
-    @Test
-    public void testAccLose(){
-        final EndGameData endGameData = MockModel.mockEndGameData();
-        endGameData.getRoom().getGame().setLeaderbordTypeEnum(LeaderboardType.Accumulate);
-
-        EndGameResult endGameResult = endGameData.getEndGameResult();
-        endGameResult.setWon(false);
-        endGameResult.getWinnersScoreDetails().clear();
-
-        final ArrayList<LeaderboardRecord> leaderboardRecords = getSampleLeaderboardRecords(false);
-        final boolean[] called = new boolean[1];
-
-        MockDB mockDB = new MockDB(){
-            @Override
-            public void getLeaderBoardAndStreak(Game game, int expectedCount, DatabaseListener<ArrayList<LeaderboardRecord>> listener) {
-                listener.onCallback(leaderboardRecords, Status.SUCCESS);
-            }
-
-            @Override
-            public void getTeamHighestLeaderBoardRecordAndStreak(Game game, ArrayList<String> teamUserIds, DatabaseListener<LeaderboardRecord> listener) {
-                listener.onCallback(leaderboardRecords.get(2), Status.SUCCESS);
-            }
-
-            @Override
-            public void streakRevive(ArrayList<String> userIds, Room room, DatabaseListener listener) {
-                Assert.assertEquals(true, userIds.contains(endGameData.getEndGameResult().getMyTeam().get(0).getUserId()));
-                Assert.assertEquals(endGameData.getRoom(), room);
-                called[0] = true;
-            }
-        };
-
-        Confirm mockConfirm = new Confirm(mock(SpriteBatch.class), mock(IPTGame.class), mock(Assets.class), mock(Broadcaster.class)){
-            @Override
-            public void show(String msg, Type type, ConfirmResultListener _listener) {
-                _listener.onResult(ConfirmResultListener.Result.YES);
-            }
-
-            @Override
-            public void invalidate() {
-            }
-        };
-
-        Services services = T_Services.mockServices();
-        services.setDatabase(mockDB);
-        services.setConfirm(mockConfirm);
-
-        EndGameLeaderBoardLogic logic = Mockito.spy(new EndGameLeaderBoardLogic(mock(PTScreen.class), services, endGameData, endGameResult.getMyTeam()));
-        logic.onShow();
-
-        Threadings.sleep(500);
-        verify(logic, times(0)).winnerHandling();
-        verify(logic, times(1)).loserHandling();
-        Threadings.sleep(6000);
-        Assert.assertEquals(true, called[0]);
-    }
+//    @Test
+//    public void testAccLose(){
+//        final EndGameData endGameData = MockModel.mockEndGameData();
+//        endGameData.getRoom().getGame().setLeaderbordTypeEnum(LeaderboardType.Accumulate);
+//
+//        EndGameResult endGameResult = endGameData.getEndGameResult();
+//        endGameResult.setWon(false);
+//        endGameResult.getWinnersScoreDetails().clear();
+//
+//        final ArrayList<LeaderboardRecord> leaderboardRecords = getSampleLeaderboardRecords(false);
+//        final boolean[] called = new boolean[1];
+//
+//        MockDB mockDB = new MockDB(){
+//            @Override
+//            public void getLeaderBoardAndStreak(Game game, int expectedCount, DatabaseListener<ArrayList<LeaderboardRecord>> listener) {
+//                listener.onCallback(leaderboardRecords, Status.SUCCESS);
+//            }
+//
+//            @Override
+//            public void getTeamHighestLeaderBoardRecordAndStreak(Game game, ArrayList<String> teamUserIds, DatabaseListener<LeaderboardRecord> listener) {
+//                listener.onCallback(leaderboardRecords.get(2), Status.SUCCESS);
+//            }
+//
+//        };
+//
+//        Confirm mockConfirm = new Confirm(mock(SpriteBatch.class), mock(IPTGame.class), mock(Assets.class), mock(Broadcaster.class)){
+//            @Override
+//            public void show(String msg, Type type, ConfirmResultListener _listener) {
+//                _listener.onResult(ConfirmResultListener.Result.YES);
+//            }
+//
+//            @Override
+//            public void invalidate() {
+//            }
+//        };
+//
+//        Services services = T_Services.mockServices();
+//        services.setDatabase(mockDB);
+//        services.setConfirm(mockConfirm);
+//
+//        EndGameLeaderBoardLogic logic = Mockito.spy(new EndGameLeaderBoardLogic(Mockings.mockPTScreen(), services, endGameData, endGameResult.getMyTeam()));
+//        logic.onShow();
+//
+//        Threadings.sleep(500);
+//        verify(logic, times(0)).winnerHandling();
+//        verify(logic, times(1)).loserHandling();
+//        Threadings.sleep(6000);
+//        Assert.assertEquals(true, called[0]);
+//    }
 
     @Test
     public void testNormalLose(){
@@ -196,11 +191,6 @@ public class TestEndGameLeaderboard extends TestAbstract {
             public void getTeamHighestLeaderBoardRecordAndStreak(Game game, ArrayList<String> teamUserIds,  DatabaseListener<LeaderboardRecord> listener) {
                 listener.onCallback(leaderboardRecords.get(2), Status.SUCCESS);
             }
-
-            @Override
-            public void streakRevive(ArrayList<String> userIds, Room room, DatabaseListener listener) {
-                called[0] = true;
-            }
         };
 
         Confirm mockConfirm = new Confirm(mock(SpriteBatch.class), mock(IPTGame.class), mock(Assets.class), mock(Broadcaster.class)){
@@ -218,7 +208,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
         services.setDatabase(mockDB);
         services.setConfirm(mockConfirm);
 
-        EndGameLeaderBoardLogic logic = Mockito.spy(new EndGameLeaderBoardLogic(mock(PTScreen.class), services, endGameData, endGameResult.getMyTeam()));
+        EndGameLeaderBoardLogic logic = Mockito.spy(new EndGameLeaderBoardLogic(Mockings.mockPTScreen(), services, endGameData, endGameResult.getMyTeam()));
 
         logic.onShow();
 
@@ -315,7 +305,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
 
         Services services = T_Services.mockServices();
 
-        EndGameLeaderBoardLogic logic = Mockito.spy(new EndGameLeaderBoardLogic(mock(PTScreen.class), services, endGameData, endGameResult.getMyTeam()){
+        EndGameLeaderBoardLogic logic = Mockito.spy(new EndGameLeaderBoardLogic(Mockings.mockPTScreen(), services, endGameData, endGameResult.getMyTeam()){
             @Override
             public void getLeaderBoardAndMyCurrentRank() {
             }

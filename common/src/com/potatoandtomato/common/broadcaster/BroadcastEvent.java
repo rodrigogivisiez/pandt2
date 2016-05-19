@@ -33,5 +33,8 @@ public class BroadcastEvent {
     public static final int VIBRATE_DEVICE = 30; //request to vibrate device
     public static final int DEVICE_ORIENTATION = 31;    //0 to potrait, 1 to landscape
     public static final int SOUNDS_CHANGED = 32;    //sounds changed
+    public static final int RECORD_START = 33;  //audio recording start
+    public static final int RECORD_END = 34;  //audio recording end
+    public static final int RECORD_RESPONSE = 35; //audio record respond back
 
 }

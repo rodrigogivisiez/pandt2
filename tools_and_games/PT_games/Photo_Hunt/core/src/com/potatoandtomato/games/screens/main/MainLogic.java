@@ -282,7 +282,7 @@ public class MainLogic extends GameLogic {
             _gameModel.setGameState(GameState.Pause);
             if(meIsThisStageDecisionMaker()){
                 _services.getRoomMsgHandler().sendWon(new WonStageModel(_gameModel.getStageNumber(),
-                                        _gameModel.getScore(), remainingSecs, _gameModel.getHintsLeft(), "0", StageType.Normal));
+                                        _gameModel.getScore().intValue(), remainingSecs, _gameModel.getHintsLeft(), "0", StageType.Normal));
             }
         }
     }

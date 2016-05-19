@@ -1,0 +1,6 @@
+{
+    "require": {
+        "ktamas77/firebase-php": "dev-master",
+        "firebase/token-generator": "~3.0"
+    }
+}

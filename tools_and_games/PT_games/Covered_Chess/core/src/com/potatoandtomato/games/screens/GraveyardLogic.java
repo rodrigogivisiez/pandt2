@@ -142,29 +142,6 @@ public class GraveyardLogic implements Disposable {
             }
         });
 
-
-        //for debug purpose only
-        if(Gdx.app.getType() == Application.ApplicationType.Desktop){
-            _graveyardActor.getGraveLabel().addListener(new ClickListener(){
-                @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    _services.getScoresHandler().setIsMeWin(false);
-                    _services.getScoresHandler().process(new ScoresListener() {
-                        @Override
-                        public void onCallBack(HashMap<Team, ArrayList<ScoreDetails>> winnerResult, ArrayList<Team> losers) {
-                            _coordinator.abandon(winnerResult, new Runnable() {
-                                @Override
-                                public void run() {
-                                    _services.getScoresHandler().updateMatchHistory();
-                                }
-                            });
-                        }
-                    });
-                    return super.touchDown(event, x, y, pointer, button);
-                }
-            });
-        }
-
     }
 
     @Override

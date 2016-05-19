@@ -170,7 +170,7 @@ public class MockDB implements IDatabase {
     }
 
     @Override
-    public void getUserStreak(Game game, String userId, DatabaseListener<Streak> listener) {
+    public void getTeamStreak(Game game, String userId, DatabaseListener<Streak> listener) {
 
     }
 

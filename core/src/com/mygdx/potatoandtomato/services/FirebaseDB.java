@@ -6,15 +6,18 @@ import com.firebase.client.annotations.Nullable;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
-import com.potatoandtomato.common.utils.Strings;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.enums.Status;
-import com.potatoandtomato.common.utils.Threadings;
-import com.potatoandtomato.common.utils.ThreadsPool;
 import com.potatoandtomato.common.models.LeaderboardRecord;
 import com.potatoandtomato.common.models.Streak;
+import com.potatoandtomato.common.utils.Strings;
+import com.potatoandtomato.common.utils.Threadings;
+import com.potatoandtomato.common.utils.ThreadsPool;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -23,7 +26,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FirebaseDB implements IDatabase {
 
     Firebase _ref;
-    private String _tableTesting = "testing";
     private String _tableUsers = "users";
     private String _tableGames = "games";
     private String _tableRooms = "rooms";
@@ -32,9 +34,8 @@ public class FirebaseDB implements IDatabase {
     private String _tableGameBelongData = "gameBelongData";
     private String _tableLeaderboard = "leaderboard";
     private String _tableUserLeaderboardLog = "userLeaderboardLog";
-    private String _tableTeamLeaderboardLog = "teamLeaderboardLog";
     private String _tableStreak = "streaks";
-    private String _tableStreakReviveHistories = "streakReviveHistories";
+    private String _tableUpdatedScores = "updatedScores";
     private String _tableServerTimeInfo = ".info/serverTimeOffset";
     private String _tableLogs = "logs";
     private Array<ListenerModel> _listenerModels;
@@ -167,14 +168,13 @@ public class FirebaseDB implements IDatabase {
     }
 
     @Override
-    public void loginAnonymous(final DatabaseListener<Profile> listener) {
-        _ref.authAnonymously(new Firebase.AuthResultHandler() {
+    public void authenticateUserByToken(String token, final DatabaseListener<Profile> listener) {
+        _ref.authWithCustomToken(token, new Firebase.AuthResultHandler() {
             @Override
             public void onAuthenticated(AuthData authData) {
-                Profile profile = new Profile();
-                profile.setUserId(authData.getUid());
-                listener.onCallback(profile, Status.SUCCESS);
+                getProfileByUserId(authData.getUid(), listener);
             }
+
             @Override
             public void onAuthenticationError(FirebaseError firebaseError) {
                 listener.onCallback(null, Status.FAILED);
@@ -237,25 +237,6 @@ public class FirebaseDB implements IDatabase {
     @Override
     public void updateProfile(Profile profile, DatabaseListener listener) {
         save(getTable(_tableUsers).child(profile.getUserId()), profile, listener);
-    }
-
-    @Override
-    public void createUserByUserId(final String userId, final DatabaseListener<Profile> listener) {
-
-        HashMap<String, String> userMap = new HashMap();
-        userMap.put("userId", userId);
-        getTable(_tableUsers).child(userId).setValue(userMap, new Firebase.CompletionListener() {
-            @Override
-            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                if (firebaseError == null) {
-                    Profile profile = new Profile();
-                    profile.setUserId(userId);
-                    listener.onCallback(profile, Status.SUCCESS);
-                } else {
-                    listener.onCallback(null, Status.FAILED);
-                }
-            }
-        });
     }
 
     @Override
@@ -375,7 +356,25 @@ public class FirebaseDB implements IDatabase {
                                 });
                             }
                         });
+
+                        final Threadings.ThreadFragment fragment2 = new Threadings.ThreadFragment();
+                        Threadings.runInBackground(new Runnable() {
+                            @Override
+                            public void run() {
+                                getTeamStreak(game, record.getUserIds(), new DatabaseListener<Streak>(Streak.class) {
+                                    @Override
+                                    public void onCallback(Streak streak, Status st) {
+                                        if(st == Status.SUCCESS){
+                                            record.setStreak(streak);
+                                        }
+                                        fragment2.setFinished(true);
+                                    }
+                                });
+                            }
+                        });
+
                         threadsPool.addFragment(fragment1);
+                        threadsPool.addFragment(fragment2);
                     }
 
                     Threadings.runInBackground(new Runnable() {
@@ -397,66 +396,18 @@ public class FirebaseDB implements IDatabase {
     }
 
     @Override
-    public void getUserStreak(Game game, String userId, DatabaseListener<Streak> listener) {
-        if(userId != null){
-            getSingleData(getTable(_tableStreak).child(game.getAbbr()).child(userId), listener);
+    public void getTeamStreak(Game game, ArrayList<String> userIds, DatabaseListener<Streak> listener) {
+        if(userIds != null && userIds.size() > 0){
+            getSingleData(getTable(_tableStreak).child(game.getAbbr()).child(userIdsToKey(userIds)), listener);
+        }
+        else{
+            listener.onCallback(null, Status.SUCCESS);
         }
     }
 
     @Override
-    public void saveLeaderBoardRecord(final Room room, final LeaderboardRecord record, final DatabaseListener listener) {
-        final String key = userIdsToKey(record.getUserIds());
-
-        isStreakRevived(record.getUserIds(), room, new DatabaseListener<Boolean>() {
-            @Override
-            public void onCallback(Boolean isRevived, Status st) {
-                if (isRevived){
-                    record.getStreak().setLastReviveRoomId(room.getId());
-                    record.getStreak().setLastReviveRoundNumber(room.getRoundCounter());
-                }
-
-                HashMap<String, Object> map = new HashMap<String, Object>();
-                map.put(key, record.getScore());
-
-                for(String userId : record.getUserIds()){
-                    getTable(_tableStreak).child(room.getGame().getAbbr()).child(userId).setValue(record.getStreak());
-
-                    getTable(_tableUserLeaderboardLog).child(room.getGame().getAbbr()).child(userId).updateChildren(map);
-                }
-
-                getTable(_tableTeamLeaderboardLog).child(room.getGame().getAbbr()).child(key).updateChildren(map);
-
-                getTable(_tableLeaderboard).child(room.getGame().getAbbr()).child(key).setValue(record, record.getScore(), new Firebase.CompletionListener() {
-                    @Override
-                    public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                        if(firebaseError == null){
-                            if(listener != null) listener.onCallback(null, Status.SUCCESS);
-                        }
-                        else{
-                            if(listener != null) listener.onCallback(null, Status.FAILED);
-                        }
-                    }
-                });
-            }
-        });
-    }
-
-    @Override
     public void getTeamHighestLeaderBoardRecordAndStreak(final Game game, ArrayList<String> teamUserIds, final DatabaseListener<LeaderboardRecord> listener) {
-        getSingleData(getTable(_tableTeamLeaderboardLog).child(game.getAbbr()).child(userIdsToKey(teamUserIds)).orderByValue().limitToLast(1), new DatabaseListener<HashMap<String, String>>(HashMap.class) {
-            @Override
-            public void onCallback(final HashMap<String, String> record, Status st) {
-                if (st == Status.SUCCESS && record != null && record.keySet().size() > 0) {
-                    for(String recordId : record.keySet()){
-                        getLeaderBoardRecordById(game, recordId, listener);
-                        break;
-                    }
-                } else {
-                    listener.onCallback(null, st);
-                }
-
-            }
-        });
+        getLeaderBoardRecordAndStreakById(game, userIdsToKey(teamUserIds), listener);
     }
 
     @Override
@@ -466,7 +417,7 @@ public class FirebaseDB implements IDatabase {
             public void onCallback(final HashMap<String, String> record, Status st) {
                 if (st == Status.SUCCESS && record != null && record.keySet().size() > 0) {
                     for(String recordId : record.keySet()){
-                        getLeaderBoardRecordById(game, recordId, listener);
+                        getLeaderBoardRecordAndStreakById(game, recordId, listener);
                         break;
                     }
                 } else {
@@ -478,20 +429,48 @@ public class FirebaseDB implements IDatabase {
     }
 
     @Override
-    public void getLeaderBoardRecordById(Game game, String leaderboardId, final DatabaseListener<LeaderboardRecord> listener) {
+    public void getLeaderBoardRecordAndStreakById(final Game game, String leaderboardId, final DatabaseListener<LeaderboardRecord> listener) {
         getSingleData(getTable(_tableLeaderboard).child(game.getAbbr()).child(leaderboardId), new DatabaseListener<LeaderboardRecord>(LeaderboardRecord.class) {
             @Override
             public void onCallback(final LeaderboardRecord record, Status st) {
                 if(st == Status.SUCCESS && record != null){
+
+                    final ThreadsPool threadsPool = new ThreadsPool();
+                    final Threadings.ThreadFragment fragment1 = new Threadings.ThreadFragment();
                     getUsernamesByUserIds(record.getUserIds(), new DatabaseListener<HashMap<String, String>>(String.class) {
                         @Override
                         public void onCallback(HashMap<String, String> obj, Status st) {
                             if (st == Status.SUCCESS) {
                                 record.setUserIdToNameMap(new ConcurrentHashMap<String, String>(obj));
                             }
-                            listener.onCallback(record, st);
+                            fragment1.setFinished(true);
                         }
                     });
+
+                    final Threadings.ThreadFragment fragment2 = new Threadings.ThreadFragment();
+                    getTeamStreak(game, record.getUserIds(), new DatabaseListener<Streak>(Streak.class) {
+                        @Override
+                        public void onCallback(Streak streak, Status st) {
+                            if (st == Status.SUCCESS) {
+                                record.setStreak(streak);
+                            }
+                            fragment2.setFinished(true);
+                        }
+                    });
+
+                    threadsPool.addFragment(fragment1);
+                    threadsPool.addFragment(fragment2);
+
+                    Threadings.runInBackground(new Runnable() {
+                        @Override
+                        public void run() {
+                            while (!threadsPool.allFinished()){
+                                Threadings.sleep(300);
+                            }
+                            listener.onCallback(record, Status.SUCCESS);
+                        }
+                    });
+
                 }
                 else{
                     listener.onCallback(record, st);
@@ -507,28 +486,13 @@ public class FirebaseDB implements IDatabase {
         return key;
     }
 
-    private String roomToKey(Room room){
-        return room.getId() + "_" + room.getRoundCounter();
-    }
-
-    private String roomAndUsersToKey(Room room, ArrayList<String> userIds){
-        return roomToKey(room) + "_" + userIdsToKey(userIds);
-    }
 
     @Override
     public void deleteLeaderBoard(final Game game, final DatabaseListener listener) {
-
         Threadings.runInBackground(new Runnable() {
             @Override
             public void run() {
                 getTable(_tableLeaderboard).child(game.getAbbr()).removeValue(new Firebase.CompletionListener() {
-                    @Override
-                    public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-
-                    }
-                });
-
-                getTable(_tableTeamLeaderboardLog).child(game.getAbbr()).removeValue(new Firebase.CompletionListener() {
                     @Override
                     public void onComplete(FirebaseError firebaseError, Firebase firebase) {
 
@@ -544,61 +508,21 @@ public class FirebaseDB implements IDatabase {
 
             }
         });
-
-
-
     }
 
     @Override
-    public void streakRevive(final ArrayList<String> userIds, final Room room, final DatabaseListener listener) {
-
-        getTable(_tableStreakReviveHistories).child(roomAndUsersToKey(room, userIds)).setValue(1, new Firebase.CompletionListener() {
+    public void checkScoreUpdated(Room room, final DatabaseListener<Boolean> listener) {
+        getSingleData(getTable(_tableUpdatedScores).child(room.getId()).child(String.valueOf(room.getRoundCounter())), new DatabaseListener<String>(String.class) {
             @Override
-            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                if(firebaseError == null){
-                    HashMap<String, Object> map = new HashMap<String, Object>();
-                    map.put("lastReviveRoomId", room.getId());
-                    map.put("lastReviveRoundNumber", room.getRoundCounter());
-
-                    getTable(_tableLeaderboard).child(room.getGame().getAbbr()).child(userIdsToKey(userIds)).child("streak").updateChildren(map, new Firebase.CompletionListener() {
-                        @Override
-                        public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                            if(firebaseError != null){
-                                if(listener != null) listener.onCallback(null, Status.FAILED);
-                            }
-                            else{
-                                if(listener != null) listener.onCallback(null, Status.SUCCESS);
-                            }
-                        }
-                    });
-
-                    for(String userId : userIds){
-                        getTable(_tableStreak).child(room.getGame().getAbbr()).child(userId).updateChildren(map);
-                    }
-
-                }
-            }
-        });
-    }
-
-    @Override
-    public void isStreakRevived(ArrayList<String> userIds, Room room, final DatabaseListener<Boolean> listener) {
-        getSingleData(getTable(_tableStreakReviveHistories).child(roomAndUsersToKey(room, userIds)), new DatabaseListener(String.class) {
-            @Override
-            public void onCallback(Object obj, Status st) {
-                if(st == Status.SUCCESS && obj != null){
-                    listener.onCallback(true, Status.SUCCESS);
+            public void onCallback(String result, Status st) {
+                if(st == Status.SUCCESS){
+                    listener.onCallback((result != null && result.equals("1")), Status.SUCCESS);
                 }
                 else{
-                    listener.onCallback(false, Status.SUCCESS);
+                    listener.onCallback(null, Status.FAILED);
                 }
             }
         });
-    }
-
-    @Override
-    public void changeSlotIndex(Room room, Profile user, Integer newIndex, DatabaseListener<String> listener) {
-        getTable(_tableRooms).child(room.getId()).child("roomUsersMap").child(user.getUserId()).child("slotIndex").setValue(newIndex);
     }
 
     @Override
@@ -771,11 +695,6 @@ public class FirebaseDB implements IDatabase {
     }
 
     @Override
-    public void getTestTableCount(DatabaseListener<Integer> listener) {
-        getDataCount(getTable(_tableTesting), listener);
-    }
-
-    @Override
     public void getProfileByGameNameLower(String gameName, final DatabaseListener<Profile> listener) {
         getData(getTable(_tableUsers).orderByChild("gameNameLower").startAt(gameName.toLowerCase()).endAt(gameName.toLowerCase()), new DatabaseListener<ArrayList<Profile>>(Profile.class) {
             @Override
@@ -869,7 +788,7 @@ public class FirebaseDB implements IDatabase {
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                listener.onCallback(0, Status.FAILED);
+                listener.onCallback(null, Status.FAILED);
             }
         });
     }

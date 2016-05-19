@@ -1,10 +1,11 @@
 package com.mygdx.potatoandtomato.services;
 
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
+import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.utils.ArrayUtils;
 import com.potatoandtomato.common.utils.JsonObj;
-import com.mygdx.potatoandtomato.utils.Terms;
+import com.mygdx.potatoandtomato.statics.Terms;
 import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.potatoandtomato.common.utils.MultiHashMap;
@@ -29,8 +30,8 @@ import java.util.*;
 public class Appwarp extends GamingKit implements ConnectionRequestListener, ZoneRequestListener, RoomRequestListener, NotifyListener {
 
     private WarpClient _warpInstance;
-    private String _appKey = Terms.WARP_API_KEY;
-    private String _secretKey = Terms.WARP_SECRET_KEY;
+    private String _appKey = Terms.WARP_API_KEY();
+    private String _secretKey = Terms.WARP_SECRET_KEY();
     private String _username, _realUsername, _roomId;
     private MultiHashMap<String, String> _msgPieces;
     private MultiHashMap<String, byte[]> _bytePieces;
@@ -188,6 +189,13 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
         Logs.show("Sending bytes chunks of size: " + finalToSendBytes.size());
 
+    }
+
+    @Override
+    public void lockProperty(String key, String value) {
+        HashMap<String, Object> table = new HashMap();
+        table.put(key, value);
+        _warpInstance.lockProperties(table);
     }
 
     public boolean checkIsBytesUpdate(UpdateEvent updateEvent){
@@ -403,7 +411,10 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
     }
 
-
+    @Override
+    public void onLockPropertiesDone(byte b) {
+        onUpdateRoomMatesReceived(UpdateRoomMatesCode.LOCK_PROPERTY, String.valueOf(b), _realUsername);
+    }
 
 
 
@@ -478,11 +489,6 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
     @Override
     public void onUpdatePropertyDone(LiveRoomInfoEvent liveRoomInfoEvent) {
-
-    }
-
-    @Override
-    public void onLockPropertiesDone(byte b) {
 
     }
 
