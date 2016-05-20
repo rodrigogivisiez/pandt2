@@ -1,5 +1,6 @@
 package com.mygdx.potatoandtomato.utils;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.mygdx.potatoandtomato.statics.Global;
@@ -17,6 +18,15 @@ public class Positions {
     public static int getWidth() {
         return Global.IS_POTRAIT ? _width : _height;
     }
+
+    public static int getScreenHeight() {
+        return Global.IS_POTRAIT ?  Gdx.graphics.getHeight() :  Gdx.graphics.getWidth();
+    }
+    public static int getScreenWidth() {
+        return Global.IS_POTRAIT ?  Gdx.graphics.getWidth() :  Gdx.graphics.getHeight();
+    }
+
+
     public static void setWidth(int _width) { Positions._width = _width; }
     public static void setHeight(int _height) { Positions._height = _height; }
 
@@ -30,6 +40,10 @@ public class Positions {
 
     public static float screenYToGdxY(float y, float screenHeight){
         return ((y * getHeight())/screenHeight);
+    }
+
+    public static float screenYToGdxY(float y){
+        return ((y * getHeight())/getScreenHeight());
     }
 
     public static Vector2 actorLocalToStageCoord(Actor actor){

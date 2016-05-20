@@ -93,8 +93,14 @@ public class MockGamingKit {
             Threadings.delay(_delay, new Runnable() {
                 @Override
                 public void run() {
-                    _broadcaster.broadcast(BroadcastEvent.INGAME_UPDATE_RESPONSE,
-                            new InGameUpdateMessage(_userId, msg));
+                    if(msg.equals("SURRENDER")){
+                        _coordinator.userAbandon(_userId);
+                    }
+                    else{
+                        _broadcaster.broadcast(BroadcastEvent.INGAME_UPDATE_RESPONSE,
+                                new InGameUpdateMessage(_userId, msg));
+                    }
+
                 }
             });
 

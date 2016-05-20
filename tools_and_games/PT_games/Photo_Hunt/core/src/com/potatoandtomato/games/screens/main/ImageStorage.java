@@ -365,11 +365,16 @@ public class ImageStorage implements Disposable {
     }
 
     public void disposeAllImages(){
-        for(ImagePair pair : imagePairs){
-            pair.getImageOne().dispose();
-            pair.getImageTwo().dispose();
-        }
-        imagePairs.clear();
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                for(ImagePair pair : imagePairs){
+                    pair.getImageOne().dispose();
+                    pair.getImageTwo().dispose();
+                }
+                imagePairs.clear();
+            }
+        });
     }
 
     @Override

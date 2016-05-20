@@ -15,9 +15,22 @@ public class FireDB {
     boolean finished = false;
     boolean success = false;
     private String _tableStorage = "storage";
+    private final String SECRET = "UogxKt0DL9RgHnadZ3nmcrPwJQBT3b699vjMOpPO";
 
     public FireDB() {
         _ref = new Firebase("https://glaring-inferno-8572.firebaseIO.com").child("gameBelongData").child("photo_hunt");
+
+        _ref.authWithCustomToken(SECRET, new Firebase.AuthResultHandler() {
+            @Override
+            public void onAuthenticated(AuthData authData) {
+
+            }
+
+            @Override
+            public void onAuthenticationError(FirebaseError firebaseError) {
+                System.exit(1);
+            }
+        });
 
     }
 

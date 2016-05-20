@@ -292,16 +292,16 @@ public class GameCoordinator implements Disposable {
     }
 
     public void abandon(){
-        abandon(null, null, null);
+        abandon(null);
     }
 
-    public void abandon(final HashMap<Team, ArrayList<ScoreDetails>> winners, final ArrayList<Team> loserTeams, final Runnable confirmedAbandon){
+    public void abandon(final Runnable confirmedAbandon){
         getGameSandBox().useConfirm("PTTEXT_ABANDON", new Runnable() {
             @Override
             public void run() {     //yes
                 getGameSandBox().userAbandoned(getMyUserId());
-                beforeEndGame(winners, loserTeams);
-                if(confirmedAbandon != null) confirmedAbandon.run();
+                beforeEndGame(null, null, true);
+                if (confirmedAbandon != null) confirmedAbandon.run();
                 endGame();
             }
         }, new Runnable() {
@@ -526,18 +526,22 @@ public class GameCoordinator implements Disposable {
     }
 
 
-    public void beforeEndGame(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers){
+    public void beforeEndGame(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers, boolean abandon){
         if(winners == null) winners = new HashMap<Team, ArrayList<ScoreDetails>>();
         if(losers == null) losers = new ArrayList<Team>();
 
-        gameSandBox.updateScores(winners, losers);
+        if(!abandon){
+            gameSandBox.updateScores(winners, losers);
+        }
 
         if(winners.size() == 0 && losers.size() == 0){
             this._endGameResult = new EndGameResult();
+            this._endGameResult.setAbandon(abandon);
             return;
         }
 
         this._endGameResult = new EndGameResult();
+        this._endGameResult.setAbandon(abandon);
         this._endGameResult.setMyTeam(getMyTeamPlayers());
 
         for(Team loserTeam : losers){

@@ -292,14 +292,14 @@ public class MainLogic extends GameLogic {
         _screen.refreshGameState(GameState.Close);      //dont change lose state for continue player
         _screen.showAnnouncement(new GameOverAnnouncement(_services));
 
-        getCoordinator().beforeEndGame(_scoresLogic.getFinalScoreDetails(), null);
+        getCoordinator().beforeEndGame(_scoresLogic.getFinalScoreDetails(), null, false);
         getCoordinator().endGame();
     }
 
     private void gameLoseAllGameModelHolderDc(){
         _screen.showAnnouncement(new ContinueFailedAnnouncement(_services));
 
-        getCoordinator().beforeEndGame(null, null);
+        getCoordinator().beforeEndGame(null, null, false);
         getCoordinator().endGame();
     }
 
@@ -321,21 +321,14 @@ public class MainLogic extends GameLogic {
 
     private void checkCanSwitchToReviewMode(){
         if(!Global.REVIEW_MODE){
-            switch(Gdx.app.getType()) {
-                case Android:
-                    _services.getDatabase().checkIsAdmin(getCoordinator().getMyUserId(), new DatabaseListener<Boolean>() {
-                        @Override
-                        public void onCallback(Boolean obj, Status st) {
-                            if(st == Status.SUCCESS && obj){
-                                switchToReviewMode();
-                            }
-                        }
-                    });
-                    break;
-                case Desktop:
-                    switchToReviewMode();
-                    break;
-            }
+            _services.getDatabase().checkIsAdmin(getCoordinator().getMyUserId(), new DatabaseListener<Boolean>() {
+                @Override
+                public void onCallback(Boolean obj, Status st) {
+                    if(st == Status.SUCCESS && obj){
+                        switchToReviewMode();
+                    }
+                }
+            });
         }
     }
 

@@ -423,7 +423,7 @@ public class BoardLogic implements Disposable{
             _services.getScoresHandler().process(new ScoresListener(){
                 @Override
                 public void onCallBack(HashMap<Team, ArrayList<ScoreDetails>> winnerResult, ArrayList<Team> losers) {
-                    _coordinator.beforeEndGame(winnerResult, losers);
+                    _coordinator.beforeEndGame(winnerResult, losers, false);
                     Threadings.delay(1000, new Runnable() {
                         @Override
                         public void run() {
@@ -578,18 +578,7 @@ public class BoardLogic implements Disposable{
         _screen.setBackKeyListener(new BackKeyListener() {
             @Override
             public void backPressed() {
-                _services.getScoresHandler().setIsMeWin(false);
-                _services.getScoresHandler().process(new ScoresListener() {
-                    @Override
-                    public void onCallBack(HashMap<Team, ArrayList<ScoreDetails>> winnerResult, ArrayList<Team> losers) {
-                        _coordinator.abandon(winnerResult, losers, new Runnable() {
-                            @Override
-                            public void run() {
-                                _services.getScoresHandler().updateMatchHistory();
-                            }
-                        });
-                    }
-                });
+                _coordinator.abandon();
             }
         });
 

@@ -11,6 +11,7 @@ public class EndGameResult {
     private HashMap<Team, ArrayList<ScoreDetails>> _winnersScoreDetails;
     private ArrayList<Team> _loserTeams;
     private boolean  _won;
+    private boolean _abandon;
     private ArrayList<Player> _myTeam;
 
     public EndGameResult() {
@@ -47,6 +48,14 @@ public class EndGameResult {
 
     public boolean isWon() {
         return _won;
+    }
+
+    public boolean isAbandon() {
+        return _abandon;
+    }
+
+    public void setAbandon(boolean _abandon) {
+        this._abandon = _abandon;
     }
 
     public ArrayList<ScoreDetails> getMyTeamWinnerScoreDetails(String userId){

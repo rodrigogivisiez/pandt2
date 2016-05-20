@@ -25,10 +25,10 @@ public class Database {
     }
 
     public void checkIsAdmin(String userId, final DatabaseListener<Boolean> listener){
-        getSingleData(getTable(_adminTable).child(userId), new DatabaseListener<String>(String.class) {
+        getSingleData(getTable(_adminTable), new DatabaseListener<Object>(Object.class) {
             @Override
-            public void onCallback(String obj, Status st) {
-                if(st == Status.SUCCESS && obj != null && obj.equals("yes")){
+            public void onCallback(Object obj, Status st) {
+                if(st == Status.SUCCESS){
                     listener.onCallback(true, Status.SUCCESS);
                 }
                 else{

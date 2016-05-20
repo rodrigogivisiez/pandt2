@@ -590,7 +590,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     }
 
 
-    @Override       //everyone will call this
+    @Override       //everyone will call this except abandoner
     public void updateScores(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers) {
         this._winners = winners;
         this._losers = losers;

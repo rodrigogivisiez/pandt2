@@ -1,6 +1,7 @@
 package com.mygdx.potatoandtomato.services;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.*;
@@ -168,8 +169,19 @@ public class Chat {
         String msg = chatControl.getMessageTextField().getText().trim();
         if(!msg.equals("")){
             sendMessage(msg);
-            chatControl.setMessageTextFieldMsg("");
+            setMessageFieldText("");
         }
+    }
+
+    public void setMessageFieldText(String newMessage){
+        chatControl.setMessageTextFieldMsg(newMessage);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                broadcaster.broadcast(BroadcastEvent.LIBGDX_TEXT_CHANGED, new NativeLibgdxTextInfo(chatControl.getMessageTextField().getText(),
+                        chatControl.getMessageTextField().getCursorPosition()));
+            }
+        });
     }
 
     public void sendMessage(String msg){
@@ -205,7 +217,7 @@ public class Chat {
     }
 
     public void resetChat() {
-        chatControl.setMessageTextFieldMsg("");
+        setMessageFieldText("");
         chatControl.clearChat(mode);
     }
 
@@ -220,14 +232,16 @@ public class Chat {
     }
 
     public void screenTouched(float x, float y){
-        if(isVisible() && mode == 2){
-            y = Positions.getHeight() - y;
+        if(isVisible()){
+            y = Positions.getHeight() - Positions.screenYToGdxY(y);
+
+            boolean result = chatControl.positionHasChatElement(mode, x, y);
+
             if(!chatControl.positionHasChatElement(mode, x, y)){
                 collapseMode2();
+                chatControl.unfocusMessageTextField();
             }
             chatTemplateControl.screenTouched(x, y);
-
-
         }
     }
 
@@ -245,6 +259,14 @@ public class Chat {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 super.touchDown(event, x, y, pointer, button);
                 return true;
+            }
+
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if(keycode == Input.Keys.BACK){
+                    chatControl.unfocusMessageTextField();
+                }
+                return super.keyDown(event, keycode);
             }
         });
 
@@ -328,6 +350,9 @@ public class Chat {
             @Override
             public boolean handle(Event event) {
                 String eventString = "";
+
+
+
                 if (event instanceof FocusEvent) {
                     FocusEvent focusEvent = (FocusEvent) event;
                     eventString = focusEvent.getType().name();

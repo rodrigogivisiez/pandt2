@@ -10,6 +10,7 @@ public class Global {
     public static int ATTACK_TIME_PERCENT = 25;
     public static int ClOSE_DOOR_BUFFER_TIME = 5000;            //in milisec
     public static int BONUS_STAGE_NUMBER = 10;
+    public static int EXPECTED_PLAYERS_DEBUG = 2;
 
     public static void setDEBUG(boolean isDebugging){
         DEBUG = isDebugging;

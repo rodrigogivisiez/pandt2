@@ -3,7 +3,6 @@ package com.mygdx.potatoandtomato.models;
 import com.badlogic.gdx.graphics.Color;
 import com.mygdx.potatoandtomato.miscs.comparators.RoomUserSlotIndexComparator;
 import com.mygdx.potatoandtomato.miscs.serializings.IntProfileMapDeserializer;
-import com.mygdx.potatoandtomato.miscs.serializings.TeamArrayDeserializer;
 import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.utils.ColorUtils;
@@ -34,7 +33,6 @@ public class Room {
     ArrayList<Profile> invitedUsers;
     ArrayList<RoomUser> originalRoomUsers;
 
-    @JsonDeserialize(using = TeamArrayDeserializer.class)
     ArrayList<Team> teams;
 
     @JsonDeserialize(using = IntProfileMapDeserializer.class)
