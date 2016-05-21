@@ -415,10 +415,10 @@ public class RoomLogic extends LogicAbstract {
                     for (Map.Entry<String, Table> entry : _scene.getPlayersMaps().entrySet()) {
                         final String userId = entry.getKey();
                         Table table = entry.getValue();
-                        Actor kickImage = table.findActor("kickImage");
-                        if(kickImage != null && !userId.equals(_services.getProfile().getUserId())){
-                            kickImage.setName("");
-                            kickImage.addListener(new ClickListener(){
+                        Actor kickButton = table.findActor("kickDummy");
+                        if(kickButton != null && !userId.equals(_services.getProfile().getUserId())){
+                            kickButton.setName("");
+                            kickButton.addListener(new ClickListener() {
                                 @Override
                                 public void clicked(InputEvent event, float x, float y) {
                                     super.clicked(event, x, y);
@@ -426,7 +426,7 @@ public class RoomLogic extends LogicAbstract {
                                             Confirm.Type.YESNO, new ConfirmResultListener() {
                                                 @Override
                                                 public void onResult(Result result) {
-                                                    if(result == Result.YES){
+                                                    if (result == Result.YES) {
                                                         JsonObj jsonObj = new JsonObj();
                                                         jsonObj.put("userId", userId);
                                                         jsonObj.put("name", _room.getProfileByUserId(userId).getDisplayName(0));

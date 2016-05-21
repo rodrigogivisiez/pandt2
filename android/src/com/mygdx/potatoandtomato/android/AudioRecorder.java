@@ -29,7 +29,7 @@ public class AudioRecorder {
     private AudioRecord recorder = null;
     private Thread recordingThread = null;
     private boolean isRecording = false;
-    int BufferElements2Rec = 1024; // want to play 2048 (2K) since 2 bytes we use only 1024
+    int BufferElements2Rec; // want to play 2048 (2K) since 2 bytes we use only 1024
     int BytesPerElement = 2; // 2 bytes in 16bit format
     private int lastSoundLevel = 0;
     private SafeThread safeThread;
@@ -37,6 +37,9 @@ public class AudioRecorder {
 
     public AudioRecorder(Broadcaster broadcaster) {
         this.broadcaster = broadcaster;
+
+        int size = AudioRecord.getMinBufferSize(RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
+        BufferElements2Rec = size / BytesPerElement;
 
         broadcaster.subscribe(BroadcastEvent.RECORD_START, new BroadcastListener<Pair<String, RunnableArgs>>() {
             @Override
@@ -57,6 +60,8 @@ public class AudioRecorder {
         recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
                 RECORDER_SAMPLERATE, RECORDER_CHANNELS,
                 RECORDER_AUDIO_ENCODING, BufferElements2Rec * BytesPerElement);
+
+
 
         recorder.startRecording();
         isRecording = true;

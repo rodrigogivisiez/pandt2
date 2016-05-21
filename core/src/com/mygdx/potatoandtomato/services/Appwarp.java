@@ -200,56 +200,60 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
     public boolean checkIsBytesUpdate(UpdateEvent updateEvent){
         byte[] data = updateEvent.getUpdate();
-        if(data.length > 6){
-            if(data[0] == 98 && data[1] == 40 && data[2] == 25){
-                byte identifier = data[3];
-                byte totalPieces = data[4];
-                byte pieceIndex = data[5];
-                byte[] unique = Arrays.copyOfRange(data, 6, 26);
-                String uniqueString = new String(unique);
 
-                if(pieceIndex == 0){
-                    byte[] userId = Arrays.copyOfRange(data, 26, data.length);
-                    String userIdString = new String(userId);
-                    _bytePiecesOwner.put(uniqueString, userIdString);
-                    _bytePieces.put(uniqueString, new byte[]{});
-                }
-                else{
-                    byte[] bytePiece =  Arrays.copyOfRange(data, 26, data.length);
+        try{
+            if(data.length > 6){
+                if(data[0] == 98 && data[1] == 40 && data[2] == 25){
+                    byte identifier = data[3];
+                    byte totalPieces = data[4];
+                    byte pieceIndex = data[5];
+                    byte[] unique = Arrays.copyOfRange(data, 6, 26);
+                    String uniqueString = new String(unique);
 
-                    if(!_bytePieces.containsKey(uniqueString)){
-                        _bytePieces.put(uniqueString, bytePiece);
+                    if(pieceIndex == 0){
+                        byte[] userId = Arrays.copyOfRange(data, 26, data.length);
+                        String userIdString = new String(userId);
+                        _bytePiecesOwner.put(uniqueString, userIdString);
+                        _bytePieces.put(uniqueString, new byte[]{});
                     }
                     else{
-                        ArrayList<byte[]> currentPieces = _bytePieces.get(uniqueString);
-                        if(pieceIndex > currentPieces.size()){
-                            currentPieces.add(currentPieces.size(), bytePiece);
+                        byte[] bytePiece =  Arrays.copyOfRange(data, 26, data.length);
+
+                        if(!_bytePieces.containsKey(uniqueString)){
+                            _bytePieces.put(uniqueString, bytePiece);
                         }
                         else{
-                            currentPieces.add(pieceIndex, bytePiece);
-                        }
-
-                        if(currentPieces.size() == totalPieces){
-                            byte[] result = new byte[]{};
-                            for(byte[] bytes : currentPieces){
-                                result = ArrayUtils.concatenate(result, bytes);
+                            ArrayList<byte[]> currentPieces = _bytePieces.get(uniqueString);
+                            if(pieceIndex > currentPieces.size()){
+                                currentPieces.add(currentPieces.size(), bytePiece);
+                            }
+                            else{
+                                currentPieces.add(pieceIndex, bytePiece);
                             }
 
-                            onUpdateRoomMatesReceived(identifier, result, _bytePiecesOwner.get(uniqueString));
-                            _bytePieces.remove(uniqueString);
-                            _bytePiecesOwner.remove(uniqueString);
+                            if(currentPieces.size() == totalPieces){
+                                byte[] result = new byte[]{};
+                                for(byte[] bytes : currentPieces){
+                                    result = ArrayUtils.concatenate(result, bytes);
+                                }
+
+                                onUpdateRoomMatesReceived(identifier, result, _bytePiecesOwner.get(uniqueString));
+                                _bytePieces.remove(uniqueString);
+                                _bytePiecesOwner.remove(uniqueString);
+                            }
                         }
                     }
+
+
+
+                    return true;
                 }
-
-
-
-                return true;
             }
+            return false;
         }
-
-
-        return false;
+        catch (IndexOutOfBoundsException ex){
+            return false;
+        }
     }
 
     private String appendDataToPeerUpdate(String input, int pieceIndex, int totalPieces, String id){

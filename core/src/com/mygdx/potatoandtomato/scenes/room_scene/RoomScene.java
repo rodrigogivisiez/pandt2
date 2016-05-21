@@ -408,14 +408,21 @@ public class RoomScene extends SceneAbstract {
         downloadImage.setVisible(false);
 
         Image kickImage = new Image(_assets.getTextures().get(Textures.Name.KICK_ICON));
-        kickImage.setName("kickImage");
+        Table kickTable = new Table();
+        kickTable.add(kickImage).size(14, 14).padRight(-6).padBottom(2);
+
+        Image kickDummy = new Image(_assets.getTextures().get(Textures.Name.EMPTY));
+        kickDummy.setName("kickDummy");
+        kickDummy.setSize(24, 24);
+        kickDummy.setPosition(-4, -2);
+        kickTable.addActor(kickDummy);
 
         new DummyButton(playerTable, _assets);
         playerTable.add(iconTable).size(16, 16).padRight(3);
         playerTable.add(nameLabel).expandX().fillX().padLeft(3).padBottom(2);
         playerTable.add(downloadImage).padRight(2);
         playerTable.add(progressLabel);
-        if(isHost && !userId.equals(_services.getProfile().getUserId())) playerTable.add(kickImage).size(14, 14).padLeft(3);
+        if(isHost && !userId.equals(_services.getProfile().getUserId())) playerTable.add(kickTable).expandY().fillY();
 
         playerTable.setName(((userId != null) ? "disableclick" : ""));
 

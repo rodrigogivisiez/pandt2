@@ -8,6 +8,7 @@ import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
+import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
 import com.mygdx.potatoandtomato.assets.*;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
@@ -99,10 +100,7 @@ public class PTGame extends Game implements IPTGame {
 				setScreen(_screen);
 
 				_screen.toScene(SceneEnum.BOOT);
-//
-//				_services.getChat().showChat();
-//				_services.getChat().setMode(2);
-//				_services.getBroadcaster().broadcast(BroadcastEvent.DEVICE_ORIENTATION, 1);
+
 
 			}
 		});

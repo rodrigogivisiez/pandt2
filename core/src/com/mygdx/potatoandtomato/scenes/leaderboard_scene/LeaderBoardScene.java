@@ -533,7 +533,7 @@ public class LeaderBoardScene extends SceneAbstract {
                     final Actor remainActor;
                     final float remainActorMoveY;
 
-                    boolean isOriginalHigher = Double.valueOf(_originalScoreLabel.getText().toString().replace(",", "")) > Double.valueOf(_animatingScoreLabel.getText().toString().replace(",", ""));
+                    boolean isOriginalHigher = Double.valueOf(_originalScoreLabel.getText().toString().replace(",", "")) >= Double.valueOf(_animatingScoreLabel.getText().toString().replace(",", ""));
                     if(isOriginalHigher){
                         _fakeScoreLabel.setText(_originalScoreLabel.getText());
                         discardActor = _animatingScoreLabel;
@@ -579,14 +579,15 @@ public class LeaderBoardScene extends SceneAbstract {
 
     //current rank start from zero
     public void moveUpRank(final Game game, final int toRank, final int originalRank,
-                           final LeaderboardRecord movingRecord, final int maxSize, final Runnable finishAnimate){
+                           final LeaderboardRecord movingRecord, final int maxSize, final boolean starAnimate,
+                           final Runnable finishAnimate){
         final ScrollPane scrollPane = _leaderboardScrolls.get(game.getAbbr());
         final Table ranksTable = scrollPane.findActor("ranksTable");
 
         final Runnable onFinishMoved = new Runnable() {
             @Override
             public void run() {
-                movingEndedAnimate(game, ranksTable, movingRecord, toRank, maxSize, finishAnimate);
+                movingEndedAnimate(game, ranksTable, movingRecord, originalRank, toRank, maxSize, starAnimate, finishAnimate);
             }
         };
 
@@ -718,7 +719,8 @@ public class LeaderBoardScene extends SceneAbstract {
         });
     }
 
-    private void movingEndedAnimate(final Game game, final Table ranksTable, final LeaderboardRecord movingRecord, final int toRank, final int maxSize, final Runnable finishAnimate){
+    private void movingEndedAnimate(final Game game, final Table ranksTable, final LeaderboardRecord movingRecord, final int fromRank,
+                                            final int toRank, final int maxSize, final boolean starAnimate, final Runnable finishAnimate){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -728,7 +730,13 @@ public class LeaderBoardScene extends SceneAbstract {
                 }
                 ranksTable.getCells().get(toRank).setActor(newRecordTable);
                 ranksTable.layout();
-                animateStarTrace(newRecordTable, finishAnimate);
+
+                if(starAnimate){
+                    animateStarTrace(newRecordTable, finishAnimate);
+                }
+                else{
+                    finishAnimate.run();
+                }
             }
         });
     }

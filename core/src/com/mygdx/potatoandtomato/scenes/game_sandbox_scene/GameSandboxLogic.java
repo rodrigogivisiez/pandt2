@@ -569,12 +569,19 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
 
     @Override
     public void userAbandoned(final String userId) {
-        _coordinator.userConnectionChanged(_services.getProfile().getUserId(), false);
+     //   _coordinator.userConnectionChanged(_services.getProfile().getUserId(), false);
+        _coordinator.userAbandon(userId);
+
+
 
         if(userId.equals(_services.getProfile().getUserId())){
             _services.getProfile().getUserPlayingState().setAbandon(true);
             _services.getProfile().getUserPlayingState().setConnected(false);
             _services.getDatabase().updateProfile(_services.getProfile(), null);
+        }
+        else{
+            _notification.important(String.format(_texts.notificationAbandon(),
+                    _room.getOriginalRoomUserByUserId(userId).getProfile().getGameName()));
         }
 
     }

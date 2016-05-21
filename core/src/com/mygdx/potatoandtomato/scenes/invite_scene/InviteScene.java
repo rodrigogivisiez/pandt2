@@ -296,25 +296,27 @@ public class InviteScene extends SceneAbstract {
         boolean result = false;
         for(Table userTable : _usersHashMap.get(user.getUserId())){
             final Image selectBox =  userTable.findActor("selectbox");
-            if (userTable.getName().equals("selected")){
-                userTable.setName("unselected");
-                Threadings.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        selectBox.setDrawable(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.UNSELECT_BOX)));
-                    }
-                });
-                result = false;
-            }
-            else{
-                userTable.setName("selected");
-                Threadings.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        selectBox.setDrawable(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.SELECT_BOX)));
-                    }
-                });
-                result = true;
+            if(selectBox != null){
+                if (userTable.getName().equals("selected")){
+                    userTable.setName("unselected");
+                    Threadings.postRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            selectBox.setDrawable(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.UNSELECT_BOX)));
+                        }
+                    });
+                    result = false;
+                }
+                else{
+                    userTable.setName("selected");
+                    Threadings.postRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            selectBox.setDrawable(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.SELECT_BOX)));
+                        }
+                    });
+                    result = true;
+                }
             }
         }
         return result;

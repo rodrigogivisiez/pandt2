@@ -313,7 +313,6 @@ public class MainScreen extends GameScreen {
                 }
 
                 _services.getSoundsWrapper().playSounds(Sounds.Name.WRONG);
-                _coordinator.requestVibrate(200);
 
 
             }

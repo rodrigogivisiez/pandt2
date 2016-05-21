@@ -222,6 +222,9 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                                             Threadings.delay(1000, new Runnable() {
                                                                 @Override
                                                                 public void run() {
+
+                                                                    boolean achieveSomething = true;
+
                                                                     if (_room.getGame().getLeaderboardTypeEnum() == LeaderboardType.Accumulate) {
                                                                         _myLeaderboardRecord.addScoresToRecord(_scoreDetails);
                                                                     }
@@ -229,6 +232,9 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                                                         if(Scores.getTotalScoresInScoresArray(_scoreDetails) > _myLeaderboardRecord.getScore()){
                                                                             _myLeaderboardRecord.setScore(0);
                                                                             _myLeaderboardRecord.addScoresToRecord(_scoreDetails);
+                                                                        }
+                                                                        else{
+                                                                            achieveSomething = false;
                                                                         }
                                                                     }
 
@@ -238,7 +244,8 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                                                     }
 
                                                                     final int finalRank1 = finalRank;
-                                                                    moveUpRankAnimation(currentRank, finalRank, new Runnable() {
+                                                                    final boolean finalAchieveSomething = achieveSomething;
+                                                                    moveUpRankAnimation(currentRank, finalRank, achieveSomething, new Runnable() {
                                                                         @Override
                                                                         public void run() {
                                                                             Threadings.delay(500, new Runnable() {
@@ -255,8 +262,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                                                                         _scene.setMascots(LeaderBoardScene.MascotType.BORING);
                                                                                         _scene.changeRecordTableToUnknownRank(_game, finalRank1);
                                                                                     }
-                                                                                    else if(_room.getGame().getLeaderboardTypeEnum() == LeaderboardType.Normal &&
-                                                                                            Scores.getTotalScoresInScoresArray(_scoreDetails) < _myLeaderboardRecord.getScore()){
+                                                                                    else if(!finalAchieveSomething){
                                                                                         _scene.setMascots(LeaderBoardScene.MascotType.BORING);
                                                                                     }
                                                                                     else {
@@ -326,8 +332,8 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
         });
     }
 
-    public void moveUpRankAnimation(int fromRank, int toRank, Runnable onFinish){
-        _scene.moveUpRank(_game, toRank, fromRank, _myLeaderboardRecord, _leaderboardSize, onFinish);
+    public void moveUpRankAnimation(int fromRank, int toRank, boolean starAnimate, Runnable onFinish){
+        _scene.moveUpRank(_game, toRank, fromRank, _myLeaderboardRecord, _leaderboardSize, starAnimate, onFinish);
     }
 
     public void addScoresRecur(final int index, final Runnable onFinish){

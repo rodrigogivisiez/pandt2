@@ -82,7 +82,6 @@ public class TerrainLogic {
                 else {
                     getTerrainActor().showBattle();
                     _soundsWrapper.playSounds(Sounds.Name.FIGHT_CHESS);
-                    _coordinator.requestVibrate(1500);
 
                     ChessModel winnerChessModel;
                     final ChessType winnerChessType, loserChessType;
