@@ -11,6 +11,7 @@ public interface ISoundsPlayer {
     void disposeAllExternalSounds();
 
     void playMusic(Music music);
+    void playMusicNoLoop(Music music);
     void stopMusic(Music music);
     void playSound(Sound sound);
     void playSoundLoop(final Sound sound);

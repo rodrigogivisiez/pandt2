@@ -40,6 +40,11 @@ public class SoundsWrapper implements Disposable {
         _coordinator.getSoundsPlayer().playMusic(music);
     }
 
+    public void playMusicNoLoop(Sounds.Name name){
+        Music music = _assets.getSounds().getMusic(name);
+        _coordinator.getSoundsPlayer().playMusicNoLoop(music);
+    }
+
     public void stopMusic(Sounds.Name name){
         Music music = _assets.getSounds().getMusic(name);
         _coordinator.getSoundsPlayer().stopMusic(music);

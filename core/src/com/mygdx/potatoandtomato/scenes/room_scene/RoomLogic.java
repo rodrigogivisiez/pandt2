@@ -847,6 +847,7 @@ public class RoomLogic extends LogicAbstract {
         _checkReadyThread.kill();
         _services.getChat().resetChat();
         if(_gameFileChecker != null) _gameFileChecker.dispose();
+        _services.getRecorder().reset();
     }
 
 }

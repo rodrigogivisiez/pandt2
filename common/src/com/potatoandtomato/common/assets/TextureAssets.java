@@ -8,6 +8,7 @@ import com.potatoandtomato.common.absints.PTAssetsManager;
 import com.potatoandtomato.common.utils.Pair;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by SiongLeng on 29/3/2016.
@@ -18,13 +19,13 @@ public abstract class TextureAssets implements IAssetFragment {
     private TextureAtlas _UIPack;
     private String _path;
     private HashMap<String, TextureRegion> _regions;
-    private HashMap<String, Pair<Integer, Texture>> _miniRefCountMap;
+    private ConcurrentHashMap<String, Pair<Integer, Texture>> _miniRefCountMap;
 
     public TextureAssets(PTAssetsManager _manager, String packPath) {
         this._manager = _manager;
         this._path = packPath;
         _regions = new HashMap<String, TextureRegion>();
-        _miniRefCountMap = new HashMap();
+        _miniRefCountMap = new ConcurrentHashMap();
     }
 
     @Override

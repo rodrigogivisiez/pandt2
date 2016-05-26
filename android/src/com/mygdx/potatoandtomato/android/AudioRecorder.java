@@ -57,10 +57,11 @@ public class AudioRecorder {
     }
 
     public void recordAudio(final String recordBinPath, final RunnableArgs onVolumeChange){
+        stopRecord();
+
         recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
                 RECORDER_SAMPLERATE, RECORDER_CHANNELS,
                 RECORDER_AUDIO_ENCODING, BufferElements2Rec * BytesPerElement);
-
 
 
         recorder.startRecording();

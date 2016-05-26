@@ -1,11 +1,9 @@
 package com.potatoandtomato.games.screens.main;
 
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.potatoandtomato.common.GameCoordinator;
-import com.potatoandtomato.common.absints.DownloaderListener;
 import com.potatoandtomato.common.absints.WebImageListener;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.SafeThread;
@@ -13,11 +11,10 @@ import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.common.utils.ThreadsPool;
 import com.potatoandtomato.games.absintf.DatabaseListener;
 import com.potatoandtomato.games.absintf.ImageStorageListener;
-import com.potatoandtomato.games.helpers.Logs;
 import com.potatoandtomato.games.models.ImageDetails;
 import com.potatoandtomato.games.models.ImagePair;
 import com.potatoandtomato.games.models.Services;
-import com.potatoandtomato.games.services.Database;
+import com.potatoandtomato.games.statics.Global;
 
 import java.util.ArrayList;
 
@@ -65,10 +62,14 @@ public class ImageStorage implements Disposable {
                 }
 
                 while (true){
-                    if(gameCoordinator.meIsDecisionMaker()){
-                        initiateDownloadsIfNeeded();
+                    initiateDownloadsIfNoImagesAndIsCoordinator();
+                    if(Global.REVIEW_MODE){
+                        Threadings.sleep(2000);
                     }
-                    Threadings.sleep(downloadPeriod);
+                    else{
+                        Threadings.sleep(downloadPeriod);
+                    }
+
                     if(safeThread.isKilled()){
                         break;
                     }
@@ -78,8 +79,8 @@ public class ImageStorage implements Disposable {
     }
 
 
-    public void initiateDownloadsIfNeeded(){
-        if(imagePairs.size() < 5){
+    public void initiateDownloadsIfNoImagesAndIsCoordinator(){
+        if(imagePairs.size() < 5 && gameCoordinator.meIsDecisionMaker()){
             final ArrayList<Integer> indexes = new ArrayList<>();
             for(int i = 0; i < imageCountPerDownload; i++){
                 if(randomize){
@@ -304,27 +305,27 @@ public class ImageStorage implements Disposable {
     }
 
     public synchronized void pop(final String id, final ImageStorageListener listener){
+        ImagePair first = getImagePairById(id);
+        if(first != null){
+            imagePairs.remove(first);
+            currentStoreImageIds.remove(first.getImageDetails().getId());
+        }
+        listener.onPopped(first);
+    }
+
+    public synchronized void popWait(final String id, final ImageStorageListener listener){
         Threadings.runInBackground(new Runnable() {
             @Override
             public void run() {
-                int i = 0;
-//                while (getImagePairById(id) == null){
-//                    Threadings.sleep(300);
-//                    if(safeThread.isKilled()) return;
-//                    i++;
-//                    if(i > 10){     //redownload
-//                        ArrayList<String> ids = new ArrayList<String>();
-//                        ids.add(id);
-//                        receivedDownloadRequest(ids);
-//                        i = 0;
-//                    }
-//                }
-
                 ImagePair first = getImagePairById(id);
-                if(first != null){
-                    imagePairs.remove(first);
-                    currentStoreImageIds.remove(first.getImageDetails().getId());
+                while (first == null){
+                    Threadings.sleep(300);
+                    first = getImagePairById(id);
+                    if(safeThread.isKilled()) return;
                 }
+
+                imagePairs.remove(first);
+                currentStoreImageIds.remove(first.getImageDetails().getId());
                 listener.onPopped(first);
             }
         });

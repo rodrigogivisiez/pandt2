@@ -1,5 +1,6 @@
 import com.badlogic.gdx.assets.AssetManager;
 import com.potatoandtomato.common.GameCoordinator;
+import com.potatoandtomato.common.absints.PTAssetsManager;
 import com.potatoandtomato.common.assets.AnimationAssets;
 import com.potatoandtomato.common.assets.FontAssets;
 import com.potatoandtomato.common.assets.PatchAssets;
@@ -19,14 +20,13 @@ import org.mockito.Mockito;
 public class Mockings {
 
     public static  Services mockServices(GameCoordinator gameCoordinator){
-        AssetManager manager = gameCoordinator.getAssetManager(true);
+        PTAssetsManager manager = gameCoordinator.getPTAssetManager(true);
 
         MyAssets myAssets = new MyAssets(manager, new Fonts(manager),
                 new Animations(manager), Mockito.mock(Sounds.class), Mockito.mock(PatchAssets.class),
                 new Textures(manager, "pack.atlas"));
 
-        myAssets.loadBasic(null);
-
+        myAssets.loadSync(null);
 
         Services services = new Services(myAssets, Mockito.mock(SoundsWrapper.class), Mockito.mock(Database.class),
                 Mockito.mock(Texts.class), Mockito.mock(RoomMsgHandler.class));

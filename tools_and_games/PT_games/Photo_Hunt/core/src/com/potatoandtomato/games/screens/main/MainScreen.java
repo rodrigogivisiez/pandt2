@@ -31,6 +31,7 @@ import com.potatoandtomato.games.controls.Circle;
 import com.potatoandtomato.games.controls.Cross;
 import com.potatoandtomato.games.controls.DummyButton;
 import com.potatoandtomato.games.enums.GameState;
+import com.potatoandtomato.games.helpers.Positions;
 import com.potatoandtomato.games.models.Services;
 import com.potatoandtomato.games.models.SimpleRectangle;
 import com.potatoandtomato.games.screens.hints.HintsActor;
@@ -52,8 +53,8 @@ public class MainScreen extends GameScreen {
     private Stage _stage;
     private Table _root, _imageOneTable, _imageTwoTable,
             _imageOneInnerTable, _imageTwoInnerTable, _bottomBarTable;
-    private Table _blockTable, _doorsTable, _announcementTable;
-    private Image _doorLeftImage, _doorRightImage;
+    private Table _blockTable;
+    private Table _endGameTable;
     private Vector2 _imageSize;
     private GameState _previousGameState;
     private GameCoordinator _coordinator;
@@ -84,6 +85,11 @@ public class MainScreen extends GameScreen {
         _blockTable.setVisible(false);
         _stage.addActor(_blockTable);
 
+        _endGameTable = new Table();
+        _endGameTable.setFillParent(true);
+        _endGameTable.setVisible(false);
+        new DummyButton(_endGameTable, _assets);
+        _stage.addActor(_endGameTable);
     }
 
     public void readyToStart(){
@@ -91,7 +97,7 @@ public class MainScreen extends GameScreen {
     }
 
     public void populate(TimeActor timeActor, HintsActor hintsActor, UserCountersActor userCountersActor, StageCounterActor stageCounterActor,
-                         ScoresActor scoresActor){
+                         ScoresActor scoresActor, StageStateActor stageStateActor){
 
         ////////////////////////////
         //top bar
@@ -120,8 +126,10 @@ public class MainScreen extends GameScreen {
 
         _imageOneTable = new Table();
         _imageOneTable.setClip(true);
+        _imageOneTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.FULL_BLACK_BG)));
         _imageTwoTable = new Table();
         _imageTwoTable.setClip(true);
+        _imageTwoTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.FULL_BLACK_BG)));
 
         _imageOneInnerTable = new Table();
         _imageOneInnerTable.setTransform(true);
@@ -146,30 +154,6 @@ public class MainScreen extends GameScreen {
 
         _root.add(imagesContainer).expand().fill();
         _root.row();
-
-
-        /////////////////////////////////////////
-        //doors
-        //////////////////////////////////////////
-        _doorsTable = new Table();
-        _doorsTable.setFillParent(true);
-        imagesContainer.addActor(_doorsTable);
-
-        _doorLeftImage = new Image(_assets.getTextures().get(Textures.Name.DOOR_LEFT));
-        _doorRightImage = new Image(_assets.getTextures().get(Textures.Name.DOOR_RIGHT));
-
-        _doorsTable.add(_doorLeftImage).expand().fill();
-        _doorsTable.add(_doorRightImage).expand().fill();
-
-        ///////////////////////////////////////////
-        //announcement
-        /////////////////////////////////////////
-        _announcementTable = new Table();
-        _announcementTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.DOOR_OVERLAY)));
-        _announcementTable.setFillParent(true);
-        _announcementTable.setVisible(false);
-
-        imagesContainer.addActor(_announcementTable);
 
         /////////////////////////////////////////
         //bottom bar
@@ -212,6 +196,16 @@ public class MainScreen extends GameScreen {
         bottomBarShadow.setPosition(0, _bottomBarTable.getHeight() - 2);
         bottomBarShadow.setTouchable(Touchable.disabled);
         _bottomBarTable.addActor(bottomBarShadow);
+
+
+        /////////////////////////////////////////
+        //papyrus
+        //////////////////////////////////////////
+        stageStateActor.setSize(imagesContainer.getWidth(), imagesContainer.getHeight());
+        Vector2 imagesContainerPosition = Positions.actorLocalToStageCoord(imagesContainer);
+        stageStateActor.setPosition(0, imagesContainerPosition.y);
+        stageStateActor.populate();
+        _root.addActor(stageStateActor);
     }
 
     public void showMessages(final String msg){
@@ -260,8 +254,6 @@ public class MainScreen extends GameScreen {
 
                 _imageOneInnerTable.add(image1).expand().fill();
                 _imageTwoInnerTable.add(image2).expand().fill();
-
-                _services.getSoundsWrapper().playSounds(Sounds.Name.START_STAGE);
             }
         });
     }
@@ -270,8 +262,13 @@ public class MainScreen extends GameScreen {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                ((Image) _imageOneInnerTable.findActor("image")).setDrawable(new TextureRegionDrawable(new TextureRegion(texture1)));
-                ((Image) _imageTwoInnerTable.findActor("image")).setDrawable(new TextureRegionDrawable(new TextureRegion(texture2)));
+                if(_imageOneInnerTable.findActor("image") != null){
+                    ((Image) _imageOneInnerTable.findActor("image")).setDrawable(new TextureRegionDrawable(new TextureRegion(texture1)));
+                }
+
+                if(_imageTwoInnerTable.findActor("image") != null){
+                    ((Image) _imageTwoInnerTable.findActor("image")).setDrawable(new TextureRegionDrawable(new TextureRegion(texture2)));
+                }
             }
         });
     }
@@ -328,26 +325,22 @@ public class MainScreen extends GameScreen {
                 rectangle.setSize(correctRect.getWidth(), correctRect.getHeight());
                 rectangle.setPosition(correctRect.getX(), imageSize.y - correctRect.getY()); //libgdx origin is at bottomleft
 
-                Circle circle1 = new Circle(getCoordinator(), _services, userId);
+                Circle circle1 = new Circle(getCoordinator(), _services, userId, correctRect);
                 circle1.setSize(rectangle.getWidth(), rectangle.getHeight());
                 circle1.setPosition(rectangle.getX(), rectangle.getY() - rectangle.getHeight());
-                if(userId != null){
-                    circle1.getColor().a = 0f;
-                    circle1.addAction(fadeIn(0.1f));
-                }
+                circle1.getColor().a = 0f;
+                circle1.addAction(fadeIn(0.1f));
                 _imageOneInnerTable.addActor(circle1);
 
 
                 for(Actor actor : _imageTwoTable.getChildren()){
                     if(actor instanceof Table){
                         Table innerTable = (Table) actor;
-                        Circle circle2 = new Circle(getCoordinator(), _services, userId);
+                        Circle circle2 = new Circle(getCoordinator(), _services, userId, correctRect);
                         circle2.setSize(rectangle.getWidth(), rectangle.getHeight());
                         circle2.setPosition(rectangle.getX(), rectangle.getY() - rectangle.getHeight());
-                        if(userId != null){
-                            circle2.getColor().a = 0f;
-                            circle2.addAction(fadeIn(0.1f));
-                        }
+                        circle2.getColor().a = 0f;
+                        circle2.addAction(fadeIn(0.1f));
                         innerTable.addActor(circle2);
                     }
                 }
@@ -392,87 +385,11 @@ public class MainScreen extends GameScreen {
         _bottomBarTable.add(reviewActor).expand().fill();
     }
 
-    public void refreshGameState(final GameState newState){
+    public void showEndGameTable(){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                if(_previousGameState != newState){
-                    if(_previousGameState == GameState.BlockingReview){
-                        _blockTable.setVisible(false);
-                    }
-
-                    if(_previousGameState == GameState.Close){
-                        _doorLeftImage.addAction(moveBy(-_doorLeftImage.getWidth(), 0, 0.8f, Interpolation.exp5In));
-                        _doorRightImage.addAction(moveBy(_doorRightImage.getWidth(), 0, 0.8f, Interpolation.exp5In));
-                        _services.getSoundsWrapper().playSounds(Sounds.Name.OPEN_DOOR);
-                    }
-
-                    if(newState == GameState.BlockingReview){
-                        _blockTable.setVisible(true);
-                    }
-                    else if(newState == GameState.Close){
-                        if(_previousGameState != GameState.Close){
-                            _doorsTable.setVisible(true);
-                            _doorLeftImage.clearActions();
-                            _doorRightImage.clearActions();
-                            if(_previousGameState == null){     //jz start game
-                                _doorLeftImage.addAction(moveTo(0, 0));
-                                _doorRightImage.addAction(moveTo(_doorLeftImage.getWidth(), 0));
-                            }
-                            else{
-                                _doorLeftImage.addAction(sequence(moveTo(-_doorLeftImage.getWidth(), 0), moveTo(0, 0, 0.8f, Interpolation.exp5Out)));
-                                _doorRightImage.addAction(sequence(moveTo(_doorLeftImage.getWidth() + _doorRightImage.getWidth(), 0),
-                                        moveTo(_doorLeftImage.getWidth(), 0, 0.8f, Interpolation.exp5Out)));
-
-                                _services.getSoundsWrapper().playSounds(Sounds.Name.CLOSE_DOOR);
-                            }
-                        }
-                    }
-
-                }
-
-                _previousGameState = newState;
-            }
-        });
-
-
-
-    }
-
-    public void showAnnouncement(final Announcement announcement){
-        Threadings.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                _announcementTable.getColor().a = 0f;
-                _announcementTable.setVisible(true);
-                _announcementTable.clear();
-
-                _announcementTable.add(announcement).expand().fill();
-
-                _announcementTable.addAction(sequence(fadeIn(0.8f), new RunnableAction(){
-                    @Override
-                    public void run() {
-                        announcement.run();
-                    }
-                }));
-            }
-        });
-    }
-
-    public void clearAnnouncement(){
-        Threadings.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                if(_announcementTable.isVisible()){
-                    _announcementTable.clearActions();
-                    _announcementTable.addAction(sequence(fadeOut(0.2f), new RunnableAction(){
-                        @Override
-                        public void run() {
-                            _announcementTable.setVisible(false);
-                            _announcementTable.clear();
-                        }
-                    }));
-                }
+                _endGameTable.setVisible(true);
             }
         });
     }
@@ -543,5 +460,9 @@ public class MainScreen extends GameScreen {
 
     public Table getBottomBarTable() {
         return _bottomBarTable;
+    }
+
+    public Table getEndGameTable() {
+        return _endGameTable;
     }
 }

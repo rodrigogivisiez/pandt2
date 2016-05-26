@@ -17,6 +17,7 @@ public class Terms {
     public static String SOUNDS_DISABLED = "soundsDisabled";
     public static String BROADCAST_RECEIVER_FOR_DISPOSE = "broadcastReceiverForDispose";
     public static String PREF_CHAT_TEMPLATE = "chatTemplates";
+    public static String LOCAL_HOST = "localhost";
 
 
     public static String FIREBASE_URL(){
@@ -24,7 +25,7 @@ public class Terms {
     }
 
     public static String RESTFUL_URL(){
-        return !Global.DEBUG ? "https://pandt-1050.appspot.com/" : "http://localhost:10080/";
+        return !Global.DEBUG ? "https://pandt-1050.appspot.com/" : "http://"+LOCAL_HOST+":10080/";
     }
 
     public static String WARP_API_KEY(){

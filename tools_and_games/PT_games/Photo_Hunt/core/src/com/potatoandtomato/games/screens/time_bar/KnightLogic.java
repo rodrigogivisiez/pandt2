@@ -24,13 +24,14 @@ public class KnightLogic {
     private float totalAtkMiliSecs;
     private float totalDistance;
     private boolean freezed;
-    private boolean playingMusic;
+    private int playingMusic;
 
     public KnightLogic(GameModel gameModel, Services services, GameCoordinator gameCoordinator) {
         this.gameModel = gameModel;
         this.services = services;
         this.gameCoordinator = gameCoordinator;
         this.totalDistance = 450;
+        this.playingMusic = -1;
 
         this.knightActor = new KnightActor(services, totalDistance);
         reset();
@@ -53,8 +54,8 @@ public class KnightLogic {
         float distance = getRemainingDistanceByRemainingTime(remainingMiliSecs);
         knightActor.setKnightPositionX(distance, true, true);
 
-        if(distance <= 50 && gameModel.getStageType() != StageType.Bonus){
-            startMusic();
+        if(gameModel.getStageType() != StageType.Bonus){
+            startMusic(distance <= 50);
         }
     }
 
@@ -90,14 +91,25 @@ public class KnightLogic {
     }
 
     public void stopMusic(){
-        if(playingMusic) services.getSoundsWrapper().stopMusic(Sounds.Name.ATTACKING_CASTLE_MUSIC);
-        playingMusic = false;
+        if(playingMusic == 2){
+            services.getSoundsWrapper().stopMusic(Sounds.Name.ATTACKING_CASTLE_MUSIC);
+        }
+        else if(playingMusic == 1){
+            services.getSoundsWrapper().stopMusic(Sounds.Name.GAME_PLAYING_MUSIC);
+        }
+        playingMusic = -1;
     }
 
-    public void startMusic(){
-        if(!playingMusic){
+    public void startMusic(boolean isDanger){
+        if(isDanger && playingMusic != 2){
+            stopMusic();
             services.getSoundsWrapper().playMusic(Sounds.Name.ATTACKING_CASTLE_MUSIC);
-            playingMusic = true;
+            playingMusic = 2;
+        }
+        else if(!isDanger && playingMusic != 1){
+            stopMusic();
+            services.getSoundsWrapper().playMusic(Sounds.Name.GAME_PLAYING_MUSIC);
+            playingMusic = 1;
         }
     }
 

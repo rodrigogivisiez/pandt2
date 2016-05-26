@@ -87,16 +87,17 @@ public class StageImagesLogic implements Disposable {
         this.extra = extra;
         this.bonusType = bonusType;
         this.disallowClick = false;
-        process();
     }
 
     public void process(){
+        if(stageType == null || bonusType == null) return;
+
         stageImagesActor.reset();
 
         if(bonusType == BonusType.MEMORY){
             disallowClick = true;
             int startTime = gameModel.getThisStageTotalMiliSecs() * 25 / 100;
-            int showCircleTime = gameModel.getThisStageTotalMiliSecs() * 12 / 100;
+            int showCircleTime = gameModel.getThisStageTotalMiliSecs() * 18 / 100;
 
             stageImagesActor.startMemory();
 
@@ -130,7 +131,6 @@ public class StageImagesLogic implements Disposable {
         else if(this.bonusType == BonusType.ONE_PERSON && !extra.equals(gameCoordinator.getMyUserId())){
             canTouch = false;
         }
-
 
         if(!canTouch){
             stageImagesActor.showDisallowClick(x, y, isTableTwo);
@@ -178,6 +178,17 @@ public class StageImagesLogic implements Disposable {
          });
 
         gameModel.addGameModelListener(new GameModelListener() {
+
+            @Override
+            public void onGameStateChanged(GameState newState) {
+                if(newState == GameState.Playing){
+                    process();
+                }
+                else if(newState == GameState.Lose){
+                    stageImagesActor.reset();
+                }
+            }
+
             @Override
             public void onCorrectClicked(SimpleRectangle rectangle, int remainingMiliSecsWhenClicked) {
                 if(gameModel.getHandledAreas().size() == 5){

@@ -31,7 +31,7 @@ public class TestScoresLogic extends TestAbstract {
     @Test
     public void testGetNextLeaderboardRecordsNoAnimate(){
         GameModel gameModel = new GameModel();
-        gameModel.setScore(0);
+        gameModel.setScore(0.0);
         GameCoordinator gameCoordinator = _game.getCoordinator();
 
         ArrayList<LeaderboardRecord> leaderboardRecords = new ArrayList();
@@ -64,7 +64,7 @@ public class TestScoresLogic extends TestAbstract {
     @Test
     public void testCalculate(){
         final GameModel gameModel = new GameModel();
-        gameModel.setScore(0);
+        gameModel.setScore(0.0);
         gameModel.setRemainingMiliSecs(1, false);
         gameModel.setHintsLeft(2);
         GameCoordinator gameCoordinator = _game.getCoordinator();

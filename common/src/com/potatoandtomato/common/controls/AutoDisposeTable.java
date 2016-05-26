@@ -19,7 +19,6 @@ public class AutoDisposeTable extends Table {
 
     @Override
     public void clear() {
-        disposeChildren(this);
         super.clear();
     }
 

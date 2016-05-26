@@ -142,7 +142,7 @@ public class RestfulApi implements IRestfulApi {
             @Override
             public void run() {
                 try {
-                    HttpPost post = new HttpPost( Terms.RESTFUL_URL() + name);
+                    HttpPost post = new HttpPost(Terms.RESTFUL_URL() + name);
                     post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
                     HttpClient client = new DefaultHttpClient();

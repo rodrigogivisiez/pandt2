@@ -52,7 +52,7 @@ public class SoundsPlayer implements ISoundsPlayer {
         if(_themeMusic == null){
             _themeMusic = _assets.getSounds().getMusic(Sounds.Name.THEME);
         }
-        playMusic(_themeMusic, false);
+        playMusic(_themeMusic, false, true);
     }
 
     public void stopThemeMusic() {
@@ -154,16 +154,23 @@ public class SoundsPlayer implements ISoundsPlayer {
     @Override
     public void playMusic(final Music music) {
         if(music != null){
-            playMusic(music, true);
+            playMusic(music, true, true);
         }
     }
 
-    public void playMusic(final Music music, boolean external) {
+    @Override
+    public void playMusicNoLoop(Music music) {
+        if(music != null){
+            playMusic(music, true, false);
+        }
+    }
+
+    public void playMusic(final Music music, boolean external, boolean looping) {
         if(!_musicMap.containsKey(music)){
             _musicMap.put(music, external);
         }
         music.setVolume(_volume);
-        music.setLooping(true);
+        music.setLooping(looping);
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {

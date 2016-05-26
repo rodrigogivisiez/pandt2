@@ -41,6 +41,7 @@ public class VoiceMessageControl extends Table {
 
         populate();
         setListener();
+        autoPlayIfNeeded();
     }
 
     public void populate(){
@@ -53,6 +54,12 @@ public class VoiceMessageControl extends Table {
                 new DummyButton(_this, assets);
             }
         });
+    }
+
+    public void autoPlayIfNeeded(){
+        if(!chatMessage.getSenderId().equals(myUserId)){
+            playVoiceMessage();
+        }
     }
 
     public void setListener(){

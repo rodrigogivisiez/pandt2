@@ -1,15 +1,18 @@
 package com.potatoandtomato.games.screens.review;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.assets.Fonts;
 import com.potatoandtomato.games.assets.MyAssets;
 import com.potatoandtomato.games.assets.Patches;
 import com.potatoandtomato.games.assets.Textures;
+import com.potatoandtomato.games.enums.GameState;
 import com.potatoandtomato.games.models.GameModel;
 import com.potatoandtomato.games.models.Services;
 
@@ -22,6 +25,7 @@ public class ReviewActor extends Table {
     private MyAssets assets;
     private Label skipLabel, goToLabel, deleteLabel;
     private TextField goToTextField;
+    private Image blockingReviewImage;
 
     public ReviewActor(Services services) {
         this.services = services;
@@ -49,19 +53,43 @@ public class ReviewActor extends Table {
 
         deleteLabel = new Label("Delete", labelStyleBig);
 
+        blockingReviewImage = new Image(assets.getTextures().get(Textures.Name.TRANS_BLACK_BG));
+        blockingReviewImage.setFillParent(true);
+        blockingReviewImage.setVisible(false);
+
         this.add(goToTextField).size(100, 30).padRight(20).padLeft(80);
         this.add(goToLabel).padRight(120);
 
         this.add(skipLabel);
         this.add(deleteLabel).padLeft(20);
 
+        this.addActor(blockingReviewImage);
+
     }
 
-    public void refreshDesign(GameModel gameModel){
-        goToTextField.setText(String.valueOf(gameModel.getImageDetails().getIndex()));
-        deleteLabel.setText("Delete");
+    public void refreshDesign(final GameModel gameModel){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                goToTextField.setText(String.valueOf(gameModel.getImageDetails().getIndex()));
+                deleteLabel.setText("Delete");
+            }
+        });
     }
 
+    public void updateBlockingReview(final GameModel gameModel){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(gameModel.getGameState() == GameState.BlockingReview){
+                    blockingReviewImage.setVisible(true);
+                }
+                else{
+                    blockingReviewImage.setVisible(false);
+                }
+            }
+        });
+    }
 
     public Label getSkipLabel() {
         return skipLabel;

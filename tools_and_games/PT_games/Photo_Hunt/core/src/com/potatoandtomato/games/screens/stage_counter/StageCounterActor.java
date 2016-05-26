@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Align;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.assets.Fonts;
 import com.potatoandtomato.games.assets.MyAssets;
+import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.assets.Textures;
 import com.potatoandtomato.games.enums.StageType;
 import com.potatoandtomato.games.models.Services;
@@ -86,7 +87,6 @@ public class StageCounterActor extends Table {
                             specialStageImage.addAction(sequence(forever(Actions.rotateBy(3f, 0.01f))));
                         }
                     }));
-
                 }
             }
         });

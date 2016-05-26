@@ -5,6 +5,7 @@ import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.absintf.GameModelListener;
+import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.enums.GameState;
 import com.potatoandtomato.games.helpers.Logs;
 import com.potatoandtomato.games.models.GameModel;
@@ -78,10 +79,7 @@ public class TimeLogic implements Disposable {
                             continue;
                         }
 
-                        if(!Global.REVIEW_MODE){
-                            gameModel.setRemainingMiliSecs(gameModel.getRemainingMiliSecs() - renderPeriodMiliSecs, true);
-                        }
-
+                        gameModel.setRemainingMiliSecs(gameModel.getRemainingMiliSecs() - renderPeriodMiliSecs, true);
 
                     }
                 }
@@ -140,6 +138,7 @@ public class TimeLogic implements Disposable {
             public void onGameStateChanged(GameState newState) {
                 if(newState == GameState.Playing){
                     setPause(false);
+                    services.getSoundsWrapper().playSounds(Sounds.Name.START_STAGE);
                 }
                 else if(newState == GameState.WaitingForNextStage){
                     stop();

@@ -26,32 +26,21 @@ public class Fonts extends FontAssets {
         this.fontDetailsGenerator = new MyFontDetailsGenerator();
     }
 
-
     public enum FontId{
         MYRIAD_XS_REGULAR,
         MYRIAD_XS_REGULAR_B_ffffff_000000_1,
-        MYRIAD_S_REGULAR,
         MYRIAD_M_REGULAR_B_ffffff_000000_2,
         MYRIAD_M_REGULAR,
         MYRIAD_M_REGULAR_B_ffffff_8e4403_2,
-        MYRIAD_M_REGULAR_B_000000_588e54_1,             //dark green
+        MYRIAD_L_REGULAR,
 
         ENCHANTED_XL_REGULAR,
         ENCHANTED_XXL_REGULAR,
+        ENCHANTED_XXXL_REGULAR,
+        ENCHANTED_XXXL_REGULAR_B_FFFFFF_0c0904_2,
         ENCHANTED_MAX_REGULAR,
         ENCHANTED_MAX_REGULAR_B_FFFFFF_563500_4,
-
-
-        HELVETICA_XS_BlACKCONDENSEDITALIC,
-        HELVETICA_XXL_HEAVY,
-        HELVETICA_XXL_BlACKCONDENSEDITALIC_B_ffffff_56380a_1,
-        HELVETICA_MAX_BlACKCONDENSEDITALIC_B_ffffff_f0c266_2_S_000000_1_1,         //orange border, black shadow
-        HELVETICA_MAX_BlACKCONDENSEDITALIC_B_ffffff_f46767_2_S_000000_1_1,          //red border, black shadow
-
-        PIZZA_XXL_REGULAR,
-        PIZZA_XXXL_REGULAR_B_000000_ffffff_3,
     }
-
 
     private class MyFontDetailsGenerator extends FontDetailsGenerator {
 
@@ -121,7 +110,7 @@ public class Fonts extends FontAssets {
                 case XXL:
                     return 20;
                 case XXXL:
-                    return 30;
+                    return 40;
                 case MAX:
                     return 45;
             }

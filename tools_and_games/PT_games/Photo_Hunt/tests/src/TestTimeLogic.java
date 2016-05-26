@@ -72,6 +72,7 @@ public class TestTimeLogic extends TestAbstract {
         Threadings.sleep(500);
 
         timeLogic.stop();
+        gameModel.setGameState(GameState.Pause);
 
         Threadings.sleep(1000);
 

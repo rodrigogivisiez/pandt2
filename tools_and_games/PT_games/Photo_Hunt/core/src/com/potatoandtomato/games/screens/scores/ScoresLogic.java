@@ -21,6 +21,7 @@ import com.potatoandtomato.games.models.Services;
 import com.potatoandtomato.games.screens.hints.HintsLogic;
 import com.potatoandtomato.games.screens.time_bar.CastleLogic;
 import com.potatoandtomato.games.screens.time_bar.KnightLogic;
+import com.potatoandtomato.games.statics.Global;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,6 +74,11 @@ public class ScoresLogic implements Disposable {
 
 
     public void calculate(){
+        if(Global.REVIEW_MODE){
+            gameModel.setGameState(GameState.WaitingForNextStage);
+            return;
+        }
+
         Actor hintsActor = hintsLogic.getHintsActor();
         services.getSoundsWrapper().playSounds(Sounds.Name.WIN);
 
@@ -170,7 +176,7 @@ public class ScoresLogic implements Disposable {
             });
         }
         else{
-            Logs.show(hintsLogic.getCurrentHintsLeft() +" hint left");
+            Logs.show(hintsLogic.getCurrentHintsLeft() + " hint left");
             addScoreAndPopScoreOnActor(hintsActor, hintsLogic.getCurrentHintsLeft() * PER_HINT_LEFT_SCORE, new Runnable() {
                 @Override
                 public void run() {

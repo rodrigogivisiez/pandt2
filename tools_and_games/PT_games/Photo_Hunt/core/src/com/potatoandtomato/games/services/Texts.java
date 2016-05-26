@@ -15,8 +15,15 @@ public class Texts {
     public String finalScore() { return "Final Scores"; }
     public String gameContinueFailed(){ return "Game continue failed as all your partners have disconnected."; }
 
+    public String evilKnightPreparing() { return "The evil knight is preparing..";}
+    public String waitingForContinue() { return "Waiting for next stage..";}
+    public String gameOverText() { return "CONTRIBUTIONS";}
+
+    public String noPlayer() { return "No Player"; }
+    public String totalScores() { return "Scores"; }
     public String slowMessage() { return "Slow connection detected, please wait for next stage.";}
     public String replenishHints(){ return "Replenish"; }
+
 
 
 }

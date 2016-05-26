@@ -6,6 +6,7 @@ import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.absintf.DatabaseListener;
+import com.potatoandtomato.games.absintf.GameModelListener;
 import com.potatoandtomato.games.absintf.ReviewLogicListener;
 import com.potatoandtomato.games.enums.GameState;
 import com.potatoandtomato.games.models.GameModel;
@@ -40,6 +41,17 @@ public class ReviewLogic {
     }
 
     private void setListeners(){
+
+        gameModel.addGameModelListener(new GameModelListener() {
+            @Override
+            public void onGameStateChanged(GameState newState) {
+                if(newState == GameState.Playing){
+                    invalidate();
+                }
+                getReviewActor().updateBlockingReview(gameModel);
+            }
+        });
+
         reviewActor.getSkipLabel().addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {

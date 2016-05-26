@@ -52,6 +52,7 @@ public class Confirm {
     ConfirmStateChangedListener _stateChangedListener;
     long _previousTime;
     Broadcaster _broadcaster;
+    String _currentMsg;
 
     public Confirm(SpriteBatch spriteBatch, IPTGame game, Assets assets, Broadcaster broadcaster) {
         _batch = spriteBatch;
@@ -80,7 +81,6 @@ public class Confirm {
                     _confirmRoot.remove();
                     _confirmRoot.clear();
                 }
-
 
                 StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
                 _stage = new Stage(viewPort, _batch);
@@ -124,6 +124,9 @@ public class Confirm {
     }
 
     public void show(final String msg, final Type type, final ConfirmResultListener _listener){
+        if(_currentMsg != null && _currentMsg.equals(msg)) return;
+        _currentMsg = msg;
+
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -215,6 +218,7 @@ public class Confirm {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
+                _currentMsg = null;
                 _confirmRoot.clearActions();
                 _confirmRoot.addAction(sequence(fadeOut(0.2f), new Action() {
                     @Override

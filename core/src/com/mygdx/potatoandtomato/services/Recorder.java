@@ -33,6 +33,7 @@ public class Recorder {
     SoundsPlayer _soundsPlayer;
     Broadcaster _broadcaster;
     boolean _canRecord = true;
+    Music _playingMusic;
 
 
     public Recorder(SoundsPlayer _soundsPlayer, Broadcaster broadcaster) {
@@ -41,6 +42,7 @@ public class Recorder {
     }
 
     public void recordToFile(final String recordPath, final RecordListener _listener){
+        _startTime = System.currentTimeMillis();
         if(!_canRecord) return;
 
         _canRecord = false;
@@ -50,7 +52,6 @@ public class Recorder {
         final FileHandle oggFile = Gdx.files.local(recordPath + fileName + ".ogg");
         Files.createIfNotExist(oggFile);
 
-        _startTime = System.currentTimeMillis();
         _recording = true;
         _recordSuccess = false;
 
@@ -70,6 +71,7 @@ public class Recorder {
                 }
                 if(!_recordSuccess){
                     _listener.onFinishedRecord(null, 0, Status.FAILED);
+                    _broadcaster.broadcast(BroadcastEvent.RECORD_END);
                     _canRecord = true;
                     return;
                 }
@@ -116,12 +118,17 @@ public class Recorder {
     }
 
     public void playBack(final FileHandle fileHandle, final Runnable onFinish){
-        if(Global.ENABLE_SOUND){
+        if(_playingMusic != null){
+            _soundsPlayer.stopMusic(_playingMusic);
+        }
+        if(Global.ENABLE_SOUND && fileHandle.exists()){
             Music music = _soundsPlayer.playMusicFromFile(fileHandle);
+            _playingMusic = music;
             music.setOnCompletionListener(new Music.OnCompletionListener() {
                 @Override
                 public void onCompletion(Music music) {
                     music.dispose();
+                    _playingMusic = null;
                     onFinish.run();
                 }
             });
@@ -130,11 +137,21 @@ public class Recorder {
 
     private void convertAndCompressAudioFile(FileHandle threegpFile, FileHandle oggFile, final RunnableArgs onFinish) {
         OggFile oggFileConverter = new OggFile();
-        oggFileConverter.convertOggFile(threegpFile.file().getAbsolutePath(), oggFile.file().getAbsolutePath(), 2f);
+        oggFileConverter.convertOggFile(threegpFile.file().getAbsolutePath(), oggFile.file().getAbsolutePath(), 10f);
         threegpFile.delete();
         onFinish.run(oggFile);
     }
 
 
+    public boolean isCanRecord() {
+        return _canRecord;
+    }
+
+    public void reset(){
+        if(_playingMusic != null){
+            _soundsPlayer.stopMusic(_playingMusic);
+            _soundsPlayer.setVolume(1);
+        }
+    }
 
 }

@@ -1,7 +1,9 @@
 import com.badlogic.gdx.graphics.Texture;
 import com.potatoandtomato.common.absints.DownloaderListener;
 import com.potatoandtomato.common.absints.IDownloader;
+import com.potatoandtomato.common.absints.WebImageListener;
 import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.helpers.RemoteHelper;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.absintf.DatabaseListener;
@@ -57,25 +59,16 @@ public class TestImageStorage extends TestAbstract {
 
         }));
 
-
-        _game.getCoordinator().setDownloader(new IDownloader() {
+        _game.getCoordinator().setRemoteHelper(new RemoteHelper(null){
             @Override
-            public SafeThread downloadFileToPath(String s, File file, DownloaderListener downloaderListener) {
-                return null;
-            }
-
-            @Override
-            public void downloadData(String s, DownloaderListener downloaderListener) {
-                downloaderListener.onCallback(new byte[]{1}, Status.SUCCESS);
+            public void getRemoteImage(String url, WebImageListener listener) {
+                listener.onLoaded(mock(Texture.class));
             }
         });
 
-        final ImageStorage imageStorage = Mockito.spy(new ImageStorage(services, _game.getCoordinator()){
-            @Override
-            public Texture processTextureBytes(byte[] textureBytes) {
-                return Mockito.mock(Texture.class);
-            }
-        });
+
+
+        final ImageStorage imageStorage = Mockito.spy(new ImageStorage(services, _game.getCoordinator()));
         imageStorage.setDownloadPeriod(3000);
 
         doAnswer(new Answer<Integer>() {
@@ -145,24 +138,14 @@ public class TestImageStorage extends TestAbstract {
 
         }));
 
-        _game.getCoordinator().setDownloader(new IDownloader() {
+        _game.getCoordinator().setRemoteHelper(new RemoteHelper(null) {
             @Override
-            public SafeThread downloadFileToPath(String s, File file, DownloaderListener downloaderListener) {
-                return null;
-            }
-
-            @Override
-            public void downloadData(String s, DownloaderListener downloaderListener) {
-                downloaderListener.onCallback(new byte[]{1}, Status.SUCCESS);
+            public void getRemoteImage(String url, WebImageListener listener) {
+                listener.onLoaded(mock(Texture.class));
             }
         });
 
-        final ImageStorage imageStorage = Mockito.spy(new ImageStorage(services, _game.getCoordinator()){
-            @Override
-            public Texture processTextureBytes(byte[] textureBytes) {
-                return Mockito.mock(Texture.class);
-            }
-        });
+        final ImageStorage imageStorage = Mockito.spy(new ImageStorage(services, _game.getCoordinator()));
 
         imageStorage.setDownloadPeriod(3000);
 
@@ -209,24 +192,14 @@ public class TestImageStorage extends TestAbstract {
             }
         }));
 
-        _game.getCoordinator().setDownloader(new IDownloader() {
+        _game.getCoordinator().setRemoteHelper(new RemoteHelper(null) {
             @Override
-            public SafeThread downloadFileToPath(String s, File file, DownloaderListener downloaderListener) {
-                return null;
-            }
-
-            @Override
-            public void downloadData(String s, DownloaderListener downloaderListener) {
-                downloaderListener.onCallback(new byte[]{1}, Status.SUCCESS);
+            public void getRemoteImage(String url, WebImageListener listener) {
+                listener.onLoaded(mock(Texture.class));
             }
         });
 
-        ImageStorage imageStorage = Mockito.spy(new ImageStorage(services, _game.getCoordinator()){
-            @Override
-            public Texture processTextureBytes(byte[] textureBytes) {
-                return Mockito.mock(Texture.class);
-            }
-        });
+        ImageStorage imageStorage = Mockito.spy(new ImageStorage(services, _game.getCoordinator()));
 
         ArrayList<String> ids = new ArrayList<>();
         for(int i = 0; i < 5; i++){

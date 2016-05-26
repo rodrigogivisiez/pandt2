@@ -159,6 +159,7 @@ public class ScoresHandler implements Disposable{
         Threadings.runInBackground(new Runnable() {
             @Override
             public void run() {
+
                 while (!dataReady){
                     if(disposed) return;
                     Threadings.sleep(300);

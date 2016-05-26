@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -130,11 +131,11 @@ public class CreateGameScene extends SceneAbstract {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                _gameDetailsParent.addAction(sequence(moveBy( 260, 0, 1f, Interpolation.bounceOut), new Action() {
+                _gameDetailsParent.clearActions();
+                _gameDetailsParent.addAction(sequence(moveBy(260, 0, 1f, Interpolation.bounceOut), new RunnableAction() {
                             @Override
-                            public boolean act(float delta) {
+                            public void run() {
                                 changeGameDetails(game);
-                                return true;
                             }
                         }
                 ));

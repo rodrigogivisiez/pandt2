@@ -6,436 +6,517 @@ filter: Linear,Linear
 repeat: none
 ALIEN
   rotate: false
-  xy: 1557, 611
+  xy: 1862, 536
   size: 30, 105
   orig: 30, 105
   offset: 0, 0
   index: -1
 BIRTHDAY
   rotate: false
-  xy: 367, 44
+  xy: 809, 126
   size: 150, 114
   orig: 150, 114
   offset: 0, 0
   index: -1
+BLACK_TRANS_BG
+  rotate: false
+  xy: 1957, 674
+  size: 31, 42
+  split: 11, 10, 21, 15
+  pad: 0, 0, 0, 0
+  orig: 31, 42
+  offset: 0, 0
+  index: -1
 BOTTOM_BG
   rotate: false
-  xy: 2, 160
+  xy: 804, 303
   size: 640, 60
   orig: 640, 60
   offset: 0, 0
   index: -1
 BOTTOM_BG_SHADOW
   rotate: false
-  xy: 1802, 703
+  xy: 468, 27
   size: 38, 25
   orig: 38, 25
   offset: 0, 0
   index: -1
 BULB_BROKEN
   rotate: false
-  xy: 1419, 350
+  xy: 1498, 581
   size: 27, 19
   orig: 27, 19
   offset: 0, 0
   index: -1
 BULB_LIGHT_OFF
   rotate: false
-  xy: 1532, 557
+  xy: 1498, 560
   size: 28, 19
   orig: 28, 19
   offset: 0, 0
   index: -1
 BULB_LIGHT_ON
   rotate: false
-  xy: 729, 41
+  xy: 1967, 905
   size: 77, 117
   orig: 77, 117
   offset: 0, 0
   index: -1
 CASTLE_DESTROYED
   rotate: false
-  xy: 1292, 241
+  xy: 104, 18
   size: 79, 34
   orig: 79, 34
   offset: 0, 0
   index: -1
 CASTLE_DOOR
   rotate: false
-  xy: 1443, 494
+  xy: 1894, 528
   size: 65, 62
   orig: 65, 62
   offset: 0, 0
   index: -1
 CASTLE_ROOM
   rotate: false
-  xy: 1446, 718
+  xy: 809, 72
   size: 153, 52
   orig: 153, 52
   offset: 0, 0
   index: -1
 CASTLE_SEMI_DESTROYED
   rotate: false
-  xy: 1292, 277
+  xy: 1967, 852
   size: 79, 51
   orig: 79, 51
   offset: 0, 0
   index: -1
 CAT
   rotate: false
-  xy: 2000, 812
+  xy: 508, 17
   size: 33, 35
   orig: 33, 35
   offset: 0, 0
   index: -1
-CIRCLE
+CIRCLE_BIG
   rotate: false
-  xy: 1703, 699
-  size: 97, 71
-  orig: 97, 71
+  xy: 1308, 387
+  size: 98, 71
+  orig: 98, 71
+  offset: 0, 0
+  index: -1
+CIRCLE_FAT
+  rotate: false
+  xy: 185, 25
+  size: 61, 27
+  orig: 61, 27
+  offset: 0, 0
+  index: -1
+CIRCLE_MEDIUM
+  rotate: false
+  xy: 1957, 760
+  size: 55, 37
+  orig: 55, 37
+  offset: 0, 0
+  index: -1
+CIRCLE_SMALL
+  rotate: false
+  xy: 1308, 365
+  size: 30, 20
+  orig: 30, 20
+  offset: 0, 0
+  index: -1
+CIRCLE_TALL
+  rotate: false
+  xy: 1232, 126
+  size: 39, 52
+  orig: 39, 52
   offset: 0, 0
   index: -1
 COVERED
   rotate: false
-  xy: 519, 48
+  xy: 1519, 703
   size: 106, 110
   orig: 106, 110
   offset: 0, 0
   index: -1
 CROSS
   rotate: false
-  xy: 2000, 786
+  xy: 434, 28
   size: 32, 24
   orig: 32, 24
   offset: 0, 0
   index: -1
 CROWD
   rotate: false
-  xy: 2, 8
+  xy: 576, 70
   size: 231, 150
   orig: 231, 150
   offset: 0, 0
   index: -1
 CURSOR_BLACK
   rotate: false
-  xy: 2036, 981
+  xy: 1430, 199
   size: 1, 41
   orig: 1, 41
   offset: 0, 0
   index: -1
 DEER_RIGHT
   rotate: false
-  xy: 1341, 452
+  xy: 964, 54
   size: 100, 104
   orig: 100, 104
   offset: 0, 0
   index: -1
-DOOR_LEFT
-  rotate: false
-  xy: 804, 470
-  size: 321, 243
-  orig: 321, 243
-  offset: 0, 0
-  index: -1
-DOOR_OVERLAY
-  rotate: false
-  xy: 804, 776
-  size: 640, 246
-  orig: 640, 246
-  offset: 0, 0
-  index: -1
-DOOR_RIGHT
-  rotate: false
-  xy: 804, 225
-  size: 321, 243
-  orig: 321, 243
-  offset: 0, 0
-  index: -1
 EGG
   rotate: false
-  xy: 497, 15
+  xy: 1498, 629
   size: 20, 27
   orig: 20, 27
   offset: 0, 0
   index: -1
 EMPTY
   rotate: false
-  xy: 1446, 715
+  xy: 961, 157
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 FULL_BLACK_BG
   rotate: false
-  xy: 1373, 267
+  xy: 1452, 473
   size: 35, 31
   orig: 35, 31
   offset: 0, 0
   index: -1
+GAME_OVER_SCENE
+  rotate: false
+  xy: 1446, 815
+  size: 232, 207
+  orig: 232, 207
+  offset: 0, 0
+  index: -1
+GAME_OVER_TRANS_BG
+  rotate: false
+  xy: 1627, 710
+  size: 45, 42
+  split: 24, 15, 11, 20
+  pad: 0, 0, 0, 0
+  orig: 45, 42
+  offset: 0, 0
+  index: -1
+GEAR_ICON
+  rotate: false
+  xy: 1370, 365
+  size: 20, 20
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
 GIRAFFE
   rotate: false
-  xy: 1127, 330
+  xy: 1680, 519
   size: 180, 383
   orig: 180, 383
   offset: 0, 0
   index: -1
 HINT_BLOCK
   rotate: false
-  xy: 367, 6
+  xy: 1519, 665
   size: 87, 36
   orig: 87, 36
   offset: 0, 0
   index: -1
 HINT_OFF_ICON
   rotate: false
-  xy: 1802, 730
+  xy: 1232, 84
   size: 38, 40
   orig: 38, 40
   offset: 0, 0
   index: -1
 HINT_ON_ICON
   rotate: false
-  xy: 456, 2
+  xy: 1957, 718
   size: 39, 40
   orig: 39, 40
   offset: 0, 0
   index: -1
 ICE_BOTTOM_HALF
   rotate: false
-  xy: 1127, 222
+  xy: 248, 28
   size: 64, 24
   orig: 64, 24
   offset: 0, 0
   index: -1
 ICE_TOP_HALF
   rotate: false
-  xy: 1443, 464
+  xy: 1130, 41
   size: 64, 28
   orig: 64, 28
   offset: 0, 0
   index: -1
 MAN_GIVE_FLOWER
   rotate: false
-  xy: 235, 3
+  xy: 1206, 460
   size: 130, 155
   orig: 130, 155
   offset: 0, 0
   index: -1
 MAN_RUNNING
   rotate: false
-  xy: 1341, 558
+  xy: 1338, 460
   size: 66, 155
   orig: 66, 155
   offset: 0, 0
   index: -1
 MONSTERS
   rotate: false
-  xy: 644, 160
+  xy: 1126, 180
   size: 150, 60
   orig: 150, 60
   offset: 0, 0
   index: -1
 MONSTERS_INVERT
   rotate: false
-  xy: 1848, 789
+  xy: 1278, 182
   size: 150, 58
   orig: 150, 58
   offset: 0, 0
   index: -1
+PAPYRUS
+  rotate: false
+  xy: 804, 782
+  size: 640, 240
+  orig: 640, 240
+  offset: 0, 0
+  index: -1
+PAPYRUS_END
+  rotate: false
+  xy: 1927, 658
+  size: 28, 244
+  orig: 28, 244
+  offset: 0, 0
+  index: -1
+PAPYRUS_START
+  rotate: false
+  xy: 1894, 658
+  size: 31, 244
+  orig: 31, 244
+  offset: 0, 0
+  index: -1
 PLAYER0_COUNTER
   rotate: false
-  xy: 1193, 222
+  xy: 248, 2
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER1_COUNTER
   rotate: false
-  xy: 1233, 222
+  xy: 288, 2
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER2_COUNTER
   rotate: false
-  xy: 1373, 241
+  xy: 314, 28
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER3_COUNTER
   rotate: false
-  xy: 1569, 585
+  xy: 328, 2
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER4_COUNTER
   rotate: false
-  xy: 1707, 673
+  xy: 354, 28
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER5_COUNTER
   rotate: false
-  xy: 1707, 647
+  xy: 368, 2
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER6_COUNTER
   rotate: false
-  xy: 1747, 673
+  xy: 394, 28
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PLAYER7_COUNTER
   rotate: false
-  xy: 1747, 647
+  xy: 408, 2
   size: 38, 24
   orig: 38, 24
   offset: 0, 0
   index: -1
 PREGNANT
   rotate: false
-  xy: 1409, 563
+  xy: 1406, 473
   size: 44, 150
   orig: 44, 150
   offset: 0, 0
   index: -1
-RECOVER_HINT_LIGHT
-  rotate: false
-  xy: 1848, 849
-  size: 186, 173
-  orig: 186, 173
-  offset: 0, 0
-  index: -1
 RED_ARROW
   rotate: false
-  xy: 1273, 224
+  xy: 1608, 679
   size: 15, 22
   split: 0, 14, 0, 0
   pad: 0, 0, 0, 0
   orig: 15, 22
   offset: 0, 0
   index: -1
-REFLECTION
-  rotate: false
-  xy: 1455, 611
-  size: 100, 105
-  orig: 100, 105
-  offset: 0, 0
-  index: -1
 ROCKET
   rotate: false
-  xy: 1309, 330
+  xy: 1066, 38
   size: 62, 120
   orig: 62, 120
   offset: 0, 0
   index: -1
 SANTA_LEFT
   rotate: false
-  xy: 627, 51
+  xy: 1130, 71
   size: 100, 107
   orig: 100, 107
   offset: 0, 0
   index: -1
 SCRATCH_SEPARATOR
   rotate: false
-  xy: 1848, 775
+  xy: 576, 56
   size: 89, 12
   orig: 89, 12
   offset: 0, 0
   index: -1
 SEXY_GIRL
   rotate: false
-  xy: 1373, 300
+  xy: 1452, 506
   size: 44, 150
   orig: 44, 150
   offset: 0, 0
   index: -1
 SHIELD_SWORD
   rotate: false
-  xy: 1455, 558
+  xy: 1957, 799
   size: 75, 51
   orig: 75, 51
   offset: 0, 0
   index: -1
 SMALL_STAR_ICON
   rotate: false
-  xy: 497, 4
+  xy: 1406, 462
   size: 9, 9
   orig: 9, 9
   offset: 0, 0
   index: -1
+SPECIAL_STAGE
+  rotate: false
+  xy: 1680, 904
+  size: 285, 118
+  orig: 285, 118
+  offset: 0, 0
+  index: -1
 SPEECH
   rotate: false
-  xy: 1589, 628
+  xy: 1894, 592
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 STAR
   rotate: false
-  xy: 1419, 393
+  xy: 1498, 602
   size: 25, 25
   orig: 25, 25
   offset: 0, 0
   index: -1
+START_GAME_SCENE
+  rotate: false
+  xy: 804, 617
+  size: 570, 163
+  orig: 570, 163
+  offset: 0, 0
+  index: -1
 STOP_ICON
   rotate: false
-  xy: 1419, 420
+  xy: 543, 22
   size: 30, 30
   orig: 30, 30
   offset: 0, 0
   index: -1
 SWORD_SEPARATOR
   rotate: false
-  xy: 1309, 454
+  xy: 1862, 643
   size: 30, 259
   orig: 30, 259
   offset: 0, 0
   index: -1
 TOP_BG
   rotate: false
-  xy: 804, 715
+  xy: 804, 242
   size: 640, 59
   orig: 640, 59
   offset: 0, 0
   index: -1
 TOP_BG_SHADOW
   rotate: false
-  xy: 1589, 611
+  xy: 1206, 365
   size: 43, 15
   orig: 43, 15
   offset: 0, 0
   index: -1
 TRANS_BLACK_BG
   rotate: false
-  xy: 1532, 578
+  xy: 1196, 38
   size: 35, 31
   orig: 35, 31
   offset: 0, 0
   index: -1
+TRUMPET
+  rotate: false
+  xy: 2, 54
+  size: 572, 166
+  orig: 572, 166
+  offset: 0, 0
+  index: -1
+TRUMPET_LEFT_TRACE
+  rotate: false
+  xy: 1376, 625
+  size: 70, 155
+  orig: 70, 155
+  offset: 0, 0
+  index: -1
+TRUMPET_RIGHT_TRACE
+  rotate: false
+  xy: 1448, 658
+  size: 69, 155
+  orig: 69, 155
+  offset: 0, 0
+  index: -1
 UFO
   rotate: false
-  xy: 519, 2
+  xy: 2, 8
   size: 100, 44
   orig: 100, 44
   offset: 0, 0
   index: -1
 VAMPIRE
   rotate: false
-  xy: 1655, 633
+  xy: 1627, 754
   size: 50, 59
   orig: 50, 59
   offset: 0, 0
   index: -1
 VAN
   rotate: false
-  xy: 1127, 248
+  xy: 961, 160
   size: 163, 80
   orig: 163, 80
   offset: 0, 0
@@ -449,14 +530,21 @@ VIGNETTE
   index: -1
 WHITE_BG
   rotate: false
-  xy: 1589, 710
+  xy: 1376, 617
   size: 10, 6
   orig: 10, 6
   offset: 0, 0
   index: -1
+WHITE_CIRCLE
+  rotate: false
+  xy: 1862, 525
+  size: 9, 9
+  orig: 9, 9
+  offset: 0, 0
+  index: -1
 WHITE_ROUNDED_BG
   rotate: false
-  xy: 1419, 371
+  xy: 1340, 365
   size: 28, 20
   split: 11, 13, 7, 9
   pad: 5, 7, 0, 0
@@ -465,14 +553,14 @@ WHITE_ROUNDED_BG
   index: -1
 WRINKLE_BG
   rotate: false
-  xy: 1446, 772
+  xy: 804, 365
   size: 400, 250
   orig: 400, 250
   offset: 0, 0
   index: -1
 YOLK
   rotate: false
-  xy: 1601, 694
+  xy: 1206, 382
   size: 100, 76
   orig: 100, 76
   offset: 0, 0

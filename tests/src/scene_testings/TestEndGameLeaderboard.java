@@ -101,7 +101,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
             }
 
             @Override
-            public void moveUpRankAnimation(int fromRank, int toRank, Runnable onFinish) {
+            public void moveUpRankAnimation(int fromRank, int toRank, boolean starAnimate, Runnable onFinish) {
                 onFinish.run();
             }
         });

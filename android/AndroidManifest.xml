@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mygdx.potatoandtomato.android"
-    android:versionCode="55"
+    android:versionCode="59"
     android:versionName="1.0" >
 
 
@@ -18,7 +18,7 @@
 
     <uses-permission android:name="com.example.gcm.permission.C2D_MESSAGE" />
 
-
+    /*must be targeting less than 21, else notification icon will be white square*/
     <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="23" />
 
 

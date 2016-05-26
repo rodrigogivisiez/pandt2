@@ -13,6 +13,7 @@ import com.potatoandtomato.games.screens.hints.HintsLogic;
 import com.potatoandtomato.games.screens.main.ImageStorage;
 import com.potatoandtomato.games.screens.main.MainLogic;
 import com.potatoandtomato.games.screens.main.StageImagesLogic;
+import com.potatoandtomato.games.screens.main.StageStateLogic;
 import com.potatoandtomato.games.screens.review.ReviewLogic;
 import com.potatoandtomato.games.screens.scores.ScoresLogic;
 import com.potatoandtomato.games.screens.stage_counter.StageCounterLogic;
@@ -47,6 +48,7 @@ public class Entrance extends GameEntrance {
     ScoresLogic _scoresLogic;
     GameModel _gameModel;
     StageImagesLogic _stageImagesLogic;
+    StageStateLogic _stageStateLogic;
 
 
     public Entrance(final GameCoordinator gameCoordinator) {
@@ -74,10 +76,11 @@ public class Entrance extends GameEntrance {
                 _stageCounterLogic = new StageCounterLogic(getServices(), _coordinator, _gameModel);
                 _scoresLogic = new ScoresLogic(_coordinator, getServices(), _gameModel, _knightLogic, _castleLogic, _hintsLogic);
                 _stageImagesLogic = new StageImagesLogic(_coordinator, getServices(), _gameModel);
+                _stageStateLogic = new StageStateLogic(_gameModel, getServices(), _coordinator);
 
                 _mainLogic = new MainLogic(getGameCoordinator(), getServices(), _timeLogic, _hintsLogic, _reviewLogic,
                         _userCountersLogic, _stageCounterLogic, _scoresLogic, _imageStorage, _gameModel,
-                        _stageImagesLogic);
+                        _stageImagesLogic, _stageStateLogic);
 
 
                 getGameCoordinator().finishLoading();
@@ -110,6 +113,7 @@ public class Entrance extends GameEntrance {
         if(_userCountersLogic != null) _userCountersLogic.dispose();
         if(_imageStorage != null) _imageStorage.dispose();
         if(_scoresLogic != null) _scoresLogic.dispose();
+        if(_stageStateLogic != null) _stageStateLogic.dispose();
     }
 
     private void initAssets(){

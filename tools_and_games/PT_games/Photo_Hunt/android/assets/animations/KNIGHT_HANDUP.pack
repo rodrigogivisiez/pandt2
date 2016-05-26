@@ -1,0 +1,152 @@
+
+KNIGHT_HANDUP.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+knight
+  rotate: false
+  xy: 0, 1146
+  size: 210, 189
+  orig: 210, 189
+  offset: 0, 0
+  index: 0
+knight
+  rotate: false
+  xy: 0, 955
+  size: 210, 189
+  orig: 210, 189
+  offset: 0, 0
+  index: 1
+knight
+  rotate: false
+  xy: 212, 1146
+  size: 210, 189
+  orig: 210, 189
+  offset: 0, 0
+  index: 2
+knight
+  rotate: false
+  xy: 0, 764
+  size: 210, 189
+  orig: 210, 189
+  offset: 0, 0
+  index: 3
+knight
+  rotate: false
+  xy: 212, 955
+  size: 210, 189
+  orig: 210, 189
+  offset: 0, 0
+  index: 4
+knight
+  rotate: false
+  xy: 424, 1146
+  size: 210, 189
+  orig: 210, 189
+  offset: 0, 0
+  index: 5
+knight
+  rotate: false
+  xy: 0, 573
+  size: 210, 189
+  orig: 210, 189
+  offset: 0, 0
+  index: 6
+knight
+  rotate: false
+  xy: 212, 764
+  size: 210, 189
+  orig: 210, 189
+  offset: 0, 0
+  index: 7
+knight
+  rotate: false
+  xy: 424, 955
+  size: 210, 189
+  orig: 210, 189
+  offset: 0, 0
+  index: 8
+knight
+  rotate: false
+  xy: 636, 1146
+  size: 210, 189
+  orig: 210, 189
+  offset: 0, 0
+  index: 9
+knight
+  rotate: false
+  xy: 0, 382
+  size: 210, 189
+  orig: 210, 189
+  offset: 0, 0
+  index: 10
+knight
+  rotate: false
+  xy: 212, 573
+  size: 210, 189
+  orig: 210, 189
+  offset: 0, 0
+  index: 11
+knight
+  rotate: false
+  xy: 424, 764
+  size: 210, 189
+  orig: 210, 189
+  offset: 0, 0
+  index: 12
+knight
+  rotate: false
+  xy: 636, 955
+  size: 210, 189
+  orig: 210, 189
+  offset: 0, 0
+  index: 13
+knight
+  rotate: false
+  xy: 0, 191
+  size: 210, 189
+  orig: 210, 189
+  offset: 0, 0
+  index: 14
+knight
+  rotate: false
+  xy: 212, 382
+  size: 210, 189
+  orig: 210, 189
+  offset: 0, 0
+  index: 15
+knight
+  rotate: false
+  xy: 424, 573
+  size: 210, 189
+  orig: 210, 189
+  offset: 0, 0
+  index: 16
+knight
+  rotate: false
+  xy: 636, 764
+  size: 210, 189
+  orig: 210, 189
+  offset: 0, 0
+  index: 17
+knight
+  rotate: false
+  xy: 0, 0
+  size: 210, 189
+  orig: 210, 189
+  offset: 0, 0
+  index: 18
+knight
+  rotate: false
+  xy: 212, 191
+  size: 210, 189
+  orig: 210, 189
+  offset: 0, 0
+  index: 19
+knight
+  rotate: false
+  xy: 424, 382
+  size: 210, 189
+  orig: 210, 189
+  offset: 0, 0
+  index: 20

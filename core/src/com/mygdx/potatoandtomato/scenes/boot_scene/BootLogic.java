@@ -219,7 +219,9 @@ public class BootLogic extends LogicAbstract {
         _services.getDatabase().authenticateUserByToken(token, new DatabaseListener<Profile>(Profile.class) {
             @Override
             public void onCallback(Profile obj, Status st) {
-                if (st == Status.FAILED || obj == null) retrieveUserFailed();
+                if (st == Status.FAILED || obj == null){
+                    retrieveUserFailed();
+                }
                 else {
                     obj.setToken(token);
                     _services.setProfile(obj);

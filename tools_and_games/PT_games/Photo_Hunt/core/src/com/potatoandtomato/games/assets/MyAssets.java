@@ -12,12 +12,14 @@ public class MyAssets extends Assets {
 
     private Textures textures;
     private Sounds sounds;
+    private Animations animations;
 
-    public MyAssets(PTAssetsManager manager, FontAssets fontAssets, AnimationAssets animationAssets,
+    public MyAssets(PTAssetsManager manager, FontAssets fontAssets, Animations animationAssets,
                     Sounds soundAssets, PatchAssets patchAssets, Textures textureAssets) {
         super(manager, fontAssets, animationAssets, soundAssets, patchAssets, textureAssets);
         this.textures = textureAssets;
         this.sounds = soundAssets;
+        this.animations = animationAssets;
     }
 
     @Override
@@ -28,5 +30,10 @@ public class MyAssets extends Assets {
     @Override
     public Sounds getSounds() {
         return sounds;
+    }
+
+    @Override
+    public Animations getAnimations() {
+        return animations;
     }
 }

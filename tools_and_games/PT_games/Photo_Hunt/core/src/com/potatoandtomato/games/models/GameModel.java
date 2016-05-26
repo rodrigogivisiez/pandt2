@@ -5,6 +5,7 @@ import com.potatoandtomato.common.utils.SafeDouble;
 import com.potatoandtomato.games.absintf.GameModelListener;
 import com.potatoandtomato.games.enums.GameState;
 import com.potatoandtomato.games.enums.StageType;
+import com.potatoandtomato.games.helpers.Logs;
 import com.potatoandtomato.games.statics.Global;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
 import com.shaded.fasterxml.jackson.core.JsonProcessingException;
@@ -112,6 +113,9 @@ public class GameModel {
     }
 
     public void setRemainingMiliSecs(int remainingMiliSecs, boolean notify) {
+        if(Global.REVIEW_MODE && remainingMiliSecs < this.remainingMiliSecs){
+            return;
+        }
         this.remainingMiliSecs = remainingMiliSecs;
         if(notify){
             for(GameModelListener listener : listeners){
@@ -181,9 +185,12 @@ public class GameModel {
     }
 
     public void setGameState(GameState gameState) {
-        this.gameState = gameState;
-        for(GameModelListener listener : listeners){
-            listener.onGameStateChanged(gameState);
+        if(gameState != this.gameState){
+            this.gameState = gameState;
+            for(GameModelListener listener : listeners){
+                listener.onGameStateChanged(gameState);
+            }
+            Logs.show("Game state: " + gameState);
         }
     }
 
@@ -231,7 +238,7 @@ public class GameModel {
     public int getThisStageTotalMiliSecs(){
         double time = 0;
         if(this.stageType == StageType.Bonus){
-            time = 30000;
+            time = 60000;
         }
         else{
             time =  Math.max(60000 - (Math.pow(stageNumber, 1.5) * 1000), 0) +

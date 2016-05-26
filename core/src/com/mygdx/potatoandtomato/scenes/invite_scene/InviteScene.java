@@ -20,6 +20,7 @@ import com.mygdx.potatoandtomato.enums.BadgeType;
 import com.mygdx.potatoandtomato.models.GameHistory;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
+import com.potatoandtomato.common.models.Streak;
 import com.potatoandtomato.common.utils.MultiHashMap;
 import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
@@ -247,7 +248,7 @@ public class InviteScene extends SceneAbstract {
                     case Leaderboard:
                         Integer rankNumber = (Integer) objs[0];
                         double score = (Double) objs[1];
-                        int streak = (Integer) objs[2];
+                        Streak streak = (Streak) objs[2];
 
                         Badge rankBadge = new Badge(BadgeType.Rank, String.valueOf(rankNumber), _assets, 2);
 
@@ -259,7 +260,7 @@ public class InviteScene extends SceneAbstract {
                         nameScoreTable.add(scoreLabel).expandX().fillX();
 
                         detailsTable.add(rankBadge).padRight(5);
-                        if(streak >= 3){
+                        if(streak.hasValidStreak()){
                             Badge streakBadge = new Badge(BadgeType.Streak, String.valueOf(streak), _assets, 2);
                             detailsTable.add(streakBadge).size(28, 30).padRight(5);
                         }

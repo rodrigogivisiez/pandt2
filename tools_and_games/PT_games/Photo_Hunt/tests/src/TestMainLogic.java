@@ -1,5 +1,6 @@
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.absintf.ImageStorageListener;
 import com.potatoandtomato.games.absintf.mockings.MockModel;
@@ -11,10 +12,7 @@ import com.potatoandtomato.games.models.Services;
 import com.potatoandtomato.games.models.SimpleRectangle;
 import com.potatoandtomato.games.models.WonStageModel;
 import com.potatoandtomato.games.screens.hints.HintsLogic;
-import com.potatoandtomato.games.screens.main.ImageStorage;
-import com.potatoandtomato.games.screens.main.MainLogic;
-import com.potatoandtomato.games.screens.main.MainScreen;
-import com.potatoandtomato.games.screens.main.StageImagesLogic;
+import com.potatoandtomato.games.screens.main.*;
 import com.potatoandtomato.games.screens.review.ReviewLogic;
 import com.potatoandtomato.games.screens.scores.ScoresLogic;
 import com.potatoandtomato.games.screens.stage_counter.StageCounterLogic;
@@ -89,9 +87,6 @@ public class TestMainLogic extends TestAbstract {
 
         Threadings.sleep(200);
 
-
-        String userId = _game.getCoordinator().getMyUserId();
-
         mainLogic.imageTouched(1, 1, 30, 3);
         verify(mainLogic.getTimeLogic(), times(1)).reduceTime();
 
@@ -106,7 +101,7 @@ public class TestMainLogic extends TestAbstract {
 
 
     private MainLogic getMainLogic(GameModel gameModel){
-        Services services =  Mockings.mockServices(_game.getCoordinator());
+        final Services services =  Mockings.mockServices(_game.getCoordinator());
 
         ImageStorage imageStorage = new ImageStorage(services, _game.getCoordinator()){
             @Override
@@ -123,9 +118,18 @@ public class TestMainLogic extends TestAbstract {
             }
         }).when(mainScreen).getImageSize();
 
+        StageStateLogic stageStateLogic = mock(StageStateLogic.class);
+        doAnswer(new Answer<Table>() {
+            @Override
+            public Table answer(InvocationOnMock invocation) throws Throwable {
+                return new StageStateActor(services);
+            }
+        }).when(stageStateLogic).getStageStateActor();
+
+
         MainLogic mainLogic = new MainLogic(_game.getCoordinator(), services, mock(TimeLogic.class),
                 mock(HintsLogic.class), mock(ReviewLogic.class), mock(UserCountersLogic.class), mock(StageCounterLogic.class),
-                mock(ScoresLogic.class), imageStorage, gameModel, mock(StageImagesLogic.class)){
+                mock(ScoresLogic.class), imageStorage, gameModel, mock(StageImagesLogic.class), stageStateLogic){
             @Override
             public boolean meIsThisStageDecisionMaker() {
                 return true;

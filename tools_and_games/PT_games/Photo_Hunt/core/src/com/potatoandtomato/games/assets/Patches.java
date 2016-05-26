@@ -14,7 +14,7 @@ public class Patches extends PatchAssets {
     }
 
     public enum Name{
-        WHITE_ROUNDED_BG, RED_ARROW
+        WHITE_ROUNDED_BG, RED_ARROW, BLACK_TRANS_BG, GAME_OVER_TRANS_BG,
     }
 
 }

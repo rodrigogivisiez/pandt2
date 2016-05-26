@@ -40,6 +40,18 @@ public class MockSoundManager implements ISoundsPlayer {
     }
 
     @Override
+    public void playMusicNoLoop(final Music music) {
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                music.setVolume(_volume);
+                music.setLooping(false);
+                music.play();
+            }
+        });
+    }
+
+    @Override
     public void stopMusic(final Music music) {
         Threadings.postRunnable(new Runnable() {
             @Override

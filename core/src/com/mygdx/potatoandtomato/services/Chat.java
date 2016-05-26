@@ -125,42 +125,49 @@ public class Chat {
     }
 
     private void startRecord(){
-        chatControl.setRecordingSoundsLevel(0);
-        chatControl.showRecording();
+        if(recorder.isCanRecord()){
+            chatControl.setRecordingSoundsLevel(0);
+            chatControl.showRecording();
 
-        Threadings.delay(500, new Runnable() {
-            @Override
-            public void run() {
-                soundsPlayer.setVolume(0);
-                Threadings.delay(200, new Runnable() {
-                    @Override
-                    public void run() {
-                        recorder.recordToFile(recordsPath, new RecordListener() {
-                            @Override
-                            public void onRecording(int volumeLevel) {
-                                chatControl.setRecordingSoundsLevel(volumeLevel);
-                            }
-
-                            @Override
-                            public void onFinishedRecord(FileHandle resultFile, int totalSecs, Status status) {
-                                if (status == Status.SUCCESS) {
-                                    sendVoiceMessage(resultFile, totalSecs);
+            Threadings.delay(500, new Runnable() {
+                @Override
+                public void run() {
+                    soundsPlayer.setVolume(0);
+                    Threadings.delay(200, new Runnable() {
+                        @Override
+                        public void run() {
+                            recorder.recordToFile(recordsPath, new RecordListener() {
+                                @Override
+                                public void onRecording(int volumeLevel) {
+                                    chatControl.setRecordingSoundsLevel(volumeLevel);
                                 }
-                            }
-                        });
-                    }
-                });
-            }
-        });
+
+                                @Override
+                                public void onFinishedRecord(FileHandle resultFile, int totalSecs, Status status) {
+                                    if (status == Status.SUCCESS) {
+                                        sendVoiceMessage(resultFile, totalSecs);
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
     }
 
     private void stopRecord(){
-        chatControl.hideRecording();
-        recorder.stopRecording();
-        Threadings.delay(1000, new Runnable() {
+        Threadings.delay(700, new Runnable() {
             @Override
             public void run() {
-                soundsPlayer.setVolume(1);
+                chatControl.hideRecording();
+                recorder.stopRecording();
+                Threadings.delay(1000, new Runnable() {
+                    @Override
+                    public void run() {
+                        soundsPlayer.setVolume(1);
+                    }
+                });
             }
         });
     }
@@ -327,7 +334,7 @@ public class Chat {
                             fos.close();
 
                             int totalSecs = pair.getFirst()[0];
-                            ChatMessage chatMessage = new ChatMessage(oggFile.name(), ChatMessage.FromType.USER_VOICE,
+                            ChatMessage chatMessage = new ChatMessage(oggFile.file().getAbsolutePath(), ChatMessage.FromType.USER_VOICE,
                                     senderId, String.valueOf(totalSecs));
                             newMessage(chatMessage);
                         }

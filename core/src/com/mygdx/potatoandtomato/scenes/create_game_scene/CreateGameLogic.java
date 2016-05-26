@@ -77,8 +77,10 @@ public class CreateGameLogic extends LogicAbstract {
     }
 
     public void onGameClicked(Game game){
-        _selectedGame = game;
-        _scene.showGameDetails(game);
+        if(_selectedGame == null || !_selectedGame.getAbbr().equals(game.getAbbr())){
+            _selectedGame = game;
+            _scene.showGameDetails(game);
+        }
     }
 
     @Override
