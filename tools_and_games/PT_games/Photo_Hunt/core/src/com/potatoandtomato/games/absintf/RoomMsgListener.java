@@ -13,14 +13,16 @@ import java.util.ArrayList;
  */
 public abstract class RoomMsgListener {
 
+
     public abstract void onTouched(TouchedPoint touchedPoint, String userId);
 
-    public abstract void onLose();
+    public abstract void onLose(GameModel loseGameModel);
 
     public abstract void onWon(WonStageModel wonStageModel);
 
     public abstract void onDownloadImageRequest(ArrayList<String> ids);
 
-    public abstract void onGoToNextStage(String id, StageType stageType, BonusType bonusType, String extra, GameModel gameModel);
+    public abstract void onGoToNextStage(String id, int stageNumber, StageType stageType, BonusType bonusType, String extra);
 
+    public abstract void onStartPlaying();
 }

@@ -110,7 +110,13 @@ public class BeforeStartPapyrusScene extends PapyrusSceneAbstract {
                     }
                 });
 
-                shouldCloseInMiliSecs(3000);
+                if(isContinue){
+                    shouldCloseInMiliSecs(0);
+                }
+                else{
+                    shouldCloseInMiliSecs(3000);
+                }
+
             }
         });
     }
@@ -122,7 +128,6 @@ public class BeforeStartPapyrusScene extends PapyrusSceneAbstract {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                assets.getAnimations().disposeAnimation(Animations.Name.KNIGHT_HANDUP);
                 services.getSoundsWrapper().stopMusic(Sounds.Name.BEFORE_START_GAME_MUSIC);
             }
         });

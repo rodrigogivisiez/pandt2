@@ -18,7 +18,7 @@ public class TestGamingKit extends TestAbstract {
         GamingKit kit = new MockGamingKit();
         kit.addListener(getClassTag(), new ConnectionChangedListener() {
             @Override
-            public void onChanged(ConnectStatus st) {
+            public void onChanged(String userId, ConnectStatus st) {
 
             }
         });

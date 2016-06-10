@@ -18,10 +18,23 @@
 		$userId = htmlspecialchars($_POST["userId"]);
 		$secret = htmlspecialchars($_POST["secret"]);
 		
+		if(empty($userId)) $userId = 1;
 		
 		$firebase = new \Firebase\FirebaseLib($DEFAULT_URL, $DEFAULT_TOKEN);
 		$response = $firebase->get('secret/users/'.$userId);
+		
+		if($response == false){
+			echo "FAIL_CONNECT";
+			return;
+		}
+			
 		$result = json_decode($response);
+		if(!empty($result->error)){
+			echo "FAIL_CONNECT";
+			return;
+		}
+		
+			
 		if(!empty($result->secret) && $result->secret == $secret){
 			$isModerator = false;
 			
@@ -45,11 +58,10 @@
 			return;
 		}
 		
-	
+		
 	} catch (TokenException $e) {
 		
 	}
-	
 	
 	echo -1;
 	return;

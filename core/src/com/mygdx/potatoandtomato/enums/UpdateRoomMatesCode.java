@@ -1,4 +1,6 @@
-package com.mygdx.potatoandtomato.absintflis.gamingkit;
+package com.mygdx.potatoandtomato.enums;
+
+import com.potatoandtomato.common.enums.RoomUpdateType;
 
 /**
  * Created by SiongLeng on 17/12/2015.
@@ -23,4 +25,28 @@ public class UpdateRoomMatesCode {
     public final static int LOAD_FAILED = 15;
     public final static int AUDIO_CHAT = 16;
     public final static int LOCK_PROPERTY = 17;
+    public final static int GAME_DATA = 18;
+    public final static int GAME_DATA_REQUEST = 22;
+    public final static int DECISION_MAKER = 19;
+    public final static int USER_ABANDON = 20;
+    public final static int USER_CONNECTED = 21;
+
+    public static int roomUpdateTypeToUpdateRoomMatesCode(RoomUpdateType roomUpdateType){
+        if(roomUpdateType == RoomUpdateType.InGame){
+            return IN_GAME_UPDATE;
+        }
+        else if(roomUpdateType == RoomUpdateType.GameData){
+            return GAME_DATA;
+        }
+        else if(roomUpdateType == RoomUpdateType.GameDataRequest){
+            return GAME_DATA_REQUEST;
+        }
+        else if(roomUpdateType == RoomUpdateType.DecisionMakerUpdate){
+            return DECISION_MAKER;
+        }
+        else{
+            return -1;
+        }
+    }
+
 }

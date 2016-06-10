@@ -69,7 +69,6 @@ public class MockModel {
         roomUsers.put(user2.getProfile().getUserId(), user2);
         r.setRoomUsersMap(roomUsers);
         r.convertRoomUsersToTeams();
-        r.storeRoomUsersToOriginalRoomUserIds();
         return r;
     }
 
@@ -91,7 +90,7 @@ public class MockModel {
         scoreDetails.add(new ScoreDetails(1000, "5 win", true, true));
 
         ArrayList<Player> myTeams = new ArrayList<Player>();
-        myTeams.add(new Player("abc", "1", true, true, 0));
+        myTeams.add(new Player("abc", "1", true,  0));
 
         Team team = new Team();
         team.setPlayers(myTeams);

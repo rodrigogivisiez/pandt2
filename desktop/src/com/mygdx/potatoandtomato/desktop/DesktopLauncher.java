@@ -1,5 +1,6 @@
 package com.mygdx.potatoandtomato.desktop;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.Texture;
@@ -7,6 +8,7 @@ import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import com.mygdx.potatoandtomato.PTGame;
 import com.mygdx.potatoandtomato.absintflis.entrance.EntranceLoaderListener;
 import com.mygdx.potatoandtomato.utils.JarUtils;
+import com.mygdx.potatoandtomato.utils.ForAppwarpTesting;
 import com.mygdx.potatoandtomato.utils.Positions;
 import com.mygdx.potatoandtomato.statics.Terms;
 import com.mygdx.potatoandtomato.statics.Global;
@@ -29,7 +31,6 @@ public class DesktopLauncher {
 	public static Broadcaster _broadcaster;
 
 	public static void main (String[] arg) {
-
 		_broadcaster = new Broadcaster();
 		_desktopImageLoader = new DesktopImageLoader(_broadcaster);
 
@@ -50,6 +51,7 @@ public class DesktopLauncher {
 		config.height = Positions.getHeight();
 		config.width = Positions.getWidth();
 		config.resizable = true;
+		config.title = Terms.PREF_NAME;
 
 
 		TexturePacker.Settings settings = new TexturePacker.Settings();

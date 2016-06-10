@@ -1,7 +1,8 @@
-package com.potatoandtomato.common.helpers;
+package com.mygdx.potatoandtomato.helpers;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Disposable;
+import com.potatoandtomato.common.absints.IRemoteHelper;
 import com.potatoandtomato.common.absints.WebImageListener;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
@@ -15,7 +16,7 @@ import java.util.HashMap;
 /**
  * Created by SiongLeng on 9/5/2016.
  */
-public class RemoteHelper implements Disposable{
+public class RemoteHelper implements IRemoteHelper{
 
     private Broadcaster broadcaster;
     private ArrayList<String> broadcastIds;
@@ -27,6 +28,7 @@ public class RemoteHelper implements Disposable{
 
     }
 
+    @Override
     public void getRemoteImage(final String url, final WebImageListener listener){
 
         String broadcastId = broadcaster.subscribe(BroadcastEvent.LOAD_IMAGE_RESPONSE, new BroadcastListener<Pair<String, Texture>>() {

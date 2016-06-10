@@ -1,28 +1,25 @@
 package com.potatoandtomato.common.mockings;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.firebase.client.Firebase;
 import com.potatoandtomato.common.*;
 import com.potatoandtomato.common.absints.*;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
+import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.controls.DisposableActor;
+import com.potatoandtomato.common.enums.RoomUpdateType;
+import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.helpers.DesktopImageLoader;
 import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.models.ScoreDetails;
 import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.statics.CommonVersion;
-import com.potatoandtomato.common.utils.ColorUtils;
-import com.potatoandtomato.common.utils.Downloader;
-import com.potatoandtomato.common.utils.Strings;
-import com.potatoandtomato.common.utils.Threadings;
+import com.potatoandtomato.common.utils.*;
 
-import javax.xml.bind.annotation.XmlElementDecl;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -38,18 +35,21 @@ public abstract class MockGame extends Game implements IPTGame {
     MockGamingKit _mockGamingKit;
     GameCoordinator _gameCoordinator;
     Broadcaster _broadcaster;
-    Downloader _downloader;
     PTAssetsManager _monitoringPTAssetsManager;
     ArrayList<Runnable> _onResumeRunnables;
     DesktopImageLoader _desktopImageLoader;
+    boolean isContinue;
+    boolean isDebugging;
+    ArrayList<Runnable> _msgToSendRunnables;
+    boolean isMockKitReady;
 
 
-    public MockGame(String gameId) {
-
+    public MockGame(String gameId, final boolean isContinue) {
         _onResumeRunnables = new ArrayList();
+        _msgToSendRunnables = new ArrayList();
         _broadcaster = new Broadcaster();
-        _downloader = new Downloader();
         _desktopImageLoader = new DesktopImageLoader(_broadcaster);
+        this.isContinue = isContinue;
 
         try {
             PrintWriter out = new PrintWriter("common_version.txt");
@@ -68,7 +68,7 @@ public abstract class MockGame extends Game implements IPTGame {
                 System.out.println("show confirm: " + msg);
                 if (msg.equals("PTTEXT_ABANDON")) {
                     yesRunnable.run();
-                    _mockGamingKit.sendUpdate("SURRENDER");
+                    _mockGamingKit.sendUpdate(-1, "SURRENDER", false, "");
                 }
             }
 
@@ -79,26 +79,100 @@ public abstract class MockGame extends Game implements IPTGame {
 
 
             @Override
-            public void onGameLoaded() {
-
-            }
-
-            @Override
             public void endGame() {
 
             }
 
             @Override
-            public void inGameUpdateRequest(String msg) {
-                _mockGamingKit.sendUpdate(msg);
+            public void sendUpdate(final RoomUpdateType updateType, final String msg) {
+                if (!isMockKitReady) {
+                    _msgToSendRunnables.add(new Runnable() {
+                        @Override
+                        public void run() {
+                            sendUpdate(updateType, msg);
+                        }
+                    });
+                    return;
+                }
+
+                int code = -1;
+                if (updateType == RoomUpdateType.GameData) {
+                    code = 0;
+                } else if (updateType == RoomUpdateType.DecisionMakerUpdate) {
+                    code = 1;
+                }
+
+                _mockGamingKit.sendUpdate(code, msg, false, "");
             }
 
             @Override
-            public void updateScores(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers) {
+            public void sendPrivateUpdate(final RoomUpdateType updateType, final String toUserId, final String msg) {
+                if (!isMockKitReady) {
+                    _msgToSendRunnables.add(new Runnable() {
+                        @Override
+                        public void run() {
+                            sendPrivateUpdate(updateType, toUserId, msg);
+                        }
+                    });
+                    return;
+                }
+
+
+                int code = -1;
+                if (updateType == RoomUpdateType.GameData) {
+                    code = 0;
+                } else if (updateType == RoomUpdateType.DecisionMakerUpdate) {
+                    code = 1;
+                }
+
+                _mockGamingKit.sendUpdate(code, msg, true, toUserId);
+            }
+
+            @Override
+            public void vibrate(double periodInMili) {
 
             }
+
+            @Override
+            public void finalizing(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers, boolean abandoned) {
+
+            }
+
+            @Override
+            public void gameFailed() {
+                System.out.println("Game failed to resume");
+            }
+
         }, _ref.child("gameBelongData").child(gameId), "1", new MockSoundManager(),
-                _broadcaster, _downloader, new ITutorials() {
+                new IRemoteHelper() {
+                    @Override
+                    public void getRemoteImage(final String url, final WebImageListener listener) {
+                        _broadcaster.subscribe(BroadcastEvent.LOAD_IMAGE_RESPONSE, new BroadcastListener<Pair<String, Texture>>() {
+                            @Override
+                            public void onCallback(Pair<String, Texture> result, Status st) {
+                                if (st == Status.SUCCESS) {
+                                    if (result.getFirst().equals(url)) {
+                                        _broadcaster.unsubscribe(this.getId());
+                                        listener.onLoaded(result.getSecond());
+                                    }
+                                } else {
+                                    if (result != null) {
+                                        if (result.getFirst() != null && result.getFirst().equals(url)) {
+                                            _broadcaster.unsubscribe(this.getId());
+                                            listener.onLoaded(null);
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                        _broadcaster.broadcast(BroadcastEvent.LOAD_IMAGE_REQUEST, url);
+                    }
+
+                    @Override
+                    public void dispose() {
+
+                    }
+                }, new ITutorials() {
             @Override
             public void show(DisposableActor actor, String text, float duration) {
                 System.out.println("Showing tutorial: " + text);
@@ -118,50 +192,78 @@ public abstract class MockGame extends Game implements IPTGame {
             public void deleteGamePref(String key) {
 
             }
-        }, 20);
+        }, 20, new IDisconnectOverlayControl() {
+            @Override
+            public void showResumingGameOverlay(int remainingMiliSecs) {
+
+            }
+
+            @Override
+            public void hideOverlay() {
+
+            }
+        }){
+            @Override
+            public void finishLoading() {
+                super.finishLoading();
+                _gameCoordinator.setGameStarted(true, isContinue);
+                _mockGamingKit.setGameStarted(true);
+                Threadings.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println("Assets loaded.");
+                    }
+                });
+            }
+        };
+
+
     }
 
     public void initiateMockGamingKit(final int expectedTeamCount, final int eachTeamExpectedPlayers, int delay, final boolean debugging){
-        _mockGamingKit = new MockGamingKit(_gameCoordinator, expectedTeamCount, !debugging ? eachTeamExpectedPlayers : 0, delay, _broadcaster, new Runnable() {
+        isDebugging = debugging;
+        _mockGamingKit = new MockGamingKit(_gameCoordinator, expectedTeamCount, !debugging ? eachTeamExpectedPlayers : 0, delay);
+        _gameCoordinator.setMyUserId(_mockGamingKit.getUserId());
+
+        if(debugging){
+            boolean addedMe = false;
+            ArrayList<Team> teams = new ArrayList<Team>();
+            int index = 0;
+            for(int i = 0; i < expectedTeamCount; i++){
+                Team team = new Team();
+                for(int q = 0; q < eachTeamExpectedPlayers; q++){
+                    team.addPlayer(new Player("test", !addedMe ? _mockGamingKit.getUserId() : Strings.generateUniqueRandomKey(18), true, index));
+                    addedMe = true;
+                    index++;
+                }
+                teams.add(team);
+            }
+
+            _gameCoordinator.setTeams(teams);
+            _gameCoordinator.getDecisionsMaker().teamsInit(teams);
+        }
+
+        connectMockGamingKit();
+
+    }
+
+    private void connectMockGamingKit(){
+        _mockGamingKit.connect(new Runnable() {
             @Override
             public void run() {
-                _gameCoordinator.setMyUserId(_mockGamingKit.getUserId());
-
-                if(debugging){
-                    boolean addedMe = false;
-                    ArrayList<Team> teams = new ArrayList<Team>();
-                    int index = 0;
-                    for(int i = 0; i < expectedTeamCount; i++){
-                        Team team = new Team();
-                        for(int q = 0; q < eachTeamExpectedPlayers; q++){
-                            team.addPlayer(new Player("test", !addedMe ? _mockGamingKit.getUserId() : Strings.generateUniqueRandomKey(18), true, true,
-                                                    index));
-                            addedMe = true;
-                            index++;
-                        }
-                        teams.add(team);
-                    }
-
-                    _gameCoordinator.setTeams(teams);
+                isMockKitReady = true;
+                for(Runnable runnable : _msgToSendRunnables){
+                    runnable.run();
                 }
 
-
-                Threadings.runInBackground(new Runnable() {
+                Threadings.postRunnable(new Runnable() {
                     @Override
                     public void run() {
-                        while (_monitoringPTAssetsManager != null && !_monitoringPTAssetsManager.isFinishLoading()){
-                            Threadings.sleep(100);
-                        }
-
-                        Threadings.postRunnable(new Runnable() {
-                            @Override
-                            public void run() {
-                                onReady();
-                            }
-                        });
-
+                        System.out.println("Connect Done.");
+                        onReady();
                     }
                 });
+
             }
         });
     }
@@ -212,6 +314,18 @@ public abstract class MockGame extends Game implements IPTGame {
         if(_monitoringPTAssetsManager != null && !_monitoringPTAssetsManager.isFinishLoading() && _monitoringPTAssetsManager.update()) {
             _monitoringPTAssetsManager.setFinishLoading(true);
         }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.F10)){
+            _mockGamingKit.setPausing(true);
+            Gdx.input.setInputProcessor(null);
+            System.out.println("Game Disconnected But Recoverable");
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.F11)){
+            _mockGamingKit.setPausing(false);
+            setInputProcessors();
+            System.out.println("Game Recovered");
+        }
+
     }
 
     @Override
@@ -229,6 +343,13 @@ public abstract class MockGame extends Game implements IPTGame {
     }
 
     @Override
+    public void dispose() {
+        if(_mockGamingKit != null){
+            _mockGamingKit.disconnect();
+        }
+    }
+
+    @Override
     public void addOnResumeRunnable(Runnable toRun) {
         _onResumeRunnables.add(toRun);
     }
@@ -236,5 +357,9 @@ public abstract class MockGame extends Game implements IPTGame {
     @Override
     public void removeOnResumeRunnable(Runnable toRun) {
         _onResumeRunnables.remove(toRun);
+    }
+
+    public boolean isContinue() {
+        return isContinue;
     }
 }

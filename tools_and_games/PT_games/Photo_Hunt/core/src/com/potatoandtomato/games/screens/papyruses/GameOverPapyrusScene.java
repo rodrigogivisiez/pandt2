@@ -68,7 +68,7 @@ public class GameOverPapyrusScene extends PapyrusSceneAbstract {
                     Player player = gameCoordinator.getPlayerByUniqueIndex(i);
                     String userName = services.getTexts().noPlayer();;
                     int totalClick = 0;
-                    if(!Strings.isEmpty(player.getUserId())){
+                    if(player != null){
                         userName = Strings.cutOff(player.getName(), 10);
                         if(userRecords.containsKey(player.getUserId())){
                             totalClick = userRecords.get(player.getUserId());
@@ -118,6 +118,7 @@ public class GameOverPapyrusScene extends PapyrusSceneAbstract {
 
                 _this.add(leftTable).padLeft(38).padRight(20);
                 _this.add(rightTable).expand().fill();
+                services.getSoundsWrapper().stopAllMusics();
                 services.getSoundsWrapper().playMusic(Sounds.Name.GAME_OVER_MUSIC);
             }
         });

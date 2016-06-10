@@ -13,23 +13,19 @@ public class PTAssetsManager extends AssetManager {
     private IPTGame iptGame;
     private boolean finishLoading;
     private OneTimeRunnable onFinish;
-    private Broadcaster broadcaster;
 
-    public PTAssetsManager(IPTGame iptGame, Broadcaster broadcaster) {
+    public PTAssetsManager(IPTGame iptGame) {
         this.iptGame = iptGame;
-        this.broadcaster = broadcaster;
     }
 
-    public PTAssetsManager(FileHandleResolver resolver, IPTGame iptGame, Broadcaster broadcaster) {
+    public PTAssetsManager(FileHandleResolver resolver, IPTGame iptGame) {
         super(resolver);
         this.iptGame = iptGame;
-        this.broadcaster = broadcaster;
     }
 
-    public PTAssetsManager(FileHandleResolver resolver, boolean defaultLoaders, IPTGame iptGame, Broadcaster broadcaster) {
+    public PTAssetsManager(FileHandleResolver resolver, boolean defaultLoaders, IPTGame iptGame) {
         super(resolver, defaultLoaders);
         this.iptGame = iptGame;
-        this.broadcaster = broadcaster;
     }
 
     public synchronized boolean isFinishLoading() {
@@ -45,9 +41,5 @@ public class PTAssetsManager extends AssetManager {
         finishLoading = false;
         this.onFinish = onFinish;
         iptGame.monitorPTAssetManager(this);
-    }
-
-    public Broadcaster getBroadcaster() {
-        return broadcaster;
     }
 }

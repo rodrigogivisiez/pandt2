@@ -13,6 +13,7 @@ public interface ISoundsPlayer {
     void playMusic(Music music);
     void playMusicNoLoop(Music music);
     void stopMusic(Music music);
+    void stopAllMusics();
     void playSound(Sound sound);
     void playSoundLoop(final Sound sound);
     void stopSoundLoop(final Sound sound);

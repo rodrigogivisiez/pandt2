@@ -31,6 +31,7 @@ public abstract class LogicAbstract implements Disposable {
     private boolean _isVisible;
     private boolean _isFullyVisible;
     private Broadcaster _broadcaster;
+    private boolean _settedListeners;
 
     public LogicAbstract(PTScreen screen, Services services, Object... objs) {
         setClassTag();
@@ -89,11 +90,16 @@ public abstract class LogicAbstract implements Disposable {
     //will be called everytime scene onshow(before moving animation), whether is back or forward direction, root might not have stage parent yet
     public void onShow(){
         _isVisible = true;
+        if(!_settedListeners){
+            setListeners();
+            _settedListeners = true;
+        }
     }
 
     //called everytime scene have complete moving animation, wheteher back or forward direction
     public void onShown(){
         _isFullyVisible = true;
+
     }
 
     //will be called everytime scene on hide, whether is back or forward direction
@@ -163,6 +169,10 @@ public abstract class LogicAbstract implements Disposable {
         }
         _broadcastSubscribes.clear();
         if(getScene() != null) getScene().dispose();
+    }
+
+    public void setListeners(){
+
     }
 
 }

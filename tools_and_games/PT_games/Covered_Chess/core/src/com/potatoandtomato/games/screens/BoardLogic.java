@@ -6,10 +6,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.absints.BackKeyListener;
+import com.potatoandtomato.common.absints.SelfConnectionListener;
 import com.potatoandtomato.common.absints.UserStateListener;
+import com.potatoandtomato.common.enums.SelfConnectionStatus;
 import com.potatoandtomato.common.models.ScoreDetails;
 import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.utils.SafeThread;
+import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.common.utils.ThreadsPool;
 import com.potatoandtomato.games.absint.ActionListener;
@@ -19,10 +22,7 @@ import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.enums.ActionType;
 import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
-import com.potatoandtomato.games.helpers.ArrayLists;
-import com.potatoandtomato.games.helpers.RoomMsgHandler;
-import com.potatoandtomato.games.helpers.Strings;
-import com.potatoandtomato.games.helpers.Terrains;
+import com.potatoandtomato.games.helpers.*;
 import com.potatoandtomato.games.models.*;
 import com.potatoandtomato.games.references.BattleRef;
 import com.potatoandtomato.games.references.MovementRef;
@@ -58,16 +58,9 @@ public class BoardLogic implements Disposable{
     TerrainLogic _lastActiveTerrainLogic;
     SplashLogic _splashLogic;
     RoomMsgHandler _roomMsgHandler;
+    GameDataContract _gameDataContract;
     SafeThread _getGameDataSafeThread, _checkCountTimeExpiredThread;
     boolean _crackStarting, _crackHappened, _suddenDeathHappened, _gameEnded;
-
-    public BoardModel getBoardModel() {
-        return _boardModel;
-    }
-
-    public GraveyardLogic getGraveyardLogic() {
-        return _graveyard;
-    }
 
     public BoardLogic(Services services, GameCoordinator coordinator) {
         this._services = services;
@@ -90,104 +83,28 @@ public class BoardLogic implements Disposable{
             }
         }, _services);
 
+        _gameDataContract = new GameDataContract( _gameDataController, this);
         _screen = new BoardScreen(coordinator, services, _splashLogic.getSplashActor(), _graveyard.getGraveyardActor());
 
+        _coordinator.getGameDataHelper().initGameDataHelper(_gameDataContract);
         setListeners();
     }
 
     //call when new game
     public void init(){
-        _splashLogic.start();
-        if(_coordinator.meIsDecisionMaker()){
-            _boardModel.setCurrentTurnIndex(_gameDataController.getFirstTurnIndex());
-            gameDataReady(_boardModel, _gameDataController.getGameData(), _graveyard.getGraveModel());
-            saveGameDataToDB();
-        }
-        else{
-           getGameDataFromDB();
-        }
+        _splashLogic.newGame();
+        _roomMsgHandler.onGameReady();
     }
 
     public void continueGame(){
-        _splashLogic.start();
-        getGameDataFromDB();
+        _splashLogic.continueGame();
+        gamePause();
+        _roomMsgHandler.onGameReady();
     }
 
-    private void saveGameDataToDB(){
-        JSONObject jsonObject = new JSONObject();
-        try {
-            int i = 0;
-            for(TerrainLogic logic : _terrains){
-                jsonObject.put(String.valueOf(i), logic.getChessLogic().getChessModel().toJson());
-                i++;
-            }
-            jsonObject.put("graveModel", _graveyard.getGraveModel().toJson());
-            jsonObject.put("boardModel", _boardModel.toJson());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public void gameDataReceived(final BoardModel boardModel, ArrayList<ChessModel> chessModels, GraveModel graveModel){
 
-        _services.getDatabase().saveGameData(jsonObject.toString());
-
-    }
-
-    private void getGameDataFromDB(){
-        _getGameDataSafeThread = new SafeThread();
-        Threadings.delay(2000, new Runnable() {
-            @Override
-            public void run() {
-                Threadings.runInBackground(new Runnable() {
-                    @Override
-                    public void run() {
-                        final String[] json = new String[1];
-                        while (!_getGameDataSafeThread.isKilled()) {
-                            _services.getDatabase().getGameData(new DatabaseListener<String>(String.class) {
-                                @Override
-                                public void onCallback(String result, Status st) {
-                                    if (st == Status.SUCCESS && result != null && !result.equals("")) {
-                                        json[0] = result;
-                                        _getGameDataSafeThread.kill();
-                                    }
-                                }
-                            });
-                            int i = 0;
-                            while (!_getGameDataSafeThread.isKilled() && i < 5) {
-                                Threadings.sleep(500);
-                                i++;
-                            }
-                        }
-                        try {
-                            ArrayList<ChessModel> chessModels = new ArrayList<ChessModel>();
-                            JSONObject jsonObject = new JSONObject(json[0]);
-                            ObjectMapper mapper1 = new ObjectMapper();
-                            for (int i = 0; i < 32; i++) {
-                                chessModels.add(mapper1.readValue(jsonObject.getString(String.valueOf(i)), ChessModel.class));
-                            }
-                            GraveModel graveModel = mapper1.readValue(jsonObject.getString("graveModel"), GraveModel.class);
-                            BoardModel boardModel = mapper1.readValue(jsonObject.getString("boardModel"), BoardModel.class);
-
-                            gameDataReady(boardModel, chessModels, graveModel);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (JsonMappingException e) {
-                            e.printStackTrace();
-                        } catch (JsonParseException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                });
-            }
-        });
-
-    }
-
-
-    private void gameDataReady(final BoardModel boardModel, ArrayList<ChessModel> chessModels, GraveModel graveModel){
-
+        _terrains.clear();
         _boardModel = boardModel;
         _crackStarting = _boardModel.isCrackStarting();
         _crackHappened = _boardModel.isCrackHappened();
@@ -220,7 +137,7 @@ public class BoardLogic implements Disposable{
                     @Override
                     public void onOpened() {
                         disableTouchable();
-                        String random = Strings.join(ArrayLists.randomNumericArray(2, 0, 4));
+                        String random = Strings.joinArr(ArrayLists.randomNumericArray(2, 0, 4), ",");
                         openChess(this.getTerrainLogic().getTerrainModel().getCol(),
                                 this.getTerrainLogic().getTerrainModel().getRow(), random);
                         _roomMsgHandler.sendChessOpenFull(this.getTerrainLogic().getTerrainModel().getCol(),
@@ -261,10 +178,15 @@ public class BoardLogic implements Disposable{
                 invalidate();
                 _screen.populateTerrains(_terrains);
                 setTurnTouchable();
-                _roomMsgHandler.onGameReady();
                 for(TerrainLogic terrainLogic : _terrains) terrainLogic.invalidate();
             }
         });
+
+
+        if(_coordinator.getAllConnectedPlayers().size() > 1){
+            gameResume();
+        }
+
     }
 
     private void chessKilled(ChessType chessType, boolean alsoCheckGameEnded){
@@ -423,7 +345,7 @@ public class BoardLogic implements Disposable{
             _services.getScoresHandler().process(new ScoresListener(){
                 @Override
                 public void onCallBack(HashMap<Team, ArrayList<ScoreDetails>> winnerResult, ArrayList<Team> losers) {
-                    _coordinator.beforeEndGame(winnerResult, losers, false);
+                    _coordinator.finalizeGame(winnerResult, losers, false);
                     Threadings.delay(1000, new Runnable() {
                         @Override
                         public void run() {
@@ -546,6 +468,17 @@ public class BoardLogic implements Disposable{
         }
     }
 
+    public void gamePause(){
+        clearAllTerrainsHighlights();
+        _graveyard.setPauseTimer(true);
+        _screen.setPaused(true, _boardModel.getCurrentTurnIndex() == _coordinator.getMyUniqueIndex());
+    }
+
+    public void gameResume(){
+        _screen.setPaused(false, _boardModel.getCurrentTurnIndex() == _coordinator.getMyUniqueIndex());
+        _graveyard.setPauseTimer(false);
+    }
+
     public BoardScreen getScreen() {
         return _screen;
     }
@@ -557,20 +490,19 @@ public class BoardLogic implements Disposable{
                 if(!s.equals(_coordinator.getMyUserId())){
                     endGame(true);
                 }
+                else{
+                    endGame(false);
+                }
             }
 
             @Override
             public void userConnected(String s) {
-                _screen.setPaused(false, _boardModel.getCurrentTurnIndex() == _coordinator.getMyUniqueIndex());
-                _graveyard.setPauseTimer(false);
+                gameResume();
             }
 
             @Override
             public void userDisconnected(String s) {
-                clearAllTerrainsHighlights();
-                _graveyard.setPauseTimer(true);
-                _screen.setPaused(true, _boardModel.getCurrentTurnIndex() == _coordinator.getMyUniqueIndex());
-                saveGameDataToDB();
+                gamePause();
             }
         });
 
@@ -578,9 +510,7 @@ public class BoardLogic implements Disposable{
         _screen.setBackKeyListener(new BackKeyListener() {
             @Override
             public void backPressed() {
-                if(!_gameEnded){
-                    _coordinator.abandon();
-                }
+                _coordinator.abandon();
             }
         });
 
@@ -643,5 +573,18 @@ public class BoardLogic implements Disposable{
     public void dispose() {
         if(_graveyard != null) _graveyard.dispose();
         if(_checkCountTimeExpiredThread != null) _checkCountTimeExpiredThread.kill();
+    }
+
+
+    public BoardModel getBoardModel() {
+        return _boardModel;
+    }
+
+    public GraveyardLogic getGraveyardLogic() {
+        return _graveyard;
+    }
+
+    public ArrayList<TerrainLogic> getTerrains() {
+        return _terrains;
     }
 }

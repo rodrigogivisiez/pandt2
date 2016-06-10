@@ -46,6 +46,11 @@ public class FirebaseDB implements IDatabase {
     }
 
     @Override
+    public void unauth() {
+        _ref.unauth();
+    }
+
+    @Override
     public void offline() {
         Firebase.goOffline();
     }
@@ -61,6 +66,23 @@ public class FirebaseDB implements IDatabase {
             removeListenerModel(listenerModel);
         }
         _listenerModels.clear();
+    }
+
+    @Override
+    public void clearAllOnDisconnectListenerModel() {
+        ArrayList<Integer> toRemove = new ArrayList();
+        for(int i = 0; i< _listenerModels.size; i++){
+            if(_listenerModels.get(i).getValue() == null && _listenerModels.get(i).getChild() == null){
+                toRemove.add(i);
+            }
+        }
+
+        Collections.reverse(toRemove);
+        for(Integer i : toRemove){
+            ListenerModel listenerModel = _listenerModels.get(i);
+            removeListenerModel(listenerModel);
+            _listenerModels.removeIndex(i);
+        }
     }
 
     @Override
@@ -253,18 +275,32 @@ public class FirebaseDB implements IDatabase {
     }
 
     @Override
-    public void updateRoomPlayingState(Room room, boolean isPlaying, @Nullable final DatabaseListener<String> listener) {
-        getTable(_tableRooms).child(room.getId()).child("playing").setValue(isPlaying, new Firebase.CompletionListener() {
-            @Override
-            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                if(firebaseError == null){
-                    if(listener != null) listener.onCallback(null, Status.SUCCESS);
+    public void updateRoomPlayingAndOpenState(final Room room, Boolean isPlaying, Boolean isOpen, @Nullable final DatabaseListener<String> listener) {
+
+        if(isPlaying != null){
+            getTable(_tableRooms).child(room.getId()).child("playing").setValue(isPlaying, new Firebase.CompletionListener() {
+                @Override
+                public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+
                 }
-                else{
-                    if(listener != null)  listener.onCallback(null, Status.FAILED);
+            });
+        }
+
+        if(isOpen != null){
+            getTable(_tableRooms).child(room.getId()).child("open").setValue(isOpen, new Firebase.CompletionListener() {
+                @Override
+                public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                    if(firebaseError == null){
+                        notifyRoomChanged(room);
+                        if(listener != null) listener.onCallback(null, Status.SUCCESS);
+                    }
+                    else{
+                        if(listener != null)  listener.onCallback(null, Status.FAILED);
+                    }
                 }
-            }
-        });
+            });
+        }
+
     }
 
     @Override
@@ -273,12 +309,8 @@ public class FirebaseDB implements IDatabase {
             Firebase ref = getTable(_tableRooms).push();
             room.setId(ref.getKey());
             save(ref, room, listener);
-            ref.child("open").onDisconnect().setValue(false);
-            String notifyKey = notifyRoomChanged(room);
-            Firebase ref2 = getTable(_tableRooms).push();
-
-            getTable(_tableRoomNotifications).child(ref2.getKey()).onDisconnect().setValue(new RoomNotification(room.getId()));
-        }
+            notifyRoomChanged(room);
+         }
         else{
             save(getTable(_tableRooms).child(room.getId()), room, listener);
             if(notify) notifyRoomChanged(room);
@@ -286,21 +318,79 @@ public class FirebaseDB implements IDatabase {
     }
 
     @Override
-    public void addUserToRoom(Room room, Profile user, DatabaseListener<String> listener) {
+    public void setOnDisconnectCloseRoom(Room room) {
+        //multiple ondisconnect fire bugs may occur when using firebase onDisconnect!!!!!
+
+        Firebase ref1 = getTable(_tableRooms).child(room.getId()).child("open");
+        ref1.onDisconnect().setValue(false);                                 //may have wifi issue
+       // Firebase ref2 = getTable(_tableRooms).child(room.getId()).child("roomUsersMap").child(room.getHost().getUserId());
+        //ref2.onDisconnect().setValue(null);
+        Firebase ref3 = getTable(_tableRoomNotifications).child(getTable(_tableRoomNotifications).push().getKey());
+        ref3.onDisconnect().setValue(new RoomNotification(room.getId()));  //may have wifi issue
+//        Firebase ref4 = getTable(_tableRooms).child(room.getId()).child("closeRoom");
+//        ref4.onDisconnect().setValue("yes");
+
+        _listenerModels.add(new ListenerModel(ref1, ""));
+        //_listenerModels.add(new ListenerModel(ref2, ""));
+        _listenerModels.add(new ListenerModel(ref3, ""));
+       // _listenerModels.add(new ListenerModel(ref4, ""));
+    }
+
+    @Override
+    public void addUserToRoom(Room room, Profile user, int slotIndex, DatabaseListener<String> listener) {
         RoomUser roomUser = new RoomUser();
         roomUser.setReady(true);
-        roomUser.setSlotIndex(-1);
+        roomUser.setSlotIndex(slotIndex);
         roomUser.setProfile(user);
         save(getTable(_tableRooms).child(room.getId()).child("roomUsersMap").child(user.getUserId()), roomUser, listener);
         notifyRoomChanged(room);
     }
 
     @Override
-    public void onDcSetGameStateDisconnected(Profile profile,  final DatabaseListener listener) {
-        getTable(_tableUsers).child(profile.getUserId()).child("userPlayingState").child("connected").onDisconnect().setValue(false, new Firebase.CompletionListener() {
+    public void removeUserFromRoom(final Room room, Profile user, final DatabaseListener listener) {
+        getTable(_tableRooms).child(room.getId()).child("roomUsersMap").child(user.getUserId()).setValue(null, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                if(listener != null)  listener.onCallback(null, Status.SUCCESS);
+                if(listener != null) listener.onCallback("", firebaseError == null ? Status.SUCCESS : Status.FAILED);
+                notifyRoomChanged(room);
+            }
+        });
+    }
+
+    @Override
+    public void setInvitedUsers(ArrayList<Profile> invitedUsers, final Room room, final DatabaseListener listener) {
+        getTable(_tableRooms).child(room.getId()).child("invitedUsers").setValue(invitedUsers, new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                if(listener != null) listener.onCallback("", firebaseError == null ? Status.SUCCESS : Status.FAILED);
+                notifyRoomChanged(room);
+            }
+        });
+    }
+
+    @Override
+    public void setRoomUserIsReady(Room room, String userId, boolean isReady, DatabaseListener listener) {
+        save(getTable(_tableRooms).child(room.getId()).child("roomUsersMap").child(userId).child("ready"),
+                        isReady, listener);
+    }
+
+    @Override
+    public void setRoomUserSlotIndex(Room room, String userId, int slotIndex, DatabaseListener listener) {
+        save(getTable(_tableRooms).child(room.getId()).child("roomUsersMap").child(userId).child("slotIndex"),
+                slotIndex, listener);
+    }
+
+    @Override
+    public void setRoomState(final Room room, int roundCounter, boolean open, boolean playing, final DatabaseListener listener) {
+        HashMap<String, Object> mapObject = new HashMap<>();
+        mapObject.put("roundCounter", roundCounter);
+        mapObject.put("open", open);
+        mapObject.put("playing", playing);
+        getTable(_tableRooms).child(room.getId()).updateChildren(mapObject, new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                if(listener != null) listener.onCallback("", firebaseError == null ? Status.SUCCESS : Status.FAILED);
+                notifyRoomChanged(room);
             }
         });
     }
@@ -643,49 +733,6 @@ public class FirebaseDB implements IDatabase {
         Firebase ref = getTable(_tableRoomNotifications).push();
         ref.setValue(new RoomNotification(room.getId()));
         return ref.getKey();
-    }
-
-
-    @Override
-    public void removeUserFromRoomOnDisconnect(String roomId, Profile user, final DatabaseListener<String> listener) {
-        final boolean[] roomUserSuccess = new boolean[1];
-        final boolean[] roomNotificationSuccess = new boolean[1];
-        final boolean[] failed = new boolean[1];
-        Firebase ref = getTable(_tableRooms).child(roomId).child("roomUsersMap").child(user.getUserId());
-        ref.onDisconnect().removeValue(new Firebase.CompletionListener() {
-            @Override
-            public void onComplete(FirebaseError error, Firebase firebase) {
-                if (error != null) {
-                    if(!failed[0]){
-                        failed[0] = true;
-                        listener.onCallback(error.getMessage(), Status.FAILED);
-                    }
-                }
-                else{
-                    roomUserSuccess[0] = true;
-                    if(roomNotificationSuccess[0] && !failed[0]) listener.onCallback(null, Status.SUCCESS);
-                }
-            }
-        });
-        //_listenerModels.add(new ListenerModel(ref, Logs.getCallerClassName()));
-
-        Firebase ref2 = getTable(_tableRoomNotifications).child(roomId + "_" + System.currentTimeMillis());
-        ref2.onDisconnect().setValue(roomId, new Firebase.CompletionListener() {
-            @Override
-            public void onComplete(FirebaseError error, Firebase firebase) {
-                if (error != null) {
-                    if(!failed[0]){
-                        failed[0] = true;
-                        listener.onCallback(error.getMessage(), Status.FAILED);
-                    }
-                }
-                else{
-                    roomNotificationSuccess[0] = true;
-                    if(roomUserSuccess[0] && !failed[0]) listener.onCallback(null, Status.SUCCESS);
-                }
-            }
-        });
-               // _listenerModels.add(new ListenerModel(ref2, Logs.getCallerClassName()));
     }
 
     @Override

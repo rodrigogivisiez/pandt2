@@ -86,7 +86,7 @@ public class HintsLogic {
         gameModel.addGameModelListener(new GameModelListener() {
 
             @Override
-            public void onGameStateChanged(GameState newState) {
+            public void onGameStateChanged(GameState oldState, GameState newState) {
                 if(newState == GameState.WaitingForNextStage && gameModel.getStageType() == StageType.Bonus){
                     reviveAllHints();
                 }

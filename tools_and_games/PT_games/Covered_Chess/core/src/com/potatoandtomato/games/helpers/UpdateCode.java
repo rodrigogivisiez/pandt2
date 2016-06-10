@@ -10,5 +10,6 @@ public class UpdateCode {
     public final static int CHESS_MOVE = 3;
     public final static int SKIP_TURN = 4;
     public final static int SURRENDER = 5;
+    public final static int GAME_DATA = 6;
 
 }

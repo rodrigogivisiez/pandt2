@@ -33,17 +33,17 @@ public class BootLogic extends LogicAbstract {
     boolean _fbStepPast;
     boolean _logined;
 
-    @Override
-    public SceneAbstract getScene() {
-        return _bootScene;
-    }
-
     public BootLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
+
+        _bootScene = new BootScene(_services, _screen);
     }
 
     @Override
     public void onShow() {
+        super.onShow();
+
+        _bootScene.reset();
         _services.getSoundsPlayer().playThemeMusic();
         _screen.showRotateSunrise();
         publishBroadcast(BroadcastEvent.DESTROY_ROOM);
@@ -52,84 +52,16 @@ public class BootLogic extends LogicAbstract {
         _services.getGamingKit().disconnect();
         _fbStepPast = false;
         _logined = false;
-        dispose();
-
         _services.getDatabase().online();
-
         checkCrashedBefore();
-
-        _bootScene = new BootScene(_services, _screen);
-        _bootScene.getPlayButton().addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                _services.getSoundsPlayer().playSoundEffect(Sounds.Name.TOGETHER_CHEERS);
-                showLoginBox();
-            }
-        });
-
-        _services.getGamingKit().addListener(getClassTag(), new ConnectionChangedListener() {
-            @Override
-            public void onChanged(ConnectStatus st) {
-                if(!_logined){
-                    if(st == ConnectStatus.CONNECTED){
-                        _screen.hideRotateSunrise();
-                        if(_services.getProfile().getGameName() == null){
-                            _screen.toScene(SceneEnum.INPUT_NAME);
-                        }
-                        else{
-                            _screen.toScene(SceneEnum.GAME_LIST);
-                        }
-                        _logined = true;
-                    }
-                    else{
-                        retrieveUserFailed();
-                    }
-                }
-                else{
-                    if(st == ConnectStatus.DISCONNECTED){
-                        publishBroadcast(BroadcastEvent.DESTROY_ROOM);
-                        _screen.backToBoot();
-                        _confirm.show(_texts.noConnection(), Confirm.Type.YES, null);
-                    }
-                }
-
-            }
-        });
-
-        super.onShow();
-
-
     }
 
     public void showLoginBox(){
         _bootScene.showSocialLogin();
-        attachClickListenerToSocial();
         if(_services.getSocials().isFacebookLogon()){    //user already logged in facebook before, log in again now
             loginFacebook();
         }
     }
-
-    private void attachClickListenerToSocial(){
-        _bootScene.getTickIcon().addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                if(!_fbStepPast) loginFacebook();
-                else afterFacebookPhase();
-            }
-        });
-
-        _bootScene.getCrossIcon().addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                if(!_fbStepPast) afterFacebookPhase();
-                else Gdx.app.exit();
-            }
-        });
-    }
-
 
     public void loginFacebook() {
         _bootScene.showSocialLoggingIn();
@@ -171,6 +103,9 @@ public class BootLogic extends LogicAbstract {
                     _services.getPreferences().delete(Terms.USERID);
                     _services.getPreferences().delete(Terms.USER_SECRET);
                     createNewUser();
+                }
+                else if(st == Status.FAILED && token.equals("FAIL_CONNECT")){
+                    _bootScene.showPTDown();
                 }
                 else if(st == Status.FAILED){
                     retrieveUserFailed();
@@ -216,6 +151,7 @@ public class BootLogic extends LogicAbstract {
     }
 
     public void loginPTWithToken(final String token){
+        _services.getDatabase().unauth();
         _services.getDatabase().authenticateUserByToken(token, new DatabaseListener<Profile>(Profile.class) {
             @Override
             public void onCallback(Profile obj, Status st) {
@@ -254,7 +190,6 @@ public class BootLogic extends LogicAbstract {
     public void loginPTSuccess(){
         _services.getDatabase().updateProfile(_services.getProfile(), null);
         _services.getGamingKit().connect(_services.getProfile());
-        _services.getDatabase().onDcSetGameStateDisconnected(_services.getProfile(), null);
     }
 
     private void checkCrashedBefore(){
@@ -263,6 +198,67 @@ public class BootLogic extends LogicAbstract {
             _services.getDatabase().saveLog(msg);
             _services.getConfirm().show(_texts.appsCrashed(), Confirm.Type.YES, null);
         }
+    }
+
+    @Override
+    public void setListeners() {
+        _bootScene.getPlayButton().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                _services.getSoundsPlayer().playSoundEffect(Sounds.Name.TOGETHER_CHEERS);
+                showLoginBox();
+                //getBroadcaster().broadcast(BroadcastEvent.SHOW_REWARD_VIDEO);
+            }
+        });
+
+        _bootScene.getTickIcon().addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                if(!_fbStepPast) loginFacebook();
+                else afterFacebookPhase();
+            }
+        });
+
+        _bootScene.getCrossIcon().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                if(!_fbStepPast) afterFacebookPhase();
+                else Gdx.app.exit();
+            }
+        });
+
+        _services.getGamingKit().addListener(getClassTag(), new ConnectionChangedListener() {
+            @Override
+            public void onChanged(String userId, ConnectStatus st) {
+                if(userId.equals(_services.getProfile().getUserId())){
+                    if(!_logined){
+                        if(st == ConnectStatus.CONNECTED){
+                            _services.getDatabase().clearAllListeners();
+
+                            _screen.hideRotateSunrise();
+                            if(_services.getProfile().getGameName() == null){
+                                _screen.toScene(SceneEnum.INPUT_NAME);
+                            }
+                            else{
+                                _screen.toScene(SceneEnum.GAME_LIST);
+                            }
+                            _logined = true;
+                        }
+                        else{
+                            retrieveUserFailed();
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    public SceneAbstract getScene() {
+        return _bootScene;
     }
 
 

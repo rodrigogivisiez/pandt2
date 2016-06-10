@@ -14,17 +14,15 @@ import com.potatoandtomato.common.utils.JsonObj;
 import com.potatoandtomato.common.utils.Threadings;
 import com.shaded.fasterxml.jackson.core.JsonProcessingException;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
-import org.shaded.apache.http.HttpEntity;
-import org.shaded.apache.http.HttpResponse;
 import org.shaded.apache.http.NameValuePair;
-import org.shaded.apache.http.client.HttpClient;
-import org.shaded.apache.http.client.entity.UrlEncodedFormEntity;
-import org.shaded.apache.http.client.methods.HttpPost;
-import org.shaded.apache.http.impl.client.DefaultHttpClient;
 import org.shaded.apache.http.message.BasicNameValuePair;
-import org.shaded.apache.http.util.EntityUtils;
 
-import java.io.IOException;
+import javax.net.ssl.HttpsURLConnection;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +32,8 @@ import java.util.Map;
  * Created by SiongLeng on 13/5/2016.
  */
 public class RestfulApi implements IRestfulApi {
+
+    private final String USER_AGENT = "Mozilla/5.0";
 
     @Override
     public void createNewUser(final RestfulApiListener<UserIdSecretModel> listener) {
@@ -83,7 +83,7 @@ public class RestfulApi implements IRestfulApi {
                     listener.onCallback("", Status.FAILED);
                 }
                 else{
-                    if(obj.equals("USER_NOT_FOUND")){
+                    if(obj.equals("USER_NOT_FOUND") || obj.equals("FAIL_CONNECT")){
                         listener.onCallback(obj, Status.FAILED);
                     }
                     else{
@@ -141,16 +141,61 @@ public class RestfulApi implements IRestfulApi {
         Threadings.runInBackground(new Runnable() {
             @Override
             public void run() {
-                try {
-                    HttpPost post = new HttpPost(Terms.RESTFUL_URL() + name);
-                    post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                try{
+                    String url = Terms.RESTFUL_URL() + name;
+                    URL obj = new URL(url);
 
-                    HttpClient client = new DefaultHttpClient();
-                    HttpResponse response = null;
-                    response = client.execute(post);
-                    HttpEntity entity = response.getEntity();
-                    String responseText = EntityUtils.toString(entity);
+                    HttpURLConnection con;
 
+                    if(url.startsWith("https")){
+                        con = (HttpsURLConnection) obj.openConnection();
+                    }
+                    else{
+                        con = (HttpURLConnection) obj.openConnection();
+                    }
+
+                    //add reuqest header
+                    con.setRequestMethod("POST");
+                    con.setRequestProperty("User-Agent", USER_AGENT);
+                    con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+
+                    String urlParameters = "";
+
+                    for(NameValuePair nameValuePair : nameValuePairs){
+                        urlParameters += nameValuePair.getName() + "=" + nameValuePair.getValue() + "&";
+                    }
+
+                    if(nameValuePairs.size() > 0){
+                        urlParameters = urlParameters.substring(0, urlParameters.length() - 1);
+                    }
+
+
+                    // Send post request
+                    con.setDoOutput(true);
+                    DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+                    wr.writeBytes(urlParameters);
+                    wr.flush();
+                    wr.close();
+
+                    int responseCode = con.getResponseCode();
+//                    System.out.println("\nSending 'POST' request to URL : " + url);
+//                    System.out.println("Post parameters : " + urlParameters);
+//                    System.out.println("Response Code : " + responseCode);
+
+                    BufferedReader in = new BufferedReader(
+                            new InputStreamReader(con.getInputStream()));
+                    String inputLine;
+                    StringBuffer response = new StringBuffer();
+
+                    while ((inputLine = in.readLine()) != null) {
+                        response.append(inputLine);
+                    }
+                    in.close();
+
+                    //print result
+                    //System.out.println(response.toString());
+
+                    String responseText = response.toString();
                     if(responseText.equals("-1")){
                         if(listener != null)  listener.onCallback(responseText, Status.FAILED);
                     }
@@ -158,7 +203,8 @@ public class RestfulApi implements IRestfulApi {
                         if(listener != null)  listener.onCallback(responseText, Status.SUCCESS);
                     }
 
-                } catch (IOException e) {
+                }
+                catch (Exception e){
                     e.printStackTrace();
                     if(listener != null)  listener.onCallback(null, Status.FAILED);
                 }

@@ -1,22 +1,23 @@
 package com.mygdx.potatoandtomato.scenes.invite_scene;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
-import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesCode;
+import com.mygdx.potatoandtomato.enums.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.absintflis.push_notifications.PushCode;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.models.LeaderboardRecord;
+import com.potatoandtomato.common.utils.RunnableArgs;
 import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.enums.Status;
-import ogg.OggFile;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -143,53 +144,22 @@ public class InviteLogic extends LogicAbstract {
                 }
             });
         }
-
-
-        _scene.getInviteButton().addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                sendInvitation();
-            }
-        });
-
-        _scene.getRecentTabTable().addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                _scene.changeTab(InviteScene.InviteType.Recent);
-            }
-        });
-
-        _scene.getLeaderboardTabTable().addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                _scene.changeTab(InviteScene.InviteType.Leaderboard);
-            }
-        });
-
-        _scene.getFacebookTabTable().addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                _scene.changeTab(InviteScene.InviteType.Facebook);
-            }
-        });
-
-
-
     }
 
     private void putProfileToTable(final Profile profile, final InviteScene.InviteType inviteType, final Object... objs){
         if(!profile.getUserId().equals(_services.getProfile().getUserId())){
-            _scene.putUserToTable(profile, inviteType, objs).addListener(new ClickListener() {
+            _scene.putUserToTable(profile, inviteType, new RunnableArgs<Actor>() {
                 @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    super.clicked(event, x, y);
-                    toggleUserSelection(profile);
+                public void run() {
+                    this.getFirstArg().addListener(new ClickListener(){
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                            super.clicked(event, x, y);
+                            toggleUserSelection(profile);
+                        }
+                    });
                 }
-            });
+            }, objs);
         }
     }
 
@@ -265,6 +235,43 @@ public class InviteLogic extends LogicAbstract {
             }
         }
         _screen.back();
+    }
+
+    @Override
+    public void setListeners() {
+        super.setListeners();
+
+        _scene.getInviteButton().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                sendInvitation();
+            }
+        });
+
+        _scene.getRecentTabTable().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                _scene.changeTab(InviteScene.InviteType.Recent);
+            }
+        });
+
+        _scene.getLeaderboardTabTable().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                _scene.changeTab(InviteScene.InviteType.Leaderboard);
+            }
+        });
+
+        _scene.getFacebookTabTable().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                _scene.changeTab(InviteScene.InviteType.Facebook);
+            }
+        });
     }
 
     @Override

@@ -1,21 +1,20 @@
 package com.mygdx.potatoandtomato.models;
 
+import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Created by SiongLeng on 7/1/2016.
  */
 public class UserPlayingState {
 
     public String roomId;
-    public boolean abandon;
-    public boolean connected;
     public int roundCounter;
 
     public UserPlayingState() {
     }
 
-    public UserPlayingState(String roomId, boolean connected, int roundCounter) {
+    public UserPlayingState(String roomId, int roundCounter) {
         this.roomId = roomId;
-        this.connected = connected;
         this.roundCounter = roundCounter;
     }
 
@@ -35,19 +34,14 @@ public class UserPlayingState {
         this.roomId = roomId;
     }
 
-    public boolean getAbandon() {
-        return abandon;
+    @JsonIgnore
+    public void abandonGame(){
+        roundCounter = 0;
+        roomId = "";
     }
 
-    public void setAbandon(boolean abandon) {
-        this.abandon = abandon;
-    }
-
-    public boolean getConnected() {
-        return connected;
-    }
-
-    public void setConnected(boolean connected) {
-        this.connected = connected;
+    @JsonIgnore
+    public boolean canContinue(Room room){
+        return room.getId().equals(roomId) && room.getRoundCounter() == roundCounter;
     }
 }

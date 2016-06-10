@@ -9,7 +9,6 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         TestFireBase.class,
         TestAppwarp.class,
-        TestUploader.class,
         TestRestful.class
 })
 public class ConnectionSuites {

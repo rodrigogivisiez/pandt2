@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
+import com.mygdx.potatoandtomato.absintflis.gamingkit.ConnectionChangedListener;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Profile;
@@ -118,7 +119,7 @@ public class TestBoot extends TestAbstract {
             @Override
             public void connect(Profile user) {
                 super.connect(user);
-                this.onConnectionChanged(true);
+                this.onConnectionChanged(user.getUserId(), ConnectionChangedListener.ConnectStatus.CONNECTED);
             }
         });
         BootLogic logic = new BootLogic(mockPTScreen, _services);
@@ -151,7 +152,7 @@ public class TestBoot extends TestAbstract {
             @Override
             public void connect(Profile user) {
                 super.connect(user);
-                this.onConnectionChanged(true);
+                this.onConnectionChanged(user.getUserId(), ConnectionChangedListener.ConnectStatus.CONNECTED);
             }
         });
 

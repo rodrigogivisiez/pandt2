@@ -10,9 +10,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.assets.Assets;
+import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.games.assets.Fonts;
 import com.potatoandtomato.games.assets.Textures;
-import com.potatoandtomato.games.helpers.Strings;
 import com.potatoandtomato.games.services.Texts;
 import com.potatoandtomato.games.statics.Global;
 
@@ -43,10 +43,10 @@ public class SplashActor extends Table {
         Label labelVs = new Label(_texts.vs(), new Label.LabelStyle(
                 _assets.getFonts().get(Fonts.FontId.PIZZA_XXL_REGULAR), null));
 
-        Label labelYellowUser = new Label(Strings.cut(_coordinator.getPlayerByUniqueIndex(0).getName(), 9), new Label.LabelStyle(
+        Label labelYellowUser = new Label(Strings.cutOff(_coordinator.getPlayerByUniqueIndex(0).getName(), 7), new Label.LabelStyle(
                 _assets.getFonts().get(Fonts.FontId.HELVETICA_MAX_BlACKCONDENSEDITALIC_B_ffffff_f0c266_2_S_000000_1_1), null));
 
-        Label labelRedUser = new Label(Strings.cut(_coordinator.getPlayerByUniqueIndex(1).getName(), 9), new Label.LabelStyle(
+        Label labelRedUser = new Label(Strings.cutOff(_coordinator.getPlayerByUniqueIndex(1).getName(), 7), new Label.LabelStyle(
                 _assets.getFonts().get(Fonts.FontId.HELVETICA_MAX_BlACKCONDENSEDITALIC_B_ffffff_f46767_2_S_000000_1_1), null));
 
 

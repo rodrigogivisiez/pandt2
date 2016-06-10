@@ -29,18 +29,18 @@ public class Services {
     Confirm _confirm;
     Notification _notification;
     Recorder _recorder;
-    IUploader _uploader;
     SoundsPlayer _soundsPlayer;
     VersionControl _versionControl;
     Broadcaster _broadcaster;
     ITutorials _tutorials;
     IRestfulApi _restfulApi;
+    ConnectionWatcher _connectionWatcher;
 
     public Services(Assets assets, Texts texts, Preferences preferences,
                     Profile profile, IDatabase database, Shaders shaders, GamingKit gamingKit, IDownloader downloader,
                     Chat chat, Socials socials, GCMSender gcmSender, Confirm confirm, Notification notification,
-                    Recorder recorder, IUploader uploader, SoundsPlayer soundsPlayer, VersionControl versionControl,
-                    Broadcaster broadcaster, ITutorials tutorials, IRestfulApi restfulApi) {
+                    Recorder recorder, SoundsPlayer soundsPlayer, VersionControl versionControl,
+                    Broadcaster broadcaster, ITutorials tutorials, IRestfulApi restfulApi, ConnectionWatcher connectionWatcher) {
         _texts = texts;
         _assets = assets;
         _preferences = preferences;
@@ -55,12 +55,20 @@ public class Services {
         _confirm = confirm;
         _notification = notification;
         _recorder = recorder;
-        _uploader = uploader;
         _soundsPlayer = soundsPlayer;
         _versionControl = versionControl;
         _broadcaster = broadcaster;
         _tutorials = tutorials;
         _restfulApi = restfulApi;
+        _connectionWatcher = connectionWatcher;
+    }
+
+    public ConnectionWatcher getConnectionWatcher() {
+        return _connectionWatcher;
+    }
+
+    public void setConnectionWatcher(ConnectionWatcher _connectionWatcher) {
+        this._connectionWatcher = _connectionWatcher;
     }
 
     public IRestfulApi getRestfulApi() {
@@ -99,14 +107,6 @@ public class Services {
         this._soundsPlayer = _soundsPlayer;
     }
 
-    public IUploader getUploader() {
-        return _uploader;
-    }
-
-    public void setUploader(IUploader _uploader) {
-        this._uploader = _uploader;
-    }
-
     public Recorder getRecorder() {
         return _recorder;
     }
@@ -141,6 +141,7 @@ public class Services {
 
     public void setProfile(Profile _profile) {
         this._profile = _profile;
+        this.getConnectionWatcher().setProfile(_profile);
     }
 
     public IDatabase getDatabase() { return _database; }

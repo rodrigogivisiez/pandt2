@@ -62,16 +62,19 @@ public class ScoresLogic implements Disposable {
 
     public void refreshAllScores(){
         this.leaderboardRecords = gameCoordinator.getGameLeaderboardRecords();
+        refreshScoresDesign();
+    }
+
+    public void refreshScoresDesign(){
         scoresActor.setMainScore(gameModel.getScore().intValue());
         scoresActor.setNextHighScore(getNextLeaderboardScore());
     }
 
-    public void addScoreWithoutAnimation(int addingScore){
-        gameModel.setScore(gameModel.getScore() + addingScore);
-        scoresActor.setMainScore(gameModel.getScore().intValue());
-        scoresActor.setNextHighScore(getNextLeaderboardScore());
+    public void calculateWithoutAnimation(){
+        services.getSoundsWrapper().playSounds(Sounds.Name.WIN);
+        gameModel.setScore(gameModel.getScore() + getCastleScores() + getHintsScores() + getRemainingDistanceScores(), true);
+        gameModel.setGameState(GameState.WaitingForNextStage);
     }
-
 
     public void calculate(){
         if(Global.REVIEW_MODE){
@@ -88,16 +91,7 @@ public class ScoresLogic implements Disposable {
                 Threadings.delay(600, new Runnable() {
                     @Override
                     public void run() {
-
-                        CastleState castleState = castleLogic.getCastleState(gameModel.getRemainingMiliSecs());
-                        int i = 0;
-                        if (castleState == CastleState.Normal) {
-                            i = 2;
-                        } else if (castleState == CastleState.Semi_Destroyed) {
-                            i = 1;
-                        }
-
-                        addScoreAndPopScoreOnActor(castleLogic.getCastleActor(), i * PER_CASTLE_STATE_SCORE, new Runnable() {
+                        addScoreAndPopScoreOnActor(castleLogic.getCastleActor(), getCastleScores(), new Runnable() {
                             @Override
                             public void run() {
                                 Threadings.delay(900, new Runnable() {
@@ -105,7 +99,7 @@ public class ScoresLogic implements Disposable {
                                     public void run() {
                                         final int remainingDistance = (int) knightLogic.getRemainingDistanceByRemainingTime(gameModel.getRemainingMiliSecs());
                                         final int[] originalScore = {gameModel.getScore().intValue()};
-                                        gameModel.setScore((double) originalScore[0] + ((int) (remainingDistance * PER_METER_DISTANCE_SCORE)));
+                                        gameModel.setScore((double) originalScore[0] + getRemainingDistanceScores(), false);
                                         final Vector2 knightActorPosition = new Vector2(knightLogic.getKnightActor().getPositionOnStage().x,
                                                 knightLogic.getKnightActor().getPositionOnStage().y);
                                         knightActorPosition.y = knightActorPosition.y + knightLogic.getKnightActor().getHeight() / 2;
@@ -166,7 +160,7 @@ public class ScoresLogic implements Disposable {
         };
 
 
-        if(gameModel.getStageType() == StageType.Bonus){
+       if(gameModel.getStageType() == StageType.Bonus){
             services.getSoundsWrapper().stopMusic(Sounds.Name.BONUS_MUSIC);
             popStringOnActor(hintsActor, services.getTexts().replenishHints(), new Runnable() {
                 @Override
@@ -177,7 +171,7 @@ public class ScoresLogic implements Disposable {
         }
         else{
             Logs.show(hintsLogic.getCurrentHintsLeft() + " hint left");
-            addScoreAndPopScoreOnActor(hintsActor, hintsLogic.getCurrentHintsLeft() * PER_HINT_LEFT_SCORE, new Runnable() {
+            addScoreAndPopScoreOnActor(hintsActor, getHintsScores(), new Runnable() {
                 @Override
                 public void run() {
                     afterCalculateHintRunnable.run();
@@ -186,14 +180,36 @@ public class ScoresLogic implements Disposable {
         }
     }
 
+    private int getCastleScores(){
+        CastleState castleState = castleLogic.getCastleState(gameModel.getRemainingMiliSecs());
+        int i = 0;
+        if (castleState == CastleState.Normal) {
+            i = 2;
+        } else if (castleState == CastleState.Semi_Destroyed) {
+            i = 1;
+        }
+
+        return i * PER_CASTLE_STATE_SCORE;
+    }
+
+    private int getHintsScores(){
+        return hintsLogic.getCurrentHintsLeft() * PER_HINT_LEFT_SCORE;
+    }
+
+    private int getRemainingDistanceScores(){
+        final int remainingDistance = (int) knightLogic.getRemainingDistanceByRemainingTime(gameModel.getRemainingMiliSecs());
+        return (remainingDistance * PER_METER_DISTANCE_SCORE);
+    }
+
+
     public void addScoreAndPopScoreOnActor(Actor actor, final int score, final Runnable onFinish){
         Vector2 actorPosition = Positions.actorLocalToStageCoord(actor);
         scoresActor.popScoreOnPosition(actorPosition.x + actor.getWidth() / 2, actorPosition.y + actor.getHeight() / 2,
                 String.valueOf(score), false, new Runnable() {
             @Override
             public void run() {
-                addScoreWithoutAnimation(score);
-                if(onFinish != null) onFinish.run();
+                gameModel.setScore(gameModel.getScore() + score, true);
+                if (onFinish != null) onFinish.run();
             }
         });
     }
@@ -242,18 +258,31 @@ public class ScoresLogic implements Disposable {
 
             @Override
             public void onAddedClickCount(String userId, int newCount) {
-                addScoreWithoutAnimation(PER_CLICK_SCORE);
+                gameModel.setScore(gameModel.getScore() + PER_CLICK_SCORE, true);
             }
 
             @Override
-            public void onGameStateChanged(GameState newState) {
+            public void onGameStateChanged(final GameState oldState, GameState newState) {
                 if(newState == GameState.Won){
                     Threadings.postRunnable(new Runnable() {
                         @Override
                         public void run() {
-                            calculate();
+                            if(oldState == GameState.BeforeContinue){
+                                calculateWithoutAnimation();
+                            }
+                            else{
+                                calculate();
+                            }
                         }
                     });
+                }
+            }
+
+            @Override
+            public void onScoresChanged(double newScores) {
+                super.onScoresChanged(newScores);
+                if(gameModel.getGameState() != GameState.BeforeContinue){
+                    refreshScoresDesign();
                 }
             }
         });

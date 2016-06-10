@@ -47,44 +47,30 @@ public class UserBadgeHelper implements Disposable {
         refresh();
     }
 
-    public void addRoomUsersIfNotExist(Collection<RoomUser> roomUsers){
-        for(RoomUser roomUser : roomUsers){
-            boolean found = false;
-            for(RoomUser currentRoomUser : _roomUsers){
-                if(currentRoomUser.getProfile().getUserId().equals(roomUser.getProfile().getUserId())){
-                    found = true;
-                    break;
-                }
-            }
-            if(!found){
-                _roomUsers.add(roomUser);
-            }
-        }
-    }
+    public synchronized void userJoinedRoom(RoomUser newRoomUser){
 
-    public void usersJoinedRoom(Collection<RoomUser> newRoomUsers){
-        for(RoomUser roomUser : newRoomUsers){
-            _roomUsers.add(roomUser);
-        }
+        _roomUsers.add(newRoomUser);
+
         roomUsersChanged();
     }
 
-    public void usersLeftRoom(Collection<RoomUser> leftRoomUsers){
+    public synchronized void userLeftRoom(RoomUser leftRoomUser){
         ArrayList<Integer> removingIndexes = new ArrayList<Integer>();
-        for(RoomUser leftRoomUser : leftRoomUsers){
-            String leftUserId = leftRoomUser.getProfile().getUserId();
-            for(int i = 0; i < _roomUsers.size(); i++){
-                if(_roomUsers.get(i).getProfile().getUserId().equals(leftUserId)){
-                    removingIndexes.add(i);
-                }
+        String leftUserId = leftRoomUser.getProfile().getUserId();
+        for(int i = 0; i < _roomUsers.size(); i++){
+            if(_roomUsers.get(i).getProfile().getUserId().equals(leftUserId)){
+                removingIndexes.add(i);
             }
-
-            _runningThreads.get(leftUserId).kill();
-            _runningThreads.remove(leftUserId);
-            _streaksMap.remove(leftUserId);
-            _rankMap.remove(leftUserId);
-            _currentBadge.remove(leftUserId);
         }
+
+        if(_runningThreads.get(leftUserId) != null){
+            _runningThreads.get(leftUserId).kill();
+        }
+
+        _runningThreads.remove(leftUserId);
+        _streaksMap.remove(leftUserId);
+        _rankMap.remove(leftUserId);
+        _currentBadge.remove(leftUserId);
 
         Collections.reverse(removingIndexes);
         for(Integer index : removingIndexes){
@@ -202,7 +188,7 @@ public class UserBadgeHelper implements Disposable {
         }
     }
 
-    public void refresh(){
+    public synchronized void refresh(){
         dispose();
         getLeaderboardRecords(new Runnable() {
             @Override

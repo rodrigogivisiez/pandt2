@@ -91,7 +91,7 @@ public class MockDB implements IDatabase {
     }
 
     @Override
-    public void updateRoomPlayingState(Room room, boolean isPlaying, @Nullable DatabaseListener<String> listener) {
+    public void updateRoomPlayingAndOpenState(Room room, boolean isPlaying, @Nullable DatabaseListener<String> listener) {
 
     }
 

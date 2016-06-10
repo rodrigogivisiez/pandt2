@@ -45,11 +45,15 @@ public class RoomMsgHandler {
             String enemyLeftTime = null;
             String realMsg = null;
             if(!receivedMsg.equals("")){
-                tmp = receivedMsg.split("@");
-                enemyLeftTime = tmp[0];
-                realMsg = tmp[1];
+                tmp = receivedMsg.split("@!!");
+                if(tmp.length > 1){
+                    enemyLeftTime = tmp[0];
+                    realMsg = tmp[1];
+                }
+                else{
+                    realMsg = tmp[0];
+                }
             }
-
 
             if(!_gameScreenReady){
                 _messagesQueue.add(new Runnable() {
@@ -61,7 +65,7 @@ public class RoomMsgHandler {
                 return;
             }
 
-            _boardLogic.updateEnemyLeftTime(enemyLeftTime);
+            if(enemyLeftTime != null) _boardLogic.updateEnemyLeftTime(enemyLeftTime);
 
             final String[] arr;
             switch (code){
@@ -122,25 +126,26 @@ public class RoomMsgHandler {
     }
 
     public void skipTurn(int myLeftTime){
-        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.SKIP_TURN, myLeftTime + "@0"));
+        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.SKIP_TURN, myLeftTime + "@!!0"));
     }
 
     public void sendTerrainSelected(int col, int row, int myLeftTime){
-        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.TERRAIN_SELECTED, myLeftTime + "@" + col + "," + row));
+        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.TERRAIN_SELECTED, myLeftTime + "@!!" + col + "," + row));
     }
 
     public void sendChessOpenFull(int col, int row, String random, int myLeftTime){
-        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.CHESS_OPEN_FULL, myLeftTime + "@" + col + "," + row + "|" + random));
+        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.CHESS_OPEN_FULL, myLeftTime + "@!!" + col + "," + row + "|" + random));
     }
 
     public void sendMoveChess(int fromCol, int fromRow, int toCol, int toRow, boolean isFromWon, String random, int myLeftTime){
-        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.CHESS_MOVE, myLeftTime + "@" +
+        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.CHESS_MOVE, myLeftTime + "@!!" +
                 fromCol +"," + fromRow + "|" + toCol + "," + toRow + "|" + (isFromWon ? "1" : "0") + "|" + random));
     }
 
     public void sendSurrender(){
         _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.SURRENDER, ""));
     }
+
 
     public void onGameReady(){
         _gameScreenReady = true;

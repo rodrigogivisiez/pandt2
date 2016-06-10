@@ -22,6 +22,7 @@ import com.mygdx.potatoandtomato.controls.WebImage;
 import com.mygdx.potatoandtomato.utils.Positions;
 import com.mygdx.potatoandtomato.utils.Sizes;
 import com.potatoandtomato.common.controls.AutoDisposeTable;
+import com.potatoandtomato.common.utils.RunnableArgs;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Services;
@@ -100,14 +101,14 @@ public class CreateGameScene extends SceneAbstract {
 
     }
 
-    public Actor populateGame(final Game game){
-        final Table gameTable = new Table();
-        final Table innerTable = new Table();
-        final Actor gameIcon = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster(), _ptGame);
-
+    public void populateGame(final Game game, final RunnableArgs<Actor> runnableArgs){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
+                final Table gameTable = new Table();
+                final Table innerTable = new Table();
+                final Actor gameIcon = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster(), _ptGame);
+
                 innerTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WOOD_BG_FAT)));
 
                 innerTable.add(gameIcon).size(90).right().expandX().fillX().padLeft(150).padTop(5).padBottom(10).padRight(15);
@@ -119,11 +120,10 @@ public class CreateGameScene extends SceneAbstract {
                 _gameList.row();
 
                 innerTable.addAction(sequence(fadeIn(0f), moveBy(200, 0, 1f, Interpolation.bounceOut)));
+
+                runnableArgs.run(gameIcon);
             }
         });
-
-        return gameIcon;
-
     }
 
     public void showGameDetails(final Game game){

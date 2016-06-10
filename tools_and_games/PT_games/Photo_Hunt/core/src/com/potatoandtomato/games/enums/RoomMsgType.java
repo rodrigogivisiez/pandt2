@@ -6,10 +6,10 @@ package com.potatoandtomato.games.enums;
 public enum RoomMsgType {
 
     Touched,
-    ConfirmTouched,
     Won,
     Lose,
     Download,
-    NextStage
+    NextStage,
+    StartPlaying,
 
 }

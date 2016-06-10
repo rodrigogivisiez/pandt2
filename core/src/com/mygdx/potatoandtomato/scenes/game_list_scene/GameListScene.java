@@ -5,6 +5,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.SnapshotArray;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Fonts;
@@ -16,8 +18,10 @@ import com.mygdx.potatoandtomato.controls.BtnEggDownward;
 import com.mygdx.potatoandtomato.controls.TopBar;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
+import com.potatoandtomato.common.utils.RunnableArgs;
 import com.potatoandtomato.common.utils.Threadings;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -158,14 +162,15 @@ public class GameListScene extends SceneAbstract {
         _root.add(_userProfileTable).expand().fill().padTop(60).padBottom(10).padLeft(30).padRight(30);
     }
 
-    public Actor addNewRoomRow(final Room room, final boolean isInvited){
-        final Button dummyButton = new Button(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
-        final Table gameRowTable = new Table();
-        _gameRowsTableMap.put(room.getId(), gameRowTable);
+    public void addNewRoomRow(final Room room, final boolean isInvited, final RunnableArgs<Actor> onFinish){
 
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
+                final Button dummyButton = new Button(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
+                final Table gameRowTable = new Table();
+                gameRowTable.setName(isInvited ? "invited" : "");
+                _gameRowsTableMap.put(room.getId(), gameRowTable);
 
                 Label.LabelStyle contentLabelStyle = new Label.LabelStyle();
                 contentLabelStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_S_BOLD);
@@ -197,10 +202,10 @@ public class GameListScene extends SceneAbstract {
 
                 dummyButton.setName(String.valueOf(room.getId()));
 
+                onFinish.run(dummyButton);
             }
         });
 
-        return dummyButton;
     }
 
     public void gameRowHighlight(final String tableName){
@@ -227,19 +232,23 @@ public class GameListScene extends SceneAbstract {
         });
     }
 
+    public void arrangeInvitedGameRow(Table gameRowTable){
+        //todo
+    }
+
     public boolean alreadyContainsRoom(Room room){
         return _gameRowsTableMap.containsKey(room.getId());
     }
 
-    public Actor updatedRoom(final Room room){
-        final boolean isInvited = (room.getInvitedUserByUserId(_services.getProfile().getUserId()) != null);
-        if(!_gameRowsTableMap.containsKey(room.getId())){
-            return addNewRoomRow(room, isInvited);
-        }
-        else{
-            Threadings.postRunnable(new Runnable() {
-                @Override
-                public void run() {
+    public void updatedRoom(final Room room, final RunnableArgs<Actor> onFinish){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                final boolean isInvited = (room.getInvitedUserByUserId(_services.getProfile().getUserId()) != null);
+                if(!_gameRowsTableMap.containsKey(room.getId())){
+                    addNewRoomRow(room, isInvited, onFinish);
+                }
+                else{
                     if(isInvited){
                         Table table = _gameRowsTableMap.get(room.getId()).findActor("gameNameInvitationTable");
                         table.getCells().get(0).width(12);
@@ -249,11 +258,11 @@ public class GameListScene extends SceneAbstract {
                     Label playerCountLabel = _gameRowsTableMap.get(room.getId()).findActor("playerCount");
                     playerCountLabel.setText(String.format("%s / %s", room.getRoomUsersCount(), room.getGame().getMaxPlayers()));
                     playerCountLabel.invalidate();
-                }
-            });
 
-            return null;
-        }
+                    onFinish.run();
+                }
+            }
+        });
     }
 
     public void removeRoom(Room room){

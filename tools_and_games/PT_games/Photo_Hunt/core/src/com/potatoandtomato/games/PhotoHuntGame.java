@@ -1,13 +1,9 @@
 package com.potatoandtomato.games;
 
-import com.potatoandtomato.common.absints.DownloaderListener;
-import com.potatoandtomato.common.absints.IDownloader;
-import com.potatoandtomato.common.absints.PTAssetsManager;
+import com.potatoandtomato.common.absints.IRemoteHelper;
 import com.potatoandtomato.common.absints.WebImageListener;
 import com.potatoandtomato.common.enums.Status;
-import com.potatoandtomato.common.helpers.RemoteHelper;
 import com.potatoandtomato.common.mockings.MockGame;
-import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.TextureUtils;
 import com.potatoandtomato.common.utils.Threadings;
@@ -18,7 +14,6 @@ import com.potatoandtomato.games.models.Services;
 import com.potatoandtomato.games.services.Database;
 import com.potatoandtomato.games.statics.Global;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,10 +24,9 @@ public class PhotoHuntGame extends MockGame {
 	private boolean _initialized;
 	private Entrance entrance;
 
-	public boolean isContinue;
 
-	public PhotoHuntGame(String gameId) {
-		super(gameId);
+	public PhotoHuntGame(String gameId, boolean isContinue) {
+		super(gameId, isContinue);
 	}
 
 	@Override
@@ -40,6 +34,7 @@ public class PhotoHuntGame extends MockGame {
 		super.create();
 
 		initiateMockGamingKit(1, Global.EXPECTED_PLAYERS_DEBUG, 0, Global.DEBUG);
+
 	}
 
 	@Override
@@ -70,7 +65,7 @@ public class PhotoHuntGame extends MockGame {
 							}
 						});
 
-						getCoordinator().setRemoteHelper(new RemoteHelper(null){
+						getCoordinator().setRemoteHelper(new IRemoteHelper(){
 							@Override
 							public void getRemoteImage(String url, final WebImageListener listener) {
 								Path path = Paths.get(String.format("testings/%s.jpg", url.equals("1") ? "ONE" : "TWO"));
@@ -85,6 +80,11 @@ public class PhotoHuntGame extends MockGame {
 								} catch (IOException e) {
 									e.printStackTrace();
 								}
+							}
+
+							@Override
+							public void dispose() {
+
 							}
 						});
 
@@ -105,16 +105,13 @@ public class PhotoHuntGame extends MockGame {
 					Threadings.postRunnable(new Runnable() {
 						@Override
 						public void run() {
-							if(!isContinue){
+							if (!isContinue()) {
 								entrance.init();
-							}
-							else{
+							} else {
 								entrance.onContinue();
 							}
 						}
 					});
-
-
 				}
 			});
 

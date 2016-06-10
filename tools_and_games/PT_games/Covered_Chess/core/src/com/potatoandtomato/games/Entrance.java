@@ -48,12 +48,12 @@ public class Entrance extends GameEntrance {
     @Override
     public void init() {
         _logic.init();
-        getGameCoordinator().getGame().setScreen((_logic.getScreen()));
+        getGameCoordinator().setScreen((_logic.getScreen()));
     }
 
     @Override
     public void onContinue() {
-        getGameCoordinator().getGame().setScreen((_logic.getScreen()));
+        getGameCoordinator().setScreen((_logic.getScreen()));
         _logic.continueGame();
     }
 

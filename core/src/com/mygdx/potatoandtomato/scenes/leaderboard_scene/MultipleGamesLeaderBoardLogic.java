@@ -34,7 +34,6 @@ public class MultipleGamesLeaderBoardLogic extends LogicAbstract {
         _scene.showNextPrevContainer();
         _games = new ArrayList<Game>();
         _loadedGameAbbrToFoundInLeaderboardMap = new HashMap<String, Boolean>();
-        setListeners();
         init();
     }
 
@@ -144,25 +143,22 @@ public class MultipleGamesLeaderBoardLogic extends LogicAbstract {
     }
 
 
-    private void setListeners(){
-        Threadings.postRunnable(new Runnable() {
+    @Override
+    public void setListeners(){
+        super.setListeners();
+        _scene.getNextButton().addListener(new ClickListener(){
             @Override
-            public void run() {
-                _scene.getNextButton().addListener(new ClickListener(){
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        nextGame();
-                        _services.getSoundsPlayer().playSoundEffect(Sounds.Name.CLICK_BUTTON);
-                    }
-                });
+            public void clicked(InputEvent event, float x, float y) {
+                nextGame();
+                _services.getSoundsPlayer().playSoundEffect(Sounds.Name.CLICK_BUTTON);
+            }
+        });
 
-                _scene.getPrevButton().addListener(new ClickListener(){
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        prevGame();
-                        _services.getSoundsPlayer().playSoundEffect(Sounds.Name.CLICK_BUTTON);
-                    }
-                });
+        _scene.getPrevButton().addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                prevGame();
+                _services.getSoundsPlayer().playSoundEffect(Sounds.Name.CLICK_BUTTON);
             }
         });
     }

@@ -23,6 +23,7 @@ import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.RoomUser;
 import com.mygdx.potatoandtomato.models.Services;
+import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.controls.Animator;
 import com.potatoandtomato.common.utils.Threadings;
 
@@ -454,6 +455,8 @@ public class RoomScene extends SceneAbstract {
                         loadingAnimator.setVisible(true);
                     }
                     else{
+                        badgeTable.getColor().a = 1f;
+                        badgeTable.clearActions();
                         badgeTable.setVisible(true);
                     }
                 }

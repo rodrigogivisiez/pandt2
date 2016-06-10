@@ -144,7 +144,7 @@ public class KnightLogic {
             }
 
             @Override
-            public void onGameStateChanged(final GameState newState) {
+            public void onGameStateChanged(GameState oldState, final GameState newState) {
                 Threadings.postRunnable(new Runnable() {
                     @Override
                     public void run() {
@@ -155,7 +155,10 @@ public class KnightLogic {
                             setPause(true);
                             kingCapture();
                         }
-                        else{
+                        else if(newState == GameState.Won){
+                            setPause(true);
+                        }
+                        else if(newState == GameState.BeforeNewGame){
                             setPause(true);
                         }
                     }

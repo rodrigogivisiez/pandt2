@@ -27,38 +27,6 @@ public class SettingsLogic extends LogicAbstract {
     public SettingsLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
         _scene = new SettingsScene(services, screen);
-        _scene.getFacebookBtn().addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-
-                _confirm.show(_services.getSocials().isFacebookLogon() ? _texts.confirmLogoutFacebook() : _texts.confirmLoginFacebook(),
-                        Confirm.Type.YESNO, new ConfirmResultListener() {
-                            @Override
-                            public void onResult(Result result) {
-                                if(result == Result.YES){
-                                    facebookRequest();
-                                }
-                            }
-                        });
-            }
-        });
-
-        _scene.getSaveBtn().addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                updateProfile();
-            }
-        });
-
-        _scene.getSoundsEnabledImage().addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                toggleSounds();
-            }
-        });
     }
 
     public void facebookRequest(){
@@ -137,6 +105,43 @@ public class SettingsLogic extends LogicAbstract {
     @Override
     public void onHide() {
         super.onHide();
+    }
+
+    @Override
+    public void setListeners() {
+        super.setListeners();
+        _scene.getFacebookBtn().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+
+                _confirm.show(_services.getSocials().isFacebookLogon() ? _texts.confirmLogoutFacebook() : _texts.confirmLoginFacebook(),
+                        Confirm.Type.YESNO, new ConfirmResultListener() {
+                            @Override
+                            public void onResult(Result result) {
+                                if(result == Result.YES){
+                                    facebookRequest();
+                                }
+                            }
+                        });
+            }
+        });
+
+        _scene.getSaveBtn().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                updateProfile();
+            }
+        });
+
+        _scene.getSoundsEnabledImage().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                toggleSounds();
+            }
+        });
     }
 
     @Override

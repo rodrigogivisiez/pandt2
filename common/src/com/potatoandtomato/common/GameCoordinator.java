@@ -2,24 +2,19 @@ package com.potatoandtomato.common;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.firebase.client.Firebase;
 import com.potatoandtomato.common.absints.*;
-import com.potatoandtomato.common.broadcaster.BroadcastEvent;
-import com.potatoandtomato.common.broadcaster.BroadcastListener;
-import com.potatoandtomato.common.broadcaster.Broadcaster;
-import com.potatoandtomato.common.enums.Status;
-import com.potatoandtomato.common.helpers.ConnectionMonitor;
-import com.potatoandtomato.common.helpers.RemoteHelper;
+import com.potatoandtomato.common.enums.RoomUpdateType;
+import com.potatoandtomato.common.enums.SelfConnectionStatus;
+import com.potatoandtomato.common.helpers.DecisionsMaker;
+import com.potatoandtomato.common.helpers.GameDataHelper;
 import com.potatoandtomato.common.models.*;
-import com.potatoandtomato.common.utils.DecisionsMaker;
 import com.potatoandtomato.common.utils.MyFileResolver;
-import com.potatoandtomato.common.utils.Pair;
 import com.potatoandtomato.common.utils.Threadings;
 
 import java.util.ArrayList;
@@ -46,25 +41,25 @@ public class GameCoordinator implements Disposable {
     private String roomId;
     private ISoundsPlayer soundsPlayer;
     private PTAssetsManager ptAssetsManager;
-    private Broadcaster broadcaster;
     private DecisionsMaker decisionsMaker;
-    private IDownloader downloader;
     private ITutorials tutorials;
     private GamePreferencesAbstract gamePreferences;
     private int leaderboardSize;
+    private GameDataHelper gameDataHelper;
+    private IDisconnectOverlayControl disconnectOverlayControl;
 
-    private boolean _landscape;
-    private ArrayList<String> _subscribedIds;
-    private Array<InputProcessor> _processors;
-    private ArrayList<InGameUpdateListener> _inGameUpdateListeners;
-    private ArrayList<LeaderboardRecord> _gameLeaderboardRecords;
+    private boolean landscape;
+    private boolean gameStarted;
+    private boolean finalized;
+    private boolean finishLoading;
+    private Array<InputProcessor> processors;
+    private ArrayList<InGameUpdateListener> inGameUpdateListeners;
+    private ArrayList<LeaderboardRecord> gameLeaderboardRecords;
 
-    private String _broadcastSubscribedId;
-
-    private EndGameResult _endGameResult;
-    private ConnectionMonitor _connectionMonitor;
-    private RemoteHelper _remoteHelper;
-    private ArrayList<Runnable> _onResumeRunnables;
+    private EndGameResult endGameResult;
+    private IRemoteHelper remoteHelper;
+    private ArrayList<Runnable> onResumeRunnables;
+    private ArrayList<SelfConnectionListener> selfConnectionListeners;
 
     public GameCoordinator(String jarPath, String assetsPath,
                            String basePath, ArrayList<Team> teams,
@@ -72,10 +67,10 @@ public class GameCoordinator implements Disposable {
                            IPTGame game, SpriteBatch batch,
                            String myUserId, IGameSandBox gameSandBox,
                            Object database, String roomId,
-                           ISoundsPlayer sounds, Broadcaster broadcaster,
-                           IDownloader downloader, ITutorials tutorials,
+                           ISoundsPlayer sounds, IRemoteHelper remoteHelper,
+                           ITutorials tutorials,
                            GamePreferencesAbstract gamePreferences,
-                           int leaderboardSize) {
+                           int leaderboardSize, IDisconnectOverlayControl iDisconnectOverlayControl) {
         this.jarPath = jarPath;
         this.assetsPath = assetsPath;
         this.basePath = basePath;
@@ -89,111 +84,30 @@ public class GameCoordinator implements Disposable {
         this.database = database;
         this.roomId = roomId;
         this.soundsPlayer = sounds;
-        this.broadcaster = broadcaster;
-        this.downloader = downloader;
         this.tutorials = tutorials;
         this.gamePreferences = gamePreferences;
-        this.decisionsMaker = new DecisionsMaker(this.teams);
+        this.decisionsMaker = new DecisionsMaker(this.teams, myUserId, gameSandBox);
         this.leaderboardSize = leaderboardSize;
+        this.remoteHelper = remoteHelper;
+        this.disconnectOverlayControl = iDisconnectOverlayControl;
 
-        _remoteHelper = new RemoteHelper(broadcaster);
-        _onResumeRunnables = new ArrayList();
-        _gameLeaderboardRecords = new ArrayList<LeaderboardRecord>();
-        _subscribedIds = new ArrayList<String>();
-        _processors = new Array<InputProcessor>();
-        _inGameUpdateListeners = new ArrayList<InGameUpdateListener>();
-        _connectionMonitor = new ConnectionMonitor(new ConnectionMonitorListener() {
-            @Override
-            public void onExceedReconnectLimitTime(String userId) {
-                forceAbandonOtherUser(userId);
-            }
-        });
-        subscribeListeners();
+        gameDataHelper = new GameDataHelper(teams, myUserId, decisionsMaker, gameSandBox, game, disconnectOverlayControl);
+        onResumeRunnables = new ArrayList();
+        gameLeaderboardRecords = new ArrayList<LeaderboardRecord>();
+        processors = new Array<InputProcessor>();
+        inGameUpdateListeners = new ArrayList<InGameUpdateListener>();
+        selfConnectionListeners = new ArrayList<SelfConnectionListener>();
     }
 
-    public int getLeaderboardSize() {
-        return leaderboardSize;
-    }
-
-    public void setLeaderboardSize(int leaderboardSize) {
-        this.leaderboardSize = leaderboardSize;
-    }
-
-    public ArrayList<LeaderboardRecord> getGameLeaderboardRecords() {
-        return _gameLeaderboardRecords;
-    }
-
-    public void setGameLeaderboardRecords(ArrayList<LeaderboardRecord> _gameLeaderboardRecords) {
-        this._gameLeaderboardRecords = _gameLeaderboardRecords;
-    }
-
-    public RemoteHelper getRemoteHelper() {
-        return _remoteHelper;
-    }
-
-    public void setRemoteHelper(RemoteHelper _remoteHelper) {
-        this._remoteHelper = _remoteHelper;
-    }
-
-    public ITutorials getTutorials() {
-        return tutorials;
-    }
-
-    public GamePreferencesAbstract getGamePreferences() {
-        return gamePreferences;
-    }
-
-    public IDownloader getDownloader() {
-        return downloader;
-    }
-
-    public void setDownloader(IDownloader downloader) {
-        this.downloader = downloader;
-    }
-
-    public IGameSandBox getGameSandBox() {
-        return gameSandBox;
-    }
-
-    public void setGameSandBox(IGameSandBox gameSandBox) {
-        this.gameSandBox = gameSandBox;
-    }
-
-    public String getMyUserId() {
-        return myUserId;
-    }
-
-    public void setMyUserId(String myUserId) {
-        this.myUserId = myUserId;
-    }
-
-    public SpriteBatch getSpriteBatch() {
-        return spriteBatch;
-    }
-
-    public void setSpriteBatch(SpriteBatch spriteBatch) {
-        this.spriteBatch = spriteBatch;
-    }
-
-    public IPTGame getGame() {
-        return game;
-    }
-
-    public float getGameWidth() {
-        return gameWidth;
-    }
-
-    public float getGameHeight() {
-        return gameHeight;
-    }
-
+    ///////////////////////////////////////////////////////////////
+    //All about teams
+    ///////////////////////////////////////////////////////////////
     public ArrayList<Team> getTeams() {
         return teams;
     }
 
     public void setTeams(ArrayList<Team> teams) {
         this.teams = teams;
-        decisionsMaker.teamsChanged(teams);
     }
 
     public Team getMyTeam(){
@@ -224,7 +138,9 @@ public class GameCoordinator implements Disposable {
         }
         return result;
     }
-
+    ///////////////////////////////////////////////////////
+    //All about loading game jar
+    /////////////////////////////////////////////////////////
     public String getJarPath() {
         return jarPath;
     }
@@ -260,72 +176,58 @@ public class GameCoordinator implements Disposable {
         }
     }
 
+    /////////////////////////////////////////////////
+    //Landscaping
+    /////////////////////////////////////////////////
     public void setLandscape(){
         float originalHeight = this.gameHeight;
         this.gameHeight = this.gameWidth;
         this.gameWidth = originalHeight;
-        _landscape = true;
+        landscape = true;
     }
 
     public boolean isLandscape() {
-        return _landscape;
+        return landscape;
     }
 
-    public void subscribedBroadcastListener(String id){
-        _subscribedIds.add(id);
-    }
-
-    public void endGame(){
-        if(_endGameResult == null){
-            System.out.println("Error: please call beforeEndGame() function before end game!!!!!");
-            return;
-        }
-
-        for(String id : _subscribedIds){
-            broadcaster.unsubscribe(id);
-        }
-        for(InputProcessor p : _processors){
-            getGame().removeInputProcessor(p);
-        }
-
-        getGameSandBox().endGame();
-    }
-
+    ////////////////////////////////////////////////////
+    //Abandoning
+    ///////////////////////////////////////////////////
     public void abandon(){
         abandon(null);
     }
 
     public void abandon(final Runnable confirmedAbandon){
-        getGameSandBox().useConfirm("PTTEXT_ABANDON", new Runnable() {
-            @Override
-            public void run() {     //yes
-                getGameSandBox().userAbandoned(getMyUserId());
-                beforeEndGame(null, null, true);
-                if (confirmedAbandon != null) confirmedAbandon.run();
-                endGame();
-            }
-        }, new Runnable() {
-            @Override
-            public void run() {     //no
+        if(!finalized){
+            gameSandBox.useConfirm("PTTEXT_ABANDON", new Runnable() {
+                @Override
+                public void run() {     //yes
+                    gameSandBox.userAbandoned(getMyUserId());
+                    if (confirmedAbandon != null) confirmedAbandon.run();
+                }
+            }, new Runnable() {
+                @Override
+                public void run() {     //no
 
-            }
-        });
+                }
+            });
+        }
     }
 
-    public void forceAbandonOtherUser(String userId){
-        getGameSandBox().userAbandoned(userId);
-    }
-
+    ////////////////////////////////////////////////////
+    //User connection related
+    ////////////////////////////////////////////////////
     public void userAbandon(String userId){
-        setPlayerConnectionChanged(userId, false);
-        _connectionMonitor.userAbandoned(userId);
-        if(this.userStateListener != null) userStateListener.userAbandoned(userId);
+        gameDataHelper.userConnectionChanged(userId, false);
+        decisionsMaker.userConnectionChanged(userId, false);
+
+        if(this.userStateListener != null && !userId.equals(myUserId)) userStateListener.userAbandoned(userId);
     }
 
     public void userConnectionChanged(String userId, boolean connected){
-        setPlayerConnectionChanged(userId, connected);
-        _connectionMonitor.connectionChanged(userId, connected);
-        if(this.userStateListener != null) {
+        gameDataHelper.userConnectionChanged(userId, connected);
+        decisionsMaker.userConnectionChanged(userId, connected);
+        if(this.userStateListener != null && !userId.equals(myUserId)) {
             if(connected){
                 userStateListener.userConnected(userId);
             }
@@ -333,26 +235,31 @@ public class GameCoordinator implements Disposable {
                 userStateListener.userDisconnected(userId);
             }
         }
-    }
 
-    private void setPlayerConnectionChanged(String userId, boolean connected){
-        for(Team team : teams){
-            if(team.getPlayerByUserId(userId) != null){
-                team.getPlayerByUserId(userId).setIsConnected(connected);
-                decisionsMaker.teamsChanged(teams);
-                return;
+        if(userId.equals(myUserId)){
+            for(SelfConnectionListener listener : selfConnectionListeners){
+                listener.onSelfConnectionChanged(connected ?
+                        SelfConnectionStatus.ConnectionRecoverd : SelfConnectionStatus.DisconnectedButRecoverable);
             }
         }
+
     }
 
-    public boolean meIsDecisionMaker(){
-        return decisionsMaker.checkIsDecisionMaker(this.getMyUserId());
+
+    public void setUserStateListener(UserStateListener userStateListener){
+        this.userStateListener = userStateListener;
     }
 
-    public String getDecisionMaker(){
-        return decisionsMaker.getDecisionMaker();
+    public void addSelfConnectionListener(SelfConnectionListener listener) {
+        selfConnectionListeners.add(listener);
     }
 
+    public void removeSelfConnectionListener(SelfConnectionListener listener) {
+        selfConnectionListeners.remove(listener);
+    }
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //Retrieving players data
+    //////////////////////////////////////////////////////////////////////////////////////
     public ConcurrentHashMap<Integer, Player> getIndexToPlayersConcurrentMap(){
         ConcurrentHashMap<Integer, Player> playerHashMap = new ConcurrentHashMap();
 
@@ -367,7 +274,7 @@ public class GameCoordinator implements Disposable {
 
     //unique index is the same as slot index
     public int getMyUniqueIndex(){
-       return getPlayerUniqueIndex(getMyUserId());
+        return getPlayerUniqueIndex(getMyUserId());
     }
 
     public int getPlayerUniqueIndex(String userId){
@@ -390,7 +297,7 @@ public class GameCoordinator implements Disposable {
                 }
             }
         }
-        return new Player("", "", false, true, -1);
+        return null;
     }
 
     public Player getPlayerByUserId(String userId){
@@ -401,84 +308,106 @@ public class GameCoordinator implements Disposable {
                 }
             }
         }
-        return new Player("", "", false, true, -1);
+        return null;
     }
 
-    public ArrayList<Player> getPlayersByConnectionState(boolean isConnected){
-        ArrayList<Player> result = new ArrayList();
+    public int getTotalPlayersCount(){
+        int result = 0;
 
         for(Team team : teams){
-            for(Player player : team.getPlayers()){
-                if(player.getIsConnected() == isConnected){
-                    result.add(player);
-                }
-            }
+            result += team.getPlayers().size();
         }
         return result;
     }
 
-    public void addInputProcessor(InputProcessor processor){
-        _processors.add(processor);
-        getGame().addInputProcessor(processor);
+    public ArrayList<Player> getAllConnectedPlayers(){
+        ArrayList<String> connectedUserIds = decisionsMaker.getDecisionMakersSequence();
+        ArrayList<Player> result = new ArrayList();
+        for(String userId : connectedUserIds){
+            result.add(getPlayerByUserId(userId));
+        }
+        return result;
     }
 
-    public void removeInputProcessor(InputProcessor processor){
-        _processors.removeValue(processor, false);
-        getGame().removeInputProcessor(processor);
+
+    /////////////////////////////////////////////////////////////////////////////
+    //Decision maker
+    ////////////////////////////////////////////////////////////////////////////
+    public DecisionsMaker getDecisionsMaker(){
+        return decisionsMaker;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////
+    //Leaderboards related
+    ////////////////////////////////////////////////////////////////////////////////////////
+    public int getLeaderboardSize() {
+        return leaderboardSize;
+    }
+
+    public void setLeaderboardSize(int leaderboardSize) {
+        this.leaderboardSize = leaderboardSize;
+    }
+
+    public ArrayList<LeaderboardRecord> getGameLeaderboardRecords() {
+        return gameLeaderboardRecords;
+    }
+
+    public void setGameLeaderboardRecords(ArrayList<LeaderboardRecord> _gameLeaderboardRecords) {
+        this.gameLeaderboardRecords = _gameLeaderboardRecords;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+    //Ingame update
+    /////////////////////////////////////////////////////////////////////////////////////////
     public void sendRoomUpdate(String msg){
-        getGameSandBox().inGameUpdateRequest(msg);
+        if(!gameStarted){
+            System.out.println("You are not allowed to send update message before game started.");
+            return;
+        }
+        gameSandBox.sendUpdate(RoomUpdateType.InGame, msg);
+    }
+
+    public void sendPrivateRoomUpdate(String toUserId, String msg){
+        if(!gameStarted){
+            System.out.println("You are not allowed to send update message before game started.");
+            return;
+        }
+        gameSandBox.sendPrivateUpdate(RoomUpdateType.InGame, toUserId, msg);
+    }
+
+    public void receivedRoomUpdate(final String msg, final String senderId){
+        Runnable toRun = new Runnable() {
+            @Override
+            public void run() {
+                for (InGameUpdateListener listener : inGameUpdateListeners) {
+                    listener.onUpdateReceived(msg, senderId);
+                }
+            }
+        };
+
+        if(gameDataHelper.isActivated() && !gameDataHelper.hasData()){
+            gameDataHelper.addToRunWhenHaveData(toRun);
+        }
+        else{
+            toRun.run();
+        }
     }
 
     public void addInGameUpdateListener(InGameUpdateListener listener){
-        _inGameUpdateListeners.add(listener);
+        inGameUpdateListeners.add(listener);
     }
 
     public void removeInGameUpdateListener(InGameUpdateListener listener){
-        _inGameUpdateListeners.remove(listener);
+        inGameUpdateListeners.remove(listener);
     }
 
-    private void subscribeListeners(){
-        _broadcastSubscribedId = broadcaster.subscribe(BroadcastEvent.INGAME_UPDATE_RESPONSE, new BroadcastListener<InGameUpdateMessage>() {
-            @Override
-            public void onCallback(InGameUpdateMessage obj, Status st) {
-                for (InGameUpdateListener listener : _inGameUpdateListeners) {
-                    listener.onUpdateReceived(obj.getMsg(), obj.getSenderId());
-                }
-            }
-        });
+    public ArrayList<InGameUpdateListener> getInGameUpdateListeners() {
+        return inGameUpdateListeners;
     }
 
-    public PTAssetsManager getPTAssetManager(boolean singleton){
-        if(ptAssetsManager == null) ptAssetsManager = new PTAssetsManager(new MyFileResolver(this), game, broadcaster);
-        if(singleton){
-            return ptAssetsManager;
-        }
-        else{
-            return new PTAssetsManager(new MyFileResolver(this), game, broadcaster);
-        }
-    }
-
-    public void setUserStateListener(UserStateListener userStateListener){
-        this.userStateListener = userStateListener;
-    }
-
-    public String getHostUserId(){
-        for(Team team : getTeams()){
-            for(Player player : team.getPlayers()){
-                if(player.getIsHost()){
-                    return player.getUserId();
-                }
-            }
-        }
-        return null;
-    }
-
-    public boolean isHost(){
-        return getHostUserId().equals(getMyUserId());
-    }
-
+    ///////////////////////////////////////////////////////////////////////////////////
+    //Ingame firebase
+    ///////////////////////////////////////////////////////////////////////////////////
     public Firebase getFirebase(){
         return (Firebase) database;
     }
@@ -487,86 +416,153 @@ public class GameCoordinator implements Disposable {
         return getFirebase().child("testing");
     }
 
-    public String getRoomId() {
-        return roomId;
+    ///////////////////////////////////////////////////////////////////////////////////////////
+    //Retrieving web image
+    /////////////////////////////////////////////////////////////////////////////////////////
+    public void getRemoteImage(final String url, final WebImageListener listener){
+        getRemoteHelper().getRemoteImage(url, listener);
+    }
+
+    public IRemoteHelper getRemoteHelper() {
+        return remoteHelper;
+    }
+
+    public void setRemoteHelper(IRemoteHelper _remoteHelper) {
+        this.remoteHelper = _remoteHelper;
+    }
+
+    //will be called when onResume lifecycle fired, mainly used to solve web image became black square problem
+    public void addOnResumeRunnable(Runnable runnable){
+        onResumeRunnables.add(runnable);
+        game.addOnResumeRunnable(runnable);
+    }
+
+    public void removeOnResumeRunnable(Runnable runnable){
+        onResumeRunnables.remove(runnable);
+        game.removeOnResumeRunnable(runnable);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+    //Assets and sounds
+    ////////////////////////////////////////////////////////////////////////////////////////
+    public PTAssetsManager getPTAssetManager(boolean singleton){
+        if(ptAssetsManager == null) ptAssetsManager = new PTAssetsManager(new MyFileResolver(this), game);
+        if(singleton){
+            return ptAssetsManager;
+        }
+        else{
+            return new PTAssetsManager(new MyFileResolver(this), game);
+        }
     }
 
     public ISoundsPlayer getSoundsPlayer() {
         return soundsPlayer;
     }
 
-    public void requestVibrate(double periodInMili){
-        broadcaster.broadcast(BroadcastEvent.VIBRATE_DEVICE, periodInMili);
+    /////////////////////////////////////////////////////////////////////////////////////////
+    //For reuse client stage spritebatch
+    ////////////////////////////////////////////////////////////////////////////////////////
+    public void addInputProcessor(InputProcessor processor){
+        processors.add(processor);
+        game.addInputProcessor(processor);
     }
 
-    public void finishLoading(){
-        this.getGameSandBox().onGameLoaded();
+    public void removeInputProcessor(InputProcessor processor){
+        processors.removeValue(processor, false);
+        game.removeInputProcessor(processor);
     }
 
-    public ArrayList<InGameUpdateListener> getInGameUpdateListeners() {
-        return _inGameUpdateListeners;
+    public SpriteBatch getSpriteBatch() {
+        return spriteBatch;
     }
 
-    public EndGameResult getEndGameResult() {
-        return _endGameResult;
+    public void setSpriteBatch(SpriteBatch spriteBatch) {
+        this.spriteBatch = spriteBatch;
     }
 
-    public void getRemoteImage(final String url, final WebImageListener listener){
-        getRemoteHelper().getRemoteImage(url, listener);
+    public void setScreen(Screen screen){
+        game.setScreen(screen);
     }
 
-    public void addOnResumeRunnable(Runnable runnable){
-        _onResumeRunnables.add(runnable);
-        game.addOnResumeRunnable(runnable);
-    }
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //Ending game
+    /////////////////////////////////////////////////////////////////////////////////////////
 
-    public void removeOnResumeRunnable(Runnable runnable){
-        _onResumeRunnables.remove(runnable);
-        game.removeOnResumeRunnable(runnable);
-    }
+    //finalize game, after this method, other user will not be allowed to reconnect back to game
+    public void finalizeGame(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers, boolean abandon){
+        finalized = true;
 
-
-    public void beforeEndGame(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers, boolean abandon){
         if(winners == null) winners = new HashMap<Team, ArrayList<ScoreDetails>>();
         if(losers == null) losers = new ArrayList<Team>();
 
-        if(!abandon){
-            gameSandBox.updateScores(winners, losers);
-        }
+        gameSandBox.finalizing(winners, losers, abandon);
 
         if(winners.size() == 0 && losers.size() == 0){
-            this._endGameResult = new EndGameResult();
-            this._endGameResult.setAbandon(abandon);
+            this.endGameResult = new EndGameResult();
+            this.endGameResult.setAbandon(abandon);
             return;
         }
 
-        this._endGameResult = new EndGameResult();
-        this._endGameResult.setAbandon(abandon);
-        this._endGameResult.setMyTeam(getMyTeamPlayers());
+        this.endGameResult = new EndGameResult();
+        this.endGameResult.setAbandon(abandon);
+        this.endGameResult.setMyTeam(getMyTeamPlayers());
 
         for(Team loserTeam : losers){
             if(loserTeam.hasUser(getMyUserId())){
-                this._endGameResult.setWon(false);
+                this.endGameResult.setWon(false);
             }
         }
 
-        this._endGameResult.setWinnersScoreDetails(winners);
-        this._endGameResult.setLoserTeams(losers);
+        this.endGameResult.setWinnersScoreDetails(winners);
+        this.endGameResult.setLoserTeams(losers);
 
-       for(Team winnerTeam : winners.keySet()){
+        for(Team winnerTeam : winners.keySet()){
             if(winnerTeam.hasUser(getMyUserId())){
-                this._endGameResult.setWon(true);
+                this.endGameResult.setWon(true);
             }
         }
     }
 
+    public void endGame(){
+        if(!finalized){
+            System.out.println("Error: please call finalizeGame() function before end game.");
+            return;
+        }
 
+        gameSandBox.endGame();
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //MISC.
+    /////////////////////////////////////////////////////////////////////////////////////
+    public void requestVibrate(double periodInMili){
+        gameSandBox.vibrate(periodInMili);
+    }
+
+    public void finishLoading(){
+        this.finishLoading = true;
+    }
+
+    public boolean isFinishLoading() {
+        return finishLoading;
+    }
+
+    //will be called when all users loaded successfully and game started
+    public void setGameStarted(boolean gameStarted, boolean isContinue) {
+        this.gameStarted = gameStarted;
+        if(gameStarted){
+            gameDataHelper.onGameStarted(isContinue);
+        }
+    }
+
+
+    /////////////////////////////////////////////////////////////////
+    //Disposing
+    ///////////////////////////////////////////////////////////////
     @Override
     public void dispose() {
-        _connectionMonitor.dispose();
-        broadcaster.unsubscribe(_broadcastSubscribedId);
         userStateListener = null;
-        _inGameUpdateListeners.clear();
+        inGameUpdateListeners.clear();
         if(ptAssetsManager != null) {
             Threadings.postRunnable(new Runnable() {
                 @Override
@@ -575,18 +571,69 @@ public class GameCoordinator implements Disposable {
                 }
             });
         }
-        broadcaster.broadcast(BroadcastEvent.DEVICE_ORIENTATION, 0);
-        for(InputProcessor processor : _processors){
-            getGame().removeInputProcessor(processor);
+        for(InputProcessor processor : processors){
+            game.removeInputProcessor(processor);
         }
-        _processors.clear();
+        processors.clear();
 
-        for(Runnable runnable : _onResumeRunnables){
-            getGame().removeOnResumeRunnable(runnable);
+        for(Runnable runnable : onResumeRunnables){
+            game.removeOnResumeRunnable(runnable);
         }
-        _onResumeRunnables.clear();
+        onResumeRunnables.clear();
+        remoteHelper.dispose();
+        selfConnectionListeners.clear();
+        gameDataHelper.dispose();
+        decisionsMaker.dispose();
+    }
 
-        _remoteHelper.dispose();
+    ////////////////////////////////////////////////////////////////
+    //Getters and setters
+    ////////////////////////////////////////////////////////////////
 
+    //database room id, not warp roomid
+    public String getRoomId() {
+        return roomId;
+    }
+
+    public EndGameResult getEndGameResult() {
+        return endGameResult;
+    }
+
+    public ITutorials getTutorials() {
+        return tutorials;
+    }
+
+    public GamePreferencesAbstract getGamePreferences() {
+        return gamePreferences;
+    }
+
+    public String getMyUserId() {
+        return myUserId;
+    }
+
+    public void setMyUserId(String myUserId) {
+        this.myUserId = myUserId;
+        gameDataHelper.setMyUserId(myUserId);
+        decisionsMaker.setMyUserId(myUserId);
+    }
+
+    public float getGameWidth() {
+        return gameWidth;
+    }
+
+    public float getGameHeight() {
+        return gameHeight;
+    }
+
+    public GameDataHelper getGameDataHelper() {
+        return gameDataHelper;
+    }
+
+    public void setGameDataHelper(GameDataHelper gameDataHelper) {
+        this.gameDataHelper = gameDataHelper;
+    }
+
+    public void setDecisionsMaker(DecisionsMaker decisionsMaker) {
+        this.decisionsMaker = decisionsMaker;
     }
 }

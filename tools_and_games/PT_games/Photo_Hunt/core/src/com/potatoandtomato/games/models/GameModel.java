@@ -50,12 +50,16 @@ public class GameModel {
     }
 
     public void copyGameModelDataToThis(GameModel gameModel){
+        setStageType(gameModel.getStageType());
         setStageNumber(gameModel.getStageNumber());
         setUserRecords(gameModel.getUserRecords());
-        setScore(gameModel.getScore());
+        setScore(gameModel.getScore(), true);
         setGameState(gameModel.getGameState());
+        setRemainingMiliSecs(gameModel.getRemainingMiliSecs(), true);
+        setFreezingMiliSecs(gameModel.getFreezingMiliSecs());
+        setCastleAttackedCount(gameModel.getCastleAttackedCount());
+        setHandledAreas(gameModel.getHandledAreas());
         setHintsLeft(gameModel.getHintsLeft());
-        setStageType(gameModel.getStageType());
     }
 
     public int getCastleAttackedCount() {
@@ -164,12 +168,6 @@ public class GameModel {
 
     public void setUserRecords(HashMap<String, Integer> userRecords) {
         this.userRecords = userRecords;
-
-        for(GameModelListener listener : listeners){
-            for (Map.Entry<String, Integer> entry : userRecords.entrySet()) {
-                listener.onAddedClickCount(entry.getKey(), entry.getValue());
-            }
-        }
     }
 
     public ArrayList<SimpleRectangle> getHandledAreas() {
@@ -178,20 +176,29 @@ public class GameModel {
 
     public void setHandledAreas(ArrayList<SimpleRectangle> handledAreas) {
         this.handledAreas = handledAreas;
+        for(GameModelListener listener : listeners){
+            listener.onHandledAreasChanged();
+        }
     }
 
     public GameState getGameState() {
         return gameState;
     }
 
-    public void setGameState(GameState gameState) {
-        if(gameState != this.gameState){
-            this.gameState = gameState;
+    public void setGameState(GameState newGameState) {
+        GameState oldState = this.gameState;
+
+        this.gameState = newGameState;
+
+        if(oldState != newGameState){
             for(GameModelListener listener : listeners){
-                listener.onGameStateChanged(gameState);
+                listener.onGameStateChanged(oldState, newGameState);
             }
-            Logs.show("Game state: " + gameState);
+            if(listeners.size() > 0){
+                Logs.show("Game state: " + newGameState);
+            }
         }
+
     }
 
     public Double getScore() {
@@ -201,12 +208,18 @@ public class GameModel {
         return score.getValue();
     }
 
-    public void setScore(Double score) {
+    public void setScore(Double score, boolean notify) {
         if(this.score == null){
             this.score = new SafeDouble(score);
         }
         else{
             this.score.setValue(score);
+        }
+
+        if(notify){
+            for(GameModelListener listener : listeners){
+                listener.onScoresChanged(this.score.getValue());
+            }
         }
 
     }
@@ -217,7 +230,6 @@ public class GameModel {
 
     public void setStageNumber(int stageNumber) {
         this.stageNumber = stageNumber;
-        convertStageNumberToRemainingMiliSecs();
         for(GameModelListener listener : listeners){
             listener.onStageNumberChanged(stageNumber);
         }

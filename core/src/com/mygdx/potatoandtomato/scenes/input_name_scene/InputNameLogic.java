@@ -32,14 +32,6 @@ public class InputNameLogic extends LogicAbstract {
         super.onInit();
 
         _scene.getDisplayNameTextField().setText(_services.getProfile().getFacebookName());
-
-        _scene.getBtnConfirm().addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                saveNameIfValid(_scene.getDisplayNameTextField().getText());
-            }
-        });
     }
 
     public void saveNameIfValid(String name){
@@ -78,6 +70,19 @@ public class InputNameLogic extends LogicAbstract {
     public void clearLoading(){
         _scene.getRoot().setTouchable(Touchable.enabled);
         _scene.getBtnConfirm().clearLoading();
+    }
+
+    @Override
+    public void setListeners() {
+        super.setListeners();
+
+        _scene.getBtnConfirm().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                saveNameIfValid(_scene.getDisplayNameTextField().getText());
+            }
+        });
     }
 
     @Override

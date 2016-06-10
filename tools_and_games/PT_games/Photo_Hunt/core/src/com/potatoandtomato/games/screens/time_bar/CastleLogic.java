@@ -74,7 +74,7 @@ public class CastleLogic {
             }
 
             @Override
-            public void onGameStateChanged(GameState newState) {
+            public void onGameStateChanged(GameState oldState, GameState newState) {
                 if(newState == GameState.Won || newState == GameState.Lose){
                     updateRemainingMiliSecs(gameModel.getRemainingMiliSecs());
                 }

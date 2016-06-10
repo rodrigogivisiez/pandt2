@@ -15,6 +15,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.files.FileHandle;
+import com.chartboost.sdk.Chartboost;
 import com.firebase.client.Firebase;
 import com.mygdx.potatoandtomato.PTGame;
 import com.mygdx.potatoandtomato.absintflis.entrance.EntranceLoaderListener;
@@ -43,6 +44,7 @@ public class AndroidLauncher extends AndroidApplication {
 	private Broadcaster _broadcaster;
 	private PTGame _ptGame;
 	private AudioRecorder _audioRecorder;
+	private ChartBoostHelper _chartBoostHelper;
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
@@ -55,6 +57,7 @@ public class AndroidLauncher extends AndroidApplication {
 		reset();
 
 		_broadcaster = new Broadcaster();
+		_chartBoostHelper = new ChartBoostHelper(this, _broadcaster);
 		_vibrator = new VibrateManager(_this, _broadcaster);
 		_imageLoader = new ImageLoader(_this, _broadcaster);
 		_facebookConnector = new FacebookConnector(this, _broadcaster);
@@ -146,6 +149,7 @@ public class AndroidLauncher extends AndroidApplication {
 	}
 
 
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -170,19 +174,27 @@ public class AndroidLauncher extends AndroidApplication {
 
 	@Override
 	public void onBackPressed() {
-		_view.requestFocus();
+		if(_chartBoostHelper != null && _chartBoostHelper.onBackPressed()){
+
+		}
+		else{
+			super.onBackPressed();
+			_view.requestFocus();
+		}
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 		_isVisible = false;
+		if(_chartBoostHelper != null) _chartBoostHelper.onPause();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		_isVisible = true;
+		if(_chartBoostHelper != null) _chartBoostHelper.onResume();
 	}
 
 	@Override
@@ -190,11 +202,13 @@ public class AndroidLauncher extends AndroidApplication {
 		super.onDestroy();
 		stopService(new Intent(getBaseContext(), OnClearFromRecentService.class));
 		reset();
+		if(_chartBoostHelper != null) _chartBoostHelper.onDestroy();
 	}
 
 	@Override
 	protected void onStart() {
 		super.onStart();
+		if(_chartBoostHelper != null) _chartBoostHelper.onStart();
 	}
 
 	@Override
@@ -205,6 +219,7 @@ public class AndroidLauncher extends AndroidApplication {
 	@Override
 	protected void onStop() {
 		super.onStop();
+		if(_chartBoostHelper != null) _chartBoostHelper.onStop();
 	}
 
 

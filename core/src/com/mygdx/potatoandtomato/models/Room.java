@@ -7,6 +7,7 @@ import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.utils.ColorUtils;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
+import com.shaded.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.shaded.fasterxml.jackson.core.JsonProcessingException;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 import com.shaded.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -20,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by SiongLeng on 16/12/2015.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Room {
 
     Game game;
@@ -31,7 +33,6 @@ public class Room {
     String id;  //this is database ID
 
     ArrayList<Profile> invitedUsers;
-    ArrayList<RoomUser> originalRoomUsers;
 
     ArrayList<Team> teams;
 
@@ -78,17 +79,6 @@ public class Room {
 
     public void setWarpRoomId(String warpRoomId) {
         this.warpRoomId = warpRoomId;
-    }
-
-    public ArrayList<RoomUser> getOriginalRoomUsers() {
-        if(originalRoomUsers == null){
-            originalRoomUsers = new ArrayList();
-        }
-        return originalRoomUsers;
-    }
-
-    public void setOriginalRoomUsers(ArrayList<RoomUser> originalRoomUsers) {
-        this.originalRoomUsers = originalRoomUsers;
     }
 
     @JsonIgnore
@@ -162,15 +152,6 @@ public class Room {
     }
 
     @JsonIgnore
-    public void storeRoomUsersToOriginalRoomUserIds(){
-        ArrayList<RoomUser> result = new ArrayList();
-        for(RoomUser roomUser : getRoomUsersMap().values()){
-            result.add(roomUser);
-        }
-        setOriginalRoomUsers(result);
-    }
-
-    @JsonIgnore
     public int getRoomUsersCount(){
         if(roomUsersMap == null) return 0;
         else return roomUsersMap.size();
@@ -205,23 +186,7 @@ public class Room {
         return false;
     }
 
-    @JsonIgnore
-    public void addRoomUser(Profile user, boolean isReady){
-        if(roomUsersMap == null) roomUsersMap = new ConcurrentHashMap();
 
-        if(getSlotIndexByUserId(user.getUserId()) != -1) return;
-
-        for(int i = 0; i < Integer.valueOf(game.getMaxPlayers()); i++){
-            if(getRoomUserBySlotIndex(i) == null){
-                RoomUser r = new RoomUser();
-                r.setProfile(user);
-                r.setSlotIndex(i);
-                r.setReady(isReady);
-                roomUsersMap.put(user.getUserId(), r);
-                break;
-            }
-        }
-    }
 
     @JsonIgnore
     public void setRoomUsersIndexIfNoIndex(Room room){
@@ -237,7 +202,25 @@ public class Room {
     }
 
     @JsonIgnore
+    public void addRoomUser(Profile user, boolean isReady){
+        addRoomUser(user, -1, isReady);
+    }
+
+    @JsonIgnore
     public void addRoomUser(Profile user, int index, boolean isReady){
+        if(roomUsersMap == null) roomUsersMap = new ConcurrentHashMap();
+
+        if(getSlotIndexByUserId(user.getUserId()) != -1) return;
+
+        if(index == -1){
+            for(int i = 0; i < Integer.valueOf(game.getMaxPlayers()); i++){
+                if(getRoomUserBySlotIndex(i) == null){
+                   index = i;
+                    break;
+                }
+            }
+        }
+
         RoomUser r = new RoomUser();
         r.setProfile(user);
         r.setSlotIndex(index);
@@ -246,19 +229,14 @@ public class Room {
     }
 
     @JsonIgnore
-    public RoomUser getRoomUserBySlotIndex(int slotIndex){
-        for(RoomUser roomUser : this.getRoomUsersMap().values()){
-            if(roomUser.getSlotIndex() == slotIndex){
-                return roomUser;
-            }
-        }
-        return null;
+    public void removeUserByUserId(String userId){
+        roomUsersMap.remove(userId);
     }
 
     @JsonIgnore
-    public RoomUser getOriginalRoomUserByUserId(String userId){
-        for(RoomUser roomUser : this.getOriginalRoomUsers()){
-            if(roomUser.getProfile().getUserId().equals(userId)){
+    public RoomUser getRoomUserBySlotIndex(int slotIndex){
+        for(RoomUser roomUser : this.getRoomUsersMap().values()){
+            if(roomUser.getSlotIndex() == slotIndex){
                 return roomUser;
             }
         }
@@ -343,6 +321,37 @@ public class Room {
         return true;
     }
 
+
+    @JsonIgnore
+    public ArrayList<RoomUser> getSlotIndexChangedUsers(Room newRoom){
+        ArrayList<RoomUser> result = new ArrayList();
+        if(newRoom == null) return result;
+        else{
+            for(RoomUser roomUser : roomUsersMap.values()){
+                RoomUser updatedRoomUser = newRoom.getRoomUserByUserId(roomUser.getProfile().getUserId());
+                if(updatedRoomUser != null && !roomUser.getSlotIndex().equals(updatedRoomUser.getSlotIndex())){
+                    result.add(updatedRoomUser);
+                }
+            }
+        }
+        return result;
+    }
+
+    @JsonIgnore
+    public ArrayList<RoomUser> getIsReadyChangedUsers(Room newRoom){
+        ArrayList<RoomUser> result = new ArrayList();
+        if(newRoom == null) return result;
+        else{
+            for(RoomUser roomUser : roomUsersMap.values()){
+                RoomUser updatedRoomUser = newRoom.getRoomUserByUserId(roomUser.getProfile().getUserId());
+                if(updatedRoomUser != null && roomUser.getReady() != updatedRoomUser.getReady()){
+                    result.add(updatedRoomUser);
+                }
+            }
+        }
+        return result;
+    }
+
     @JsonIgnore
     public ArrayList<RoomUser> getJustLeftUsers(Room newRoom){
         if(newRoom == null) return new ArrayList<RoomUser>();
@@ -350,7 +359,7 @@ public class Room {
     }
 
     @JsonIgnore
-    public ArrayList<RoomUser>  getJustJoinedUsers(Room newRoom){
+    public ArrayList<RoomUser> getJustJoinedUsers(Room newRoom){
         if(newRoom == null) return new ArrayList<RoomUser>();
         return getRoomUsersDifference(newRoom.getRoomUsersMap().values(), this.getRoomUsersMap().values());
     }
@@ -384,6 +393,18 @@ public class Room {
     }
 
     @JsonIgnore
+    public Player getPlayerByUserId(String userId){
+        for(Team team : teams){
+            for(Player player : team.getPlayers()){
+                if(player.getUserId().equals(userId)){
+                    return player;
+                }
+            }
+        }
+        return null;
+    }
+
+    @JsonIgnore
     public void convertRoomUsersToTeams() {
         ArrayList<Team> teams = new ArrayList();
         for (int i = 0; i < Integer.valueOf(this.getGame().getTeamCount()); i++) {
@@ -395,11 +416,12 @@ public class Room {
                 boolean isHost = false;
                 if(user.getProfile().equals(this.getHost())) isHost = true;
                 teams.get(teamNumber).addPlayer(new Player(user.getProfile().getDisplayName(15),
-                                user.getProfile().getUserId(), isHost, true, user.getSlotIndex()));
+                                user.getProfile().getUserId(), isHost, user.getSlotIndex()));
             }
         }
         this.teams = teams;
     }
+
 
     @JsonIgnore
     public boolean checkAllFairTeam(){
@@ -441,8 +463,7 @@ public class Room {
     public boolean canContinue(Profile myProfile){
         if(getRoomUsersMap().size() > 0 && isPlaying() && !isOpen() &&
                 getRoundCounter() == myProfile.getUserPlayingState().getRoundCounter() &&
-                getId().equals(myProfile.getUserPlayingState().getRoomId()) &&
-                !myProfile.getUserPlayingState().getAbandon()){
+                getId().equals(myProfile.getUserPlayingState().getRoomId())){
             if(getRoomUsersMap().size() == 1 && getRoomUserByUserId(myProfile.getUserId()) != null){
                 return false;
             }

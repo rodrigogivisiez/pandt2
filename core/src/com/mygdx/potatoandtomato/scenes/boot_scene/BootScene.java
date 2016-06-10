@@ -135,12 +135,24 @@ public class BootScene extends SceneAbstract {
         _root.addActor(_playButton);
         _root.add(versionLabel).expand().bottom().right().padRight(10).padBottom(10);
         _root.addActor(_infoTable);
+
+
+        _tickIcon = new Image(_assets.getTextures().get(Textures.Name.TICK_ICON));
+        _crossIcon = new Image(_assets.getTextures().get(Textures.Name.CROSS_ICON));
+    }
+
+    public void reset(){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _playButton.setVisible(true);
+                _playButton.getColor().a = 1f;
+                _infoTable.getColor().a = 0f;
+            }
+        });
     }
 
     public void showSocialLogin(){
-        _tickIcon = new Image(_assets.getTextures().get(Textures.Name.TICK_ICON));
-        _crossIcon = new Image(_assets.getTextures().get(Textures.Name.CROSS_ICON));
-
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -270,6 +282,17 @@ public class BootScene extends SceneAbstract {
             }
         });
     }
+
+    public void showPTDown(){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _infoTable.findActor("choicesTable").setVisible(true);
+                setMessage(_texts.ptIsDown());
+            }
+        });
+    }
+
 
     private void setLoading(final String msg){
         Threadings.postRunnable(new Runnable() {

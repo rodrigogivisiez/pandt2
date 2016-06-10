@@ -1,5 +1,6 @@
 package com.mygdx.potatoandtomato.scenes.invite_scene;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -22,6 +23,7 @@ import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
 import com.potatoandtomato.common.models.Streak;
 import com.potatoandtomato.common.utils.MultiHashMap;
+import com.potatoandtomato.common.utils.RunnableArgs;
 import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
 
@@ -213,13 +215,13 @@ public class InviteScene extends SceneAbstract {
         });
     }
 
-    public Table putUserToTable(final Profile profile, final InviteScene.InviteType inviteType, final Object... objs){
-        final Table userTable = new Table();
-        userTable.setName("unselected");
-
+    public void putUserToTable(final Profile profile, final InviteScene.InviteType inviteType, final RunnableArgs<Actor> onFinish, final Object... objs){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
+                final Table userTable = new Table();
+                userTable.setName("unselected");
+
                 Label.LabelStyle normalStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_M_SEMIBOLD), null);
                 Label.LabelStyle smallItalicStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_S_REGULAR), null);
 
@@ -283,12 +285,12 @@ public class InviteScene extends SceneAbstract {
                 contentTable.add(userTable).expandX().fillX();
                 contentTable.row();
 
+
+                _usersHashMap.put(profile.getUserId(), userTable);
+
+                onFinish.run(userTable);
             }
         });
-
-        _usersHashMap.put(profile.getUserId(), userTable);
-
-        return userTable;
     }
 
 

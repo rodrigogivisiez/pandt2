@@ -8,7 +8,6 @@ import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
-import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
 import com.mygdx.potatoandtomato.assets.*;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
@@ -17,6 +16,7 @@ import com.mygdx.potatoandtomato.statics.Terms;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.statics.Global;
+import com.mygdx.potatoandtomato.utils.ForAppwarpTesting;
 import com.potatoandtomato.common.absints.IDownloader;
 import com.potatoandtomato.common.absints.IPTGame;
 import com.potatoandtomato.common.absints.PTAssetsManager;
@@ -44,13 +44,14 @@ public class PTGame extends Game implements IPTGame {
 	Confirm _confirm;
 	Notification _notification;
 	Recorder _recorder;
-	IUploader _uploader;
 	IDownloader _downloader;
 	SoundsPlayer _soundsPlayer;
 	Broadcaster _broadcaster;
 	Preferences _preferences;
 	RestfulApi _restfulApi;
 	Tutorials _tutorials;
+	ConnectionWatcher _connectionWatcher;
+	Profile _profile;
 	PTAssetsManager _monitoringPTAssetsManager;
 	ArrayList<Runnable> _onResumeRunnables;
 
@@ -74,13 +75,13 @@ public class PTGame extends Game implements IPTGame {
 			@Override
 			public void run() {
 
+				_profile = new Profile();
 				_batch = new SpriteBatch();
 				_gamingKit = new Appwarp();
 				_texts = new Texts();
 				_soundsPlayer = new SoundsPlayer(_assets, _broadcaster);
 				_recorder = new Recorder(_soundsPlayer, _broadcaster);
 				_downloader = new Downloader();
-				_uploader = new App42Uploader(_downloader);
 
 				_chat = new Chat(_broadcaster, _gamingKit, _texts, _assets,
 										_soundsPlayer, _recorder, _batch, _game, _preferences);
@@ -88,20 +89,19 @@ public class PTGame extends Game implements IPTGame {
 				_notification = new Notification(_batch, _assets, _game, _broadcaster);
 				_tutorials = new Tutorials(_game, _batch, _soundsPlayer, _assets, _broadcaster);
 				_restfulApi = new RestfulApi();
+				_connectionWatcher = new ConnectionWatcher(_gamingKit, _batch, _assets,  _broadcaster, _confirm, _texts);
 
 				_services = new Services(_assets, _texts,
-						_preferences, new Profile(), new FirebaseDB(Terms.FIREBASE_URL()),
+						_preferences, _profile, new FirebaseDB(Terms.FIREBASE_URL()),
 						new Shaders(), _gamingKit, _downloader, _chat,
 						new Socials(_preferences, _broadcaster), new GCMSender(), _confirm, _notification,
-						_recorder, _uploader, _soundsPlayer, new VersionControl(), _broadcaster,
-						_tutorials, _restfulApi);
+						_recorder, _soundsPlayer, new VersionControl(), _broadcaster,
+						_tutorials, _restfulApi, _connectionWatcher);
 				_screen = new PTScreen(_game, _services);
-
+				_connectionWatcher.setPtScreen(_screen);
 				setScreen(_screen);
 
 				_screen.toScene(SceneEnum.BOOT);
-
-
 			}
 		});
 	}
@@ -113,6 +113,7 @@ public class PTGame extends Game implements IPTGame {
 		if(_notification != null) _notification.resize(width, height);
 		if(_confirm != null) _confirm.resize(width, height);
 		if(_tutorials != null) _tutorials.resize(width, height);
+		if(_connectionWatcher != null) _connectionWatcher.resize(width, height);
 	}
 
 	@Override
@@ -157,6 +158,7 @@ public class PTGame extends Game implements IPTGame {
 		if(_chat != null) _chat.render(Gdx.graphics.getDeltaTime());
 		if(_tutorials != null) _tutorials.render(Gdx.graphics.getDeltaTime());
 		if(_confirm != null) _confirm.render(Gdx.graphics.getDeltaTime());
+		if(_connectionWatcher != null) _connectionWatcher.render(Gdx.graphics.getDeltaTime());
 		if(_notification != null) _notification.render(Gdx.graphics.getDeltaTime());
 	}
 
@@ -206,7 +208,7 @@ public class PTGame extends Game implements IPTGame {
 	}
 
 	private void initiateAssets(){
-		PTAssetsManager manager = new PTAssetsManager(new InternalFileHandleResolver(), this, _broadcaster);
+		PTAssetsManager manager = new PTAssetsManager(new InternalFileHandleResolver(), this);
 		Animations animations = new Animations(manager);
 		Patches patches = new Patches(manager);
 		Sounds sounds = new Sounds(manager);
@@ -230,4 +232,5 @@ public class PTGame extends Game implements IPTGame {
 	public void removeOnResumeRunnable(Runnable toRun) {
 		_onResumeRunnables.remove(toRun);
 	}
+
 }

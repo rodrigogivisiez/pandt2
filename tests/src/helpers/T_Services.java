@@ -47,7 +47,7 @@ public class T_Services {
 
         Broadcaster broadcaster = new Broadcaster();
 
-        PTAssetsManager manager = new PTAssetsManager(new InternalFileHandleResolver(), mock(PTGame.class), broadcaster);
+        PTAssetsManager manager = new PTAssetsManager(new InternalFileHandleResolver(), mock(PTGame.class));
         Animations animations = new Animations(manager);
         Patches patches = new Patches(manager);
         Sounds sounds = new Sounds(manager);
@@ -67,7 +67,8 @@ public class T_Services {
                         mock(SpriteBatch.class), mock(PTGame.class), preferences),
                 new Socials(preferences, broadcaster), new GCMSender(), new Confirm(mock(SpriteBatch.class), mock(PTGame.class), assets, broadcaster),
                 new Notification(mock(SpriteBatch.class), assets, mock(PTGame.class), broadcaster), mock(Recorder.class), mock(IUploader.class),
-                mock(SoundsPlayer.class), mock(VersionControl.class), broadcaster, mock(ITutorials.class), new MockRestfulApi());
+                mock(SoundsPlayer.class), mock(VersionControl.class), broadcaster, mock(ITutorials.class), new MockRestfulApi(),
+                mock(ConnectionWatcher.class));
     }
 
 }

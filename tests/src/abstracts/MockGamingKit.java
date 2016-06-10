@@ -54,12 +54,27 @@ public class MockGamingKit extends GamingKit {
     }
 
     @Override
+    public void privateUpdateRoomMates(String toUserId, int updateRoomMatesCode, String msg) {
+
+    }
+
+    @Override
     public void updateRoomMates(byte identifier, byte[] bytes) {
 
     }
 
     @Override
+    public void privateUpdateRoomMates(String toUserId, byte identifier, byte[] bytes) {
+
+    }
+
+    @Override
     public void lockProperty(String key, String value) {
+
+    }
+
+    @Override
+    public void recoverConnection() {
 
     }
 

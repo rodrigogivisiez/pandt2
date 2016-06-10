@@ -248,6 +248,7 @@ public class ChatControl {
             @Override
             public void run() {
                 if(mode == 1){
+                    _chatBoxContainer.clearActions();
                     _mode1MessagesContainer.setVisible(true);
                     _mode2MessagesContainer.setVisible(false);
                 }
@@ -386,7 +387,6 @@ public class ChatControl {
                     _mode1MessagesTable.row();
                 }
                 else if(mode == 2){
-
                     Table chatTable = new Table();
                     chatTable.align(Align.left);
                     if (_mode2MessagesTable.getCells().size == 0) {

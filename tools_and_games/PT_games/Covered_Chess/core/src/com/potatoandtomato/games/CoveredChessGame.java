@@ -8,10 +8,8 @@ public class CoveredChessGame extends MockGame {
 
 	private boolean _initialized;
 
-	public boolean isContinue;
-
-	public CoveredChessGame(String gameId) {
-		super(gameId);
+	public CoveredChessGame(String gameId, boolean isContinue) {
+		super(gameId, isContinue);
 	}
 
 	@Override
@@ -37,7 +35,7 @@ public class CoveredChessGame extends MockGame {
 					Threadings.postRunnable(new Runnable() {
 						@Override
 						public void run() {
-							if(!isContinue){
+							if(!isContinue()){
 								entrance.init();
 							}
 							else{

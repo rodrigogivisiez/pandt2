@@ -11,7 +11,7 @@ import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.potatoandtomato.common.absints.DownloaderListener;
 import com.potatoandtomato.common.absints.IDownloader;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
-import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesCode;
+import com.mygdx.potatoandtomato.enums.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.services.GCMSender;
 import com.potatoandtomato.common.utils.SafeThread;

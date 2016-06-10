@@ -8,7 +8,7 @@ public enum  GameState {
     //normal flow, Close -> Playing -> Pause -> Won/Lose -> WaitingForNextStage -> Playing ............
     //BlockingReview is for review mode only
 
-    BeforeNewGame, BeforeContinue,
+    BeforeNewGame, BeforeContinue, BeforeContinueReceivedData,
     BeforeBouns,
     PrePlaying,
     Playing, Pause, Won, Lose, WaitingForNextStage,

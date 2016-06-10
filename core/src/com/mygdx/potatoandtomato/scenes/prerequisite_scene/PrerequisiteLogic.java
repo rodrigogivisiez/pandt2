@@ -6,6 +6,7 @@ import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.JoinRoomListener;
+import com.mygdx.potatoandtomato.absintflis.gamingkit.RoomInfoListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
@@ -13,6 +14,7 @@ import com.mygdx.potatoandtomato.services.Texts;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
+import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.enums.Status;
 
 /**
@@ -26,6 +28,7 @@ public class PrerequisiteLogic extends LogicAbstract {
     JoinType _joinType;
     String _roomId;
     Room _joiningRoom;
+    boolean _roomInfoRetrieved;
 
     public PrerequisiteLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
@@ -35,14 +38,6 @@ public class PrerequisiteLogic extends LogicAbstract {
         _game = (Game) objs[0];
         _joinType = (JoinType) objs[1];
         if(objs.length > 2) _roomId = (String) objs[2];
-
-        _scene.getRetryButton().addListener((new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                restart();     //retry whole process
-            }
-        }));
     }
 
     @Override
@@ -58,6 +53,8 @@ public class PrerequisiteLogic extends LogicAbstract {
     }
 
     public void restart(){
+        _roomInfoRetrieved = false;
+        _services.getDatabase().clearAllOnDisconnectListenerModel();
         if(_joinType == JoinType.CREATING){
             createRoom();
         }
@@ -78,6 +75,9 @@ public class PrerequisiteLogic extends LogicAbstract {
                     _services.getGamingKit().addListener(getClassTag(), new JoinRoomListener() {
                         @Override
                         public void onRoomJoined(String roomId) {
+
+
+
                             createRoomSuccess(roomId);
                         }
 
@@ -105,7 +105,9 @@ public class PrerequisiteLogic extends LogicAbstract {
             public void onCallback(Room obj, Status st) {
                 if(st == Status.SUCCESS){
 
-                    if(obj.getRoomUsersCount() >= Integer.valueOf(obj.getGame().getMaxPlayers())){
+                    int minusMe = (obj.getRoomUserByUserId(_services.getProfile().getUserId()) == null) ? 0 : 1;
+
+                    if(obj.getRoomUsersCount() - minusMe >= Integer.valueOf(obj.getGame().getMaxPlayers())){
                         joinRoomFailed(1);
                         return;
                     }
@@ -125,7 +127,30 @@ public class PrerequisiteLogic extends LogicAbstract {
                     _services.getGamingKit().addListener(getClassTag(), new JoinRoomListener() {
                         @Override
                         public void onRoomJoined(String roomId) {
-                            joinRoomSuccess();
+                            _scene.changeMessage(_texts.joiningRoom());
+                            _services.getGamingKit().addListener(getClassTag(), new RoomInfoListener(roomId) {
+                                @Override
+                                public void onRoomInfoRetrievedSuccess(String[] inRoomUserIds) {
+                                    if(!_roomInfoRetrieved){
+                                        _roomInfoRetrieved = true;
+                                        if(inRoomUserIds.length == 1){  //only one people and thats myself, error
+                                            joinRoomFailed(4);
+                                        }
+                                        else{
+                                            joinRoomSuccess();
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onRoomInfoFailed() {
+                                    if(!_roomInfoRetrieved){
+                                        _roomInfoRetrieved = true;
+                                        joinRoomFailed(0);
+                                    }
+                                }
+                            });
+                            _services.getGamingKit().getRoomInfo(_joiningRoom.getWarpRoomId());
                         }
 
                         @Override
@@ -133,6 +158,7 @@ public class PrerequisiteLogic extends LogicAbstract {
                             joinRoomFailed(0);
                         }
                     });
+
                     _services.getGamingKit().joinRoom(_joiningRoom.getWarpRoomId());
                 }
                 else{
@@ -150,11 +176,17 @@ public class PrerequisiteLogic extends LogicAbstract {
             _scene.failedMessage(_texts.roomIsFull());
         }
         else if(reason == 2){    //room is not open
-            _scene.failedMessage(_texts.roomStarted());
+            _scene.failedMessage(_texts.roomNotAvailable());
         }
         else if(reason == 3){   //cannot continue game
             _scene.failedMessage(_texts.cannotContinue());
         }
+        else if(reason == 4){     //room no user anymore
+            _scene.failedMessage(_texts.roomNotAvailable());
+            _services.getDatabase().updateRoomPlayingAndOpenState(_joiningRoom, false, false, null);
+        }
+
+        _services.getGamingKit().leaveRoom();
 
     }
 
@@ -172,13 +204,8 @@ public class PrerequisiteLogic extends LogicAbstract {
             @Override
             public void onCallback(String obj, Status st) {
                 if (st == Status.SUCCESS) {
+                    _services.getDatabase().setOnDisconnectCloseRoom(_joiningRoom);
                     _screen.toScene(SceneEnum.ROOM, _joiningRoom, false);
-                    _services.getDatabase().removeUserFromRoomOnDisconnect(_joiningRoom.getId(), _services.getProfile(), new DatabaseListener<String>() {
-                        @Override
-                        public void onCallback(String obj, Status st) {
-
-                        }
-                    });
                 } else {
                     joinRoomFailed(0);
                 }
@@ -187,34 +214,28 @@ public class PrerequisiteLogic extends LogicAbstract {
     }
 
     public void joinRoomSuccess(){
-        _scene.changeMessage(_texts.joiningRoom());
-        _services.getDatabase().addUserToRoom(_joiningRoom, _services.getProfile(), new DatabaseListener<String>() {
-            @Override
-            public void onCallback(String obj, Status st) {
-                if (st == Status.SUCCESS) {
-                    if (_joinType != JoinType.CONTINUING) {           //no need wait until removeUser attached to join the room
-                        _screen.toScene(SceneEnum.ROOM, _joiningRoom, false);
-                    }
-
-                    _services.getDatabase().removeUserFromRoomOnDisconnect(_joiningRoom.getId(), _services.getProfile(), new DatabaseListener<String>() {
-                        @Override
-                        public void onCallback(String obj, Status st) {
-                            if (_joinType == JoinType.CONTINUING) {        //continue game need to wait until removeUser attached to join the room
-                                _screen.toScene(SceneEnum.ROOM, _joiningRoom, true);
-                            }
-                        }
-                    });
-                } else {
-                    joinRoomFailed(0);
-                }
-            }
-        });
+        if(_joiningRoom.getHost().getUserId().equals(_services.getProfile().getUserId())){
+            _services.getDatabase().setOnDisconnectCloseRoom(_joiningRoom);
+        }
+        _screen.toScene(SceneEnum.ROOM, _joiningRoom, _joinType == JoinType.CONTINUING);
     }
 
     @Override
     public void dispose() {
         super.dispose();
 
+    }
+
+    @Override
+    public void setListeners() {
+        super.setListeners();
+        _scene.getRetryButton().addListener((new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                restart();     //retry whole process
+            }
+        }));
     }
 
     @Override

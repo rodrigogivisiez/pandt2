@@ -1,17 +1,16 @@
 package com.mygdx.potatoandtomato.services;
 
+import com.mygdx.potatoandtomato.absintflis.gamingkit.ConnectionChangedListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
-import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesCode;
+import com.mygdx.potatoandtomato.enums.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.utils.Logs;
-import com.potatoandtomato.common.utils.ArrayUtils;
-import com.potatoandtomato.common.utils.JsonObj;
+import com.potatoandtomato.common.utils.*;
 import com.mygdx.potatoandtomato.statics.Terms;
 import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.models.Profile;
-import com.potatoandtomato.common.utils.MultiHashMap;
-import com.potatoandtomato.common.utils.Strings;
 import com.shaded.fasterxml.jackson.core.JsonProcessingException;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
+import com.shephertz.app42.gaming.multiplayer.client.ConnectionState;
 import com.shephertz.app42.gaming.multiplayer.client.WarpClient;
 import com.shephertz.app42.gaming.multiplayer.client.command.WarpResponseResultCode;
 import com.shephertz.app42.gaming.multiplayer.client.events.*;
@@ -23,6 +22,7 @@ import com.shephertz.app42.gaming.multiplayer.client.listener.ZoneRequestListene
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by SiongLeng on 15/12/2015.
@@ -33,32 +33,36 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
     private String _appKey = Terms.WARP_API_KEY();
     private String _secretKey = Terms.WARP_SECRET_KEY();
     private String _username, _realUsername, _roomId;
+    private ConcurrentHashMap<String, String> _userIdToEncodeUserIdMap;
     private MultiHashMap<String, String> _msgPieces;
     private MultiHashMap<String, byte[]> _bytePieces;
-    private HashMap<String, String> _bytePiecesOwner;
+    private ConcurrentHashMap<String, String> _bytePiecesOwner;
+    private String _gettingRoomId;
 
     public Appwarp(String appKey, String secretKey){
         _appKey = appKey;
         _secretKey = secretKey;
         _msgPieces = new MultiHashMap();
         _bytePieces = new MultiHashMap();
-        _bytePiecesOwner = new HashMap();
+        _bytePiecesOwner = new ConcurrentHashMap();
+        _userIdToEncodeUserIdMap = new ConcurrentHashMap();
         init();
     }
 
     public Appwarp() {
         _msgPieces = new MultiHashMap();
         _bytePieces = new MultiHashMap();
-        _bytePiecesOwner = new HashMap();
+        _bytePiecesOwner = new ConcurrentHashMap();
+        _userIdToEncodeUserIdMap = new ConcurrentHashMap();
        init();
     }
 
     public void init(){
         int result =  WarpClient.initialize(_appKey, _secretKey);
-        //WarpClient.setRecoveryAllowance(120);
         try {
             _warpInstance = WarpClient.getInstance();
-
+            _warpInstance.enableTrace(true);
+            _warpInstance.setRecoveryAllowance(30);
             reflectionClearListeners();
 
             _warpInstance.addConnectionRequestListener(this);
@@ -101,15 +105,28 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
 
     @Override
+    public void recoverConnection() {
+        _warpInstance.RecoverConnection();
+    }
+
+    @Override
     public void connect(Profile user) {
         _realUsername = user.getUserId();
-        _username = user.getUserId().replace("-", "") + "_" + System.currentTimeMillis();
+        _username = encodeUserId(user.getUserId());
         _warpInstance.connectWithUserName(_username);
     }
 
     @Override
     public void disconnect() {
-        _warpInstance.disconnect();
+        if(_warpInstance.getConnectionState() == ConnectionState.CONNECTED){
+            _warpInstance.disconnect();
+        }
+    }
+
+    @Override
+    public void getRoomInfo(String roomId) {
+        _gettingRoomId = roomId;
+        _warpInstance.getLiveRoomInfo(roomId);
     }
 
     @Override
@@ -120,18 +137,56 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
     @Override
     public void joinRoom(String roomId) {
         _roomId = roomId;
-        _warpInstance.subscribeRoom(_roomId);
+        _userIdToEncodeUserIdMap.clear();
+        _warpInstance.joinAndSubscribeRoom(_roomId);
     }
 
     @Override
     public void leaveRoom() {
-        _warpInstance.unsubscribeRoom(_roomId);
-        _warpInstance.leaveRoom(_roomId);
+        _warpInstance.leaveAndUnsubscribeRoom(_roomId);
         _roomId = null;
     }
 
     @Override
     public void updateRoomMates(int updateRoomMatesCode, String msg) {
+        ArrayList<String> results = packUpdateMessage(updateRoomMatesCode, msg);
+
+        if(results.size() > 1){
+            String id = Strings.generateUniqueRandomKey(20);
+            for(int i = 0; i < results.size(); i++){
+                _warpInstance.sendUpdatePeers(appendDataToPeerUpdate(results.get(i), i, results.size(), id).getBytes());
+            }
+        }
+        else{
+            for(int i = 0; i < results.size(); i++){
+                _warpInstance.sendUpdatePeers(results.get(i).getBytes());
+            }
+        }
+    }
+
+    @Override
+    public void privateUpdateRoomMates(String toUserId, int updateRoomMatesCode, String msg) {
+        if(_userIdToEncodeUserIdMap.containsKey(toUserId)){
+            ArrayList<String> results = packUpdateMessage(updateRoomMatesCode, msg);
+
+            if(results.size() > 1){
+                String id = Strings.generateUniqueRandomKey(20);
+                for(int i = 0; i < results.size(); i++){
+                    _warpInstance.sendPrivateUpdate(_userIdToEncodeUserIdMap.get(toUserId),
+                            appendDataToPeerUpdate(results.get(i), i, results.size(), id).getBytes());
+                }
+            }
+            else{
+                for(int i = 0; i < results.size(); i++){
+                    _warpInstance.sendPrivateUpdate(_userIdToEncodeUserIdMap.get(toUserId),
+                            results.get(i).getBytes());
+                }
+            }
+        }
+    }
+
+    private  ArrayList<String> packUpdateMessage(int updateRoomMatesCode, String msg){
+        ArrayList<String> results = new ArrayList();
         JsonObj data = new JsonObj();
         data.put("code", updateRoomMatesCode);
         data.put("msg", msg);
@@ -139,20 +194,35 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
         String toSend = data.getJSONObject().toString();
         if(toSend.length() > 900){
-            ArrayList<String> results = Strings.split(toSend, 900);
-            String id = Strings.generateUniqueRandomKey(20);
-            for(int i = 0; i < results.size(); i++){
-                _warpInstance.sendUpdatePeers(appendDataToPeerUpdate(results.get(i), i, results.size(), id).getBytes());
-            }
+            results = Strings.split(toSend, 900);
         }
         else{
-            _warpInstance.sendUpdatePeers(toSend.getBytes());
+            results.add(toSend);
         }
+        return results;
     }
 
     @Override
     public void updateRoomMates(byte identifier, byte[] bytes) {
+        ArrayList<byte[]> finalToSendBytes = packUpdateBytes(identifier, bytes);
+        for(byte[] toSend : finalToSendBytes){
+            _warpInstance.sendUpdatePeers(toSend);
+        }
 
+        Logs.show("Sending bytes chunks of size: " + finalToSendBytes.size());
+    }
+
+    @Override
+    public void privateUpdateRoomMates(String toUserId, byte identifier, byte[] bytes) {
+        if(_userIdToEncodeUserIdMap.containsKey(toUserId)){
+            ArrayList<byte[]> finalToSendBytes = packUpdateBytes(identifier, bytes);
+            for(byte[] toSend : finalToSendBytes){
+                _warpInstance.sendPrivateUpdate(_userIdToEncodeUserIdMap.get(toUserId), toSend);
+            }
+        }
+    }
+
+    private ArrayList<byte[]> packUpdateBytes(byte identifier, byte[] bytes){
         int chunkSize = 900;
         String unique = Strings.generateUniqueRandomKey(20);
         byte[] uniqueArr = unique.getBytes();
@@ -182,14 +252,9 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
             finalToSendBytes.add(finalBytes);
             i++;
         }
-
-        for(byte[] toSend : finalToSendBytes){
-            _warpInstance.sendUpdatePeers(toSend);
-        }
-
-        Logs.show("Sending bytes chunks of size: " + finalToSendBytes.size());
-
+        return finalToSendBytes;
     }
+
 
     @Override
     public void lockProperty(String key, String value) {
@@ -198,9 +263,7 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
         _warpInstance.lockProperties(table);
     }
 
-    public boolean checkIsBytesUpdate(UpdateEvent updateEvent){
-        byte[] data = updateEvent.getUpdate();
-
+    public boolean checkIsBytesUpdate(byte[] data){
         try{
             if(data.length > 6){
                 if(data[0] == 98 && data[1] == 40 && data[2] == 25){
@@ -287,13 +350,13 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
     @Override
     public void onConnectDone(ConnectEvent connectEvent) {
         if (connectEvent.getResult() == WarpResponseResultCode.SUCCESS ){
-            onConnectionChanged(true);
+            onConnectionChanged(_realUsername, ConnectionChangedListener.ConnectStatus.CONNECTED);
         }
-        else if (connectEvent.getResult() == WarpResponseResultCode.SUCCESS_RECOVERED ){
-            onConnectionChanged(true);
+        else if (connectEvent.getResult() == WarpResponseResultCode.SUCCESS_RECOVERED){
+            onConnectionChanged(_realUsername, ConnectionChangedListener.ConnectStatus.CONNECTED_FROM_RECOVER);
         }
-
-//        else if (connectEvent.getResult() == WarpResponseResultCode .CONNECTION_ERROR_RECOVERABLE ){
+        else if (connectEvent.getResult() == WarpResponseResultCode .CONNECTION_ERROR_RECOVERABLE ){
+            onConnectionChanged(_realUsername, ConnectionChangedListener.ConnectStatus.DISCONNECTED_BUT_RECOVERABLE);
 //            System.out.println("Try connect again.");
 //            Threadings.delay(5000, new Runnable() {
 //                @Override
@@ -301,15 +364,43 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 //                    _warpInstance.RecoverConnection();
 //                }
 //            });
-//        }
+        }
         else {
-            onConnectionChanged(false);
+            onConnectionChanged(_realUsername, ConnectionChangedListener.ConnectStatus.DISCONNECTED);
         }
     }
 
     @Override
     public void onDisconnectDone(ConnectEvent connectEvent) {
         //onConnectionChanged(false);
+    }
+
+    @Override
+    public void onUserLeftRoom(RoomData roomData, String s) {
+        if(checkAndSaveEncodeUserId(s)){
+            onConnectionChanged(decodeUserId(s), ConnectionChangedListener.ConnectStatus.DISCONNECTED);
+        }
+    }
+
+    @Override
+    public void onUserJoinedRoom(RoomData roomData, String s) {
+        if(checkAndSaveEncodeUserId(s)){
+            onConnectionChanged(decodeUserId(s), ConnectionChangedListener.ConnectStatus.CONNECTED);
+        }
+    }
+
+    @Override
+    public void onUserPaused(String s, boolean b, String s1) {
+        if(checkAndSaveEncodeUserId(s1)){
+            onConnectionChanged(decodeUserId(s1), ConnectionChangedListener.ConnectStatus.DISCONNECTED_BUT_RECOVERABLE);
+        }
+    }
+
+    @Override
+    public void onUserResumed(String s, boolean b, String s1) {
+        if(checkAndSaveEncodeUserId(s1)){
+            onConnectionChanged(decodeUserId(s1), ConnectionChangedListener.ConnectStatus.CONNECTED_FROM_RECOVER);
+        }
     }
 
     @Override
@@ -323,9 +414,9 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
     }
 
     @Override
-    public void onSubscribeRoomDone(RoomEvent roomEvent) {
-        if(roomEvent.getResult() == 0){
-            _warpInstance.joinRoom(roomEvent.getData().getId());
+    public void onJoinAndSubscribeRoomDone(RoomEvent roomEvent) {
+        if(roomEvent.getResult() == 0) {
+            onRoomJoined(roomEvent.getData().getId());
         }
         else{
             onJoinRoomFail();
@@ -333,12 +424,29 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
     }
 
     @Override
-    public void onJoinRoomDone(RoomEvent roomEvent) {
-        if(roomEvent.getResult() == 0) {
-            onRoomJoined(roomEvent.getData().getId());
+    public void onLeaveAndUnsubscribeRoomDone(RoomEvent roomEvent) {
+
+    }
+
+    @Override
+    public void onGetLiveRoomInfoDone(LiveRoomInfoEvent liveRoomInfoEvent) {
+        if(liveRoomInfoEvent.getResult() == 0){
+            String[] users = liveRoomInfoEvent.getJoinedUsers();
+            String[] decodeUsers = new String[0];
+            if(users != null){
+                decodeUsers = new String[users.length];
+                for(int i = 0; i < users.length; i++){
+                    decodeUsers[i] = decodeUserId(users[i]);
+                }
+                for(String userId : users){
+                    checkAndSaveEncodeUserId(userId);
+                }
+            }
+
+            onRoomInfoReceivedSuccess(liveRoomInfoEvent.getData().getId(), decodeUsers);
         }
         else{
-            onJoinRoomFail();
+            onRoomInfoReceivedFailed(_gettingRoomId);
         }
     }
 
@@ -354,10 +462,20 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
     @Override
     public void onUpdatePeersReceived(UpdateEvent updateEvent) {
-        if(!checkIsBytesUpdate(updateEvent)){
-            String msg = new String(updateEvent.getUpdate());
+        unpackUpdateMessage(updateEvent.getUpdate());
+    }
+
+    @Override
+    public void onPrivateUpdateReceived(String s, byte[] bytes, boolean b) {
+        checkAndSaveEncodeUserId(s);
+        unpackUpdateMessage(bytes);
+    }
+
+    private void unpackUpdateMessage(byte[] bytes){
+        if(!checkIsBytesUpdate(bytes)){
+            String msg = new String(bytes);
             if(msg.startsWith("@PT")){
-                unAppendDataFromPeerMsg(new String(updateEvent.getUpdate()));
+                unAppendDataFromPeerMsg(new String(bytes));
             }
             else{
                 JsonObj jsonObj = new JsonObj(msg);
@@ -405,6 +523,7 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
     @Override
     public void onChatReceived(ChatEvent chatEvent) {
         try {
+            checkAndSaveEncodeUserId(chatEvent.getSender());
             JsonObj jsonObj = new JsonObj(chatEvent.getMessage());
             ObjectMapper mapper = new ObjectMapper();
             ChatMessage chatMessage = mapper.readValue(jsonObj.getString("msg"), ChatMessage.class);
@@ -420,13 +539,47 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
         onUpdateRoomMatesReceived(UpdateRoomMatesCode.LOCK_PROPERTY, String.valueOf(b), _realUsername);
     }
 
+    private String encodeUserId(String userId){
+        return userId + "_(pandt)_" + System.currentTimeMillis();
+    }
 
+    private String decodeUserId(String userId){
+        String[] tmp = decodeUserIdToArr(userId);
+        if(tmp.length > 0){
+            return tmp[0];
+        }
+        else{
+            return "";
+        }
+    }
 
+    private String[] decodeUserIdToArr(String userId){
+        String[] tmp = userId.split("_\\(pandt\\)_");
+        return tmp;
+    }
 
-
-
-
-
+    private boolean checkAndSaveEncodeUserId(String encodedUserId){
+        String[] newDecodedArr = decodeUserIdToArr(encodedUserId);
+        if(newDecodedArr.length > 1){
+            if(_userIdToEncodeUserIdMap.containsKey(newDecodedArr[0])){
+                String[] oldDecodedArr = decodeUserIdToArr(_userIdToEncodeUserIdMap.get(newDecodedArr[0]));
+                if(Long.valueOf(newDecodedArr[1]) >= Long.valueOf(oldDecodedArr[1])){
+                    _userIdToEncodeUserIdMap.put(newDecodedArr[0], encodedUserId);
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+            else{
+                _userIdToEncodeUserIdMap.put(newDecodedArr[0], encodedUserId);
+                return true;
+            }
+        }
+        else{
+            return false;
+        }
+    }
 
 
 
@@ -480,11 +633,21 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
     }
 
-
     @Override
-    public void onGetLiveRoomInfoDone(LiveRoomInfoEvent liveRoomInfoEvent) {
+    public void onGetAllRoomsCountDone(AllRoomsEvent allRoomsEvent) {
 
     }
+
+    @Override
+    public void onGetOnlineUsersCountDone(AllUsersEvent allUsersEvent) {
+
+    }
+
+    @Override
+    public void onGetUserStatusDone(LiveUserInfoEvent liveUserInfoEvent) {
+
+    }
+
 
     @Override
     public void onSetCustomRoomDataDone(LiveRoomInfoEvent liveRoomInfoEvent) {
@@ -511,15 +674,7 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
     }
 
-    @Override
-    public void onUserLeftRoom(RoomData roomData, String s) {
 
-    }
-
-    @Override
-    public void onUserJoinedRoom(RoomData roomData, String s) {
-
-    }
 
     @Override
     public void onUserLeftLobby(LobbyData lobbyData, String s) {
@@ -533,11 +688,6 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
     @Override
     public void onPrivateChatReceived(String s, String s1) {
-
-    }
-
-    @Override
-    public void onPrivateUpdateReceived(String s, byte[] bytes, boolean b) {
 
     }
 
@@ -561,18 +711,20 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
     }
 
-    @Override
-    public void onUserPaused(String s, boolean b, String s1) {
 
-    }
-
-    @Override
-    public void onUserResumed(String s, boolean b, String s1) {
-
-    }
 
     @Override
     public void onNextTurnRequest(String s) {
+
+    }
+
+    @Override
+    public void onJoinRoomDone(RoomEvent roomEvent) {
+
+    }
+
+    @Override
+    public void onSubscribeRoomDone(RoomEvent roomEvent) {
 
     }
 

@@ -9,6 +9,7 @@ import com.mygdx.potatoandtomato.models.Services;
 import com.potatoandtomato.common.absints.IPTGame;
 import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.common.controls.AutoDisposeTable;
+import com.potatoandtomato.common.utils.Threadings;
 
 /**
  * Created by SiongLeng on 4/12/2015.
@@ -28,9 +29,14 @@ public abstract class SceneAbstract implements Disposable {
         _ptGame = _screen.getGame();
         _assets = _services.getAssets();
         _texts = _services.getTexts();
-        _root = new AutoDisposeTable();
-        _root.setFillParent(true);
-        populateRoot();
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _root = new AutoDisposeTable();
+                _root.setFillParent(true);
+                populateRoot();
+            }
+        });
     }
 
     public abstract void populateRoot();

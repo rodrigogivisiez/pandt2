@@ -22,7 +22,7 @@ public class SplashLogic {
 
     }
 
-    public void start(){
+    public void newGame(){
         _services.getSoundsWrapper().playSounds(Sounds.Name.START_GAME);
         Threadings.delay(!Global.NO_ENTRANCE ? 7000 : 0, new Runnable() {
             @Override
@@ -37,6 +37,12 @@ public class SplashLogic {
                 });
             }
         });
+    }
+
+    public void continueGame(){
+        _splashActor.remove();
+        _services.getSoundsWrapper().playTheme();
+        _onFinish.run();
     }
 
     public SplashActor getSplashActor() {

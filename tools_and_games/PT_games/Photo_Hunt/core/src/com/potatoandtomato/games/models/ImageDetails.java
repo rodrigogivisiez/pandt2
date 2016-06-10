@@ -152,13 +152,14 @@ public class ImageDetails {
     }
 
     @JsonIgnore
-    public SimpleRectangle getTouchedCorrectRect(float touchedX, float touchedY){
+    public ArrayList<SimpleRectangle> getTouchedCorrectRects(float touchedX, float touchedY){
+        ArrayList<SimpleRectangle> result = new ArrayList();
         for(Rectangle rectangle : getCorrectRects()){
             if(rectangle.contains(touchedX, touchedY)){
-                return new SimpleRectangle(rectangle);
+                result.add(new SimpleRectangle(rectangle));
             }
         }
-        return null;
+        return result;
     }
 
     public Rectangle convertAreaToRectangle(CorrectArea area){

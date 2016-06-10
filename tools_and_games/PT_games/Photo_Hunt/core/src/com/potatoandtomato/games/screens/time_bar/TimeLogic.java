@@ -24,6 +24,7 @@ public class TimeLogic implements Disposable {
     private GameModel gameModel;
     private GameCoordinator gameCoordinator;
     private boolean paused;
+    private boolean started;
     private ArrayList<SafeThread> timeThreads;
     private TimeActor timeActor;
     private KingLogic kingLogic;
@@ -50,10 +51,16 @@ public class TimeLogic implements Disposable {
         gameModel.setFreezingMiliSecs(0);
         stop();
         start();
+    }
 
+    public void startIfNotStarted(){
+        if(!started){
+            start();
+        }
     }
 
     private void start(){
+        started = true;
         final SafeThread timeThread = new SafeThread();
         timeThreads.add(timeThread);
 
@@ -80,7 +87,6 @@ public class TimeLogic implements Disposable {
                         }
 
                         gameModel.setRemainingMiliSecs(gameModel.getRemainingMiliSecs() - renderPeriodMiliSecs, true);
-
                     }
                 }
             }
@@ -99,6 +105,7 @@ public class TimeLogic implements Disposable {
             timeThreads.clear();
         }
         setPause(true);
+        started = false;
     }
 
     public void reduceTime(){
@@ -114,7 +121,7 @@ public class TimeLogic implements Disposable {
         gameModel.addGameModelListener(new GameModelListener() {
             @Override
             public void onStageNumberChanged(int newStageNumber) {
-                restart();
+
             }
 
             @Override
@@ -135,10 +142,14 @@ public class TimeLogic implements Disposable {
             }
 
             @Override
-            public void onGameStateChanged(GameState newState) {
+            public void onGameStateChanged(GameState oldState, GameState newState) {
                 if(newState == GameState.Playing){
+                    restart();
                     setPause(false);
                     services.getSoundsWrapper().playSounds(Sounds.Name.START_STAGE);
+                }
+                else if(newState == GameState.BeforeContinue){
+                    setPause(false);
                 }
                 else if(newState == GameState.WaitingForNextStage){
                     stop();

@@ -44,7 +44,7 @@ public class ReviewLogic {
 
         gameModel.addGameModelListener(new GameModelListener() {
             @Override
-            public void onGameStateChanged(GameState newState) {
+            public void onGameStateChanged(GameState oldState, GameState newState) {
                 if(newState == GameState.Playing){
                     invalidate();
                 }

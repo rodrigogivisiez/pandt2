@@ -18,4 +18,5 @@ public interface IPTGame {
 
     void addOnResumeRunnable(Runnable toRun);
     void removeOnResumeRunnable(Runnable toRun);
+
 }

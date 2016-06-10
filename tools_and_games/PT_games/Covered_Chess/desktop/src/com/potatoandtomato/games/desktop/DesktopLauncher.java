@@ -21,8 +21,11 @@ public class DesktopLauncher {
 		settings.filterMin = Texture.TextureFilter.Linear;
 		if(arg.length > 0 && arg[0].equals("pack")) TexturePacker.process(settings, "../../images", "../../android/assets", "pack");
 
-		CoveredChessGame coveredChessGame = new CoveredChessGame("covered_chess");
-		if(arg.length > 0 && arg[0].equals("continue")) coveredChessGame.isContinue = true;
+		boolean isContinue = false;
+		if(arg.length > 0 && arg[0].equals("continue")) isContinue = true;
+
+		CoveredChessGame coveredChessGame = new CoveredChessGame("covered_chess", isContinue);
+
 
 		if(arg.length > 0 && (arg[0].equals("debug"))) Global.DEBUG = true;
 

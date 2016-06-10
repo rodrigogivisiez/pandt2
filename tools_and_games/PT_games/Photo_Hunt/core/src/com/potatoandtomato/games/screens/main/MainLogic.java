@@ -10,10 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.potatoandtomato.common.GameCoordinator;
-import com.potatoandtomato.common.absints.BackKeyListener;
-import com.potatoandtomato.common.absints.GameLogic;
-import com.potatoandtomato.common.absints.UserStateListener;
-import com.potatoandtomato.common.absints.WebImageListener;
+import com.potatoandtomato.common.absints.*;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
@@ -51,17 +48,15 @@ public class MainLogic extends GameLogic {
     private ImagePair _currentImagePair;
     private ImageStorage _imageStorage;
     private StageImagesLogic _stageImagesLogic;
-    private String _currentDecisionMaker;
-    private boolean _waitingContinue;
-    private boolean _attachGameModelOnFinish;
-    private boolean _stageStarted;
-    private SafeThread _safeThread, _continueMonitorSafeThread;
+    private GameDataContract _gameDataContract;
+    private SafeThread _safeThread;
+    private boolean disposed;
 
     public MainLogic(GameCoordinator gameCoordinator, Services _services,
                      TimeLogic _timeLogic, HintsLogic _hintsLogic, ReviewLogic _reviewLogic, UserCountersLogic _userCounterLogic,
                      StageCounterLogic _stageCounterLogic, ScoresLogic _scoresLogic,
                      ImageStorage _imageStorage, GameModel _gameModel, StageImagesLogic _stageImagesLogic,
-                     StageStateLogic _stageStateLogic) {
+                     StageStateLogic _stageStateLogic, GameDataContract gameDataContract) {
         super(gameCoordinator);
         this._services = _services;
         this._timeLogic = _timeLogic;
@@ -74,6 +69,7 @@ public class MainLogic extends GameLogic {
         this._gameModel = _gameModel;
         this._stageImagesLogic = _stageImagesLogic;
         this._stageStateLogic = _stageStateLogic;
+        this._gameDataContract = gameDataContract;
 
         _screen = new MainScreen(_services, gameCoordinator);
         _screen.populate(_timeLogic.getTimeActor(), _hintsLogic.getHintsActor(),
@@ -83,26 +79,19 @@ public class MainLogic extends GameLogic {
         _stageImagesLogic.init(_screen.getImageOneTable(), _screen.getImageTwoTable(),
                                     _screen.getImageOneInnerTable(), _screen.getImageTwoInnerTable());
         setListeners();
-
-
     }
 
     public void init(){
         _screen.readyToStart();
-        _currentDecisionMaker = getCoordinator().getDecisionMaker();
         _imageStorage.startMonitor();
         _gameModel.setGameState(GameState.BeforeNewGame);
-        setRoomMsgListeners();
         sendGoToNextStageIfIsDecisionMaker(-1);
     }
 
     public void onContinue(){
         _screen.readyToStart();
-        _waitingContinue = true;
         _imageStorage.startMonitor();
         _gameModel.setGameState(GameState.BeforeContinue);
-        setRoomMsgListeners();
-        monitorHaveOtherUserStillConnected();
     }
 
     //index = -1 mean peek next item in imagestorage, else peek item by index
@@ -111,7 +100,7 @@ public class MainLogic extends GameLogic {
             return;
         }
 
-        if(meIsThisStageDecisionMaker()) {
+        if(getCoordinator().getDecisionsMaker().meIsDecisionMaker()) {
             _imageStorage.peek(index, new ImageStorageListener() {
                 @Override
                 public void onPeeked(ImagePair imagePair) {
@@ -122,18 +111,17 @@ public class MainLogic extends GameLogic {
                         stageType = StageType.Bonus;
                         bonusType = BonusType.random();
                     }
-                    String extra = StageImagesLogic.generateBonusTypeExtra(bonusType, getCoordinator().getPlayersByConnectionState(true));
+                    String extra = StageImagesLogic.generateBonusTypeExtra(bonusType, getCoordinator().getAllConnectedPlayers());
 
                     _services.getRoomMsgHandler().sendGotoNextStage(imagePair.getImageDetails().getId(),
-                            stageType, bonusType, extra,
-                            _attachGameModelOnFinish ? _gameModel : null);
+                            _gameModel.getStageNumber() + 1, stageType, bonusType, extra);
 
                 }
             });
         }
     }
 
-    public void goToNewStage(final String id, final StageType stageType, final BonusType bonusType, final String extra){
+    public void goToNewStage(final String id, final int stageNumber, final StageType stageType, final BonusType bonusType, final String extra){
         if(Global.REVIEW_MODE){
             newStageReviewMode(id);
             return;
@@ -143,11 +131,7 @@ public class MainLogic extends GameLogic {
             return;
         }
 
-        _stageStarted = true;
-        _waitingContinue = false;
         _currentImagePair = null;
-
-        popImagePairIfCurrentIsNull(id);
 
         if(stageType == StageType.Bonus){
             _gameModel.setGameState(GameState.BeforeBouns);
@@ -158,7 +142,7 @@ public class MainLogic extends GameLogic {
 
         long delayTime = 0;
         //if papyrus is blocking or wait for continue user papyrus blocking
-        if(_stageStateLogic.isPapyrusOpened() || _attachGameModelOnFinish){
+        if(_stageStateLogic.isPapyrusOpened()){
             delayTime = 5000;
         }
 
@@ -170,7 +154,7 @@ public class MainLogic extends GameLogic {
             @Override
             public void run() {
                 if(_safeThread != null) _safeThread.kill();
-                _currentDecisionMaker = getCoordinator().getDecisionMaker();
+                if(disposed) return;
 
                 popImagePairIfCurrentIsNull(id);
                 if(_currentImagePair != null){
@@ -190,10 +174,15 @@ public class MainLogic extends GameLogic {
 
                 _gameModel.clearHandledAreas();
                 _gameModel.setStageType(stageType);
-                _gameModel.addStageNumber();
-                _gameModel.setGameState(GameState.Playing);
+                _gameModel.setStageNumber(stageNumber);
+                _gameModel.convertStageNumberToRemainingMiliSecs();
+                if(_gameModel.getGameState() == GameState.PrePlaying){
+                    _gameModel.setGameState(GameState.Playing);
+                    if(getCoordinator().getDecisionsMaker().meIsDecisionMaker()){
+                        _services.getRoomMsgHandler().sendStartPlaying();
+                    }
+                }
 
-                _attachGameModelOnFinish = false;
             }
         });
     }
@@ -234,13 +223,21 @@ public class MainLogic extends GameLogic {
 
     //only call by self
     public void imageTouched(float x, float y, int remainingMiliSecs, int hintLeft){
-        SimpleRectangle correctRect = getCorrectRectByTouchPosition(x, y);
+        ArrayList<SimpleRectangle> correctRects = getCorrectRectsByTouchPosition(x, y);
+        SimpleRectangle correctRect = null;
+
+        for(SimpleRectangle simpleRectangle : correctRects){
+            if(!_gameModel.isAreaAlreadyHandled(simpleRectangle)){
+                correctRect = simpleRectangle;
+                break;
+            }
+        }
 
         if(correctRect == null){
             _timeLogic.reduceTime();
             _screen.cross(x, y, getCoordinator().getMyUserId());
         }
-        else if(!_gameModel.isAreaAlreadyHandled(correctRect)) {
+        else{
             _gameModel.addHandledArea(correctRect, remainingMiliSecs);
         }
 
@@ -263,15 +260,15 @@ public class MainLogic extends GameLogic {
         }
     }
 
-    public SimpleRectangle getCorrectRectByTouchPosition(float x, float y){
+    public ArrayList<SimpleRectangle> getCorrectRectsByTouchPosition(float x, float y){
         Vector2 imageSize = _screen.getImageSize();
 
         float finalY = imageSize.y - y;  //libgdx origin is at bottomleft
-        SimpleRectangle correctRect = null;
+        ArrayList<SimpleRectangle> finalCorrectRects = new ArrayList();
 
         //expand the touch to a imaginary small square, for better touch experience
         int i = 0, expandSize = 5;
-        while (correctRect == null && i <= 3){
+        while (i <= 3){
             float checkingX = 0, checkingY = 0;
             if(i == 0){         //top left corner
                 checkingX = Math.max(0, x - expandSize);
@@ -290,17 +287,30 @@ public class MainLogic extends GameLogic {
                 checkingY = Math.max(0, finalY - expandSize);
             }
 
-            correctRect = _gameModel.getImageDetails().getTouchedCorrectRect(checkingX, checkingY);
+            ArrayList<SimpleRectangle> correctRects = _gameModel.getImageDetails().getTouchedCorrectRects(checkingX, checkingY);
+            for(SimpleRectangle simpleRectangle : correctRects){
+                boolean found = false;
+                for(SimpleRectangle existed : finalCorrectRects){
+                    if(existed.equals(simpleRectangle)){
+                        found = true;
+                        break;
+                    }
+                }
+
+                if(!found){
+                    finalCorrectRects.add(simpleRectangle);
+                }
+            }
             i++;
         }
 
-        return correctRect;
+        return finalCorrectRects;
     }
 
     public void checkGameEnded(int remainingSecs){
         if(_gameModel.getHandledAreas().size() == 5){
             _gameModel.setGameState(GameState.Pause);
-            if(meIsThisStageDecisionMaker()){
+            if(getCoordinator().getDecisionsMaker().meIsDecisionMaker()){
                 _services.getRoomMsgHandler().sendWon(new WonStageModel(_gameModel.getStageNumber(),
                                         _gameModel.getScore().intValue(), remainingSecs, _gameModel.getHintsLeft(), "0", StageType.Normal));
             }
@@ -310,20 +320,16 @@ public class MainLogic extends GameLogic {
 
     private void gameOver(){
         _gameModel.setGameState(GameState.Lose);
-        getCoordinator().beforeEndGame(_scoresLogic.getFinalScoreDetails(), null, false);
-        showEndGameTable();
-    }
-
-    private void gameLoseAllGameModelHolderDc(){
-        _gameModel.setGameState(GameState.Lose);
-        getCoordinator().beforeEndGame(null, null, false);
+        getCoordinator().finalizeGame(_scoresLogic.getFinalScoreDetails(), null, false);
         showEndGameTable();
     }
 
     private void circleAllAnswers(){
-        for(SimpleRectangle simpleRectangle : _gameModel.getImageDetails().getCorrectSimpleRects()){
-            if(!_gameModel.isAreaAlreadyHandled(simpleRectangle)){
-                _screen.circle(simpleRectangle, null, -1);
+        if(_gameModel.getImageDetails() != null){
+            for(SimpleRectangle simpleRectangle : _gameModel.getImageDetails().getCorrectSimpleRects()){
+                if(!_gameModel.isAreaAlreadyHandled(simpleRectangle)){
+                    _screen.circle(simpleRectangle, null, -1);
+                }
             }
         }
     }
@@ -342,38 +348,6 @@ public class MainLogic extends GameLogic {
                 });
             }
         });
-    }
-
-    private void monitorHaveOtherUserStillConnected(){
-        _continueMonitorSafeThread = new SafeThread();
-        Threadings.runInBackground(new Runnable() {
-            @Override
-            public void run() {
-                while (true){
-                    if(_waitingContinue && !_continueMonitorSafeThread.isKilled()){
-                        if(getCoordinator().getPlayersByConnectionState(true).size() == 1){
-                            //only me is connected, and nobody will send me game model for continue, deem as lose
-                            gameLoseAllGameModelHolderDc();
-                            break;
-                        }
-                        Threadings.sleep(1000);
-                    }
-                    else{
-                        break;
-                    }
-                }
-
-            }
-        });
-    }
-
-    private void reconstructGameModelIfWaitingContinue(GameModel gameModel){
-        this._gameModel.copyGameModelDataToThis(gameModel);
-        _scoresLogic.refreshAllScores();
-    }
-
-    public boolean meIsThisStageDecisionMaker(){
-        return (_currentDecisionMaker != null && _currentDecisionMaker.equals(getCoordinator().getMyUserId()));
     }
 
     private void checkCanSwitchToReviewMode(){
@@ -409,15 +383,22 @@ public class MainLogic extends GameLogic {
 
         _gameModel.addGameModelListener(new GameModelListener() {
             @Override
+            public void onHandledAreasChanged() {
+                super.onHandledAreasChanged();
+                for(SimpleRectangle simpleRectangle : _gameModel.getHandledAreas()){
+                    _screen.circle(simpleRectangle, simpleRectangle.getUserId(), -1);
+                }
+            }
+
+            @Override
             public void onTimeFinished() {
                 //allow a 1 sec tolerance time for game over
-                if(meIsThisStageDecisionMaker()){
+                if(getCoordinator().getDecisionsMaker().meIsDecisionMaker()){
                     Threadings.delay(1000, new Runnable() {
                         @Override
                         public void run() {
                             if(_gameModel.getGameState() == GameState.Playing){
-                                _services.getRoomMsgHandler().sendLose();
-                                _attachGameModelOnFinish = false;
+                                _services.getRoomMsgHandler().sendLose(_gameModel);
                             }
                         }
                     });
@@ -425,7 +406,7 @@ public class MainLogic extends GameLogic {
             }
 
             @Override
-            public void onGameStateChanged(GameState newState) {
+            public void onGameStateChanged(GameState oldState, GameState newState) {
                 if(newState == GameState.WaitingForNextStage){
                     if(!Global.REVIEW_MODE){
                         Threadings.delay(1000, new Runnable() {
@@ -476,9 +457,7 @@ public class MainLogic extends GameLogic {
         _screen.setBackKeyListener(new BackKeyListener() {
             @Override
             public void backPressed() {
-                if(_gameModel.getGameState() != GameState.Lose){
-                    getCoordinator().abandon();
-                }
+                getCoordinator().abandon();
             }
         });
 
@@ -571,30 +550,72 @@ public class MainLogic extends GameLogic {
             }
         });
 
+        getCoordinator().getDecisionsMaker().addDecisionMakerChangedListener(new DecisionMakerChangedListener() {
+            @Override
+            public void onChanged(String s) {
+                sendGoToNextStageIfIsDecisionMaker(-1);
+                _imageStorage.initiateDownloadsIfNoImagesAndIsCoordinator();
+            }
+        });
+
         getCoordinator().setUserStateListener(new UserStateListener() {
             @Override
             public void userAbandoned(String s) {
-                if(s.equals(_currentDecisionMaker)){
-                    _currentDecisionMaker = getCoordinator().getDecisionMaker();
-                    sendGoToNextStageIfIsDecisionMaker(-1);
-                    _imageStorage.initiateDownloadsIfNoImagesAndIsCoordinator();
-                }
             }
 
             @Override
             public void userConnected(String s) {
-                _imageStorage.resendRedownloadCurrentImageStorage();
-                _attachGameModelOnFinish = true;
+                _imageStorage.resendRedownloadCurrentImageStorage(s);
             }
 
             @Override
             public void userDisconnected(String s) {
-                if(s.equals(_currentDecisionMaker)){
-                    _currentDecisionMaker = getCoordinator().getDecisionMaker();
-                    sendGoToNextStageIfIsDecisionMaker(-1);
-                    _imageStorage.initiateDownloadsIfNoImagesAndIsCoordinator();
+            }
+        });
+
+        _services.getRoomMsgHandler().setRoomMsgListener(new RoomMsgListener() {
+
+            @Override
+            public void onTouched(final TouchedPoint touchedPoint, final String userId) {
+                touchReceived(userId, touchedPoint.x, touchedPoint.y, touchedPoint.getRemainingMiliSecs(),
+                        touchedPoint.getHintLeft(), touchedPoint.getCorrectRect());
+            }
+
+            @Override
+            public void onLose(GameModel loseGameModel) {
+                Logs.show("YOU LOSE!! Bye!");
+                _gameModel.setScore(loseGameModel.getScore(), true);
+                _gameModel.setUserRecords(loseGameModel.getUserRecords());
+                _gameModel.setRemainingMiliSecs(0, true);
+                _gameModel.setGameState(GameState.Lose);
+            }
+
+            @Override
+            public void onWon(WonStageModel wonStageModel) {
+                _gameModel.setRemainingMiliSecs(wonStageModel.getRemainingSecs(), false);
+                _gameModel.setHintsLeft(wonStageModel.getHintsLeft());
+                _gameModel.setGameState(GameState.Won);
+
+                Logs.show("You win, time is: " + wonStageModel.getRemainingSecs());
+            }
+
+            @Override
+            public void onDownloadImageRequest(ArrayList<String> ids) {
+                _imageStorage.receivedDownloadRequest(ids);
+            }
+
+            @Override
+            public void onGoToNextStage(String id, int stageNumber, StageType stageType, BonusType bonusType, String extra) {
+                goToNewStage(id, stageNumber, stageType, bonusType, extra);
+            }
+
+            @Override       //is a precaution for continue player not aware the game in playing state
+            public void onStartPlaying() {
+                if(_gameModel.getGameState() != GameState.Playing && _gameModel.getGameState() != GameState.PrePlaying){
+                    _gameModel.setGameState(GameState.Playing);
                 }
             }
+
         });
 
         _reviewLogic.setReviewLogicListener(new ReviewLogicListener() {
@@ -608,7 +629,13 @@ public class MainLogic extends GameLogic {
                 if(index != _gameModel.getImageDetails().getIndex() + 1){       //skip to next
                     _imageStorage.setCurrentIndex(index);
                     _imageStorage.disposeAllImages();
-                    _imageStorage.initiateDownloadsIfNoImagesAndIsCoordinator();
+                    Threadings.postRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            _imageStorage.initiateDownloadsIfNoImagesAndIsCoordinator();
+                        }
+                    });
+
                 }
                 sendGoToNextStageIfIsDecisionMaker(index);
             }
@@ -617,64 +644,10 @@ public class MainLogic extends GameLogic {
 
     }
 
-    public void setRoomMsgListeners(){
-        _services.getRoomMsgHandler().setRoomMsgListener(new RoomMsgListener() {
-            @Override
-            public void onTouched(final TouchedPoint touchedPoint, final String userId) {
-                if(_stageStarted){
-                    touchReceived(userId, touchedPoint.x, touchedPoint.y, touchedPoint.getRemainingMiliSecs(),
-                            touchedPoint.getHintLeft(), touchedPoint.getCorrectRect());
-                }
-            }
-
-            @Override
-            public void onLose() {
-                if(!_waitingContinue) {
-                    Logs.show("YOU LOSE!! Bye!");
-                    _gameModel.setGameState(GameState.Lose);
-                }
-            }
-
-            @Override
-            public void onWon(WonStageModel wonStageModel) {
-                if(!_waitingContinue) {
-                    _gameModel.setRemainingMiliSecs(wonStageModel.getRemainingSecs(), false);
-                    _gameModel.setHintsLeft(wonStageModel.getHintsLeft());
-                    _gameModel.setGameState(GameState.Won);
-
-                    Logs.show("You win, time is: " + wonStageModel.getRemainingSecs());
-                }
-            }
-
-            @Override
-            public void onDownloadImageRequest(ArrayList<String> ids) {
-                _imageStorage.receivedDownloadRequest(ids);
-            }
-
-            @Override
-            public void onGoToNextStage(String id, StageType stageType, BonusType bonusType, String extra, GameModel gameModel) {
-                if(_waitingContinue){
-                    if(gameModel != null){
-                        reconstructGameModelIfWaitingContinue(gameModel);
-                        goToNewStage(id, stageType, bonusType, extra);
-                    }
-                }
-                else{
-                    goToNewStage(id, stageType, bonusType, extra);
-                }
-            }
-
-        });
-    }
-
-
-
-
-
     @Override
     public void dispose() {
         if(_safeThread != null) _safeThread.kill();
-        if(_continueMonitorSafeThread != null) _continueMonitorSafeThread.kill();
+        disposed = true;
     }
 
     public MainScreen getMainScreen() {
@@ -697,7 +670,4 @@ public class MainLogic extends GameLogic {
         return _services;
     }
 
-    public String getCurrentDecisionMaker() {
-        return _currentDecisionMaker;
-    }
 }

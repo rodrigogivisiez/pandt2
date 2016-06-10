@@ -23,10 +23,14 @@ public abstract class GameModelListener {
 
     public void onHintChanged(int newHintLeft){}
 
-    public void onGameStateChanged(GameState newState){}
+    public void onGameStateChanged(GameState oldState, GameState newState){}
 
     public void onCorrectClicked(SimpleRectangle rectangle, int remainingMiliSecsWhenClicked){}
 
     public void onAddedClickCount(String userId, int newCount){}
+
+    public void onScoresChanged(double newScores){}
+
+    public void onHandledAreasChanged() {}
 
 }

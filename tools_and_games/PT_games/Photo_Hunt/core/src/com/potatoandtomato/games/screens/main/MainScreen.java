@@ -262,12 +262,14 @@ public class MainScreen extends GameScreen {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                if(_imageOneInnerTable.findActor("image") != null){
-                    ((Image) _imageOneInnerTable.findActor("image")).setDrawable(new TextureRegionDrawable(new TextureRegion(texture1)));
-                }
+                if(texture1 != null && texture2 != null){
+                    if(_imageOneInnerTable.findActor("image") != null){
+                        ((Image) _imageOneInnerTable.findActor("image")).setDrawable(new TextureRegionDrawable(new TextureRegion(texture1)));
+                    }
 
-                if(_imageTwoInnerTable.findActor("image") != null){
-                    ((Image) _imageTwoInnerTable.findActor("image")).setDrawable(new TextureRegionDrawable(new TextureRegion(texture2)));
+                    if(_imageTwoInnerTable.findActor("image") != null){
+                        ((Image) _imageTwoInnerTable.findActor("image")).setDrawable(new TextureRegionDrawable(new TextureRegion(texture2)));
+                    }
                 }
             }
         });

@@ -26,6 +26,7 @@ public class StageStateLogic implements Disposable {
     private StageStateActor stageStateActor;
     private PapyrusSceneAbstract currentPapyrusScene;
     private GameState previousState;
+    private boolean papyrusOpened;
     private int currentIndex;
 
     public StageStateLogic(GameModel gameModel, Services services, GameCoordinator gameCoordinator) {
@@ -66,14 +67,21 @@ public class StageStateLogic implements Disposable {
             previousState = newState;
         }
         else if(newState == GameState.PrePlaying){
-            if(previousState == GameState.BeforeNewGame || previousState == GameState.BeforeContinue){
+            if(previousState == GameState.BeforeNewGame){
                 if(currentPapyrusScene instanceof BeforeStartPapyrusScene){
                     ((BeforeStartPapyrusScene) currentPapyrusScene).gameReadyToStart();
                 }
             }
             previousState = newState;
         }
-
+        else if(newState == GameState.Won){
+            if(previousState == GameState.BeforeContinue){
+                if(currentPapyrusScene instanceof BeforeStartPapyrusScene){
+                    ((BeforeStartPapyrusScene) currentPapyrusScene).gameReadyToStart();
+                }
+            }
+            previousState = newState;
+        }
     }
 
     public void openPapyrus(PapyrusType papyrusType){
@@ -91,9 +99,11 @@ public class StageStateLogic implements Disposable {
            stageStateActor.openPapyrus(papyrusScene);
         }
         currentPapyrusScene = papyrusScene;
+        papyrusOpened = true;
     }
 
     public void closeCurrentPapyrus(){
+        papyrusOpened = false;
         stageStateActor.closePapyrus(new Runnable() {
             @Override
             public void run() {
@@ -126,15 +136,14 @@ public class StageStateLogic implements Disposable {
     public void setListeners(){
         gameModel.addGameModelListener(new GameModelListener() {
             @Override
-            public void onGameStateChanged(GameState newState) {
-                super.onGameStateChanged(newState);
+            public void onGameStateChanged(GameState oldState, GameState newState) {
                 stateChanged(newState);
             }
         });
     }
 
     public boolean isPapyrusOpened(){
-        return currentPapyrusScene != null;
+        return papyrusOpened;
     }
 
     public StageStateActor getStageStateActor() {

@@ -11,28 +11,18 @@ public class Player {
     public String name;
     public String userId;
     public boolean isHost;
-    public boolean isConnected;
     public int slotIndex;
     public Color userColor;
 
     public Player() {
     }
 
-    public Player(String name, String userId, boolean isHost, boolean isConnected, int slotIndex) {
+    public Player(String name, String userId, boolean isHost, int slotIndex) {
         this.name = name;
         this.userId = userId;
         this.isHost = isHost;
-        this.isConnected = isConnected;
         this.slotIndex = slotIndex;
         this.userColor = ColorUtils.getUserColorByIndex(slotIndex);
-    }
-
-    public boolean getIsConnected() {
-        return isConnected;
-    }
-
-    public void setIsConnected(boolean isConnected) {
-        this.isConnected = isConnected;
     }
 
     public boolean getIsHost() {

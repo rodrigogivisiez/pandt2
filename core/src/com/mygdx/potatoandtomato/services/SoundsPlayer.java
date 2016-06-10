@@ -203,6 +203,18 @@ public class SoundsPlayer implements ISoundsPlayer {
     }
 
     @Override
+    public void stopAllMusics() {
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                for(Music music : _musicMap.keySet()){
+                    music.stop();
+                }
+            }
+        });
+    }
+
+    @Override
     public void setVolume(float volume){
         this._volume = volume;
 

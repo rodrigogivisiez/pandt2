@@ -12,6 +12,7 @@ import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.scenes.prerequisite_scene.PrerequisiteLogic;
 import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.utils.RunnableArgs;
 
 import java.util.ArrayList;
 
@@ -26,34 +27,9 @@ public class CreateGameLogic extends LogicAbstract {
 
     public CreateGameLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
-
         _scene = new CreateGameScene(_services, _screen);
-
         getAllGames();
-
-        _scene.getCreateButton().addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                if(_selectedGame != null){
-                    _screen.toScene(SceneEnum.PREREQUISITE, _selectedGame, PrerequisiteLogic.JoinType.CREATING);
-                }
-            }
-        });
-
     }
-
-//    @Override
-//    public void onHide() {
-//        _scene.hideAllElements();
-//        super.onHide();
-//    }
-//
-//    @Override
-//    public void onShow() {
-//        _scene.showAllElements();
-//        super.onShow();
-//    }
 
     public void getAllGames(){
         _services.getDatabase().getAllGames(new DatabaseListener<ArrayList<Game>>(Game.class) {
@@ -62,12 +38,16 @@ public class CreateGameLogic extends LogicAbstract {
                 if(st == Status.SUCCESS) {
                     _games = obj;
                     for(final Game game : _games){
-                        Actor actor = _scene.populateGame(game);
-                        actor.addListener(new ClickListener(){
+                        _scene.populateGame(game, new RunnableArgs<Actor>() {
                             @Override
-                            public void clicked(InputEvent event, float x, float y) {
-                                super.clicked(event, x, y);
-                                onGameClicked(game);
+                            public void run() {
+                                this.getFirstArg().addListener(new ClickListener(){
+                                    @Override
+                                    public void clicked(InputEvent event, float x, float y) {
+                                        super.clicked(event, x, y);
+                                        onGameClicked(game);
+                                    }
+                                });
                             }
                         });
                     }
@@ -81,6 +61,20 @@ public class CreateGameLogic extends LogicAbstract {
             _selectedGame = game;
             _scene.showGameDetails(game);
         }
+    }
+
+    @Override
+    public void setListeners() {
+        super.setListeners();
+        _scene.getCreateButton().addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                if(_selectedGame != null){
+                    _screen.toScene(SceneEnum.PREREQUISITE, _selectedGame, PrerequisiteLogic.JoinType.CREATING);
+                }
+            }
+        });
     }
 
     @Override

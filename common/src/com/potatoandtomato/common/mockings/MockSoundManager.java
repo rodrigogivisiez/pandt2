@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Array;
 import com.potatoandtomato.common.absints.ISoundsPlayer;
 import com.potatoandtomato.common.utils.Threadings;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -16,9 +17,11 @@ public class MockSoundManager implements ISoundsPlayer {
     private float _volume;
 
     private HashMap<Sound, Long> _externalSoundIdsMap;
+    private ArrayList<Music> _externalMusics;
 
     public MockSoundManager() {
         _externalSoundIdsMap = new HashMap();
+        _externalMusics = new ArrayList();
         setVolume(1f);
     }
 
@@ -35,6 +38,7 @@ public class MockSoundManager implements ISoundsPlayer {
                 music.setVolume(_volume);
                 music.setLooping(true);
                 music.play();
+                _externalMusics.add(music);
             }
         });
     }
@@ -47,6 +51,7 @@ public class MockSoundManager implements ISoundsPlayer {
                 music.setVolume(_volume);
                 music.setLooping(false);
                 music.play();
+                _externalMusics.add(music);
             }
         });
     }
@@ -57,6 +62,20 @@ public class MockSoundManager implements ISoundsPlayer {
             @Override
             public void run() {
                 music.stop();
+                _externalMusics.remove(music);
+            }
+        });
+    }
+
+    @Override
+    public void stopAllMusics() {
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                for(Music music : _externalMusics){
+                    music.stop();
+                }
+                _externalMusics.clear();
             }
         });
     }

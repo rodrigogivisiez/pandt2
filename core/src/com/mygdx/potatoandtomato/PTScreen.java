@@ -87,8 +87,13 @@ public class PTScreen implements Screen, InputProcessor {
 
     //call this function to change scene
     public void toScene(final SceneEnum sceneEnum, final Object... objs){
-        final LogicAbstract logic = newSceneLogic(sceneEnum, objs);
-        toScene(logic, sceneEnum, objs);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                final LogicAbstract logic = newSceneLogic(sceneEnum, objs);
+                toScene(logic, sceneEnum, objs);
+            }
+        });
     }
 
     //call this function to change scene
@@ -177,13 +182,18 @@ public class PTScreen implements Screen, InputProcessor {
     }
 
     public void backToBoot(){
-        while(_logicStacks.size() > 0){
-            LogicEnumPair logicEnumPair = _logicStacks.pop();
-            logicEnumPair.getLogic().getScene().getRoot().remove();
-            logicEnumPair.getLogic().onHide();
-            logicEnumPair.getLogic().dispose();
-        }
-        toScene(SceneEnum.BOOT);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                while(_logicStacks.size() > 0){
+                    LogicEnumPair logicEnumPair = _logicStacks.pop();
+                    logicEnumPair.getLogic().getScene().getRoot().remove();
+                    logicEnumPair.getLogic().onHide();
+                    logicEnumPair.getLogic().dispose();
+                }
+                toScene(SceneEnum.BOOT);
+            }
+        });
     }
 
     public LogicAbstract newSceneLogic(SceneEnum sceneEnum, Object... objs){

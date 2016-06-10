@@ -15,12 +15,15 @@ public abstract class GamingKit {
     private ConcurrentHashMap<String, JoinRoomListener> _joinRoomListeners;
     private ConcurrentHashMap<String, UpdateRoomMatesListener> _updateRoomMatesListeners;
     private ConcurrentHashMap<String, MessagingListener> _messagingListeners;
+    private ConcurrentHashMap<String, RoomInfoListener> _roomInfoListeners;
+
 
     public GamingKit() {
         _connectionChangedListeners = new ConcurrentHashMap();
         _joinRoomListeners = new ConcurrentHashMap();
         _updateRoomMatesListeners = new ConcurrentHashMap();
         _messagingListeners = new ConcurrentHashMap();
+        _roomInfoListeners = new ConcurrentHashMap();
     }
 
     public void addListener(String classTag, Object listener){
@@ -36,6 +39,9 @@ public abstract class GamingKit {
         else if(listener instanceof MessagingListener){
             _messagingListeners.put(classTag, (MessagingListener) listener);
         }
+        else if(listener instanceof RoomInfoListener){
+            _roomInfoListeners.put(classTag, (RoomInfoListener) listener);
+        }
     }
 
     public void removeListenersByClassTag(String classTag){
@@ -43,12 +49,13 @@ public abstract class GamingKit {
         _joinRoomListeners.remove(classTag);
         _updateRoomMatesListeners.remove(classTag);
         _messagingListeners.remove(classTag);
+        _roomInfoListeners.remove(classTag);
     }
 
 
-    public void onConnectionChanged(boolean connected){
+    public void onConnectionChanged(String userId, ConnectionChangedListener.ConnectStatus status){
         for(ConnectionChangedListener listener : _connectionChangedListeners.values()){
-            listener.onChanged(connected ? ConnectionChangedListener.ConnectStatus.CONNECTED : ConnectionChangedListener.ConnectStatus.DISCONNECTED);
+            listener.onChanged(userId, status);
         }
     }
 
@@ -82,6 +89,22 @@ public abstract class GamingKit {
         }
     }
 
+    public void onRoomInfoReceivedSuccess(String roomId, String[] inRoomUserIds){
+        for(RoomInfoListener listener : _roomInfoListeners.values()) {
+            if(listener.getRoomId().equals(roomId)){
+                listener.onRoomInfoRetrievedSuccess(inRoomUserIds);
+            }
+        }
+    }
+
+    public void onRoomInfoReceivedFailed(String roomId){
+        for(RoomInfoListener listener : _roomInfoListeners.values()) {
+            if(listener.getRoomId().equals(roomId)){
+                listener.onRoomInfoFailed();
+            }
+        }
+    }
+
     public ConcurrentHashMap<String, ConnectionChangedListener> getConnectionChangedListeners() {
         return _connectionChangedListeners;
     }
@@ -106,11 +129,19 @@ public abstract class GamingKit {
 
     public abstract void leaveRoom();
 
+    public abstract void getRoomInfo(String roomId);
+
     public abstract void updateRoomMates(int updateRoomMatesCode, String msg);
+
+    public abstract void privateUpdateRoomMates(String toUserId, int updateRoomMatesCode, String msg);
 
     public abstract void updateRoomMates(byte identifier, byte[] bytes);
 
+    public abstract void privateUpdateRoomMates(String toUserId, byte identifier, byte[] bytes);
+
     public abstract void lockProperty(String key, String value);
+
+    public abstract void recoverConnection();
 
     public abstract void dispose();
 

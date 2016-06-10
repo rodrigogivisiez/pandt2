@@ -6,13 +6,25 @@ package com.mygdx.potatoandtomato.absintflis.gamingkit;
 public abstract class ConnectionChangedListener {
 
     public enum ConnectStatus {
-        CONNECTED, DISCONNECTED
+        CONNECTED, DISCONNECTED, DISCONNECTED_BUT_RECOVERABLE, CONNECTED_FROM_RECOVER;
+
+        public static boolean isConnected(ConnectStatus connectStatus){
+            if(connectStatus == ConnectStatus.CONNECTED || connectStatus == ConnectStatus.CONNECTED_FROM_RECOVER){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+
     }
+
+
 
     public ConnectionChangedListener() {
 
     }
 
-    public abstract void onChanged(ConnectStatus st);
+    public abstract void onChanged(String userId, ConnectStatus st);
 
 }

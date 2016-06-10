@@ -33,13 +33,27 @@ public interface IDatabase {
 
      void getAllGames(DatabaseListener<ArrayList<Game>> listener);
 
-     void updateRoomPlayingState(Room room, boolean isPlaying, @Nullable DatabaseListener<String> listener);
+
+     ///////////////all about rooms/////////////////////
+     void updateRoomPlayingAndOpenState(Room room, Boolean isPlaying, Boolean isOpen, @Nullable DatabaseListener<String> listener);
 
      void saveRoom(Room room, boolean notify, @Nullable DatabaseListener<String> listener);    //except slot index
 
-     void addUserToRoom(Room room, Profile user, DatabaseListener<String> listener);
+     void setOnDisconnectCloseRoom(Room room);
+
+     void setInvitedUsers(ArrayList<Profile> invitedUsers, Room room, DatabaseListener listener);
+
+     void addUserToRoom(Room room, Profile user, int slotIndex, DatabaseListener<String> listener);
+
+     void removeUserFromRoom(Room room, Profile user, DatabaseListener listener);
 
      void monitorRoomById(String id, String classTag, DatabaseListener<Room> listener);
+
+     void setRoomUserIsReady(Room room, String userId, boolean isReady, DatabaseListener listener);
+
+     void setRoomUserSlotIndex(Room room, String userId, int slotIndex, DatabaseListener listener);
+
+     void setRoomState(final Room room, int roundCounter, boolean open, boolean playing, DatabaseListener listener);
 
      void getRoomById(String id, DatabaseListener<Room> listener);
 
@@ -47,7 +61,9 @@ public interface IDatabase {
 
      String notifyRoomChanged(Room room);
 
-     void removeUserFromRoomOnDisconnect(String roomId, Profile user, DatabaseListener<String> listener);
+     ////////////////////////////////////
+
+     void unauth();
 
      void offline();
 
@@ -57,13 +73,13 @@ public interface IDatabase {
 
      void clearAllListeners();
 
+     void clearAllOnDisconnectListenerModel();
+
      void savePlayedHistory(Profile profile, Room room, DatabaseListener<String> listener);
 
      void getPlayedHistories(Profile profile, DatabaseListener<ArrayList<GameHistory>> listener);
    
      void getPendingInvitationsCount(Profile profile, DatabaseListener<Integer> listener);
-
-     void onDcSetGameStateDisconnected(Profile profile, DatabaseListener listener);
 
      void getGameByAbbr(String abbr, DatabaseListener<Game> listener);
 

@@ -24,7 +24,7 @@ public class BroadcastEvent {
     public static final int LOAD_GAME_RESPONSE = 16; //response to load game
     public static final int GAME_END = 17; //game ended
     public static final int INGAME_UPDATE_REQUEST = 21;     //imgame update request
-    public static final int INGAME_UPDATE_RESPONSE = 22;     //imgame update request
+    //public static final int INGAME_UPDATE_RESPONSE = 22;     //imgame update request
     public static final int LOAD_IMAGE_REQUEST = 23;    //load image from url
     public static final int LOAD_IMAGE_RESPONSE = 24;   //load image from url
     public static final int SHOW_NATIVE_KEYBOARD = 27; //show native keepboard
@@ -36,5 +36,5 @@ public class BroadcastEvent {
     public static final int RECORD_START = 33;  //audio recording start
     public static final int RECORD_END = 34;  //audio recording end
     public static final int RECORD_RESPONSE = 35; //audio record respond back
-
+    public static final int SHOW_REWARD_VIDEO = 36; //show reward video
 }

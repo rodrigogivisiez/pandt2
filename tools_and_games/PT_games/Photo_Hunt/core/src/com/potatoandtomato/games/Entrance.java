@@ -10,10 +10,7 @@ import com.potatoandtomato.games.helpers.Logs;
 import com.potatoandtomato.games.models.GameModel;
 import com.potatoandtomato.games.models.Services;
 import com.potatoandtomato.games.screens.hints.HintsLogic;
-import com.potatoandtomato.games.screens.main.ImageStorage;
-import com.potatoandtomato.games.screens.main.MainLogic;
-import com.potatoandtomato.games.screens.main.StageImagesLogic;
-import com.potatoandtomato.games.screens.main.StageStateLogic;
+import com.potatoandtomato.games.screens.main.*;
 import com.potatoandtomato.games.screens.review.ReviewLogic;
 import com.potatoandtomato.games.screens.scores.ScoresLogic;
 import com.potatoandtomato.games.screens.stage_counter.StageCounterLogic;
@@ -49,6 +46,7 @@ public class Entrance extends GameEntrance {
     GameModel _gameModel;
     StageImagesLogic _stageImagesLogic;
     StageStateLogic _stageStateLogic;
+    GameDataContract _gameDataContract;
 
 
     public Entrance(final GameCoordinator gameCoordinator) {
@@ -63,6 +61,7 @@ public class Entrance extends GameEntrance {
             public void run() {
 
                 _gameModel = new GameModel();
+                _gameModel.setRemainingMiliSecs(_gameModel.getThisStageTotalMiliSecs(), false);
 
                 _kingLogic = new KingLogic(_gameModel, getServices());
                 _castleLogic = new CastleLogic(_gameModel, getServices(), gameCoordinator);
@@ -78,11 +77,13 @@ public class Entrance extends GameEntrance {
                 _stageImagesLogic = new StageImagesLogic(_coordinator, getServices(), _gameModel);
                 _stageStateLogic = new StageStateLogic(_gameModel, getServices(), _coordinator);
 
+                _gameDataContract = new GameDataContract(_gameModel, _coordinator);
+
                 _mainLogic = new MainLogic(getGameCoordinator(), getServices(), _timeLogic, _hintsLogic, _reviewLogic,
                         _userCountersLogic, _stageCounterLogic, _scoresLogic, _imageStorage, _gameModel,
-                        _stageImagesLogic, _stageStateLogic);
+                        _stageImagesLogic, _stageStateLogic, _gameDataContract);
 
-
+                _coordinator.getGameDataHelper().initGameDataHelper(_gameDataContract);
                 getGameCoordinator().finishLoading();
             }
         });
@@ -93,20 +94,18 @@ public class Entrance extends GameEntrance {
     public void init() {
         _mainLogic.init();
         _scoresLogic.refreshAllScores();
-        getGameCoordinator().getGame().setScreen((_mainLogic.getMainScreen()));
+        getGameCoordinator().setScreen((_mainLogic.getMainScreen()));
     }
 
     @Override
     public void onContinue() {
         _mainLogic.onContinue();
         _scoresLogic.refreshAllScores();
-        getGameCoordinator().getGame().setScreen((_mainLogic.getMainScreen()));
+        getGameCoordinator().setScreen((_mainLogic.getMainScreen()));
     }
 
     @Override
     public void dispose() {
-        if(_assets != null) _assets.dispose();
-        if(_services != null) _services.dispose();
         if(_mainLogic != null) _mainLogic.dispose();
         if(_stageImagesLogic != null) _stageImagesLogic.dispose();
         if(_timeLogic != null) _timeLogic.dispose();
@@ -114,6 +113,8 @@ public class Entrance extends GameEntrance {
         if(_imageStorage != null) _imageStorage.dispose();
         if(_scoresLogic != null) _scoresLogic.dispose();
         if(_stageStateLogic != null) _stageStateLogic.dispose();
+        if(_assets != null) _assets.dispose();
+        if(_services != null) _services.dispose();
     }
 
     private void initAssets(){

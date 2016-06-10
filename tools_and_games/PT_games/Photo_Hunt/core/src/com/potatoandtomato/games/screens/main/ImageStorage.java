@@ -28,10 +28,10 @@ public class ImageStorage implements Disposable {
     private int totalIndex;
     private ArrayList<ImagePair> imagePairs;
     private boolean randomize = true;
-    private int imageCountPerDownload = 5;
+    private int imageCountPerDownload = 3;
     private int currentIndex;
     private int orderIndex;           //used to make sure final results is in same order
-    private long downloadPeriod = 30000;
+    private long downloadPeriod = 10000;
     private ArrayList<String> currentStoreImageIds;
     private SafeThread safeThread;
 
@@ -80,7 +80,7 @@ public class ImageStorage implements Disposable {
 
 
     public void initiateDownloadsIfNoImagesAndIsCoordinator(){
-        if(imagePairs.size() < 5 && gameCoordinator.meIsDecisionMaker()){
+        if(imagePairs.size() < imageCountPerDownload && gameCoordinator.getDecisionsMaker().meIsDecisionMaker()){
             final ArrayList<Integer> indexes = new ArrayList<>();
             for(int i = 0; i < imageCountPerDownload; i++){
                 if(randomize){
@@ -331,8 +331,8 @@ public class ImageStorage implements Disposable {
         });
     }
 
-    public void resendRedownloadCurrentImageStorage(){
-        services.getRoomMsgHandler().sendDownloadImageRequest(currentStoreImageIds);
+    public void resendRedownloadCurrentImageStorage(String toUserId){
+        services.getRoomMsgHandler().sendPrivateDownloadImageRequest(toUserId, currentStoreImageIds);
     }
 
 

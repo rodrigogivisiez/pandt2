@@ -12,7 +12,7 @@ import com.mygdx.potatoandtomato.absintflis.controls.ChatTemplateSelectedListene
 import com.mygdx.potatoandtomato.absintflis.controls.StageChangedListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.MessagingListener;
-import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesCode;
+import com.mygdx.potatoandtomato.enums.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
 import com.mygdx.potatoandtomato.absintflis.recorder.RecordListener;
 import com.mygdx.potatoandtomato.controls.ChatControl;
@@ -226,6 +226,12 @@ public class Chat {
     public void resetChat() {
         setMessageFieldText("");
         chatControl.clearChat(mode);
+    }
+
+    public void resetAllChat() {
+        setMessageFieldText("");
+        chatControl.clearChat(1);
+        chatControl.clearChat(2);
     }
 
     public void render(float delta){

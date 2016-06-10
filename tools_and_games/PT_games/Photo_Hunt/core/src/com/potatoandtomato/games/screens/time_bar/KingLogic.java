@@ -36,7 +36,7 @@ public class KingLogic{
     }
 
     public void updateRemainingMiliSecs(int remainingMiliSecs){
-        if(remainingMiliSecs <= totalAtkMiliSecs){
+        if(remainingMiliSecs <= (totalAtkMiliSecs * 0.3)){
             kingActor.changeState(KingState.Panic);
         }
         else{
@@ -86,7 +86,7 @@ public class KingLogic{
             }
 
             @Override
-            public void onGameStateChanged(final GameState newState) {
+            public void onGameStateChanged(GameState oldState, final GameState newState) {
                 Threadings.postRunnable(new Runnable() {
                     @Override
                     public void run() {
@@ -107,7 +107,7 @@ public class KingLogic{
                                 }
                             });
                         }
-                        else {
+                        else if(newState == GameState.BeforeNewGame){
                             setPaused(true);
                         }
                     }

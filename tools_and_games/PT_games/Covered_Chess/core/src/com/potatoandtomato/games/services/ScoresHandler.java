@@ -310,18 +310,12 @@ public class ScoresHandler implements Disposable{
 
 
     private HashMap<Team, ArrayList<ScoreDetails>> getWinnerResult(ArrayList<ScoreDetails> scoreDetails){
-        if(!coordinator.getPlayerByUserId(getWinnerUserId()).getIsConnected()){
-            return null;
-        }
         HashMap<Team, ArrayList<ScoreDetails>> result = new HashMap<Team, ArrayList<ScoreDetails>>();
         result.put(winnerTeam, scoreDetails);
         return result;
     }
 
     private ArrayList<Team> getLoser(){
-        if(!coordinator.getPlayerByUserId(getWinnerUserId()).getIsConnected()){
-            return null;
-        }
         ArrayList<Team> loser = new ArrayList<Team>();
         loser.add(this.loserTeam);
         return loser;

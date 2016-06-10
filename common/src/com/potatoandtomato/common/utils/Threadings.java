@@ -138,6 +138,27 @@ public class Threadings {
         });
     }
 
+    public static SafeThread countDown(final int totalSecs, final int notifyPeriodInMiliSecs, final RunnableArgs<Integer> onNotify){
+        final SafeThread safeThread = new SafeThread();
+        Threadings.runInBackground(new Runnable() {
+            @Override
+            public void run() {
+                int i = totalSecs;
+                while (true){
+                    i--;
+
+                    onNotify.run(i);
+
+                    if(i == 0 || safeThread.isKilled()){
+                        break;
+                    }
+                    Threadings.sleep(notifyPeriodInMiliSecs);
+
+                }
+            }
+        });
+        return safeThread;
+    }
 
 
     public static class ThreadFragment{

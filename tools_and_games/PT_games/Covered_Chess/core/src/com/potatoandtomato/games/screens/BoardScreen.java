@@ -119,6 +119,8 @@ public class BoardScreen extends GameScreen {
     }
 
     public void populateTerrains(ArrayList<TerrainLogic> terrainLogics){
+        _root.clear();
+
         _chessesTable = new Table();
         _root.add(_chessesTable).expand().fill().padTop(60).padBottom(65).padLeft(15).padRight(15);
 

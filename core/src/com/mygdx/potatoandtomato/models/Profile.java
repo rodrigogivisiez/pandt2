@@ -39,7 +39,7 @@ public class Profile {
     }
 
     public UserPlayingState getUserPlayingState() {
-        if(userPlayingState == null ||  userPlayingState.getRoomId() == null) userPlayingState = new UserPlayingState("0", false, -1);
+        if(userPlayingState == null ||  userPlayingState.getRoomId() == null) userPlayingState = new UserPlayingState("0", -1);
         return userPlayingState;
     }
 

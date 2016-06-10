@@ -117,7 +117,7 @@ DOWNWARD_EGG_BUTTON
   index: -1
 EMPTY
   rotate: false
-  xy: 1152, 1542
+  xy: 918, 984
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
@@ -140,7 +140,7 @@ EXPANDED_ICON
   index: -1
 FACEBOOK_ICON
   rotate: false
-  xy: 1080, 1194
+  xy: 345, 191
   size: 40, 38
   orig: 40, 38
   offset: 0, 0
@@ -170,9 +170,9 @@ GAMELIST_BG
   index: -1
 GAMELIST_HIGHLIGHT
   rotate: false
-  xy: 345, 189
-  size: 40, 40
-  orig: 40, 40
+  xy: 1158, 1636
+  size: 8, 8
+  orig: 8, 8
   offset: 0, 0
   index: -1
 GAMELIST_TITLE_BG
@@ -198,7 +198,7 @@ GREY_HORIZONTAL_LINE
   index: -1
 GREY_ROUNDED_BG
   rotate: false
-  xy: 1080, 1144
+  xy: 345, 141
   size: 28, 20
   split: 11, 11, 6, 9
   pad: 4, 6, 0, 1
@@ -207,7 +207,7 @@ GREY_ROUNDED_BG
   index: -1
 INVITED_ICON
   rotate: false
-  xy: 345, 124
+  xy: 1080, 1169
   size: 30, 26
   orig: 30, 26
   offset: 0, 0
@@ -223,7 +223,7 @@ INVITE_BG
   index: -1
 INVITE_TAB_CENTER
   rotate: false
-  xy: 1595, 1612
+  xy: 1543, 1583
   size: 18, 12
   split: 6, 7, 3, 3
   pad: 0, 0, 0, 0
@@ -264,7 +264,7 @@ KICK_ICON
   index: -1
 LEADERBOARD_ANIMATING_BASE
   rotate: false
-  xy: 1543, 1582
+  xy: 1080, 1132
   size: 18, 13
   split: 8, 5, 6, 6
   pad: 0, 0, 0, 0
@@ -280,7 +280,7 @@ LEADERBOARD_ICON
   index: -1
 LEADERBOARD_INVITE_ICON
   rotate: false
-  xy: 1080, 1166
+  xy: 345, 163
   size: 40, 26
   orig: 40, 26
   offset: 0, 0
@@ -399,7 +399,7 @@ ORANGE_HORIZONTAL_LINE
   index: -1
 ORANGE_ROUNDED_BG
   rotate: false
-  xy: 1080, 1122
+  xy: 1080, 1147
   size: 28, 20
   split: 10, 11, 6, 9
   pad: 0, 2, 0, 2
@@ -640,7 +640,7 @@ VERTICAL_DOTS
   index: -1
 VOICE_ICON
   rotate: false
-  xy: 345, 152
+  xy: 1080, 1197
   size: 36, 35
   orig: 36, 35
   offset: 0, 0
@@ -654,7 +654,7 @@ WHITE_HORIZONTAL_LINE
   index: -1
 WHITE_ROUNDED_BG
   rotate: false
-  xy: 1565, 1604
+  xy: 345, 119
   size: 28, 20
   split: 11, 13, 7, 9
   pad: 5, 7, 0, 0
@@ -670,7 +670,7 @@ WHITE_ROUND_BUTTON_BG
   index: -1
 WHITE_VERTICAL_LINE
   rotate: false
-  xy: 1158, 1634
+  xy: 1152, 1533
   size: 2, 10
   orig: 2, 10
   offset: 0, 0

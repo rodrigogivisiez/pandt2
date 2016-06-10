@@ -3,13 +3,13 @@ package connection_testings;
 import abstracts.TestAbstract;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.*;
 import com.mygdx.potatoandtomato.services.Appwarp;
+import com.mygdx.potatoandtomato.enums.UpdateRoomMatesCode;
+import com.mygdx.potatoandtomato.utils.ForAppwarpTesting;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import helpers.T_Threadings;
 import org.junit.*;
-
-import java.util.HashMap;
 
 /**
  * Created by SiongLeng on 15/12/2015.
@@ -20,25 +20,34 @@ public class TestAppwarp extends TestAbstract {
 
     @Before
     public void setUp() throws Exception {
-        if(_gamingKit == null){
-            final boolean[] waiting = {true};
-            _gamingKit = new Appwarp();
-
-            _gamingKit.addListener(getClassTag(), new ConnectionChangedListener() {
-                @Override
-                public void onChanged(ConnectStatus st) {
-                    waiting[0] = false;
-                    //Assert.assertEquals(ConnectStatus.CONNECTED, st);
-                }
-            });
-
-            _gamingKit.connect(MockModel.mockProfile("random"));
-
-            while(waiting[0]){
-                T_Threadings.sleep(100);
-            }
-        }
+//        if(_gamingKit == null){
+//            final boolean[] waiting = {true};
+//            _gamingKit = new Appwarp();
+//
+//            _gamingKit.addListener(getClassTag(), new ConnectionChangedListener() {
+//                @Override
+//                public void onChanged(String userId, ConnectStatus st) {
+//                    waiting[0] = false;
+//                }
+//            });
+//
+//            _gamingKit.connect(MockModel.mockProfile("random"));
+//
+//            while(waiting[0]){
+//                T_Threadings.sleep(100);
+//            }
+//        }
     }
+
+    @Test
+    public void testReconnect(){
+        ForAppwarpTesting testing = new ForAppwarpTesting();
+        testing.init();
+
+        Threadings.waitTasks(1);
+    }
+
+
 
     @Test
     public void testCreateRoomAndUpdatePeersAndPrivateMsgAndLeaveRoom(){

@@ -98,8 +98,8 @@ public class TestGameLoader extends TestAbstract{
 
         GameCoordinator gameCoordinator = new GameCoordinator(game.getFullLocalJarPath(),
                                         game.getLocalAssetsPath(), game.getBasePath(), new ArrayList<Team>(), Positions.getWidth(),
-                                        Positions.getHeight(), null, null, "123", mock(IGameSandBox.class), null, "1", mock(ISoundsPlayer.class), broadcaster,
-                                        mock(IDownloader.class), mock(ITutorials.class), mock(GamePreferencesAbstract.class), Global.LEADERBOARD_COUNT);
+                                        Positions.getHeight(), null, null, "123", mock(IGameSandBox.class), null, "1", mock(ISoundsPlayer.class), mock(IRemoteHelper.class),
+                                        mock(ITutorials.class), mock(GamePreferencesAbstract.class), Global.LEADERBOARD_COUNT);
         broadcaster.broadcast(BroadcastEvent.LOAD_GAME_REQUEST, gameCoordinator);
 
         while (waiting[0]){

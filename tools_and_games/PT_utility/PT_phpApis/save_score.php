@@ -24,10 +24,12 @@
 			$loserFoundTeamSize = 0;
 			$winnerFoundTeamSize = 0;
 			if(!empty($dbRoom)){
-				foreach ($dbRoom->originalRoomUsers as $key => $value){
-					if($value->profile->userId == $userId){
-						$haveUser = true;
-						break;
+				foreach ($dbRoom->teams as $key => $team){
+					foreach($team->players as $key => $player){
+						if($player->userId == $userId){
+							$haveUser = true;
+							break;
+						}
 					}
 				}
 				
@@ -65,16 +67,19 @@
 		
 	}
 	
-	function checkTeamIsInRoom($teamUserIdsString, $room){
+	function checkTeamIsInRoom($teamUserIdsString, $dbRoom){
 		$result = true;
 		$userIdsArr = explode(",", $teamUserIdsString);
 		foreach ($userIdsArr as $userId){
 			$haveUser = false;
 			
-			foreach ($dbRoom->originalRoomUsers as $key => $value){
-				if($value->profile->userId == $userId){
-					$haveUser = true;
-					break;
+			
+			foreach ($dbRoom->teams as $key => $team){
+				foreach($team->players as $key => $player){
+					if($player->userId == $userId){
+						$haveUser = true;
+						break;
+					}
 				}
 			}
 			
@@ -197,15 +202,16 @@
 	
 	
 	if(checkCanUpdate($firebase, $room)){
-		if(checkRoomAndUserValid($firebase, $room, $userId, $userToken)){
+		if(checkRoomAndUserValid($firebase, $room, $userId, $userToken, $winners, $losers)){
 			handleLosers($firebase, $losers, $room);
 			handleWinners($firebase, $winners, $room);
 		}
 		else{
-			echo "success";
 		}
 	}
 	else{
-		echo "success";
+		
 	}
+	
+	echo "success";
 ?>

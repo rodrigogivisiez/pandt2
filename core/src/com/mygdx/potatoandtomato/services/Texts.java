@@ -16,6 +16,7 @@ public class Texts {
     public String socialLoginFailed() { return "Login with Facebook failed... \nTry again?";}
     public String creatingUser() { return "Creating new user profile..."; }
     public String failedRetrieveProfile() { return "Failed to retrieve data from server, please check your connection and try again."; }
+    public String ptIsDown() { return "P&T server is down for maintenance at the moment, please come back later."; }
     public String loginProcessing() { return "Logging in..."; }
 
     public String build() {return "Build %s";}
@@ -91,7 +92,7 @@ public class Texts {
     public String cannotContinue() { return "Failed to continue game, the game might be already finished.";}
 
     public String roomIsFull() { return "Room is full, please try again later.";}
-    public String roomStarted() { return "Game has already started.";}
+    public String roomNotAvailable() { return "Game is not available to join.";}
 
 
     public String hostLeft() { return "Room host has left the room, this room will now be dismissed."; }
@@ -140,7 +141,17 @@ public class Texts {
     public String notificationAbandon() { return "%s has abandoned the game!";}
     public String notificationConnected() { return "%s has connected to the game.";}
     public String notificationDisconnected() { return "%s has disconnected from the game, he/she has one minute to reconnect, please wait.";}
-    public String notificationKicked() { return "You have been kicked from the room, game will now be disconnected.";}
+
+    public String notificationYouAbandon() { return "You have abandoned the game!";}
+    public String notificationYouAbandonDueToTimeout() { return "You have abandoned the game because of failed to reconnect in one minute.";}
+
+    public String notificationYouConnected() { return "You have connected to the game.";}
+    public String notificationYouDisconnected() { return "You have disconnected from the game, you have one minute to reconnect.";}
+
+
+    public String notificationYouKicked() { return "You have been kicked from the room, game will now be abandoned.";}
+    public String notificationKicked() { return "%s has been kicked from the room.";}
+    public String notificationGameFailed() { return "Failed to retrieve game data.";}
 
     public String noConnection() { return "You have been disconnected from the server, please check your connection."; }
 
@@ -160,6 +171,11 @@ public class Texts {
     public String xPoints() {return "%s points";}
 
     public String appsCrashed() {return "Opps, looks like P&T has crashed on the last time you played, a error log has been received by Tomato and will be fixed asap.";}
+
+
+    public String lostConnection() {return "Lost connection with server, trying to reconnect...";}
+    public String connectionRecovered() {return "Connection established, trying to resume game session, %s secs remaining";}
+
 
     //push notifications part
     public String PUSHGameInvitationsTitle() { return "P&T Game Invitations"; }
