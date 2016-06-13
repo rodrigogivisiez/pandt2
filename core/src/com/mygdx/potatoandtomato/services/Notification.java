@@ -61,7 +61,7 @@ public class Notification {
             @Override
             public void run() {
                 if(_stage != null){
-                    _game.removeInputProcessor(_stage);
+                   // _game.removeInputProcessor(_stage);
                     _stage.dispose();
                     _root.remove();
                 }
@@ -76,7 +76,7 @@ public class Notification {
                 _root.invalidate();
 
                 _stage.addActor(_root);
-                _game.addInputProcessor(_stage, 20);
+               // _game.addInputProcessor(_stage, 20);
 
                 reposition();
             }

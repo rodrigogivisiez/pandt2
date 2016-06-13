@@ -233,7 +233,7 @@ public class BootLogic extends LogicAbstract {
         _services.getGamingKit().addListener(getClassTag(), new ConnectionChangedListener() {
             @Override
             public void onChanged(String userId, ConnectStatus st) {
-                if(userId.equals(_services.getProfile().getUserId())){
+                if(_services.getProfile() != null && userId != null && userId.equals(_services.getProfile().getUserId())){
                     if(!_logined){
                         if(st == ConnectStatus.CONNECTED){
                             _services.getDatabase().clearAllListeners();

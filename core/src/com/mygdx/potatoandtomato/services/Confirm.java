@@ -168,7 +168,7 @@ public class Confirm {
 
                 _visible = true;
 
-                _game.addInputProcessor(_stage, 11);
+                _game.addInputProcessor(_stage, 15);
             }
         });
 

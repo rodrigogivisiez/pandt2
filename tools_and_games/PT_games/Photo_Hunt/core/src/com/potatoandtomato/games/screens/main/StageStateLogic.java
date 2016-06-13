@@ -50,7 +50,7 @@ public class StageStateLogic implements Disposable {
             previousState = newState;
         }
         else if(newState == GameState.BeforeContinue){
-            openPapyrus(PapyrusType.BeforeContinue);
+            closeCurrentPapyrus();
             previousState = newState;
         }
         else if(newState == GameState.BeforeBouns){
@@ -74,14 +74,14 @@ public class StageStateLogic implements Disposable {
             }
             previousState = newState;
         }
-        else if(newState == GameState.Won){
-            if(previousState == GameState.BeforeContinue){
-                if(currentPapyrusScene instanceof BeforeStartPapyrusScene){
-                    ((BeforeStartPapyrusScene) currentPapyrusScene).gameReadyToStart();
-                }
-            }
-            previousState = newState;
-        }
+//        else if(newState == GameState.Won){
+//            if(previousState == GameState.BeforeContinue){
+//                if(currentPapyrusScene instanceof BeforeStartPapyrusScene){
+//                    ((BeforeStartPapyrusScene) currentPapyrusScene).gameReadyToStart();
+//                }
+//            }
+//            previousState = newState;
+//        }
     }
 
     public void openPapyrus(PapyrusType papyrusType){

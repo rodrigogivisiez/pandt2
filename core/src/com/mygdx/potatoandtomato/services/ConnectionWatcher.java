@@ -1,5 +1,7 @@
 package com.mygdx.potatoandtomato.services;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.ConnectionChangedListener;
@@ -11,10 +13,14 @@ import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.absints.IDisconnectOverlayControl;
+import com.potatoandtomato.common.absints.IPTGame;
 import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.utils.Threadings;
+
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by SiongLeng on 27/5/2016.
@@ -29,38 +35,36 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
     private boolean playingGame;
     private Room room;
     private Profile profile;
-    private ConnectionWatcherListener connectionWatcherListener;
-    private boolean visible;
+    private ArrayList<ConnectionWatcherListener> connectionWatcherListeners;
     private DisconnectedOverlay disconnectedOverlay;
     private int count;
     private boolean showResumingGame;
 
     public ConnectionWatcher(GamingKit gamingKit, SpriteBatch spriteBatch, Assets assets,
                              Broadcaster broadcaster, Confirm confirm,
-                             Texts texts) {
+                             Texts texts, IPTGame iptGame) {
         this.gamingKit = gamingKit;
         this.broadcaster = broadcaster;
         this.confirm = confirm;
         this.texts = texts;
-        this.disconnectedOverlay = new DisconnectedOverlay(spriteBatch, assets, broadcaster, texts);
+        connectionWatcherListeners = new ArrayList();
+        this.disconnectedOverlay = new DisconnectedOverlay(spriteBatch, assets, broadcaster, texts, iptGame);
         setListeners();
     }
 
 
-    public void gameStarted(Room room, ConnectionWatcherListener listener){
+    public void gameStarted(Room room){
         playingGame = true;
         this.room = room;
-        this.connectionWatcherListener = listener;
     }
 
     public void gameEnded(){
         playingGame = false;
         room = null;
-        connectionWatcherListener = null;
+        connectionWatcherListeners.clear();
     }
 
     public void resetAndBackToBoot(){
-        visible = false;
         showResumingGame = false;
         disconnectedOverlay.resetText();
         broadcaster.broadcast(BroadcastEvent.DESTROY_ROOM);
@@ -69,15 +73,17 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
         count = 0;
     }
 
+    public void addConnectionWatcherListener(ConnectionWatcherListener listener){
+        connectionWatcherListeners.add(listener);
+    }
+
     public void resize(int width, int height){
         disconnectedOverlay.resize(width, height);
     }
 
 
     public void render(float delta){
-        if(visible){
-            disconnectedOverlay.render(delta);
-        }
+        disconnectedOverlay.render(delta);
     }
 
     public void setListeners(){
@@ -95,8 +101,10 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
                             resetAndBackToBoot();
                         }
                         else if(st == ConnectStatus.DISCONNECTED_BUT_RECOVERABLE){
-                            if(count == 0 && connectionWatcherListener != null){
-                                connectionWatcherListener.onConnectionHalt();
+                            if(count == 0){
+                                for(ConnectionWatcherListener connectionWatcherListener : connectionWatcherListeners){
+                                    connectionWatcherListener.onConnectionHalt();
+                                }
                             }
                             if(count < 5){
                                 Threadings.delay(5000, new Runnable() {
@@ -106,7 +114,7 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
                                     }
                                 });
                                 count++;
-                                visible = true;
+                                disconnectedOverlay.setVisible(true);
                             }
                             else{
                                 resetAndBackToBoot();
@@ -114,7 +122,7 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
                         }
                         else if(st == ConnectStatus.CONNECTED_FROM_RECOVER){
                             count = 0;
-                            if(connectionWatcherListener != null){
+                            for(ConnectionWatcherListener connectionWatcherListener : connectionWatcherListeners){
                                 connectionWatcherListener.onConnectionResume();
                             }
 
@@ -122,7 +130,7 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
                                 @Override
                                 public void run() {
                                     if(!showResumingGame){
-                                        visible = false;
+                                        disconnectedOverlay.setVisible(false);
                                     }
                                 }
                             });
@@ -144,16 +152,18 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
 
     @Override
     public void showResumingGameOverlay(int remainingSecs) {
-        visible = true;
+        disconnectedOverlay.setVisible(true);
         showResumingGame = true;
         disconnectedOverlay.showResumingGameText(remainingSecs);
     }
 
     @Override
     public void hideOverlay() {
-        visible = false;
+        disconnectedOverlay.setVisible(false);
         disconnectedOverlay.resetText();
         showResumingGame = false;
     }
+
+
 
 }

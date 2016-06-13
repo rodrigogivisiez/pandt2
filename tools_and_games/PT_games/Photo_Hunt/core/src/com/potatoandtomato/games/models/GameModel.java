@@ -188,18 +188,17 @@ public class GameModel {
     public void setGameState(GameState newGameState) {
         GameState oldState = this.gameState;
 
-        this.gameState = newGameState;
-
         if(oldState != newGameState){
-            for(GameModelListener listener : listeners){
-                listener.onGameStateChanged(oldState, newGameState);
-            }
+            this.gameState = newGameState;
             if(listeners.size() > 0){
                 Logs.show("Game state: " + newGameState);
             }
+            for(GameModelListener listener : listeners){
+                listener.onGameStateChanged(oldState, newGameState);
+            }
         }
-
     }
+
 
     public Double getScore() {
         if(this.score == null){

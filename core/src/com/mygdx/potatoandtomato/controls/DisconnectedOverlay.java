@@ -18,6 +18,7 @@ import com.mygdx.potatoandtomato.assets.Patches;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.services.Texts;
 import com.mygdx.potatoandtomato.utils.Positions;
+import com.potatoandtomato.common.absints.IPTGame;
 import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
@@ -38,12 +39,15 @@ public class DisconnectedOverlay {
     private Broadcaster broadcaster;
     private Label labelMessage;
     private Texts texts;
+    private IPTGame iptGame;
+    private boolean visible;
 
-    public DisconnectedOverlay(SpriteBatch batch, Assets assets, Broadcaster broadcaster, Texts texts) {
+    public DisconnectedOverlay(SpriteBatch batch, Assets assets, Broadcaster broadcaster, Texts texts, IPTGame game) {
         this.batch = batch;
         this.assets = assets;
         this.broadcaster = broadcaster;
         this.texts = texts;
+        this.iptGame = game;
 
         invalidate();
         populate();
@@ -66,11 +70,19 @@ public class DisconnectedOverlay {
                     root.setFillParent(true);
                     root.setBackground(new TextureRegionDrawable(
                                 assets.getTextures().get(assets.getTextures().get(Textures.Name.FULL_BLACK_BG))));
+
+                    root.addListener(new ClickListener(){
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+
+                        }
+                    });
                 }
 
                 if (stage != null) {
                     stage.dispose();
                     root.remove();
+                    iptGame.removeInputProcessor(stage);
                 }
 
                 StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
@@ -114,8 +126,21 @@ public class DisconnectedOverlay {
 
 
     public void render(float delta){
-        stage.act(delta);
-        stage.draw();
+        if(visible){
+            stage.act(delta);
+            stage.draw();
+        }
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+
+        if(visible && stage != null){
+            iptGame.addInputProcessor(stage, 11);
+        }
+        else{
+            iptGame.removeInputProcessor(stage);
+        }
     }
 
     public void resize(int width, int height){

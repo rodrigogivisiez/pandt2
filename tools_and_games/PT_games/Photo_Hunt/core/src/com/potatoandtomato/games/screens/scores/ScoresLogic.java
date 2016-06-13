@@ -40,6 +40,7 @@ public class ScoresLogic implements Disposable {
     private ScoresActor scoresActor;
     private SafeThread safeThread;
     private ArrayList<LeaderboardRecord> leaderboardRecords;
+    private int originalScores = 0;
     private final int PER_CLICK_SCORE = 1000;
     private final int PER_HINT_LEFT_SCORE = 1000;
     private final int PER_CASTLE_STATE_SCORE = 250;
@@ -70,10 +71,17 @@ public class ScoresLogic implements Disposable {
         scoresActor.setNextHighScore(getNextLeaderboardScore());
     }
 
-    public void calculateWithoutAnimation(){
-        services.getSoundsWrapper().playSounds(Sounds.Name.WIN);
+    public void fakeAddScores(int toAdd){
+        originalScores += toAdd;
+        scoresActor.setMainScore(originalScores);
+    }
+
+    public void calculateWithoutAnimation(boolean sound){
+        if(sound) services.getSoundsWrapper().playSounds(Sounds.Name.WIN);
         gameModel.setScore(gameModel.getScore() + getCastleScores() + getHintsScores() + getRemainingDistanceScores(), true);
         gameModel.setGameState(GameState.WaitingForNextStage);
+
+        Logs.show("Final score:" + gameModel.getScore());
     }
 
     public void calculate(){
@@ -82,6 +90,7 @@ public class ScoresLogic implements Disposable {
             return;
         }
 
+        originalScores = gameModel.getScore().intValue();
         Actor hintsActor = hintsLogic.getHintsActor();
         services.getSoundsWrapper().playSounds(Sounds.Name.WIN);
 
@@ -98,13 +107,10 @@ public class ScoresLogic implements Disposable {
                                     @Override
                                     public void run() {
                                         final int remainingDistance = (int) knightLogic.getRemainingDistanceByRemainingTime(gameModel.getRemainingMiliSecs());
-                                        final int[] originalScore = {gameModel.getScore().intValue()};
-                                        gameModel.setScore((double) originalScore[0] + getRemainingDistanceScores(), false);
+                                        final int[] originalScore = {originalScores};
                                         final Vector2 knightActorPosition = new Vector2(knightLogic.getKnightActor().getPositionOnStage().x,
                                                 knightLogic.getKnightActor().getPositionOnStage().y);
                                         knightActorPosition.y = knightActorPosition.y + knightLogic.getKnightActor().getHeight() / 2;
-
-                                        Logs.show("Final score:" + gameModel.getScore());
 
                                         Threadings.runInBackground(new Runnable() {
                                             @Override
@@ -132,8 +138,6 @@ public class ScoresLogic implements Disposable {
                                                     originalScore[0] += PER_METER_DISTANCE_SCORE;
                                                 }
 
-                                                scoresActor.setMainScore(gameModel.getScore().intValue());
-
                                                 services.getSoundsWrapper().stopSoundLoop(Sounds.Name.ADDING_SCORE);
 
                                                 Threadings.postRunnable(new Runnable() {
@@ -147,7 +151,7 @@ public class ScoresLogic implements Disposable {
                                                     Threadings.sleep(2000 - totalSleepTime);
                                                 }
 
-                                                gameModel.setGameState(GameState.WaitingForNextStage);
+                                                calculateWithoutAnimation(false);
                                             }
                                         });
                                     }
@@ -208,7 +212,7 @@ public class ScoresLogic implements Disposable {
                 String.valueOf(score), false, new Runnable() {
             @Override
             public void run() {
-                gameModel.setScore(gameModel.getScore() + score, true);
+                fakeAddScores(score);
                 if (onFinish != null) onFinish.run();
             }
         });
@@ -264,18 +268,16 @@ public class ScoresLogic implements Disposable {
             @Override
             public void onGameStateChanged(final GameState oldState, GameState newState) {
                 if(newState == GameState.Won){
-                    Threadings.postRunnable(new Runnable() {
+                    Threadings.delay(100, new Runnable() {  //delay to prevent ontouch but not circle yet bug
                         @Override
                         public void run() {
-                            if(oldState == GameState.BeforeContinue){
-                                calculateWithoutAnimation();
-                            }
-                            else{
-                                calculate();
-                            }
+                            calculate();
                         }
                     });
                 }
+//                else if(newState == GameState.WonWithoutContributions){
+//                    calculateWithoutAnimation(true);
+//                }
             }
 
             @Override

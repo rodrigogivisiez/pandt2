@@ -487,11 +487,13 @@ public class BoardLogic implements Disposable{
         _coordinator.setUserStateListener(new UserStateListener() {
             @Override
             public void userAbandoned(String s) {
-                if(!s.equals(_coordinator.getMyUserId())){
-                    endGame(true);
-                }
-                else{
-                    endGame(false);
+                if(_coordinator.getGameDataHelper().hasData()){
+                    if(!s.equals(_coordinator.getMyUserId())){
+                        endGame(true);
+                    }
+                    else{
+                        endGame(false);
+                    }
                 }
             }
 

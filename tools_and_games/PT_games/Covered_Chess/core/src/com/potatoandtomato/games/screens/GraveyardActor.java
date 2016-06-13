@@ -14,6 +14,7 @@ import com.potatoandtomato.games.assets.*;
 import com.potatoandtomato.games.controls.DummyButton;
 import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
+import com.potatoandtomato.games.helpers.Positions;
 import com.potatoandtomato.games.models.BoardModel;
 import com.potatoandtomato.games.models.GraveModel;
 import com.potatoandtomato.games.services.SoundsWrapper;
@@ -125,13 +126,10 @@ public class GraveyardActor extends Table {
         //tiny icons
         ///////////////////////////////////
         _tutorialIcon = new Image(_assets.getTextures().get(Textures.Name.TUTORIAL_ICON));
+        _tutorialIcon.setPosition(_gameCoordinator.getGameWidth() - 2 - _tutorialIcon.getPrefWidth(), -13.4f);
+
         _graveIcon = new Image(_assets.getTextures().get(Textures.Name.GRAVE_ICON));
-
-        Table turnAndIconsTable = new Table();
-        turnAndIconsTable.add(_turnLabel).padRight(5);
-        turnAndIconsTable.add(_graveIcon).padRight(5);
-        turnAndIconsTable.add(_tutorialIcon);
-
+        _graveIcon.setPosition(2, -13.4f);
         /////////////////////////
         //pointing icons
         ////////////////////////
@@ -139,7 +137,7 @@ public class GraveyardActor extends Table {
         _pointRightImage = new Image(_assets.getTextures().get(Textures.Name.POINT_RIGHT_ICON));
 
         Table turnTable = new Table();
-        turnTable.add(turnAndIconsTable).expandX().fillX().colspan(3);
+        turnTable.add(_turnLabel).expandX().fillX().colspan(3);
         turnTable.row();
         turnTable.add(_pointLeftImage).expandX().right().space(0, 10, 0, 10).height(20);
         turnTable.add(_turnCountContainer).height(20);
@@ -155,6 +153,8 @@ public class GraveyardActor extends Table {
         topInfoTable.pad(2);
         topInfoTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.YELLOW_GRADIENT_BOX)));
 
+        topInfoTable.addActor(_tutorialIcon);
+        topInfoTable.addActor(_graveIcon);
         /////////////////////////
         //yellow grave table
         ////////////////////////

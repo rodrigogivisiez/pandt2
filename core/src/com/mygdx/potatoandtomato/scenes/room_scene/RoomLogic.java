@@ -120,6 +120,7 @@ public class RoomLogic extends LogicAbstract {
             if(!isContinue && isHost()){
                 _services.getDatabase().updateRoomPlayingAndOpenState(room, false, true, null);
             }
+            _services.getSoundsPlayer().playThemeMusic();
         }
 
         userBadgeHelper.setPaused(false);
@@ -740,6 +741,26 @@ public class RoomLogic extends LogicAbstract {
                         }
                         else{
                             if(isHost()) removeUserFromRoom(userId);
+                        }
+                    }
+                    else if(st == ConnectStatus.CONNECTED_FROM_RECOVER){
+                        if(gameStarted && isHost()){
+                            Player player = room.getPlayerByUserId(userId);
+                            int slotIndex = -1;
+                            if(player != null){
+                                slotIndex = player.getSlotIndex();
+                            }
+                            addUserToRoom(userId, null, slotIndex);
+                        }
+                    }
+                    else if(st == ConnectStatus.CONNECTED){
+                        if(gameStarted && isHost()){
+                            Player player = room.getPlayerByUserId(userId);
+                            int slotIndex = -1;
+                            if(player != null){
+                                slotIndex = player.getSlotIndex();
+                            }
+                            addUserToRoom(userId, null, slotIndex);
                         }
                     }
                 }

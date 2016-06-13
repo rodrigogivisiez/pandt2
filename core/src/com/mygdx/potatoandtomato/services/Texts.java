@@ -139,6 +139,7 @@ public class Texts {
     public String confirmAbandon() { return "Are you sure you want to abandon this game?"; }
 
     public String notificationAbandon() { return "%s has abandoned the game!";}
+    public String notificationAbandonDueToTimeout() { return "%s has abandoned the game because of failed to reconnect in one minute.";}
     public String notificationConnected() { return "%s has connected to the game.";}
     public String notificationDisconnected() { return "%s has disconnected from the game, he/she has one minute to reconnect, please wait.";}
 

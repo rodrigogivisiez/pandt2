@@ -10,6 +10,7 @@ import com.potatoandtomato.common.enums.RoomUpdateType;
 import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.utils.JsonObj;
+import com.potatoandtomato.common.utils.OneTimeRunnable;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
 import com.shaded.fasterxml.jackson.core.JsonProcessingException;
@@ -37,6 +38,7 @@ public class GameDataHelper implements Disposable {
     private IPTGame iptGame;
     private IDisconnectOverlayControl disconnectOverlayControl;
     private boolean comeBackFromRecoverConnection;
+    private OneTimeRunnable onGameDataReceivedRunnable;
 
     public GameDataHelper(ArrayList<Team> teams, String myUserId,
                           DecisionsMaker decisionsMaker, IGameSandBox gameSandBox, IPTGame iptGame,
@@ -233,6 +235,8 @@ public class GameDataHelper implements Disposable {
 
             gameDataContract.onGameDataReceived(gameData);
 
+            if(onGameDataReceivedRunnable != null) onGameDataReceivedRunnable.run();
+
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -308,6 +312,13 @@ public class GameDataHelper implements Disposable {
 
     public boolean isActivated() {
         return activated;
+    }
+
+    public void setOnGameDataReceivedRunnable(OneTimeRunnable onGameDataReceivedRunnable) {
+        this.onGameDataReceivedRunnable = onGameDataReceivedRunnable;
+        if(this.hasData() || gameDataContract == null){     //not using game data helper
+            onGameDataReceivedRunnable.run();
+        }
     }
 
     @Override

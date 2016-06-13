@@ -19,6 +19,7 @@ import com.potatoandtomato.common.utils.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by SiongLeng on 6/6/2016.
@@ -32,14 +33,14 @@ public class ConnectionsController implements Disposable {
     private boolean gameStarted = false;
     private SafeThread safeThread;
     private ArrayList<Runnable> onRefreshFinishedRunnables;
-    private ArrayList<Runnable> onGameStartedRunnables;
+    private CopyOnWriteArrayList<Runnable> onGameStartedRunnables;
 
     public ConnectionsController(Room room, Services services) {
         this.services = services;
         this.room = room;
         playerConnectionStatesMap = new ConcurrentHashMap();
         onRefreshFinishedRunnables = new ArrayList();
-        onGameStartedRunnables = new ArrayList();
+        onGameStartedRunnables = new CopyOnWriteArrayList<Runnable>();
         safeThread = new SafeThread();
 
         init(room.getTeams());
@@ -48,7 +49,7 @@ public class ConnectionsController implements Disposable {
 
     public void gameStarted(){
         gameStarted = true;
-        services.getConnectionWatcher().gameStarted(room, new ConnectionWatcherListener() {
+        services.getConnectionWatcher().addConnectionWatcherListener(new ConnectionWatcherListener() {
             @Override
             public void onConnectionResume() {
                 sendMeConnected();
@@ -62,9 +63,10 @@ public class ConnectionsController implements Disposable {
                 for(PlayerConnectionState playerConnectionState : playerConnectionStatesMap.values()){
                     playerConnectionState.stopDisconnectTimeoutThread();
                 }
-
             }
         });
+
+        services.getConnectionWatcher().gameStarted(room);
 
         updateMyPlayingState(true, false);
 
@@ -204,7 +206,7 @@ public class ConnectionsController implements Disposable {
                     }
                     else{
                         services.getNotification().important(isSelf ? services.getTexts().notificationYouAbandonDueToTimeout() :
-                                String.format(services.getTexts().notificationAbandon(), player.getName()));
+                                String.format(services.getTexts().notificationAbandonDueToTimeout(), player.getName()));
                     }
 
 

@@ -155,7 +155,7 @@ public class KnightLogic {
                             setPause(true);
                             kingCapture();
                         }
-                        else if(newState == GameState.Won){
+                        else if(newState == GameState.Won || newState == GameState.WonWithoutContributions){
                             setPause(true);
                         }
                         else if(newState == GameState.BeforeNewGame){

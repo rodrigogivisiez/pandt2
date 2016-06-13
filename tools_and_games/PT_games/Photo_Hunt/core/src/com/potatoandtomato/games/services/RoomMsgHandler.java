@@ -71,10 +71,15 @@ public class RoomMsgHandler {
                 listener.onGoToNextStage(jsonObj.getString("id"), jsonObj.getInt("stageNumber"),
                         StageType.valueOf(jsonObj.getString("stageType")),
                         BonusType.valueOf(jsonObj.getString("bonusType")),
-                        jsonObj.getString("extra"));
+                        jsonObj.getString("extra"), jsonObj.getInt("currentScores"));
             }
             else if(type == RoomMsgType.StartPlaying){
-                listener.onStartPlaying();
+                JsonObj jsonObj = new JsonObj(msg);
+
+                listener.onStartPlaying(jsonObj.getString("id"), jsonObj.getInt("stageNumber"),
+                        StageType.valueOf(jsonObj.getString("stageType")),
+                        BonusType.valueOf(jsonObj.getString("bonusType")),
+                        jsonObj.getString("extra"));
             }
 
         } catch (JSONException e) {
@@ -140,13 +145,14 @@ public class RoomMsgHandler {
         }
     }
 
-    public void sendGotoNextStage(String id, int stageNumber, StageType stageType, BonusType bonusType, String extra){
+    public void sendGotoNextStage(String id, int stageNumber, StageType stageType, BonusType bonusType, String extra, int currentScores){
         JsonObj jsonObj = new JsonObj();
         jsonObj.put("id", id);
         jsonObj.put("bonusType", bonusType.name());
         jsonObj.put("stageType", stageType.name());
         jsonObj.put("stageNumber", stageNumber);
         jsonObj.put("extra", extra);
+        jsonObj.put("currentScores", currentScores);
         send(jsonObj.toString(), RoomMsgType.NextStage);
     }
 
@@ -164,8 +170,14 @@ public class RoomMsgHandler {
         }
     }
 
-    public void sendStartPlaying(){
-        send("", RoomMsgType.StartPlaying);
+    public void sendStartPlaying(String id, int stageNumber, StageType stageType, BonusType bonusType, String extra){
+        JsonObj jsonObj = new JsonObj();
+        jsonObj.put("id", id);
+        jsonObj.put("bonusType", bonusType.name());
+        jsonObj.put("stageType", stageType.name());
+        jsonObj.put("stageNumber", stageNumber);
+        jsonObj.put("extra", extra);
+        send(jsonObj.toString(), RoomMsgType.StartPlaying);
     }
 
 

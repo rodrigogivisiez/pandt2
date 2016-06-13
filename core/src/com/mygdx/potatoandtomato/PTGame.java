@@ -89,7 +89,7 @@ public class PTGame extends Game implements IPTGame {
 				_notification = new Notification(_batch, _assets, _game, _broadcaster);
 				_tutorials = new Tutorials(_game, _batch, _soundsPlayer, _assets, _broadcaster);
 				_restfulApi = new RestfulApi();
-				_connectionWatcher = new ConnectionWatcher(_gamingKit, _batch, _assets,  _broadcaster, _confirm, _texts);
+				_connectionWatcher = new ConnectionWatcher(_gamingKit, _batch, _assets,  _broadcaster, _confirm, _texts, _game);
 
 				_services = new Services(_assets, _texts,
 						_preferences, _profile, new FirebaseDB(Terms.FIREBASE_URL()),

@@ -146,9 +146,9 @@ GRAVE_BG
   index: -1
 GRAVE_ICON
   rotate: false
-  xy: 266, 69
-  size: 17, 17
-  orig: 17, 17
+  xy: 266, 68
+  size: 17, 18
+  orig: 17, 18
   offset: 0, 0
   index: -1
 GREEN_TILE
@@ -370,9 +370,9 @@ TRANS_DARK_BROWN_ROUNDED_BG
   index: -1
 TUTORIAL_ICON
   rotate: false
-  xy: 368, 170
-  size: 17, 17
-  orig: 17, 17
+  xy: 368, 169
+  size: 17, 18
+  orig: 17, 18
   offset: 0, 0
   index: -1
 UNKNOWN_CHESS

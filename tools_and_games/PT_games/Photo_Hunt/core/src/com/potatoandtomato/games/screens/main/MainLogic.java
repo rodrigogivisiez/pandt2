@@ -94,9 +94,14 @@ public class MainLogic extends GameLogic {
         _gameModel.setGameState(GameState.BeforeContinue);
     }
 
+    public void waitingContinue(){
+        _currentImagePair = null;
+        _screen.showMessages(_services.getTexts().waitForNextStage());
+    }
+
     //index = -1 mean peek next item in imagestorage, else peek item by index
     public void sendGoToNextStageIfIsDecisionMaker(int index){
-        if(_gameModel.getGameState() == GameState.Playing || _gameModel.getGameState() == GameState.PrePlaying){
+        if(_gameModel.getGameState() == GameState.Playing){
             return;
         }
 
@@ -114,14 +119,15 @@ public class MainLogic extends GameLogic {
                     String extra = StageImagesLogic.generateBonusTypeExtra(bonusType, getCoordinator().getAllConnectedPlayers());
 
                     _services.getRoomMsgHandler().sendGotoNextStage(imagePair.getImageDetails().getId(),
-                            _gameModel.getStageNumber() + 1, stageType, bonusType, extra);
+                            _gameModel.getStageNumber() + 1, stageType, bonusType, extra, _gameModel.getScore().intValue());
 
                 }
             });
         }
     }
 
-    public void goToNewStage(final String id, final int stageNumber, final StageType stageType, final BonusType bonusType, final String extra){
+    public void goToNewStage(final String id, final int stageNumber, final StageType stageType,
+                             final BonusType bonusType, final String extra, int currentScores){
         if(Global.REVIEW_MODE){
             newStageReviewMode(id);
             return;
@@ -131,6 +137,7 @@ public class MainLogic extends GameLogic {
             return;
         }
 
+        _gameModel.setScore((double) currentScores, true);
         _currentImagePair = null;
 
         if(stageType == StageType.Bonus){
@@ -156,35 +163,40 @@ public class MainLogic extends GameLogic {
                 if(_safeThread != null) _safeThread.kill();
                 if(disposed) return;
 
-                popImagePairIfCurrentIsNull(id);
-                if(_currentImagePair != null){
-                    _gameModel.setImageDetails(_currentImagePair.getImageDetails());
-                }
-                else{
-                    _gameModel.setImageDetails(null);
-                }
-
-                if (_currentImagePair == null) {
-                    _screen.showMessages(_services.getTexts().slowMessage());
-                }
-                else{
-                    _screen.setImages(_currentImagePair.getImageOne(), _currentImagePair.getImageTwo());
-                    _stageImagesLogic.beforeStartStage(stageType, bonusType, extra);
-                }
-
-                _gameModel.clearHandledAreas();
-                _gameModel.setStageType(stageType);
-                _gameModel.setStageNumber(stageNumber);
-                _gameModel.convertStageNumberToRemainingMiliSecs();
                 if(_gameModel.getGameState() == GameState.PrePlaying){
-                    _gameModel.setGameState(GameState.Playing);
                     if(getCoordinator().getDecisionsMaker().meIsDecisionMaker()){
-                        _services.getRoomMsgHandler().sendStartPlaying();
+                        _services.getRoomMsgHandler().sendStartPlaying(id, stageNumber, stageType, bonusType, extra);
                     }
                 }
-
             }
         });
+    }
+
+    public void onStartGameReceived(final String id, final int stageNumber, final StageType stageType, final BonusType bonusType, final String extra){
+        if(_safeThread != null) _safeThread.kill();
+        if(disposed) return;
+
+        popImagePairIfCurrentIsNull(id);
+        if(_currentImagePair != null){
+            _gameModel.setImageDetails(_currentImagePair.getImageDetails());
+        }
+        else{
+            _gameModel.setImageDetails(null);
+        }
+
+        if (_currentImagePair == null) {
+            _screen.showMessages(_services.getTexts().slowMessage());
+        }
+        else{
+            _screen.setImages(_currentImagePair.getImageOne(), _currentImagePair.getImageTwo());
+            _stageImagesLogic.beforeStartStage(stageType, bonusType, extra);
+        }
+
+        _gameModel.clearHandledAreas();
+        _gameModel.setStageType(stageType);
+        _gameModel.setStageNumber(stageNumber);
+        _gameModel.convertStageNumberToRemainingMiliSecs();
+        _gameModel.setGameState(GameState.Playing);
     }
 
     private void newStageReviewMode(final String id){
@@ -407,7 +419,10 @@ public class MainLogic extends GameLogic {
 
             @Override
             public void onGameStateChanged(GameState oldState, GameState newState) {
-                if(newState == GameState.WaitingForNextStage){
+                if(newState == GameState.BeforeContinue){
+                    waitingContinue();
+                }
+                else if(newState == GameState.WaitingForNextStage){
                     if(!Global.REVIEW_MODE){
                         Threadings.delay(1000, new Runnable() {
                             @Override
@@ -527,14 +542,14 @@ public class MainLogic extends GameLogic {
                             @Override
                             public void onLoaded(Texture texture) {
                                 waitingImageCount[0]++;
-                                _currentImagePair.setImageOne(texture);
+                                if(_currentImagePair != null) _currentImagePair.setImageOne(texture);
                             }
                         });
                         getCoordinator().getRemoteImage(_currentImagePair.getImageDetails().getImageTwoUrl(), new WebImageListener() {
                             @Override
                             public void onLoaded(Texture texture) {
                                 waitingImageCount[0]++;
-                                _currentImagePair.setImageTwo(texture);
+                                if(_currentImagePair != null) _currentImagePair.setImageTwo(texture);
                             }
                         });
 
@@ -542,7 +557,7 @@ public class MainLogic extends GameLogic {
                             Threadings.sleep(200);
                         }
 
-                        if(!_safeThread.isKilled()){
+                        if(!_safeThread.isKilled() && _currentImagePair != null){
                             _screen.onResumeRefreshImages(_currentImagePair.getImageOne(), _currentImagePair.getImageTwo());
                         }
                     }
@@ -594,7 +609,7 @@ public class MainLogic extends GameLogic {
             public void onWon(WonStageModel wonStageModel) {
                 _gameModel.setRemainingMiliSecs(wonStageModel.getRemainingSecs(), false);
                 _gameModel.setHintsLeft(wonStageModel.getHintsLeft());
-                _gameModel.setGameState(GameState.Won);
+                _gameModel.setGameState(_currentImagePair == null ? GameState.WonWithoutContributions : GameState.Won);
 
                 Logs.show("You win, time is: " + wonStageModel.getRemainingSecs());
             }
@@ -605,15 +620,13 @@ public class MainLogic extends GameLogic {
             }
 
             @Override
-            public void onGoToNextStage(String id, int stageNumber, StageType stageType, BonusType bonusType, String extra) {
-                goToNewStage(id, stageNumber, stageType, bonusType, extra);
+            public void onGoToNextStage(String id, int stageNumber, StageType stageType, BonusType bonusType, String extra, int currentScore) {
+                goToNewStage(id, stageNumber, stageType, bonusType, extra, currentScore);
             }
 
-            @Override       //is a precaution for continue player not aware the game in playing state
-            public void onStartPlaying() {
-                if(_gameModel.getGameState() != GameState.Playing && _gameModel.getGameState() != GameState.PrePlaying){
-                    _gameModel.setGameState(GameState.Playing);
-                }
+            @Override
+            public void onStartPlaying(String id, int stageNumber, StageType stageType, BonusType bonusType, String extra) {
+                onStartGameReceived(id, stageNumber, stageType, bonusType, extra);
             }
 
         });

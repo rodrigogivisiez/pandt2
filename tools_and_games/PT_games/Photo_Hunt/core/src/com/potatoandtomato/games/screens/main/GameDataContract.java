@@ -23,7 +23,8 @@ public class GameDataContract extends GameDataContractAbstract {
     public GameDataContract(GameModel gameModel, GameCoordinator gameCoordinator) {
         this.gameModel = gameModel;
         this.gameCoordinator = gameCoordinator;
-    }
+
+   }
 
     @Override
     public String generateGameData() {
@@ -75,11 +76,13 @@ public class GameDataContract extends GameDataContractAbstract {
                 GameModel receivedGameModel = objectMapper.readValue(receivedGameModelJson, GameModel.class);
 
                 if(receivedGameModel.getGameState() == GameState.Lose
-                        || receivedGameModel.getGameState() == GameState.Won
+                        || receivedGameModel.getGameState() == GameState.WonWithoutContributions
                         || receivedGameModel.getGameState() == GameState.Playing){
 
                 }
-                else{
+                else if(receivedGameModel.getGameState() == GameState.Won){
+                    receivedGameModel.setGameState(GameState.WonWithoutContributions);
+                } else {
                     receivedGameModel.setGameState(gameModel.getGameState());   //set to before continue
                 }
 

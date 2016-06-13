@@ -22,7 +22,7 @@ public abstract class RoomMsgListener {
 
     public abstract void onDownloadImageRequest(ArrayList<String> ids);
 
-    public abstract void onGoToNextStage(String id, int stageNumber, StageType stageType, BonusType bonusType, String extra);
+    public abstract void onGoToNextStage(String id, int stageNumber, StageType stageType, BonusType bonusType, String extra, int currentScores);
 
-    public abstract void onStartPlaying();
+    public abstract void onStartPlaying(String id, int stageNumber, StageType stageType, BonusType bonusType, String extra);
 }

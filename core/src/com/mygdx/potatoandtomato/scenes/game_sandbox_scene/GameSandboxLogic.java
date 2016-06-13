@@ -5,6 +5,7 @@ import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
 import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.ConnectionsControllerListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.GameLoadStateMonitorListener;
+import com.mygdx.potatoandtomato.absintflis.services.ConnectionWatcherListener;
 import com.mygdx.potatoandtomato.enums.ConnectionStatus;
 import com.mygdx.potatoandtomato.enums.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
@@ -26,6 +27,7 @@ import com.potatoandtomato.common.models.ScoreDetails;
 import com.potatoandtomato.common.models.Team;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by SiongLeng on 26/12/2015.
@@ -38,6 +40,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     Notification _notification;
     boolean isContinue;
     boolean gameStarted;
+    boolean gamePlaying;
     boolean failed;
     boolean exiting;
     EndGameData endGameData;
@@ -47,7 +50,8 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     SafeThread safeThread;
     GameLoadStateMonitor gameLoadStateMonitor;
     ConnectionsController connectionsController;
-    ArrayList<Runnable> onGameStartedRunnables;
+    CopyOnWriteArrayList<Runnable> onGameStartedRunnables;
+    CopyOnWriteArrayList<Runnable> onHasGameDataReceivedRunnables;
 
     public GameSandboxLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
@@ -60,7 +64,8 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         safeThread = new SafeThread();
         gameLoadStateMonitor = new GameLoadStateMonitor(room, _services, isContinue ? null : room.getTeams(), _screen, this);
         connectionsController = new ConnectionsController(room, services);
-        onGameStartedRunnables = new ArrayList<Runnable>();
+        onGameStartedRunnables = new CopyOnWriteArrayList<Runnable>();
+        onHasGameDataReceivedRunnables = new CopyOnWriteArrayList<Runnable>();
 
         initiateUserTables();
         initiateEndGameEssential();
@@ -77,14 +82,28 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     }
 
     public void updateReceived(final int code, final String msg, final String senderId){
+        if(!gamePlaying){
+            if(code == UpdateRoomMatesCode.IN_GAME_UPDATE){
+                onHasGameDataReceivedRunnables.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateReceived(code, msg, senderId);
+                    }
+                });
+                return;
+            }
+        }
+
         if(!gameStarted){
-            onGameStartedRunnables.add(new Runnable() {
-                @Override
-                public void run() {
-                    updateReceived(code, msg, senderId);
-                }
-            });
-            return;
+            if(code != UpdateRoomMatesCode.IN_GAME_UPDATE){
+                onGameStartedRunnables.add(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateReceived(code, msg, senderId);
+                    }
+                });
+                return;
+            }
         }
 
         if(code == UpdateRoomMatesCode.IN_GAME_UPDATE){
@@ -177,11 +196,22 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                     }
                 });
 
-
                 for(Runnable runnable : onGameStartedRunnables){
                     runnable.run();
                 }
                 onGameStartedRunnables.clear();
+
+                coordinator.getGameDataHelper().setOnGameDataReceivedRunnable(new OneTimeRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        for(Runnable runnable : onHasGameDataReceivedRunnables){
+                            runnable.run();
+                        }
+                        onHasGameDataReceivedRunnables.clear();
+
+                        gamePlaying = true;
+                    }
+                }));
 
             }
         };
@@ -274,6 +304,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                 }
                 else if(connectionStatus == ConnectionStatus.Disconnected){
                     coordinator.userConnectionChanged(userId, false);
+
                 }
                 else if(connectionStatus == ConnectionStatus.Connected){
                     coordinator.userConnectionChanged(userId, true);
@@ -281,6 +312,27 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             }
         });
 
+        _services.getConnectionWatcher().addConnectionWatcherListener(new ConnectionWatcherListener() {
+            @Override
+            public void onConnectionResume() {
+                coordinator.getGameDataHelper().setOnGameDataReceivedRunnable(new OneTimeRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        for(Runnable runnable : onHasGameDataReceivedRunnables){
+                            runnable.run();
+                        }
+                        onHasGameDataReceivedRunnables.clear();
+
+                        gamePlaying = true;
+                    }
+                }));
+            }
+
+            @Override
+            public void onConnectionHalt() {
+                gamePlaying = false;
+            }
+        });
 
         _services.getGamingKit().addListener(getClassTag(), new UpdateRoomMatesListener() {
             @Override
@@ -427,6 +479,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             }
         }
 
+        connectionsController.dispose();
         _services.getConnectionWatcher().gameEnded();
         connectionsController.updateMyPlayingState(false, false);
     }

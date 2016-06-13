@@ -45,7 +45,7 @@ public class KingLogic{
     }
 
     public void updateKingByGameState(GameState gameState){
-        if(gameState == GameState.Won){
+        if(gameState == GameState.Won || gameState == GameState.WonWithoutContributions){
             kingActor.changeState(KingState.Win);
         }
         else if(gameState == GameState.Lose){
@@ -93,7 +93,7 @@ public class KingLogic{
                         if (newState == GameState.Playing) {
                             setPaused(false);
                         }
-                        else if(newState == GameState.Won){
+                        else if(newState == GameState.Won || newState == GameState.WonWithoutContributions){
                             setPaused(false);
                             updateKingByGameState(newState);
                         }

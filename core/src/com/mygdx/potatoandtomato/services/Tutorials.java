@@ -69,7 +69,7 @@ public class Tutorials implements ITutorials {
             @Override
             public void run() {
                 if(_stage != null){
-                    _game.removeInputProcessor(_stage);
+                   // _game.removeInputProcessor(_stage);
                     _stage.dispose();
                     _root.remove();
                 }
@@ -83,7 +83,7 @@ public class Tutorials implements ITutorials {
                 _root.invalidate();
 
                 _stage.addActor(_root);
-                _game.addInputProcessor(_stage, 19);
+              //  _game.addInputProcessor(_stage, 19);
             }
         });
     }

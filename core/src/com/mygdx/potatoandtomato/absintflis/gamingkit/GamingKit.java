@@ -54,8 +54,10 @@ public abstract class GamingKit {
 
 
     public void onConnectionChanged(String userId, ConnectionChangedListener.ConnectStatus status){
-        for(ConnectionChangedListener listener : _connectionChangedListeners.values()){
-            listener.onChanged(userId, status);
+        if(userId != null){
+            for(ConnectionChangedListener listener : _connectionChangedListeners.values()){
+                listener.onChanged(userId, status);
+            }
         }
     }
 

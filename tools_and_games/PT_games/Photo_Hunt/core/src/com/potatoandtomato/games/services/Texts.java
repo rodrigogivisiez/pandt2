@@ -21,6 +21,7 @@ public class Texts {
 
     public String noPlayer() { return "No Player"; }
     public String totalScores() { return "Scores"; }
+    public String waitForNextStage() { return "You teammates are playing, you will rejoin in next stage.";}
     public String slowMessage() { return "Slow connection detected, please wait for next stage.";}
     public String replenishHints(){ return "Replenish"; }
 

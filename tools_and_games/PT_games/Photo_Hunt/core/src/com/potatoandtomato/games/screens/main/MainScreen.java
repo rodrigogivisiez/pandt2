@@ -217,20 +217,22 @@ public class MainScreen extends GameScreen {
 
                 Table msgTable1 = new Table();
                 msgTable1.pad(10);
-                msgTable1.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WHITE_BG)));
+                msgTable1.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.FULL_BLACK_BG)));
                 Table msgTable2 = new Table();
                 msgTable2.pad(10);
-                msgTable2.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WHITE_BG)));
+                msgTable2.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.FULL_BLACK_BG)));
 
-                Label.LabelStyle labelStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR), Color.BLACK);
+                Label.LabelStyle labelStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR), Color.WHITE);
 
                 Label label1 = new Label(msg, labelStyle);
+                label1.setAlignment(Align.center);
                 label1.setWrap(true);
                 Label label2 = new Label(msg, labelStyle);
+                label2.setAlignment(Align.center);
                 label2.setWrap(true);
 
-                msgTable1.add(label1).expandX().fillX();
-                msgTable2.add(label2).expandX().fillX();
+                msgTable1.add(label1).expandX().fillX().pad(20);
+                msgTable2.add(label2).expandX().fillX().pad(20);
 
                 _imageOneInnerTable.add(msgTable1).expand().fill();
                 _imageTwoInnerTable.add(msgTable2).expand().fill();
