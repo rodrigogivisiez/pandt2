@@ -17,6 +17,7 @@ import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.mygdx.potatoandtomato.utils.ForAppwarpTesting;
+import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.absints.IDownloader;
 import com.potatoandtomato.common.absints.IPTGame;
 import com.potatoandtomato.common.absints.PTAssetsManager;
@@ -102,6 +103,8 @@ public class PTGame extends Game implements IPTGame {
 				setScreen(_screen);
 
 				_screen.toScene(SceneEnum.BOOT);
+
+				Logs.show("JUST TEST MASTER");
 			}
 		});
 	}
