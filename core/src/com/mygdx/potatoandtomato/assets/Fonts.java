@@ -72,7 +72,8 @@ public class Fonts extends FontAssets {
         CARTER_L_REGULAR_B_ffffff_000000_1,
 
         IMPACT_XS_REGULAR_S_a74828_1_1,
-        IMPACT_S_REGULAR_S_a74828_1_1
+        IMPACT_S_REGULAR_S_a74828_1_1,
+        IMPACT_M_REGULAR,
     }
 
 

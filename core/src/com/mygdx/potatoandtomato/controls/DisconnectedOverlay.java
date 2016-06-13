@@ -136,7 +136,7 @@ public class DisconnectedOverlay {
         this.visible = visible;
 
         if(visible && stage != null){
-            iptGame.addInputProcessor(stage, 11);
+            iptGame.addInputProcessor(stage, 12);
         }
         else{
             iptGame.removeInputProcessor(stage);

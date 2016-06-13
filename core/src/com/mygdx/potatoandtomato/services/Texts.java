@@ -5,6 +5,9 @@ package com.mygdx.potatoandtomato.services;
  */
 public class Texts {
 
+    public String insert() { return "Insert";}
+    public String coin() { return "Coin";}
+
     public String mascotQuestion() { return "Are you a Potato or \nTomato?";};
     public String mascotPotato() { return "Potatoes welcome \nYOU!";};
     public String mascotTomato() { return "Tomatoes welcome \nYOU!";};
