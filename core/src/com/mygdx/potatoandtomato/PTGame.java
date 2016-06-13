@@ -104,7 +104,7 @@ public class PTGame extends Game implements IPTGame {
 
 				_screen.toScene(SceneEnum.BOOT);
 
-				Logs.show("JUST TEST MASTER");
+				Logs.show("JUST TEST MASTER jejeh");
 			}
 		});
 	}
