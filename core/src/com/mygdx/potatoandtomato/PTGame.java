@@ -104,7 +104,6 @@ public class PTGame extends Game implements IPTGame {
 
 				_screen.toScene(SceneEnum.BOOT);
 
-				Logs.show("COINNN");
 			}
 		});
 	}

@@ -54,6 +54,7 @@ public class RoomLogic extends LogicAbstract {
     RoomError roomErrorOccured;
     UserBadgeHelper userBadgeHelper;
     GameFileChecker gameFileChecker;
+    ConcurrentHashMap<String, SafeThread> addUserSafeThreadMap;
 
     public Room getRoom() {
         return room;
@@ -67,6 +68,7 @@ public class RoomLogic extends LogicAbstract {
         scene = new RoomScene(services, screen, room);
         userBadgeHelper = new UserBadgeHelper(_services, scene, room.getGame());
         noGameClientUsers = new ConcurrentHashMap();
+        addUserSafeThreadMap = new ConcurrentHashMap();
         roomLogicSafeThread = new SafeThread();
 
         scene.populateGameDetails(room.getGame());
@@ -358,32 +360,40 @@ public class RoomLogic extends LogicAbstract {
     }
 
     public void addUserToRoom(final String userId, final Profile profile, final int slotIndex){
+
+        if(addUserSafeThreadMap.containsKey(userId)){
+            addUserSafeThreadMap.get(userId).kill();
+        }
+        final SafeThread safeThread = new SafeThread();
+        addUserSafeThreadMap.put(userId, safeThread);
+
         Threadings.runInBackground(new Runnable() {
             @Override
             public void run() {
-                if(room.getRoomUserByUserId(userId) != null) return;
+                if (room.getRoomUserByUserId(userId) != null) return;
 
                 final boolean[] added = {false};
-                if(isHost()){
+                if (isHost()) {
                     getProfileByUserId(userId, new RunnableArgs<Profile>() {
                         @Override
                         public void run() {
+                            if(safeThread.isKilled()) return;
+
                             room.addRoomUser(this.getFirstArg(), slotIndex, false);
                             _services.getDatabase().addUserToRoom(room, this.getFirstArg(), room.getSlotIndexByUserId(userId), null);
                             added[0] = true;
                         }
                     });
-                }
-                else{
-                    if(profile == null) return;
+                } else {
+                    if (profile == null) return;
 
                     room.addRoomUser(profile, slotIndex, false);
                     added[0] = true;
                 }
 
-                while (!added[0]){
+                while (!added[0]) {
                     Threadings.sleep(100);
-                    if(roomLogicSafeThread.isKilled()) return;
+                    if (roomLogicSafeThread.isKilled()) return;
                 }
 
                 RoomUser roomUser = room.getRoomUserByUserId(userId);
@@ -391,7 +401,7 @@ public class RoomLogic extends LogicAbstract {
                 stopGameStartCountDown(roomUser.getProfile());
                 userBadgeHelper.userJoinedRoom(roomUser);
 
-                if(isHost()){
+                if (isHost()) {
                     refreshRoomDesign();
                     selfUpdateRoomStatePush();
                 }
@@ -400,6 +410,10 @@ public class RoomLogic extends LogicAbstract {
     }
 
     public void removeUserFromRoom(String userId){
+        if(addUserSafeThreadMap.containsKey(userId)){
+            addUserSafeThreadMap.get(userId).kill();
+        }
+
         RoomUser roomUser = room.getRoomUserByUserId(userId);
         if(roomUser != null){
             if(isHost()){

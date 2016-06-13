@@ -173,6 +173,8 @@ public class GameLoadStateMonitor implements Disposable {
         services.getGamingKit().addListener(getClassTag(), new UpdateRoomMatesListener() {
             @Override
             public void onUpdateRoomMatesReceived(int code, String msg, String senderId) {
+                if(!userLoadStateMap.containsKey(senderId)) return;
+
                 switch (code) {
                     case UpdateRoomMatesCode.ASK_FOR_USER_READY:
                         if(userLoadStateMap.get(services.getProfile().getUserId()) != LoadState.Loading){
