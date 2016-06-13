@@ -493,7 +493,6 @@ public class RoomLogic extends LogicAbstract {
     public void selfUpdateRoomStatePush(){
         if(quiting) return;;
 
-        boolean canStart = (startGameCheck(false) == 0);
         PushNotification push = new PushNotification();
         push.setId(PushCode.UPDATE_ROOM);
         push.setSticky(true);
@@ -502,13 +501,16 @@ public class RoomLogic extends LogicAbstract {
         push.setSilentNotification(true);
         push.setSilentIfInGame(false);
 
+        int returnCode = startGameCheck(false);
+        boolean canStart = (returnCode == 0 || returnCode == 3 || returnCode == 2);
         if(canStart && !gameStarted && isHost() && !isContinue){
             push.setTitle(_texts.PUSHRoomUpdateGameReadyTitle());
             push.setSilentIfInGame(true);
             push.setSilentNotification(false);
         }
 
-        _services.getGcmSender().send(_services.getProfile(), push);
+        publishBroadcast(BroadcastEvent.UPDATE_ROOM, push);
+        //_services.getGcmSender().send(_services.getProfile(), push);
     }
 
     public void hostSendGameStartedPush(){
@@ -575,6 +577,12 @@ public class RoomLogic extends LogicAbstract {
             }
             return 1;
         }
+        else if(room.getGame().getMustFairTeam() && !room.checkAllFairTeam()){
+            if(showMessage){
+                _confirm.show(_services.getTexts().fairTeamNeeded(), Confirm.Type.YES, null);
+            }
+            return 4;
+        }
         else if(noGameClientUsers.size() > 0){
             if(showMessage){
                 _confirm.show(_services.getTexts().stillDownloadingClient(), Confirm.Type.YES, null);
@@ -586,12 +594,6 @@ public class RoomLogic extends LogicAbstract {
                 _confirm.show(_services.getTexts().waitAllUsersReady(), Confirm.Type.YES, null);
             }
             return 3;
-        }
-        else if(room.getGame().getMustFairTeam() && !room.checkAllFairTeam()){
-            if(showMessage){
-                _confirm.show(_services.getTexts().fairTeamNeeded(), Confirm.Type.YES, null);
-            }
-            return 4;
         }
         else{
             return 0;

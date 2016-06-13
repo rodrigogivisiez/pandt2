@@ -45,7 +45,7 @@ public class GcmMessageHandler extends GcmListenerService {
         }
     }
 
-    private void showNotification(Context context, PushNotification pushNotification){
+    public static void showNotification(Context context, PushNotification pushNotification){
         Intent intent = new Intent(context, HandleNotificationBroadcastReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
                 pushNotification.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);

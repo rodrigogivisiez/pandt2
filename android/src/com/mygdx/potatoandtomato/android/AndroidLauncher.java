@@ -19,6 +19,7 @@ import com.chartboost.sdk.Chartboost;
 import com.firebase.client.Firebase;
 import com.mygdx.potatoandtomato.PTGame;
 import com.mygdx.potatoandtomato.absintflis.entrance.EntranceLoaderListener;
+import com.mygdx.potatoandtomato.models.PushNotification;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.*;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
@@ -94,6 +95,13 @@ public class AndroidLauncher extends AndroidApplication {
 	}
 
 	private void roomAliveRelated(){
+		_broadcaster.subscribe(BroadcastEvent.UPDATE_ROOM, new BroadcastListener<PushNotification>() {
+			@Override
+			public void onCallback(PushNotification obj, Status st) {
+				GcmMessageHandler.showNotification(_this, obj);
+			}
+		});
+
 		_broadcaster.subscribe(BroadcastEvent.DESTROY_ROOM, new BroadcastListener() {
 			@Override
 			public void onCallback(Object obj, Status st) {
