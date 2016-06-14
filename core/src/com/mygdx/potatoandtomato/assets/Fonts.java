@@ -49,6 +49,7 @@ public class Fonts extends FontAssets {
         MYRIAD_XL_REGULAR,
         MYRIAD_XL_BOLD_S_000000_1_1,
 
+        HELVETICA_XXS_REGULAR,
         HELVETICA_XS_REGULAR,
         HELVETICA_XS_BOLD,
         HELVETICA_S_HEAVYITALIC_B_ffffff_81562c_2,         //dark brown
@@ -62,11 +63,12 @@ public class Fonts extends FontAssets {
         HELVETICA_XL_CONDENSED_S_a05e00_1_1,       //dark orange
 
         PIZZA_M_REGULAR_B_ffffff_000000_1,
+        PIZZA_L_REGULAR_S_a05e00_2_2,              //dark orange
         PIZZA_XL_REGULAR_S_a05e00_1_1,              //dark orange
         PIZZA_XXL_REGULAR_S_a05e00_1_1,             //dark orange
         PIZZA_XXL_REGULAR_B_ffffff_0f5673_1_S_0e516c_1_3, //dark blue
+        PIZZA_XXL_REGULAR_B_000000_fed271_3,               //light orange
         PIZZA_XXXL_REGULAR,
-        PIZZA_MAX_REGULAR_B_000000_fed271_3,               //light orange
 
         CARTER_S_REGULAR_B_ffffff_000000_1,
         CARTER_L_REGULAR_B_ffffff_000000_1,

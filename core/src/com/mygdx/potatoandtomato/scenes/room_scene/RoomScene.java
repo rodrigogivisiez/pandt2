@@ -81,7 +81,7 @@ public class RoomScene extends SceneAbstract {
     @Override
     public void populateRoot() {
 
-        new TopBar(_root, _texts.roomTitle(), false, _assets, _screen);
+        new TopBar(_root, _texts.roomTitle(), false, _assets, _screen, _services.getCoins());
         _root.align(Align.top);
 
         _teamTables = new Array();

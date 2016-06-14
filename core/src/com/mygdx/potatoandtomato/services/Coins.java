@@ -1,11 +1,16 @@
 package com.mygdx.potatoandtomato.services;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.controls.CoinMachineControl;
+import com.mygdx.potatoandtomato.controls.TopBarCoinControl;
 import com.potatoandtomato.common.absints.IPTGame;
 import com.potatoandtomato.common.assets.Assets;
+import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.utils.Threadings;
+
+import java.util.ArrayList;
 
 /**
  * Created by SiongLeng on 13/6/2016.
@@ -17,26 +22,27 @@ public class Coins {
     private Texts texts;
     private IPTGame iptGame;
     private CoinMachineControl coinMachineControl;
-    private boolean visible;
+    private ArrayList<TopBarCoinControl> topBarCoinControls;
 
-    public Coins(Assets assets, SoundsPlayer soundsPlayer, Texts texts, IPTGame iptGame) {
+    public Coins(Broadcaster broadcaster, Assets assets,
+                 SoundsPlayer soundsPlayer, Texts texts, IPTGame iptGame, SpriteBatch batch) {
         this.assets = assets;
         this.soundsPlayer = soundsPlayer;
         this.texts = texts;
         this.iptGame = iptGame;
 
-        coinMachineControl = new CoinMachineControl(assets, soundsPlayer, texts, iptGame);
-        show();
+        coinMachineControl = new CoinMachineControl(broadcaster, assets, soundsPlayer, texts, iptGame, batch);
+        topBarCoinControls = new ArrayList();
 
         setListeners();
     }
 
-    public void show(){
-        visible = true;
+    public void showCoinMachine(){
+        coinMachineControl.show();
     }
 
-    public void hide(){
-
+    public void hideCoinMachine(){
+        coinMachineControl.hide();
     }
 
     public void setListeners(){
@@ -47,7 +53,7 @@ public class Coins {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         super.clicked(event, x, y);
-                        coinMachineControl.putCoin();
+                        coinMachineControl.putCoinAnimation(null);
                     }
                 });
 
@@ -56,16 +62,8 @@ public class Coins {
         });
     }
 
-
-
-
-
-
-
     public void render(float delta){
-        if(isVisible()){
-            coinMachineControl.render(delta);
-        }
+        coinMachineControl.render(delta);
     }
 
     public void resize(int width, int height){
@@ -73,8 +71,9 @@ public class Coins {
     }
 
 
-
-    public boolean isVisible() {
-        return visible;
+    public TopBarCoinControl getNewTopBarCoinControl() {
+        TopBarCoinControl topBarCoinControl = new TopBarCoinControl(assets);
+        topBarCoinControls.add(topBarCoinControl);
+        return topBarCoinControl;
     }
 }

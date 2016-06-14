@@ -7,6 +7,7 @@ public class Texts {
 
     public String insert() { return "Insert";}
     public String coin() { return "Coin";}
+    public String coinsInsertedTitle() { return "Coins Inserted";}
 
     public String mascotQuestion() { return "Are you a Potato or \nTomato?";};
     public String mascotPotato() { return "Potatoes welcome \nYOU!";};
