@@ -144,7 +144,7 @@ public class MockDB implements IDatabase {
     }
 
     @Override
-    public void clearListenersByClassTag(String classTag) {
+    public void clearListenersByTag(String tag) {
 
     }
 

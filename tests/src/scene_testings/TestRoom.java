@@ -175,7 +175,7 @@ public class TestRoom extends TestAbstract {
         verify(gamingKit, times(1)).updateRoomMates(eq(UpdateRoomMatesCode.START_GAME), anyString());
 
         logic.receivedUpdateRoomMates(UpdateRoomMatesCode.START_GAME, "", "");
-        logic.stopGameStartCountDown(_room.getRoomUsersMap().get("another").getProfile());
+        logic.cancelPutCoins(_room.getRoomUsersMap().get("another").getProfile());
         Threadings.sleep(1600);
         verify(logic, times(0)).gameStarted();
 
@@ -211,7 +211,7 @@ public class TestRoom extends TestAbstract {
         _room.getGame().setTeamMinPlayers("1");
         _room.getGame().setTeamCount("2");
 
-        logic.startGameCountDown();
+        logic.startPutCoins();
         Threadings.sleep(7100);
 
         Assert.assertEquals(true, _room.isPlaying());

@@ -148,7 +148,6 @@ public class Services {
 
     public void setProfile(Profile _profile) {
         this._profile = _profile;
-        this.getConnectionWatcher().setProfile(_profile);
     }
 
     public IDatabase getDatabase() { return _database; }

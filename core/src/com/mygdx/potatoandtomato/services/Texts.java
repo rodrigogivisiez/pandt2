@@ -123,7 +123,7 @@ public class Texts {
 
     public String playedXAgo() { return "Played %s together %s";}
 
-    public String gameStartingIn() { return "Game starting in %s...";}
+    public String gameStarting() { return "Game will be starting soon after %s coin(s) inserted.";}
     public String gameStartStop() { return "Game start process is stopped by %s...";}
 
     public String confirmQuit() { return "Are you sure you want to quit Potato and Tomato?";}

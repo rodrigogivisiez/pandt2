@@ -231,7 +231,7 @@ public class CoinMachineControl {
                 Label usernameLabel = new Label(Strings.cutOff(userName, 10), labelStyle);
 
                 Table coinTable = new Table();
-                if(hasCoin){
+                if(hasCoin || insertedCoins > 0){
                     Image coinImage = new Image(assets.getTextures().get(Textures.Name.COIN_ICON_SMALL));
                     Label coinCountLabel = new Label(String.format("x%s", insertedCoins), labelStyle);
                     coinTable.add(coinImage).padRight(1);

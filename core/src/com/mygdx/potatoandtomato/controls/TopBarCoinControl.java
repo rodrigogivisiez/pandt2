@@ -18,13 +18,13 @@ public class TopBarCoinControl extends Table {
     private Table _this;
     private Label coinLabel;
 
-    public TopBarCoinControl(Assets assets) {
+    public TopBarCoinControl(Assets assets, int myCoinCount) {
         this.assets = assets;
         _this = this;
-        populate();
+        populate(myCoinCount);
     }
 
-    public void populate(){
+    public void populate(final int myCoinCount){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -34,7 +34,7 @@ public class TopBarCoinControl extends Table {
                 coinTable.setSize(30, 30);
                 coinTable.setPosition(5, 12);
 
-                coinLabel = new Label("1",
+                coinLabel = new Label(String.valueOf(myCoinCount),
                         new Label.LabelStyle(assets.getFonts().get(Fonts.FontId.PIZZA_L_REGULAR_S_a05e00_2_2), Color.WHITE));
                 coinTable.add(coinLabel);
 

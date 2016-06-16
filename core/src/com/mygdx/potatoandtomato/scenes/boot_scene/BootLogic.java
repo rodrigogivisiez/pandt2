@@ -44,6 +44,8 @@ public class BootLogic extends LogicAbstract {
         super.onShow();
 
         _bootScene.reset();
+        _services.getCoins().reset();
+        _services.getProfile().reset();
         _services.getSoundsPlayer().playThemeMusic();
         _screen.showRotateSunrise();
         publishBroadcast(BroadcastEvent.DESTROY_ROOM);
@@ -160,7 +162,7 @@ public class BootLogic extends LogicAbstract {
                 }
                 else {
                     obj.setToken(token);
-                    _services.setProfile(obj);
+                    _services.getProfile().copyToThis(obj);
                     loginGCM();
                 }
             }
@@ -189,6 +191,7 @@ public class BootLogic extends LogicAbstract {
 
     public void loginPTSuccess(){
         _services.getDatabase().updateProfile(_services.getProfile(), null);
+        _services.getCoins().profileReady();
         _services.getGamingKit().connect(_services.getProfile());
     }
 

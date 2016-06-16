@@ -25,7 +25,6 @@ import com.mygdx.potatoandtomato.enums.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.services.Confirm;
 import com.mygdx.potatoandtomato.services.VersionControl;
-import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.models.Player;
@@ -149,6 +148,7 @@ public class RoomLogic extends LogicAbstract {
         userBadgeHelper.setPaused(true);
         toggleConfirmStateListener(false);
         _services.getChat().hideChat();
+        _services.getCoins().hideCoinMachine();
         if(!quiting)  sendIsReadyUpdate(false);
     }
 
@@ -340,12 +340,12 @@ public class RoomLogic extends LogicAbstract {
             }
             if(noGameClientUsers.size() > 0){
                 Map.Entry<String, String> entry = noGameClientUsers.entrySet().iterator().next();  //first item
-                stopGameStartCountDown(room.getProfileByUserId(entry.getKey()));
+                cancelPutCoins(room.getProfileByUserId(entry.getKey()));
             }
             scene.updateDownloadPercentage(senderId, Integer.valueOf(msg));
         }
         else if(code == UpdateRoomMatesCode.START_GAME){
-            startGameCountDown();
+            startPutCoins();
         }
         else if(code == UpdateRoomMatesCode.GAME_OUTDATED){
             errorOccurred(RoomError.GameVersionOutdated);
@@ -355,7 +355,7 @@ public class RoomLogic extends LogicAbstract {
             if(!gameStarted) gameStarted();
         }
         else if(code == UpdateRoomMatesCode.PLAYER_CANCEL_START_GAME){
-            stopGameStartCountDown(room.getProfileByUserId(msg));
+            cancelPutCoins(room.getProfileByUserId(msg));
         }
     }
 
@@ -398,7 +398,7 @@ public class RoomLogic extends LogicAbstract {
 
                 RoomUser roomUser = room.getRoomUserByUserId(userId);
                 userJoinLeftAddChat(roomUser.getProfile(), true);
-                stopGameStartCountDown(roomUser.getProfile());
+                cancelPutCoins(roomUser.getProfile());
                 userBadgeHelper.userJoinedRoom(roomUser);
 
                 if (isHost()) {
@@ -423,7 +423,7 @@ public class RoomLogic extends LogicAbstract {
             room.removeUserByUserId(userId);
             scene.getPlayersMaps().remove(userId);
             userJoinLeftAddChat(roomUser.getProfile(), false);
-            stopGameStartCountDown(roomUser.getProfile());
+            cancelPutCoins(roomUser.getProfile());
 
             checkHostInRoom();
             userBadgeHelper.userLeftRoom(roomUser);
@@ -611,46 +611,24 @@ public class RoomLogic extends LogicAbstract {
         }
     }
 
-    public void startGameCountDown(){
-        countDownThread = new SafeThread();
+    public void startPutCoins(){
         starting = true;
         scene.getTeamsRoot().setTouchable(Touchable.disabled);
 
-        Threadings.runInBackground(new Runnable() {
-            @Override
-            public void run() {
-                int i = 3;
-                while(i > 0){
-                    _services.getSoundsPlayer().playSoundEffect(Sounds.Name.COUNT_DOWN);
-                    _services.getChat().newMessage(new ChatMessage(String.format(_texts.gameStartingIn(), i),
-                                            ChatMessage.FromType.IMPORTANT, null, ""));
+        _services.getSoundsPlayer().playSoundEffect(Sounds.Name.COUNT_DOWN);
+        _services.getChat().newMessage(new ChatMessage(String.format(_texts.gameStarting(), room.getRoomUsersCount()),
+                ChatMessage.FromType.IMPORTANT, null, ""));
 
-                    Threadings.sleep(1500);
-
-                    i--;
-                    if(countDownThread == null || countDownThread.isKilled()){
-                        countDownThread = null;
-                        starting = false;
-                        scene.getTeamsRoot().setTouchable(Touchable.enabled);
-                        return;
-                    }
-                }
-                countDownThread = null;
-                if(isHost()){
-                    sendUpdateRoomMates(UpdateRoomMatesCode.GAME_STARTED, "");
-                }
-            }
-        });
-
+        _services.getCoins().showCoinMachine();
     }
 
-    public void stopGameStartCountDown(Profile profile){
-        if(countDownThread != null){
-            countDownThread.kill();
-            if(profile != null){
-                _services.getChat().newMessage(new ChatMessage(String.format(_texts.gameStartStop(),
-                        profile.getDisplayName(15)), ChatMessage.FromType.SYSTEM, null, ""));
-            }
+    public void cancelPutCoins(Profile profile){
+        starting = false;
+
+        _services.getCoins().hideCoinMachine();
+        if(profile != null){
+            _services.getChat().newMessage(new ChatMessage(String.format(_texts.gameStartStop(),
+                    profile.getDisplayName(15)), ChatMessage.FromType.SYSTEM, null, ""));
         }
     }
 
@@ -932,7 +910,8 @@ public class RoomLogic extends LogicAbstract {
                 super.clicked(event, x, y);
                 if(!starting){
                     starting = true;
-                    hostSendStartGame();
+                    //hostSendStartGame();
+                    startPutCoins();
                 }
 
             }
@@ -942,9 +921,7 @@ public class RoomLogic extends LogicAbstract {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                if(!starting){
-                    _screen.toScene(SceneEnum.INVITE, room);
-                }
+                _screen.toScene(SceneEnum.INVITE, room);
             }
         });
 
@@ -952,9 +929,7 @@ public class RoomLogic extends LogicAbstract {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                if(!starting){
-                    _screen.toScene(SceneEnum.SINGLE_GAME_LEADER_BOARD, room.getGame());
-                }
+                _screen.toScene(SceneEnum.SINGLE_GAME_LEADER_BOARD, room.getGame());
             }
         });
     }

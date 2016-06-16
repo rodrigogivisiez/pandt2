@@ -7,7 +7,9 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
+import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import com.mygdx.potatoandtomato.assets.*;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.models.Profile;
@@ -51,6 +53,7 @@ public class PTGame extends Game implements IPTGame {
 	ConnectionWatcher _connectionWatcher;
 	Coins _coins;
 	Profile _profile;
+	IDatabase _database;
 	PTAssetsManager _monitoringPTAssetsManager;
 	ArrayList<Runnable> _onResumeRunnables;
 
@@ -81,6 +84,7 @@ public class PTGame extends Game implements IPTGame {
 				_soundsPlayer = new SoundsPlayer(_assets, _broadcaster);
 				_recorder = new Recorder(_soundsPlayer, _broadcaster);
 				_downloader = new Downloader();
+				_database = new FirebaseDB(Terms.FIREBASE_URL());
 
 				_chat = new Chat(_broadcaster, _gamingKit, _texts, _assets,
 										_soundsPlayer, _recorder, _batch, _game, _preferences);
@@ -88,11 +92,13 @@ public class PTGame extends Game implements IPTGame {
 				_notification = new Notification(_batch, _assets, _game, _broadcaster);
 				_tutorials = new Tutorials(_game, _batch, _soundsPlayer, _assets, _broadcaster);
 				_restfulApi = new RestfulApi();
-				_connectionWatcher = new ConnectionWatcher(_gamingKit, _batch, _assets,  _broadcaster, _confirm, _texts, _game);
-				_coins = new Coins(_broadcaster, _assets, _soundsPlayer, _texts, _game, _batch);
+				_connectionWatcher = new ConnectionWatcher(_gamingKit, _batch, _assets,
+									_broadcaster, _confirm, _texts, _game, _profile);
+				_coins = new Coins(_broadcaster, _assets, _soundsPlayer, _texts,
+						_game, _batch, _profile, _database, _gamingKit);
 
 				_services = new Services(_assets, _texts,
-						_preferences, _profile, new FirebaseDB(Terms.FIREBASE_URL()),
+						_preferences, _profile, _database,
 						new Shaders(), _gamingKit, _downloader, _chat,
 						new Socials(_preferences, _broadcaster), new GCMSender(), _confirm, _notification,
 						_recorder, _soundsPlayer, new VersionControl(), _broadcaster,
@@ -101,7 +107,8 @@ public class PTGame extends Game implements IPTGame {
 				_connectionWatcher.setPtScreen(_screen);
 				setScreen(_screen);
 
-				_screen.toScene(SceneEnum.BOOT);
+				_services.setProfile(MockModel.mockProfile());
+				_screen.toScene(SceneEnum.ROOM, MockModel.mockRoom("1"), false);
 			}
 		});
 	}
