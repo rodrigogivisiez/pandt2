@@ -107,8 +107,8 @@ public class PTGame extends Game implements IPTGame {
 				_connectionWatcher.setPtScreen(_screen);
 				setScreen(_screen);
 
-				_services.setProfile(MockModel.mockProfile());
-				_screen.toScene(SceneEnum.ROOM, MockModel.mockRoom("1"), false);
+
+				_screen.toScene(SceneEnum.SHOP);
 			}
 		});
 	}

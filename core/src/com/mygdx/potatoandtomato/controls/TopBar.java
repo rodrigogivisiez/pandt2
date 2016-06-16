@@ -76,6 +76,29 @@ public class TopBar {
         });
     }
 
+    public void setDarkTheme(){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                topBarTable.clearChildren();
+
+                iconImg.setDrawable(new TextureRegionDrawable(assets.getTextures().get(Textures.Name.BACK_ICON_DARK)));
+
+                Image darkImage = new Image(assets.getTextures().get(Textures.Name.LESS_TRANS_BLACK_BG));
+                darkImage.setFillParent(true);
+
+                Label.LabelStyle titleLabelStyle = new Label.LabelStyle();
+                titleLabelStyle.font = assets.getFonts().get(Fonts.FontId.PIZZA_XXL_REGULAR_B_000000_ffffff_3);
+                titleLabel.setStyle(titleLabelStyle);
+
+                topBarTable.add(titleLabel).expand().fill().padLeft(90);
+                topBarTable.addActor(darkImage);
+                topBarTable.addActor(iconImg);
+                topBarTable.add(coins.getNewTopBarCoinControl()).padBottom(5).padRight(5);
+            }
+        });
+    }
+
     public void setIconListener(){
         Threadings.postRunnable(new Runnable() {
             @Override

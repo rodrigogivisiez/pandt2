@@ -257,6 +257,16 @@ public class CoinMachineControl {
         });
     }
 
+    public void removeUserTable(final String userId){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Actor existUserTable = usersTable.findActor(userId);
+                existUserTable.remove();
+            }
+        });
+    }
+
     public void putCoinAnimation(final Runnable onFinish){
         Threadings.postRunnable(new Runnable() {
             @Override

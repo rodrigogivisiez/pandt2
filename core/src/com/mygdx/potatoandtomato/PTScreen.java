@@ -19,6 +19,7 @@ import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
+import com.mygdx.potatoandtomato.scenes.shop_scene.ShopLogic;
 import com.mygdx.potatoandtomato.services.Confirm;
 import com.mygdx.potatoandtomato.services.Texts;
 import com.mygdx.potatoandtomato.utils.Positions;
@@ -234,6 +235,9 @@ public class PTScreen implements Screen, InputProcessor {
                 break;
             case MULTIPLE_GAMES_LEADER_BOARD:
                 logic = new MultipleGamesLeaderBoardLogic(this, _services, objs);
+                break;
+            case SHOP:
+                logic = new ShopLogic(this, _services, objs);
                 break;
         }
         return logic;

@@ -16,10 +16,7 @@ import com.potatoandtomato.common.absints.IPTGame;
 import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.enums.Status;
-import com.potatoandtomato.common.utils.JsonObj;
-import com.potatoandtomato.common.utils.MultiHashMap;
-import com.potatoandtomato.common.utils.Pair;
-import com.potatoandtomato.common.utils.Threadings;
+import com.potatoandtomato.common.utils.*;
 import com.shaded.fasterxml.jackson.core.JsonProcessingException;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 
@@ -41,7 +38,7 @@ public class Coins {
     private CoinMachineControl coinMachineControl;
     private IDatabase database;
     private GamingKit gamingKit;
-    private int myCoinsCount;
+    private SafeDouble myCoinsCount;
     private int expectingCoin;
     private String transactionId;
     private boolean puttingCoin;
@@ -73,6 +70,7 @@ public class Coins {
         this.transactionIdsToPutCoinUserMap = new MultiHashMap();
         this.currentUsersPutCoinNumberMap = new ConcurrentHashMap();
         this.noCoinUserIds = new ArrayList();
+        this.myCoinsCount = new SafeDouble(0.0);
 
         coinMachineControl = new CoinMachineControl(broadcaster, assets, soundsPlayer, texts, iptGame, batch);
         topBarCoinControls = new ArrayList();
@@ -87,12 +85,15 @@ public class Coins {
     private void mePutCoin(){
         if(puttingCoin) return;
 
+        if(getUserPutCoinCount(profile.getUserId()) + 1 > myCoinsCount.getValue().intValue()){
+            return;
+        }
+
         puttingCoin = true;
 
         coinMachineControl.putCoinAnimation(new Runnable() {
             @Override
             public void run() {
-                puttingCoin = false;
             }
         });
 
@@ -109,18 +110,9 @@ public class Coins {
         this.transactionId = transactionId;
         this.deductedSuccessCoinsCount = 0;
         this.userIdToNamePairs = userIdToNamePairs;
-        syncUsers(userIdToNamePairs);
-        runStoredTransactionsIdsAction();
+        sync(userIdToNamePairs);
     }
 
-    private void runStoredTransactionsIdsAction(){
-        if(transactionIdsToPutCoinUserMap.containsKey(transactionId)){
-            for(String userId : transactionIdsToPutCoinUserMap.get(transactionId)){
-                userAddCoin(userId);
-            }
-            transactionIdsToPutCoinUserMap.remove(transactionId);
-        }
-    }
 
     public void showCoinMachine(){
         coinMachineControl.show();
@@ -133,7 +125,7 @@ public class Coins {
     private void addCoinMonitor(final String userId, final String username){
         if(!monitoringUserIds.contains(userId)){
             monitoringUserIds.add(userId);
-            database.monitorUserCoinsCount(profile.getUserId(), new DatabaseListener<Integer>() {
+            database.monitorUserCoinsCount(userId, new DatabaseListener<Integer>(Integer.class) {
                 @Override
                 public void onCallback(Integer obj, Status st) {
                     if (obj == null) {
@@ -148,7 +140,7 @@ public class Coins {
                     }
 
                     if(userId.equals(profile.getUserId())){
-                        myCoinsCount = obj;
+                        myCoinsCount.setValue((double) obj);
 
                         for (TopBarCoinControl topBarCoinControl : topBarCoinControls) {
                             topBarCoinControl.setCoinCount(obj);
@@ -187,8 +179,12 @@ public class Coins {
                currentUsersPutCoinNumberMap.put(fromUserId, 1);
            }
 
-           refreshCoinsMachine();
+           sync(this.userIdToNamePairs);
            checkSufficientCoins();
+
+           if(fromUserId.equals(profile.getUserId())){
+               puttingCoin = false;
+           }
        }
     }
 
@@ -207,7 +203,7 @@ public class Coins {
     public void startDeductCoins(){
         if(currentUsersPutCoinNumberMap.containsKey(profile.getUserId())){
             database.deductUserCoins(profile.getUserId(),
-                    myCoinsCount - currentUsersPutCoinNumberMap.get(profile.getUserId()), new DatabaseListener() {
+                    myCoinsCount.getValue().intValue() - currentUsersPutCoinNumberMap.get(profile.getUserId()), new DatabaseListener() {
                 @Override
                 public void onCallback(Object obj, Status st) {
                     gamingKit.updateRoomMates(st == Status.SUCCESS ? UpdateRoomMatesCode.COINS_DEDUCTED_SUCCESS :
@@ -230,7 +226,7 @@ public class Coins {
         }
     }
 
-    private void syncUsers(ArrayList<Pair<String, String>> userIdToNamePairs){
+    private void sync(ArrayList<Pair<String, String>> userIdToNamePairs){
         for(int i = monitoringUserIds.size() - 1; i >= 0; i--){
             String userId = monitoringUserIds.get(i);
             if(!userId.equals(profile.getUserId())){
@@ -254,9 +250,35 @@ public class Coins {
 
         for(String userId : toRemoveUserIds){
             removeCoinMonitor(userId);
+            coinMachineControl.removeUserTable(userId);
         }
+
+        if(transactionIdsToPutCoinUserMap.containsKey(transactionId)){
+            for(String userId : transactionIdsToPutCoinUserMap.get(transactionId)){
+                userAddCoin(userId);
+            }
+            transactionIdsToPutCoinUserMap.remove(transactionId);
+        }
+
+        for(Pair<String, String> pair : userIdToNamePairs){
+            int insertedCoin = 0;
+            if(currentUsersPutCoinNumberMap.containsKey(pair.getFirst())){
+                insertedCoin = currentUsersPutCoinNumberMap.get(pair.getFirst());
+            }
+            coinMachineControl.updateUserTable(pair.getFirst(), pair.getSecond(),
+                    insertedCoin, !noCoinUserIds.contains(pair.getFirst()));
+        }
+
     }
 
+    private int getUserPutCoinCount(String userId){
+        if(currentUsersPutCoinNumberMap.containsKey(userId)){
+            return currentUsersPutCoinNumberMap.get(userId);
+        }
+        else{
+            return 0;
+        }
+    }
 
     public void reset(){
         for(String userId : monitoringUserIds){
@@ -267,18 +289,6 @@ public class Coins {
         transactionIdsToPutCoinUserMap.clear();
         currentUsersPutCoinNumberMap.clear();
         topBarCoinControls.clear();
-    }
-
-    private void refreshCoinsMachine(){
-        for(Pair<String, String> pair : userIdToNamePairs){
-            int insertedCoin = 0;
-            if(currentUsersPutCoinNumberMap.containsKey(pair.getFirst())){
-                insertedCoin = currentUsersPutCoinNumberMap.get(pair.getFirst());
-            }
-            coinMachineControl.updateUserTable(pair.getFirst(), pair.getSecond(),
-                    insertedCoin, !noCoinUserIds.contains(pair.getFirst()));
-        }
-
     }
 
     public void requestCoinsMachineStateFromOthers(){
@@ -320,8 +330,7 @@ public class Coins {
                     }
 
                     waitingRefresh = false;
-                    runStoredTransactionsIdsAction();
-                    refreshCoinsMachine();
+                    sync(this.userIdToNamePairs);
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -391,7 +400,7 @@ public class Coins {
     }
 
     public TopBarCoinControl getNewTopBarCoinControl() {
-        TopBarCoinControl topBarCoinControl = new TopBarCoinControl(assets, myCoinsCount);
+        TopBarCoinControl topBarCoinControl = new TopBarCoinControl(assets, myCoinsCount.getValue().intValue());
         topBarCoinControls.add(topBarCoinControl);
         return topBarCoinControl;
     }

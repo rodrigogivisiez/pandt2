@@ -5,6 +5,7 @@ import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
 import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.ConnectionsControllerListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.GameLoadStateMonitorListener;
+import com.mygdx.potatoandtomato.absintflis.services.CoinListener;
 import com.mygdx.potatoandtomato.absintflis.services.ConnectionWatcherListener;
 import com.mygdx.potatoandtomato.enums.ConnectionStatus;
 import com.mygdx.potatoandtomato.enums.UpdateRoomMatesCode;
@@ -17,6 +18,7 @@ import com.mygdx.potatoandtomato.services.Confirm;
 import com.mygdx.potatoandtomato.services.Notification;
 import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
 import com.potatoandtomato.common.enums.RoomUpdateType;
+import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.utils.*;
 import com.mygdx.potatoandtomato.models.*;
@@ -266,7 +268,22 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             @Override
             public void onAllSuccess(GameCoordinator gameCoordinator) {
                 coordinator = gameCoordinator;
-                gameStart();
+
+                _services.getCoins().setCoinListener(new CoinListener() {
+                    @Override
+                    public void onEnoughCoins() {
+
+                    }
+
+                    @Override
+                    public void onDeductCoinsDone(String extra, Status status) {
+                        if(status == Status.SUCCESS){
+                            gameStart();
+                        }
+                    }
+                });
+
+                _services.getCoins().startDeductCoins();
             }
 
             @Override

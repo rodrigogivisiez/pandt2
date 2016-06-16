@@ -18,6 +18,7 @@ import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
 import com.mygdx.potatoandtomato.absintflis.push_notifications.PushCode;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.absintflis.services.CoinListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.RoomError;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
@@ -69,6 +70,8 @@ public class RoomLogic extends LogicAbstract {
         noGameClientUsers = new ConcurrentHashMap();
         addUserSafeThreadMap = new ConcurrentHashMap();
         roomLogicSafeThread = new SafeThread();
+
+        onRoomUserChanged();
 
         scene.populateGameDetails(room.getGame());
         if(isHost()) scene.setStartButtonText(_texts.startGame());
@@ -351,7 +354,6 @@ public class RoomLogic extends LogicAbstract {
             errorOccurred(RoomError.GameVersionOutdated);
         }
         else if(code == UpdateRoomMatesCode.GAME_STARTED){
-            if(countDownThread != null) countDownThread.kill();
             if(!gameStarted) gameStarted();
         }
         else if(code == UpdateRoomMatesCode.PLAYER_CANCEL_START_GAME){
@@ -400,6 +402,7 @@ public class RoomLogic extends LogicAbstract {
                 userJoinLeftAddChat(roomUser.getProfile(), true);
                 cancelPutCoins(roomUser.getProfile());
                 userBadgeHelper.userJoinedRoom(roomUser);
+                onRoomUserChanged();
 
                 if (isHost()) {
                     refreshRoomDesign();
@@ -427,12 +430,17 @@ public class RoomLogic extends LogicAbstract {
 
             checkHostInRoom();
             userBadgeHelper.userLeftRoom(roomUser);
+            onRoomUserChanged();
 
             if(isHost()){
                 refreshRoomDesign();
                 selfUpdateRoomStatePush();
             }
         }
+    }
+
+    public void onRoomUserChanged(){
+        initCoinMachine();
     }
 
     public void moveSlot(String userId, int toSlot){
@@ -619,10 +627,14 @@ public class RoomLogic extends LogicAbstract {
         _services.getChat().newMessage(new ChatMessage(String.format(_texts.gameStarting(), room.getRoomUsersCount()),
                 ChatMessage.FromType.IMPORTANT, null, ""));
 
+        initCoinMachine();
+        setCoinListener();
         _services.getCoins().showCoinMachine();
     }
 
     public void cancelPutCoins(Profile profile){
+        if(!starting) return;
+
         starting = false;
 
         _services.getCoins().hideCoinMachine();
@@ -641,7 +653,7 @@ public class RoomLogic extends LogicAbstract {
         room.setOpen(false);
         room.setPlaying(true);
         room.setRoundCounter(room.getRoundCounter()+1);
-        room.convertRoomUsersToTeams();
+        room.setTeams(room.convertRoomUsersToTeams());
         _services.getDatabase().saveRoom(room, true, null);
         _services.getDatabase().savePlayedHistory(_services.getProfile(), room, null);
         _services.getChat().newMessage(new ChatMessage(_texts.gameStarted(), ChatMessage.FromType.SYSTEM, null, ""));
@@ -910,8 +922,7 @@ public class RoomLogic extends LogicAbstract {
                 super.clicked(event, x, y);
                 if(!starting){
                     starting = true;
-                    //hostSendStartGame();
-                    startPutCoins();
+                    hostSendStartGame();
                 }
 
             }
@@ -932,6 +943,21 @@ public class RoomLogic extends LogicAbstract {
                 _screen.toScene(SceneEnum.SINGLE_GAME_LEADER_BOARD, room.getGame());
             }
         });
+    }
+
+    public void setCoinListener(){
+        _services.getCoins().setCoinListener(new CoinListener() {
+            @Override
+            public void onEnoughCoins() {
+                sendUpdateRoomMates(UpdateRoomMatesCode.GAME_STARTED, "");
+            }
+
+            @Override
+            public void onDeductCoinsDone(String extra, Status status) {
+
+            }
+        });
+
     }
 
     @Override
@@ -989,6 +1015,14 @@ public class RoomLogic extends LogicAbstract {
                 }
             }
         });
+    }
+
+    public void initCoinMachine(){
+        ArrayList<Pair<String, String>> userIdToNamePairs = new ArrayList();
+        for(RoomUser roomUser : room.getRoomUsersMap().values()){
+            userIdToNamePairs.add(new Pair<String, String>(roomUser.getProfile().getUserId(), roomUser.getProfile().getDisplayName(99)));
+        }
+        _services.getCoins().initCoinMachine(room.getRoomUsersCount(), room.getId() + "_" + room.getRoundCounter(), userIdToNamePairs);
     }
 
     @Override

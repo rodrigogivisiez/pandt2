@@ -44,6 +44,7 @@ public class BootLogic extends LogicAbstract {
         super.onShow();
 
         _bootScene.reset();
+        _services.getDatabase().clearAllListeners();
         _services.getCoins().reset();
         _services.getProfile().reset();
         _services.getSoundsPlayer().playThemeMusic();
@@ -239,8 +240,6 @@ public class BootLogic extends LogicAbstract {
                 if(_services.getProfile() != null && userId != null && userId.equals(_services.getProfile().getUserId())){
                     if(!_logined){
                         if(st == ConnectStatus.CONNECTED){
-                            _services.getDatabase().clearAllListeners();
-
                             _screen.hideRotateSunrise();
                             if(_services.getProfile().getGameName() == null){
                                 _screen.toScene(SceneEnum.INPUT_NAME);

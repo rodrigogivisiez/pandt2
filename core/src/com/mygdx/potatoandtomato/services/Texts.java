@@ -45,6 +45,8 @@ public class Texts {
     public String roomTitle() { return "Game Room"; }
     public String settingsTitle() { return "Settings"; }
     public String inviteTitle() { return "Invite Friends"; }
+    public String shopTitle() { return "Shop"; }
+
 
     public String confirm() { return "Confirm"; }
     public String details() { return "Details"; }
