@@ -19,6 +19,6 @@ public interface IGameSandBox {
     void sendPrivateUpdate(RoomUpdateType updateType, String toUserId, String msg);
     void vibrate(double periodInMili);
     void finalizing(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers, boolean abandoned);
-    void gameFailed();
+    void gameFailed(String msg);
 
 }

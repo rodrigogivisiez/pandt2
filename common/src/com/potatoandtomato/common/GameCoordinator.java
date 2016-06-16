@@ -91,7 +91,8 @@ public class GameCoordinator implements Disposable {
         this.remoteHelper = remoteHelper;
         this.disconnectOverlayControl = iDisconnectOverlayControl;
 
-        gameDataHelper = new GameDataHelper(teams, myUserId, decisionsMaker, gameSandBox, game, disconnectOverlayControl);
+        gameDataHelper = new GameDataHelper(teams, myUserId, decisionsMaker,
+                                                    gameSandBox, game, disconnectOverlayControl, this);
         onResumeRunnables = new ArrayList();
         gameLeaderboardRecords = new ArrayList<LeaderboardRecord>();
         processors = new Array<InputProcessor>();
@@ -530,6 +531,10 @@ public class GameCoordinator implements Disposable {
         }
 
         gameSandBox.endGame();
+    }
+
+    public void raiseGameFailedError(String msg){
+        gameSandBox.gameFailed(msg);
     }
 
     //////////////////////////////////////////////////////////////////////////////////

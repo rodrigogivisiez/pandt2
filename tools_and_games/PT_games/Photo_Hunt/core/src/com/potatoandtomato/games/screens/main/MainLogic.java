@@ -50,7 +50,7 @@ public class MainLogic extends GameLogic {
     private StageImagesLogic _stageImagesLogic;
     private GameDataContract _gameDataContract;
     private SafeThread _safeThread;
-    private boolean disposed;
+    private boolean disposed, waitingContinue;
 
     public MainLogic(GameCoordinator gameCoordinator, Services _services,
                      TimeLogic _timeLogic, HintsLogic _hintsLogic, ReviewLogic _reviewLogic, UserCountersLogic _userCounterLogic,
@@ -92,6 +92,7 @@ public class MainLogic extends GameLogic {
         _screen.readyToStart();
         _imageStorage.startMonitor();
         _gameModel.setGameState(GameState.BeforeContinue);
+        waitingContinue = true;
     }
 
     public void waitingContinue(){
@@ -128,6 +129,8 @@ public class MainLogic extends GameLogic {
 
     public void goToNewStage(final String id, final int stageNumber, final StageType stageType,
                              final BonusType bonusType, final String extra, int currentScores){
+        waitingContinue = false;
+
         if(Global.REVIEW_MODE){
             newStageReviewMode(id);
             return;
@@ -576,6 +579,11 @@ public class MainLogic extends GameLogic {
         getCoordinator().setUserStateListener(new UserStateListener() {
             @Override
             public void userAbandoned(String s) {
+                if(waitingContinue){
+                    if(getCoordinator().getAllConnectedPlayers().size() == 1 && getCoordinator().getGameDataHelper().hasData()){  //only me
+                        getCoordinator().raiseGameFailedError(_services.getTexts().gameContinueFailed());
+                    }
+                }
             }
 
             @Override
@@ -585,6 +593,11 @@ public class MainLogic extends GameLogic {
 
             @Override
             public void userDisconnected(String s) {
+                if(waitingContinue){
+                    if(getCoordinator().getAllConnectedPlayers().size() == 1 && getCoordinator().getGameDataHelper().hasData()){  //only me
+                        getCoordinator().raiseGameFailedError(_services.getTexts().gameContinueFailed());
+                    }
+                }
             }
         });
 
