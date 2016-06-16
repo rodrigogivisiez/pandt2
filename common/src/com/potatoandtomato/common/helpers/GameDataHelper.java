@@ -2,6 +2,7 @@ package com.potatoandtomato.common.helpers;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Disposable;
+import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.absints.GameDataContractAbstract;
 import com.potatoandtomato.common.absints.IDisconnectOverlayControl;
 import com.potatoandtomato.common.absints.IGameSandBox;
@@ -9,6 +10,7 @@ import com.potatoandtomato.common.absints.IPTGame;
 import com.potatoandtomato.common.enums.RoomUpdateType;
 import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.models.Team;
+import com.potatoandtomato.common.statics.Texts;
 import com.potatoandtomato.common.utils.JsonObj;
 import com.potatoandtomato.common.utils.OneTimeRunnable;
 import com.potatoandtomato.common.utils.SafeThread;
@@ -36,19 +38,21 @@ public class GameDataHelper implements Disposable {
     private boolean activated;
     private ArrayList<Runnable> toRunWhenHaveData;
     private IPTGame iptGame;
+    private GameCoordinator gameCoordinator;
     private IDisconnectOverlayControl disconnectOverlayControl;
     private boolean comeBackFromRecoverConnection;
     private OneTimeRunnable onGameDataReceivedRunnable;
 
     public GameDataHelper(ArrayList<Team> teams, String myUserId,
                           DecisionsMaker decisionsMaker, IGameSandBox gameSandBox, IPTGame iptGame,
-                          IDisconnectOverlayControl disconnectOverlayControl) {
+                          IDisconnectOverlayControl disconnectOverlayControl, GameCoordinator coordinator) {
         this.myUserId = myUserId;
         this.gameSandBox = gameSandBox;
         this.decisionsMaker = decisionsMaker;
         this.disconnectOverlayControl = disconnectOverlayControl;
         usersHasDataMap = new ConcurrentHashMap();
         toRunWhenHaveData = new ArrayList();
+        this.gameCoordinator = gameCoordinator;
         this.iptGame = iptGame;
 
         teamsInit(teams);
@@ -254,7 +258,7 @@ public class GameDataHelper implements Disposable {
         if(safeThread != null) safeThread.kill();
 
         if(!gameDataContract.onFailedRetrieve()){
-            gameSandBox.gameFailed();
+            gameCoordinator.raiseGameFailedError(Texts.failedToExchangeGameData);
         }
     }
 

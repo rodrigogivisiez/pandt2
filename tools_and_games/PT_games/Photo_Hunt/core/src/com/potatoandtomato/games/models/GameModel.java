@@ -108,7 +108,7 @@ public class GameModel {
 
     public void minusHintLeft(){
         if(!Global.REVIEW_MODE) {
-            setHintsLeft(hintsLeft - 1);
+            //setHintsLeft(hintsLeft - 1);
         }
     }
 
@@ -252,8 +252,9 @@ public class GameModel {
             time = 60000;
         }
         else{
-            time =  Math.max(60000 - (Math.pow(stageNumber, 1.5) * 1000), 0) +
-                    Math.max(3000 - (Math.pow(stageNumber, 0.2) * 1000), 0) + 5500;
+//            time =  Math.max(60000 - (Math.pow(stageNumber, 1.5) * 1000), 0) +
+//                    Math.max(3000 - (Math.pow(stageNumber, 0.2) * 1000), 0) + 5500;
+            time = 60000 * 5;
         }
 
         return (int) time;

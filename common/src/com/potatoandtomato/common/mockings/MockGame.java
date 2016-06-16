@@ -139,8 +139,8 @@ public abstract class MockGame extends Game implements IPTGame {
             }
 
             @Override
-            public void gameFailed() {
-                System.out.println("Game failed to resume");
+            public void gameFailed(String msg) {
+                System.out.println("Game failed to resume " + msg);
             }
 
         }, _ref.child("gameBelongData").child(gameId), "1", new MockSoundManager(),

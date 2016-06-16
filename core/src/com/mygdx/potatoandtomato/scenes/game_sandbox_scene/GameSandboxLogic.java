@@ -496,8 +496,11 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     }
 
     @Override
-    public void gameFailed() {
-        _notification.important(_texts.notificationGameFailed());
+    public void gameFailed(String msg) {
+        _notification.important(msg);
+        if(coordinator.getAllConnectedPlayers().size() == 1){       //only me
+            _services.getDatabase().updateRoomPlayingAndOpenState(room, false, null, null);
+        }
         exitSandbox();
     }
 
