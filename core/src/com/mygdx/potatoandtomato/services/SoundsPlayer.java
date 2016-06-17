@@ -23,7 +23,6 @@ import java.util.HashMap;
 public class SoundsPlayer implements ISoundsPlayer {
 
     private Assets _assets;
-    private Music _themeMusic;
     private float _volume;
     private HashMap<Music, Boolean> _musicMap;
     private Broadcaster _broadcaster;
@@ -47,22 +46,16 @@ public class SoundsPlayer implements ISoundsPlayer {
 
     }
 
-
-    public void playThemeMusic() {
-        if(_themeMusic == null){
-            _themeMusic = _assets.getSounds().getMusic(Sounds.Name.THEME);
-        }
-        playMusic(_themeMusic, false, true);
+    public void playMusic(Sounds.Name name){
+        Music music = _assets.getSounds().getMusic(name);
+        playMusic(music, false, true);
     }
 
-    public void stopThemeMusic() {
-        Threadings.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                _themeMusic.stop();
-            }
-        });
+    public void stopMusic(Sounds.Name name){
+        Music music = _assets.getSounds().getMusic(name);
+        stopMusic(music);
     }
+
 
     public Music playMusicFromFile(FileHandle fileHandle){
         Music music = Gdx.audio.newMusic(fileHandle);

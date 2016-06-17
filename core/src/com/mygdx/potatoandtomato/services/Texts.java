@@ -174,8 +174,11 @@ public class Texts {
     public String ready() { return "Ready";}
     public String failed() { return "Failed";}
     public String remainingTime() { return "Remaining Time: ";}
+    public String purseTitle() { return "Mum's purse";}
+    public String growthRate() { return "Free coin: %s/hr ";}
 
     public String xPoints() {return "%s points";}
+    public String xCoin() {return "Coin x %s";}
 
     public String appsCrashed() {return "Opps, looks like P&T has crashed on the last time you played, a error log has been received by Tomato and will be fixed asap.";}
 
@@ -183,6 +186,10 @@ public class Texts {
     public String lostConnection() {return "Lost connection with server, trying to reconnect...";}
     public String connectionRecovered() {return "Connection established, trying to resume game session, %s secs remaining";}
 
+
+    public String retrieveCoins() { return "Retrieve Now"; }
+    public String watchAds() { return "Watch Now"; }
+    public String buyCoins() { return "Buy Now"; }
 
     //push notifications part
     public String PUSHGameInvitationsTitle() { return "P&T Game Invitations"; }

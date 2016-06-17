@@ -110,7 +110,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
         Threadings.delay(1000, new Runnable() {
             @Override
             public void run() {
-                _services.getSoundsPlayer().playThemeMusic();
+                _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
             }
         });
     }
@@ -132,7 +132,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                 Threadings.delay(8000, new Runnable() {
                     @Override
                     public void run() {
-                        _services.getSoundsPlayer().playThemeMusic();
+                        _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
                     }
                 });
 
@@ -269,7 +269,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                                                                         _scene.setMascots(LeaderBoardScene.MascotType.HAPPY);
                                                                                     }
 
-                                                                                    _services.getSoundsPlayer().playThemeMusic();
+                                                                                    _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
                                                                                 }
                                                                             });
                                                                         }
@@ -296,7 +296,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                     );
                     }else {
                     _scene.hideLoading(_game);
-                    _services.getSoundsPlayer().playThemeMusic();
+                    _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
                 }
             }
         });

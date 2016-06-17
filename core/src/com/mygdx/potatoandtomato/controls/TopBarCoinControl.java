@@ -1,11 +1,15 @@
 package com.mygdx.potatoandtomato.controls;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.assets.Textures;
+import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.common.utils.Threadings;
 
@@ -17,11 +21,14 @@ public class TopBarCoinControl extends Table {
     private Assets assets;
     private Table _this;
     private Label coinLabel;
+    private PTScreen ptScreen;
 
-    public TopBarCoinControl(Assets assets, int myCoinCount) {
+    public TopBarCoinControl(Assets assets, int myCoinCount, PTScreen ptScreen) {
         this.assets = assets;
         _this = this;
+        this.ptScreen = ptScreen;
         populate(myCoinCount);
+        setListeners();
     }
 
     public void populate(final int myCoinCount){
@@ -29,6 +36,7 @@ public class TopBarCoinControl extends Table {
             @Override
             public void run() {
                 _this.setBackground(new TextureRegionDrawable(assets.getTextures().get(Textures.Name.TOP_BAR_COIN_COUNT)));
+                new DummyButton(_this, assets);
 
                 Table coinTable = new Table();
                 coinTable.setSize(30, 30);
@@ -48,6 +56,21 @@ public class TopBarCoinControl extends Table {
             @Override
             public void run() {
                 coinLabel.setText(String.valueOf(newCount));
+            }
+        });
+    }
+
+    public void setListeners(){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _this.addListener(new ClickListener(){
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        ptScreen.toScene(SceneEnum.SHOP);
+                    }
+                });
             }
         });
     }

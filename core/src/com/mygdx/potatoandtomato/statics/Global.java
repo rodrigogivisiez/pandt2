@@ -14,9 +14,9 @@ public class Global {
     public static int LEADERBOARD_COUNT = 15;
 
     public static void init(Preferences preferences){
-        if(preferences.get(Terms.SOUNDS_DISABLED) != null && preferences.get(Terms.SOUNDS_DISABLED).equals("true")){
-            ENABLE_SOUND = false;
-        }
+//        if(preferences.get(Terms.SOUNDS_DISABLED) != null && preferences.get(Terms.SOUNDS_DISABLED).equals("true")){
+//            ENABLE_SOUND = false;
+//        }
     }
 
 

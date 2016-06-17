@@ -7,6 +7,7 @@ import com.mygdx.potatoandtomato.absintflis.scenes.ConnectionsControllerListener
 import com.mygdx.potatoandtomato.absintflis.scenes.GameLoadStateMonitorListener;
 import com.mygdx.potatoandtomato.absintflis.services.CoinListener;
 import com.mygdx.potatoandtomato.absintflis.services.ConnectionWatcherListener;
+import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.ConnectionStatus;
 import com.mygdx.potatoandtomato.enums.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
@@ -189,12 +190,12 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                     _services.getBroadcaster().broadcast(BroadcastEvent.DEVICE_ORIENTATION, 1);
                 }
 
-                _services.getSoundsPlayer().stopThemeMusic();
+                _services.getSoundsPlayer().stopMusic(Sounds.Name.THEME_MUSIC);
                 //for multitask still play theme music bug fix
                 Threadings.delay(3000, new Runnable() {
                     @Override
                     public void run() {
-                        _services.getSoundsPlayer().stopThemeMusic();
+                        _services.getSoundsPlayer().stopMusic(Sounds.Name.THEME_MUSIC);
                     }
                 });
 
@@ -398,7 +399,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             }
             else{
                 _screen.back();
-                _services.getSoundsPlayer().playThemeMusic();
+                _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
             }
         }
     }

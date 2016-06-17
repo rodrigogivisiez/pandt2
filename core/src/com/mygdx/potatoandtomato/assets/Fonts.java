@@ -61,7 +61,9 @@ public class Fonts extends FontAssets {
         HELVETICA_L_HEAVY,
         HELVETICA_XL_HEAVYITALIC_B_ffffff_81562c_2,         //dark brown
         HELVETICA_XL_CONDENSED_S_a05e00_1_1,       //dark orange
+        HELVETICA_XXXL_REGULAR,
 
+        PIZZA_S_REGULAR_B_ffffff_000000_1,
         PIZZA_M_REGULAR_B_ffffff_000000_1,
         PIZZA_L_REGULAR_S_a05e00_2_2,              //dark orange
         PIZZA_XL_REGULAR_S_a05e00_1_1,              //dark orange

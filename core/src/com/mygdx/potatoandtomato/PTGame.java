@@ -105,10 +105,11 @@ public class PTGame extends Game implements IPTGame {
 						_tutorials, _restfulApi, _connectionWatcher, _coins);
 				_screen = new PTScreen(_game, _services);
 				_connectionWatcher.setPtScreen(_screen);
+				_coins.setPtScreen(_screen);
 				setScreen(_screen);
 
 
-				_screen.toScene(SceneEnum.SHOP);
+				_screen.toScene(SceneEnum.BOOT);
 			}
 		});
 	}

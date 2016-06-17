@@ -3,6 +3,7 @@ package com.mygdx.potatoandtomato.services;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
@@ -38,6 +39,7 @@ public class Coins {
     private CoinMachineControl coinMachineControl;
     private IDatabase database;
     private GamingKit gamingKit;
+    private PTScreen ptScreen;
     private SafeDouble myCoinsCount;
     private int expectingCoin;
     private String transactionId;
@@ -400,9 +402,13 @@ public class Coins {
     }
 
     public TopBarCoinControl getNewTopBarCoinControl() {
-        TopBarCoinControl topBarCoinControl = new TopBarCoinControl(assets, myCoinsCount.getValue().intValue());
+        TopBarCoinControl topBarCoinControl = new TopBarCoinControl(assets, myCoinsCount.getValue().intValue(), ptScreen);
         topBarCoinControls.add(topBarCoinControl);
         return topBarCoinControl;
+    }
+
+    public void setPtScreen(PTScreen ptScreen) {
+        this.ptScreen = ptScreen;
     }
 
     public void setCoinListener(CoinListener coinListener) {

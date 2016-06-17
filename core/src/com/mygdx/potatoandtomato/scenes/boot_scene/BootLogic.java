@@ -47,7 +47,7 @@ public class BootLogic extends LogicAbstract {
         _services.getDatabase().clearAllListeners();
         _services.getCoins().reset();
         _services.getProfile().reset();
-        _services.getSoundsPlayer().playThemeMusic();
+        _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
         _screen.showRotateSunrise();
         publishBroadcast(BroadcastEvent.DESTROY_ROOM);
 

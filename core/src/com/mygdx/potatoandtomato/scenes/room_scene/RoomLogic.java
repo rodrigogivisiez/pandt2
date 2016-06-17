@@ -124,7 +124,7 @@ public class RoomLogic extends LogicAbstract {
             if(!isContinue && isHost()){
                 _services.getDatabase().updateRoomPlayingAndOpenState(room, false, true, null);
             }
-            _services.getSoundsPlayer().playThemeMusic();
+            _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
         }
 
         userBadgeHelper.setPaused(false);
