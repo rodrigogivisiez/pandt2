@@ -33,6 +33,7 @@ public class GameListScene extends SceneAbstract {
     Table _gameListTable, _gameTitleTable;
     Label _titleGameLabel, _titlePlayersLabel, _titleHostLabel;
     HashMap<String, Table> _gameRowsTableMap;
+    HashMap<String, String> _hostToRoomIdMaps;
     ScrollPane _gameListScrollPane;
     Table _scrollTable;
     BtnEggDownward _newGameButton, _joinGameButton, _continueGameButton;
@@ -49,6 +50,7 @@ public class GameListScene extends SceneAbstract {
     public GameListScene(Services services, PTScreen screen) {
         super(services, screen);
         _gameRowsTableMap = new HashMap();
+        _hostToRoomIdMaps = new HashMap();
     }
 
     public BtnEggDownward getNewGameButton() {
@@ -171,6 +173,7 @@ public class GameListScene extends SceneAbstract {
                 final Table gameRowTable = new Table();
                 gameRowTable.setName(isInvited ? "invited" : "");
                 _gameRowsTableMap.put(room.getId(), gameRowTable);
+                _hostToRoomIdMaps.put(room.getHost().getUserId(), room.getId());
 
                 Label.LabelStyle contentLabelStyle = new Label.LabelStyle();
                 contentLabelStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_S_BOLD);
@@ -246,6 +249,10 @@ public class GameListScene extends SceneAbstract {
             public void run() {
                 final boolean isInvited = (room.getInvitedUserByUserId(_services.getProfile().getUserId()) != null);
                 if(!_gameRowsTableMap.containsKey(room.getId())){
+                    if(_hostToRoomIdMaps.containsKey(room.getHost().getUserId())){
+                        removeRoom(_hostToRoomIdMaps.get(room.getHost().getUserId()));
+                    }
+                    _hostToRoomIdMaps.remove(room.getHost().getUserId());
                     addNewRoomRow(room, isInvited, onFinish);
                 }
                 else{
@@ -265,16 +272,16 @@ public class GameListScene extends SceneAbstract {
         });
     }
 
-    public void removeRoom(Room room){
-        if(_gameRowsTableMap.containsKey(room.getId())){
-            final Actor actor = _gameRowsTableMap.get(room.getId());
+    public void removeRoom(String roomId){
+        if(_gameRowsTableMap.containsKey(roomId)){
+            final Actor actor = _gameRowsTableMap.get(roomId);
             Threadings.postRunnable(new Runnable() {
                 @Override
                 public void run() {
                     actor.remove();
                 }
             });
-            _gameRowsTableMap.remove(room.getId());
+            _gameRowsTableMap.remove(roomId);
         }
     }
 

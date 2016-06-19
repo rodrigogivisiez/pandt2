@@ -10,7 +10,7 @@ public class Threadings {
     private static long mainTreadId;
     private static boolean isRunning;
     private static float continuousRenderPeriod;
-    private static boolean continuousRenderLock;
+    private static boolean continuousRenderLock = true;
     private static long lastChangedLock;
     public static int waitingTaskCount = 0;
 
@@ -108,17 +108,17 @@ public class Threadings {
 
     public static void setContinuousRenderLock(boolean continuousRenderLock) {
 
-        if(continuousRenderLock){
-            Gdx.graphics.setContinuousRendering(true);
-            lastChangedLock = System.currentTimeMillis();
-            Threadings.continuousRenderLock = true;
-        }
-        else{
-            if(lastChangedLock == 0 || System.currentTimeMillis() - lastChangedLock > 500) {
-                Gdx.graphics.setContinuousRendering(false);
-                Threadings.continuousRenderLock = false;
-            }
-        }
+//        if(continuousRenderLock){
+//            Gdx.graphics.setContinuousRendering(true);
+//            lastChangedLock = System.currentTimeMillis();
+//            Threadings.continuousRenderLock = true;
+//        }
+//        else{
+//            if(lastChangedLock == 0 || System.currentTimeMillis() - lastChangedLock > 500) {
+//                Gdx.graphics.setContinuousRendering(false);
+//                Threadings.continuousRenderLock = false;
+//            }
+//        }
     }
 
     public static void waitTasks(int expectedTask){
