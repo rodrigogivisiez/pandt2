@@ -24,6 +24,7 @@ public class SoundsPlayer implements ISoundsPlayer {
 
     private Assets _assets;
     private float _volume;
+    private Music _currentMusic;
     private HashMap<Music, Boolean> _musicMap;
     private Broadcaster _broadcaster;
     private HashMap<Sounds.Name, Long> _soundIdsMap;
@@ -48,7 +49,10 @@ public class SoundsPlayer implements ISoundsPlayer {
 
     public void playMusic(Sounds.Name name){
         Music music = _assets.getSounds().getMusic(name);
-        playMusic(music, false, true);
+        if(music != _currentMusic){
+            stopMusic(_currentMusic);
+            playMusic(music, false, true);
+        }
     }
 
     public void stopMusic(Sounds.Name name){
@@ -58,8 +62,15 @@ public class SoundsPlayer implements ISoundsPlayer {
 
 
     public Music playMusicFromFile(FileHandle fileHandle){
-        Music music = Gdx.audio.newMusic(fileHandle);
-        playMusic(music, 1);
+        final Music music = Gdx.audio.newMusic(fileHandle);
+        music.setVolume(1);
+        music.setLooping(false);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                music.play();
+            }
+        });
         return music;
     }
 
@@ -167,17 +178,7 @@ public class SoundsPlayer implements ISoundsPlayer {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                music.play();
-            }
-        });
-    }
-
-    public void playMusic(final Music music, float volume) {
-        music.setVolume(volume);
-        music.setLooping(false);
-        Threadings.postRunnable(new Runnable() {
-            @Override
-            public void run() {
+                _currentMusic = music;
                 music.play();
             }
         });

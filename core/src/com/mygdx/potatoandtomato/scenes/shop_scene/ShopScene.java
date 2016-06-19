@@ -82,8 +82,8 @@ public class ShopScene extends SceneAbstract {
             @Override
             public void run() {
                 while (true){
-                    if(disposed) break;
                     Threadings.sleep(MathUtils.random(6, 20) * 1000);
+                    if(disposed) break;
                     potatoFlipCoinAnimator.setPaused(false);
                     potatoFlipCoinAnimator.replay();
                     _services.getSoundsPlayer().playSoundEffect(Sounds.Name.COIN_FLIP);
