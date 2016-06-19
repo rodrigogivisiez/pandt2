@@ -375,7 +375,7 @@ public class RoomScene extends SceneAbstract {
 
         Table iconTable = new Table();
         iconTable.setName("iconTable");
-        Animator loadingAnimator = new Animator(0.2f, _assets.getAnimations().get(Animations.Name.LOADING));
+        Animator loadingAnimator = new Animator(0.09f, _assets.getAnimations().get(Animations.Name.LOADING));
         loadingAnimator.setName("loadingAnimator");
         loadingAnimator.overrideSize(16, 16);
         Image unknownImage = new Image(_assets.getTextures().get(Textures.Name.UNKNOWN_ICON));
@@ -440,10 +440,12 @@ public class RoomScene extends SceneAbstract {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                Actor loadingAnimator = table.findActor("loadingAnimator");
+                Animator loadingAnimator = table.findActor("loadingAnimator");
                 Actor unknownImage = table.findActor("unknownImage");
                 Actor badgeTable = table.findActor("badgeTable");
                 loadingAnimator.setVisible(false);
+                loadingAnimator.setPaused(true);
+
                 unknownImage.setVisible(false);
                 badgeTable.setVisible(false);
 
@@ -452,6 +454,7 @@ public class RoomScene extends SceneAbstract {
                 }
                 else{
                     if(!isReady){
+                        loadingAnimator.setPaused(false);
                         loadingAnimator.setVisible(true);
                     }
                     else{

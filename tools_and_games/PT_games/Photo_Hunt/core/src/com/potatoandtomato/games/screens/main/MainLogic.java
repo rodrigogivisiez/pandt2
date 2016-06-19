@@ -97,6 +97,7 @@ public class MainLogic extends GameLogic {
 
     public void waitingContinue(){
         _currentImagePair = null;
+        _gameModel.setImageDetails(null);
         _screen.showMessages(_services.getTexts().waitForNextStage());
     }
 

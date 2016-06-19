@@ -50,7 +50,7 @@ public class SoundsPlayer implements ISoundsPlayer {
 
     public void playThemeMusic() {
         if(_themeMusic == null){
-            _themeMusic = _assets.getSounds().getMusic(Sounds.Name.THEME);
+            _themeMusic = _assets.getSounds().getMusic(Sounds.Name.THEME_MUSIC);
         }
         playMusic(_themeMusic, false, true);
     }

@@ -169,7 +169,7 @@ public class GameListLogic extends LogicAbstract {
                 _selectedRoom = null;
                 _scene.gameRowHighlight("-1");
             }
-            _scene.removeRoom(room);
+            _scene.removeRoom(room.getId());
         }
     }
 
