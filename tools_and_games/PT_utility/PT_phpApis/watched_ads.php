@@ -3,6 +3,7 @@
 	include 'firebaseStub.php';
 	include 'firebaseLib.php';
 	include 'firebase_details.php';
+	include 'coins_adder.php';
 	
 	
 	date_default_timezone_set("Asia/Singapore");
@@ -22,24 +23,7 @@
 	
 		if(!$userValid) return false;
 		
-		
-		$currentUserCoinsString = $firebase->get("coins/".$userId);
-			
-		if(empty($currentUserCoinsString)){
-			$currentUserCoins = 0;
-		}
-		else{
-			$currentUserCoins = (int)json_decode($currentUserCoinsString);
-		}
-		
-		$currentUserCoins += $coinRewarded;
-		$firebase->set("coins/".$userId, $currentUserCoins);
-		
-		$currentDateTimeString = date("Y-m-d H:i:s");
-		$firebase->push('coinAdsLogs/'.$userId, $currentDateTimeString);
-	}
-	else{
-	
+		addCoinToUser($userId, $coinRewarded, "Watch Video Ads", "", $firebase);
 	}
 	
 

@@ -182,6 +182,18 @@ public class RestfulApi implements IRestfulApi {
         });
     }
 
+    @Override
+    public void purchasedProducts(String productId, String productToken, String orderId, Profile myProfile, int phase, final RestfulApiListener<String> listener) {
+        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(6);
+        nameValuePairs.add(new BasicNameValuePair("userId", myProfile.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("userToken", myProfile.getToken()));
+        nameValuePairs.add(new BasicNameValuePair("productId", productId));
+        nameValuePairs.add(new BasicNameValuePair("productToken", productToken));
+        nameValuePairs.add(new BasicNameValuePair("orderId", orderId));
+        nameValuePairs.add(new BasicNameValuePair("phase", String.valueOf(phase)));
+        callApi("purchase", nameValuePairs, listener);
+    }
+
     private void callApi(String name, RestfulApiListener listener){
         callApi(name, new ArrayList<NameValuePair>(), listener);
     }

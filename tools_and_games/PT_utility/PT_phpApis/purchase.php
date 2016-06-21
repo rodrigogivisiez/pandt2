@@ -3,43 +3,70 @@
 	include 'firebaseStub.php';
 	include 'firebaseLib.php';
 	include 'firebase_details.php';
+	include 'google_iab_helpers.php';
+	include 'coins_adder.php';
 	
 	
 	date_default_timezone_set("Asia/Singapore");
-	$secret = "3E4933FD7CDD337AF874E53FD975BECD1F629276CE6CB4346A6F1B2C12E786B59195311647F7D6F3926CA417ED2CE7E4BFB8F2EEA12FE84BF6B3";
-	$coinRewarded = 1;
 	
-	$inputSecret = $_GET["secret"];
+	$phase = $_POST["phase"];
+	$userId = $_POST["userId"];
+	$userToken = $_POST["userToken"];
+	$productId = $_POST["productId"];
+	$productToken = $_POST["productToken"];
+	$orderId = $_POST["orderId"];
 	
-	$userId = $_GET["userId"];
 	$firebase = new \Firebase\FirebaseLib($DEFAULT_URL, $DEFAULT_TOKEN);
 	
-	if($secret === $inputSecret){
-		
-		$userValid = false;
-		$dbUserId = json_decode($firebase->get('users/'.$userId.'/userId'));
-		$userValid = ($dbUserId == $userId);
+	$userValid = false;
+	$dbToken = json_decode($firebase->get('secret/users/'.$userId.'/token'));
+	$userValid = ($dbToken == $userToken);
 	
-		if(!$userValid) return false;
-		
-		
-		$currentUserCoinsString = $firebase->get("coins/".$userId);
-			
-		if(empty($currentUserCoinsString)){
-			$currentUserCoins = 0;
-		}
-		else{
-			$currentUserCoins = (int)json_decode($currentUserCoinsString);
-		}
-		
-		$currentUserCoins += $coinRewarded;
-		$firebase->set("coins/".$userId, $currentUserCoins);
-		
-		$currentDateTimeString = date("Y-m-d H:i:s");
-		$firebase->push('coinAdsLogs/'.$userId, $currentDateTimeString);
+	if(!$userValid) return false;
+	
+	$resultJson = getPurchaseDetails($productId, $productToken, 0, $firebase);
+	
+	$encodeProductToken = str_replace("%", "!", str_replace(".", "%2E", urlencode($productToken)));		//% cause invalid token in firebase set
+	
+	if($resultJson == -1){
+		echo "-1";
 	}
 	else{
-	
+		$purchaseDetails = json_decode($resultJson);
+		if($phase == "0"){
+			if($purchaseDetails->purchaseState == 0 && $purchaseDetails->consumptionState == 0){
+				$firebase->set('secret/purchases/'.$encodeProductToken, null);
+				echo "0";
+			}
+			else{
+				echo "-1";
+			}
+		}
+		else if($phase == "1"){
+			if($purchaseDetails->purchaseState == 0 && $purchaseDetails->consumptionState == 1){
+				if(empty($productToken)) $encodeProductToken = "1";
+				
+				$exist = json_decode($firebase->get('secret/purchases/'.$encodeProductToken));
+				if(empty($exist)){
+					$product = json_decode($firebase->get('coinsProducts/'.$productId));
+					if(!empty($product)){	
+						$firebase->set('secret/purchases/'.$encodeProductToken, $userId);
+						addCoinToUser($userId, $product->count, "Purchase coin", "Product Id: ".$productId. ", Product Token: ".$productToken. ", Order Id: ".$orderId, $firebase);
+						
+						echo "0";
+					}
+					else{
+						echo "-1";
+					}
+				}
+				else{
+					echo "-1";
+				}
+			}
+			else{
+				echo "-1";
+			}
+		}
 	}
 	
 

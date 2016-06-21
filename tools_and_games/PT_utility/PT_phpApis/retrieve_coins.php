@@ -3,6 +3,7 @@
 	include 'firebaseStub.php';
 	include 'firebaseLib.php';
 	include 'firebase_details.php';
+	include 'coins_adder.php';
 	
 	date_default_timezone_set("Asia/Singapore");
 	
@@ -65,19 +66,10 @@
 	
 	if(isset($retrieveRequest) && $retrieveRequest != "0"){		//retrive coins
 		if($resultData -> canRetrieveCoinsCount > 0){
-			$currentUserCoinsString = $firebase->get("coins/".$userId);
 			
-			if(empty($currentUserCoinsString)){
-				$currentUserCoins = 0;
-			}
-			else{
-				$currentUserCoins = (int)json_decode($currentUserCoinsString);
-			}
-			
-			$currentUserCoins += $resultData -> canRetrieveCoinsCount;
-		
 			$firebase->set("coinsLastRetrieved/".$userId, $currentDateTimeString);
-			$firebase->set("coins/".$userId, $currentUserCoins);
+			addCoinToUser($userId, $resultData -> canRetrieveCoinsCount, "Mum Purse", "", $firebase);
+			
 			echo json_encode(getRetriveableCoinData(0));
 		}
 	}

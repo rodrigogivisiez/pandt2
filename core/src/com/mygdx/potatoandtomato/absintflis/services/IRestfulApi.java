@@ -24,4 +24,7 @@ public interface IRestfulApi {
     void getRetrievableCoinsData(Profile myProfile, RestfulApiListener<RetrievableCoinsData> listener);
 
     void retrieveCoins(Profile myProfile, RestfulApiListener<RetrievableCoinsData> listener);
+
+    void purchasedProducts(String productId, String productToken, String orderId, Profile myProfile, int phase, RestfulApiListener<String> listener);
+
 }

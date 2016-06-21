@@ -28,3 +28,7 @@ handlers:
 - url: /retrieve_coins
   script: retrieve_coins.php
   secure: always
+  
+- url: /purchase
+  script: purchase.php
+  secure: always
