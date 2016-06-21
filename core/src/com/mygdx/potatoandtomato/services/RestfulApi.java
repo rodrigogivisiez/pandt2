@@ -2,15 +2,13 @@ package com.mygdx.potatoandtomato.services;
 
 import com.mygdx.potatoandtomato.absintflis.services.IRestfulApi;
 import com.mygdx.potatoandtomato.absintflis.services.RestfulApiListener;
-import com.mygdx.potatoandtomato.models.FacebookProfile;
-import com.mygdx.potatoandtomato.models.Profile;
-import com.mygdx.potatoandtomato.models.Room;
-import com.mygdx.potatoandtomato.models.UserIdSecretModel;
+import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.statics.Terms;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.models.ScoreDetails;
 import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.utils.JsonObj;
+import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
 import com.shaded.fasterxml.jackson.core.JsonProcessingException;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +18,7 @@ import org.shaded.apache.http.message.BasicNameValuePair;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -131,6 +130,56 @@ public class RestfulApi implements IRestfulApi {
             if(listener != null) listener.onCallback("", Status.FAILED);
         }
 
+    }
+
+    @Override
+    public void getRetrievableCoinsData(Profile myProfile, final RestfulApiListener<RetrievableCoinsData> listener) {
+        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
+        nameValuePairs.add(new BasicNameValuePair("userId", myProfile.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("userToken", myProfile.getToken()));
+        nameValuePairs.add(new BasicNameValuePair("retrieveRequest", "0"));
+        callApi("retrieve_coins", nameValuePairs, new RestfulApiListener<String>() {
+            @Override
+            public void onCallback(String json, Status st) {
+                if(st == Status.FAILED || Strings.isEmpty(json)){
+                    listener.onCallback(null, Status.FAILED);
+                }
+                else{
+                    try {
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        RetrievableCoinsData data = objectMapper.readValue(json, RetrievableCoinsData.class);
+                        listener.onCallback(data, Status.SUCCESS);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    public void retrieveCoins(Profile myProfile, final RestfulApiListener<RetrievableCoinsData> listener) {
+        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
+        nameValuePairs.add(new BasicNameValuePair("userId", myProfile.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("userToken", myProfile.getToken()));
+        nameValuePairs.add(new BasicNameValuePair("retrieveRequest", "1"));
+        callApi("retrieve_coins", nameValuePairs, new RestfulApiListener<String>() {
+            @Override
+            public void onCallback(String json, Status st) {
+                if(st == Status.FAILED || Strings.isEmpty(json)){
+                    listener.onCallback(null, Status.FAILED);
+                }
+                else{
+                    try {
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        RetrievableCoinsData data = objectMapper.readValue(json, RetrievableCoinsData.class);
+                        listener.onCallback(data, Status.SUCCESS);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 
     private void callApi(String name, RestfulApiListener listener){

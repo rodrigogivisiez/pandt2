@@ -81,8 +81,6 @@ public class AndroidLauncher extends AndroidApplication {
 
 	}
 
-
-
 	private void setBuildNumber(){
 		PackageInfo pInfo = null;
 		try {

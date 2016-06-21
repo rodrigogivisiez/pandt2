@@ -108,8 +108,9 @@ public class PTGame extends Game implements IPTGame {
 				_coins.setPtScreen(_screen);
 				setScreen(_screen);
 
-
-				_screen.toScene(SceneEnum.BOOT);
+				_services.getProfile().setUserId("-KJpZJTAAW38OskHWVWU");
+				_services.getProfile().setToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhZG1pbiI6ZmFsc2UsImRlYnVnIjpmYWxzZSwiZCI6eyJ1aWQiOiItS0pwWkpUQUFXMzhPc2tIV1ZXVSIsImlzTW9kZXJhdG9yIjpmYWxzZX0sInYiOjAsImlhdCI6MTQ2NjMzOTU0OX0.gi3dMQFyeh7OGFO2VRPF4Aifyj5LONqG7wPlhH-9rkA");
+				_screen.toScene(SceneEnum.SHOP);
 			}
 		});
 	}

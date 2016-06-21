@@ -20,3 +20,11 @@ handlers:
 - url: /save_score
   script: save_score.php
   secure: always
+  
+- url: /watched_ads
+  script: watched_ads.php
+  secure: always
+
+- url: /retrieve_coins
+  script: retrieve_coins.php
+  secure: always

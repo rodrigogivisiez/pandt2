@@ -38,4 +38,5 @@ public class BroadcastEvent {
     public static final int RECORD_END = 34;  //audio recording end
     public static final int RECORD_RESPONSE = 35; //audio record respond back
     public static final int SHOW_REWARD_VIDEO = 36; //show reward video
+    public static final int HAS_REWARD_VIDEO = 38; //check has reward video
 }

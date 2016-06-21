@@ -1,9 +1,6 @@
 package com.mygdx.potatoandtomato.absintflis.services;
 
-import com.mygdx.potatoandtomato.models.FacebookProfile;
-import com.mygdx.potatoandtomato.models.Profile;
-import com.mygdx.potatoandtomato.models.Room;
-import com.mygdx.potatoandtomato.models.UserIdSecretModel;
+import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.models.ScoreDetails;
 import com.potatoandtomato.common.models.Team;
 
@@ -24,4 +21,7 @@ public interface IRestfulApi {
     void updateScores(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers, Room room,
                       Profile myProfile, RestfulApiListener<String> listener);
 
+    void getRetrievableCoinsData(Profile myProfile, RestfulApiListener<RetrievableCoinsData> listener);
+
+    void retrieveCoins(Profile myProfile, RestfulApiListener<RetrievableCoinsData> listener);
 }

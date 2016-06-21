@@ -194,6 +194,7 @@ public class BootLogic extends LogicAbstract {
         _services.getDatabase().updateProfile(_services.getProfile(), null);
         _services.getCoins().profileReady();
         _services.getGamingKit().connect(_services.getProfile());
+        _services.getBroadcaster().broadcast(BroadcastEvent.USER_READY, _services.getProfile().getUserId());
     }
 
     private void checkCrashedBefore(){

@@ -18,6 +18,7 @@ import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.helpers.DesktopImageLoader;
+import com.potatoandtomato.common.utils.RunnableArgs;
 import com.potatoandtomato.common.utils.Threadings;
 
 import java.net.MalformedURLException;
@@ -68,6 +69,16 @@ public class DesktopLauncher {
 
 		subscribeLoadGameRequest();
 		subscribeOrientationChanged();
+		subscribeAndroidSpecific();
+	}
+
+	public static void subscribeAndroidSpecific(){
+		_broadcaster.subscribe(BroadcastEvent.HAS_REWARD_VIDEO, new BroadcastListener<RunnableArgs<Boolean>>() {
+			@Override
+			public void onCallback(RunnableArgs<Boolean> obj, Status st) {
+				obj.run(false);
+			}
+		});
 	}
 
 	public static void subscribeOrientationChanged(){

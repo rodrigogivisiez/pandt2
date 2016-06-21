@@ -175,7 +175,8 @@ public class Texts {
     public String failed() { return "Failed";}
     public String remainingTime() { return "Remaining Time: ";}
     public String purseTitle() { return "Mum's purse";}
-    public String growthRate() { return "Free coin: %s/hr ";}
+    public String growthRate() { return "Grow Coin In";}
+    public String maxPurse() { return "Maximum Reached";}
 
     public String xPoints() {return "%s points";}
     public String xCoin() {return "Coin x %s";}

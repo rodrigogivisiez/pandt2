@@ -15,9 +15,13 @@ import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.*;
+import com.mygdx.potatoandtomato.controls.DummyButton;
 import com.mygdx.potatoandtomato.controls.TopBar;
+import com.mygdx.potatoandtomato.enums.ProductAction;
 import com.mygdx.potatoandtomato.enums.ShopProducts;
+import com.mygdx.potatoandtomato.models.RetrievableCoinsData;
 import com.mygdx.potatoandtomato.models.Services;
+import com.mygdx.potatoandtomato.utils.DateTimes;
 import com.mygdx.potatoandtomato.utils.Sizes;
 import com.potatoandtomato.common.controls.Animator;
 import com.potatoandtomato.common.utils.Threadings;
@@ -29,8 +33,10 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
  */
 public class ShopScene extends SceneAbstract {
 
-    private Table purseImagesTable, productsTable;
+    private Table purseImagesTable, productsTable, watchAdsItemTable, growthRateTable;
     private Label purseCountLabel;
+    private Actor watchVideoAdsButton;
+    private Actor retrieveCoinsButton;
 
     public ShopScene(Services services, PTScreen screen) {
         super(services, screen);
@@ -184,7 +190,7 @@ public class ShopScene extends SceneAbstract {
 
         Label.LabelStyle labelBigStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HELVETICA_XXXL_REGULAR), Color.WHITE);
         Label xLabel = new Label("x", labelBigStyle);
-        purseCountLabel = new Label("0", labelBigStyle);
+        purseCountLabel = new Label("?", labelBigStyle);
 
         Label.LabelStyle labelSmallStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HELVETICA_XS_BOLD), Color.WHITE);
         Table detailsTable = new Table();
@@ -192,18 +198,29 @@ public class ShopScene extends SceneAbstract {
         Label labelTitle = new Label(_texts.purseTitle(), labelSmallStyle);
         labelTitle.setAlignment(Align.right);
         labelTitle.setWrap(true);
-        Label labelGrowthRate = new Label(String.format(_texts.growthRate(), 0.5), labelSmallStyle);
+
+        growthRateTable = new Table();
+        Label labelGrowthRate = new Label(_texts.growthRate(), labelSmallStyle);
+        labelGrowthRate.setName("labelGrowthRate");
         labelGrowthRate.setAlignment(Align.right);
+        Label nextCoinTimerLabel = new Label("?", labelSmallStyle);
+        nextCoinTimerLabel.setAlignment(Align.right);
+        nextCoinTimerLabel.setName("nextCoinTimerLabel");
+
+        growthRateTable.add(labelGrowthRate).expandX().fillX();
+        growthRateTable.row();
+        growthRateTable.add(nextCoinTimerLabel).expandX().fillX();
 
         detailsTable.add(labelTitle).expandX().fillX();
         detailsTable.row();
-        detailsTable.add(labelGrowthRate).expandX().fillX();
+        detailsTable.add(growthRateTable).expandX().fillX();
 
         topContentTable.add(xLabel).padLeft(140).padTop(15);
         topContentTable.add(purseCountLabel).padLeft(5).padTop(15);
         topContentTable.add(detailsTable).expandX().fillX().padRight(10);
 
         Table retrieveButton = getWoodButton(_services.getTexts().retrieveCoins());
+        retrieveCoinsButton = retrieveButton;
 
         purseRootTable.add(topContentTable).expandX().fillX().height(63);
         purseRootTable.row();
@@ -217,12 +234,18 @@ public class ShopScene extends SceneAbstract {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                Table productTable = getSellingItemTable(ShopProducts.ONE_COIN, "30 sec video ads", _texts.watchAds());
-                Table productTable2 = getSellingItemTable(ShopProducts.FIVE_COINS, "RM 20.00", _texts.buyCoins());
-                Table productTable3 = getSellingItemTable(ShopProducts.FIFTEEN_COINS, "RM 30.00", _texts.buyCoins());
-                Table productTable4 = getSellingItemTable(ShopProducts.HUNDRED_COINS, "RM 40.00", _texts.buyCoins());
-                Table productTable5 = getSellingItemTable(ShopProducts.HUNDRED_COINS, "RM 40.00", _texts.buyCoins());
-                Table productTable6 = getSellingItemTable(ShopProducts.HUNDRED_COINS, "RM 40.00", _texts.buyCoins());
+                Table productTable = getSellingItemTable(ShopProducts.ONE_COIN, "30 sec video ads",
+                                                    _texts.watchAds(), ProductAction.WatchVideo);
+                Table productTable2 = getSellingItemTable(ShopProducts.FIVE_COINS, "RM 20.00",
+                                                    _texts.buyCoins(), ProductAction.Buy);
+                Table productTable3 = getSellingItemTable(ShopProducts.FIFTEEN_COINS, "RM 30.00", _texts.buyCoins()
+                                                    , ProductAction.Buy);
+                Table productTable4 = getSellingItemTable(ShopProducts.HUNDRED_COINS, "RM 40.00", _texts.buyCoins()
+                                                     , ProductAction.Buy);
+                Table productTable5 = getSellingItemTable(ShopProducts.HUNDRED_COINS, "RM 40.00", _texts.buyCoins()
+                                                     , ProductAction.Buy);
+                Table productTable6 = getSellingItemTable(ShopProducts.HUNDRED_COINS, "RM 40.00", _texts.buyCoins()
+                                                    , ProductAction.Buy);
 
                 productsTable.add(productTable).space(5).uniformX().expandX().fillX();
                 productsTable.add(productTable2).space(5).uniformX().expandX().fillX();
@@ -236,7 +259,7 @@ public class ShopScene extends SceneAbstract {
         });
     }
 
-    public Table getSellingItemTable(ShopProducts shopProducts, String price, String buttonText){
+    public Table getSellingItemTable(ShopProducts shopProducts, String price, String buttonText, ProductAction productAction){
         Table itemRootTable = new Table();
         itemRootTable.align(Align.top);
         itemRootTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
@@ -297,6 +320,11 @@ public class ShopScene extends SceneAbstract {
 
         Table retrieveButton = getWoodButton(buttonText);
 
+        if(productAction == ProductAction.WatchVideo){
+            watchVideoAdsButton = retrieveButton;
+            watchAdsItemTable = itemRootTable;
+        }
+
         itemRootTable.add(topContentTable).expandX().fillX().height(63);
         itemRootTable.row();
         itemRootTable.add(retrieveButton).right().pad(7, 0, 7, 7);
@@ -304,7 +332,36 @@ public class ShopScene extends SceneAbstract {
         return itemRootTable;
     }
 
-    public void setPurseCoinsCount(final int count){
+    public void setCanWatchAds(final boolean hasAds){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                setIsOutOfStock(watchAdsItemTable, !hasAds);
+            }
+        });
+    }
+
+    public void setIsOutOfStock(final Table itemRootTable, final boolean isOutOfStock){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(isOutOfStock){
+                    Table outOfStockTable = new Table();
+                    outOfStockTable.setName("outOfStockTable");
+                    outOfStockTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.LESS_TRANS_BLACK_BG)));
+                    outOfStockTable.add(new Image(_assets.getTextures().get(Textures.Name.OUT_OF_STOCK_ICON))).pad(10);
+                    outOfStockTable.setFillParent(true);
+
+                    itemRootTable.addActor(outOfStockTable);
+                }
+                else{
+                    if(itemRootTable.findActor("outOfStockTable") != null) itemRootTable.findActor("outOfStockTable").remove();
+                }
+            }
+        });
+    }
+
+    public void refreshPurseDesign(final RetrievableCoinsData retrievableCoinsData){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -318,32 +375,60 @@ public class ShopScene extends SceneAbstract {
                 coin3.setVisible(false);
                 coin4.setVisible(false);
 
-                if(count > 0 && count <= 1){
-                    coin1.setVisible(true);
-                }
-                else if(count > 1 && count <= 2){
-                    coin1.setVisible(true);
-                    coin2.setVisible(true);
-                }
-                else if(count > 2 && count <= 3){
-                    coin1.setVisible(true);
-                    coin2.setVisible(true);
-                    coin3.setVisible(true);
-                }
-                else if(count > 3){
-                    coin1.setVisible(true);
-                    coin2.setVisible(true);
-                    coin3.setVisible(true);
-                    coin4.setVisible(true);
-                }
+                if(retrievableCoinsData == null){
 
-                purseCountLabel.setText(String.valueOf(count));
+                    purseCountLabel.setText("?");
+                }
+                else{
+                    if(retrievableCoinsData.getCanRetrieveCoinsCount() > 0 && retrievableCoinsData.getCanRetrieveCoinsCount() <= 1){
+                        coin1.setVisible(true);
+                    }
+                    else if(retrievableCoinsData.getCanRetrieveCoinsCount() > 1 && retrievableCoinsData.getCanRetrieveCoinsCount() <= 2){
+                        coin1.setVisible(true);
+                        coin2.setVisible(true);
+                    }
+                    else if(retrievableCoinsData.getCanRetrieveCoinsCount() > 2 && retrievableCoinsData.getCanRetrieveCoinsCount() <= 3){
+                        coin1.setVisible(true);
+                        coin2.setVisible(true);
+                        coin3.setVisible(true);
+                    }
+                    else if(retrievableCoinsData.getCanRetrieveCoinsCount() > 3){
+                        coin1.setVisible(true);
+                        coin2.setVisible(true);
+                        coin3.setVisible(true);
+                        coin4.setVisible(true);
+                    }
+
+                    purseCountLabel.setText(String.valueOf(retrievableCoinsData.getCanRetrieveCoinsCount()));
+                }
+            }
+        });
+    }
+
+    public void refreshNextCoinTimer(final int nextCoinInSecs, final boolean maxCoinReached){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+
+                Label labelGrowthRate = growthRateTable.findActor("labelGrowthRate");
+                Label nextCoinTimerLabel = growthRateTable.findActor("nextCoinTimerLabel");
+
+                if(maxCoinReached){
+                    labelGrowthRate.setText(_texts.maxPurse());
+                    nextCoinTimerLabel.setVisible(false);
+                }
+                else{
+                    labelGrowthRate.setText(_texts.growthRate());
+                    nextCoinTimerLabel.setText(DateTimes.getDurationString(nextCoinInSecs));
+                    nextCoinTimerLabel.setVisible(true);
+                }
             }
         });
     }
 
     public Table getWoodButton(String text){
         Table buttonTable = new Table();
+        new DummyButton(buttonTable, _assets);
         buttonTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.SHOP_WOOD_BTN)));
 
         Label.LabelStyle labelStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.PIZZA_S_REGULAR_B_ffffff_000000_1),
@@ -355,4 +440,11 @@ public class ShopScene extends SceneAbstract {
         return buttonTable;
     }
 
+    public Actor getWatchVideoAdsButton(){
+        return watchVideoAdsButton;
+    }
+
+    public Actor getRetrieveCoinsButton() {
+        return retrieveCoinsButton;
+    }
 }
