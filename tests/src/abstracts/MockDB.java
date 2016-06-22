@@ -91,9 +91,10 @@ public class MockDB implements IDatabase {
     }
 
     @Override
-    public void updateRoomPlayingAndOpenState(Room room, boolean isPlaying, @Nullable DatabaseListener<String> listener) {
+    public void updateRoomPlayingAndOpenState(Room room, Boolean isPlaying, Boolean isOpen, @Nullable DatabaseListener<String> listener) {
 
     }
+
 
     @Override
     public void saveRoom(Room room, boolean notify, @Nullable DatabaseListener<String> listener) {
@@ -101,13 +102,42 @@ public class MockDB implements IDatabase {
     }
 
     @Override
-    public void addUserToRoom(Room room, Profile user, DatabaseListener<String> listener) {
+    public void setOnDisconnectCloseRoom(Room room) {
 
     }
 
+    @Override
+    public void setInvitedUsers(ArrayList<Profile> invitedUsers, Room room, DatabaseListener listener) {
+
+    }
+
+    @Override
+    public void addUserToRoom(Room room, Profile user, int slotIndex, DatabaseListener<String> listener) {
+
+    }
+
+    @Override
+    public void removeUserFromRoom(Room room, Profile user, DatabaseListener listener) {
+
+    }
 
     @Override
     public void monitorRoomById(String id, String classTag, DatabaseListener<Room> listener) {
+
+    }
+
+    @Override
+    public void setRoomUserIsReady(Room room, String userId, boolean isReady, DatabaseListener listener) {
+
+    }
+
+    @Override
+    public void setRoomUserSlotIndex(Room room, String userId, int slotIndex, DatabaseListener listener) {
+
+    }
+
+    @Override
+    public void setRoomState(Room room, int roundCounter, boolean open, boolean playing, DatabaseListener listener) {
 
     }
 
@@ -128,7 +158,7 @@ public class MockDB implements IDatabase {
     }
 
     @Override
-    public void removeUserFromRoomOnDisconnect(String roomId, Profile user, DatabaseListener<String> listener) {
+    public void unauth() {
 
     }
 
@@ -153,6 +183,11 @@ public class MockDB implements IDatabase {
 
     }
 
+    @Override
+    public void clearAllOnDisconnectListenerModel() {
+
+    }
+
 
     @Override
     public void savePlayedHistory(Profile profile, Room room, DatabaseListener<String> listener) {
@@ -171,10 +206,6 @@ public class MockDB implements IDatabase {
         listener.onCallback(1, Status.SUCCESS);
     }
 
-    @Override
-    public void onDcSetGameStateDisconnected(Profile profile,  DatabaseListener listener) {
-
-    }
 
     @Override
     public void getGameByAbbr(String abbr, DatabaseListener<Game> listener) {

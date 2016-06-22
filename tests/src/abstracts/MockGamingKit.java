@@ -47,6 +47,11 @@ public class MockGamingKit extends GamingKit {
     }
 
     @Override
+    public void getRoomInfo(String roomId) {
+
+    }
+
+    @Override
     public void updateRoomMates(int updateRoomMatesCode, String msg) {
         for(UpdateRoomMatesListener listener : getUpdateRoomMatesListeners().values()){
             listener.onUpdateRoomMatesReceived(updateRoomMatesCode, msg, MockModel.mockProfile().getUserId());

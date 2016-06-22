@@ -56,7 +56,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
 
         Profile profile = MockModel.mockProfile();
         Team team = new Team();
-        team.addPlayer(new Player(profile.getGameName(), profile.getUserId(), true, true, 0));
+        team.addPlayer(new Player(profile.getGameName(), profile.getUserId(), true, 0));
 
         ArrayList<ScoreDetails> scoreDetails = new ArrayList<ScoreDetails>();
         scoreDetails.add(new ScoreDetails(900, "test", true, true));
@@ -295,7 +295,7 @@ public class TestEndGameLeaderboard extends TestAbstract {
         endGameResult.setWon(false);
 
         Team myTeam = new Team();
-        myTeam.addPlayer(new Player("", MockModel.mockProfile().getUserId(), true, true, 0));
+        myTeam.addPlayer(new Player("", MockModel.mockProfile().getUserId(), true, 0));
         endGameResult.setMyTeam(myTeam.getPlayers());
 
         ArrayList<Team> losersTeam = new ArrayList<>();

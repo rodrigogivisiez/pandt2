@@ -66,7 +66,7 @@ public class T_Services {
                 new Chat(broadcaster, gamingKit, new Texts(), assets, mock(SoundsPlayer.class), mock(Recorder.class),
                         mock(SpriteBatch.class), mock(PTGame.class), preferences),
                 new Socials(preferences, broadcaster), new GCMSender(), new Confirm(mock(SpriteBatch.class), mock(PTGame.class), assets, broadcaster),
-                new Notification(mock(SpriteBatch.class), assets, mock(PTGame.class), broadcaster), mock(Recorder.class), mock(IUploader.class),
+                new Notification(mock(SpriteBatch.class), assets, mock(PTGame.class), broadcaster), mock(Recorder.class),
                 mock(SoundsPlayer.class), mock(VersionControl.class), broadcaster, mock(ITutorials.class), new MockRestfulApi(),
                 mock(ConnectionWatcher.class));
     }

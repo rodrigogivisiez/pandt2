@@ -336,7 +336,7 @@ public class PTScreen implements Screen, InputProcessor {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                Gdx.graphics.setContinuousRendering(true);
+                //Gdx.graphics.setContinuousRendering(true);
                 _sunrayImg.clearActions();
                 _sunrayImg.addAction(parallel(
                         fadeIn(1f),
@@ -355,7 +355,7 @@ public class PTScreen implements Screen, InputProcessor {
                         fadeOut(1f), new Action() {
                             @Override
                             public boolean act(float delta) {
-                                Gdx.graphics.setContinuousRendering(false);
+                                //Gdx.graphics.setContinuousRendering(false);
                                 return true;
                             }
                         }

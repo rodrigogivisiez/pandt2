@@ -67,7 +67,7 @@ public class TestGameList extends TestAbstract {
         room.setOpen(false);
 
         Services services = T_Services.mockServices();
-        services.getProfile().setUserPlayingState(new UserPlayingState(room.getId(), false, 1));
+        services.getProfile().setUserPlayingState(new UserPlayingState(room.getId(), 1));
         services.setDatabase(new MockDB() {
             @Override
             public void getRoomById(String id, DatabaseListener<Room> listener) {
