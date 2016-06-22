@@ -35,12 +35,14 @@ public class Services {
     ITutorials _tutorials;
     IRestfulApi _restfulApi;
     ConnectionWatcher _connectionWatcher;
+    Coins _coins;
 
     public Services(Assets assets, Texts texts, Preferences preferences,
                     Profile profile, IDatabase database, Shaders shaders, GamingKit gamingKit, IDownloader downloader,
                     Chat chat, Socials socials, GCMSender gcmSender, Confirm confirm, Notification notification,
                     Recorder recorder, SoundsPlayer soundsPlayer, VersionControl versionControl,
-                    Broadcaster broadcaster, ITutorials tutorials, IRestfulApi restfulApi, ConnectionWatcher connectionWatcher) {
+                    Broadcaster broadcaster, ITutorials tutorials, IRestfulApi restfulApi, ConnectionWatcher connectionWatcher,
+                    Coins coins) {
         _texts = texts;
         _assets = assets;
         _preferences = preferences;
@@ -61,6 +63,11 @@ public class Services {
         _tutorials = tutorials;
         _restfulApi = restfulApi;
         _connectionWatcher = connectionWatcher;
+        _coins = coins;
+    }
+
+    public Coins getCoins() {
+        return _coins;
     }
 
     public ConnectionWatcher getConnectionWatcher() {
@@ -141,7 +148,6 @@ public class Services {
 
     public void setProfile(Profile _profile) {
         this._profile = _profile;
-        this.getConnectionWatcher().setProfile(_profile);
     }
 
     public IDatabase getDatabase() { return _database; }

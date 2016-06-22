@@ -19,6 +19,7 @@ public class Profile {
     String token;
 
     public Profile() {
+        reset();
     }
 
     @JsonIgnore
@@ -124,4 +125,31 @@ public class Profile {
         }
         return super.equals(o);
     }
+
+    @JsonIgnore
+    public void copyToThis(Profile toCopyProfile){
+        this.facebookUserId = toCopyProfile.getFacebookUserId();
+        this.facebookName = toCopyProfile.getFacebookName();
+        this.userId = toCopyProfile.getUserId();
+        this.gameName = toCopyProfile.getGameName();
+        this.gcmId = toCopyProfile.getGcmId();
+        this.userPlayingState = toCopyProfile.getUserPlayingState();
+        this.gameNameLower = toCopyProfile.getGameNameLower();
+        this.token = toCopyProfile.getToken();
+    }
+
+    @JsonIgnore
+    public void reset(){
+        this.facebookUserId = "";
+        this.facebookName = "";
+        this.userId = "";
+        this.gameName = "";
+        this.gcmId ="";
+        this.userPlayingState = null;
+        this.gameNameLower = "";
+        this.token = "";
+    }
+
+
+
 }

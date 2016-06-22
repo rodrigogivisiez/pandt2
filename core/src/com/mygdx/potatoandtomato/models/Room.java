@@ -405,7 +405,7 @@ public class Room {
     }
 
     @JsonIgnore
-    public void convertRoomUsersToTeams() {
+    public ArrayList<Team> convertRoomUsersToTeams() {
         ArrayList<Team> teams = new ArrayList();
         for (int i = 0; i < Integer.valueOf(this.getGame().getTeamCount()); i++) {
             teams.add(new Team());
@@ -419,13 +419,13 @@ public class Room {
                                 user.getProfile().getUserId(), isHost, user.getSlotIndex()));
             }
         }
-        this.teams = teams;
+        return teams;
     }
 
 
     @JsonIgnore
     public boolean checkAllFairTeam(){
-        convertRoomUsersToTeams();
+        ArrayList<Team> teams = convertRoomUsersToTeams();
         int lastCount = 0;
         for(Team team : teams){
             if(team.getPlayers().size() != 0){

@@ -42,11 +42,12 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
 
     public ConnectionWatcher(GamingKit gamingKit, SpriteBatch spriteBatch, Assets assets,
                              Broadcaster broadcaster, Confirm confirm,
-                             Texts texts, IPTGame iptGame) {
+                             Texts texts, IPTGame iptGame, Profile profile) {
         this.gamingKit = gamingKit;
         this.broadcaster = broadcaster;
         this.confirm = confirm;
         this.texts = texts;
+        this.profile = profile;
         connectionWatcherListeners = new ArrayList();
         this.disconnectedOverlay = new DisconnectedOverlay(spriteBatch, assets, broadcaster, texts, iptGame);
         setListeners();
@@ -144,10 +145,6 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
 
     public void setPtScreen(PTScreen ptScreen) {
         this.ptScreen = ptScreen;
-    }
-
-    public void setProfile(Profile profile){
-        this.profile = profile;
     }
 
     @Override

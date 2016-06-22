@@ -5,6 +5,10 @@ package com.mygdx.potatoandtomato.services;
  */
 public class Texts {
 
+    public String insert() { return "Insert";}
+    public String coin() { return "Coin";}
+    public String coinsInsertedTitle() { return "Coins Inserted";}
+
     public String mascotQuestion() { return "Are you a Potato or \nTomato?";};
     public String mascotPotato() { return "Potatoes welcome \nYOU!";};
     public String mascotTomato() { return "Tomatoes welcome \nYOU!";};
@@ -41,6 +45,8 @@ public class Texts {
     public String roomTitle() { return "Game Room"; }
     public String settingsTitle() { return "Settings"; }
     public String inviteTitle() { return "Invite Friends"; }
+    public String shopTitle() { return "Shop"; }
+
 
     public String confirm() { return "Confirm"; }
     public String details() { return "Details"; }
@@ -119,7 +125,7 @@ public class Texts {
 
     public String playedXAgo() { return "Played %s together %s";}
 
-    public String gameStartingIn() { return "Game starting in %s...";}
+    public String gameStarting() { return "Game will be starting soon after %s coin(s) inserted.";}
     public String gameStartStop() { return "Game start process is stopped by %s...";}
 
     public String confirmQuit() { return "Are you sure you want to quit Potato and Tomato?";}
@@ -168,8 +174,12 @@ public class Texts {
     public String ready() { return "Ready";}
     public String failed() { return "Failed";}
     public String remainingTime() { return "Remaining Time: ";}
+    public String purseTitle() { return "Mum's purse";}
+    public String growthRate() { return "Grow Coin In";}
+    public String maxPurse() { return "Maximum Reached";}
 
     public String xPoints() {return "%s points";}
+    public String xCoin() {return "Coin x %s";}
 
     public String appsCrashed() {return "Opps, looks like P&T has crashed on the last time you played, a error log has been received by Tomato and will be fixed asap.";}
 
@@ -177,6 +187,11 @@ public class Texts {
     public String lostConnection() {return "Lost connection with server, trying to reconnect...";}
     public String connectionRecovered() {return "Connection established, trying to resume game session, %s secs remaining";}
 
+
+    public String retrieveCoins() { return "Retrieve Now"; }
+    public String watchAds() { return "Watch Now"; }
+    public String watchAdsDescription() { return "30secs video ads"; }
+    public String buyCoins() { return "Buy Now"; }
 
     //push notifications part
     public String PUSHGameInvitationsTitle() { return "P&T Game Invitations"; }

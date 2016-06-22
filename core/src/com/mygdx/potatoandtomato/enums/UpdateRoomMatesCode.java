@@ -30,6 +30,11 @@ public class UpdateRoomMatesCode {
     public final static int DECISION_MAKER = 19;
     public final static int USER_ABANDON = 20;
     public final static int USER_CONNECTED = 21;
+    public final static int PUT_COIN = 22;
+    public final static int COINS_DEDUCTED_SUCCESS = 23;
+    public final static int COINS_DEDUCTED_FAILED = 24;
+    public final static int REQUEST_COINS_STATE = 25;
+    public final static int COINS_STATE_RESPONSE = 26;
 
     public static int roomUpdateTypeToUpdateRoomMatesCode(RoomUpdateType roomUpdateType){
         if(roomUpdateType == RoomUpdateType.InGame){

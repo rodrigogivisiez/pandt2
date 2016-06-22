@@ -162,7 +162,7 @@ public abstract class LogicAbstract implements Disposable {
 
     private void disposeEverything(){
         _services.getGamingKit().removeListenersByClassTag(getClassTag());
-        _services.getDatabase().clearListenersByClassTag(getClassTag());
+        _services.getDatabase().clearListenersByTag(getClassTag());
         _alive = false;
         for(String id : _broadcastSubscribes){
             _broadcaster.unsubscribe(id);

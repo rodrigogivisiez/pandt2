@@ -60,7 +60,7 @@ public class LeaderBoardScene extends SceneAbstract {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                new TopBar(_root, _texts.leaderBoards(), false, _assets, _screen);
+                new TopBar(_root, _texts.leaderBoards(), false, _assets, _screen, _services.getCoins());
                 _root.align(Align.top);
 
                 ////////////////////////

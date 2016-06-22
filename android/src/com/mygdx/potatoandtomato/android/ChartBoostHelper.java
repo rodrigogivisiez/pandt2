@@ -6,10 +6,13 @@ import com.chartboost.sdk.Chartboost;
 import com.chartboost.sdk.ChartboostDelegate;
 import com.chartboost.sdk.Libraries.CBLogging;
 import com.chartboost.sdk.Model.CBError;
+import com.mygdx.potatoandtomato.models.Profile;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.utils.RunnableArgs;
+import com.potatoandtomato.common.utils.Threadings;
 
 /**
  * Created by SiongLeng on 2/6/2016.
@@ -30,18 +33,34 @@ public class ChartBoostHelper {
         Chartboost.setDelegate(delegate);
         Chartboost.onCreate(mainActivity);
 
-        Chartboost.cacheRewardedVideo(CBLocation.LOCATION_GAMEOVER);
+        Chartboost.cacheRewardedVideo(CBLocation.LOCATION_DEFAULT);
         subscribeBroadcasterEvents();
     }
 
     public void subscribeBroadcasterEvents(){
+        broadcaster.subscribe(BroadcastEvent.USER_READY, new BroadcastListener<Profile>() {
+            @Override
+            public void onCallback(Profile profile, Status st) {
+                Chartboost.setCustomId(profile.getUserId());
+            }
+        });
+
+        broadcaster.subscribe(BroadcastEvent.HAS_REWARD_VIDEO, new BroadcastListener<RunnableArgs<Boolean>>() {
+            @Override
+            public void onCallback(RunnableArgs<Boolean> runnable, Status st) {
+                runnable.run(Chartboost.hasRewardedVideo(CBLocation.LOCATION_DEFAULT));
+            }
+        });
+
         broadcaster.subscribe(BroadcastEvent.SHOW_REWARD_VIDEO, new BroadcastListener() {
             @Override
             public void onCallback(Object obj, Status st) {
-                //if(Chartboost.hasRewardedVideo(CBLocation.LOCATION_GAMEOVER)){
-                    Chartboost.showRewardedVideo(CBLocation.LOCATION_GAMEOVER);
-                //}
-                //Chartboost.cacheRewardedVideo(CBLocation.LOCATION_GAMEOVER);
+                Threadings.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        Chartboost.showRewardedVideo(CBLocation.LOCATION_DEFAULT);
+                    }
+                });
             }
         });
     }

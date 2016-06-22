@@ -44,7 +44,10 @@ public class BootLogic extends LogicAbstract {
         super.onShow();
 
         _bootScene.reset();
-        _services.getSoundsPlayer().playThemeMusic();
+        _services.getDatabase().clearAllListeners();
+        _services.getCoins().reset();
+        _services.getProfile().reset();
+        _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
         _screen.showRotateSunrise();
         publishBroadcast(BroadcastEvent.DESTROY_ROOM);
 
@@ -160,7 +163,7 @@ public class BootLogic extends LogicAbstract {
                 }
                 else {
                     obj.setToken(token);
-                    _services.setProfile(obj);
+                    _services.getProfile().copyToThis(obj);
                     loginGCM();
                 }
             }
@@ -189,7 +192,9 @@ public class BootLogic extends LogicAbstract {
 
     public void loginPTSuccess(){
         _services.getDatabase().updateProfile(_services.getProfile(), null);
+        _services.getCoins().profileReady();
         _services.getGamingKit().connect(_services.getProfile());
+        _services.getBroadcaster().broadcast(BroadcastEvent.USER_READY, _services.getProfile());
     }
 
     private void checkCrashedBefore(){
@@ -236,10 +241,8 @@ public class BootLogic extends LogicAbstract {
                 if(_services.getProfile() != null && userId != null && userId.equals(_services.getProfile().getUserId())){
                     if(!_logined){
                         if(st == ConnectStatus.CONNECTED){
-                            _services.getDatabase().clearAllListeners();
-
                             _screen.hideRotateSunrise();
-                            if(_services.getProfile().getGameName() == null){
+                            if(Strings.isEmpty(_services.getProfile().getGameName())){
                                 _screen.toScene(SceneEnum.INPUT_NAME);
                             }
                             else{

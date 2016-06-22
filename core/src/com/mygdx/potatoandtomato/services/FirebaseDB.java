@@ -23,7 +23,8 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by SiongLeng on 9/12/2015.
  */
-public class FirebaseDB implements IDatabase {
+public class
+        FirebaseDB implements IDatabase {
 
     Firebase _ref;
     private String _tableUsers = "users";
@@ -35,7 +36,9 @@ public class FirebaseDB implements IDatabase {
     private String _tableLeaderboard = "leaderboard";
     private String _tableUserLeaderboardLog = "userLeaderboardLog";
     private String _tableStreak = "streaks";
+    private String _tableCoins = "coins";
     private String _tableUpdatedScores = "updatedScores";
+    private String _tableCoinsProducts = "coinsProducts";
     private String _tableServerTimeInfo = ".info/serverTimeOffset";
     private String _tableLogs = "logs";
     private Array<ListenerModel> _listenerModels;
@@ -86,10 +89,10 @@ public class FirebaseDB implements IDatabase {
     }
 
     @Override
-    public void clearListenersByClassTag(String classTag) {
+    public void clearListenersByTag(String tag) {
         ArrayList<Integer> toRemove = new ArrayList();
         for(int i = 0; i< _listenerModels.size; i++){
-            if(_listenerModels.get(i).getClassName().equals(classTag)){
+            if(_listenerModels.get(i).getTag().equals(tag)){
                 toRemove.add(i);
             }
         }
@@ -257,6 +260,26 @@ public class FirebaseDB implements IDatabase {
     }
 
     @Override
+    public void monitorUserCoinsCount(String userId, DatabaseListener<Integer> listener) {
+        getSingleDataMonitor(getTable(_tableCoins).child(userId).child("count"), userId, listener);
+    }
+
+    @Override
+    public void deductUserCoins(String userId, int finalCoins, final DatabaseListener listener) {
+        getTable(_tableCoins).child(userId).child("count").setValue(finalCoins, new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                if(firebaseError != null){
+                    listener.onCallback(null, Status.FAILED);
+                }
+                else{
+                    listener.onCallback(null, Status.SUCCESS);
+                }
+            }
+        });
+    }
+
+    @Override
     public void updateProfile(Profile profile, DatabaseListener listener) {
         save(getTable(_tableUsers).child(profile.getUserId()), profile, listener);
     }
@@ -272,6 +295,11 @@ public class FirebaseDB implements IDatabase {
                         listener.onCallback(result, st);
                     }
                 });
+    }
+
+    @Override
+    public void getAllProducts(DatabaseListener<ArrayList<CoinProduct>> listener) {
+        getData(getTable(_tableCoinsProducts).orderByChild("count"), listener);
     }
 
     @Override
@@ -883,24 +911,24 @@ public class FirebaseDB implements IDatabase {
     private class ListenerModel{
 
         Query ref;
-        String className;
+        String tag;
         ChildEventListener child;
         ValueEventListener value;
 
-        public ListenerModel(Query ref, String className, ChildEventListener child) {
+        public ListenerModel(Query ref, String tag, ChildEventListener child) {
             this.ref = ref;
-            this.className = className;
+            this.tag = tag;
             this.child = child;
         }
 
-        public ListenerModel(Query ref, String className, ValueEventListener value) {
+        public ListenerModel(Query ref, String tag, ValueEventListener value) {
             this.value = value;
-            this.className = className;
+            this.tag = tag;
             this.ref = ref;
         }
 
-        public ListenerModel(Query ref, String className) {
-            this.className = className;
+        public ListenerModel(Query ref, String tag) {
+            this.tag = tag;
             this.ref = ref;
         }
 
@@ -908,8 +936,8 @@ public class FirebaseDB implements IDatabase {
             return ref;
         }
 
-        public String getClassName() {
-            return className;
+        public String getTag() {
+            return tag;
         }
 
         public ChildEventListener getChild() {

@@ -1,0 +1,215 @@
+
+POTATO_FLIP_COIN.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+COIN_FLIP
+  rotate: false
+  xy: 0, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 0
+COIN_FLIP
+  rotate: false
+  xy: 0, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 27
+COIN_FLIP
+  rotate: false
+  xy: 0, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 28
+COIN_FLIP
+  rotate: false
+  xy: 0, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 29
+COIN_FLIP
+  rotate: false
+  xy: 29, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 1
+COIN_FLIP
+  rotate: false
+  xy: 58, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 2
+COIN_FLIP
+  rotate: false
+  xy: 87, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 3
+COIN_FLIP
+  rotate: false
+  xy: 116, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 4
+COIN_FLIP
+  rotate: false
+  xy: 145, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 5
+COIN_FLIP
+  rotate: false
+  xy: 174, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 6
+COIN_FLIP
+  rotate: false
+  xy: 203, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 7
+COIN_FLIP
+  rotate: false
+  xy: 232, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 8
+COIN_FLIP
+  rotate: false
+  xy: 261, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 9
+COIN_FLIP
+  rotate: false
+  xy: 290, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 10
+COIN_FLIP
+  rotate: false
+  xy: 319, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 11
+COIN_FLIP
+  rotate: false
+  xy: 348, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 12
+COIN_FLIP
+  rotate: false
+  xy: 377, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 13
+COIN_FLIP
+  rotate: false
+  xy: 406, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 14
+COIN_FLIP
+  rotate: false
+  xy: 435, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 15
+COIN_FLIP
+  rotate: false
+  xy: 464, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 16
+COIN_FLIP
+  rotate: false
+  xy: 493, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 17
+COIN_FLIP
+  rotate: false
+  xy: 522, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 18
+COIN_FLIP
+  rotate: false
+  xy: 551, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 19
+COIN_FLIP
+  rotate: false
+  xy: 580, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 20
+COIN_FLIP
+  rotate: false
+  xy: 609, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 21
+COIN_FLIP
+  rotate: false
+  xy: 638, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 22
+COIN_FLIP
+  rotate: false
+  xy: 667, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 23
+COIN_FLIP
+  rotate: false
+  xy: 696, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 24
+COIN_FLIP
+  rotate: false
+  xy: 725, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 25
+COIN_FLIP
+  rotate: false
+  xy: 754, 0
+  size: 27, 68
+  orig: 27, 68
+  offset: 0, 0
+  index: 26

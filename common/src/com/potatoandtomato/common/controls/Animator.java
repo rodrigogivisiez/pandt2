@@ -57,7 +57,9 @@ public class Animator extends Actor {
         return animation;
     }
 
-
+    public void replay(){
+        elapsed = 0;
+    }
 
     public void overrideSize(float width, float height){
         overRiddenWidth = width;

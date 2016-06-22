@@ -7,17 +7,16 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
-import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
+import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import com.mygdx.potatoandtomato.assets.*;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.services.*;
-import com.mygdx.potatoandtomato.statics.Terms;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
+import com.mygdx.potatoandtomato.services.*;
 import com.mygdx.potatoandtomato.statics.Global;
-import com.mygdx.potatoandtomato.utils.ForAppwarpTesting;
-import com.mygdx.potatoandtomato.utils.Logs;
+import com.mygdx.potatoandtomato.statics.Terms;
 import com.potatoandtomato.common.absints.IDownloader;
 import com.potatoandtomato.common.absints.IPTGame;
 import com.potatoandtomato.common.absints.PTAssetsManager;
@@ -52,7 +51,9 @@ public class PTGame extends Game implements IPTGame {
 	RestfulApi _restfulApi;
 	Tutorials _tutorials;
 	ConnectionWatcher _connectionWatcher;
+	Coins _coins;
 	Profile _profile;
+	IDatabase _database;
 	PTAssetsManager _monitoringPTAssetsManager;
 	ArrayList<Runnable> _onResumeRunnables;
 
@@ -83,6 +84,7 @@ public class PTGame extends Game implements IPTGame {
 				_soundsPlayer = new SoundsPlayer(_assets, _broadcaster);
 				_recorder = new Recorder(_soundsPlayer, _broadcaster);
 				_downloader = new Downloader();
+				_database = new FirebaseDB(Terms.FIREBASE_URL());
 
 				_chat = new Chat(_broadcaster, _gamingKit, _texts, _assets,
 										_soundsPlayer, _recorder, _batch, _game, _preferences);
@@ -90,20 +92,25 @@ public class PTGame extends Game implements IPTGame {
 				_notification = new Notification(_batch, _assets, _game, _broadcaster);
 				_tutorials = new Tutorials(_game, _batch, _soundsPlayer, _assets, _broadcaster);
 				_restfulApi = new RestfulApi();
-				_connectionWatcher = new ConnectionWatcher(_gamingKit, _batch, _assets,  _broadcaster, _confirm, _texts, _game);
+				_connectionWatcher = new ConnectionWatcher(_gamingKit, _batch, _assets,
+									_broadcaster, _confirm, _texts, _game, _profile);
+				_coins = new Coins(_broadcaster, _assets, _soundsPlayer, _texts,
+						_game, _batch, _profile, _database, _gamingKit);
 
 				_services = new Services(_assets, _texts,
-						_preferences, _profile, new FirebaseDB(Terms.FIREBASE_URL()),
+						_preferences, _profile, _database,
 						new Shaders(), _gamingKit, _downloader, _chat,
 						new Socials(_preferences, _broadcaster), new GCMSender(), _confirm, _notification,
 						_recorder, _soundsPlayer, new VersionControl(), _broadcaster,
-						_tutorials, _restfulApi, _connectionWatcher);
+						_tutorials, _restfulApi, _connectionWatcher, _coins);
 				_screen = new PTScreen(_game, _services);
 				_connectionWatcher.setPtScreen(_screen);
+				_coins.setPtScreen(_screen);
 				setScreen(_screen);
 
+//				_services.getProfile().setUserId("-KJpZJTAAW38OskHWVWU");
+//				_services.getProfile().setToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhZG1pbiI6ZmFsc2UsImRlYnVnIjpmYWxzZSwiZCI6eyJ1aWQiOiItS0pwWkpUQUFXMzhPc2tIV1ZXVSIsImlzTW9kZXJhdG9yIjpmYWxzZX0sInYiOjAsImlhdCI6MTQ2NjMzOTU0OX0.gi3dMQFyeh7OGFO2VRPF4Aifyj5LONqG7wPlhH-9rkA");
 				_screen.toScene(SceneEnum.BOOT);
-
 			}
 		});
 	}
@@ -112,6 +119,7 @@ public class PTGame extends Game implements IPTGame {
 	public void resize(int width, int height) {
 		super.resize(width, height);
 		if(_chat != null) _chat.resize(width, height);
+		if(_coins != null) _coins.resize(width, height);
 		if(_notification != null) _notification.resize(width, height);
 		if(_confirm != null) _confirm.resize(width, height);
 		if(_tutorials != null) _tutorials.resize(width, height);
@@ -158,6 +166,7 @@ public class PTGame extends Game implements IPTGame {
 		}
 
 		if(_chat != null) _chat.render(Gdx.graphics.getDeltaTime());
+		if(_coins != null) _coins.render(Gdx.graphics.getDeltaTime());
 		if(_tutorials != null) _tutorials.render(Gdx.graphics.getDeltaTime());
 		if(_confirm != null) _confirm.render(Gdx.graphics.getDeltaTime());
 		if(_connectionWatcher != null) _connectionWatcher.render(Gdx.graphics.getDeltaTime());
