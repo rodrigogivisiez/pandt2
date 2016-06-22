@@ -23,8 +23,8 @@ import java.util.HashMap;
 public class SoundsPlayer implements ISoundsPlayer {
 
     private Assets _assets;
-    private Music _themeMusic;
     private float _volume;
+    private Music _currentMusic;
     private HashMap<Music, Boolean> _musicMap;
     private Broadcaster _broadcaster;
     private HashMap<Sounds.Name, Long> _soundIdsMap;
@@ -47,26 +47,30 @@ public class SoundsPlayer implements ISoundsPlayer {
 
     }
 
-
-    public void playThemeMusic() {
-        if(_themeMusic == null){
-            _themeMusic = _assets.getSounds().getMusic(Sounds.Name.THEME_MUSIC);
+    public void playMusic(Sounds.Name name){
+        Music music = _assets.getSounds().getMusic(name);
+        if(music != _currentMusic){
+            stopMusic(_currentMusic);
+            playMusic(music, false, true);
         }
-        playMusic(_themeMusic, false, true);
     }
 
-    public void stopThemeMusic() {
+    public void stopMusic(Sounds.Name name){
+        Music music = _assets.getSounds().getMusic(name);
+        stopMusic(music);
+    }
+
+
+    public Music playMusicFromFile(FileHandle fileHandle){
+        final Music music = Gdx.audio.newMusic(fileHandle);
+        music.setVolume(1);
+        music.setLooping(false);
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                _themeMusic.stop();
+                music.play();
             }
         });
-    }
-
-    public Music playMusicFromFile(FileHandle fileHandle){
-        Music music = Gdx.audio.newMusic(fileHandle);
-        playMusic(music, 1);
         return music;
     }
 
@@ -174,17 +178,7 @@ public class SoundsPlayer implements ISoundsPlayer {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                music.play();
-            }
-        });
-    }
-
-    public void playMusic(final Music music, float volume) {
-        music.setVolume(volume);
-        music.setLooping(false);
-        Threadings.postRunnable(new Runnable() {
-            @Override
-            public void run() {
+                _currentMusic = music;
                 music.play();
             }
         });

@@ -75,7 +75,7 @@ public class GameListScene extends SceneAbstract {
 
     @Override
     public void populateRoot() {
-        new TopBar(_root, _texts.gamesList(), true, _assets, _screen);
+        new TopBar(_root, _texts.gamesList(), true, _assets, _screen, _services.getCoins());
         _root.align(Align.top);
 
         //Game List Table START

@@ -46,6 +46,7 @@ public class AndroidLauncher extends AndroidApplication {
 	private PTGame _ptGame;
 	private AudioRecorder _audioRecorder;
 	private ChartBoostHelper _chartBoostHelper;
+	private InAppPurchaseHelper _inAppPurchaseHelper;
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
@@ -58,6 +59,7 @@ public class AndroidLauncher extends AndroidApplication {
 		reset();
 
 		_broadcaster = new Broadcaster();
+		_inAppPurchaseHelper = new InAppPurchaseHelper(this, _broadcaster);
 		_chartBoostHelper = new ChartBoostHelper(this, _broadcaster);
 		_vibrator = new VibrateManager(_this, _broadcaster);
 		_imageLoader = new ImageLoader(_this, _broadcaster);
@@ -80,8 +82,6 @@ public class AndroidLauncher extends AndroidApplication {
 		startService(new Intent(getBaseContext(), OnClearFromRecentService.class));
 
 	}
-
-
 
 	private void setBuildNumber(){
 		PackageInfo pInfo = null;
@@ -160,9 +160,11 @@ public class AndroidLauncher extends AndroidApplication {
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		_facebookConnector.getCallbackManager().onActivityResult(requestCode,
-				resultCode, data);
+		if(!_inAppPurchaseHelper.onActivityResult(requestCode, resultCode, data)){
+			super.onActivityResult(requestCode, resultCode, data);
+			_facebookConnector.getCallbackManager().onActivityResult(requestCode,
+					resultCode, data);
+		}
 	}
 
 	@Override
@@ -208,6 +210,7 @@ public class AndroidLauncher extends AndroidApplication {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		_inAppPurchaseHelper.onDestroy();
 		stopService(new Intent(getBaseContext(), OnClearFromRecentService.class));
 		reset();
 		if(_chartBoostHelper != null) _chartBoostHelper.onDestroy();

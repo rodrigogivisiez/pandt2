@@ -4,17 +4,13 @@ import abstracts.TestAbstract;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
-import com.mygdx.potatoandtomato.enums.LeaderboardType;
 import com.mygdx.potatoandtomato.services.FirebaseDB;
-import com.potatoandtomato.common.utils.ArrayUtils;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.enums.Status;
 import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
-import com.potatoandtomato.common.models.LeaderboardRecord;
 import helpers.T_Threadings;
 import org.junit.*;
-import org.mockito.Mock;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -23,7 +19,6 @@ import java.util.Map;
  * Created by SiongLeng on 9/12/2015.
  */
 public class TestFireBase extends TestAbstract {
-
 //    private String _unitTestUrl = "https://forunittest.firebaseio.com";
 //    IDatabase databases;
 //

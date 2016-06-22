@@ -29,10 +29,16 @@ public interface IDatabase {
 
      void getProfileByFacebookUserId(String facebookUserId, DatabaseListener<Profile> listener);
 
+     void monitorUserCoinsCount(String userId, DatabaseListener<Integer> listener);
+
+     void deductUserCoins(String userId, int finalCoins, DatabaseListener listener);
+
      void updateProfile(Profile profile, DatabaseListener listener);
 
      void getAllGames(DatabaseListener<ArrayList<Game>> listener);
 
+     ///////////////all about iab//////////////////////////
+     void getAllProducts(DatabaseListener<ArrayList<CoinProduct>> listener);
 
      ///////////////all about rooms/////////////////////
      void updateRoomPlayingAndOpenState(Room room, Boolean isPlaying, Boolean isOpen, @Nullable DatabaseListener<String> listener);
@@ -69,7 +75,7 @@ public interface IDatabase {
 
      void online();
 
-     void clearListenersByClassTag(String classTag);
+     void clearListenersByTag(String tag);
 
      void clearAllListeners();
 

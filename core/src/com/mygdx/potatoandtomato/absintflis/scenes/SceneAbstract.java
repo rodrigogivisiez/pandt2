@@ -22,6 +22,7 @@ public abstract class SceneAbstract implements Disposable {
     protected AutoDisposeTable _root;
     protected PTScreen _screen;
     protected IPTGame _ptGame;
+    protected boolean disposed;
 
     public SceneAbstract(Services services, PTScreen screen) {
         _services = services;
@@ -45,6 +46,7 @@ public abstract class SceneAbstract implements Disposable {
 
     @Override
     public void dispose() {
+        disposed = true;
         if(_root != null) _root.dispose();
     }
 }
