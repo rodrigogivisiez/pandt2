@@ -38,6 +38,7 @@ public class
     private String _tableStreak = "streaks";
     private String _tableCoins = "coins";
     private String _tableUpdatedScores = "updatedScores";
+    private String _tableCoinsProducts = "coinsProducts";
     private String _tableServerTimeInfo = ".info/serverTimeOffset";
     private String _tableLogs = "logs";
     private Array<ListenerModel> _listenerModels;
@@ -294,6 +295,11 @@ public class
                         listener.onCallback(result, st);
                     }
                 });
+    }
+
+    @Override
+    public void getAllProducts(DatabaseListener<ArrayList<CoinProduct>> listener) {
+        getData(getTable(_tableCoinsProducts).orderByChild("count"), listener);
     }
 
     @Override

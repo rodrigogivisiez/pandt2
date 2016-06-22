@@ -6,11 +6,13 @@ import com.chartboost.sdk.Chartboost;
 import com.chartboost.sdk.ChartboostDelegate;
 import com.chartboost.sdk.Libraries.CBLogging;
 import com.chartboost.sdk.Model.CBError;
+import com.mygdx.potatoandtomato.models.Profile;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.RunnableArgs;
+import com.potatoandtomato.common.utils.Threadings;
 
 /**
  * Created by SiongLeng on 2/6/2016.
@@ -36,10 +38,10 @@ public class ChartBoostHelper {
     }
 
     public void subscribeBroadcasterEvents(){
-        broadcaster.subscribe(BroadcastEvent.USER_READY, new BroadcastListener<String>() {
+        broadcaster.subscribe(BroadcastEvent.USER_READY, new BroadcastListener<Profile>() {
             @Override
-            public void onCallback(String userId, Status st) {
-                Chartboost.setCustomId(userId);
+            public void onCallback(Profile profile, Status st) {
+                Chartboost.setCustomId(profile.getUserId());
             }
         });
 
@@ -53,7 +55,12 @@ public class ChartBoostHelper {
         broadcaster.subscribe(BroadcastEvent.SHOW_REWARD_VIDEO, new BroadcastListener() {
             @Override
             public void onCallback(Object obj, Status st) {
-                Chartboost.showRewardedVideo(CBLocation.LOCATION_DEFAULT);
+                Threadings.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        Chartboost.showRewardedVideo(CBLocation.LOCATION_DEFAULT);
+                    }
+                });
             }
         });
     }

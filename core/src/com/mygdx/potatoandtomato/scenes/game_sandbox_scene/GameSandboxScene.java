@@ -20,13 +20,11 @@ import java.util.HashMap;
  */
 public class GameSandboxScene extends SceneAbstract {
 
-    private HashMap<String, Table> _userTableMap;
     Table _loadingTable;
     Label _remainingTimeLabel;
 
     public GameSandboxScene(Services services, PTScreen screen) {
         super(services, screen);
-        _userTableMap = new HashMap<String, Table>();
     }
 
     @Override
@@ -35,8 +33,11 @@ public class GameSandboxScene extends SceneAbstract {
         _root.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.LOADING_PAGE)));
 
         _loadingTable = new Table();
-        _loadingTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.FULL_BLACK_BG)));
         _loadingTable.padBottom(10);
+
+        Image loadingTableBgImage = new Image(_assets.getTextures().get(Textures.Name.FULL_BLACK_BG));
+        loadingTableBgImage.setFillParent(true);
+        _loadingTable.addActor(loadingTableBgImage);
 
         Label.LabelStyle remainingStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_S_REGULAR), null);
         Table remainingTable = new Table();
@@ -68,13 +69,14 @@ public class GameSandboxScene extends SceneAbstract {
                         isFailed ? Color.RED : isReady ? Color.GREEN : Color.WHITE);
                 String status = isFailed ? _texts.failed() : isReady ? _texts.ready() : _texts.loading();
 
-                if(_userTableMap.containsKey(userId)){
-                    userTable = _userTableMap.get(userId);
+                userTable = _loadingTable.findActor(userId);
+                if(userTable != null){
                     userNameLabel = userTable.findActor("userNameLabel");
                     statusLabel = userTable.findActor("statusLabel");
                 }
                 else{
                     userTable = new Table();
+                    userTable.setName(userId);
                     userNameLabel = new Label(name, labelNameStyle);
                     userNameLabel.setName("userNameLabel");
                     statusLabel = new Label(status, labelStatusStyle);
@@ -84,8 +86,6 @@ public class GameSandboxScene extends SceneAbstract {
 
                     _loadingTable.row();
                     _loadingTable.add(userTable).expandX().fillX().space(10);
-
-                    _userTableMap.put(userId, userTable);
                 }
 
                 userNameLabel.setText(name);

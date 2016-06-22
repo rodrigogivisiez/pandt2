@@ -1,6 +1,6 @@
 <?php
 	function addCoinToUser($userId, $count, $reason, $extra, $firebase){
-		$currentUserCoinsString = $firebase->get("coins/".$userId);
+		$currentUserCoinsString = $firebase->get("coins/".$userId."/count");
 			
 		if(empty($currentUserCoinsString)){
 			$currentUserCoins = 0;
@@ -10,7 +10,7 @@
 		}
 		
 		$currentUserCoins += $count;
-		$firebase->set("coins/".$userId, $currentUserCoins);
+		$firebase->set("coins/".$userId."/count", $currentUserCoins);
 		
 		date_default_timezone_set("Asia/Singapore");
 		$currentDateTimeString = date("Y-m-d H:i:s");

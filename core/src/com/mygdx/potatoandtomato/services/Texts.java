@@ -190,6 +190,7 @@ public class Texts {
 
     public String retrieveCoins() { return "Retrieve Now"; }
     public String watchAds() { return "Watch Now"; }
+    public String watchAdsDescription() { return "30secs video ads"; }
     public String buyCoins() { return "Buy Now"; }
 
     //push notifications part

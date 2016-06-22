@@ -37,6 +37,8 @@ public interface IDatabase {
 
      void getAllGames(DatabaseListener<ArrayList<Game>> listener);
 
+     ///////////////all about iab//////////////////////////
+     void getAllProducts(DatabaseListener<ArrayList<CoinProduct>> listener);
 
      ///////////////all about rooms/////////////////////
      void updateRoomPlayingAndOpenState(Room room, Boolean isPlaying, Boolean isOpen, @Nullable DatabaseListener<String> listener);

@@ -194,7 +194,7 @@ public class BootLogic extends LogicAbstract {
         _services.getDatabase().updateProfile(_services.getProfile(), null);
         _services.getCoins().profileReady();
         _services.getGamingKit().connect(_services.getProfile());
-        _services.getBroadcaster().broadcast(BroadcastEvent.USER_READY, _services.getProfile().getUserId());
+        _services.getBroadcaster().broadcast(BroadcastEvent.USER_READY, _services.getProfile());
     }
 
     private void checkCrashedBefore(){
@@ -242,7 +242,7 @@ public class BootLogic extends LogicAbstract {
                     if(!_logined){
                         if(st == ConnectStatus.CONNECTED){
                             _screen.hideRotateSunrise();
-                            if(_services.getProfile().getGameName() == null){
+                            if(Strings.isEmpty(_services.getProfile().getGameName())){
                                 _screen.toScene(SceneEnum.INPUT_NAME);
                             }
                             else{

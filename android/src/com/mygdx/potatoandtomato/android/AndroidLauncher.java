@@ -59,7 +59,7 @@ public class AndroidLauncher extends AndroidApplication {
 		reset();
 
 		_broadcaster = new Broadcaster();
-		_inAppPurchaseHelper = new InAppPurchaseHelper(this);
+		_inAppPurchaseHelper = new InAppPurchaseHelper(this, _broadcaster);
 		_chartBoostHelper = new ChartBoostHelper(this, _broadcaster);
 		_vibrator = new VibrateManager(_this, _broadcaster);
 		_imageLoader = new ImageLoader(_this, _broadcaster);

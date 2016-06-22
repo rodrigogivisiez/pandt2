@@ -18,13 +18,15 @@ import com.mygdx.potatoandtomato.assets.*;
 import com.mygdx.potatoandtomato.controls.DummyButton;
 import com.mygdx.potatoandtomato.controls.TopBar;
 import com.mygdx.potatoandtomato.enums.ProductAction;
-import com.mygdx.potatoandtomato.enums.ShopProducts;
+import com.mygdx.potatoandtomato.models.CoinProduct;
 import com.mygdx.potatoandtomato.models.RetrievableCoinsData;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.utils.DateTimes;
 import com.mygdx.potatoandtomato.utils.Sizes;
 import com.potatoandtomato.common.controls.Animator;
 import com.potatoandtomato.common.utils.Threadings;
+
+import java.util.ArrayList;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -35,7 +37,6 @@ public class ShopScene extends SceneAbstract {
 
     private Table purseImagesTable, productsTable, watchAdsItemTable, growthRateTable;
     private Label purseCountLabel;
-    private Actor watchVideoAdsButton;
     private Actor retrieveCoinsButton;
 
     public ShopScene(Services services, PTScreen screen) {
@@ -230,36 +231,30 @@ public class ShopScene extends SceneAbstract {
         return purseRootTable;
     }
 
-    public void setProductsDesign(){
+    public void setProductsDesign(final ArrayList<CoinProduct> coinProducts){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                Table productTable = getSellingItemTable(ShopProducts.ONE_COIN, "30 sec video ads",
-                                                    _texts.watchAds(), ProductAction.WatchVideo);
-                Table productTable2 = getSellingItemTable(ShopProducts.FIVE_COINS, "RM 20.00",
-                                                    _texts.buyCoins(), ProductAction.Buy);
-                Table productTable3 = getSellingItemTable(ShopProducts.FIFTEEN_COINS, "RM 30.00", _texts.buyCoins()
-                                                    , ProductAction.Buy);
-                Table productTable4 = getSellingItemTable(ShopProducts.HUNDRED_COINS, "RM 40.00", _texts.buyCoins()
-                                                     , ProductAction.Buy);
-                Table productTable5 = getSellingItemTable(ShopProducts.HUNDRED_COINS, "RM 40.00", _texts.buyCoins()
-                                                     , ProductAction.Buy);
-                Table productTable6 = getSellingItemTable(ShopProducts.HUNDRED_COINS, "RM 40.00", _texts.buyCoins()
-                                                    , ProductAction.Buy);
-
-                productsTable.add(productTable).space(5).uniformX().expandX().fillX();
-                productsTable.add(productTable2).space(5).uniformX().expandX().fillX();
-                productsTable.row();
-                productsTable.add(productTable3).space(5).uniformX().expandX().fillX();
-                productsTable.add(productTable4).space(5).uniformX().expandX().fillX();
-                productsTable.row();
-                productsTable.add(productTable5).space(5).uniformX().expandX().fillX();
-                productsTable.add(productTable6).space(5).uniformX().expandX().fillX();
+                productsTable.clearChildren();
+                for(CoinProduct coinProduct : coinProducts){
+                    if(coinProduct.getPrice() >= 0){
+                        Table productTable = getSellingItemTable(coinProduct);
+                        productsTable.add(productTable).space(5).uniformX().expandX().fillX();
+                        if(productsTable.getChildren().size % 2 == 0){
+                            productsTable.row();
+                        }
+                    }
+                }
             }
         });
     }
 
-    public Table getSellingItemTable(ShopProducts shopProducts, String price, String buttonText, ProductAction productAction){
+    public Table getSellingItemTable(CoinProduct coinProduct){
+        ProductAction productAction = ProductAction.Buy;
+        if(coinProduct.getId().equals("WATCH_ADS")){
+            productAction = ProductAction.WatchVideo;
+        }
+
         Table itemRootTable = new Table();
         itemRootTable.align(Align.top);
         itemRootTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
@@ -269,26 +264,8 @@ public class ShopScene extends SceneAbstract {
         topContentTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
 
         TextureRegion itemTextureRegion = null;
-        String title = "";
-
-        switch (shopProducts){
-            case ONE_COIN:
-                itemTextureRegion = _assets.getTextures().get(Textures.Name.COIN_ONE);
-                title = String.format(_texts.xCoin(), 1);
-                break;
-            case FIVE_COINS:
-                itemTextureRegion = _assets.getTextures().get(Textures.Name.COIN_FIVE);
-                title = String.format(_texts.xCoin(), 5);
-                break;
-            case FIFTEEN_COINS:
-                itemTextureRegion = _assets.getTextures().get(Textures.Name.COIN_FIFTEEN);
-                title = String.format(_texts.xCoin(), 15);
-                break;
-            case HUNDRED_COINS:
-                itemTextureRegion = _assets.getTextures().get(Textures.Name.COIN_BAG);
-                title = String.format(_texts.xCoin(), 100);
-                break;
-        }
+        String title =  String.format(_texts.xCoin(), coinProduct.getCount());;
+        itemTextureRegion = _assets.getTextures().get(coinProduct.getTextureNameFromCoinCount());
 
         Image itemImage = new Image();
         itemImage.setDrawable(new TextureRegionDrawable(itemTextureRegion));
@@ -307,7 +284,11 @@ public class ShopScene extends SceneAbstract {
         Label.LabelStyle labelSmallStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HELVETICA_XS_BOLD), Color.WHITE);
         Label titleLabel = new Label(title, labelSmallStyle);
         titleLabel.setAlignment(Align.left);
-        Label priceLabel = new Label(price, labelSmallStyle);
+
+         Label priceLabel = new Label(coinProduct.getCurrency() + " " + coinProduct.getPrice(), labelSmallStyle);
+        if(productAction == ProductAction.WatchVideo){
+            priceLabel.setText(coinProduct.getDescription());
+        }
         priceLabel.setAlignment(Align.left);
 
         Table detailsTable = new Table();
@@ -318,10 +299,10 @@ public class ShopScene extends SceneAbstract {
         topContentTable.add(itemImageTable).width(70).expandY().fillY();
         topContentTable.add(detailsTable).expand().fill();
 
-        Table retrieveButton = getWoodButton(buttonText);
+        Table retrieveButton = getWoodButton(productAction != ProductAction.WatchVideo ? _texts.buyCoins() : _texts.watchAds());
+        retrieveButton.setName(coinProduct.getId());
 
         if(productAction == ProductAction.WatchVideo){
-            watchVideoAdsButton = retrieveButton;
             watchAdsItemTable = itemRootTable;
         }
 
@@ -336,7 +317,9 @@ public class ShopScene extends SceneAbstract {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                setIsOutOfStock(watchAdsItemTable, !hasAds);
+                if(watchAdsItemTable != null){
+                    setIsOutOfStock(watchAdsItemTable, !hasAds);
+                }
             }
         });
     }
@@ -440,8 +423,8 @@ public class ShopScene extends SceneAbstract {
         return buttonTable;
     }
 
-    public Actor getWatchVideoAdsButton(){
-        return watchVideoAdsButton;
+    public Actor getProductButtonById(String productId){
+        return productsTable.findActor(productId);
     }
 
     public Actor getRetrieveCoinsButton() {
