@@ -211,6 +211,7 @@ public class AndroidLauncher extends AndroidApplication {
 	protected void onDestroy() {
 		super.onDestroy();
 		_inAppPurchaseHelper.onDestroy();
+		if(_ptGame != null) _ptGame.dispose();
 		stopService(new Intent(getBaseContext(), OnClearFromRecentService.class));
 		reset();
 		if(_chartBoostHelper != null) _chartBoostHelper.onDestroy();

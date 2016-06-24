@@ -9,6 +9,7 @@ import com.mygdx.potatoandtomato.absintflis.gamingkit.JoinRoomListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.RoomInfoListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.enums.RoomUserState;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.services.Texts;
 import com.mygdx.potatoandtomato.models.Game;
@@ -199,7 +200,7 @@ public class PrerequisiteLogic extends LogicAbstract {
         _joiningRoom.setHost(_services.getProfile());
         _joiningRoom.setPlaying(false);
         _joiningRoom.setRoundCounter(0);
-        _joiningRoom.addRoomUser(_services.getProfile(), false);
+        _joiningRoom.addRoomUser(_services.getProfile(), RoomUserState.NotReady);
         _services.getDatabase().saveRoom(_joiningRoom, true, new DatabaseListener<String>() {
             @Override
             public void onCallback(String obj, Status st) {

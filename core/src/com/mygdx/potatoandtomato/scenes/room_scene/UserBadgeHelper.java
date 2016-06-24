@@ -15,7 +15,6 @@ import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -28,10 +27,8 @@ public class UserBadgeHelper implements Disposable {
     private RoomScene _roomScene;
     private Game _game;
     private ArrayList<RoomUser> _roomUsers;
-    private HashMap<String, SafeThread> _runningThreads;
     private HashMap<String, Integer> _streaksMap;
     private HashMap<String, Integer> _rankMap;
-    private HashMap<String, BadgeType> _currentBadge;
     private ArrayList<LeaderboardRecord> _records;
     private boolean paused;
 
@@ -39,18 +36,14 @@ public class UserBadgeHelper implements Disposable {
         this._services = _services;
         this._roomScene = _roomScene;
         this._game = _game;
-        this._runningThreads= new HashMap<String, SafeThread>();
         this._streaksMap = new HashMap<String, Integer>();
         this._rankMap = new HashMap<String, Integer>();
         this._roomUsers = new ArrayList<RoomUser>();
-        this._currentBadge = new HashMap<String, BadgeType>();
         refresh();
     }
 
     public synchronized void userJoinedRoom(RoomUser newRoomUser){
-
         _roomUsers.add(newRoomUser);
-
         roomUsersChanged();
     }
 
@@ -63,14 +56,8 @@ public class UserBadgeHelper implements Disposable {
             }
         }
 
-        if(_runningThreads.get(leftUserId) != null){
-            _runningThreads.get(leftUserId).kill();
-        }
-
-        _runningThreads.remove(leftUserId);
         _streaksMap.remove(leftUserId);
         _rankMap.remove(leftUserId);
-        _currentBadge.remove(leftUserId);
 
         Collections.reverse(removingIndexes);
         for(Integer index : removingIndexes){
@@ -83,78 +70,6 @@ public class UserBadgeHelper implements Disposable {
     public void roomUsersChanged(){
         fillRankMap();
         fillStreaksMap();
-        fillRunningThreadsMap();
-    }
-
-    public void fillRunningThreadsMap(){
-        for(final RoomUser roomUser : _roomUsers){
-            if(!_runningThreads.containsKey(roomUser.getProfile().getUserId())){
-                final SafeThread safeThread = new SafeThread();
-                Threadings.runInBackground(new Runnable() {
-                    @Override
-                    public void run() {
-                        boolean showingRank = true;
-
-                        while (true){
-
-                            final String userId = roomUser.getProfile().getUserId();
-
-                            if(safeThread.isKilled()){
-                                setBadge(userId, BadgeType.Normal, 0);
-                                break;
-                            }
-
-                            if(isPaused()){
-                                Threadings.sleep(1000);
-                                continue;
-                            }
-
-                            if(safeThread.isKilled()){
-                                setBadge(userId, BadgeType.Normal, 0);
-                                break;
-                            }
-
-
-                            boolean reRun = false;
-
-                            if(!showingRank && _records != null){
-                                if(_streaksMap.containsKey(userId)){
-                                    reRun = !setBadge(userId, BadgeType.Streak, _streaksMap.get(userId));
-                                }
-                            }
-                            else{
-                                if(_rankMap.containsKey(userId)){
-                                    reRun =  !setBadge(userId, BadgeType.Rank, _rankMap.get(userId));
-                                }
-                            }
-
-                            if(!_streaksMap.containsKey(userId) && !_rankMap.containsKey(userId)){
-                                reRun = !setBadge(userId, BadgeType.Normal, 0);
-                            }
-
-                            Threadings.sleep(_records == null || reRun? 1 * 1000 : 7 * 1000);
-                            if(!reRun) showingRank = !showingRank;
-                        }
-                    }
-                });
-                _runningThreads.put(roomUser.getProfile().getUserId(), safeThread);
-            }
-        }
-    }
-
-    private boolean setBadge(final String userId, final BadgeType type, final int num){
-        if(_currentBadge.containsKey(userId) && _currentBadge.get(userId) == type){
-            return true;
-        }
-        else{
-            boolean success = _roomScene.getPlayersMaps().containsKey(userId);
-            _roomScene.setPlayerBadge(userId, type, num);
-
-            if(success){
-                _currentBadge.put(userId, type);
-            }
-            return success;
-        }
     }
 
     public void fillRankMap(){
@@ -165,6 +80,7 @@ public class UserBadgeHelper implements Disposable {
             for(RoomUser roomUser : _roomUsers){
                 if(record.containUser(roomUser.getProfile().getUserId()) && !_rankMap.containsKey(roomUser.getProfile().getUserId())){
                     _rankMap.put(roomUser.getProfile().getUserId(), i);
+                    addPlayerBadge(roomUser.getProfile().getUserId(), BadgeType.Rank, i);
                 }
             }
             i++;
@@ -180,12 +96,32 @@ public class UserBadgeHelper implements Disposable {
                         if (st == Status.SUCCESS && streak != null) {
                             if (streak.hasValidStreak()) {
                                 _streaksMap.put(roomUser.getProfile().getUserId(), streak.getStreakCount());
+                                addPlayerBadge(roomUser.getProfile().getUserId(), BadgeType.Streak, streak.getStreakCount());
                             }
                         }
                     }
                 });
             }
         }
+    }
+
+    public void addPlayerBadge(final String userId, final BadgeType badgeType, final int num){
+        Threadings.runInBackground(new Runnable() {
+            @Override
+            public void run() {
+                int i = 0;
+                while (i < 5){
+                    if(_roomScene.getPlayerTableByUserId(userId) == null){
+                        Threadings.sleep(1000);
+                    }
+                    else{
+                        break;
+                    }
+                    i++;
+                }
+                _roomScene.addPlayerBadge(userId, badgeType, num);
+            }
+        });
     }
 
     public synchronized void refresh(){
@@ -195,7 +131,6 @@ public class UserBadgeHelper implements Disposable {
             public void run() {
                 fillRankMap();
                 fillStreaksMap();
-                fillRunningThreadsMap();
             }
         });
 
@@ -217,19 +152,9 @@ public class UserBadgeHelper implements Disposable {
     public void dispose(){
         _streaksMap.clear();
         _rankMap.clear();
-        _currentBadge.clear();
-        for(SafeThread thread : _runningThreads.values()){
-            thread.kill();
+        for(final RoomUser roomUser : _roomUsers){
+           _roomScene.removeAllPlayerBadges(roomUser.getProfile().getUserId());
         }
-        _runningThreads.clear();
     }
 
-
-    public boolean isPaused() {
-        return paused;
-    }
-
-    public void setPaused(boolean paused) {
-        this.paused = paused;
-    }
 }

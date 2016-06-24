@@ -3,10 +3,8 @@ package com.mygdx.potatoandtomato.scenes.room_scene;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
@@ -19,15 +17,16 @@ import com.mygdx.potatoandtomato.assets.Patches;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.enums.BadgeType;
 import com.mygdx.potatoandtomato.controls.*;
+import com.mygdx.potatoandtomato.enums.RoomUserState;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.RoomUser;
 import com.mygdx.potatoandtomato.models.Services;
-import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.controls.Animator;
+import com.potatoandtomato.common.utils.RunnableArgs;
+import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
 
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
@@ -37,45 +36,17 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
  */
 public class RoomScene extends SceneAbstract {
 
-    BtnEggDownward _startButton, _inviteButton;
-    Array<Table> _teamTables;
-    Table _teamsRoot, _detailsRoot;
-    HashMap<String, Table> _playerMaps;
-    Array<Table> _slotsTable;
-    Room _room;
-    Image _leaderboardImage;
-
-    public Array<Table> getTeamTables() {
-        return _teamTables;
-    }
-
-    public HashMap<String, Table> getPlayersMaps() {
-        return _playerMaps;
-    }
-
-    public Array<Table> getSlotsTable() {
-        return _slotsTable;
-    }
-
-    public BtnEggDownward getStartButton() {
-        return _startButton;
-    }
-
-    public BtnEggDownward getInviteButton() {
-        return _inviteButton;
-    }
-
-    public Image getLeaderboardImage() {
-        return _leaderboardImage;
-    }
-
-    public Table getTeamsRoot() {
-        return _teamsRoot;
-    }
+    private BtnEggDownward startButton, inviteButton;
+    private Table teamsRoot, detailsRoot;
+    private ConcurrentHashMap<String, Table> playerMaps;
+    private Array<Table> slotsTable;
+    private Image leaderboardButton;
+    private SafeThread safeThread;
+    private final int REFRESH_USER_ICON_PERIOD = 6000;
 
     public RoomScene(Services services, PTScreen screen, Room room) {
         super(services, screen);
-        this._room = room;
+        startRotateUserIconThread();
     }
 
     @Override
@@ -84,45 +55,42 @@ public class RoomScene extends SceneAbstract {
         new TopBar(_root, _texts.roomTitle(), false, _assets, _screen, _services.getCoins());
         _root.align(Align.top);
 
-        _teamTables = new Array();
-        _playerMaps = new HashMap();
-        _slotsTable = new Array<Table>();
+        playerMaps = new ConcurrentHashMap();
+        slotsTable = new Array<Table>();
 
         Table buttonTable = new Table();
 
-        _startButton = new BtnEggDownward(_assets, _services.getSoundsPlayer(), _services.getShaders());
-        _startButton.setEnabled(false);
-        _startButton.setText(_texts.waitingHost());
+        startButton = new BtnEggDownward(_assets, _services.getSoundsPlayer(), _services.getShaders());
+        startButton.setEnabled(false);
+        startButton.setText(_texts.waitingHost());
 
-        _inviteButton = new BtnEggDownward(_assets, _services.getSoundsPlayer());
-        _inviteButton.setText(_texts.invite());
+        inviteButton = new BtnEggDownward(_assets, _services.getSoundsPlayer());
+        inviteButton.setText(_texts.invite());
 
         Image ropeImage1 = new Image(_assets.getTextures().get(Textures.Name.ROPE));
         Image ropeImage2 = new Image(_assets.getTextures().get(Textures.Name.ROPE));
         ropeImage1.setPosition(45, 84);
-        ropeImage2.setPosition(_startButton.getWidth() + 55, 84);
+        ropeImage2.setPosition(startButton.getWidth() + 55, 84);
 
-        buttonTable.add(_startButton).padRight(10);
-        buttonTable.add(_inviteButton).padRight(10);
+        buttonTable.add(startButton).padRight(10);
+        buttonTable.add(inviteButton).padRight(10);
 
         buttonTable.addActor(ropeImage1);
         buttonTable.addActor(ropeImage2);
 
-        _teamsRoot = new Table();
+        teamsRoot = new Table();
 
-        _detailsRoot = new Table();
-        _detailsRoot.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.YELLOW_GRADIENT_BOX_ROUNDED)));
-        _detailsRoot.align(Align.top);
-        _detailsRoot.row();
+        detailsRoot = new Table();
+        detailsRoot.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.YELLOW_GRADIENT_BOX_ROUNDED)));
+        detailsRoot.align(Align.top);
+        detailsRoot.row();
 
         Table scrollableTable = new Table();
         ScrollPane scrollPane = new ScrollPane(scrollableTable);
         scrollPane.setScrollingDisabled(true, false);
-        scrollableTable.add(_teamsRoot).expandX().fillX().padTop(10);
+        scrollableTable.add(teamsRoot).expandX().fillX().padTop(10);
         scrollableTable.row();
-        scrollableTable.add(_detailsRoot).expandX().fillX().padLeft(10).padRight(10).padBottom(200);
-
-        _leaderboardImage = new Image(_assets.getTextures().get(Textures.Name.LEADERBOARD_ICON));
+        scrollableTable.add(detailsRoot).expandX().fillX().padLeft(10).padRight(10).padBottom(200);
 
         _root.add(buttonTable).height(110).expandX();
         _root.row();
@@ -133,7 +101,7 @@ public class RoomScene extends SceneAbstract {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                _startButton.setText(text);
+                startButton.setText(text);
             }
         });
     }
@@ -163,8 +131,11 @@ public class RoomScene extends SceneAbstract {
 
                 Table titleTable = new Table();
                 titleTable.add(titleLabel).expandX().fillX().padRight(10);
-                titleTable.add(_leaderboardImage);
-                _leaderboardImage.setVisible(game.hasLeaderboard());
+
+                if(game.hasLeaderboard()){
+                    leaderboardButton = new Image(_assets.getTextures().get(Textures.Name.LEADERBOARD_ICON));
+                    titleTable.add(leaderboardButton);
+                }
 
                 Label playersLabel = new Label(String.format(_texts.xPlayers(), game.getMinPlayers(), game.getMaxPlayers()), smallStyle);
                 Label versionAndLastUpdatedLabel = new Label(String.format(_texts.version(), game.getVersion()) + " (" + game.getLastUpdatedAgo() + ")", smallStyle);
@@ -185,20 +156,24 @@ public class RoomScene extends SceneAbstract {
                 _subRoot.row();
                 _subRoot.add(descriptionTable).left().expandX().fillX().padTop(5);
 
-                _detailsRoot.pad(10);
-                _detailsRoot.add(gameImg).size(120).top();
-                _detailsRoot.add(separatorImage).padLeft(5).padRight(10).expandY().fillY();
-                _detailsRoot.add(_subRoot).expandX().fillX().top();
+                detailsRoot.pad(10);
+                detailsRoot.add(gameImg).size(120).top();
+                detailsRoot.add(separatorImage).padLeft(5).padRight(10).expandY().fillY();
+                detailsRoot.add(_subRoot).expandX().fillX().top();
             }
         });
     }
 
-    public void populateTeamTables(final int totalTeams, final int teamMaxPlayers, final ConcurrentHashMap<String, RoomUser> roomUsers, final boolean isHost){
+    public void refreshTeamTables(final int totalTeams, final int teamMaxPlayers, final ConcurrentHashMap<String, RoomUser> roomUsers, final boolean isHost){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                _teamsRoot.clear();
+
+                teamsRoot.clear();
+                slotsTable.clear();
+
                 int accIndex = 0;
+                Array<Table> teamTables = new Array();
 
                 for(int i=0; i<totalTeams; i++){
 
@@ -228,13 +203,15 @@ public class RoomScene extends SceneAbstract {
                         }
                         Table playerTable;
                         if(occupiedUser != null){
-                            playerTable = getPlayerTable(occupiedUser.getProfile().getDisplayName(15),
+                            playerTable = refreshAndGetPlayerTable(occupiedUser.getProfile().getDisplayName(15),
                                     occupiedUser.getProfile().getUserId(),
-                                    occupiedUser.getReady(), isHost);
+                                    occupiedUser.getRoomUserState(), isHost);
                         }
                         else{
-                            playerTable = getPlayerTable(null, null, false, false);
+                            playerTable = refreshAndGetPlayerTable(null, null, RoomUserState.Unknown, false);
                         }
+
+                        playerTable.setName(String.valueOf(accIndex));
 
                         if(totalTeams == 1){
                             if((q % 2 == 0 && q != 0) || (teamMaxPlayers <= 2)) teamTable.row();
@@ -245,27 +222,27 @@ public class RoomScene extends SceneAbstract {
                             teamTable.row();
                         }
 
-                        _slotsTable.add(playerTable);
+                        slotsTable.add(playerTable);
                         accIndex++;
                     }
 
-                    _teamTables.add(teamTable);
+                    teamTables.add(teamTable);
                 }
 
-                _teamsRoot.padLeft(5).padRight(5);
+                teamsRoot.padLeft(5).padRight(5);
                 int i = 1;
-                for(Table t : _teamTables){
+                for(Table t : teamTables){
 
                     if(totalTeams > 1){
-                        _teamsRoot.add(t).expandX().fillX().center().uniformX().space(3).padBottom(10);
+                        teamsRoot.add(t).expandX().fillX().center().uniformX().space(3).padBottom(10);
                     }
                     else{
-                        _teamsRoot.add(t).padBottom(10);
+                        teamsRoot.add(t).padBottom(10);
                     }
 
 
                     if(i % 2 == 0 && i!=0) {
-                        _teamsRoot.row();
+                        teamsRoot.row();
                     }
                     i++;
                 }
@@ -273,28 +250,67 @@ public class RoomScene extends SceneAbstract {
         });
     }
 
-    public void updateRoom(final Room room){
+    public void updateRoom(final Room room, final RunnableArgs<Boolean> onFinish){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
                 if(room.getHost().equals(_services.getProfile())){
-                    _startButton.setEnabled(true);
+                    startButton.setEnabled(true);
                 }
-                for(Table t : _teamTables) t.remove();
-                _teamTables.clear();
-                _slotsTable.clear();
-                populateTeamTables(Integer.valueOf(room.getGame().getTeamCount()),
-                        Integer.valueOf(room.getGame().getTeamMaxPlayers()), room.getRoomUsersMap(), room.getHost().equals(_services.getProfile()));
+
+                if(checkCompleteRefreshRequired(room)){
+                    refreshTeamTables(Integer.valueOf(room.getGame().getTeamCount()),
+                            Integer.valueOf(room.getGame().getTeamMaxPlayers()), room.getRoomUsersMap(),
+                            room.getHost().equals(_services.getProfile()));
+                    onFinish.run(true);
+                }
+                else{
+                    for(RoomUser roomUser : room.getRoomUsersMap().values()){
+                        refreshAndGetPlayerTable(roomUser.getProfile().getDisplayName(15), roomUser.getProfile().getUserId(),
+                                roomUser.getRoomUserState(), roomUser.getProfile().equals(room.getHost()));
+                    }
+                    onFinish.run(false);
+                }
             }
         });
+    }
+
+    //complete refresh only occur when someone change slot/left room/join room
+    private boolean checkCompleteRefreshRequired(Room room){
+        boolean result = false;
+        for(RoomUser roomUser : room.getRoomUsersMap().values()){
+            Table playerTable = playerMaps.get(roomUser.getProfile().getUserId());
+            if(playerTable == null){
+                result = true;
+                break;
+            }
+            else{
+                if(!String.valueOf(roomUser.getSlotIndex()).equals(playerTable.getName())){
+                    result = true;
+                    break;
+                }
+            }
+
+        }
+
+        if(!result){
+            for(String userId : playerMaps.keySet()){
+                if(room.getRoomUserByUserId(userId) == null){
+                    result = true;
+                    playerMaps.remove(userId);
+                }
+            }
+        }
+
+        return result;
     }
 
     public void updateDownloadPercentage(final String userId, final int percent){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                if(_playerMaps.containsKey(userId)){
-                    Table playerTable = _playerMaps.get(userId);
+                if(playerMaps.containsKey(userId)){
+                    Table playerTable = playerMaps.get(userId);
                     Image downloadImage = playerTable.findActor("download");
                     if(downloadImage != null){
                         downloadImage.addAction(forever(sequence(moveBy(0, -2), moveBy(0, 2, 0.9f))));
@@ -354,12 +370,11 @@ public class RoomScene extends SceneAbstract {
         });
     }
 
-    private Table getPlayerTable(String name, String userId, boolean isReady, boolean isHost){
-
-        if(_playerMaps.containsKey(userId) && userId != null){
-            Table playerTable = _playerMaps.get(userId);
-            swapIsReadyIcon((Table) playerTable.findActor("iconTable"), userId, isReady);
-            return _playerMaps.get(userId);
+    private Table refreshAndGetPlayerTable(String name, String userId, RoomUserState roomUserState, boolean isHost){
+        if(userId != null && playerMaps.containsKey(userId)){
+            Table playerTable = playerMaps.get(userId);
+            swapRoomUserStateIcon(userId, roomUserState);
+            return playerMaps.get(userId);
         }
 
         BitmapFont font = _assets.getFonts().get(Fonts.FontId.HELVETICA_XS_BOLD);
@@ -375,27 +390,28 @@ public class RoomScene extends SceneAbstract {
 
         Table iconTable = new Table();
         iconTable.setName("iconTable");
-        Animator loadingAnimator = new Animator(0.09f, _assets.getAnimations().get(Animations.Name.LOADING));
-        loadingAnimator.setName("loadingAnimator");
-        loadingAnimator.overrideSize(16, 16);
+
+        Table roomUserStateIconTable = new Table();
+        roomUserStateIconTable.setName("roomUserStateIconTable");
+        iconTable.add(roomUserStateIconTable).expand().fill();
+
         Image unknownImage = new Image(_assets.getTextures().get(Textures.Name.UNKNOWN_ICON));
-        unknownImage.setName("unknownImage");
         unknownImage.setSize(5, 8);
         unknownImage.setPosition(5, 5);
+        roomUserStateIconTable.addActor(unknownImage);
 
-        Table badgeTable = new Table();
-        badgeTable.setFillParent(true);
-        badgeTable.setName("badgeTable");
-
-        iconTable.addActor(loadingAnimator);
-        iconTable.addActor(unknownImage);
-        iconTable.addActor(badgeTable);
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
         labelStyle.font = font;
         labelStyle.fontColor = fontColor;
 
         Label nameLabel = new Label(name, labelStyle);
+
+        Label timeElapsedLabel = new Label("0", labelStyle);
+        timeElapsedLabel.setName("timeElapsedLabel");
+        timeElapsedLabel.setVisible(false);
+        playerTable.addActor(timeElapsedLabel);
+
 
         Label.LabelStyle progressLabelStyle = new Label.LabelStyle();
         progressLabelStyle.fontColor = Color.valueOf("51bf1b");
@@ -425,76 +441,258 @@ public class RoomScene extends SceneAbstract {
         playerTable.add(progressLabel);
         if(isHost && !userId.equals(_services.getProfile().getUserId())) playerTable.add(kickTable).expandY().fillY();
 
-        playerTable.setName(((userId != null) ? "disableclick" : ""));
+        if(userId != null) playerMaps.put(userId, playerTable);
 
-        if(userId != null) _playerMaps.put(userId, playerTable);
-
-        setPlayerBadge(userId, BadgeType.Normal, 0);
-
-        swapIsReadyIcon(iconTable, userId, isReady);
+        swapRoomUserStateIcon(userId, roomUserState);
 
         return playerTable;
     }
 
-    private void swapIsReadyIcon(final Table table, final String userId, final boolean isReady){
+    private void swapRoomUserStateIcon(final String userId, final RoomUserState roomUserState){
+        if(userId != null && playerMaps.containsKey(userId)) {
+            Threadings.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    Table playerTable = playerMaps.get(userId);
+
+                    Table iconTable = playerTable.findActor("iconTable");
+                    Table roomUserStateIconTable = iconTable.findActor("roomUserStateIconTable");
+                    roomUserStateIconTable.clear();
+
+                    switch (roomUserState){
+                        case Normal:
+                            Image bulletIcon = new Image(_assets.getTextures().get(Textures.Name.BULLET_ICON));
+                            bulletIcon.setName(roomUserState.name());
+                            roomUserStateIconTable.add(bulletIcon).size(4, 4);
+                            break;
+                        case NotReady:
+                            Animator loadingAnimator = new Animator(0.09f, _assets.getAnimations().get(Animations.Name.LOADING));
+                            loadingAnimator.setName("loadingAnimator");
+                            loadingAnimator.overrideSize(16, 16);
+                            loadingAnimator.setName(roomUserState.name());
+                            roomUserStateIconTable.addActor(loadingAnimator);
+                            break;
+                        case TemporaryDisconnected:
+                            Image disconnectedIcon = new Image(_assets.getTextures().get(Textures.Name.DISCONNECTED_ICON));
+                            disconnectedIcon.setName(roomUserState.name());
+                            roomUserStateIconTable.add(disconnectedIcon).size(15, 15);
+                            break;
+                    }
+
+                    ((Label) playerTable.findActor("timeElapsedLabel")).setText(String.valueOf(REFRESH_USER_ICON_PERIOD));
+                }
+            });
+        }
+    }
+
+    public void addPlayerBadge(final String playerId, final BadgeType badgeType, final int num){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                Animator loadingAnimator = table.findActor("loadingAnimator");
-                Actor unknownImage = table.findActor("unknownImage");
-                Actor badgeTable = table.findActor("badgeTable");
-                loadingAnimator.setVisible(false);
-                loadingAnimator.setPaused(true);
+            if(playerId != null && playerMaps.containsKey(playerId)) {
+                Table playerTable = playerMaps.get(playerId);
+                Table iconTable = playerTable.findActor("iconTable");
 
-                unknownImage.setVisible(false);
-                badgeTable.setVisible(false);
-
-                if(userId == null){
-                    unknownImage.setVisible(true);
-                }
-                else{
-                    if(!isReady){
-                        loadingAnimator.setPaused(false);
-                        loadingAnimator.setVisible(true);
+                for(Actor actor : iconTable.getChildren()){
+                    if(actor.getName().equals(badgeType.name())){
+                        actor.remove();
                     }
-                    else{
-                        badgeTable.getColor().a = 1f;
-                        badgeTable.clearActions();
-                        badgeTable.setVisible(true);
+                }
+
+                Table badgeTable = new Table();
+                badgeTable.getColor().a = 0f;
+                badgeTable.setVisible(false);
+                badgeTable.setFillParent(true);
+                badgeTable.setName(badgeType.name());
+                Badge badge = new Badge(badgeType, String.valueOf(num), _assets);
+                badgeTable.add(badge).padBottom(4).size(20, 21);
+
+                iconTable.addActor(badgeTable);
+            }
+            }
+        });
+    }
+
+    public void removeAllPlayerBadges(final String playerId){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(playerId != null && playerMaps.containsKey(playerId)) {
+                    Table playerTable = playerMaps.get(playerId);
+                    Table iconTable = playerTable.findActor("iconTable");
+                    Table roomUserStateIconTable = iconTable.findActor("roomUserStateIconTable");
+                    roomUserStateIconTable.clearActions();
+                    roomUserStateIconTable.getColor().a = 1f;
+                    roomUserStateIconTable.setVisible(true);
+
+                    for(Actor actor : iconTable.getChildren()){
+                        if(!actor.getName().equals("roomUserStateIconTable")){
+                            actor.remove();
+                        }
                     }
                 }
             }
         });
     }
 
-    public boolean setPlayerBadge(final String playerId, final BadgeType badgeType, final int num){
-        if(playerId != null && _playerMaps.containsKey(playerId)){
-            Threadings.postRunnable(new Runnable() {
-                @Override
-                public void run() {
-                    Table table = _playerMaps.get(playerId);
-                    Table badgeTable = table.findActor("badgeTable");
+    private void startRotateUserIconThread(){
+        safeThread = new SafeThread();
+        Threadings.runInBackground(new Runnable() {
+            @Override
+            public void run() {
+                int sleepPeriod = 1000;
 
-                    badgeTable.clear();
-                    if(badgeType == BadgeType.Normal){
-                        Image bulletIcon = new Image(_assets.getTextures().get(Textures.Name.BULLET_ICON));
-                        badgeTable.add(bulletIcon).size(4, 4);
-                    }
-                    else if(badgeType == BadgeType.Rank || badgeType == BadgeType.Streak){
-                        Badge badge = new Badge(badgeType, String.valueOf(num), _assets);
-                        badgeTable.add(badge).padBottom(4).size(20, 21);
-                    }
+                while (true){
+                    if(safeThread.isKilled()) return;
+                    else{
+                        for(Table playerTable : playerMaps.values()){
+                            Table iconTable = playerTable.findActor("iconTable");
 
-                    if(badgeTable.isVisible()){
-                        badgeTable.clearActions();
-                        badgeTable.addAction(sequence(fadeOut(0f), fadeIn(0.2f)));
+                            boolean foundVisible = false;
+                            for(Actor actor : iconTable.getChildren()){
+                                if(actor.isVisible()){
+                                    foundVisible = true;
+                                    break;
+                                }
+                            }
+
+                            if(!foundVisible && iconTable.getChildren().size > 0){
+                                iconTable.getChildren().get(0).clearActions();
+                                iconTable.getChildren().get(0).getColor().a = 1f;
+                                iconTable.getChildren().get(0).setVisible(true);
+                            }
+
+
+                            Label timeElapsedLabel = playerTable.findActor("timeElapsedLabel");
+                            int elapsed = Integer.valueOf(timeElapsedLabel.getText().toString());
+                            elapsed += sleepPeriod;
+                            if(elapsed < REFRESH_USER_ICON_PERIOD){
+                                timeElapsedLabel.setText(String.valueOf(elapsed));
+                                continue;
+                            }
+                            else{
+                                timeElapsedLabel.setText("0");
+                            }
+
+                            for(int i = 0; i < iconTable.getChildren().size; i++){
+                                int actor2Index = 0;
+
+                                final Actor actor1 = iconTable.getChildren().get(i);
+                                Actor actor2 = null;
+                                if(i + 1 < iconTable.getChildren().size){
+                                    actor2 = iconTable.getChildren().get(i+1);
+                                    actor2Index = i+1;
+                                }
+                                else if(i > 0){
+                                    actor2 = iconTable.getChildren().get(0);
+                                    actor2Index = 0;
+                                }
+
+                                if(actor1.getName().equals("roomUserStateIconTable")){
+                                    boolean locked = false;
+                                    if(((Table) actor1).getChildren().size > 0){
+                                        Actor child = ((Table) actor1).getChildren().get(0);
+                                        if(!child.getName().equals(RoomUserState.Normal.name())){
+                                            locked = true;
+                                            if(!actor1.isVisible()){
+                                                actor1.clearActions();
+                                                actor1.getColor().a = 1f;
+                                                actor1.setVisible(true);
+                                                actor1.addAction(fadeIn(0.2f));
+                                            }
+                                        }
+                                    }
+
+                                    if(locked){
+                                        for(Actor actor :  iconTable.getChildren()){
+                                            if(actor.isVisible() && actor != actor1){
+                                                actor.clearActions();
+                                                actor.addAction(sequence(fadeOut(0.2f), new RunnableAction(){
+                                                    @Override
+                                                    public void run() {
+                                                        actor.setVisible(false);
+                                                    }
+                                                }));
+                                            }
+                                        }
+
+                                        break;
+                                    }
+                                }
+
+
+
+                                if(actor2 != null && actor2.getName().equals("roomUserStateIconTable")){
+                                    if(((Table) actor2).getChildren().size > 0){
+                                        Actor child = ((Table) actor2).getChildren().get(0);
+                                        if(child.getName().equals(RoomUserState.Normal.name())){
+                                            actor2 = iconTable.getChildren().get(actor2Index + 1);
+                                        }
+                                        else{
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                if(actor1 != actor2){
+                                    if(actor1.isVisible() && actor2 != null){
+                                        actor1.clearActions();
+                                        actor2.clearActions();
+                                        actor1.addAction(sequence(fadeOut(0.2f), new RunnableAction(){
+                                            @Override
+                                            public void run() {
+                                                actor1.setVisible(false);
+                                            }
+                                        }));
+                                        actor2.setVisible(true);
+                                        actor2.addAction(fadeIn(0.2f));
+                                        break;
+                                    }
+                                    else if(!actor1.isVisible() && actor2 == null){
+                                        actor1.clearActions();
+                                        actor1.setVisible(true);
+                                        actor1.addAction(fadeIn(0.2f));
+                                        break;
+                                    }
+                                }
+                            }
+
+                        }
+
+                        Threadings.sleep(sleepPeriod);
                     }
                 }
-            });
-            return true;
-        }
-        return false;
+            }
+        });
     }
 
+    public Table getPlayerTableByUserId(String userId){
+        return playerMaps.get(userId);
+    }
 
+    public Array<Table> getSlotsTable() {
+        return slotsTable;
+    }
+
+    public BtnEggDownward getStartButton() {
+        return startButton;
+    }
+
+    public BtnEggDownward getInviteButton() {
+        return inviteButton;
+    }
+
+    public Image getLeaderboardButton() {
+        return leaderboardButton;
+    }
+
+    public Table getTeamsRoot() {
+        return teamsRoot;
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        safeThread.kill();
+    }
 }

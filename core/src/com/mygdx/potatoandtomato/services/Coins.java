@@ -159,6 +159,8 @@ public class Coins implements ICoins {
             monitoringUserIds.remove(userId);
             database.clearListenersByTag(userId);
             noCoinUserIds.remove(userId);
+            coinMachineControl.removeUserTable(userId);
+            currentUsersPutCoinNumberMap.remove(userId);
         }
     }
 
@@ -251,28 +253,20 @@ public class Coins implements ICoins {
     private void sync(ArrayList<Pair<String, String>> userIdToNamePairs){
         for(int i = monitoringUserIds.size() - 1; i >= 0; i--){
             String userId = monitoringUserIds.get(i);
-            if(!userId.equals(profile.getUserId())){
-                database.clearListenersByTag(userId);
-                monitoringUserIds.remove(userId);
+            boolean found = false;
+            for(Pair<String, String> pair : userIdToNamePairs){
+                if(pair.getFirst().equals(userId)){
+                    found = true;
+                    break;
+                }
+            }
+            if(!found){
+                removeCoinMonitor(userId);
             }
         }
-
-        ArrayList<String> toRemoveUserIds = new ArrayList();
 
         for(Pair<String, String> pair : userIdToNamePairs){
-            toRemoveUserIds.add(pair.getFirst());
             addCoinMonitor(pair.getFirst(), pair.getSecond());
-        }
-
-        for(String userId : monitoringUserIds){
-            if(toRemoveUserIds.contains(userId)) {
-                toRemoveUserIds.remove(userId);
-            }
-        }
-
-        for(String userId : toRemoveUserIds){
-            removeCoinMonitor(userId);
-            coinMachineControl.removeUserTable(userId);
         }
 
         for(Pair<String, String> pair : userIdToNamePairs){

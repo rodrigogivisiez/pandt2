@@ -1,6 +1,7 @@
 package com.mygdx.potatoandtomato.absintflis.mocks;
 
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
+import com.mygdx.potatoandtomato.enums.RoomUserState;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.models.EndGameResult;
 import com.potatoandtomato.common.models.Player;
@@ -61,10 +62,10 @@ public class MockModel {
         RoomUser user2 = new RoomUser();
         user1.setProfile(mockProfile());
         user1.setSlotIndex(0);
-        user1.setReady(true);
+        user1.setRoomUserState(RoomUserState.Normal);
         user2.setProfile(mockProfile("another"));
         user2.setSlotIndex(99);
-        user2.setReady(true);
+        user2.setRoomUserState(RoomUserState.Normal);
         roomUsers.put(user1.getProfile().getUserId(), user1);
         roomUsers.put(user2.getProfile().getUserId(), user2);
         r.setRoomUsersMap(roomUsers);

@@ -206,6 +206,13 @@ CURSOR_BLACK
   orig: 1, 41
   offset: 0, 0
   index: -1
+DISCONNECTED_ICON
+  rotate: false
+  xy: 616, 575
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
 DOWNLOAD_ICON
   rotate: false
   xy: 2040, 1871

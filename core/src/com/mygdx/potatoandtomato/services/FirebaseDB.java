@@ -6,6 +6,7 @@ import com.firebase.client.annotations.Nullable;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
+import com.mygdx.potatoandtomato.enums.RoomUserState;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.models.LeaderboardRecord;
@@ -365,9 +366,9 @@ public class
     }
 
     @Override
-    public void addUserToRoom(Room room, Profile user, int slotIndex, DatabaseListener<String> listener) {
+    public void addUserToRoom(Room room, Profile user, int slotIndex, RoomUserState roomUserState, DatabaseListener<String> listener) {
         RoomUser roomUser = new RoomUser();
-        roomUser.setReady(true);
+        roomUser.setRoomUserState(roomUserState);
         roomUser.setSlotIndex(slotIndex);
         roomUser.setProfile(user);
         save(getTable(_tableRooms).child(room.getId()).child("roomUsersMap").child(user.getUserId()), roomUser, listener);
@@ -397,30 +398,15 @@ public class
     }
 
     @Override
-    public void setRoomUserIsReady(Room room, String userId, boolean isReady, DatabaseListener listener) {
-        save(getTable(_tableRooms).child(room.getId()).child("roomUsersMap").child(userId).child("ready"),
-                        isReady, listener);
+    public void setRoomUserState(Room room, String userId, RoomUserState roomUserState, DatabaseListener listener) {
+        save(getTable(_tableRooms).child(room.getId()).child("roomUsersMap").child(userId).child("roomUserState"),
+                roomUserState, listener);
     }
 
     @Override
     public void setRoomUserSlotIndex(Room room, String userId, int slotIndex, DatabaseListener listener) {
         save(getTable(_tableRooms).child(room.getId()).child("roomUsersMap").child(userId).child("slotIndex"),
                 slotIndex, listener);
-    }
-
-    @Override
-    public void setRoomState(final Room room, int roundCounter, boolean open, boolean playing, final DatabaseListener listener) {
-        HashMap<String, Object> mapObject = new HashMap<>();
-        mapObject.put("roundCounter", roundCounter);
-        mapObject.put("open", open);
-        mapObject.put("playing", playing);
-        getTable(_tableRooms).child(room.getId()).updateChildren(mapObject, new Firebase.CompletionListener() {
-            @Override
-            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                if(listener != null) listener.onCallback("", firebaseError == null ? Status.SUCCESS : Status.FAILED);
-                notifyRoomChanged(room);
-            }
-        });
     }
 
     @Override

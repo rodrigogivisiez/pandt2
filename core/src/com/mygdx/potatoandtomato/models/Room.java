@@ -1,6 +1,7 @@
 package com.mygdx.potatoandtomato.models;
 
 import com.badlogic.gdx.graphics.Color;
+import com.mygdx.potatoandtomato.enums.RoomUserState;
 import com.mygdx.potatoandtomato.miscs.comparators.RoomUserSlotIndexComparator;
 import com.mygdx.potatoandtomato.miscs.serializings.IntProfileMapDeserializer;
 import com.potatoandtomato.common.models.Player;
@@ -202,12 +203,12 @@ public class Room {
     }
 
     @JsonIgnore
-    public void addRoomUser(Profile user, boolean isReady){
-        addRoomUser(user, -1, isReady);
+    public void addRoomUser(Profile user, RoomUserState roomUserState){
+        addRoomUser(user, -1, roomUserState);
     }
 
     @JsonIgnore
-    public void addRoomUser(Profile user, int index, boolean isReady){
+    public void addRoomUser(Profile user, int index, RoomUserState roomUserState){
         if(roomUsersMap == null) roomUsersMap = new ConcurrentHashMap();
 
         if(getSlotIndexByUserId(user.getUserId()) != -1) return;
@@ -224,7 +225,7 @@ public class Room {
         RoomUser r = new RoomUser();
         r.setProfile(user);
         r.setSlotIndex(index);
-        r.setReady(isReady);
+        r.setRoomUserState(roomUserState);
         roomUsersMap.put(user.getUserId(), r);
     }
 
@@ -281,7 +282,7 @@ public class Room {
         if(userSlotIndex != -1 && userSlotIndex >= startIndex && userSlotIndex + 1 < ((toTeam + 1) * Integer.valueOf(this.getGame().getTeamMaxPlayers()))){
             if(getRoomUserBySlotIndex(userSlotIndex+1) == null){
                 changed = true;
-                addRoomUser(user, userSlotIndex + 1, true);
+                addRoomUser(user, userSlotIndex + 1, RoomUserState.Normal);
             }
         }
 
@@ -289,7 +290,7 @@ public class Room {
             for(int i = 0; i< Integer.valueOf(this.getGame().getTeamMaxPlayers()); i++){
                 if(getRoomUserBySlotIndex(startIndex) == null){
                     changed = true;
-                    addRoomUser(user, startIndex, true);
+                    addRoomUser(user, startIndex, RoomUserState.Normal);
                     break;
                 }
                 startIndex++;
@@ -330,21 +331,6 @@ public class Room {
             for(RoomUser roomUser : roomUsersMap.values()){
                 RoomUser updatedRoomUser = newRoom.getRoomUserByUserId(roomUser.getProfile().getUserId());
                 if(updatedRoomUser != null && !roomUser.getSlotIndex().equals(updatedRoomUser.getSlotIndex())){
-                    result.add(updatedRoomUser);
-                }
-            }
-        }
-        return result;
-    }
-
-    @JsonIgnore
-    public ArrayList<RoomUser> getIsReadyChangedUsers(Room newRoom){
-        ArrayList<RoomUser> result = new ArrayList();
-        if(newRoom == null) return result;
-        else{
-            for(RoomUser roomUser : roomUsersMap.values()){
-                RoomUser updatedRoomUser = newRoom.getRoomUserByUserId(roomUser.getProfile().getUserId());
-                if(updatedRoomUser != null && roomUser.getReady() != updatedRoomUser.getReady()){
                     result.add(updatedRoomUser);
                 }
             }
@@ -444,16 +430,16 @@ public class Room {
     public int getNotYetReadyCount(){
         int count = 0;
         for(RoomUser roomUser : this.roomUsersMap.values()){
-            if(!roomUser.getReady()) count++;
+            if(roomUser.getRoomUserState() != RoomUserState.Normal) count++;
         }
         return count;
     }
 
     @JsonIgnore
-    public void setRoomUserReady(String userId, boolean isReady){
+    public void setRoomUserState(String userId, RoomUserState roomUserState){
         for(RoomUser roomUser : this.roomUsersMap.values()){
             if(roomUser.getProfile().getUserId().equals(userId)){
-                roomUser.setReady(isReady);
+                roomUser.setRoomUserState(roomUserState);
                 break;
             }
         }

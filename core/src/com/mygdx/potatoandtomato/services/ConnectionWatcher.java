@@ -92,51 +92,43 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
             @Override
             public void onChanged(String userId, ConnectStatus st) {
                 if(profile != null && userId != null && userId.equals(profile.getUserId())){
-                    if(!playingGame){
-                        if(st == ConnectStatus.DISCONNECTED || st == ConnectStatus.DISCONNECTED_BUT_RECOVERABLE){
+                    if(st == ConnectStatus.DISCONNECTED){
+                        resetAndBackToBoot();
+                    }
+                    else if(st == ConnectStatus.DISCONNECTED_BUT_RECOVERABLE){
+                        if(count == 0){
+                            for(ConnectionWatcherListener connectionWatcherListener : connectionWatcherListeners){
+                                connectionWatcherListener.onConnectionHalt();
+                            }
+                        }
+                        if(count < 10){
+                            Threadings.delay(1500, new Runnable() {
+                                @Override
+                                public void run() {
+                                    gamingKit.recoverConnection();
+                                }
+                            });
+                            count++;
+                            disconnectedOverlay.setVisible(true);
+                        }
+                        else{
                             resetAndBackToBoot();
                         }
                     }
-                    else{
-                        if(st == ConnectStatus.DISCONNECTED){
-                            resetAndBackToBoot();
+                    else if(st == ConnectStatus.CONNECTED_FROM_RECOVER){
+                        count = 0;
+                        for(ConnectionWatcherListener connectionWatcherListener : connectionWatcherListeners){
+                            connectionWatcherListener.onConnectionResume();
                         }
-                        else if(st == ConnectStatus.DISCONNECTED_BUT_RECOVERABLE){
-                            if(count == 0){
-                                for(ConnectionWatcherListener connectionWatcherListener : connectionWatcherListeners){
-                                    connectionWatcherListener.onConnectionHalt();
+
+                        Threadings.delay(1000, new Runnable() {
+                            @Override
+                            public void run() {
+                                if(!showResumingGame){
+                                    disconnectedOverlay.setVisible(false);
                                 }
                             }
-                            if(count < 5){
-                                Threadings.delay(5000, new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        gamingKit.recoverConnection();
-                                    }
-                                });
-                                count++;
-                                disconnectedOverlay.setVisible(true);
-                            }
-                            else{
-                                resetAndBackToBoot();
-                            }
-                        }
-                        else if(st == ConnectStatus.CONNECTED_FROM_RECOVER){
-                            count = 0;
-                            for(ConnectionWatcherListener connectionWatcherListener : connectionWatcherListeners){
-                                connectionWatcherListener.onConnectionResume();
-                            }
-
-                            Threadings.delay(1000, new Runnable() {
-                                @Override
-                                public void run() {
-                                    if(!showResumingGame){
-                                        disconnectedOverlay.setVisible(false);
-                                    }
-                                }
-                            });
-
-                        }
+                        });
                     }
                 }
             }

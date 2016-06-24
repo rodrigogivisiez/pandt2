@@ -1,6 +1,7 @@
 package com.mygdx.potatoandtomato.absintflis.databases;
 
 import com.firebase.client.annotations.Nullable;
+import com.mygdx.potatoandtomato.enums.RoomUserState;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.models.LeaderboardRecord;
 import com.potatoandtomato.common.models.Streak;
@@ -49,17 +50,15 @@ public interface IDatabase {
 
      void setInvitedUsers(ArrayList<Profile> invitedUsers, Room room, DatabaseListener listener);
 
-     void addUserToRoom(Room room, Profile user, int slotIndex, DatabaseListener<String> listener);
+     void addUserToRoom(Room room, Profile user, int slotIndex, RoomUserState roomUserState, DatabaseListener<String> listener);
 
      void removeUserFromRoom(Room room, Profile user, DatabaseListener listener);
 
      void monitorRoomById(String id, String classTag, DatabaseListener<Room> listener);
 
-     void setRoomUserIsReady(Room room, String userId, boolean isReady, DatabaseListener listener);
+     void setRoomUserState(Room room, String userId, RoomUserState roomUserState, DatabaseListener listener);
 
      void setRoomUserSlotIndex(Room room, String userId, int slotIndex, DatabaseListener listener);
-
-     void setRoomState(final Room room, int roundCounter, boolean open, boolean playing, DatabaseListener listener);
 
      void getRoomById(String id, DatabaseListener<Room> listener);
 
