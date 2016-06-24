@@ -183,7 +183,8 @@ public class RestfulApi implements IRestfulApi {
     }
 
     @Override
-    public void purchasedProducts(String productId, String productToken, String orderId, Profile myProfile, int phase, final RestfulApiListener<String> listener) {
+    public void purchasedProducts(String productId, String productToken, String orderId, Profile myProfile, int phase,
+                                  final RestfulApiListener<String> listener) {
         List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(6);
         nameValuePairs.add(new BasicNameValuePair("userId", myProfile.getUserId()));
         nameValuePairs.add(new BasicNameValuePair("userToken", myProfile.getToken()));
@@ -192,6 +193,25 @@ public class RestfulApi implements IRestfulApi {
         nameValuePairs.add(new BasicNameValuePair("orderId", orderId));
         nameValuePairs.add(new BasicNameValuePair("phase", String.valueOf(phase)));
         callApi("purchase", nameValuePairs, listener);
+    }
+
+    @Override
+    public void reviveStreak(String teamUserIdsString, ArrayList<CoinsMeta> coinsMetas, String gameAbbr, String roomId,
+                             String roundCounter, RestfulApiListener<String> listener) {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            String coinsMetaJson = objectMapper.writeValueAsString(coinsMetas);
+            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(5);
+            nameValuePairs.add(new BasicNameValuePair("teamUserIdsString", teamUserIdsString));
+            nameValuePairs.add(new BasicNameValuePair("coinsMetaJson", coinsMetaJson));
+            nameValuePairs.add(new BasicNameValuePair("gameAbbr", gameAbbr));
+            nameValuePairs.add(new BasicNameValuePair("roomId", roomId));
+            nameValuePairs.add(new BasicNameValuePair("roundCounter", roundCounter));
+            callApi("revive_streaks", nameValuePairs, listener);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     private void callApi(String name, RestfulApiListener listener){

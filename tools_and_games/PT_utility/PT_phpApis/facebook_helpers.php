@@ -28,7 +28,7 @@
 	
 	
 	function isTokenValid($token, $fbUserId){
-		$graph_url = "https://graph.facebook.com/debug_token?".
+		$graph_url = "https://graph.facebook.com/v2.6/debug_token?".
 						"access_token=500529570103453|UIew2VTxQ9iJ5jQWLyCVd4pNhRA&".
 						"input_token=".$token;
 							

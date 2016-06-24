@@ -678,7 +678,7 @@ public class LeaderBoardScene extends SceneAbstract {
         nameLabel.setAlignment(Align.left);
 
         if(record.getStreak().hasValidStreak()){
-            Badge streakBadge = new Badge(BadgeType.Streak, String.valueOf(record.getStreak()), _assets);
+            Badge streakBadge = new Badge(BadgeType.Streak, String.valueOf(record.getStreak().getStreakCount()), _assets);
             streakBadge.setName("streakTable");
             nameStreakTable.add(streakBadge).padRight(5);
 

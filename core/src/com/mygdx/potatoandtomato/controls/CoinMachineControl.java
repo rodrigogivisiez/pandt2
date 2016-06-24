@@ -165,7 +165,7 @@ public class CoinMachineControl {
             public void run() {
                 if(stage != null){
                     stage.dispose();
-                    iptGame.removeInputProcessor(stage);
+                    iptGame.removeInputProcessorById(getClassTag());
                 }
                 root.remove();
 
@@ -174,7 +174,7 @@ public class CoinMachineControl {
                 stage.addActor(root);
 
                 if(visible){
-                    iptGame.addInputProcessor(stage, 11);
+                    iptGame.addInputProcessor(stage, 11, getClassTag());
                 }
             }
         });
@@ -191,13 +191,15 @@ public class CoinMachineControl {
                 root.setX(Positions.getWidth() + 10);
                 root.addAction(moveTo(Positions.getWidth() - root.getWidth(), root.getY(), 0.3f));
 
-                iptGame.addInputProcessor(stage, 11);
+                iptGame.addInputProcessor(stage, 11, getClassTag());
             }
         });
 
     }
 
     public void hide(){
+        iptGame.removeInputProcessorById(getClassTag());
+
         if(!visible) return;
 
         Threadings.postRunnable(new Runnable() {
@@ -210,8 +212,6 @@ public class CoinMachineControl {
                         visible = false;
                     }
                 }));
-
-                iptGame.removeInputProcessor(stage);
             }
         });
 
@@ -228,7 +228,7 @@ public class CoinMachineControl {
 
                 Table userTable = new Table();
                 userTable.setName(userId);
-                Label usernameLabel = new Label(Strings.cutOff(userName, 10), labelStyle);
+                Label usernameLabel = new Label(Strings.cutOff(userName, 8), labelStyle);
 
                 Table coinTable = new Table();
                 if(hasCoin || insertedCoins > 0){
@@ -303,5 +303,9 @@ public class CoinMachineControl {
 
     public Table getCoinInsertRootTable() {
         return coinInsertRootTable;
+    }
+
+    public String getClassTag(){
+        return this.getClass().getName();
     }
 }

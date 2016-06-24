@@ -27,4 +27,7 @@ public interface IRestfulApi {
 
     void purchasedProducts(String productId, String productToken, String orderId, Profile myProfile, int phase, RestfulApiListener<String> listener);
 
+    void reviveStreak(String teamUserIdsString, ArrayList<CoinsMeta> coinsMetas, String gameAbbr,
+                                    String roomId, String roundCounter, RestfulApiListener<String> listener);
+
 }

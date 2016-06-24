@@ -2,27 +2,22 @@ package com.mygdx.potatoandtomato.scenes.leaderboard_scene;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.mygdx.potatoandtomato.PTScreen;
-import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.potatoandtomato.common.absints.CoinListener;
+import com.mygdx.potatoandtomato.absintflis.services.RestfulApiListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
-import com.mygdx.potatoandtomato.services.Confirm;
 import com.mygdx.potatoandtomato.utils.Scores;
-import com.potatoandtomato.common.utils.OneTimeRunnable;
-import com.potatoandtomato.common.utils.Pair;
+import com.potatoandtomato.common.models.*;
+import com.potatoandtomato.common.utils.*;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.enums.Status;
-import com.potatoandtomato.common.models.LeaderboardRecord;
-import com.potatoandtomato.common.models.Player;
-import com.potatoandtomato.common.models.ScoreDetails;
-import com.potatoandtomato.common.models.Team;
-import com.potatoandtomato.common.utils.SafeThread;
-import com.potatoandtomato.common.utils.Threadings;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -149,31 +144,8 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                     public void run() {
                                         if(_room.getGame().isStreakEnabled() && myLeaderboardRecord.getStreak().hasValidStreak()){
                                             _scene.loseStreakAnimate(_game, myCurrentRank);
-
-//                                            if(myLeaderboardRecord.getStreak().canRevive()){
-//                                                _scene.setMascots(LeaderBoardScene.MascotType.FAILED);
-//                                                Threadings.delay(2000, new Runnable() {
-//                                                    @Override
-//                                                    public void run() {
-//                                                        _services.getConfirm().show("Revive your streak?", Confirm.Type.YESNO, new ConfirmResultListener() {
-//                                                            @Override
-//                                                            public void onResult(Result result) {
-//                                                                if(result == Result.YES){
-//                                                                    _scene.reviveStreakAnimate(_game, myCurrentRank);
-//                                                                    _scene.setMascots(LeaderBoardScene.MascotType.HAPPY);
-//                                                                    _services.getDatabase().streakRevive(getMyTeamUserIds(), _room, null);
-//                                                                }
-//                                                                else{
-//                                                                    _scene.setMascots(LeaderBoardScene.MascotType.CRY);
-//                                                                }
-//                                                            }
-//                                                        });
-//                                                    }
-//                                                });
-//                                            }
-//                                            else{
-                                                _scene.setMascots(LeaderBoardScene.MascotType.CRY);
-                                            //}
+                                            _scene.setMascots(LeaderBoardScene.MascotType.CRY);
+                                            reviveStreakProcess(myLeaderboardRecord.getStreak(), myCurrentRank);
                                         }
                                     }
                                 });
@@ -295,9 +267,9 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
 
                     );
                     }else {
-                    _scene.hideLoading(_game);
-                    _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
-                }
+                        _scene.hideLoading(_game);
+                        _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
+                    }
             }
         });
     }
@@ -418,6 +390,54 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
         }
     }
 
+    public void reviveStreakProcess(Streak streak, final int myCurrentRank){
+        int revivingStreakCount = streak.getStreakCount();
+        if(revivingStreakCount == 0){
+            revivingStreakCount = streak.getBeforeStreakCount();
+        }
+
+        if(revivingStreakCount > 0){
+            final String teamUserIdsString = Strings.joinArr(getMyTeamUserIds(), ",");
+
+            ArrayList<Pair<String, String>> userIdToNamePairs = new ArrayList();
+            for(Player player : _myTeam){
+                userIdToNamePairs.add(new Pair<String, String>(player.getUserId(), player.getName()));
+            }
+
+            _services.getCoins().initCoinMachine(MathUtils.floor(revivingStreakCount / 2),
+                    _room.getId() + "_" + _room.getRoundCounter() + "_" + teamUserIdsString,
+                    userIdToNamePairs);
+
+            _services.getCoins().setCoinListener(new CoinListener() {
+                @Override
+                public void onEnoughCoins() {
+                    _scene.reviveStreakAnimate(_game, myCurrentRank);
+                    _scene.setMascots(LeaderBoardScene.MascotType.HAPPY);
+                    _services.getCoins().hideCoinMachine();
+                    _services.getCoins().checkMeIsCoinsCollectedDecisionMaker(new Runnable() {
+                        @Override
+                        public void run() {
+                            _services.getRestfulApi().reviveStreak(teamUserIdsString, _services.getCoins().getCurrentUsersPutCoinsMeta(),
+                                    _room.getGame().getAbbr(), _room.getId(), String.valueOf(_room.getRoundCounter()),
+                                    new RestfulApiListener<String>() {
+                                        @Override
+                                        public void onCallback(String obj, Status st) {
+                                    }
+                                });
+                        }
+                    });
+                }
+
+                @Override
+                public void onDeductCoinsDone(String extra, Status status) {
+
+                }
+            });
+
+            _services.getCoins().showCoinMachine();
+        }
+    }
+
     private int getStreakToAdd(){
         int toAdd = 0;
         for(ScoreDetails details : _scoreDetails){
@@ -445,6 +465,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
         for(Player p : _myTeam){
             playerIds.add(p.getUserId());
         }
+        Collections.sort(playerIds);
         return playerIds;
     }
 
@@ -607,6 +628,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
     public void dispose() {
         super.dispose();
         if(safeThread != null) safeThread.kill();
+        _services.getCoins().reset();
     }
 
     public LeaderboardRecord getMyLeaderboardRecord() {

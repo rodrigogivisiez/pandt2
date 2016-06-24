@@ -188,7 +188,9 @@ public class CreateGameScene extends SceneAbstract {
                 descriptionTable.align(Align.left);
                 descriptionTable.pad(10);
                 descriptionTable.padRight(20);
-                descriptionTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
+                Image descriptionTableBackground = new Image(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG));
+                descriptionTableBackground.setFillParent(true);
+                descriptionTable.addActor(descriptionTableBackground);
                 Label descriptionLabel = new Label(game.getDescription(), contentStyle2);
                 descriptionLabel.setWrap(true);
                 descriptionTable.add(descriptionLabel).fill().expand();

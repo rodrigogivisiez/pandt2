@@ -3,9 +3,10 @@ package com.mygdx.potatoandtomato.scenes.game_sandbox_scene;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
 import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
+import com.mygdx.potatoandtomato.absintflis.gamingkit.LockPropertyListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.ConnectionsControllerListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.GameLoadStateMonitorListener;
-import com.mygdx.potatoandtomato.absintflis.services.CoinListener;
+import com.potatoandtomato.common.absints.CoinListener;
 import com.mygdx.potatoandtomato.absintflis.services.ConnectionWatcherListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.ConnectionStatus;
@@ -269,22 +270,26 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             @Override
             public void onAllSuccess(GameCoordinator gameCoordinator) {
                 coordinator = gameCoordinator;
+                if(!isContinue){
+                    _services.getCoins().setCoinListener(new CoinListener() {
+                        @Override
+                        public void onEnoughCoins() {
 
-                _services.getCoins().setCoinListener(new CoinListener() {
-                    @Override
-                    public void onEnoughCoins() {
-
-                    }
-
-                    @Override
-                    public void onDeductCoinsDone(String extra, Status status) {
-                        if(status == Status.SUCCESS){
-                            gameStart();
                         }
-                    }
-                });
 
-                _services.getCoins().startDeductCoins();
+                        @Override
+                        public void onDeductCoinsDone(String extra, Status status) {
+                            if(status == Status.SUCCESS){
+                                gameStart();
+                            }
+                        }
+                    });
+
+                    _services.getCoins().startDeductCoins();
+                }
+                else{
+                    gameStart();
+                }
             }
 
             @Override
@@ -294,7 +299,9 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
 
             @Override
             public void onFailed(Player failedPlayers) {
-                setUserTableDesign(failedPlayers.getUserId(), false, true);
+                if(failedPlayers != null){
+                    setUserTableDesign(failedPlayers.getUserId(), false, true);
+                }
                 failLoad(failedPlayers);
             }
 
@@ -355,17 +362,19 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         _services.getGamingKit().addListener(getClassTag(), new UpdateRoomMatesListener() {
             @Override
             public void onUpdateRoomMatesReceived(int code, String msg, String senderId) {
-                if(code == UpdateRoomMatesCode.LOCK_PROPERTY){
-                    onLockUpdateScorePropertyResult(msg);
-                }
-                else {
-                    updateReceived(code, msg, senderId);
-                }
+                updateReceived(code, msg, senderId);
             }
 
             @Override
             public void onUpdateRoomMatesReceived(byte identifier, byte[] data, String senderId) {
 
+            }
+        });
+
+        _services.getGamingKit().addListener(getClassTag(), new LockPropertyListener(room.getId() + "_" + room.getRoundCounter()) {
+            @Override
+            public void onLockSucceed() {
+                onLockUpdateScorePropertySuccess();
             }
         });
 
@@ -502,10 +511,8 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         connectionsController.updateMyPlayingState(false, false);
     }
 
-    public void onLockUpdateScorePropertyResult(String result){
-        if(result.equals("0")){     //lock success
-            _services.getRestfulApi().updateScores(winners, losers, room, _services.getProfile(), null);
-        }
+    public void onLockUpdateScorePropertySuccess(){
+        _services.getRestfulApi().updateScores(winners, losers, room, _services.getProfile(), null);
     }
 
     @Override

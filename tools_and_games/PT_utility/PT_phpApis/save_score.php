@@ -144,12 +144,7 @@
 				);
 				$firebase->set('leaderboard/'.$room->game->abbr.'/'.$teamUserIdsString, $scoresMap);
 				
-				// $priorityMap = array(
-					// ".priority" => $newScore
-				// );
-				// $firebase->set('leaderboard/'.$room->game->abbr.'/'.$teamUserIdsString.'.json', $priorityMap);
-// 				
-				
+	
 				foreach($userIdArr as $userId){
 					$firebase->set('userLeaderboardLog/'.$room->game->abbr.'/'.$userId.'/'.$teamUserIdsString, $newScore);
 				}
@@ -173,10 +168,15 @@
 	function handleLosers($firebase, $losers, $room){
 		if(sizeof($losers) > 0){
 			foreach($losers as $teamUserIdsString){
-				$originalStreakJson = json_decode($firebase->get('streaks/'.$room->game->abbr.'/'.$teamUserIdsString.'/streakCount'));
-				if(!empty($originalStreakJson)){
-					$originalStreakCount = json_decode($originalStreakJson);
-					
+				
+				$revived = json_decode($firebase->get('streaksRevived/'.$room->id.'/'.$room->roundCounter.'/'.$teamUserIdsString));
+				if(!empty($revived)){
+					continue;
+				}
+				
+				
+				$originalStreakCount = json_decode($firebase->get('streaks/'.$room->game->abbr.'/'.$teamUserIdsString.'/streakCount'));
+				if(!empty($originalStreakCount)){
 					$streakMap = array(
 		   				"streakCount" => 0,
 					    "beforeStreakCount" => $originalStreakCount

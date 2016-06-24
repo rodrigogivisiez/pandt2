@@ -199,7 +199,7 @@ public class PrerequisiteLogic extends LogicAbstract {
         _joiningRoom.setHost(_services.getProfile());
         _joiningRoom.setPlaying(false);
         _joiningRoom.setRoundCounter(0);
-        _joiningRoom.addRoomUser(_services.getProfile(), true);
+        _joiningRoom.addRoomUser(_services.getProfile(), false);
         _services.getDatabase().saveRoom(_joiningRoom, true, new DatabaseListener<String>() {
             @Override
             public void onCallback(String obj, Status st) {

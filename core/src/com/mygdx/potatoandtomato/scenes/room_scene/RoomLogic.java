@@ -18,7 +18,7 @@ import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
 import com.mygdx.potatoandtomato.absintflis.push_notifications.PushCode;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
-import com.mygdx.potatoandtomato.absintflis.services.CoinListener;
+import com.potatoandtomato.common.absints.CoinListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.RoomError;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
@@ -51,6 +51,7 @@ public class RoomLogic extends LogicAbstract {
     boolean gameStarted;
     boolean isContinue;
     boolean quiting;
+    boolean finishGameFileCheck;
     RoomError roomErrorOccured;
     UserBadgeHelper userBadgeHelper;
     GameFileChecker gameFileChecker;
@@ -811,6 +812,7 @@ public class RoomLogic extends LogicAbstract {
                     new GameFileCheckerListener() {
                         @Override
                         public void onCallback(GameFileChecker.GameFileResult result, Status st) {
+                            finishGameFileCheck = true;
                             if(st == Status.FAILED && !quiting){
                                 switch (result){
                                     case FAILED_RETRIEVE:
@@ -849,7 +851,7 @@ public class RoomLogic extends LogicAbstract {
                     if(isSceneVisible() && !_confirm.isVisible()){
                         RoomUser roomUser = room.getRoomUserByUserId(_services.getProfile().getUserId());
                         if(roomUser != null){
-                            if(!roomUser.getReady()){
+                            if(!roomUser.getReady() && finishGameFileCheck){
                                 sendIsReadyUpdate(true);
                             }
                         }

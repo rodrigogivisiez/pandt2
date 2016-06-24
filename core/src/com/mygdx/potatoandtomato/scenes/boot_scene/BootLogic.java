@@ -45,7 +45,8 @@ public class BootLogic extends LogicAbstract {
 
         _bootScene.reset();
         _services.getDatabase().clearAllListeners();
-        _services.getCoins().reset();
+        _services.getChat().hideChat();
+        _services.getCoins().dispose();
         _services.getProfile().reset();
         _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
         _screen.showRotateSunrise();

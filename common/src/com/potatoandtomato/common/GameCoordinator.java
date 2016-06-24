@@ -9,12 +9,15 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.firebase.client.Firebase;
 import com.potatoandtomato.common.absints.*;
+import com.potatoandtomato.common.enums.CoinRequestType;
 import com.potatoandtomato.common.enums.RoomUpdateType;
 import com.potatoandtomato.common.enums.SelfConnectionStatus;
+import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.helpers.DecisionsMaker;
 import com.potatoandtomato.common.helpers.GameDataHelper;
 import com.potatoandtomato.common.models.*;
 import com.potatoandtomato.common.utils.MyFileResolver;
+import com.potatoandtomato.common.utils.Pair;
 import com.potatoandtomato.common.utils.Threadings;
 
 import java.util.ArrayList;
@@ -47,6 +50,7 @@ public class GameCoordinator implements Disposable {
     private int leaderboardSize;
     private GameDataHelper gameDataHelper;
     private IDisconnectOverlayControl disconnectOverlayControl;
+    private ICoins iCoins;
 
     private boolean landscape;
     private boolean gameStarted;
@@ -70,7 +74,8 @@ public class GameCoordinator implements Disposable {
                            ISoundsPlayer sounds, IRemoteHelper remoteHelper,
                            ITutorials tutorials,
                            GamePreferencesAbstract gamePreferences,
-                           int leaderboardSize, IDisconnectOverlayControl iDisconnectOverlayControl) {
+                           int leaderboardSize, IDisconnectOverlayControl iDisconnectOverlayControl,
+                           ICoins iCoins) {
         this.jarPath = jarPath;
         this.assetsPath = assetsPath;
         this.basePath = basePath;
@@ -90,6 +95,7 @@ public class GameCoordinator implements Disposable {
         this.leaderboardSize = leaderboardSize;
         this.remoteHelper = remoteHelper;
         this.disconnectOverlayControl = iDisconnectOverlayControl;
+        this.iCoins = iCoins;
 
         gameDataHelper = new GameDataHelper(teams, myUserId, decisionsMaker,
                                                     gameSandBox, game, disconnectOverlayControl, this);
@@ -538,6 +544,55 @@ public class GameCoordinator implements Disposable {
     }
 
     //////////////////////////////////////////////////////////////////////////////////
+    //about coins
+    ////////////////////////////////////////////////////////////////////////////////////
+    public void coinsInputRequest(CoinRequestType coinRequestType, int coinPerPerson, final CoinListener coinListener){
+        iCoins.reset();
+
+        ArrayList<Pair<String, String>> userIdToNamePairs = new ArrayList();
+        switch (coinRequestType){
+            case MeOnly:
+                for(Player player : getMyTeam().getPlayers()){
+                    if(player.getUserId().equals(myUserId)){
+                        userIdToNamePairs.add(new Pair<String, String>(player.getUserId(), player.getName()));
+                        break;
+                    }
+                }
+                break;
+            case MyTeam:
+                for(Player player : getMyTeam().getPlayers()){
+                    userIdToNamePairs.add(new Pair<String, String>(player.getUserId(), player.getName()));
+                }
+                break;
+            case Everyone:
+                for(Team team : getTeams()){
+                    for(Player player : team.getPlayers()){
+                        userIdToNamePairs.add(new Pair<String, String>(player.getUserId(), player.getName()));
+                    }
+                }
+                break;
+        }
+
+        iCoins.initCoinMachine(coinPerPerson * userIdToNamePairs.size(), roomId + "_game", userIdToNamePairs);
+        iCoins.setCoinListener(new CoinListener() {
+            @Override
+            public void onEnoughCoins() {
+                coinListener.onEnoughCoins();
+                iCoins.hideCoinMachine();
+                iCoins.startDeductCoins();
+            }
+
+            @Override
+            public void onDeductCoinsDone(String extra, Status status) {
+                coinListener.onDeductCoinsDone(extra, status);
+            }
+        });
+        iCoins.showCoinMachine();
+
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////////////
     //MISC.
     /////////////////////////////////////////////////////////////////////////////////////
     public void requestVibrate(double periodInMili){
@@ -589,6 +644,7 @@ public class GameCoordinator implements Disposable {
         selfConnectionListeners.clear();
         gameDataHelper.dispose();
         decisionsMaker.dispose();
+        iCoins.reset();
     }
 
     ////////////////////////////////////////////////////////////////

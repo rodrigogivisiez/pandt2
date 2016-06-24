@@ -109,19 +109,19 @@ public class Chat {
         if(!isVisible()){
             setVisible(true);
             chatControl.scrollToBottom();
-            ptGame.addInputProcessor(chatControl.getStage(), 10);
+            ptGame.addInputProcessor(chatControl.getStage(), 10, getClassTag());
         }
     }
 
     public void hideChat(){
         setVisible(false);
         chatControl.scrollToBottom();
-        ptGame.removeInputProcessor(chatControl.getStage());
+        ptGame.removeInputProcessorById(getClassTag());
     }
 
     public void stageChanged(Stage oldStage, Stage newStage){
-        if(oldStage != null) ptGame.removeInputProcessor(oldStage);
-        if(isVisible()) ptGame.addInputProcessor(newStage, 10);
+        ptGame.removeInputProcessorById(getClassTag());
+        if(isVisible()) ptGame.addInputProcessor(newStage, 10, getClassTag());
     }
 
     private void startRecord(){
@@ -495,5 +495,9 @@ public class Chat {
 
     public ChatControl getChatControl() {
         return chatControl;
+    }
+
+    public String getClassTag(){
+        return this.getClass().getName();
     }
 }

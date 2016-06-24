@@ -55,12 +55,7 @@ public class ChartBoostHelper {
         broadcaster.subscribe(BroadcastEvent.SHOW_REWARD_VIDEO, new BroadcastListener() {
             @Override
             public void onCallback(Object obj, Status st) {
-                Threadings.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        Chartboost.showRewardedVideo(CBLocation.LOCATION_DEFAULT);
-                    }
-                });
+                Chartboost.showRewardedVideo(CBLocation.LOCATION_DEFAULT);
             }
         });
     }

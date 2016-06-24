@@ -168,7 +168,7 @@ public class Confirm {
 
                 _visible = true;
 
-                _game.addInputProcessor(_stage, 15);
+                _game.addInputProcessor(_stage, 15, getClassTag());
             }
         });
 
@@ -224,7 +224,7 @@ public class Confirm {
                     @Override
                     public boolean act(float delta) {
                         _visible = false;
-                        _game.removeInputProcessor(_stage);
+                        _game.removeInputProcessorById(getClassTag());
                         if(_stateChangedListener != null) _stateChangedListener.onHide();
                         return true;
                     }
@@ -247,6 +247,10 @@ public class Confirm {
 
             }
         }
+    }
+
+    public String getClassTag(){
+        return this.getClass().getName();
     }
 
 

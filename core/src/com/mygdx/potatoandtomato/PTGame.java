@@ -11,9 +11,13 @@ import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import com.mygdx.potatoandtomato.assets.*;
+import com.mygdx.potatoandtomato.enums.LeaderboardType;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
+import com.mygdx.potatoandtomato.models.EndGameData;
 import com.mygdx.potatoandtomato.models.Profile;
+import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
+import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
 import com.mygdx.potatoandtomato.services.*;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.mygdx.potatoandtomato.statics.Terms;
@@ -23,6 +27,10 @@ import com.potatoandtomato.common.absints.PTAssetsManager;
 import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
+import com.potatoandtomato.common.models.EndGameResult;
+import com.potatoandtomato.common.models.Player;
+import com.potatoandtomato.common.models.ScoreDetails;
+import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.utils.Downloader;
 import com.potatoandtomato.common.utils.Threadings;
 
@@ -40,7 +48,6 @@ public class PTGame extends Game implements IPTGame {
 	Chat _chat;
 	GamingKit _gamingKit;
 	PTGame _game;
-	HashMap<InputProcessor, Integer> _processors;
 	Confirm _confirm;
 	Notification _notification;
 	Recorder _recorder;
@@ -57,6 +64,9 @@ public class PTGame extends Game implements IPTGame {
 	PTAssetsManager _monitoringPTAssetsManager;
 	ArrayList<Runnable> _onResumeRunnables;
 
+	HashMap<InputProcessor, Integer> _processors;
+	HashMap<String, InputProcessor> _idToProcessorMap;
+
 	public PTGame(Broadcaster broadcaster) {
 		_broadcaster = broadcaster;
 		_onResumeRunnables = new ArrayList();
@@ -68,6 +78,7 @@ public class PTGame extends Game implements IPTGame {
 		_game = this;
 		_preferences = new Preferences();
 		_processors = new HashMap();
+		_idToProcessorMap = new HashMap();
 		Threadings.setMainTreadId();
 		Global.init(_preferences);
 		initiateAssets();
@@ -108,8 +119,6 @@ public class PTGame extends Game implements IPTGame {
 				_coins.setPtScreen(_screen);
 				setScreen(_screen);
 
-//				_services.getProfile().setUserId("-KJpZJTAAW38OskHWVWU");
-//				_services.getProfile().setToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhZG1pbiI6ZmFsc2UsImRlYnVnIjpmYWxzZSwiZCI6eyJ1aWQiOiItS0pwWkpUQUFXMzhPc2tIV1ZXVSIsImlzTW9kZXJhdG9yIjpmYWxzZX0sInYiOjAsImlhdCI6MTQ2NjMzOTU0OX0.gi3dMQFyeh7OGFO2VRPF4Aifyj5LONqG7wPlhH-9rkA");
 				_screen.toScene(SceneEnum.BOOT);
 			}
 		});
@@ -182,6 +191,13 @@ public class PTGame extends Game implements IPTGame {
 	}
 
 	@Override
+	public void addInputProcessor(InputProcessor processor, int priority, String id) {
+		removeInputProcessorById(id);
+		_idToProcessorMap.put(id, processor);
+		addInputProcessor(processor, priority);
+	}
+
+	@Override
 	public void addInputProcessor(InputProcessor processor) {
 		if(!_processors.containsKey(processor)){
 			_processors.put(processor, 0);
@@ -193,6 +209,15 @@ public class PTGame extends Game implements IPTGame {
 	public void removeInputProcessor(InputProcessor processor) {
 		_processors.remove(processor);
 		setInputProcessors();
+	}
+
+	@Override
+	public void removeInputProcessorById(String id) {
+		if(_idToProcessorMap.containsKey(id)){
+			InputProcessor processor = _idToProcessorMap.get(id);
+			removeInputProcessor(processor);
+			_idToProcessorMap.remove(id);
+		}
 	}
 
 	private void setInputProcessors(){

@@ -38,6 +38,7 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
     private MultiHashMap<String, byte[]> _bytePieces;
     private ConcurrentHashMap<String, String> _bytePiecesOwner;
     private String _gettingRoomId;
+    private String _lockingProperty;
 
     public Appwarp(String appKey, String secretKey){
         _appKey = appKey;
@@ -258,6 +259,7 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
     @Override
     public void lockProperty(String key, String value) {
+        _lockingProperty = key;
         HashMap<String, Object> table = new HashMap();
         table.put(key, value);
         _warpInstance.lockProperties(table);
@@ -536,7 +538,10 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
     @Override
     public void onLockPropertiesDone(byte b) {
-        onUpdateRoomMatesReceived(UpdateRoomMatesCode.LOCK_PROPERTY, String.valueOf(b), _realUsername);
+        if(b == 0){
+            onLockPropertySuccess(_lockingProperty);
+            _lockingProperty = "";
+        }
     }
 
     private String encodeUserId(String userId){
@@ -692,7 +697,7 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
     }
 
     @Override
-    public void onUserChangeRoomProperty(RoomData roomData, String s, HashMap<String, Object> hashMap, HashMap<String, String> hashMap1) {
+    public void onUserChangeRoomProperty(RoomData roomData, String userName, HashMap<String, Object> tableProperties, HashMap<String, String> lockProperties) {
 
     }
 

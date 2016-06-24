@@ -197,7 +197,7 @@ public class
         _ref.authWithCustomToken(token, new Firebase.AuthResultHandler() {
             @Override
             public void onAuthenticated(AuthData authData) {
-                getProfileByUserId(authData.getUid(), listener);
+                if(authData.getUid() != null) getProfileByUserId(authData.getUid(), listener);
             }
 
             @Override
@@ -813,16 +813,16 @@ public class
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if(snapshot.exists()){
-                    listener.onCallback(snapshot.getValue(listener.getType()), Status.SUCCESS);
+                    if(listener != null) listener.onCallback(snapshot.getValue(listener.getType()), Status.SUCCESS);
                 }
                 else{
-                    listener.onCallback(null, Status.SUCCESS);
+                    if(listener != null) listener.onCallback(null, Status.SUCCESS);
                 }
 
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                listener.onCallback(0, Status.FAILED);
+                if(listener != null) listener.onCallback(0, Status.FAILED);
             }
         });
     }

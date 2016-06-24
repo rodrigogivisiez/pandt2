@@ -22,11 +22,13 @@ public class TopBarCoinControl extends Table {
     private Table _this;
     private Label coinLabel;
     private PTScreen ptScreen;
+    private boolean disableClick;
 
-    public TopBarCoinControl(Assets assets, int myCoinCount, PTScreen ptScreen) {
+    public TopBarCoinControl(Assets assets, int myCoinCount, boolean disableClick, PTScreen ptScreen) {
         this.assets = assets;
         _this = this;
         this.ptScreen = ptScreen;
+        this.disableClick = disableClick;
         populate(myCoinCount);
         setListeners();
     }
@@ -61,18 +63,20 @@ public class TopBarCoinControl extends Table {
     }
 
     public void setListeners(){
-        Threadings.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                _this.addListener(new ClickListener(){
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        super.clicked(event, x, y);
-                        ptScreen.toScene(SceneEnum.SHOP);
-                    }
-                });
-            }
-        });
+        if(!this.disableClick){
+            Threadings.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    _this.addListener(new ClickListener(){
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                            super.clicked(event, x, y);
+                            ptScreen.toScene(SceneEnum.SHOP);
+                        }
+                    });
+                }
+            });
+        }
     }
 
 }

@@ -72,6 +72,9 @@ public class StageStateLogic implements Disposable {
                     ((BeforeStartPapyrusScene) currentPapyrusScene).gameReadyToStart();
                 }
             }
+            else if(previousState == GameState.Lose){
+                closeCurrentPapyrus();
+            }
             previousState = newState;
         }
 //        else if(newState == GameState.Won){

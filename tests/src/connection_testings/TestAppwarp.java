@@ -2,12 +2,10 @@ package connection_testings;
 
 import abstracts.TestAbstract;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.*;
-import com.mygdx.potatoandtomato.services.Appwarp;
 import com.mygdx.potatoandtomato.enums.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.utils.ForAppwarpTesting;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.ChatMessage;
-import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import helpers.T_Threadings;
 import org.junit.*;
 
@@ -194,7 +192,7 @@ public class TestAppwarp extends TestAbstract {
         _gamingKit.addListener("", new UpdateRoomMatesListener() {
             @Override
             public void onUpdateRoomMatesReceived(int code, String msg, String senderId) {
-                Assert.assertEquals(UpdateRoomMatesCode.LOCK_PROPERTY, code);
+                Assert.assertEquals(UpdateRoomMatesCode.LOCK_PROPERTY_SUCCESS, code);
                 Assert.assertEquals("0", msg);
                 Threadings.oneTaskFinish();
             }

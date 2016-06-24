@@ -68,7 +68,7 @@ public class TopBar {
 
                 topBarTable.addActor(iconImg);
                 topBarTable.add(titleLabel).expand().fill().padLeft(90);
-                topBarTable.add(coins.getNewTopBarCoinControl()).padBottom(5).padRight(5);
+                topBarTable.add(coins.getNewTopBarCoinControl(false)).padBottom(5).padRight(5);
 
                 root.padTop(barHeight);
                 root.addActor(topBarTable);
@@ -94,7 +94,7 @@ public class TopBar {
                 topBarTable.add(titleLabel).expand().fill().padLeft(90);
                 topBarTable.addActor(darkImage);
                 topBarTable.addActor(iconImg);
-                topBarTable.add(coins.getNewTopBarCoinControl()).padBottom(5).padRight(5);
+                topBarTable.add(coins.getNewTopBarCoinControl(true)).padBottom(5).padRight(5);
             }
         });
     }

@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.absints.*;
+import com.potatoandtomato.common.enums.CoinRequestType;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
@@ -336,8 +337,36 @@ public class MainLogic extends GameLogic {
 
     private void gameOver(){
         _gameModel.setGameState(GameState.Lose);
-        getCoordinator().finalizeGame(_scoresLogic.getFinalScoreDetails(), null, false);
+        if(!_gameModel.isContinueChanceUsed()){
+            coinRequestPhase();
+        }
         showEndGameTable();
+    }
+
+    private void coinRequestPhase(){
+        Threadings.delay(3000, new Runnable() {
+            @Override
+            public void run() {
+                getCoordinator().coinsInputRequest(CoinRequestType.MyTeam, 1, new CoinListener() {
+                    @Override
+                    public void onEnoughCoins() {
+
+                    }
+
+                    @Override
+                    public void onDeductCoinsDone(String s, Status status) {
+                        if(status == Status.FAILED){
+                            coinRequestPhase();
+                        }
+                        else{
+                            _screen.hideEndGameTable();
+                            _gameModel.setContinueChanceUsed(true);
+                            sendGoToNextStageIfIsDecisionMaker(-1);
+                        }
+                    }
+                });
+            }
+        });
     }
 
     private void circleAllAnswers(){
@@ -359,6 +388,7 @@ public class MainLogic extends GameLogic {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         super.clicked(event, x, y);
+                        getCoordinator().finalizeGame(_scoresLogic.getFinalScoreDetails(), null, false);
                         getCoordinator().endGame();
                     }
                 });

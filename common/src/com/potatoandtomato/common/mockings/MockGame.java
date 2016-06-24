@@ -202,6 +202,41 @@ public abstract class MockGame extends Game implements IPTGame {
             public void hideOverlay() {
 
             }
+        }, new ICoins() {
+            @Override
+            public void showCoinMachine() {
+
+            }
+
+            @Override
+            public void hideCoinMachine() {
+
+            }
+
+            @Override
+            public void reset() {
+
+            }
+
+            @Override
+            public void requestCoinsMachineStateFromOthers() {
+
+            }
+
+            @Override
+            public void initCoinMachine(int expectingCoin, String transactionId, ArrayList<Pair<String, String>> userIdToNamePairs) {
+
+            }
+
+            @Override
+            public void startDeductCoins() {
+
+            }
+
+            @Override
+            public void setCoinListener(CoinListener coinListener) {
+
+            }
         }){
             @Override
             public void finishLoading() {

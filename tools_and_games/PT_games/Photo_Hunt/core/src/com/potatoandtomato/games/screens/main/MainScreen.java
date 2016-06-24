@@ -398,6 +398,15 @@ public class MainScreen extends GameScreen {
         });
     }
 
+    public void hideEndGameTable(){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _endGameTable.setVisible(false);
+            }
+        });
+    }
+
     @Override
     public void show() {
 

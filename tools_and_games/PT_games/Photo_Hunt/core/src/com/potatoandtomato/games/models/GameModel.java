@@ -29,6 +29,7 @@ public class GameModel {
     private int hintsLeft;
     private int castleAttackedCount;
     private int freezingMiliSecs;
+    private boolean continueChanceUsed;
     private ImageDetails imageDetails;
     private StageType stageType;
     private ArrayList<GameModelListener> listeners;
@@ -60,6 +61,15 @@ public class GameModel {
         setCastleAttackedCount(gameModel.getCastleAttackedCount());
         setHandledAreas(gameModel.getHandledAreas());
         setHintsLeft(gameModel.getHintsLeft());
+        setContinueChanceUsed(gameModel.isContinueChanceUsed());
+    }
+
+    public boolean isContinueChanceUsed() {
+        return continueChanceUsed;
+    }
+
+    public void setContinueChanceUsed(boolean continueChanceUsed) {
+        this.continueChanceUsed = continueChanceUsed;
     }
 
     public int getCastleAttackedCount() {
@@ -252,9 +262,9 @@ public class GameModel {
             time = 60000;
         }
         else{
-//            time =  Math.max(60000 - (Math.pow(stageNumber, 1.5) * 1000), 0) +
-//                    Math.max(3000 - (Math.pow(stageNumber, 0.2) * 1000), 0) + 5500;
-            time = 60000 * 5;
+            time =  Math.max(60000 - (Math.pow(stageNumber, 1.5) * 1000), 0) +
+                    Math.max(3000 - (Math.pow(stageNumber, 0.2) * 1000), 0) + 5500;
+            //time = 60000 * 5;
         }
 
         return (int) time;

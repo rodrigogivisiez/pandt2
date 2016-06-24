@@ -16,6 +16,7 @@ public abstract class GamingKit {
     private ConcurrentHashMap<String, UpdateRoomMatesListener> _updateRoomMatesListeners;
     private ConcurrentHashMap<String, MessagingListener> _messagingListeners;
     private ConcurrentHashMap<String, RoomInfoListener> _roomInfoListeners;
+    private ConcurrentHashMap<String, LockPropertyListener> _lockPropertyListeners;
 
 
     public GamingKit() {
@@ -24,6 +25,7 @@ public abstract class GamingKit {
         _updateRoomMatesListeners = new ConcurrentHashMap();
         _messagingListeners = new ConcurrentHashMap();
         _roomInfoListeners = new ConcurrentHashMap();
+        _lockPropertyListeners = new ConcurrentHashMap();
     }
 
     public void addListener(String classTag, Object listener){
@@ -42,6 +44,9 @@ public abstract class GamingKit {
         else if(listener instanceof RoomInfoListener){
             _roomInfoListeners.put(classTag, (RoomInfoListener) listener);
         }
+        else if(listener instanceof LockPropertyListener){
+            _lockPropertyListeners.put(classTag, (LockPropertyListener) listener);
+        }
     }
 
     public void removeListenersByClassTag(String classTag){
@@ -50,6 +55,11 @@ public abstract class GamingKit {
         _updateRoomMatesListeners.remove(classTag);
         _messagingListeners.remove(classTag);
         _roomInfoListeners.remove(classTag);
+        _lockPropertyListeners.remove(classTag);
+    }
+
+    public void removeLockPropertyListenersByClassTag(String classTag){
+        _lockPropertyListeners.remove(classTag);
     }
 
 
@@ -103,6 +113,14 @@ public abstract class GamingKit {
         for(RoomInfoListener listener : _roomInfoListeners.values()) {
             if(listener.getRoomId().equals(roomId)){
                 listener.onRoomInfoFailed();
+            }
+        }
+    }
+
+    public void onLockPropertySuccess(String property){
+        for(LockPropertyListener listener : _lockPropertyListeners.values()) {
+            if(listener.getProperty().equals(property)){
+                listener.onLockSucceed();
             }
         }
     }
