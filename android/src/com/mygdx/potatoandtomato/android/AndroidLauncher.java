@@ -4,10 +4,13 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 
 import android.os.Environment;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -30,6 +33,8 @@ import com.potatoandtomato.common.utils.Threadings;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class AndroidLauncher extends AndroidApplication {
 
@@ -93,6 +98,7 @@ public class AndroidLauncher extends AndroidApplication {
 		}
 
 	}
+
 
 	private void roomAliveRelated(){
 		_broadcaster.subscribe(BroadcastEvent.UPDATE_ROOM, new BroadcastListener<PushNotification>() {

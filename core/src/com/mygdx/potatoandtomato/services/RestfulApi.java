@@ -71,10 +71,12 @@ public class RestfulApi implements IRestfulApi {
     }
 
     @Override
-    public void loginUser(String userId, String secret, final RestfulApiListener<String> listener) {
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+    public void loginUser(String userId, String secret, FacebookProfile facebookProfile, final RestfulApiListener<String> listener) {
+        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(4);
         nameValuePairs.add(new BasicNameValuePair("userId", userId));
         nameValuePairs.add(new BasicNameValuePair("secret", secret));
+        nameValuePairs.add(new BasicNameValuePair("fbUserId", facebookProfile == null ? "" : facebookProfile.getUserId()));
+        nameValuePairs.add(new BasicNameValuePair("fbToken", facebookProfile == null ? "" : facebookProfile.getToken()));
         callApi("login_user", nameValuePairs, new RestfulApiListener<String>() {
             @Override
             public void onCallback(String obj, Status st) {

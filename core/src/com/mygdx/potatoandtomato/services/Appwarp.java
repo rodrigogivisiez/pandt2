@@ -328,11 +328,13 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
     @Override
     public void dispose() {
-        _warpInstance.removeConnectionRequestListener(this);
-        _warpInstance.removeZoneRequestListener(this);
-        _warpInstance.removeRoomRequestListener(this);
-        _warpInstance.removeNotificationListener(this);
-        _warpInstance.disconnect();
+        if(_warpInstance != null){
+            _warpInstance.removeConnectionRequestListener(this);
+            _warpInstance.removeZoneRequestListener(this);
+            _warpInstance.removeRoomRequestListener(this);
+            _warpInstance.removeNotificationListener(this);
+            _warpInstance.disconnect();
+        }
         _warpInstance = null;
     }
 

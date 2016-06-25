@@ -12,10 +12,7 @@ import com.mygdx.potatoandtomato.absintflis.services.RestfulApiListener;
 import com.mygdx.potatoandtomato.absintflis.socials.FacebookListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.models.FacebookProfile;
-import com.mygdx.potatoandtomato.models.Profile;
-import com.mygdx.potatoandtomato.models.Services;
-import com.mygdx.potatoandtomato.models.UserIdSecretModel;
+import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.services.Confirm;
 import com.mygdx.potatoandtomato.statics.Terms;
 import com.mygdx.potatoandtomato.utils.Logs;
@@ -23,6 +20,9 @@ import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.Strings;
+import com.shaded.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
 
 /**
  * Created by SiongLeng on 2/12/2015.
@@ -100,22 +100,31 @@ public class BootLogic extends LogicAbstract {
         final String userId = _services.getPreferences().get(Terms.USERID);
         final String userSecret = _services.getPreferences().get(Terms.USER_SECRET);
 
-        _services.getRestfulApi().loginUser(userId, userSecret, new RestfulApiListener<String>() {
+        _services.getRestfulApi().loginUser(userId, userSecret, _services.getSocials().getFacebookProfile(), new RestfulApiListener<String>() {
             @Override
-            public void onCallback(String token, Status st) {
-                if(st == Status.FAILED && token.equals("USER_NOT_FOUND")){
+            public void onCallback(String result, Status st) {
+                if(st == Status.FAILED && result.equals("USER_NOT_FOUND")){
                     _services.getPreferences().delete(Terms.USERID);
                     _services.getPreferences().delete(Terms.USER_SECRET);
                     createNewUser();
                 }
-                else if(st == Status.FAILED && token.equals("FAIL_CONNECT")){
+                else if(st == Status.FAILED && result.equals("FAIL_CONNECT")){
                     _bootScene.showPTDown();
                 }
                 else if(st == Status.FAILED){
                     retrieveUserFailed();
                 }
                 else{
-                    loginPTWithToken(token);
+                    try {
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        LoginReturnData loginReturnData = objectMapper.readValue(result, LoginReturnData.class);
+                        _services.getPreferences().put(Terms.USERID, loginReturnData.getUserId());
+                        _services.getPreferences().put(Terms.USER_SECRET, loginReturnData.getSecret());
+                        loginPTWithToken(loginReturnData.getToken());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                 }
             }
         });

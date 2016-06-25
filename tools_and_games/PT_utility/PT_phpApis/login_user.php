@@ -11,16 +11,45 @@
 	include 'SignatureInvalidException.php';
 	include 'TokenException.php';
 	include 'TokenGenerator.php';
+	include 'facebook_helpers.php';
 	
 	try {
 		
 		
 		$userId = htmlspecialchars($_POST["userId"]);
 		$secret = htmlspecialchars($_POST["secret"]);
-		
-		if(empty($userId)) $userId = 1;
+		$fbUserId = htmlspecialchars($_POST["fbUserId"]);
+		$fbToken = htmlspecialchars($_POST["fbToken"]);
 		
 		$firebase = new \Firebase\FirebaseLib($DEFAULT_URL, $DEFAULT_TOKEN);
+		
+		if(!empty($fbUserId) && !empty($fbToken)){
+			if(isTokenValid($fbToken, $fbUserId)){
+				$fbTokenMatch = true;
+				$userId = json_decode($firebase->get('secret/facebookUserIds/'.$fbUserId));
+				if(empty($userId)){
+					echo "USER_NOT_FOUND";
+					return;
+				}
+				else{
+					$response = $firebase->get('secret/users/'.$userId);
+					if(empty($response)){
+						echo "USER_NOT_FOUND";
+						return;
+					}
+					$result = json_decode($response);
+					$secret = $result->secret;
+				}
+			}
+			else{
+				echo -1;
+				return;
+			}
+		}
+			
+		
+		
+		if(empty($userId)) $userId = 1;
 		$response = $firebase->get('secret/users/'.$userId);
 		
 		if($response == false){
@@ -50,7 +79,13 @@
 			
 			$firebase->set('secret/users/'.$userId."/token", $token);
 			
-			echo $token;
+			
+			$toReturn = new stdClass();
+			$toReturn->userId = $userId;
+			$toReturn->secret = $secret;
+			$toReturn->token = $token;
+			
+			echo json_encode($toReturn);
 			return;
 		}
 		else{

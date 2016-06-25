@@ -384,9 +384,14 @@ public class MainScreen extends GameScreen {
 
 
 
-    public void switchToReviewMode(ReviewActor reviewActor){
-        _bottomBarTable.clear();
-        _bottomBarTable.add(reviewActor).expand().fill();
+    public void switchToReviewMode(final ReviewActor reviewActor){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _bottomBarTable.clear();
+                _bottomBarTable.add(reviewActor).expand().fill();
+            }
+        });
     }
 
     public void showEndGameTable(){

@@ -251,8 +251,10 @@ public class MainLogic extends GameLogic {
         }
 
         if(correctRect == null){
-            _timeLogic.reduceTime();
-            _screen.cross(x, y, getCoordinator().getMyUserId());
+            if(correctRects.size() == 0){
+                _timeLogic.reduceTime();
+                _screen.cross(x, y, getCoordinator().getMyUserId());
+            }
         }
         else{
             _gameModel.addHandledArea(correctRect, remainingMiliSecs);

@@ -16,7 +16,7 @@ public interface IRestfulApi {
 
     void createNewUserWithFacebookProfile(FacebookProfile facebookProfile, RestfulApiListener<UserIdSecretModel> listener);
 
-    void loginUser(String userId, String secret, RestfulApiListener<String> listener);
+    void loginUser(String userId, String secret, FacebookProfile facebookProfile, RestfulApiListener<String> listener);
 
     void updateScores(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers, Room room,
                       Profile myProfile, RestfulApiListener<String> listener);
