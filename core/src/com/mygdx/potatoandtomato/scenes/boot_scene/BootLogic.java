@@ -74,13 +74,25 @@ public class BootLogic extends LogicAbstract {
             @Override
             public void onLoginComplete(Result result) {
                 if(result == Result.SUCCESS){
-                    afterFacebookPhase();
+                    checkContainsSecondaryUserId();
                 }
                 else{
                     _bootScene.showSocialLoginFailed();
                 }
             }
         });
+    }
+
+    public void checkContainsSecondaryUserId(){
+        String userId = _services.getPreferences().get(Terms.USERID);
+        if(Strings.isEmpty(userId)){
+            String userId2 = _services.getPreferences().get(Terms.USERID_2);
+            if(!Strings.isEmpty(userId2)){
+                _services.getPreferences().put(Terms.USERID, _services.getPreferences().get(Terms.USERID_2));
+                _services.getPreferences().put(Terms.USER_SECRET, _services.getPreferences().get(Terms.USER_SECRET_2));
+            }
+        }
+        afterFacebookPhase();
     }
 
     public void afterFacebookPhase(){
@@ -118,6 +130,11 @@ public class BootLogic extends LogicAbstract {
                     try {
                         ObjectMapper objectMapper = new ObjectMapper();
                         LoginReturnData loginReturnData = objectMapper.readValue(result, LoginReturnData.class);
+                        if(!loginReturnData.getUserId().equals(userId)){
+                            _services.getPreferences().put(Terms.USERID_2, userId);
+                            _services.getPreferences().put(Terms.USER_SECRET_2, userSecret);
+                        }
+
                         _services.getPreferences().put(Terms.USERID, loginReturnData.getUserId());
                         _services.getPreferences().put(Terms.USER_SECRET, loginReturnData.getSecret());
                         loginPTWithToken(loginReturnData.getToken());
@@ -142,7 +159,7 @@ public class BootLogic extends LogicAbstract {
                     else{
                         _services.getPreferences().put(Terms.USERID, obj.getUserId());
                         _services.getPreferences().put(Terms.USER_SECRET, obj.getSecret());
-                        afterFacebookPhase();
+                        checkContainsSecondaryUserId();
                     }
                 }
             });
@@ -232,7 +249,7 @@ public class BootLogic extends LogicAbstract {
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 if(!_fbStepPast) loginFacebook();
-                else afterFacebookPhase();
+                else checkContainsSecondaryUserId();
             }
         });
 
@@ -240,7 +257,7 @@ public class BootLogic extends LogicAbstract {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                if(!_fbStepPast) afterFacebookPhase();
+                if(!_fbStepPast) checkContainsSecondaryUserId();
                 else Gdx.app.exit();
             }
         });

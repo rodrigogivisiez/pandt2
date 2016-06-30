@@ -62,7 +62,6 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
         int result =  WarpClient.initialize(_appKey, _secretKey);
         try {
             _warpInstance = WarpClient.getInstance();
-            _warpInstance.enableTrace(true);
             _warpInstance.setRecoveryAllowance(30);
             reflectionClearListeners();
 
@@ -243,6 +242,7 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
             byte[] bytes1;
             if(i == 0){
                 String username = _realUsername;
+                if(username == null) return new ArrayList();
                 bytes1 = username.getBytes();
                 q = -1;
             }
@@ -335,6 +335,7 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
             _warpInstance.removeNotificationListener(this);
             _warpInstance.disconnect();
         }
+
         _warpInstance = null;
     }
 

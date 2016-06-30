@@ -4,15 +4,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Fonts;
-import com.mygdx.potatoandtomato.assets.Patches;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.controls.BtnColor;
+import com.mygdx.potatoandtomato.controls.PTTextField;
 import com.mygdx.potatoandtomato.models.Services;
 
 /**
@@ -20,19 +19,19 @@ import com.mygdx.potatoandtomato.models.Services;
  */
 public class InputNameScene extends SceneAbstract {
 
-    TextField _displayNameTextField;
-    BtnColor _btnConfirm;
+    TextField displayNameTextField;
+    BtnColor btnConfirm;
 
     public InputNameScene(Services services, PTScreen screen) {
         super(services, screen);
     }
 
     public TextField getDisplayNameTextField() {
-        return _displayNameTextField;
+        return displayNameTextField;
     }
 
     public BtnColor getBtnConfirm() {
-        return _btnConfirm;
+        return btnConfirm;
     }
 
     @Override
@@ -51,23 +50,17 @@ public class InputNameScene extends SceneAbstract {
         questionLabel.setWrap(true);
         questionLabel.setAlignment(Align.center);
 
-        Table displayNameFieldTable = new Table();
-        displayNameFieldTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.TEXT_FIELD_BG)));
-        TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle();
-        textFieldStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR);
-        textFieldStyle.fontColor = Color.BLACK;
-        textFieldStyle.cursor = new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.CURSOR_BLACK));
-        _displayNameTextField = new TextField(_services.getProfile().getGameName(), textFieldStyle);
-        displayNameFieldTable.add(_displayNameTextField).expand().fill().pad(10);
+        displayNameTextField = new PTTextField(_assets);
+        displayNameTextField.setText(_services.getProfile().getGameName());
 
-        _btnConfirm = new BtnColor(BtnColor.ColorChoice.GREEN, _assets);
-        _btnConfirm.setText(_texts.confirm());
+        btnConfirm = new BtnColor(BtnColor.ColorChoice.GREEN, _assets);
+        btnConfirm.setText(_texts.confirm());
 
         questionTable.add(questionLabel).expandX().fillX();
         questionTable.row();
-        questionTable.add(displayNameFieldTable).expandX().fillX().padTop(20);
+        questionTable.add(displayNameTextField).expandX().fillX().padTop(20);
         questionTable.row();
-        questionTable.add(_btnConfirm).width(150).padTop(20);
+        questionTable.add(btnConfirm).width(150).padTop(20);
 
         _root.add(questionTable).expandX().fillX().padBottom(30);
     }

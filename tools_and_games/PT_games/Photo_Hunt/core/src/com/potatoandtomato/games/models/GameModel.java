@@ -118,7 +118,7 @@ public class GameModel {
 
     public void minusHintLeft(){
         if(!Global.REVIEW_MODE) {
-            //setHintsLeft(hintsLeft - 1);
+            setHintsLeft(hintsLeft - 1);
         }
     }
 

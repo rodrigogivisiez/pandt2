@@ -3,6 +3,7 @@ package com.potatoandtomato.common.assets;
 import com.badlogic.gdx.utils.Disposable;
 import com.potatoandtomato.common.absints.PTAssetsManager;
 import com.potatoandtomato.common.utils.OneTimeRunnable;
+import com.potatoandtomato.common.utils.Threadings;
 
 /**
  * Created by SiongLeng on 29/3/2016.
@@ -144,11 +145,16 @@ public class Assets implements Disposable {
     @Override
     public void dispose() {
         disposed = true;
-        manager.dispose();
-        if(soundAssets != null) soundAssets.dispose();
-        if(textureAssets != null) textureAssets.dispose();
-        if(patchAssets != null) patchAssets.dispose();
-        if(fontAssets != null) fontAssets.dispose();
-        if(animationAssets != null) animationAssets.dispose();
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                manager.dispose();
+                if(soundAssets != null) soundAssets.dispose();
+                if(textureAssets != null) textureAssets.dispose();
+                if(patchAssets != null) patchAssets.dispose();
+                if(fontAssets != null) fontAssets.dispose();
+                if(animationAssets != null) animationAssets.dispose();
+            }
+        });
     }
 }

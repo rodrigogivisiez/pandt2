@@ -18,4 +18,13 @@ public class Sizes {
         return new Vector2(textureRegion.getRegionWidth() / percent, finalHeight);
     }
 
+    public static Vector2 resizeByWidthWithMaxWidth(float maxWidth, TextureRegion textureRegion){
+        if(textureRegion.getRegionWidth() > maxWidth){
+            return resize(maxWidth, textureRegion);
+        }
+        else{
+            return new Vector2(textureRegion.getRegionWidth(), textureRegion.getRegionHeight());
+        }
+    }
+
 }

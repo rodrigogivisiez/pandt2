@@ -261,7 +261,10 @@ public class ImageStorage implements Disposable {
                     if(safeThread.isKilled()) return;
                 }
 
-                ImagePair first = imagePairs.get(0);
+                int min = 0;
+                int max = Math.max(imagePairs.size() - 2, 0);        //don't include last downloaded image
+
+                ImagePair first = imagePairs.get(MathUtils.random(min, max));
                 listener.onPeeked(first);
             }
         });

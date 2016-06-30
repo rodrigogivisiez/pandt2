@@ -425,6 +425,14 @@ public class Room {
         return true;
     }
 
+    @JsonIgnore
+    public int getTemporaryDisconnectedCount(){
+        int count = 0;
+        for(RoomUser roomUser : this.roomUsersMap.values()){
+            if(roomUser.getRoomUserState() == RoomUserState.TemporaryDisconnected) count++;
+        }
+        return count;
+    }
 
     @JsonIgnore
     public int getNotYetReadyCount(){

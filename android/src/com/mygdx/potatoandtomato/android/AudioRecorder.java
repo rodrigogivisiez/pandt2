@@ -31,8 +31,6 @@ public class AudioRecorder {
     private boolean isRecording = false;
     int BufferElements2Rec; // want to play 2048 (2K) since 2 bytes we use only 1024
     int BytesPerElement = 2; // 2 bytes in 16bit format
-    private int lastSoundLevel = 0;
-    private SafeThread safeThread;
     private Broadcaster broadcaster;
 
     public AudioRecorder(Broadcaster broadcaster) {
@@ -112,7 +110,6 @@ public class AudioRecorder {
             if (readSize > 0) {
                 final double amplitude = sum / readSize;
                 int result = (int) Math.sqrt(amplitude);
-                int newSoundLevel = 0;
                 if(result > 0 && result < 200){
                     onVolumeChange.run(0);
                 }
@@ -124,9 +121,6 @@ public class AudioRecorder {
                 }
                 else if(result > 1000){
                     onVolumeChange.run(3);
-                }
-                if(newSoundLevel > lastSoundLevel){
-                    lastSoundLevel = newSoundLevel;
                 }
             }
 

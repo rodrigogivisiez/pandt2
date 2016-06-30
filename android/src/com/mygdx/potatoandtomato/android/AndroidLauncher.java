@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -22,6 +23,7 @@ import com.chartboost.sdk.Chartboost;
 import com.firebase.client.Firebase;
 import com.mygdx.potatoandtomato.PTGame;
 import com.mygdx.potatoandtomato.absintflis.entrance.EntranceLoaderListener;
+import com.mygdx.potatoandtomato.android.controls.MyEditText;
 import com.mygdx.potatoandtomato.models.PushNotification;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.*;
@@ -77,7 +79,7 @@ public class AndroidLauncher extends AndroidApplication {
 
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 		_view = initializeForView(_ptGame, config);
-		_textFieldFix = new TextFieldFix(this, (EditText) findViewById(R.id.dummyText), _view, _broadcaster);
+		_textFieldFix = new TextFieldFix(this, (MyEditText) findViewById(R.id.dummyText), _view, _broadcaster);
 		lg.addView(_view);
 
 		subscribeLoadGameRequest();
@@ -215,12 +217,14 @@ public class AndroidLauncher extends AndroidApplication {
 
 	@Override
 	protected void onDestroy() {
-		super.onDestroy();
 		_inAppPurchaseHelper.onDestroy();
-		if(_ptGame != null) _ptGame.dispose();
+		if(_ptGame != null){
+			_ptGame.dispose();
+		}
 		stopService(new Intent(getBaseContext(), OnClearFromRecentService.class));
 		reset();
 		if(_chartBoostHelper != null) _chartBoostHelper.onDestroy();
+		super.onDestroy();
 	}
 
 	@Override
@@ -239,7 +243,6 @@ public class AndroidLauncher extends AndroidApplication {
 		super.onStop();
 		if(_chartBoostHelper != null) _chartBoostHelper.onStop();
 	}
-
 
 
 	public static boolean isVisible() {

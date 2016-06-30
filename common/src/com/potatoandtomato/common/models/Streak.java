@@ -47,7 +47,7 @@ public class Streak {
 
     @JsonIgnore
     public boolean hasValidStreak(){
-        return streakCount >= 3;
+        return streakCount >= 2;
     }
 
     @Override

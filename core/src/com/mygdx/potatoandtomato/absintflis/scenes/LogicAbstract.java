@@ -32,6 +32,7 @@ public abstract class LogicAbstract implements Disposable {
     private boolean _isFullyVisible;
     private Broadcaster _broadcaster;
     private boolean _settedListeners;
+    private boolean _disposing;
 
     public LogicAbstract(PTScreen screen, Services services, Object... objs) {
         setClassTag();
@@ -139,9 +140,14 @@ public abstract class LogicAbstract implements Disposable {
         return _alive;
     }
 
+    protected boolean isDisposing() {
+        return _disposing;
+    }
+
     //will be called everytime scene on hide and dispose, must be back direction
     @Override
     public void dispose() {
+        _disposing = true;
         if(_keepAlive == null){
             disposeEverything();
         }

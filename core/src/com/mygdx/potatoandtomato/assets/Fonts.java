@@ -45,6 +45,7 @@ public class Fonts extends FontAssets {
         MYRIAD_S_ITALIC,
         MYRIAD_M_REGULAR,
         MYRIAD_M_SEMIBOLD,
+        MYRIAD_L_REGULAR,
         MYRIAD_L_BOLD,
         MYRIAD_XL_REGULAR,
         MYRIAD_XL_BOLD_S_000000_1_1,

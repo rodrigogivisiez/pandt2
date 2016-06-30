@@ -9,9 +9,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.mygdx.potatoandtomato.absintflis.controls.ChatTemplateSelectedListener;
-import com.mygdx.potatoandtomato.absintflis.controls.StageChangedListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.MessagingListener;
+import com.mygdx.potatoandtomato.enums.ConnectionStatus;
 import com.mygdx.potatoandtomato.enums.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
 import com.mygdx.potatoandtomato.absintflis.recorder.RecordListener;
@@ -28,12 +28,14 @@ import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.utils.Pair;
 import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by SiongLeng on 20/12/2015.
@@ -52,6 +54,9 @@ public class Chat {
     private String myUserId;
     private ChatControl chatControl;
     private ChatTemplateControl chatTemplateControl;
+    private float originalTouchedPositionY = 0;
+    private float softKeyboardHeight = 0;
+    private boolean focused;
 
     public Chat(Broadcaster broadcaster, GamingKit gamingKit, Texts texts, Assets assets,
                         SoundsPlayer soundsPlayer, Recorder recorder, SpriteBatch batch, IPTGame game, Preferences preferences) {
@@ -62,13 +67,11 @@ public class Chat {
         this.soundsPlayer = soundsPlayer;
         this.mode = 1;
 
-        chatTemplateControl = new ChatTemplateControl(assets, preferences);
-        chatControl = new ChatControl(texts, assets, soundsPlayer, recorder, batch, chatTemplateControl);
-
+        chatTemplateControl = new ChatTemplateControl(assets, preferences, texts, soundsPlayer);
+        chatControl = new ChatControl(game, texts, assets, soundsPlayer, recorder, batch, chatTemplateControl);
 
         setListeners();
         invalidate();
-
     }
 
     public void initChat(Room room, String myUserId) {
@@ -87,46 +90,42 @@ public class Chat {
         chatControl.modeChanged(newMode);
     }
 
-    //expand and collapse valid for mode2 only
-    public void expandMode2(){
-        setMode2ChatLock(true);
-        chatControl.fadeInMode2();
+    public void messageTextFieldFocused(){
+        if(mode == 2){
+            setMode2ChatLock(true);
+            chatControl.fadeInMode2();
+        }
     }
 
-    //expand and collapse valid for mode2 only
-    public void collapseMode2(){
-        chatControl.unfocusMessageTextField();
-        chatControl.fadeOutMode2(5);
-        setMode2ChatLock(false);
-    }
+    public void messageTextFieldUnfocus(){
+        if(focused){
+            chatControl.unfocusMessageTextField();
+            focused = false;
+        }
 
-    public void focusOnMessageTextField(){
-        if(mode == 2) expandMode2();
-        chatControl.focusMessageTextField();
+        if(mode == 2){
+            chatControl.fadeOutMode2(2);
+            setMode2ChatLock(false);
+        }
     }
 
     public void showChat(){
         if(!isVisible()){
+            chatControl.getRoot().setVisible(true);
             setVisible(true);
             chatControl.scrollToBottom();
-            ptGame.addInputProcessor(chatControl.getStage(), 10, getClassTag());
         }
     }
 
     public void hideChat(){
+        chatControl.getRoot().setVisible(false);
         setVisible(false);
         chatControl.scrollToBottom();
-        ptGame.removeInputProcessorById(getClassTag());
-    }
-
-    public void stageChanged(Stage oldStage, Stage newStage){
-        ptGame.removeInputProcessorById(getClassTag());
-        if(isVisible()) ptGame.addInputProcessor(newStage, 10, getClassTag());
     }
 
     private void startRecord(){
         if(recorder.isCanRecord()){
-            chatControl.setRecordingSoundsLevel(0);
+            chatControl.resetRecordDesign();
             chatControl.showRecording();
 
             Threadings.delay(500, new Runnable() {
@@ -138,8 +137,16 @@ public class Chat {
                         public void run() {
                             recorder.recordToFile(recordsPath, new RecordListener() {
                                 @Override
-                                public void onRecording(int volumeLevel) {
-                                    chatControl.setRecordingSoundsLevel(volumeLevel);
+                                public void onRecording(int volumeLevel, int remainingSecs) {
+                                    chatControl.updateRecordStatus(volumeLevel, remainingSecs);
+                                    if(remainingSecs <= 0){
+                                        stopRecord(0);
+                                    }
+                                }
+
+                                @Override
+                                public void onPreSuccessRecord(FileHandle resultFile) {
+                                    sendVoiceMessage(resultFile, -1);
                                 }
 
                                 @Override
@@ -156,8 +163,8 @@ public class Chat {
         }
     }
 
-    private void stopRecord(){
-        Threadings.delay(700, new Runnable() {
+    private void stopRecord(int delay){
+        Threadings.delay(delay, new Runnable() {
             @Override
             public void run() {
                 chatControl.hideRecording();
@@ -172,6 +179,17 @@ public class Chat {
         });
     }
 
+    private void cancelRecord(){
+        chatControl.hideRecording();
+        recorder.cancelRecord();
+        Threadings.delay(1000, new Runnable() {
+            @Override
+            public void run() {
+                soundsPlayer.setVolume(1);
+            }
+        });
+    }
+
     public void messageFieldSendMessage(){
         String msg = chatControl.getMessageTextField().getText().trim();
         if(!msg.equals("")){
@@ -181,7 +199,7 @@ public class Chat {
     }
 
     public void setMessageFieldText(String newMessage){
-        chatControl.setMessageTextFieldMsg(newMessage);
+        chatControl.setMessageTextFieldMsg(newMessage, -1);
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -210,8 +228,22 @@ public class Chat {
         RoomUser roomUser = null;
         if(chatMessage.getSenderId() != null){
             roomUser =  room.getRoomUserByUserId(chatMessage.getSenderId());
+            if(roomUser != null){
+                chatControl.add(chatMessage, mode, roomUser.getProfile().getUserId(),
+                        roomUser.getProfile().getDisplayName(99), roomUser.getSlotIndex(), myUserId);
+            }
+            else{
+                Player player = room.getPlayerByUserId(chatMessage.getSenderId());
+                if(player != null){
+                    chatControl.add(chatMessage, mode, player.getUserId(),
+                            player.getName(), player.getSlotIndex(), myUserId);
+                }
+            }
         }
-        chatControl.add(chatMessage, mode, roomUser, myUserId);
+        else{
+            chatControl.add(chatMessage, mode, myUserId);
+        }
+
 
         if(mode == 2){
             chatControl.fadeInMode2();
@@ -221,6 +253,10 @@ public class Chat {
         }
 
         chatControl.scrollToBottom();
+    }
+
+    public void refreshRoomUsersConnectionStatus(ArrayList<Pair<String, ConnectionStatus>> playersConnectionStatusPairs) {
+        chatControl.refreshRoomUsersPopupDesign(playersConnectionStatusPairs);
     }
 
     public void resetChat() {
@@ -246,15 +282,16 @@ public class Chat {
 
     public void screenTouched(float x, float y){
         if(isVisible()){
-            y = Positions.getHeight() - Positions.screenYToGdxY(y);
+            y = Positions.getHeight() - Positions.screenYToGdxY(y) - softKeyboardHeight;
+            x = Positions.screenXToGdxX(x);
 
-            boolean result = chatControl.positionHasChatElement(mode, x, y);
+            chatControl.hidePopupsIfNotTouching(x, y);
 
             if(!chatControl.positionHasChatElement(mode, x, y)){
-                collapseMode2();
-                chatControl.unfocusMessageTextField();
+                messageTextFieldUnfocus();
             }
-            chatTemplateControl.screenTouched(x, y);
+
+            if(mode == 2) chatControl.fadeOutMode2IfApplicable();
         }
     }
 
@@ -277,11 +314,27 @@ public class Chat {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
                 if(keycode == Input.Keys.BACK){
-                    chatControl.unfocusMessageTextField();
+                    messageTextFieldUnfocus();
                 }
                 return super.keyDown(event, keycode);
             }
         });
+
+        chatControl.getMessageTextField().addListener(new FocusListener() {
+            @Override
+            public void keyboardFocusChanged(FocusEvent event, Actor actor, boolean _focused) {
+                super.keyboardFocusChanged(event, actor, _focused);
+                if(_focused){
+                    focused = true;
+                    messageTextFieldFocused();
+                }
+                else{
+                    focused = false;
+                    messageTextFieldUnfocus();
+                }
+            }
+        });
+
 
         broadcaster.subscribe(BroadcastEvent.NATIVE_TEXT_CHANGED, new BroadcastListener<NativeLibgdxTextInfo>() {
             @Override
@@ -290,8 +343,7 @@ public class Chat {
                 Threadings.postRunnable(new Runnable() {
                     @Override
                     public void run() {
-                        chatControl.getMessageTextField().setText(obj.getText());
-                        chatControl.getMessageTextField().setCursorPosition(obj.getCursorPosition());
+                        chatControl.setMessageTextFieldMsg(obj.getText(), obj.getCursorPosition());
                     }
                 });
             }
@@ -307,7 +359,22 @@ public class Chat {
         broadcaster.subscribe(BroadcastEvent.SCREEN_LAYOUT_CHANGED, new BroadcastListener<Float>() {
             @Override
             public void onCallback(final Float obj, Status st) {
+                softKeyboardHeight = obj;
                 chatControl.moveChatPosition(obj);
+            }
+        });
+
+        broadcaster.subscribe(BroadcastEvent.NATIVE_TEXT_DONE_CLICKED, new BroadcastListener() {
+            @Override
+            public void onCallback(Object obj, Status st) {
+                messageFieldSendMessage();
+            }
+        });
+
+        broadcaster.subscribe(BroadcastEvent.NATIVE_KEYBOARD_CLOSED, new BroadcastListener() {
+            @Override
+            public void onCallback(Object obj, Status st) {
+                messageTextFieldUnfocus();
             }
         });
 
@@ -351,43 +418,6 @@ public class Chat {
             }
         });
 
-        chatControl.getChatBoxTable().addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                focusOnMessageTextField();
-            }
-        });
-
-        chatControl.getMessageTextField().addListener(new FocusListener() {
-            @Override
-            public boolean handle(Event event) {
-                String eventString = "";
-
-
-
-                if (event instanceof FocusEvent) {
-                    FocusEvent focusEvent = (FocusEvent) event;
-                    eventString = focusEvent.getType().name();
-                    if (!focusEvent.isFocused()) {
-                        if (mode == 1) Threadings.setContinuousRenderLock(false);
-                        return false;
-                    }
-                } else {
-                    eventString = event.toString();
-                }
-
-                if (eventString.equals("keyboard") ||
-                        eventString.equals("touchDown") || eventString.equals("touchUp")) {
-                    focusOnMessageTextField();
-                    if (mode == 1) Threadings.setContinuousRenderLock(true);
-                    return true;
-                }
-                if (mode == 1) Threadings.setContinuousRenderLock(false);
-                return false;
-            }
-        });
-
         chatControl.getMessageTextField().setTextFieldListener(new TextField.TextFieldListener() {
             @Override
             public void keyTyped(TextField textField, char c) {
@@ -399,79 +429,46 @@ public class Chat {
             }
         });
 
-        chatControl.getSendTable().addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                messageFieldSendMessage();
-            }
-        });
+        for(Actor sendButton : chatControl.getSendButtons()){
+            sendButton.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    messageFieldSendMessage();
+                }
+            });
+        }
 
-        chatControl.getBtnMic().addListener(new InputListener() {
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                stopRecord();
-                super.touchUp(event, x, y, pointer, button);
-            }
+        for(Actor micButton : chatControl.getMicButtons()){
+            micButton.addListener(new InputListener() {
+                @Override
+                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    stopRecord(700);
+                    super.touchUp(event, x, y, pointer, button);
+                }
 
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                startRecord();
-                return true;
-            }
-        });
+                @Override
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    originalTouchedPositionY = y;
+                    startRecord();
+                    return true;
+                }
 
-        chatControl.getMicImage().addListener(new InputListener() {
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                stopRecord();
-                super.touchUp(event, x, y, pointer, button);
-
-            }
-
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                startRecord();
-                return true;
-            }
-        });
-
-        chatControl.getCloseKeyboardImage().addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                chatControl.animateHideForMode2();
-            }
-        });
-
-        chatControl.getBtnKeyboard().addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                chatControl.animateShowForMode2();
-            }
-        });
-
-        chatControl.getBtnTemplate().addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                chatTemplateControl.setShowing(chatControl.getBtnTemplate(), true);
-            }
-        });
-
-        chatControl.setStageChangedListener(new StageChangedListener() {
-            @Override
-            public void onChanged(Stage oldStage, Stage newStage) {
-                stageChanged(oldStage, newStage);
-            }
-        });
+                @Override
+                public void touchDragged(InputEvent event, float x, float y, int pointer) {
+                    super.touchDragged(event, x, y, pointer);
+                    if (y - originalTouchedPositionY > 30) {
+                        cancelRecord();
+                    }
+                }
+            });
+        }
 
         chatTemplateControl.setChatTemplateSelectedListener(new ChatTemplateSelectedListener() {
             @Override
             public void onSelected(String template) {
                 sendMessage(template);
-                chatTemplateControl.setShowing(false);
+                chatControl.hideChatTemplatePopup();
             }
         });
 

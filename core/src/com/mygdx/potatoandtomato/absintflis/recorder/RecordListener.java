@@ -8,7 +8,9 @@ import com.potatoandtomato.common.enums.Status;
  */
 public abstract class RecordListener {
 
-    public abstract void onRecording(int volumeLevel);
+    public abstract void onRecording(int volumeLevel, int remainingSecs);
+
+    public abstract void onPreSuccessRecord(FileHandle resultFile);
 
     public abstract void onFinishedRecord(FileHandle resultFile, int totalSecs, Status status);
 

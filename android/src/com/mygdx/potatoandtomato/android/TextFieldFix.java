@@ -4,9 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
+import com.mygdx.potatoandtomato.android.controls.MyEditText;
 import com.mygdx.potatoandtomato.models.NativeLibgdxTextInfo;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
@@ -19,15 +23,31 @@ import com.potatoandtomato.common.enums.Status;
 public class TextFieldFix {
 
     private Activity _activity;
-    private EditText _editText;
+    private MyEditText _editText;
     private View _gameView;
     private Broadcaster _broadcaster;
 
-    public TextFieldFix(Activity activity, final EditText editText, View gameView, Broadcaster broadcaster) {
+    public TextFieldFix(Activity activity, final MyEditText editText, View gameView, Broadcaster broadcaster) {
         _activity = activity;
         _editText = editText;
         _gameView = gameView;
         _broadcaster = broadcaster;
+
+        _editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                int result = actionId & EditorInfo.IME_MASK_ACTION;
+                switch(result) {
+                    case EditorInfo.IME_ACTION_DONE:
+                        donePress();
+                        return false;
+                    case EditorInfo.IME_ACTION_NEXT:
+                        donePress();
+                        return false;
+                }
+                return false;
+            }
+        });
 
         _editText.addTextChangedListener(new TextWatcher() {
 
@@ -80,6 +100,23 @@ public class TextFieldFix {
             }
         });
 
+
+        _broadcaster.subscribe(BroadcastEvent.HIDE_NATIVE_KEYBOARD, new BroadcastListener() {
+            @Override
+            public void onCallback(Object obj, Status st) {
+                _activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        View view = _activity.getCurrentFocus();
+                        if (view != null) {
+                            InputMethodManager imm = (InputMethodManager) _activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                        }
+                    }
+                });
+            }
+        });
+
         _broadcaster.subscribe(BroadcastEvent.SCREEN_LAYOUT_CHANGED, new BroadcastListener<Float>() {
             @Override
             public void onCallback(Float obj, Status st) {
@@ -95,7 +132,18 @@ public class TextFieldFix {
             }
         });
 
+        _editText.setOnBackKeyPressedRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _broadcaster.broadcast(BroadcastEvent.NATIVE_KEYBOARD_CLOSED);
+            }
+        });
 
+
+    }
+
+    private void donePress(){
+        _broadcaster.broadcast(BroadcastEvent.NATIVE_TEXT_DONE_CLICKED);
     }
 
 

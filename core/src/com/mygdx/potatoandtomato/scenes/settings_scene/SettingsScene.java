@@ -14,6 +14,7 @@ import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.assets.Patches;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.controls.BtnColor;
+import com.mygdx.potatoandtomato.controls.PTTextField;
 import com.mygdx.potatoandtomato.controls.TopBar;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.statics.Global;
@@ -60,14 +61,12 @@ public class SettingsScene extends SceneAbstract {
         ////////////////////
         Label displayNameLabel = new Label(_texts.displayName(), labelTitleStyle);
 
-        Table displayNameFieldTable = new Table();
-        displayNameFieldTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.TEXT_FIELD_BG)));
         TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle();
         textFieldStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR);
         textFieldStyle.fontColor = Color.BLACK;
         textFieldStyle.cursor = new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.CURSOR_BLACK));
-        _displayNameTextField = new TextField(_services.getProfile().getDisplayName(15), textFieldStyle);
-        displayNameFieldTable.add(_displayNameTextField).width(110).padTop(10).padBottom(10);
+        _displayNameTextField = new PTTextField(_assets);
+        _displayNameTextField.setText(_services.getProfile().getDisplayName(99));
 
         //////////////////////////
         //Save Button
@@ -101,7 +100,7 @@ public class SettingsScene extends SceneAbstract {
         settingsTable.add(separatorImage).expandX().fillX().colspan(2).padTop(10).padBottom(10);
         settingsTable.row();
         settingsTable.add(displayNameLabel).left();
-        settingsTable.add(displayNameFieldTable).right();
+        settingsTable.add(_displayNameTextField).right();
         settingsTable.row();
         settingsTable.add(_saveBtn).colspan(2).right().padTop(15);
         settingsTable.row();

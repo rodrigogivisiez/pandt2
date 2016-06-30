@@ -9,6 +9,7 @@ import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.LockPropertyListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
+import com.mygdx.potatoandtomato.absintflis.services.CoinsListener;
 import com.potatoandtomato.common.absints.CoinListener;
 import com.mygdx.potatoandtomato.controls.CoinMachineControl;
 import com.mygdx.potatoandtomato.controls.TopBarCoinControl;
@@ -26,6 +27,7 @@ import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -56,6 +58,7 @@ public class Coins implements ICoins {
     private ArrayList<Pair<String, String>> userIdToNamePairs;
     private ArrayList<TopBarCoinControl> topBarCoinControls;
     private ArrayList<String> monitoringUserIds;
+    private ConcurrentHashMap<String, CoinsListener> tagTocoinsListenersMap;
 
 
     public Coins(Broadcaster broadcaster, Assets assets,
@@ -72,6 +75,7 @@ public class Coins implements ICoins {
         this.monitoringUserIds = new ArrayList();
         this.currentUsersPutCoinNumberMap = new ConcurrentHashMap();
         this.noCoinUserIds = new ArrayList();
+        this.tagTocoinsListenersMap = new ConcurrentHashMap();
         this.myCoinsCount = new SafeDouble(0.0);
 
         coinMachineControl = new CoinMachineControl(broadcaster, assets, soundsPlayer, texts, iptGame, batch);
@@ -137,9 +141,15 @@ public class Coins implements ICoins {
 
                     if(obj == 0 && !noCoinUserIds.contains(userId)){
                         noCoinUserIds.add(userId);
+                        for(CoinsListener coinsListener : tagTocoinsListenersMap.values()){
+                            coinsListener.userHasCoinChanged(userId, false);
+                        }
                     }
                     else if(obj != 0 && noCoinUserIds.contains(userId)){
                         noCoinUserIds.remove(userId);
+                        for(CoinsListener coinsListener : tagTocoinsListenersMap.values()){
+                            coinsListener.userHasCoinChanged(userId, true);
+                        }
                     }
 
                     if(userId.equals(profile.getUserId())){
@@ -403,7 +413,19 @@ public class Coins implements ICoins {
 
             }
         });
+    }
 
+    public void addCoinsListener(String classTag, CoinsListener listener){
+        tagTocoinsListenersMap.put(classTag, listener);
+
+        for(String userID : noCoinUserIds){
+            listener.userHasCoinChanged(userID, false);
+        }
+
+    }
+
+    public void removeCoinsListenersByClassTag(String classTag){
+        tagTocoinsListenersMap.remove(classTag);
     }
 
     public void render(float delta){
@@ -439,4 +461,9 @@ public class Coins implements ICoins {
     public void setCoinListener(CoinListener coinListener) {
         this.coinListener = coinListener;
     }
+
+    public boolean checkUserHasCoin(String userId){
+         return !noCoinUserIds.contains(userId);
+    }
+
 }

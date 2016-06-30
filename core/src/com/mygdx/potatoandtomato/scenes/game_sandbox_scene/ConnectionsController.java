@@ -8,7 +8,9 @@ import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.ConnectionsControllerListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.PlayerConnectionStateListener;
 import com.mygdx.potatoandtomato.absintflis.services.ConnectionWatcherListener;
+import com.mygdx.potatoandtomato.absintflis.services.IChatRoomUsersConnectionRefresher;
 import com.mygdx.potatoandtomato.enums.ConnectionStatus;
+import com.mygdx.potatoandtomato.enums.RoomUserState;
 import com.mygdx.potatoandtomato.enums.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.enums.Status;
@@ -24,7 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Created by SiongLeng on 6/6/2016.
  */
-public class ConnectionsController implements Disposable {
+public class ConnectionsController implements Disposable, IChatRoomUsersConnectionRefresher {
 
     private ConnectionsControllerListener connectionsControllerListener;
     private ConcurrentHashMap<String, PlayerConnectionState> playerConnectionStatesMap;
@@ -178,6 +180,8 @@ public class ConnectionsController implements Disposable {
                 }
 
                 onRefreshFinishedRunnables.clear();
+
+                refreshChatRoomUsersConnectStatus();
             }
         });
     }
@@ -191,6 +195,7 @@ public class ConnectionsController implements Disposable {
             boolean changed = playerConnectionStatesMap.get(userId).setConnectionStatus(connectionStatus);
 
             if(gameStarted && changed){
+                refreshChatRoomUsersConnectStatus();
                 Player player = room.getPlayerByUserId(userId);
                 if(player == null) return;
 
@@ -222,6 +227,19 @@ public class ConnectionsController implements Disposable {
             }
 
         }
+    }
+
+    @Override
+    public void refreshChatRoomUsersConnectStatus() {
+        ArrayList<Pair<String, ConnectionStatus>> userIdToConnectStatusPairs = new ArrayList();
+
+        for(String userId : playerConnectionStatesMap.keySet()){
+            PlayerConnectionState playerConnectionState = playerConnectionStatesMap.get(userId);
+            userIdToConnectStatusPairs.add(new Pair<String, ConnectionStatus>(playerConnectionState.getPlayer().getName(),
+                                            playerConnectionState.getConnectionStatus()));
+        }
+
+        services.getChat().refreshRoomUsersConnectionStatus(userIdToConnectStatusPairs);
     }
 
     public void setListeners(){
@@ -296,6 +314,8 @@ public class ConnectionsController implements Disposable {
         services.getDatabase().updateProfile(services.getProfile(), null);
     }
 
+
+
     public void setConnectionsControllerListener(ConnectionsControllerListener connectionsControllerListener) {
         this.connectionsControllerListener = connectionsControllerListener;
     }
@@ -313,4 +333,6 @@ public class ConnectionsController implements Disposable {
         services.getGamingKit().removeListenersByClassTag(getClassTag());
         services.getConnectionWatcher().gameEnded();
     }
+
+
 }

@@ -2,6 +2,7 @@ package com.mygdx.potatoandtomato.scenes.room_scene;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -22,6 +23,7 @@ import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.RoomUser;
 import com.mygdx.potatoandtomato.models.Services;
+import com.mygdx.potatoandtomato.utils.Sizes;
 import com.potatoandtomato.common.controls.Animator;
 import com.potatoandtomato.common.utils.RunnableArgs;
 import com.potatoandtomato.common.utils.SafeThread;
@@ -407,6 +409,7 @@ public class RoomScene extends SceneAbstract {
 
         Label nameLabel = new Label(name, labelStyle);
 
+        //a hidden label to record next badge rotation time
         Label timeElapsedLabel = new Label("0", labelStyle);
         timeElapsedLabel.setName("timeElapsedLabel");
         timeElapsedLabel.setVisible(false);
@@ -505,10 +508,30 @@ public class RoomScene extends SceneAbstract {
                 badgeTable.setFillParent(true);
                 badgeTable.setName(badgeType.name());
                 Badge badge = new Badge(badgeType, String.valueOf(num), _assets);
-                badgeTable.add(badge).padBottom(4).size(20, 21);
+
+                Vector2 size = Sizes.resizeByWidthWithMaxWidth(20, badge.getBadgeRegion());
+                badgeTable.add(badge).padBottom(4).size(size.x, size.y);
 
                 iconTable.addActor(badgeTable);
             }
+            }
+        });
+    }
+
+    public void removePlayerBadge(final String playerId, final BadgeType badgeType){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(playerId != null && playerMaps.containsKey(playerId)) {
+                    Table playerTable = playerMaps.get(playerId);
+                    Table iconTable = playerTable.findActor("iconTable");
+
+                    for(Actor actor : iconTable.getChildren()){
+                        if(actor.getName().equals(badgeType.name())){
+                            actor.remove();
+                        }
+                    }
+                }
             }
         });
     }
@@ -578,6 +601,10 @@ public class RoomScene extends SceneAbstract {
                                 int actor2Index = 0;
 
                                 final Actor actor1 = iconTable.getChildren().get(i);
+                                if(actor1.getName().equals(BadgeType.NoCoin.name())){
+                                    break;
+                                }
+
                                 Actor actor2 = null;
                                 if(i + 1 < iconTable.getChildren().size){
                                     actor2 = iconTable.getChildren().get(i+1);

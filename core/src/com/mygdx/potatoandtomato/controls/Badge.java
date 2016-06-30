@@ -20,6 +20,7 @@ public class Badge extends Table {
     private Label textLabel;
     private String text;
     private int fontScale;
+    private TextureRegion badgeRegion;
 
     public Badge(BadgeType badgeType, String text, Assets assets) {
         this(badgeType, text, assets, 1);
@@ -35,24 +36,42 @@ public class Badge extends Table {
 
 
     public void populate(){
-        TextureRegion badgeRegion;
+        boolean needLabel = true;
         if(badgeType == BadgeType.Rank){
             badgeRegion = assets.getTextures().get(Textures.Name.RANK_ICON);
+        }
+        else if(badgeType == BadgeType.NoCoin){
+            badgeRegion = assets.getTextures().get(Textures.Name.NO_COIN_ICON);
+            needLabel = false;
         }
         else{
             badgeRegion = assets.getTextures().get(Textures.Name.STREAK_ICON);
         }
 
         this.setBackground(new TextureRegionDrawable(badgeRegion));
-        Label.LabelStyle labelStyle = new Label.LabelStyle(assets.getFonts().get(
-                            fontScale == 1 ? Fonts.FontId.IMPACT_XS_REGULAR_S_a74828_1_1 : Fonts.FontId.IMPACT_S_REGULAR_S_a74828_1_1), null);
-        textLabel = new Label(text, labelStyle);
-        textLabel.setAlignment(Align.center);
-        int padTop = 0;
-        if(badgeType == BadgeType.Streak){
-            padTop = 4;
+
+        if(needLabel){
+            Label.LabelStyle labelStyle = new Label.LabelStyle(assets.getFonts().get(
+                    fontScale == 1 ? Fonts.FontId.IMPACT_XS_REGULAR_S_a74828_1_1 : Fonts.FontId.IMPACT_S_REGULAR_S_a74828_1_1), null);
+            textLabel = new Label(text, labelStyle);
+            textLabel.setAlignment(Align.center);
+            int padTop = 0;
+            if(badgeType == BadgeType.Streak){
+                padTop = 4;
+            }
+            this.add(textLabel).padTop(padTop).expand().fill().center();
         }
-        this.add(textLabel).padTop(padTop).expand().fill().center();
     }
 
+    public float getBadgePrefWidth(){
+        return badgeRegion.getRegionWidth();
+    }
+
+    public float getBadgePrefHeight(){
+        return badgeRegion.getRegionHeight();
+    }
+
+    public TextureRegion getBadgeRegion() {
+        return badgeRegion;
+    }
 }

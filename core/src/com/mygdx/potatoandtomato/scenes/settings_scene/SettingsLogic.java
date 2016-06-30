@@ -47,6 +47,8 @@ public class SettingsLogic extends LogicAbstract {
             _services.getSocials().logoutFacebook(new FacebookListener() {
                 @Override
                 public void onLogoutComplete(Result result) {
+                    _services.getPreferences().delete(Terms.USERID);
+                    _services.getPreferences().delete(Terms.USER_SECRET);
                     _services.getProfile().setFacebookName(null);
                     _services.getProfile().setFacebookUserId(null);     //update profile on hide
                     _screen.backToBoot();   //always success

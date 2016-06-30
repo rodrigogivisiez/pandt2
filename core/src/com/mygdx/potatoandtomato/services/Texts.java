@@ -44,6 +44,7 @@ public class Texts {
 
     public String roomTitle() { return "Game Room"; }
     public String settingsTitle() { return "Settings"; }
+    public String favouritesTitle() { return "Favourites"; }
     public String inviteTitle() { return "Invite Friends"; }
     public String shopTitle() { return "Shop"; }
 
@@ -86,6 +87,8 @@ public class Texts {
 
     public String generalError() { return "Unexpected error occurred, please try again.";}
     public String duplicateNameError() { return "This name has already been taken, please use another name.";}
+    public String emptyNameError() { return "Game name cannot be empty.";}
+    public String nameLengthError() { return "Game name cannot be more than %s characters.";}
 
     public String checkGameVersion() { return "Checking game version..."; }
     public String downloadingGame() { return "Downloading game content..."; }
@@ -141,6 +144,7 @@ public class Texts {
     public String cancel() { return "Cancel";}
 
     public String waitAllUsersReady() { return "Please wait for all users ready before start.";}
+    public String waitTemporaryDisconnectedUsers() { return "Please wait for all users connection stabilize before start.";}
     public String fairTeamNeeded() { return "All teams must have equal amount of players to start.";}
     public String confirmAbandon() { return "Are you sure you want to abandon this game?"; }
 
@@ -192,6 +196,8 @@ public class Texts {
     public String watchAds() { return "Watch Now"; }
     public String watchAdsDescription() { return "30secs video ads"; }
     public String buyCoins() { return "Buy Now"; }
+
+    public String slideUpCancel() { return "Slide up to cancel";}
 
     //push notifications part
     public String PUSHGameInvitationsTitle() { return "P&T Game Invitations"; }

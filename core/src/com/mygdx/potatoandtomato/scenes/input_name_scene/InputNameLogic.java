@@ -11,6 +11,8 @@ import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.services.Confirm;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
+import com.mygdx.potatoandtomato.statics.Global;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.enums.Status;
 
 /**
@@ -34,9 +36,22 @@ public class InputNameLogic extends LogicAbstract {
         _scene.getDisplayNameTextField().setText(_services.getProfile().getFacebookName());
     }
 
+    @Override
+    public void onHide() {
+        getBroadcaster().broadcast(BroadcastEvent.HIDE_NATIVE_KEYBOARD);
+        super.onHide();
+    }
+
     public void saveNameIfValid(String name){
         name = name.trim();
-        if(!name.equals("")){
+        if(name.equals("")){
+            _services.getConfirm().show(_texts.emptyNameError(), Confirm.Type.YES, null);
+        }
+        else if(name.length() > Global.USERNAME_MAX_LENGTH){
+            _services.getConfirm().show(String.format(_texts.nameLengthError(), Global.USERNAME_MAX_LENGTH),
+                                Confirm.Type.YES, null);
+        }
+        else{
             loading();
             final String finalName = name;
             _services.getDatabase().getProfileByGameNameLower(name, new DatabaseListener<Profile>() {
@@ -57,8 +72,6 @@ public class InputNameLogic extends LogicAbstract {
                     }
                 }
             });
-
-
         }
     }
 
@@ -71,6 +84,7 @@ public class InputNameLogic extends LogicAbstract {
         _scene.getRoot().setTouchable(Touchable.enabled);
         _scene.getBtnConfirm().clearLoading();
     }
+
 
     @Override
     public void setListeners() {

@@ -2,6 +2,7 @@ package com.mygdx.potatoandtomato.scenes.room_scene;
 
 import com.badlogic.gdx.utils.Disposable;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
+import com.mygdx.potatoandtomato.absintflis.services.CoinsListener;
 import com.mygdx.potatoandtomato.enums.BadgeType;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.RoomUser;
@@ -39,6 +40,7 @@ public class UserBadgeHelper implements Disposable {
         this._streaksMap = new HashMap<String, Integer>();
         this._rankMap = new HashMap<String, Integer>();
         this._roomUsers = new ArrayList<RoomUser>();
+        setListeners();
         refresh();
     }
 
@@ -70,6 +72,7 @@ public class UserBadgeHelper implements Disposable {
     public void roomUsersChanged(){
         fillRankMap();
         fillStreaksMap();
+        handleNoCoinsBadge();
     }
 
     public void fillRankMap(){
@@ -88,6 +91,13 @@ public class UserBadgeHelper implements Disposable {
     }
 
     public void fillStreaksMap(){
+        for(final RoomUser roomUser : _roomUsers){
+            userHasCoinChangedUpdateBadge(roomUser.getProfile().getUserId(),
+                    _services.getCoins().checkUserHasCoin(roomUser.getProfile().getUserId()));
+        }
+    }
+
+    public void handleNoCoinsBadge(){
         for(final RoomUser roomUser : _roomUsers){
             if(!_streaksMap.containsKey(roomUser.getProfile().getUserId())){
                 _services.getDatabase().getTeamStreak(_game, ArrayUtils.stringsToArray(roomUser.getProfile().getUserId()), new DatabaseListener<Streak>(Streak.class) {
@@ -124,13 +134,23 @@ public class UserBadgeHelper implements Disposable {
         });
     }
 
+    public void userHasCoinChangedUpdateBadge(String userId, boolean hasCoin){
+        if(hasCoin){
+            _roomScene.removePlayerBadge(userId, BadgeType.NoCoin);
+        }
+        else{
+            _roomScene.addPlayerBadge(userId, BadgeType.NoCoin, 0);
+        }
+    }
+
     public synchronized void refresh(){
-        dispose();
+        reset();
         getLeaderboardRecords(new Runnable() {
             @Override
             public void run() {
                 fillRankMap();
                 fillStreaksMap();
+                handleNoCoinsBadge();
             }
         });
 
@@ -148,13 +168,30 @@ public class UserBadgeHelper implements Disposable {
         });
     }
 
+    public void setListeners(){
+        _services.getCoins().addCoinsListener(getClassTag(), new CoinsListener() {
+            @Override
+            public void userHasCoinChanged(String userId, boolean userHasCoin) {
+                userHasCoinChangedUpdateBadge(userId, userHasCoin);
+            }
+        });
+    }
 
-    public void dispose(){
+    public void reset(){
         _streaksMap.clear();
         _rankMap.clear();
         for(final RoomUser roomUser : _roomUsers){
-           _roomScene.removeAllPlayerBadges(roomUser.getProfile().getUserId());
+            _roomScene.removeAllPlayerBadges(roomUser.getProfile().getUserId());
         }
+    }
+
+    public void dispose(){
+        reset();
+        _services.getCoins().removeCoinsListenersByClassTag(getClassTag());
+    }
+
+    public String getClassTag(){
+        return this.getClass().getName();
     }
 
 }

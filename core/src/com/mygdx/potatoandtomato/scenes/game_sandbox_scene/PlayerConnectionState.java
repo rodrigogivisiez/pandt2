@@ -3,10 +3,13 @@ package com.mygdx.potatoandtomato.scenes.game_sandbox_scene;
 import com.badlogic.gdx.utils.Disposable;
 import com.mygdx.potatoandtomato.absintflis.scenes.PlayerConnectionStateListener;
 import com.mygdx.potatoandtomato.enums.ConnectionStatus;
+import com.mygdx.potatoandtomato.statics.Global;
 import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
+
+import javax.xml.bind.annotation.XmlElementDecl;
 
 /**
  * Created by SiongLeng on 7/6/2016.
@@ -29,7 +32,7 @@ public class PlayerConnectionState implements Disposable {
         Threadings.runInBackground(new Runnable() {
             @Override
             public void run() {
-                int i = 60;
+                int i = Global.ABANDON_TOLERANCE_SECS;
                 while (i > 0){
                     if (safeThread.isKilled()) return;
                     i--;
@@ -87,8 +90,14 @@ public class PlayerConnectionState implements Disposable {
         return connectionStatus;
     }
 
+    public Player getPlayer() {
+        return player;
+    }
+
     @Override
     public void dispose() {
         if(safeThread != null) safeThread.kill();
     }
+
+
 }

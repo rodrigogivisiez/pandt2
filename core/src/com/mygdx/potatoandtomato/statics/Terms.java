@@ -9,6 +9,8 @@ public class Terms {
 
     public static String USERID = "userId";
     public static String USER_SECRET = "userSecret";
+    public static String USERID_2 = "userId2";
+    public static String USER_SECRET_2 = "userSecret2";
     public static String FACEBOOK_USERID = "facebookUserId";
     public static String PREF_NAME = "potatoandtomato";
     public static String FACEBOOK_USERNAME = "facebookUsername";

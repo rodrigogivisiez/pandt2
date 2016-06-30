@@ -6,17 +6,16 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import com.mygdx.potatoandtomato.assets.*;
+import com.mygdx.potatoandtomato.enums.ConnectionStatus;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.models.EndGameData;
-import com.mygdx.potatoandtomato.models.Profile;
-import com.mygdx.potatoandtomato.models.Room;
-import com.mygdx.potatoandtomato.models.Services;
+import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
 import com.mygdx.potatoandtomato.services.*;
 import com.mygdx.potatoandtomato.statics.Global;
@@ -32,6 +31,7 @@ import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.models.ScoreDetails;
 import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.utils.Downloader;
+import com.potatoandtomato.common.utils.Pair;
 import com.potatoandtomato.common.utils.Threadings;
 
 import java.util.ArrayList;
@@ -93,7 +93,7 @@ public class PTGame extends Game implements IPTGame {
 				_gamingKit = new Appwarp();
 				_texts = new Texts();
 				_soundsPlayer = new SoundsPlayer(_assets, _broadcaster);
-				_recorder = new Recorder(_soundsPlayer, _broadcaster);
+				_recorder = new Recorder(_assets, _soundsPlayer, _broadcaster);
 				_downloader = new Downloader();
 				_database = new FirebaseDB(Terms.FIREBASE_URL());
 
@@ -120,6 +120,7 @@ public class PTGame extends Game implements IPTGame {
 				setScreen(_screen);
 
 				_screen.toScene(SceneEnum.BOOT);
+
 			}
 		});
 	}

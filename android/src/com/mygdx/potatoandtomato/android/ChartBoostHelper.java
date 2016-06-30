@@ -29,7 +29,7 @@ public class ChartBoostHelper {
         this.broadcaster = broadcaster;
 
         Chartboost.startWithAppId(mainActivity, appId, appSignature);
-        Chartboost.setLoggingLevel(CBLogging.Level.ALL);
+        //Chartboost.setLoggingLevel(CBLogging.Level.ALL);
         Chartboost.setDelegate(delegate);
         Chartboost.onCreate(mainActivity);
 

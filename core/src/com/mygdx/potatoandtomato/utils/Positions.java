@@ -20,10 +20,10 @@ public class Positions {
     }
 
     public static int getScreenHeight() {
-        return Global.IS_POTRAIT ?  Gdx.graphics.getHeight() :  Gdx.graphics.getWidth();
+        return Gdx.graphics.getHeight() ;
     }
     public static int getScreenWidth() {
-        return Global.IS_POTRAIT ?  Gdx.graphics.getWidth() :  Gdx.graphics.getHeight();
+        return Gdx.graphics.getWidth();
     }
 
 
@@ -43,7 +43,14 @@ public class Positions {
     }
 
     public static float screenYToGdxY(float y){
+        int myHeight = getHeight();
+        int screenheight = getScreenHeight();
+
         return ((y * getHeight())/getScreenHeight());
+    }
+
+    public static float screenXToGdxX(float x){
+        return ((x * getWidth()) /getScreenWidth());
     }
 
     public static Vector2 actorLocalToStageCoord(Actor actor){
