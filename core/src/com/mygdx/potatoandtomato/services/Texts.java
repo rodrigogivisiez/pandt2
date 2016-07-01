@@ -188,9 +188,9 @@ public class Texts {
     public String appsCrashed() {return "Opps, looks like P&T has crashed on the last time you played, a error log has been received by Tomato and will be fixed asap.";}
 
 
-    public String lostConnection() {return "Lost connection with server, trying to reconnect...";}
-    public String connectionRecovered() {return "Connection established, trying to resume game session, %s secs remaining";}
-
+    public String lostConnection() {return "Lost connection with server, trying to reconnect, \n%s secs remaining";}
+    public String connectionRecovered() {return "Connection established, trying to resume game session, \n%s secs remaining";}
+    public String clickToDisconnect(){ return "Click to Disconnect";}
 
     public String retrieveCoins() { return "Retrieve Now"; }
     public String watchAds() { return "Watch Now"; }

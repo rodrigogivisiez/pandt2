@@ -39,7 +39,7 @@ public class StageStateLogic implements Disposable {
 
     }
 
-    public void stateChanged(GameState newState){
+    public void stateChanged(final GameState newState){
         if(previousState != null && previousState == newState){
             return;
         }
@@ -67,15 +67,21 @@ public class StageStateLogic implements Disposable {
             previousState = newState;
         }
         else if(newState == GameState.PrePlaying){
-            if(previousState == GameState.BeforeNewGame){
-                if(currentPapyrusScene instanceof BeforeStartPapyrusScene){
-                    ((BeforeStartPapyrusScene) currentPapyrusScene).gameReadyToStart();
+            Threadings.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    if(previousState == GameState.BeforeNewGame){
+                        if(currentPapyrusScene instanceof BeforeStartPapyrusScene){
+                            ((BeforeStartPapyrusScene) currentPapyrusScene).gameReadyToStart();
+                        }
+                    }
+                    else if(previousState == GameState.Lose){
+                        closeCurrentPapyrus();
+                    }
+
+                    previousState = newState;
                 }
-            }
-            else if(previousState == GameState.Lose){
-                closeCurrentPapyrus();
-            }
-            previousState = newState;
+            });
         }
 //        else if(newState == GameState.Won){
 //            if(previousState == GameState.BeforeContinue){
@@ -87,33 +93,49 @@ public class StageStateLogic implements Disposable {
 //        }
     }
 
-    public void openPapyrus(PapyrusType papyrusType){
-        PapyrusSceneAbstract papyrusScene = papyrusTypeToScene(papyrusType);
-        papyrusScene.setOnClosingRunnable(new Runnable() {
+    public void openPapyrus(final PapyrusType papyrusType){
+        Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                closeCurrentPapyrus();
+                PapyrusSceneAbstract papyrusScene = papyrusTypeToScene(papyrusType);
+                papyrusScene.setOnClosingRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        Threadings.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                closeCurrentPapyrus();
+                            }
+                        });
+                    }
+                });
+                if(currentPapyrusScene != null){
+                    stageStateActor.switchPapyrus(papyrusScene);
+                }
+                else{
+                    stageStateActor.openPapyrus(papyrusScene);
+                }
+                currentPapyrusScene = papyrusScene;
+                papyrusOpened = true;
             }
         });
-        if(currentPapyrusScene != null){
-            stageStateActor.switchPapyrus(papyrusScene);
-        }
-        else{
-           stageStateActor.openPapyrus(papyrusScene);
-        }
-        currentPapyrusScene = papyrusScene;
-        papyrusOpened = true;
     }
 
     public void closeCurrentPapyrus(){
-        papyrusOpened = false;
-        stageStateActor.closePapyrus(new Runnable() {
+        Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                if(currentPapyrusScene != null) currentPapyrusScene.dispose();
-                currentPapyrusScene = null;
+                papyrusOpened = false;
+                stageStateActor.closePapyrus(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(currentPapyrusScene != null) currentPapyrusScene.dispose();
+                        currentPapyrusScene = null;
+                    }
+                });
             }
         });
+
     }
 
     public PapyrusSceneAbstract papyrusTypeToScene(PapyrusType papyrusType){
@@ -130,10 +152,16 @@ public class StageStateLogic implements Disposable {
         return null;
     }
 
-    public void setBonusMeta(BonusType bonusType, String extra){
-        if(currentPapyrusScene instanceof BeforeBonusPapyrusScene){
-            ((BeforeBonusPapyrusScene) currentPapyrusScene).revealBonus(bonusType, extra);
-        }
+    public void setBonusMeta(final BonusType bonusType, final String extra){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(currentPapyrusScene instanceof BeforeBonusPapyrusScene){
+                    ((BeforeBonusPapyrusScene) currentPapyrusScene).revealBonus(bonusType, extra);
+                }
+            }
+        });
+
     }
 
     public void setListeners(){

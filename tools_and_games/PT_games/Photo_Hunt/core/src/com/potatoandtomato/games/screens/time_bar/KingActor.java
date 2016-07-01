@@ -33,21 +33,31 @@ public class KingActor extends Table {
         this.services = services;
         this.assets = services.getAssets();
         this.animations = services.getAssets().getAnimations();
-        this.setTouchable(Touchable.disabled);
-        normalAnimator = new Animator(0.1f, this.animations.get(Animations.Name.KING_NORMAL));
-        normalAnimator.overrideSize(28, 40);
 
-        panicAnimator = new Animator(0.1f, this.animations.get(Animations.Name.KING_PANIC));
-        panicAnimator.overrideSize(58, 40);
-
-        winAnimator = new Animator(0.1f, this.animations.get(Animations.Name.KING_WIN));
-        winAnimator.overrideSize(31, 40);
-
-        loseAnimator = new Animator(0.20f, this.animations.get(Animations.Name.KING_LOSE), false);
-        loseAnimator.overrideSize(34, 40);
-
+        populate();
         changeState(KingState.Normal);
 
+    }
+
+    private void populate(){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _this.setTouchable(Touchable.disabled);
+                normalAnimator = new Animator(0.1f, animations.get(Animations.Name.KING_NORMAL));
+                normalAnimator.overrideSize(28, 40);
+
+                panicAnimator = new Animator(0.1f, animations.get(Animations.Name.KING_PANIC));
+                panicAnimator.overrideSize(58, 40);
+
+                winAnimator = new Animator(0.1f, animations.get(Animations.Name.KING_WIN));
+                winAnimator.overrideSize(31, 40);
+
+                loseAnimator = new Animator(0.20f, animations.get(Animations.Name.KING_LOSE), false);
+                loseAnimator.overrideSize(34, 40);
+
+            }
+        });
     }
 
     public void changeState(final KingState kingState){

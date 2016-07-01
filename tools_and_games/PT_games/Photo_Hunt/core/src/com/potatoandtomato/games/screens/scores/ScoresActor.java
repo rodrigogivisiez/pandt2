@@ -45,39 +45,45 @@ public class ScoresActor extends Table {
         this.assets = services.getAssets();
         this.gameCoordinator = gameCoordinator;
         this.poppedActorsArray = new Array();
-        this.align(Align.left);
     }
 
-    public void populate(int currentScore){
-        Label.LabelStyle mainScoreLabelStyle = new Label.LabelStyle(assets.getFonts().get(
-                                                        Fonts.FontId.ENCHANTED_MAX_REGULAR_B_FFFFFF_563500_4), Color.valueOf("ffe9c0"));
-        mainScoreLabel = new Label(String.format("%,d", currentScore), mainScoreLabelStyle);
+    public void populate(final int currentScore){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _this.align(Align.left);
 
-        this.add(mainScoreLabel).padLeft(10);
+                Label.LabelStyle mainScoreLabelStyle = new Label.LabelStyle(assets.getFonts().get(
+                        Fonts.FontId.ENCHANTED_MAX_REGULAR_B_FFFFFF_563500_4), Color.valueOf("ffe9c0"));
+                mainScoreLabel = new Label(String.format("%,d", currentScore), mainScoreLabelStyle);
 
-        Table nextHighScoreTable = new Table();
-        nextHighScoreTable.align(Align.right);
+                _this.add(mainScoreLabel).padLeft(10);
 
-        Label.LabelStyle smallLabelStyle = new Label.LabelStyle(assets.getFonts().get(
-                                              Fonts.FontId.ENCHANTED_XL_REGULAR), Color.WHITE);
+                Table nextHighScoreTable = new Table();
+                nextHighScoreTable.align(Align.right);
 
-        Label captionLabel = new Label(services.getTexts().nextHighScore(), smallLabelStyle);
+                Label.LabelStyle smallLabelStyle = new Label.LabelStyle(assets.getFonts().get(
+                        Fonts.FontId.ENCHANTED_XL_REGULAR), Color.WHITE);
 
-        Image separatorImage = new Image(assets.getTextures().get(Textures.Name.SCRATCH_SEPARATOR));
+                Label captionLabel = new Label(services.getTexts().nextHighScore(), smallLabelStyle);
 
-        Label.LabelStyle nextHighScoreLabelStyle = new Label.LabelStyle(assets.getFonts().get(
-                                    Fonts.FontId.ENCHANTED_XXL_REGULAR), Color.WHITE);
+                Image separatorImage = new Image(assets.getTextures().get(Textures.Name.SCRATCH_SEPARATOR));
 
-        nextHighScoreLabel = new Label("", nextHighScoreLabelStyle);
-        setNextHighScore(-1);
+                Label.LabelStyle nextHighScoreLabelStyle = new Label.LabelStyle(assets.getFonts().get(
+                        Fonts.FontId.ENCHANTED_XXL_REGULAR), Color.WHITE);
 
-        nextHighScoreTable.add(captionLabel);
-        nextHighScoreTable.row();
-        nextHighScoreTable.add(separatorImage).padTop(-7);
-        nextHighScoreTable.row();
-        nextHighScoreTable.add(nextHighScoreLabel).padTop(-7);
+                nextHighScoreLabel = new Label("", nextHighScoreLabelStyle);
+                setNextHighScore(-1);
 
-        this.add(nextHighScoreTable).expand().fill().padRight(5);
+                nextHighScoreTable.add(captionLabel);
+                nextHighScoreTable.row();
+                nextHighScoreTable.add(separatorImage).padTop(-7);
+                nextHighScoreTable.row();
+                nextHighScoreTable.add(nextHighScoreLabel).padTop(-7);
+
+                _this.add(nextHighScoreTable).expand().fill().padRight(5);
+            }
+        });
     }
 
     public void setMainScore(final int score){

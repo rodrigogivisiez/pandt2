@@ -69,143 +69,155 @@ public class MainScreen extends GameScreen {
     }
 
     public void init(){
-        _stage = new Stage(new StretchViewport(getCoordinator().getGameWidth(), getCoordinator().getGameHeight()),
-                getCoordinator().getSpriteBatch());
-        getCoordinator().addInputProcessor(_stage);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _stage = new Stage(new StretchViewport(getCoordinator().getGameWidth(), getCoordinator().getGameHeight()),
+                        getCoordinator().getSpriteBatch());
+                getCoordinator().addInputProcessor(_stage);
 
-        _root = new Table();
-        _root.setFillParent(true);
-        _root.getColor().a = 0f;
-        _stage.addActor(_root);
+                _root = new Table();
+                _root.setFillParent(true);
+                _root.getColor().a = 0f;
+                _stage.addActor(_root);
 
-        _blockTable = new Table();
-        _blockTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
-        _blockTable.setFillParent(true);
-        new DummyButton(_blockTable, _assets);
-        _blockTable.setVisible(false);
-        _stage.addActor(_blockTable);
+                _blockTable = new Table();
+                _blockTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
+                _blockTable.setFillParent(true);
+                new DummyButton(_blockTable, _assets);
+                _blockTable.setVisible(false);
+                _stage.addActor(_blockTable);
 
-        _endGameTable = new Table();
-        _endGameTable.setFillParent(true);
-        _endGameTable.setVisible(false);
-        new DummyButton(_endGameTable, _assets);
-        _stage.addActor(_endGameTable);
+                _endGameTable = new Table();
+                _endGameTable.setFillParent(true);
+                _endGameTable.setVisible(false);
+                new DummyButton(_endGameTable, _assets);
+                _stage.addActor(_endGameTable);
+            }
+        });
+
     }
 
     public void readyToStart(){
         _root.getColor().a = 1f;
     }
 
-    public void populate(TimeActor timeActor, HintsActor hintsActor, UserCountersActor userCountersActor, StageCounterActor stageCounterActor,
-                         ScoresActor scoresActor, StageStateActor stageStateActor){
+    public void populate(final TimeActor timeActor, final HintsActor hintsActor, final UserCountersActor userCountersActor, final StageCounterActor stageCounterActor,
+                         final ScoresActor scoresActor, final StageStateActor stageStateActor){
 
-        ////////////////////////////
-        //top bar
-        /////////////////////////////
-        Table topBarTable = new Table();
-        topBarTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TOP_BG)));
-        topBarTable.align(Align.left);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                ////////////////////////////
+                //top bar
+                /////////////////////////////
+                Table topBarTable = new Table();
+                topBarTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TOP_BG)));
+                topBarTable.align(Align.left);
 
-        Image castleRoomImage = new Image(_assets.getTextures().get(Textures.Name.CASTLE_ROOM));
-        castleRoomImage.setSize(castleRoomImage.getPrefWidth(), castleRoomImage.getPrefHeight());
-        castleRoomImage.setPosition(0, 0);
-        topBarTable.addActor(castleRoomImage);
+                Image castleRoomImage = new Image(_assets.getTextures().get(Textures.Name.CASTLE_ROOM));
+                castleRoomImage.setSize(castleRoomImage.getPrefWidth(), castleRoomImage.getPrefHeight());
+                castleRoomImage.setPosition(0, 0);
+                topBarTable.addActor(castleRoomImage);
 
-        topBarTable.add(hintsActor).padTop(7);
-        topBarTable.add(timeActor).expand().fill();
-
-
-        _root.add(topBarTable).expandX().fillX().height(60);
-
-        _root.row();
+                topBarTable.add(hintsActor).padTop(7);
+                topBarTable.add(timeActor).expand().fill();
 
 
-        ////////////////////////////////////////
-        //Image pairs
-        //////////////////////////////////////////
+                _root.add(topBarTable).expandX().fillX().height(60);
 
-        _imageOneTable = new Table();
-        _imageOneTable.setClip(true);
-        _imageOneTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.FULL_BLACK_BG)));
-        _imageTwoTable = new Table();
-        _imageTwoTable.setClip(true);
-        _imageTwoTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.FULL_BLACK_BG)));
-
-        _imageOneInnerTable = new Table();
-        _imageOneInnerTable.setTransform(true);
-        _imageOneInnerTable.setName("innerTable");
-        _imageTwoInnerTable = new Table();
-        _imageTwoInnerTable.setTransform(true);
-        _imageTwoInnerTable.setName("innerTable");
-
-        _imageOneTable.add(_imageOneInnerTable).expand().fill();
-        _imageTwoTable.add(_imageTwoInnerTable).expand().fill();
-
-        Table imageTwoContainer = new Table();
-        imageTwoContainer.setClip(true);
-
-        Table imagesContainer = new Table();
-
-        imagesContainer.add(_imageOneTable).expand().fill().space(6).uniform();
-        imagesContainer.add(new Table()).expand().fill().uniform();
-
-        imagesContainer.addActor(imageTwoContainer);
-        imageTwoContainer.addActor(_imageTwoTable);
-
-        _root.add(imagesContainer).expand().fill();
-        _root.row();
-
-        /////////////////////////////////////////
-        //bottom bar
-        ///////////////////////////////////////////
-
-        _bottomBarTable = new Table();
-        _bottomBarTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.BOTTOM_BG)));
-        _bottomBarTable.align(Align.left);
-        new DummyButton(_bottomBarTable, _assets);
-
-        _bottomBarTable.add(userCountersActor).expandY().fillY().padLeft(15);
-
-        _bottomBarTable.add(stageCounterActor).padLeft(76);
-        _bottomBarTable.add(scoresActor).expand().fill();
-
-        _root.add(_bottomBarTable).expandX().fillX().height(60);
+                _root.row();
 
 
-        try{
-            _stage.draw();
-        }
-        catch (Exception ex){
+                ////////////////////////////////////////
+                //Image pairs
+                //////////////////////////////////////////
 
-        }
+                _imageOneTable = new Table();
+                _imageOneTable.setClip(true);
+                _imageOneTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.FULL_BLACK_BG)));
+                _imageTwoTable = new Table();
+                _imageTwoTable.setClip(true);
+                _imageTwoTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.FULL_BLACK_BG)));
 
-        _imageSize = new Vector2(_imageOneTable.getWidth(), _imageOneTable.getHeight());
+                _imageOneInnerTable = new Table();
+                _imageOneInnerTable.setTransform(true);
+                _imageOneInnerTable.setName("innerTable");
+                _imageTwoInnerTable = new Table();
+                _imageTwoInnerTable.setTransform(true);
+                _imageTwoInnerTable.setName("innerTable");
 
-        imageTwoContainer.setSize(_imageOneTable.getWidth(), _imageOneTable.getHeight());
-        imageTwoContainer.setPosition(_imageOneTable.getWidth() + 6, 0);
-        _imageTwoTable.setSize(_imageOneTable.getWidth(), _imageOneTable.getHeight());
+                _imageOneTable.add(_imageOneInnerTable).expand().fill();
+                _imageTwoTable.add(_imageTwoInnerTable).expand().fill();
 
-        Image topBarShadow = new Image(_assets.getTextures().get(Textures.Name.TOP_BG_SHADOW));
-        topBarShadow.setSize(getCoordinator().getGameWidth(), 15);
-        topBarShadow.setPosition(0, _imageSize.y - topBarShadow.getHeight() + 2);
-        topBarShadow.setTouchable(Touchable.disabled);
-        imagesContainer.addActor(topBarShadow);
+                Table imageTwoContainer = new Table();
+                imageTwoContainer.setClip(true);
 
-        Image bottomBarShadow = new Image(_assets.getTextures().get(Textures.Name.BOTTOM_BG_SHADOW));
-        bottomBarShadow.setSize(getCoordinator().getGameWidth(), 25);
-        bottomBarShadow.setPosition(0, _bottomBarTable.getHeight() - 2);
-        bottomBarShadow.setTouchable(Touchable.disabled);
-        _bottomBarTable.addActor(bottomBarShadow);
+                Table imagesContainer = new Table();
+
+                imagesContainer.add(_imageOneTable).expand().fill().space(6).uniform();
+                imagesContainer.add(new Table()).expand().fill().uniform();
+
+                imagesContainer.addActor(imageTwoContainer);
+                imageTwoContainer.addActor(_imageTwoTable);
+
+                _root.add(imagesContainer).expand().fill();
+                _root.row();
+
+                /////////////////////////////////////////
+                //bottom bar
+                ///////////////////////////////////////////
+
+                _bottomBarTable = new Table();
+                _bottomBarTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.BOTTOM_BG)));
+                _bottomBarTable.align(Align.left);
+                new DummyButton(_bottomBarTable, _assets);
+
+                _bottomBarTable.add(userCountersActor).expandY().fillY().padLeft(15);
+
+                _bottomBarTable.add(stageCounterActor).padLeft(76);
+                _bottomBarTable.add(scoresActor).expand().fill();
+
+                _root.add(_bottomBarTable).expandX().fillX().height(60);
 
 
-        /////////////////////////////////////////
-        //papyrus
-        //////////////////////////////////////////
-        stageStateActor.setSize(imagesContainer.getWidth(), imagesContainer.getHeight());
-        Vector2 imagesContainerPosition = Positions.actorLocalToStageCoord(imagesContainer);
-        stageStateActor.setPosition(0, imagesContainerPosition.y);
-        stageStateActor.populate();
-        _root.addActor(stageStateActor);
+                try{
+                    _stage.draw();
+                }
+                catch (Exception ex){
+
+                }
+
+                _imageSize = new Vector2(_imageOneTable.getWidth(), _imageOneTable.getHeight());
+
+                imageTwoContainer.setSize(_imageOneTable.getWidth(), _imageOneTable.getHeight());
+                imageTwoContainer.setPosition(_imageOneTable.getWidth() + 6, 0);
+                _imageTwoTable.setSize(_imageOneTable.getWidth(), _imageOneTable.getHeight());
+
+                Image topBarShadow = new Image(_assets.getTextures().get(Textures.Name.TOP_BG_SHADOW));
+                topBarShadow.setSize(getCoordinator().getGameWidth(), 15);
+                topBarShadow.setPosition(0, _imageSize.y - topBarShadow.getHeight() + 2);
+                topBarShadow.setTouchable(Touchable.disabled);
+                imagesContainer.addActor(topBarShadow);
+
+                Image bottomBarShadow = new Image(_assets.getTextures().get(Textures.Name.BOTTOM_BG_SHADOW));
+                bottomBarShadow.setSize(getCoordinator().getGameWidth(), 25);
+                bottomBarShadow.setPosition(0, _bottomBarTable.getHeight() - 2);
+                bottomBarShadow.setTouchable(Touchable.disabled);
+                _bottomBarTable.addActor(bottomBarShadow);
+
+
+                /////////////////////////////////////////
+                //papyrus
+                //////////////////////////////////////////
+                stageStateActor.setSize(imagesContainer.getWidth(), imagesContainer.getHeight());
+                Vector2 imagesContainerPosition = Positions.actorLocalToStageCoord(imagesContainer);
+                stageStateActor.setPosition(0, imagesContainerPosition.y);
+                stageStateActor.populate();
+                _root.addActor(stageStateActor);
+            }
+        });
+
     }
 
     public void showMessages(final String msg){

@@ -6,7 +6,7 @@ package com.mygdx.potatoandtomato.absintflis;
 public abstract class ConfirmResultListener {
 
     public enum Result{
-        YES, NO
+        YES, NO, CANCEL
     }
 
     public abstract void onResult(Result result);

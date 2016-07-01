@@ -25,6 +25,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.rotateBy;
  */
 public class StageCounterActor extends Table {
 
+    private Table _this;
     private Services services;
     private MyAssets assets;
     private Label stageLabel;
@@ -32,33 +33,39 @@ public class StageCounterActor extends Table {
     private Image specialStageImage;
 
     public StageCounterActor(Services services) {
+        _this = this;
         this.services = services;
         this.assets = services.getAssets();
         populate();
     }
 
     public void populate(){
-        this.setBackground(new TextureRegionDrawable(assets.getTextures().get(Textures.Name.SHIELD_SWORD)));
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _this.setBackground(new TextureRegionDrawable(assets.getTextures().get(Textures.Name.SHIELD_SWORD)));
 
-        Label.LabelStyle stageLabelStyle = new Label.LabelStyle(
-                                    assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR_B_ffffff_8e4403_2), Color.valueOf("ffe400"));
+                Label.LabelStyle stageLabelStyle = new Label.LabelStyle(
+                        assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR_B_ffffff_8e4403_2), Color.valueOf("ffe400"));
 
-        stageLabel = new Label("", stageLabelStyle);
-        stageLabel.setAlignment(Align.center);
-        this.add(stageLabel).expandX().fillX().padLeft(1);
+                stageLabel = new Label("", stageLabelStyle);
+                stageLabel.setAlignment(Align.center);
+                _this.add(stageLabel).expandX().fillX().padLeft(1);
 
-        specialStageTable = new Table();
-        specialStageTable.setFillParent(true);
-        specialStageTable.getColor().a = 0f;
-        specialStageImage = new Image(assets.getTextures().get(Textures.Name.STAR));
-        specialStageImage.setOrigin(Align.center);
-        specialStageTable.add(specialStageImage);
-        this.addActor(specialStageTable);
+                specialStageTable = new Table();
+                specialStageTable.setFillParent(true);
+                specialStageTable.getColor().a = 0f;
+                specialStageImage = new Image(assets.getTextures().get(Textures.Name.STAR));
+                specialStageImage.setOrigin(Align.center);
+                specialStageTable.add(specialStageImage);
+                _this.addActor(specialStageTable);
 
-        Image swordSeparator = new Image(assets.getTextures().get(Textures.Name.SWORD_SEPARATOR));
-        swordSeparator.setPosition(22, 39);
-        swordSeparator.setTouchable(Touchable.disabled);
-        this.addActor(swordSeparator);
+                Image swordSeparator = new Image(assets.getTextures().get(Textures.Name.SWORD_SEPARATOR));
+                swordSeparator.setPosition(22, 39);
+                swordSeparator.setTouchable(Touchable.disabled);
+                _this.addActor(swordSeparator);
+            }
+        });
     }
 
     public void refreshStageNumber(final int newNumber, final StageType stageType){

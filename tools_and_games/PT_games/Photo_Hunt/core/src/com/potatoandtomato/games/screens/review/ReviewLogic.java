@@ -52,52 +52,59 @@ public class ReviewLogic {
             }
         });
 
-        reviewActor.getSkipLabel().addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                gameModel.setGameState(GameState.BlockingReview);
-                reviewLogicListener.onGoToIndex(gameModel.getImageDetails().getIndex() + 1);
-            }
-        });
 
-        reviewActor.getGoToLabel().addListener(new ClickListener(){
+        Threadings.postRunnable(new Runnable() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                String goToIndex = reviewActor.getGoToTextField().getText();
-                if(Integer.valueOf(goToIndex) != gameModel.getImageDetails().getIndex()){
-                    reviewActor.getStage().setKeyboardFocus(reviewActor.getGoToLabel());
-                    gameModel.setGameState(GameState.BlockingReview);
-                    reviewLogicListener.onGoToIndex(Integer.valueOf(goToIndex));
-                }
-            }
-        });
+            public void run() {
+                reviewActor.getSkipLabel().addListener(new ClickListener(){
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        gameModel.setGameState(GameState.BlockingReview);
+                        reviewLogicListener.onGoToIndex(gameModel.getImageDetails().getIndex() + 1);
+                    }
+                });
 
-        reviewActor.getDeleteLabel().addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                if(!confirmDeleted){
-                    confirmDeleted = true;
-                    reviewActor.getDeleteLabel().setText("Delete?");
-                }
-                else{
-                    gameModel.setGameState(GameState.BlockingReview);
-                    services.getDatabase().removeImageById(String.valueOf(gameModel.getImageDetails().getId()), new DatabaseListener() {
-                        @Override
-                        public void onCallback(Object obj, Status st) {
-                            Threadings.postRunnable(new Runnable() {
+                reviewActor.getGoToLabel().addListener(new ClickListener(){
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        String goToIndex = reviewActor.getGoToTextField().getText();
+                        if(Integer.valueOf(goToIndex) != gameModel.getImageDetails().getIndex()){
+                            reviewActor.getStage().setKeyboardFocus(reviewActor.getGoToLabel());
+                            gameModel.setGameState(GameState.BlockingReview);
+                            reviewLogicListener.onGoToIndex(Integer.valueOf(goToIndex));
+                        }
+                    }
+                });
+
+                reviewActor.getDeleteLabel().addListener(new ClickListener(){
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        if(!confirmDeleted){
+                            confirmDeleted = true;
+                            reviewActor.getDeleteLabel().setText("Delete?");
+                        }
+                        else{
+                            gameModel.setGameState(GameState.BlockingReview);
+                            services.getDatabase().removeImageById(String.valueOf(gameModel.getImageDetails().getId()), new DatabaseListener() {
                                 @Override
-                                public void run() {
-                                    reviewLogicListener.onGoToIndex(gameModel.getImageDetails().getIndex());
+                                public void onCallback(Object obj, Status st) {
+                                    Threadings.postRunnable(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            reviewLogicListener.onGoToIndex(gameModel.getImageDetails().getIndex());
+                                        }
+                                    });
                                 }
                             });
                         }
-                    });
-                }
+                    }
+                });
             }
         });
+
 
     }
 

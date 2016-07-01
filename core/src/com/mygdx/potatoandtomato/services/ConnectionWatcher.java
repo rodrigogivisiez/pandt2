@@ -1,26 +1,19 @@
 package com.mygdx.potatoandtomato.services;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.potatoandtomato.PTScreen;
+import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.ConnectionChangedListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.services.ConnectionWatcherListener;
-import com.mygdx.potatoandtomato.controls.DisconnectedOverlay;
-import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Room;
-import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.absints.IDisconnectOverlayControl;
-import com.potatoandtomato.common.absints.IPTGame;
-import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
+import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
 
 import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by SiongLeng on 27/5/2016.
@@ -36,20 +29,18 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
     private Room room;
     private Profile profile;
     private ArrayList<ConnectionWatcherListener> connectionWatcherListeners;
-    private DisconnectedOverlay disconnectedOverlay;
     private int count;
-    private boolean showResumingGame;
+    private boolean showingResumeGame, showingLostConnection;
+    private SafeThread safeThread;
 
-    public ConnectionWatcher(GamingKit gamingKit, SpriteBatch spriteBatch, Assets assets,
-                             Broadcaster broadcaster, Confirm confirm,
-                             Texts texts, IPTGame iptGame, Profile profile) {
+    public ConnectionWatcher(GamingKit gamingKit, Broadcaster broadcaster, Confirm confirm,
+                             Texts texts, Profile profile) {
         this.gamingKit = gamingKit;
         this.broadcaster = broadcaster;
         this.confirm = confirm;
         this.texts = texts;
         this.profile = profile;
         connectionWatcherListeners = new ArrayList();
-        this.disconnectedOverlay = new DisconnectedOverlay(spriteBatch, assets, broadcaster, texts, iptGame);
         setListeners();
     }
 
@@ -66,26 +57,20 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
     }
 
     public void resetAndBackToBoot(){
-        showResumingGame = false;
-        disconnectedOverlay.resetText();
+        showingResumeGame = false;
+        showingLostConnection = false;
+        confirm.close();
         broadcaster.broadcast(BroadcastEvent.DESTROY_ROOM);
         ptScreen.backToBoot();
         confirm.show(texts.noConnection(), Confirm.Type.YES, null);
         count = 0;
+        if(safeThread != null) safeThread.kill();
     }
 
     public void addConnectionWatcherListener(ConnectionWatcherListener listener){
         connectionWatcherListeners.add(listener);
     }
 
-    public void resize(int width, int height){
-        disconnectedOverlay.resize(width, height);
-    }
-
-
-    public void render(float delta){
-        disconnectedOverlay.render(delta);
-    }
 
     public void setListeners(){
         gamingKit.addListener(this.getClass().getName(), new ConnectionChangedListener() {
@@ -100,23 +85,35 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
                             for(ConnectionWatcherListener connectionWatcherListener : connectionWatcherListeners){
                                 connectionWatcherListener.onConnectionHalt();
                             }
-                        }
-                        if(count < 10){
-                            Threadings.delay(1500, new Runnable() {
+
+                            safeThread = new SafeThread();
+                            Threadings.runInBackground(new Runnable() {
                                 @Override
                                 public void run() {
-                                    gamingKit.recoverConnection();
+                                    int totalCount = 25;
+                                    showLostConnection(totalCount);
+
+                                    while (count < totalCount){
+                                        Threadings.sleep(1000);
+                                        if(safeThread.isKilled()) return;
+
+                                        count++;
+                                        if(count % 3 == 0){
+                                            gamingKit.recoverConnection();
+                                        }
+                                        showLostConnection(totalCount - count);
+                                    }
+
+                                    resetAndBackToBoot();
                                 }
                             });
-                            count++;
-                            disconnectedOverlay.setVisible(true);
-                        }
-                        else{
-                            resetAndBackToBoot();
+
                         }
                     }
                     else if(st == ConnectStatus.CONNECTED_FROM_RECOVER){
                         count = 0;
+                        if(safeThread != null) safeThread.kill();
+
                         for(ConnectionWatcherListener connectionWatcherListener : connectionWatcherListeners){
                             connectionWatcherListener.onConnectionResume();
                         }
@@ -124,8 +121,8 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
                         Threadings.delay(1000, new Runnable() {
                             @Override
                             public void run() {
-                                if(!showResumingGame){
-                                    disconnectedOverlay.setVisible(false);
+                                if(!showingResumeGame){
+                                    hideLostConnection();
                                 }
                             }
                         });
@@ -139,18 +136,52 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
         this.ptScreen = ptScreen;
     }
 
+    public void showLostConnection(int remainingSecs){
+        String msg = String.format(texts.lostConnection(), remainingSecs);
+        if(!showingLostConnection){
+            showingLostConnection = true;
+            confirm.show(msg, Confirm.Type.LOADING_WITH_CANCEL, new ConfirmResultListener() {
+                @Override
+                public void onResult(Result result) {
+                    if (result == Result.CANCEL) {
+                        resetAndBackToBoot();
+                    }
+                }
+            }, texts.clickToDisconnect());
+        }
+        else{
+            confirm.updateMessage(msg);
+        }
+    }
+
+    public void hideLostConnection(){
+        showingLostConnection = false;
+        confirm.close();
+    }
+
     @Override
     public void showResumingGameOverlay(int remainingSecs) {
-        disconnectedOverlay.setVisible(true);
-        showResumingGame = true;
-        disconnectedOverlay.showResumingGameText(remainingSecs);
+        String msg = String.format(texts.connectionRecovered(), remainingSecs);
+        if(!showingResumeGame && !showingLostConnection){
+            showingResumeGame = true;
+            confirm.show(msg, Confirm.Type.LOADING_WITH_CANCEL, new ConfirmResultListener() {
+                @Override
+                public void onResult(Result result) {
+                    if (result == Result.CANCEL) {
+                        resetAndBackToBoot();
+                    }
+                }
+            }, texts.clickToDisconnect());
+        }
+        else{
+            confirm.updateMessage(msg);
+        }
     }
 
     @Override
     public void hideOverlay() {
-        disconnectedOverlay.setVisible(false);
-        disconnectedOverlay.resetText();
-        showResumingGame = false;
+        confirm.close();
+        showingResumeGame = false;
     }
 
 

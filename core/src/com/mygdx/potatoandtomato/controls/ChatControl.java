@@ -931,19 +931,21 @@ public class ChatControl {
                     transButton.addAction(sequence(fadeIn(0.1f), new RunnableAction(){
                         @Override
                         public void run() {
-                            if(transButton == roomUsersButtonRootTrans){
-                                roomUsersPopup.show();
-                                soundsPlayer.playSoundEffect(Sounds.Name.OPEN_POPUP);
-                            }
-                            else if(transButton == chatTemplateButtonTrans){
-                                chatTemplatesPopup.show();
-                                soundsPlayer.playSoundEffect(Sounds.Name.OPEN_POPUP);
-                            }
-                            else if(transButton == keyboardToggleButtonTrans){
-                                animateShowForMode2();
-                            }
+
                         }
                     }));
+
+                    if(transButton == roomUsersButtonRootTrans){
+                        roomUsersPopup.show();
+                        soundsPlayer.playSoundEffect(Sounds.Name.OPEN_POPUP);
+                    }
+                    else if(transButton == chatTemplateButtonTrans){
+                        chatTemplatesPopup.show();
+                        soundsPlayer.playSoundEffect(Sounds.Name.OPEN_POPUP);
+                    }
+                    else if(transButton == keyboardToggleButtonTrans){
+                        animateShowForMode2();
+                    }
 
                     return super.touchDown(event, x, y, pointer, button);
                 }

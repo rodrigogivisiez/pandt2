@@ -12,6 +12,7 @@ import com.potatoandtomato.games.models.Services;
  */
 public class TimeActor extends Table {
 
+    private Table _this;
     private MyAssets assets;
     private Services services;
     private GameCoordinator coordinator;
@@ -20,14 +21,22 @@ public class TimeActor extends Table {
         this.services = services;
         this.assets = services.getAssets();
         this.coordinator = gameCoordinator;
-        this.align(Align.left);
+        _this = this;
+
     }
 
-    public void populate(KingActor kingActor, CastleActor castleActor, final KnightActor knightActor){
-        this.clear();
-        this.add(kingActor).width(30);
-        this.add(castleActor).padLeft(-5).size(70, 55);
-        this.add(knightActor).expand().fill();
+    public void populate(final KingActor kingActor, final CastleActor castleActor, final KnightActor knightActor){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _this.align(Align.left);
+                _this.clear();
+                _this.add(kingActor).width(30);
+                _this.add(castleActor).padLeft(-5).size(70, 55);
+                _this.add(knightActor).expand().fill();
+
+            }
+        });
 
     }
 

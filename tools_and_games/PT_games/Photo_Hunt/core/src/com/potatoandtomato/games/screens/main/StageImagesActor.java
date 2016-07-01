@@ -29,6 +29,7 @@ import com.potatoandtomato.games.models.LightTimingModel;
 import com.potatoandtomato.games.models.Services;
 import com.potatoandtomato.games.models.TimePeriodModel;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
+import org.omg.IOP.TAG_JAVA_CODEBASE;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,62 +64,71 @@ public class StageImagesActor {
     }
 
     public void reset(){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                services.getSoundsWrapper().stopMusic(Sounds.Name.BONUS_MUSIC);
+                services.getSoundsWrapper().stopAllLoopingSounds();
 
-        services.getSoundsWrapper().stopMusic(Sounds.Name.BONUS_MUSIC);
-        services.getSoundsWrapper().stopAllLoopingSounds();
-
-        imageTwoTable.clearActions();
-        imageTwoTable.setPosition(0, 0);
-        imageTwoTable.setClip(true);
-        imageTwoInnerTable.setRotation(0);
-        imageTwoInnerTable.setScale(1, 1);
-        imageTwoInnerTable.setVisible(true);
+                imageTwoTable.clearActions();
+                imageTwoTable.setPosition(0, 0);
+                imageTwoTable.setClip(true);
+                imageTwoInnerTable.setRotation(0);
+                imageTwoInnerTable.setScale(1, 1);
+                imageTwoInnerTable.setVisible(true);
 
 
-        if(safeThread != null) safeThread.kill();
+                if(safeThread != null) safeThread.kill();
 
-        resetAllTable();
+                resetAllTable();
+            }
+        });
     }
 
     public void stop(){
         if(safeThread != null) safeThread.kill();
     }
 
-    public void maneuver(BonusType bonusType, String extra, GameModel gameModel){
-        if(bonusType != BonusType.NONE){
-            services.getSoundsWrapper().playMusic(Sounds.Name.BONUS_MUSIC);
-        }
+    public void maneuver(final BonusType bonusType, final String extra, final GameModel gameModel){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(bonusType != BonusType.NONE){
+                    services.getSoundsWrapper().playMusic(Sounds.Name.BONUS_MUSIC);
+                }
 
-        switch (bonusType){
-            case INVERTED:
-                inverted();
-                break;
-            case LOOPING:
-                looping();
-                break;
-            case ONE_PERSON:
-                break;
-            case LIGHTING:
-                lighting(extra, gameModel);
-                break;
-            case MEMORY:
-                break;
-            case TORCH_LIGHT:
-                torchLight();
-                break;
-            case DISTRACTION:
-                distractions(extra);
-                break;
-            case WRINKLE:
-                wrinkle();
-                break;
-            case COVERED:
-                covered();
-                break;
-            case EGG:
-                egg();
-                break;
-        }
+                switch (bonusType){
+                    case INVERTED:
+                        inverted();
+                        break;
+                    case LOOPING:
+                        looping();
+                        break;
+                    case ONE_PERSON:
+                        break;
+                    case LIGHTING:
+                        lighting(extra, gameModel);
+                        break;
+                    case MEMORY:
+                        break;
+                    case TORCH_LIGHT:
+                        torchLight();
+                        break;
+                    case DISTRACTION:
+                        distractions(extra);
+                        break;
+                    case WRINKLE:
+                        wrinkle();
+                        break;
+                    case COVERED:
+                        covered();
+                        break;
+                    case EGG:
+                        egg();
+                        break;
+                }
+            }
+        });
     }
 
 
@@ -486,7 +496,12 @@ public class StageImagesActor {
     }
 
     public void startMemory(){
-        services.getSoundsWrapper().playSoundLoop(Sounds.Name.MEMORY);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                services.getSoundsWrapper().playSoundLoop(Sounds.Name.MEMORY);
+            }
+        });
     }
 
     public void endMemory(){

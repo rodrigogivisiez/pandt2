@@ -40,42 +40,58 @@ public class KnightActor extends Table {
         _this = this;
         this.services = services;
         this.animationAssets = services.getAssets().getAnimations();
-        this.knightContainer = new Container();
-        knightContainer.setTransform(true);
-        knightContainer.setDebug(true);
-        this.addActor(knightContainer);
         this.totalDistance = totalDistance;
 
-        knightContainer.setPosition(totalDistance, 23);
-
-        knightWalkAnimator = new Animator(0.3f, animationAssets.get(Animations.Name.KNIGHT_WALK));
-        knightWalkAnimator.overrideSize(45, 38);
-
-        knightRunAnimator = new Animator(0.3f, animationAssets.get(Animations.Name.KNIGHT_RUN));
-        knightRunAnimator.overrideSize(55, 48);
-
-        knightAtkAnimator = new Animator(0.3f, animationAssets.get(Animations.Name.KNIGHT_ATK));
-        knightAtkAnimator.overrideSize(52, 54);
-
-        knightWonAnimator = new Animator(0.1f, animationAssets.get(Animations.Name.KNIGHT_WON), false);
-        knightWonAnimator.overrideSize(45, 56);
-
-        iceTopImage = new Image(services.getAssets().getTextures().get(Textures.Name.ICE_TOP_HALF));
-        iceTopImage.setSize(iceTopImage.getPrefWidth(), iceTopImage.getPrefHeight());
-        iceBottomImage = new Image(services.getAssets().getTextures().get(Textures.Name.ICE_BOTTOM_HALF));
-        iceBottomImage.setSize(iceBottomImage.getPrefWidth(), iceBottomImage.getPrefHeight());
-
-        knightAtkAnimator.callBackOnIndex(18, new Runnable() {
-            @Override
-            public void run() {
-                services.getSoundsWrapper().playSounds(Sounds.Name.KNIGHT_ATTACKING);
-            }
-        });
-
+        populate();
     }
 
-    public void setKnightAtkSpeed(float frameRate){
-        knightAtkAnimator.getAnimation().setFrameDuration(frameRate);
+    private void populate(){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                knightContainer = new Container();
+                knightContainer.setTransform(true);
+                knightContainer.setDebug(true);
+                _this.addActor(knightContainer);
+
+
+                knightContainer.setPosition(totalDistance, 23);
+
+                knightWalkAnimator = new Animator(0.3f, animationAssets.get(Animations.Name.KNIGHT_WALK));
+                knightWalkAnimator.overrideSize(45, 38);
+
+                knightRunAnimator = new Animator(0.3f, animationAssets.get(Animations.Name.KNIGHT_RUN));
+                knightRunAnimator.overrideSize(55, 48);
+
+                knightAtkAnimator = new Animator(0.3f, animationAssets.get(Animations.Name.KNIGHT_ATK));
+                knightAtkAnimator.overrideSize(52, 54);
+
+                knightWonAnimator = new Animator(0.1f, animationAssets.get(Animations.Name.KNIGHT_WON), false);
+                knightWonAnimator.overrideSize(45, 56);
+
+                iceTopImage = new Image(services.getAssets().getTextures().get(Textures.Name.ICE_TOP_HALF));
+                iceTopImage.setSize(iceTopImage.getPrefWidth(), iceTopImage.getPrefHeight());
+                iceBottomImage = new Image(services.getAssets().getTextures().get(Textures.Name.ICE_BOTTOM_HALF));
+                iceBottomImage.setSize(iceBottomImage.getPrefWidth(), iceBottomImage.getPrefHeight());
+
+                knightAtkAnimator.callBackOnIndex(18, new Runnable() {
+                    @Override
+                    public void run() {
+                        services.getSoundsWrapper().playSounds(Sounds.Name.KNIGHT_ATTACKING);
+                    }
+                });
+            }
+        });
+    }
+
+
+    public void setKnightAtkSpeed(final float frameRate){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                knightAtkAnimator.getAnimation().setFrameDuration(frameRate);
+            }
+        });
     }
 
     public void changeState(final KnightState knightState, final boolean playSound){
@@ -188,15 +204,27 @@ public class KnightActor extends Table {
     }
 
     public void continueAnimation(){
-        knightWalkAnimator.setPaused(false);
-        knightRunAnimator.setPaused(false);
-        knightAtkAnimator.setPaused(false);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                knightWalkAnimator.setPaused(false);
+                knightRunAnimator.setPaused(false);
+                knightAtkAnimator.setPaused(false);
+            }
+        });
+
     }
 
     public void stopAnimation(){
-        knightWalkAnimator.setPaused(true);
-        knightRunAnimator.setPaused(true);
-        knightAtkAnimator.setPaused(true);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                knightWalkAnimator.setPaused(true);
+                knightRunAnimator.setPaused(true);
+                knightAtkAnimator.setPaused(true);
+            }
+        });
+
     }
 
     public Vector2 getPositionOnStage(){

@@ -137,6 +137,8 @@ public class ImageStorage implements Disposable {
     }
 
     public void receivedDownloadRequest(final ArrayList<String> imageIds){
+        if(imageIds == null) return;
+
         for(String id : imageIds){
             if(!currentStoreImageIds.contains(id)){
                 currentStoreImageIds.add(id);

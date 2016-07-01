@@ -111,14 +111,16 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
     @Override
     public void connect(Profile user) {
-        _realUsername = user.getUserId();
-        _username = encodeUserId(user.getUserId());
-        _warpInstance.connectWithUserName(_username);
+        if(_warpInstance != null){
+            _realUsername = user.getUserId();
+            _username = encodeUserId(user.getUserId());
+            _warpInstance.connectWithUserName(_username);
+        }
     }
 
     @Override
     public void disconnect() {
-        if(_warpInstance.getConnectionState() == ConnectionState.CONNECTED){
+        if(_warpInstance != null && _warpInstance.getConnectionState() == ConnectionState.CONNECTED){
             _warpInstance.disconnect();
         }
     }

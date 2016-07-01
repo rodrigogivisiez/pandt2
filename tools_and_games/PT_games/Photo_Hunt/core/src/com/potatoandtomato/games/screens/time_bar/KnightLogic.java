@@ -166,13 +166,19 @@ public class KnightLogic {
             }
         });
 
-        knightActor.getKnightAtkAnimator().callBackOnIndex(17, new Runnable() {
+        Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                knightActor.popStars();
-                gameModel.setCastleAttackedCount(gameModel.getCastleAttackedCount() + 1);
+                knightActor.getKnightAtkAnimator().callBackOnIndex(17, new Runnable() {
+                    @Override
+                    public void run() {
+                        knightActor.popStars();
+                        gameModel.setCastleAttackedCount(gameModel.getCastleAttackedCount() + 1);
+                    }
+                });
             }
         });
+
 
     }
 

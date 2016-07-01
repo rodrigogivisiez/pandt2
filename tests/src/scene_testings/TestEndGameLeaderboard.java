@@ -81,8 +81,8 @@ public class TestEndGameLeaderboard extends TestAbstract {
 
         Confirm mockConfirm = new Confirm(mock(SpriteBatch.class), mock(IPTGame.class), mock(Assets.class), mock(Broadcaster.class)){
             @Override
-            public void show(String msg, Type type, ConfirmResultListener _listener) {
-                _listener.onResult(ConfirmResultListener.Result.YES);
+            public void show(String msg, Type type, ConfirmResultListener listener) {
+                listener.onResult(ConfirmResultListener.Result.YES);
             }
 
             @Override
@@ -195,8 +195,8 @@ public class TestEndGameLeaderboard extends TestAbstract {
 
         Confirm mockConfirm = new Confirm(mock(SpriteBatch.class), mock(IPTGame.class), mock(Assets.class), mock(Broadcaster.class)){
             @Override
-            public void show(String msg, Type type, ConfirmResultListener _listener) {
-                _listener.onResult(ConfirmResultListener.Result.YES);
+            public void show(String msg, Type type, ConfirmResultListener listener) {
+                listener.onResult(ConfirmResultListener.Result.YES);
             }
 
             @Override

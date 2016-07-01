@@ -2,12 +2,13 @@ package com.mygdx.potatoandtomato.services;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
@@ -21,6 +22,7 @@ import com.mygdx.potatoandtomato.assets.Patches;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.controls.DummyButton;
 import com.mygdx.potatoandtomato.utils.Positions;
+import com.mygdx.potatoandtomato.utils.Sizes;
 import com.potatoandtomato.common.absints.IPTGame;
 import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
@@ -36,38 +38,82 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
  */
 public class Confirm {
 
-    public enum Type{
-        YESNO, YES
-    }
-    Assets _assets;
-    Table _confirmRoot;
-    Image _yesImage, _noImage;
-    ConfirmResultListener _listener;
-    Label _messageLabel;
-    Table _buttonsTable, _msgTable;
-    boolean _visible;
-    Stage _stage;
-    SpriteBatch _batch;
-    IPTGame _game;
-    ConfirmStateChangedListener _stateChangedListener;
-    long _previousTime;
-    Broadcaster _broadcaster;
-    String _currentMsg;
+    Assets assets;
+    SpriteBatch batch;
+    IPTGame game;
+    Broadcaster broadcaster;
+    Stage stage;
+    Table confirmRoot;
+    Image yesImage, noImage;
+    Table cancelButtonTable;
+    Label messageLabel;
+    Table buttonsTable, msgTable;
+    boolean visible;
+    long previousTime;
+    String currentMsg;
+    boolean locked;
+    ConfirmResultListener confirmResultListener;
+    ConfirmStateChangedListener stateChangedListener;
 
     public Confirm(SpriteBatch spriteBatch, IPTGame game, Assets assets, Broadcaster broadcaster) {
-        _batch = spriteBatch;
-        _assets = assets;
-        _game = game;
-        _previousTime = 0;
-        _broadcaster = broadcaster;
+        batch = spriteBatch;
+        this.assets = assets;
+        this.game = game;
+        previousTime = 0;
+        this.broadcaster = broadcaster;
 
-        _confirmRoot = new Table();
+        populateRoot();
+        attachEvent();
         invalidate();
 
-        _broadcaster.subscribe(BroadcastEvent.DEVICE_ORIENTATION, new BroadcastListener() {
+        this.broadcaster.subscribe(BroadcastEvent.DEVICE_ORIENTATION, new BroadcastListener() {
             @Override
             public void onCallback(Object obj, Status st) {
                 invalidate();
+            }
+        });
+    }
+
+    public void populateRoot(){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                confirmRoot = new Table();
+                confirmRoot.setBackground(new TextureRegionDrawable(assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
+                confirmRoot.setFillParent(true);
+                confirmRoot.align(Align.bottom);
+                new DummyButton(confirmRoot, assets);
+
+                msgTable = new Table();
+                msgTable.setBackground(new NinePatchDrawable(assets.getPatches().get(Patches.Name.POPUP_BG)));
+
+                Label.LabelStyle labelStyle = new Label.LabelStyle();
+                labelStyle.font = assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR);
+                labelStyle.fontColor = Color.BLACK;
+                messageLabel = new Label("", labelStyle);
+                messageLabel.setWrap(true);
+                messageLabel.setAlignment(Align.center);
+
+                buttonsTable = new Table();
+
+                yesImage = new Image(assets.getTextures().get(Textures.Name.TICK_ICON));
+                noImage = new Image(assets.getTextures().get(Textures.Name.CROSS_ICON));
+                cancelButtonTable = new Table();
+                Label cancelButtonLabel = new Label("",
+                        new Label.LabelStyle(assets.getFonts().get(Fonts.FontId.HELVETICA_M_REGULAR),  Color.valueOf("1a0dab")));
+                cancelButtonLabel.setName("cancelButtonLabel");
+                Image underLineImage = new Image(assets.getTextures().get(Textures.Name.GREY_HORIZONTAL_LINE));
+                underLineImage.setColor(Color.valueOf("1a0dab"));
+                cancelButtonTable.add(cancelButtonLabel);
+                cancelButtonTable.row();
+                cancelButtonTable.add(underLineImage).expandX().fillX();
+
+
+                new DummyButton(cancelButtonTable, assets);
+
+                confirmRoot.add(msgTable).expandX().fillX();
+
+                attachEvent();
             }
         });
     }
@@ -76,157 +122,193 @@ public class Confirm {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                if(_stage != null){
-                    _stage.dispose();
-                    _confirmRoot.remove();
-                    _confirmRoot.clear();
+
+                if(stage == null){
+                    StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
+                    viewPort.update(Positions.getWidth(), Positions.getHeight(), true);
+                    stage = new Stage(viewPort, batch);
+                    game.addInputProcessor(stage, 15, getClassTag());
+                    stage.addActor(confirmRoot);
                 }
-
-                StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
-                _stage = new Stage(viewPort, _batch);
-
-                _confirmRoot.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
-                _confirmRoot.setFillParent(true);
-                _confirmRoot.align(Align.bottom);
-                new DummyButton(_confirmRoot, _assets);
-
-                _msgTable = new Table();
-                _msgTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.POPUP_BG)));
-
-                Label.LabelStyle labelStyle = new Label.LabelStyle();
-                labelStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR);
-                labelStyle.fontColor = Color.BLACK;
-                _messageLabel = new Label("", labelStyle);
-                _messageLabel.setWrap(true);
-                _messageLabel.setAlignment(Align.center);
-
-                ScrollPane scrollPane = new ScrollPane(_messageLabel);
-
-                _buttonsTable = new Table();
-
-                _yesImage = new Image(_assets.getTextures().get(Textures.Name.TICK_ICON));
-                _noImage = new Image(_assets.getTextures().get(Textures.Name.CROSS_ICON));
-
-                _msgTable.add(scrollPane).padTop(20).padBottom(20).expand().fill().padLeft(10).padRight(10);
-                _msgTable.row();
-                _msgTable.add(_buttonsTable).expandX().fillX().padBottom(20);
-
-
-                _confirmRoot.add(_msgTable).expandX().fillX();
-                _confirmRoot.invalidate();
-
-                _stage.addActor(_confirmRoot);
-                close();
-
-                attachEvent();
+                else{
+                    if(stage.getViewport().getWorldWidth() != Positions.getWidth()
+                            || stage.getViewport().getWorldHeight() != Positions.getHeight()){
+                        StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
+                        viewPort.update(Positions.getWidth(), Positions.getHeight(), true);
+                        stage.setViewport(viewPort);
+                    }
+                }
             }
         });
     }
 
-    public void show(final String msg, final Type type, final ConfirmResultListener _listener){
-        if(_currentMsg != null && _currentMsg.equals(msg)) return;
-        _currentMsg = msg;
+    public void show(final String msg, final Type type, final ConfirmResultListener listener){
+        show(msg, type, listener, "");
+    }
+
+    public void show(final String msg, final Type type, final ConfirmResultListener listener, final String extra){
+        if(currentMsg != null && currentMsg.equals(msg)) return;
+        if(locked) return;
+
+        if(type == Type.LOADING_WITH_CANCEL || type == Type.LOADING_NO_CANCEL){
+            locked = true;
+        }
+        visible = true;
+        currentMsg = msg;
 
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                setListener(_listener);
+                confirmResultListener = listener;
 
-                if (_previousTime != 0 && System.currentTimeMillis() - _previousTime < 500) {
+                if (previousTime != 0 && System.currentTimeMillis() - previousTime < 500) {
                     return;
                 }
-                _previousTime = System.currentTimeMillis();
+                previousTime = System.currentTimeMillis();
 
-                _messageLabel.setText(msg);
-                _buttonsTable.clear();
+                msgTable.clear();
+                if(type == Type.YESNO || type == Type.YES){
+                    msgTable.add(messageLabel).padTop(20).padBottom(20).expand().fill().padLeft(10).padRight(10);
+                    msgTable.row();
+                    msgTable.add(buttonsTable).expandX().fillX().padBottom(20);
 
+                    messageLabel.setText(msg);
+                }
+                else if(type == Type.LOADING_NO_CANCEL || type == Type.LOADING_WITH_CANCEL){
+
+                    messageLabel.setText(msg);
+                    Table loadingTable = new Table();
+                    Image loadingMascotsImage = new Image(assets.getTextures().get(Textures.Name.LOGGING_IN_MASCOTS));
+                    Vector2 sizes = Sizes.resizeByH(40, assets.getTextures().get(Textures.Name.LOGGING_IN_MASCOTS));
+                    loadingMascotsImage.setSize(sizes.x, sizes.y);
+                    loadingMascotsImage.setPosition(-100, 0);
+                    loadingMascotsImage.addAction(forever(sequence(moveBy(Positions.getWidth() + 100, 0, (Positions.getWidth() + 100)/ 100),
+                                                                moveTo(-100, 0))));
+                    loadingTable.addActor(loadingMascotsImage);
+
+                    msgTable.add(loadingTable).expandX().fillX().padTop(10).height(sizes.y);
+                    msgTable.row();
+                    msgTable.add(messageLabel).padTop(5).padBottom(5).expandX().fillX().padLeft(10).padRight(10);
+                    msgTable.row();
+                    msgTable.add(buttonsTable).expandX().fillX().padBottom(10);
+
+                }
+
+                setButtonTable(type, extra);
+                animateShowConfirm();
+            }
+        });
+    }
+
+    public void updateMessage(final String newMessage){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                messageLabel.setText(newMessage);
+            }
+        });
+    }
+
+    private void setButtonTable(final Type type, final String text){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                buttonsTable.clear();
                 int w = 70;
 
                 if (type == Type.YESNO) {
-                    _buttonsTable.add(_yesImage).size(w, w).space(70);
-                    _buttonsTable.add(_noImage).size(w, w).space(70);
+                    buttonsTable.add(yesImage).size(w, w).space(70);
+                    buttonsTable.add(noImage).size(w, w).space(70);
                 } else if (type == Type.YES) {
-                    _buttonsTable.add(_yesImage).size(w, w);
+                    buttonsTable.add(yesImage).size(w, w);
+                }
+                else if(type == Type.LOADING_WITH_CANCEL){
+                    ((Label) cancelButtonTable.findActor("cancelButtonLabel")).setText(text);
+                    buttonsTable.add(cancelButtonTable);
                 }
 
-                _msgTable.getColor().a = 0;
-                Threadings.renderFor(5f);
-                _confirmRoot.clearActions();
-                _confirmRoot.addAction(sequence(fadeOut(0f), fadeIn(0.3f), new Action() {
-                    @Override
-                    public boolean act(float delta) {
-                        _msgTable.addAction(sequence(moveBy(0, -400), fadeIn(0f), moveBy(0, 400, 0.3f), new Action() {
-                            @Override
-                            public boolean act(float delta) {
-                                return true;
-                            }
-                        }));
-                        if (_stateChangedListener != null) _stateChangedListener.onShow();
-                        return true;
-                    }
-                }));
-
-                _visible = true;
-
-                _game.addInputProcessor(_stage, 15, getClassTag());
             }
         });
+    }
 
-
+    private void animateShowConfirm(){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                msgTable.getColor().a = 0;
+                Threadings.renderFor(5f);
+                confirmRoot.setVisible(true);
+                confirmRoot.clearActions();
+                confirmRoot.addAction(sequence(fadeOut(0f), fadeIn(0.3f), new RunnableAction() {
+                    @Override
+                    public void run() {
+                        msgTable.addAction(sequence(moveBy(0, -400), fadeIn(0f), moveBy(0, 400, 0.3f)));
+                        if (stateChangedListener != null) stateChangedListener.onShow();
+                    }
+                }));
+            }
+        });
     }
 
     public void resize(int width, int height){
-        _stage.getViewport().update(width, height);
+        stage.getViewport().update(width, height);
     }
 
     private void attachEvent(){
 
-        _yesImage.addListener(new ClickListener() {
+        yesImage.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                if (_listener != null) {
-                    _listener.onResult(ConfirmResultListener.Result.YES);
+                if (confirmResultListener != null) {
+                    confirmResultListener.onResult(ConfirmResultListener.Result.YES);
                 }
                 close();
             }
         });
 
-        _noImage.addListener(new ClickListener() {
+        noImage.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                if (_listener != null) {
-                    _listener.onResult(ConfirmResultListener.Result.NO);
+                if (confirmResultListener != null) {
+                    confirmResultListener.onResult(ConfirmResultListener.Result.NO);
                 }
                 close();
             }
         });
 
+        cancelButtonTable.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                if (confirmResultListener != null) {
+                    confirmResultListener.onResult(ConfirmResultListener.Result.CANCEL);
+                }
+                close();
+            }
+        });
 
-    }
-
-    public void setListener(ConfirmResultListener _listener) {
-        this._listener = _listener;
     }
 
     public void setStateChangedListener(ConfirmStateChangedListener _stateListener) {
-        this._stateChangedListener = _stateListener;
+        this.stateChangedListener = _stateListener;
     }
 
     public void close(){
+        locked = false;
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                _currentMsg = null;
-                _confirmRoot.clearActions();
-                _confirmRoot.addAction(sequence(fadeOut(0.2f), new Action() {
+                currentMsg = null;
+                confirmRoot.clearActions();
+                confirmRoot.addAction(sequence(fadeOut(0.2f), new RunnableAction() {
                     @Override
-                    public boolean act(float delta) {
-                        _visible = false;
-                        _game.removeInputProcessorById(getClassTag());
-                        if(_stateChangedListener != null) _stateChangedListener.onHide();
-                        return true;
+                    public void run() {
+                        msgTable.clear();
+                        confirmRoot.setVisible(false);
+                        visible = false;
+                        if (stateChangedListener != null) stateChangedListener.onHide();
                     }
                 }));
             }
@@ -234,14 +316,14 @@ public class Confirm {
     }
 
     public boolean isVisible() {
-        return _visible;
+        return visible;
     }
 
     public void render(float delta){
-        if(_visible){
+        if(visible){
             try{
-                _stage.act(delta);
-                _stage.draw();
+                stage.act(delta);
+                stage.draw();
             }
             catch (Exception e){
 
@@ -253,5 +335,7 @@ public class Confirm {
         return this.getClass().getName();
     }
 
-
+    public enum Type{
+        YESNO, YES, LOADING_WITH_CANCEL, LOADING_NO_CANCEL
+    }
 }

@@ -21,6 +21,7 @@ import com.potatoandtomato.games.models.Services;
  */
 public class ReviewActor extends Table {
 
+    private Table _this;
     private Services services;
     private MyAssets assets;
     private Label skipLabel, goToLabel, deleteLabel;
@@ -28,42 +29,48 @@ public class ReviewActor extends Table {
     private Image blockingReviewImage;
 
     public ReviewActor(Services services) {
+        _this = this;
         this.services = services;
         this.assets = services.getAssets();
         populate();
     }
 
     public void populate(){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Label.LabelStyle labelStyleBig = new Label.LabelStyle(
+                        assets.getFonts().get(Fonts.FontId.ENCHANTED_MAX_REGULAR_B_FFFFFF_563500_4), Color.valueOf("ffe9c0"));
 
-        Label.LabelStyle labelStyleBig = new Label.LabelStyle(
-                                    assets.getFonts().get(Fonts.FontId.ENCHANTED_MAX_REGULAR_B_FFFFFF_563500_4), Color.valueOf("ffe9c0"));
+                TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle();
+                textFieldStyle.font = assets.getFonts().get(Fonts.FontId.ENCHANTED_XXL_REGULAR);
+                textFieldStyle.fontColor = Color.BLACK;
+                textFieldStyle.background = new NinePatchDrawable(assets.getPatches().get(Patches.Name.WHITE_ROUNDED_BG));
+                textFieldStyle.cursor = new TextureRegionDrawable(assets.getTextures().get(Textures.Name.CURSOR_BLACK));
+                textFieldStyle.cursor.setMinWidth(2);
 
-        TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle();
-        textFieldStyle.font = assets.getFonts().get(Fonts.FontId.ENCHANTED_XXL_REGULAR);
-        textFieldStyle.fontColor = Color.BLACK;
-        textFieldStyle.background = new NinePatchDrawable(assets.getPatches().get(Patches.Name.WHITE_ROUNDED_BG));
-        textFieldStyle.cursor = new TextureRegionDrawable(assets.getTextures().get(Textures.Name.CURSOR_BLACK));
-        textFieldStyle.cursor.setMinWidth(2);
+                goToTextField = new TextField("", textFieldStyle);
+                goToLabel = new Label("Go", labelStyleBig);
 
-        goToTextField = new TextField("", textFieldStyle);
-        goToLabel = new Label("Go", labelStyleBig);
-
-        skipLabel = new Label("Skip", labelStyleBig);
+                skipLabel = new Label("Skip", labelStyleBig);
 
 
-        deleteLabel = new Label("Delete", labelStyleBig);
+                deleteLabel = new Label("Delete", labelStyleBig);
 
-        blockingReviewImage = new Image(assets.getTextures().get(Textures.Name.TRANS_BLACK_BG));
-        blockingReviewImage.setFillParent(true);
-        blockingReviewImage.setVisible(false);
+                blockingReviewImage = new Image(assets.getTextures().get(Textures.Name.TRANS_BLACK_BG));
+                blockingReviewImage.setFillParent(true);
+                blockingReviewImage.setVisible(false);
 
-        this.add(goToTextField).size(100, 30).padRight(20).padLeft(80);
-        this.add(goToLabel).padRight(120);
+                _this.add(goToTextField).size(100, 30).padRight(20).padLeft(80);
+                _this.add(goToLabel).padRight(40);
 
-        this.add(skipLabel);
-        this.add(deleteLabel).padLeft(20);
+                _this.add(skipLabel);
+                _this.add(deleteLabel).padLeft(20);
 
-        this.addActor(blockingReviewImage);
+                _this.addActor(blockingReviewImage);
+            }
+        });
+
 
     }
 

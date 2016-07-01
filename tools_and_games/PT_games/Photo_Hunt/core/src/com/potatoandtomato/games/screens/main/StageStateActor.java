@@ -33,8 +33,6 @@ public class StageStateActor extends Table {
         this.services = services;
         assets = services.getAssets();
         _this = this;
-
-        papyrusContentTable = new Table();
     }
 
 
@@ -42,6 +40,8 @@ public class StageStateActor extends Table {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
+                papyrusContentTable = new Table();
+
                 papyrusRootTable = new Table();
                 papyrusRootTable.setClip(true);
 

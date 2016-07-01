@@ -137,7 +137,7 @@ public class GameDataHelper implements Disposable {
                     int sleepMilisecs = 1000;
 
                     if(comeBackFromRecoverConnection)
-                        disconnectOverlayControl.showResumingGameOverlay(failToleranceMiliSecs - elapsed);
+                        disconnectOverlayControl.showResumingGameOverlay((failToleranceMiliSecs - elapsed) / 1000);
 
                     Threadings.sleep(sleepMilisecs);
 

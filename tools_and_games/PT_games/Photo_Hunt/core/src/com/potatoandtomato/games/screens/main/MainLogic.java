@@ -56,7 +56,7 @@ public class MainLogic extends GameLogic {
     public MainLogic(GameCoordinator gameCoordinator, Services _services,
                      TimeLogic _timeLogic, HintsLogic _hintsLogic, ReviewLogic _reviewLogic, UserCountersLogic _userCounterLogic,
                      StageCounterLogic _stageCounterLogic, ScoresLogic _scoresLogic,
-                     ImageStorage _imageStorage, GameModel _gameModel, StageImagesLogic _stageImagesLogic,
+                     ImageStorage _imageStorage, GameModel _gameModel, final StageImagesLogic _stageImagesLogic,
                      StageStateLogic _stageStateLogic, GameDataContract gameDataContract) {
         super(gameCoordinator);
         this._services = _services;
@@ -77,8 +77,14 @@ public class MainLogic extends GameLogic {
                                 _userCounterLogic.getUserCountersActor(), _stageCounterLogic.getStageCounterActor(),
                                 _scoresLogic.getScoresActor(), _stageStateLogic.getStageStateActor());
 
-        _stageImagesLogic.init(_screen.getImageOneTable(), _screen.getImageTwoTable(),
-                                    _screen.getImageOneInnerTable(), _screen.getImageTwoInnerTable());
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _stageImagesLogic.init(_screen.getImageOneTable(), _screen.getImageTwoTable(),
+                        _screen.getImageOneInnerTable(), _screen.getImageTwoInnerTable());
+            }
+        });
+
         setListeners();
     }
 
@@ -512,18 +518,23 @@ public class MainLogic extends GameLogic {
             }
         });
 
-        _screen.getBlockTable().addListener(new ClickListener(){
+        Threadings.postRunnable(new Runnable() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
+            public void run() {
+                _screen.getBlockTable().addListener(new ClickListener(){
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
 
-            }
-        });
+                    }
+                });
 
-        _screen.getBottomBarTable().addListener(new ActorGestureListener(){
-            @Override
-            public boolean longPress(Actor actor, float x, float y) {
-                checkCanSwitchToReviewMode();
-                return super.longPress(actor, x, y);
+                _screen.getBottomBarTable().addListener(new ActorGestureListener(){
+                    @Override
+                    public boolean longPress(Actor actor, float x, float y) {
+                        checkCanSwitchToReviewMode();
+                        return super.longPress(actor, x, y);
+                    }
+                });
             }
         });
 

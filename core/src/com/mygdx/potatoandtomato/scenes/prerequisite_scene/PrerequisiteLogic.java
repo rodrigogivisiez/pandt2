@@ -147,7 +147,7 @@ public class PrerequisiteLogic extends LogicAbstract {
                                 public void onRoomInfoFailed() {
                                     if(!_roomInfoRetrieved){
                                         _roomInfoRetrieved = true;
-                                        joinRoomFailed(0);
+                                        joinRoomFailed(4);
                                     }
                                 }
                             });
@@ -156,7 +156,7 @@ public class PrerequisiteLogic extends LogicAbstract {
 
                         @Override
                         public void onJoinRoomFailed() {
-                            joinRoomFailed(0);
+                            joinRoomFailed(4);
                         }
                     });
 

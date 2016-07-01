@@ -21,7 +21,6 @@ public class CastleActor extends Table {
 
     public CastleActor(Services services) {
         _this = this;
-        _this.align(Align.bottomLeft);
         this.services = services;
         this.assets = services.getAssets();
 
@@ -31,6 +30,8 @@ public class CastleActor extends Table {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
+                _this.align(Align.bottomLeft);
+
                 if(castleState == CastleState.Normal){
                     _this.clear();
                     _this.add(new Image(assets.getTextures().get(Textures.Name.CASTLE_DOOR)));

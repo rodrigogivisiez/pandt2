@@ -153,29 +153,36 @@ public class StageImagesLogic implements Disposable {
     }
 
     public void setListeners(){
-        imageOneTable.addListener(new ClickListener() {
+
+        Threadings.postRunnable(new Runnable() {
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                if(checkCanTouch(x, y, false)){
-                    Vector2 result = processTouch(x, y, false);
-                    stageImagesHandlerListener.onTouch(result.x, result.y);
-                }
-                return super.touchDown(event, x, y, pointer, button);
+            public void run() {
+                imageOneTable.addListener(new ClickListener() {
+                    @Override
+                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                        if(checkCanTouch(x, y, false)){
+                            Vector2 result = processTouch(x, y, false);
+                            stageImagesHandlerListener.onTouch(result.x, result.y);
+                        }
+                        return super.touchDown(event, x, y, pointer, button);
+                    }
+                });
+
+                imageTwoTable.addListener(new ClickListener() {
+                    @Override
+                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                        if(bonusType != BonusType.COVERED){
+                            if (checkCanTouch(x, y, true)) {
+                                Vector2 result = processTouch(x, y, true);
+                                stageImagesHandlerListener.onTouch(result.x,result.y);
+                            }
+                        }
+                        return super.touchDown(event, x, y, pointer, button);
+                    }
+                });
             }
         });
 
-        imageTwoTable.addListener(new ClickListener() {
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                if(bonusType != BonusType.COVERED){
-                    if (checkCanTouch(x, y, true)) {
-                        Vector2 result = processTouch(x, y, true);
-                        stageImagesHandlerListener.onTouch(result.x,result.y);
-                    }
-                }
-                return super.touchDown(event, x, y, pointer, button);
-            }
-         });
 
         gameModel.addGameModelListener(new GameModelListener() {
 
