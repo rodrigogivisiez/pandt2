@@ -64,67 +64,80 @@ public class Recorder {
         _recording = true;
         _recordSuccess = false;
 
-        broadcaster.broadcast(BroadcastEvent.RECORD_START, new Pair<String, RunnableArgs>(binFile.file().getAbsolutePath(), new RunnableArgs() {
-            @Override
-            public void run() {
 
+        broadcaster.broadcast(BroadcastEvent.RECORD_START, new RecordListener(binFile.file().getAbsolutePath()) {
+            @Override
+            public void onStart() {
+                _listener.onStart();
+
+                Threadings.runInBackground(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        while (_recording){
+                            Threadings.sleep(100);
+                        }
+                        if(!_recordSuccess){
+                            _listener.onFinishedRecord(null, 0, Status.FAILED);
+                            broadcaster.broadcast(BroadcastEvent.RECORD_END, "", Status.FAILED);
+                            _canRecord = true;
+                            return;
+                        }
+                        else{
+                            broadcaster.broadcast(BroadcastEvent.RECORD_END, "", Status.SUCCESS);
+                        }
+
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onRecording(int volumeLevel, int remainingSecs) {
                 long elapsed = System.currentTimeMillis() - _startTime;
-                int remainingSecs = MAX_SECS - (int) (elapsed / 1000);
-                _listener.onRecording((int) this.getArgs()[0], remainingSecs);
+                remainingSecs = MAX_SECS - (int) (elapsed / 1000);
+                _listener.onRecording(volumeLevel, remainingSecs);
 
                 if (remainingSecs <= 0) {
                     stopRecording();
                 }
             }
-        }));
 
-        Threadings.runInBackground(new Runnable() {
             @Override
-            public void run() {
+            public void onPreSuccessRecord(FileHandle resultFile) {
+                _listener.onPreSuccessRecord(resultFile);
+            }
 
-                while (_recording){
-                    Threadings.sleep(100);
-                }
-                if(!_recordSuccess){
+            @Override
+            public void onFinishedRecord(FileHandle resultFile, int totalSecs, Status st) {
+                if (st == Status.FAILED) {
                     _listener.onFinishedRecord(null, 0, Status.FAILED);
-                    broadcaster.broadcast(BroadcastEvent.RECORD_END);
                     _canRecord = true;
-                    return;
-                }
+                } else {
+                    totalSecs = Math.max((int) (System.currentTimeMillis() - _startTime) / 1000, 1);
+                    _listener.onPreSuccessRecord(oggFile);
 
-                broadcaster.subscribeOnce(BroadcastEvent.RECORD_RESPONSE, new BroadcastListener() {
-                    @Override
-                    public void onCallback(Object obj, Status st) {
-                        if (st == Status.FAILED) {
-                            _listener.onFinishedRecord(null, 0, Status.FAILED);
-                            _canRecord = true;
-                        } else {
-                            final int totalSecs = Math.max((int) (System.currentTimeMillis() - _startTime) / 1000, 1);
-                            _listener.onPreSuccessRecord(oggFile);
-
-                            convertAndCompressAudioFile(binFile, oggFile, new RunnableArgs() {
-                                @Override
-                                public void run() {
-                                    if (this.getArgCount() > 0) {
-                                        FileHandle oggFile = (FileHandle) this.getArgs()[0];
-                                        if (oggFile.exists()) {
-                                            _listener.onFinishedRecord(oggFile, totalSecs, Status.SUCCESS);
-                                        }
-                                    }
-                                    _canRecord = true;
+                    final int finalTotalSecs = totalSecs;
+                    convertAndCompressAudioFile(binFile, oggFile, new RunnableArgs() {
+                        @Override
+                        public void run() {
+                            if (this.getArgCount() > 0) {
+                                FileHandle oggFile = (FileHandle) this.getArgs()[0];
+                                if (oggFile.exists()) {
+                                    _listener.onFinishedRecord(oggFile, finalTotalSecs, Status.SUCCESS);
                                 }
-                            });
+                            }
+                            _canRecord = true;
                         }
-                    }
-                });
-
-                broadcaster.broadcast(BroadcastEvent.RECORD_END);
+                    });
+                }
             }
         });
     }
 
     public void stopRecording(){
-        if(System.currentTimeMillis() - _startTime < 300){
+        if(System.currentTimeMillis() - _startTime < 1000){
             _recordSuccess = false;
         }
         else{
@@ -219,6 +232,7 @@ public class Recorder {
             playbackListener = null;
             playbackRunnablesQueue.clear();
         }
+        soundsPlayer.setVolume(1);
     }
 
     private void convertAndCompressAudioFile(FileHandle threegpFile, FileHandle oggFile, final RunnableArgs onFinish) {
@@ -238,6 +252,10 @@ public class Recorder {
             soundsPlayer.stopMusic(playingAudioMsg);
             soundsPlayer.setVolume(1);
         }
+    }
+
+    public boolean isRecording() {
+        return _recording;
     }
 
     public int getMaxSecs(){

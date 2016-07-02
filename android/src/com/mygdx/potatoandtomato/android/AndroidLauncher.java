@@ -65,6 +65,7 @@ public class AndroidLauncher extends AndroidApplication {
 		_this = this;
 		reset();
 
+
 		_broadcaster = new Broadcaster();
 		_inAppPurchaseHelper = new InAppPurchaseHelper(this, _broadcaster);
 		_chartBoostHelper = new ChartBoostHelper(this, _broadcaster);
@@ -72,7 +73,7 @@ public class AndroidLauncher extends AndroidApplication {
 		_imageLoader = new ImageLoader(_this, _broadcaster);
 		_facebookConnector = new FacebookConnector(this, _broadcaster);
 		_gcm = new GCMClientManager(this, _broadcaster);
-		_audioRecorder = new AudioRecorder(_broadcaster);
+		_audioRecorder = new AudioRecorder(this, _broadcaster);
 		Firebase.setAndroidContext(this);
 		_layoutChangedFix = new LayoutChangedFix(this.getWindow().getDecorView().getRootView(), _broadcaster);
 		_ptGame = new PTGame(_broadcaster);

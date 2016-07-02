@@ -554,7 +554,6 @@ public class ChatControl {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                soundsPlayer.playSoundEffect(Sounds.Name.MIC);
                 recordingTable.clearActions();
                 recordingTable.getColor().a = 0f;
                 recordingTable.addAction(fadeIn(0.2f));

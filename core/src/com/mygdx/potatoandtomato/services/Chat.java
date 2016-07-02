@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.mygdx.potatoandtomato.absintflis.controls.ChatTemplateSelectedListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.MessagingListener;
+import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.ConnectionStatus;
 import com.mygdx.potatoandtomato.enums.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
@@ -126,16 +127,23 @@ public class Chat {
     private void startRecord(){
         if(recorder.isCanRecord()){
             chatControl.resetRecordDesign();
-            chatControl.showRecording();
+            soundsPlayer.setVolume(1);
+            soundsPlayer.playSoundEffect(Sounds.Name.MIC);
+            Gdx.input.vibrate(200);
 
-            Threadings.delay(500, new Runnable() {
+            Threadings.delay(300, new Runnable() {
                 @Override
                 public void run() {
                     soundsPlayer.setVolume(0);
                     Threadings.delay(200, new Runnable() {
                         @Override
                         public void run() {
-                            recorder.recordToFile(recordsPath, new RecordListener() {
+                            recorder.recordToFile(recordsPath, new RecordListener(null) {
+                                @Override
+                                public void onStart() {
+                                    chatControl.showRecording();
+                                }
+
                                 @Override
                                 public void onRecording(int volumeLevel, int remainingSecs) {
                                     chatControl.updateRecordStatus(volumeLevel, remainingSecs);
@@ -172,7 +180,7 @@ public class Chat {
                 Threadings.delay(1000, new Runnable() {
                     @Override
                     public void run() {
-                        soundsPlayer.setVolume(1);
+                        if(!recorder.isRecording()) soundsPlayer.setVolume(1);
                     }
                 });
             }

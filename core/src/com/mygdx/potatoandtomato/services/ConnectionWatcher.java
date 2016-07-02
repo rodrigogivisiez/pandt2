@@ -157,6 +157,7 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
     public void hideLostConnection(){
         showingLostConnection = false;
         confirm.close();
+
     }
 
     @Override
