@@ -247,7 +247,7 @@ public class GameListScene extends SceneAbstract {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                final boolean isInvited = (room.getInvitedUserByUserId(_services.getProfile().getUserId()) != null);
+                final boolean isInvited = (room.getUserIsInvited(_services.getProfile().getUserId()));
                 if(!_gameRowsTableMap.containsKey(room.getId())){
                     if(_hostToRoomIdMaps.containsKey(room.getHost().getUserId())){
                         removeRoom(_hostToRoomIdMaps.get(room.getHost().getUserId()));

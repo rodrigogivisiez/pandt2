@@ -15,10 +15,7 @@ import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.common.utils.ThreadsPool;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -31,6 +28,7 @@ public class
     private String _tableUsers = "users";
     private String _tableGames = "games";
     private String _tableRooms = "rooms";
+    private String _tableRoomInvitations = "roomInvitations";
     private String _tableHistories = "histories";
     private String _tableRoomNotifications = "roomNotifications";
     private String _tableGameBelongData = "gameBelongData";
@@ -172,25 +170,6 @@ public class
             }
         };
         getData(getTable(_tableHistories).child(profile.getUserId()).orderByChild("creationDate"), intermediateListener);
-    }
-
-    @Override
-    public void getPendingInvitationsCount(final Profile profile, final DatabaseListener<Integer> listener) {
-        getData(getTable(_tableRooms).orderByChild("open").equalTo(true), new DatabaseListener<ArrayList<Room>>(Room.class) {
-            @Override
-            public void onCallback(ArrayList<Room> obj, Status st) {
-                if(st == Status.SUCCESS){
-                    int result = 0;
-                    for(Room room : obj){
-                        if(room.getInvitedUserByUserId(profile.getUserId()) != null) result++;
-                    }
-                    listener.onCallback(result, Status.SUCCESS);
-                }
-                else{
-                    listener.onCallback(null, Status.FAILED);
-                }
-            }
-        });
     }
 
     @Override
@@ -387,8 +366,8 @@ public class
     }
 
     @Override
-    public void setInvitedUsers(ArrayList<Profile> invitedUsers, final Room room, final DatabaseListener listener) {
-        getTable(_tableRooms).child(room.getId()).child("invitedUsers").setValue(invitedUsers, new Firebase.CompletionListener() {
+    public void setInvitedUsers(ArrayList<String> invitedUserIds, final Room room, final DatabaseListener listener) {
+        getTable(_tableRooms).child(room.getId()).child("invitedUserIds").setValue(invitedUserIds, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 if(listener != null) listener.onCallback("", firebaseError == null ? Status.SUCCESS : Status.FAILED);
@@ -726,9 +705,72 @@ public class
                                     classTag, childEventListener));
             }
         });
+    }
 
+    @Override
+    public void monitorRoomInvitations(String roomId, String classTag,  final DatabaseListener listener) {
+        final boolean[] firstDataDispose = new boolean[1];
+        getDataMonitor(getTable(_tableRoomInvitations).child(roomId), classTag, new DatabaseListener() {
+            @Override
+            public void onCallback(Object obj, Status st) {
+                if(firstDataDispose[0]){
+                    listener.onCallback(obj, st);
+                }
+                else{
+                    if(st == Status.SUCCESS){
+                        firstDataDispose[0] = true;
+                    }
+                }
+            }
+        });
+    }
 
+    @Override
+    public void checkRoomInvitationResponseExist(String roomId, String userId, DatabaseListener<Boolean> listener) {
+        checkExist(getTable(_tableRoomInvitations).child(roomId).child(userId), listener);
+    }
 
+    @Override
+    public void getPendingInvitationRoomIds(final Profile profile, final DatabaseListener<ArrayList<String>> listener) {
+        getData(getTable(_tableRooms).orderByChild("open").equalTo(true), new DatabaseListener<ArrayList<Room>>(Room.class) {
+            @Override
+            public void onCallback(final ArrayList<Room> rooms, Status st) {
+                if(st == Status.SUCCESS){
+                    Threadings.runInBackground(new Runnable() {
+                        @Override
+                        public void run() {
+                            ThreadsPool threadsPool = new ThreadsPool();
+
+                            final ArrayList<String> result =new ArrayList<String>();
+                            for(final Room room : rooms){
+                                if(room.getUserIsInvited(profile.getUserId())){
+                                    final Threadings.ThreadFragment threadFragment = new Threadings.ThreadFragment();
+                                    checkRoomInvitationResponseExist(room.getId(), profile.getUserId(), new DatabaseListener<Boolean>() {
+                                        @Override
+                                        public void onCallback(Boolean responded, Status st) {
+                                            if(!responded){
+                                                result.add(room.getId());
+                                            }
+                                            threadFragment.setFinished(true);
+                                        }
+                                    });
+                                    threadsPool.addFragment(threadFragment);
+                                }
+                            }
+
+                            while (!threadsPool.allFinished()){
+                                Threadings.sleep(300);
+                            }
+
+                            listener.onCallback(result, Status.SUCCESS);
+                        }
+                    });
+                }
+                else{
+                    listener.onCallback(null, Status.FAILED);
+                }
+            }
+        });
     }
 
     private void getServerCurrentTime(final DatabaseListener<Double> listener){
@@ -780,6 +822,19 @@ public class
         return r;
     }
 
+    public void checkExist(Firebase ref, final DatabaseListener<Boolean> listener) {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                listener.onCallback(snapshot.getValue() != null, Status.SUCCESS);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                listener.onCallback(false, Status.FAILED);
+            }
+        });
+    }
 
     private void getDataCount(Query ref, final DatabaseListener<Integer> listener){
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -861,7 +916,15 @@ public class
             public void onDataChange(DataSnapshot snapshot) {
                 List<Object> results = new ArrayList<Object>();
                 for(DataSnapshot postSnapShot : snapshot.getChildren()){
-                    Object newPost = postSnapShot.getValue(listener.getType());
+                    Object newPost;
+                    if(listener.getType() == null){
+                        HashMap map = new HashMap();
+                        map.put(postSnapShot.getKey(), postSnapShot.getValue());
+                        newPost = map;
+                    }
+                    else{
+                        newPost = postSnapShot.getValue(listener.getType());
+                    }
                     results.add(newPost);
                 }
                 listener.onCallback(results, Status.SUCCESS);

@@ -1,8 +1,9 @@
-package com.mygdx.potatoandtomato.android;
+package com.mygdx.potatoandtomato.android.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import com.mygdx.potatoandtomato.android.RoomAliveHelper;
 import com.mygdx.potatoandtomato.models.PushNotification;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 

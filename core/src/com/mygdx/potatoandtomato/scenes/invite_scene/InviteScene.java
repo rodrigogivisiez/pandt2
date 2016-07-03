@@ -1,11 +1,15 @@
 package com.mygdx.potatoandtomato.scenes.invite_scene;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.PTScreen;
@@ -18,6 +22,7 @@ import com.mygdx.potatoandtomato.controls.BtnEggDownward;
 import com.mygdx.potatoandtomato.controls.DummyButton;
 import com.mygdx.potatoandtomato.controls.TopBar;
 import com.mygdx.potatoandtomato.enums.BadgeType;
+import com.mygdx.potatoandtomato.models.FacebookProfile;
 import com.mygdx.potatoandtomato.models.GameHistory;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Services;
@@ -215,7 +220,8 @@ public class InviteScene extends SceneAbstract {
         });
     }
 
-    public void putUserToTable(final Profile profile, final InviteScene.InviteType inviteType, final RunnableArgs<Actor> onFinish, final Object... objs){
+    public void putUserToTable(final Profile profile, final InviteScene.InviteType inviteType, final boolean alreadyInvited,
+                                            final RunnableArgs<Actor> onFinish, final Object... objs){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -224,8 +230,6 @@ public class InviteScene extends SceneAbstract {
 
                 Label.LabelStyle normalStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_M_SEMIBOLD), null);
                 Label.LabelStyle smallItalicStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_S_REGULAR), null);
-
-                Label.LabelStyle badgeStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_XS_SEMIBOLD_B_ffffff_000000_1), null);
 
                 Table contentTable = getContainerContentTable(inviteType);
 
@@ -236,7 +240,6 @@ public class InviteScene extends SceneAbstract {
 
                 switch (inviteType){
                     case Recent:
-
                         GameHistory history = (GameHistory) objs[0];
                         Label nameLabel = new Label(profile.getDisplayName(30), normalStyle);
                         Label historyLabel = new Label(String.format(_texts.playedXAgo(), history.getNameOfGame(), history.getCreationDateAgo()),
@@ -245,6 +248,25 @@ public class InviteScene extends SceneAbstract {
                         detailsTable.add(nameLabel).expandX().fillX();
                         detailsTable.row();
                         detailsTable.add(historyLabel).expandX().fillX();
+                        break;
+
+                    case Facebook:
+                        FacebookProfile facebookProfile = (FacebookProfile) objs[0];
+
+                        Image image = new Image();
+                        image.setName(facebookProfile.getUserId());
+
+                        Table namesTable = new Table();
+                        Label facebookNameLabel = new Label(Strings.cutOff(facebookProfile.getName(), 30), normalStyle);
+                        Label gameNameLabel = new Label(String.format(_texts.gameNameIs(), profile.getDisplayName(25)),
+                                smallItalicStyle);
+
+                        namesTable.add(facebookNameLabel).expandX().fillX();
+                        namesTable.row();
+                        namesTable.add(gameNameLabel).expandX().fillX();
+
+                        detailsTable.add(image).size(30, 30).padRight(10);
+                        detailsTable.add(namesTable).expandX().fillX();
                         break;
 
                     case Leaderboard:
@@ -271,10 +293,10 @@ public class InviteScene extends SceneAbstract {
                         break;
 
                 }
-
-
-                Image selectBoxImage = new Image(_assets.getTextures().get(Textures.Name.UNSELECT_BOX));
+                Image selectBoxImage = new Image(_assets.getTextures().get(
+                        alreadyInvited ? Textures.Name.SELECT_BOX : Textures.Name.UNSELECT_BOX));
                 selectBoxImage.setName("selectbox");
+                if(alreadyInvited) selectBoxImage.setColor(Color.valueOf("cdcdcd"));
                 Image separator = new Image(_assets.getTextures().get(Textures.Name.WHITE_HORIZONTAL_LINE));
 
                 userTable.add(detailsTable).expandX().fillX().padLeft(10);
@@ -284,7 +306,6 @@ public class InviteScene extends SceneAbstract {
 
                 contentTable.add(userTable).expandX().fillX();
                 contentTable.row();
-
 
                 _usersHashMap.put(profile.getUserId(), userTable);
 
@@ -345,6 +366,17 @@ public class InviteScene extends SceneAbstract {
             @Override
             public void run() {
                 getContainerContentTable(type).clear();
+            }
+        });
+    }
+
+    public void putFacebookProfilePicture(final String fbId, final Texture texture){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Table contentTable = getContainerContentTable(InviteType.Facebook);
+                Image image = contentTable.findActor(fbId);
+                image.setDrawable(new SpriteDrawable(new Sprite(texture)));
             }
         });
     }

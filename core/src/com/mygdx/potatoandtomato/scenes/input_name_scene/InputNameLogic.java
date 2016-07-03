@@ -38,7 +38,7 @@ public class InputNameLogic extends LogicAbstract {
 
     @Override
     public void onHide() {
-        getBroadcaster().broadcast(BroadcastEvent.HIDE_NATIVE_KEYBOARD);
+        publishBroadcast(BroadcastEvent.HIDE_NATIVE_KEYBOARD);
         super.onHide();
     }
 

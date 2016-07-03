@@ -27,4 +27,9 @@ public class FacebookProfile {
     public String getUserId() {
         return userId;
     }
+
+    public String getProfilePicUrl(){
+        return "https://graph.facebook.com/"+getUserId()+"/picture";
+    }
+
 }

@@ -62,10 +62,6 @@ public abstract class LogicAbstract implements Disposable {
         _broadcaster.broadcast(event, object);
     }
 
-    public Broadcaster getBroadcaster() {
-        return _broadcaster;
-    }
-
     public void setClassTag(){
         _classTag = Logs.getCallerClassName();
     }

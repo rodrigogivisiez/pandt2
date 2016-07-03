@@ -33,6 +33,7 @@ import com.potatoandtomato.common.utils.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -85,6 +86,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         _services.getChat().initChat(room, _services.getProfile().getUserId());
         _services.getChat().resetAllChat();
 
+        setCloseRoomOnDisconnectIfHost();
         initRoomDbMonitor(new OneTimeRunnable(new Runnable() {
             @Override
             public void run() {
@@ -312,22 +314,10 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         else if(code == UpdateRoomMatesCode.INVTE_USERS){
             if(isHost()){
                 final String[] userIds = msg.split(",");
-                final int[] i = {0};
                 for(final String userId : userIds){
-                    _services.getDatabase().getProfileByUserId(userId, new DatabaseListener<Profile>(Profile.class) {
-                        @Override
-                        public void onCallback(Profile obj, Status st) {
-                            if(st == Status.SUCCESS){
-                                room.addInvitedUser(obj);
-
-                            }
-                            i[0]++;
-                            if(i[0] == userIds.length){
-                                _services.getDatabase().setInvitedUsers(room.getInvitedUsers(), room, null);
-                            }
-                        }
-                    });
+                    room.addInvitedUserId(userId);
                 }
+                _services.getDatabase().setInvitedUsers(room.getInvitedUserIds(), room, null);
             }
         }
         else if(code == UpdateRoomMatesCode.UPDATE_DOWNLOAD){
@@ -775,6 +765,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                     if(st == ConnectStatus.CONNECTED_FROM_RECOVER){
                         refreshRoomPlayersIfIsHost();
                         sendIsReadyUpdate(false);
+                        setCloseRoomOnDisconnectIfHost();   //need to re-set it again since it should alrdy fired when disconnection occured
                     }
                 }
             }
@@ -895,6 +886,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                     }
 
                     room.setOpen(roomObj.isOpen());
+                    room.setInvitedUserIds(roomObj.getInvitedUserIds());
 
                     onSuccess.run();
                 }
@@ -903,6 +895,36 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                 }
             }
         });
+
+        _services.getDatabase().monitorRoomInvitations(room.getId(), getClassTag(), new DatabaseListener<ArrayList<HashMap>>() {
+            @Override
+            public void onCallback(ArrayList<HashMap> maps, Status st) {
+                for(HashMap map : maps){
+                    for(Object key : map.keySet()){
+                        String userId = key.toString();
+                        final String statusCode = map.get(key).toString();
+
+                        _services.getDatabase().getProfileByUserId(userId, new DatabaseListener<Profile>(Profile.class) {
+                            @Override
+                            public void onCallback(Profile obj, Status st) {
+                                if(statusCode.equals("0")){
+                                    _services.getChat().newMessage(new ChatMessage(String.format(_texts.invitationRejected(), obj.getDisplayName(0)),
+                                            ChatMessage.FromType.IMPORTANT, null, ""));
+                                }
+                                else if(statusCode.equals("1")){
+                                    _services.getChat().newMessage(new ChatMessage(String.format(_texts.invitationAccepted(), obj.getDisplayName(0)),
+                                            ChatMessage.FromType.IMPORTANT, null, ""));
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+    private void setCloseRoomOnDisconnectIfHost(){
+        if(isHost()) _services.getDatabase().setOnDisconnectCloseRoom(room);
     }
 
     @Override
@@ -913,7 +935,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                if(!starting){
+                if (!starting) {
                     starting = true;
                     hostSendStartGame();
                 }
@@ -1027,8 +1049,14 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         if(this.isSceneVisible()){
             ArrayList<Pair<String, ConnectionStatus>> userIdToConnectStatusPairs = new ArrayList();
             for(RoomUser roomUser : room.getRoomUsersMap().values()){
-                userIdToConnectStatusPairs.add(new Pair<String, ConnectionStatus>(roomUser.getProfile().getDisplayName(99),
-                        ConnectionStatus.Connected));
+                if(roomUser.getRoomUserState() == RoomUserState.TemporaryDisconnected){
+                    userIdToConnectStatusPairs.add(new Pair<String, ConnectionStatus>(roomUser.getProfile().getDisplayName(99),
+                            ConnectionStatus.Disconnected_No_CountDown));
+                }
+                else{
+                    userIdToConnectStatusPairs.add(new Pair<String, ConnectionStatus>(roomUser.getProfile().getDisplayName(99),
+                            ConnectionStatus.Connected));
+                }
             }
 
             _services.getChat().refreshRoomUsersConnectionStatus(userIdToConnectStatusPairs);

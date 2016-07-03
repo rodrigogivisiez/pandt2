@@ -3,6 +3,7 @@ package com.mygdx.potatoandtomato.android;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import com.mygdx.potatoandtomato.android.receivers.RoomAliveReceiver;
 import com.mygdx.potatoandtomato.utils.Logs;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;

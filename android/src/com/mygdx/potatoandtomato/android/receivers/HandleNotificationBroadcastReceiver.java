@@ -1,9 +1,10 @@
-package com.mygdx.potatoandtomato.android;
+package com.mygdx.potatoandtomato.android.receivers;
 
 import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import com.mygdx.potatoandtomato.android.AndroidLauncher;
 
 /**
  * Created by SiongLeng on 5/1/2016.
@@ -17,11 +18,14 @@ public class HandleNotificationBroadcastReceiver extends BroadcastReceiver {
             public void run() {
                 try {
 
+                    int i = 0;
                     KeyguardManager myKM = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
                     while( myKM.inKeyguardRestrictedInputMode()) {
+                        i++;
                         Thread.sleep(500);
                     }
-                    Thread.sleep(700);
+
+                    Thread.sleep(i != 0 ? 700 : 50);
 
                     Intent intent = new Intent(context, AndroidLauncher.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // You need this if starting

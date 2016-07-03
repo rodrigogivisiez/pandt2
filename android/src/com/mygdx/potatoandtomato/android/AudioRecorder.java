@@ -58,7 +58,7 @@ public class AudioRecorder {
         stopRecord(false);
 
         if(!isStoragePermissionGranted()){
-            broadcaster.broadcast(BroadcastEvent.RECORD_RESPONSE, "", Status.FAILED);
+            recordListener.onFinishedRecord(null, -1, Status.FAILED);
             return;
         }
         refreshParametersIfNeeded();

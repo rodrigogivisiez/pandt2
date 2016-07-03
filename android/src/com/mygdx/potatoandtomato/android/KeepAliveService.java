@@ -1,21 +1,16 @@
 package com.mygdx.potatoandtomato.android;
 
-import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.os.IBinder;
-import android.util.Log;
 import com.mygdx.potatoandtomato.absintflis.push_notifications.PushCode;
-import com.mygdx.potatoandtomato.models.PushNotification;
+import com.mygdx.potatoandtomato.android.receivers.HandleNotificationBroadcastReceiver;
+import com.mygdx.potatoandtomato.android.receivers.RoomAliveReceiver;
 import com.mygdx.potatoandtomato.utils.Logs;
-import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 
 public class KeepAliveService extends Service {
 

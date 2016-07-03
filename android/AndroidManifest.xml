@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mygdx.potatoandtomato.android"
-    android:versionCode="80"
+    android:versionCode="83"
     android:versionName="1.0" >
 
 
@@ -85,10 +85,19 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".HandleNotificationBroadcastReceiver" >
+        <receiver android:name=".receivers.HandleNotificationBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="com.mygdx.potatoandtomato.android.startActivity" />
+            </intent-filter>
         </receiver>
 
-        <receiver android:name=".RoomAliveReceiver" >
+        <receiver android:name=".receivers.RoomAliveReceiver" >
+        </receiver>
+
+        <receiver android:name=".receivers.InvitationAcceptReceiver" >
+        </receiver>
+
+        <receiver android:name=".receivers.InvitationRejectReceiver" >
         </receiver>
 
         <service

@@ -7,6 +7,6 @@ import com.potatoandtomato.common.enums.RoomUpdateType;
  */
 public enum ConnectionStatus {
 
-    Connected, Disconnected, Abandoned
+    Connected, Disconnected, Disconnected_No_CountDown, Abandoned
 
 }

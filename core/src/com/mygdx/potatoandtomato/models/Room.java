@@ -33,7 +33,7 @@ public class Room {
     Profile host;
     String id;  //this is database ID
 
-    ArrayList<Profile> invitedUsers;
+    ArrayList<String> invitedUserIds;
 
     ArrayList<Team> teams;
 
@@ -107,15 +107,15 @@ public class Room {
         this.roomUsersMap = roomUsersMap;
     }
 
-    public ArrayList<Profile> getInvitedUsers() {
-        if(invitedUsers == null){
-            invitedUsers = new ArrayList();
+    public ArrayList<String> getInvitedUserIds() {
+        if(invitedUserIds == null){
+            invitedUserIds = new ArrayList();
         }
-        return invitedUsers;
+        return invitedUserIds;
     }
 
-    public void setInvitedUsers(ArrayList<Profile> invitedUsers) {
-        this.invitedUsers = invitedUsers;
+    public void setInvitedUserIds(ArrayList<String> invitedUserIds) {
+        this.invitedUserIds = invitedUserIds;
     }
 
     public Profile getHost() {
@@ -159,13 +159,13 @@ public class Room {
     }
 
     @JsonIgnore
-    public Profile getInvitedUserByUserId(String userId){
-        for(Profile user : this.getInvitedUsers()){
-            if(user.getUserId().equals(userId)){
-                return user;
+    public boolean getUserIsInvited(String userId){
+        for(String invited : this.getInvitedUserIds()){
+            if(invited.equals(userId)){
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
     @JsonIgnore
@@ -179,9 +179,9 @@ public class Room {
     }
 
     @JsonIgnore
-    public boolean addInvitedUser(Profile user){
-        if(getInvitedUserByUserId(user.getUserId()) == null){
-            getInvitedUsers().add(user);
+    public boolean addInvitedUserId(String userId){
+        if(!getUserIsInvited(userId)) {
+            getInvitedUserIds().add(userId);
             return true;
         }
         return false;

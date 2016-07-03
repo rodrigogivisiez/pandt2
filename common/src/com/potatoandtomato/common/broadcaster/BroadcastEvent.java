@@ -39,7 +39,6 @@ public class BroadcastEvent {
     public static final int SOUNDS_CHANGED = 32;    //sounds changed
     public static final int RECORD_START = 33;  //audio recording start
     public static final int RECORD_END = 34;  //audio recording end
-    public static final int RECORD_RESPONSE = 35; //audio record respond back
     public static final int SHOW_REWARD_VIDEO = 36; //show reward video
     public static final int HAS_REWARD_VIDEO = 38; //check has reward video
     public static final int IAB_PRODUCTS_REQUEST = 39; //request for iab products

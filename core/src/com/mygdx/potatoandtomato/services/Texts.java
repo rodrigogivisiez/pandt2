@@ -124,12 +124,17 @@ public class Texts {
     public String noLeaderBoard() { return "This game doesn't have leaderboard function enabled.";}
 
     public String xInvitedX() { return "%s has invited %s to join this room.";}
+    public String xInvitedXAlias() { return "%s has invited %s (previously known as %s) to join this room.";}
     public String xInvitedXFailed() { return "%s has invited %s to join this room, but request failed.";}
 
     public String playedXAgo() { return "Played %s together %s";}
+    public String gameNameIs() { return "Game name: %s";}
 
     public String gameStarting() { return "Game will be starting soon after %s coin(s) inserted.";}
     public String gameStartStop() { return "Game start process is stopped by %s...";}
+
+    public String invitationAccepted() { return "%s has accepted the game invitation and is joining soon.";}
+    public String invitationRejected() { return "%s is too busy for a game at this moment.";}
 
     public String confirmQuit() { return "Are you sure you want to quit Potato and Tomato?";}
 

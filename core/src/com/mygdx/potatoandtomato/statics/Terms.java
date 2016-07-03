@@ -21,7 +21,7 @@ public class Terms {
     public static String PREF_CHAT_TEMPLATE = "chatTemplates";
     public static String LOCAL_HOST = "localhost";
     public static String WATCH_ADS_ID = "WATCH_ADS";
-
+    public static String PUSH_CODE = "pushCode";
 
     public static String FIREBASE_URL(){
         return !Global.DEBUG ? "https://glaring-inferno-8572.firebaseIO.com" : "https://ptapptest.firebaseio.com/";

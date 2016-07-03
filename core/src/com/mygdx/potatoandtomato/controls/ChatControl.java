@@ -1034,6 +1034,7 @@ public class ChatControl {
             public void run() {
                 ArrayList<String> connectedUsers = new ArrayList<String>();
                 ArrayList<String> disconnectedUsers = new ArrayList<String>();
+                ArrayList<String> disconnectedNoCountDownUsers = new ArrayList<String>();
                 ArrayList<String> abandonedUsers = new ArrayList<String>();
 
                 Table rootTable = new Table();
@@ -1055,6 +1056,9 @@ public class ChatControl {
                     else if(playerConnectionStatus.getSecond() == ConnectionStatus.Disconnected){
                         disconnectedUsers.add(playerConnectionStatus.getFirst());
                     }
+                    else if(playerConnectionStatus.getSecond() == ConnectionStatus.Disconnected_No_CountDown){
+                        disconnectedNoCountDownUsers.add(playerConnectionStatus.getFirst());
+                    }
                     else if(playerConnectionStatus.getSecond() == ConnectionStatus.Abandoned){
                         abandonedUsers.add(playerConnectionStatus.getFirst());
                     }
@@ -1062,9 +1066,10 @@ public class ChatControl {
 
                 Collections.sort(connectedUsers);
                 Collections.sort(disconnectedUsers);
+                Collections.sort(disconnectedNoCountDownUsers);
                 Collections.sort(abandonedUsers);
 
-                for(int i = 0; i < 3; i++){
+                for(int i = 0; i < 4; i++){
                     ArrayList<String> users = null;
                     ConnectionStatus status = null;
                     if(i == 0){
@@ -1076,6 +1081,10 @@ public class ChatControl {
                         status = ConnectionStatus.Disconnected;
                     }
                     else if(i == 2){
+                        users = disconnectedNoCountDownUsers;
+                        status = ConnectionStatus.Disconnected_No_CountDown;
+                    }
+                    else if(i == 3){
                         users = abandonedUsers;
                         status = ConnectionStatus.Abandoned;
                     }
@@ -1118,7 +1127,7 @@ public class ChatControl {
             case Connected:
                 color = Color.valueOf("37a719");
                 break;
-            case Disconnected:
+            case Disconnected: case Disconnected_No_CountDown:
                 color = Color.valueOf("ff0000");
                 break;
             case Abandoned:

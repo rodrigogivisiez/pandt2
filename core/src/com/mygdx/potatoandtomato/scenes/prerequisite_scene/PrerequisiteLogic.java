@@ -196,7 +196,7 @@ public class PrerequisiteLogic extends LogicAbstract {
         _joiningRoom = new Room();
         _joiningRoom.setWarpRoomId(roomId);
         _joiningRoom.setGame(_game);
-        _joiningRoom.setOpen(true);
+        _joiningRoom.setOpen(false);
         _joiningRoom.setHost(_services.getProfile());
         _joiningRoom.setPlaying(false);
         _joiningRoom.setRoundCounter(0);
@@ -205,7 +205,6 @@ public class PrerequisiteLogic extends LogicAbstract {
             @Override
             public void onCallback(String obj, Status st) {
                 if (st == Status.SUCCESS) {
-                    _services.getDatabase().setOnDisconnectCloseRoom(_joiningRoom);
                     _screen.toScene(SceneEnum.ROOM, _joiningRoom, false);
                 } else {
                     joinRoomFailed(0);
@@ -215,9 +214,6 @@ public class PrerequisiteLogic extends LogicAbstract {
     }
 
     public void joinRoomSuccess(){
-        if(_joiningRoom.getHost().getUserId().equals(_services.getProfile().getUserId())){
-            _services.getDatabase().setOnDisconnectCloseRoom(_joiningRoom);
-        }
         _screen.toScene(SceneEnum.ROOM, _joiningRoom, _joinType == JoinType.CONTINUING);
     }
 

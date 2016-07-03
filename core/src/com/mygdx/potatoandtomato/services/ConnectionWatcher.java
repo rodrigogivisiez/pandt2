@@ -56,13 +56,17 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
         connectionWatcherListeners.clear();
     }
 
-    public void resetAndBackToBoot(){
+    public void resetAndBackToBoot(boolean showDisconnectedMsg){
         showingResumeGame = false;
         showingLostConnection = false;
         confirm.close();
         broadcaster.broadcast(BroadcastEvent.DESTROY_ROOM);
         ptScreen.backToBoot();
-        confirm.show(texts.noConnection(), Confirm.Type.YES, null);
+
+        if(showDisconnectedMsg){
+            confirm.show(texts.noConnection(), Confirm.Type.YES, null);
+        }
+
         count = 0;
         if(safeThread != null) safeThread.kill();
     }
@@ -78,7 +82,7 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
             public void onChanged(String userId, ConnectStatus st) {
                 if(profile != null && userId != null && userId.equals(profile.getUserId())){
                     if(st == ConnectStatus.DISCONNECTED){
-                        resetAndBackToBoot();
+                        resetAndBackToBoot(true);
                     }
                     else if(st == ConnectStatus.DISCONNECTED_BUT_RECOVERABLE){
                         if(count == 0){
@@ -104,7 +108,7 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
                                         showLostConnection(totalCount - count);
                                     }
 
-                                    resetAndBackToBoot();
+                                    resetAndBackToBoot(true);
                                 }
                             });
 
@@ -144,7 +148,7 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
                 @Override
                 public void onResult(Result result) {
                     if (result == Result.CANCEL) {
-                        resetAndBackToBoot();
+                        resetAndBackToBoot(false);
                     }
                 }
             }, texts.clickToDisconnect());
@@ -169,7 +173,7 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
                 @Override
                 public void onResult(Result result) {
                     if (result == Result.CANCEL) {
-                        resetAndBackToBoot();
+                        resetAndBackToBoot(false);
                     }
                 }
             }, texts.clickToDisconnect());

@@ -86,11 +86,8 @@ public class Recorder {
                         else{
                             broadcaster.broadcast(BroadcastEvent.RECORD_END, "", Status.SUCCESS);
                         }
-
-
                     }
                 });
-
             }
 
             @Override

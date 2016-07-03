@@ -63,7 +63,6 @@ public class Confirm {
         this.broadcaster = broadcaster;
 
         populateRoot();
-        attachEvent();
         invalidate();
 
         this.broadcaster.subscribe(BroadcastEvent.DEVICE_ORIENTATION, new BroadcastListener() {

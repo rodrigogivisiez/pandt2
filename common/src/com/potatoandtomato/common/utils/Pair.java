@@ -13,6 +13,10 @@ public class Pair<A, B> {
         this.second = second;
     }
 
+    public Pair() {
+        super();
+    }
+
     public int hashCode() {
         int hashFirst = first != null ? first.hashCode() : 0;
         int hashSecond = second != null ? second.hashCode() : 0;

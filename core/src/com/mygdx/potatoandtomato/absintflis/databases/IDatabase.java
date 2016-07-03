@@ -1,8 +1,10 @@
 package com.mygdx.potatoandtomato.absintflis.databases;
 
+import com.firebase.client.Firebase;
 import com.firebase.client.annotations.Nullable;
 import com.mygdx.potatoandtomato.enums.RoomUserState;
 import com.mygdx.potatoandtomato.models.*;
+import com.mygdx.potatoandtomato.services.FirebaseDB;
 import com.potatoandtomato.common.models.LeaderboardRecord;
 import com.potatoandtomato.common.models.Streak;
 
@@ -48,7 +50,7 @@ public interface IDatabase {
 
      void setOnDisconnectCloseRoom(Room room);
 
-     void setInvitedUsers(ArrayList<Profile> invitedUsers, Room room, DatabaseListener listener);
+     void setInvitedUsers(ArrayList<String> invitedUserIds, Room room, DatabaseListener listener);
 
      void addUserToRoom(Room room, Profile user, int slotIndex, RoomUserState roomUserState, DatabaseListener<String> listener);
 
@@ -63,6 +65,12 @@ public interface IDatabase {
      void getRoomById(String id, DatabaseListener<Room> listener);
 
      void monitorAllRooms(ArrayList<Room> rooms, String classTag, SpecialDatabaseListener<ArrayList<Room>, Room> listener);
+
+     void monitorRoomInvitations(String roomId, String classTag, DatabaseListener listener);
+
+     void checkRoomInvitationResponseExist(String roomId, String userId, DatabaseListener<Boolean> listener);
+
+     void getPendingInvitationRoomIds(Profile profile, DatabaseListener<ArrayList<String>> listener);
 
      String notifyRoomChanged(Room room);
 
@@ -83,8 +91,6 @@ public interface IDatabase {
      void savePlayedHistory(Profile profile, Room room, DatabaseListener<String> listener);
 
      void getPlayedHistories(Profile profile, DatabaseListener<ArrayList<GameHistory>> listener);
-   
-     void getPendingInvitationsCount(Profile profile, DatabaseListener<Integer> listener);
 
      void getGameByAbbr(String abbr, DatabaseListener<Game> listener);
 

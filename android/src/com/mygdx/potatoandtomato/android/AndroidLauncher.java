@@ -107,7 +107,7 @@ public class AndroidLauncher extends AndroidApplication {
 		_broadcaster.subscribe(BroadcastEvent.UPDATE_ROOM, new BroadcastListener<PushNotification>() {
 			@Override
 			public void onCallback(PushNotification obj, Status st) {
-				GcmMessageHandler.showNotification(_this, obj);
+				GcmMessageHandler.handleNotification(_this, obj);
 			}
 		});
 

@@ -11,7 +11,6 @@ import java.io.IOException;
  */
 public class PushNotification {
 
-
     private int id;
     private boolean sticky;
     private String message;

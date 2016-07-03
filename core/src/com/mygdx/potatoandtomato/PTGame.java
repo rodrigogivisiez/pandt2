@@ -129,6 +129,7 @@ public class PTGame extends Game implements IPTGame {
 		_broadcaster.broadcast(BroadcastEvent.DESTROY_ROOM);
 		if(_services != null && _services.getAssets() != null) _services.getAssets().dispose();
 		if(_services != null && _services.getAssets() != null) _services.getGamingKit().dispose();
+		if(_services != null && _services.getDatabase() != null) _services.getDatabase().offline();
 	}
 
 

@@ -177,7 +177,7 @@ public class ShopLogic extends LogicAbstract {
                                 @Override
                                 public void clicked(InputEvent event, float x, float y) {
                                     super.clicked(event, x, y);
-                                    getBroadcaster().subscribeOnce(BroadcastEvent.IAB_PRODUCT_PURCHASE_RESPONSE, new BroadcastListener() {
+                                    subscribeBroadcastOnceWithTimeout(BroadcastEvent.IAB_PRODUCT_PURCHASE_RESPONSE, 60 * 1000, new BroadcastListener() {
                                         @Override
                                         public void onCallback(Object obj, Status st) {
                                             if(st == Status.SUCCESS){
@@ -185,7 +185,7 @@ public class ShopLogic extends LogicAbstract {
                                             }
                                         }
                                     });
-                                    getBroadcaster().broadcast(BroadcastEvent.IAB_PRODUCT_PURCHASE, new Pair<String, IRestfulApi>(coinProduct.getId(), _services.getRestfulApi()));
+                                    publishBroadcast(BroadcastEvent.IAB_PRODUCT_PURCHASE, new Pair<String, IRestfulApi>(coinProduct.getId(), _services.getRestfulApi()));
                                 }
                             });
                         }

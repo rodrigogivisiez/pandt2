@@ -9,6 +9,10 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import com.google.android.gms.gcm.GcmListenerService;
 import com.mygdx.potatoandtomato.absintflis.push_notifications.PushCode;
+import com.mygdx.potatoandtomato.android.receivers.HandleNotificationBroadcastReceiver;
+import com.mygdx.potatoandtomato.android.receivers.InvitationAcceptReceiver;
+import com.mygdx.potatoandtomato.android.receivers.InvitationRejectReceiver;
+import com.mygdx.potatoandtomato.android.receivers.RoomAliveReceiver;
 import com.mygdx.potatoandtomato.models.PushNotification;
 import com.shaded.fasterxml.jackson.core.JsonProcessingException;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
@@ -22,30 +26,28 @@ public class GcmMessageHandler extends GcmListenerService {
     public void onMessageReceived(String from, Bundle data) {
         String message = data.getString("message");
         PushNotification pushNotification = new PushNotification(message);
-        if(pushNotification.getId() == PushCode.DESTROY_ROOM){
-            Intent i = new Intent();
-            i.setClass(this, RoomAliveReceiver.class);
-            i.setAction("RELEASE");
-            this.sendBroadcast(i);
-        }
-        else if(pushNotification.getId() == PushCode.UPDATE_ROOM && !RoomAliveHelper.isActivated()){
+        handleNotification(this, pushNotification);
+    }
+
+    public static void handleNotification(Context context, PushNotification pushNotification){
+        if(pushNotification.getId() == PushCode.UPDATE_ROOM && !RoomAliveHelper.isActivated()){
             try {
                 Intent i = new Intent();
-                i.setClass(this, RoomAliveReceiver.class);
+                i.setClass(context, RoomAliveReceiver.class);
                 i.setAction("KEEP");
                 ObjectMapper mapper = new ObjectMapper();
                 i.putExtra("push", mapper.writeValueAsString(pushNotification));
-                this.sendBroadcast(i);
+                context.sendBroadcast(i);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
         }
         else{
-            showNotification(this, new PushNotification(message));
+            showNotification(context,pushNotification);
         }
     }
 
-    public static void showNotification(Context context, PushNotification pushNotification){
+    private static void showNotification(Context context, PushNotification pushNotification){
         Intent intent = new Intent(context, HandleNotificationBroadcastReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
                 pushNotification.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -56,6 +58,26 @@ public class GcmMessageHandler extends GcmListenerService {
                 .setContentIntent(pendingIntent)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setWhen(System.currentTimeMillis());
+
+        if(pushNotification.getId() == PushCode.SEND_INVITATION){
+            Intent acceptIntent = new Intent(context, InvitationAcceptReceiver.class);
+            acceptIntent.putExtra("pushCode", PushCode.SEND_INVITATION);
+            acceptIntent.putExtra("data", pushNotification.getExtras());
+            PendingIntent acceptPendingIntent = PendingIntent.getBroadcast(context,
+                    pushNotification.getId(), acceptIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            Intent rejectIntent = new Intent(context, InvitationRejectReceiver.class);
+            rejectIntent.putExtra("pushCode", PushCode.SEND_INVITATION);
+            rejectIntent.putExtra("data", pushNotification.getExtras());
+            PendingIntent rejectPendingIntent = PendingIntent.getBroadcast(context,
+                    pushNotification.getId(), rejectIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            builder.addAction(R.drawable.ic_stat_action_done, context.getResources().getString(R.string.invitation_accept),
+                    acceptPendingIntent);
+            builder.addAction(R.drawable.ic_stat_navigation_close, context.getResources().getString(R.string.invitation_reject),
+                    rejectPendingIntent);
+        }
+
 
         if(!pushNotification.isSticky()) builder.setAutoCancel(true);
 

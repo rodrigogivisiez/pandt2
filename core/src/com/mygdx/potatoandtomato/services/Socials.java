@@ -52,14 +52,15 @@ public class Socials {
     }
 
     public void logoutFacebook(final FacebookListener listener){
-        _broadcaster.subscribeOnceWithTimeout(BroadcastEvent.LOGOUT_FACEBOOK_REQUEST, 10000, new BroadcastListener<JsonObj>() {
+        _broadcaster.subscribeOnceWithTimeout(BroadcastEvent.LOGOUT_FACEBOOK_CALLBACK, 10000, new BroadcastListener<JsonObj>() {
             @Override
             public void onCallback(JsonObj obj, Status st) {
+                fbUserId = null;
+                fbUsername = null;
+                _pref.delete(Terms.FACEBOOK_USERID);
+
                 //logout success success
                 if (st == Status.SUCCESS) {
-                    fbUserId = null;
-                    fbUsername = null;
-                    _pref.delete(Terms.FACEBOOK_USERID);
                     listener.onLogoutComplete(FacebookListener.Result.SUCCESS);
                     return;
                 }
