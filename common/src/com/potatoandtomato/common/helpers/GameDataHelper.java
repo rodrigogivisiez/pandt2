@@ -41,6 +41,7 @@ public class GameDataHelper implements Disposable {
     private GameCoordinator gameCoordinator;
     private IDisconnectOverlayControl disconnectOverlayControl;
     private boolean comeBackFromRecoverConnection;
+    private boolean finalized;
     private OneTimeRunnable onGameDataReceivedRunnable;
 
     public GameDataHelper(ArrayList<Team> teams, String myUserId,
@@ -52,7 +53,7 @@ public class GameDataHelper implements Disposable {
         this.disconnectOverlayControl = disconnectOverlayControl;
         usersHasDataMap = new ConcurrentHashMap();
         toRunWhenHaveData = new ArrayList();
-        this.gameCoordinator = gameCoordinator;
+        this.gameCoordinator = coordinator;
         this.iptGame = iptGame;
 
         teamsInit(teams);
@@ -148,7 +149,7 @@ public class GameDataHelper implements Disposable {
                     else{
                         elapsed += sleepMilisecs;
                         if(elapsed > failToleranceMiliSecs){
-                            gameDataFailedToRetrieve();
+                            gameDataFailedToRetrieve(ErrorType.TimeOut);
                             disconnectOverlayControl.hideOverlay();
                             break;
                         }
@@ -199,22 +200,32 @@ public class GameDataHelper implements Disposable {
     }
 
     public void sendGameData(boolean isPrivate, String toUserId){
-        String gameData;
-        if(!dataGeneratedBefore){
-            gameData = gameDataContract.generateGameData();
-            dataGeneratedBefore = true;
+        if(finalized){
+            if(isPrivate){
+                gameSandBox.sendPrivateUpdate(RoomUpdateType.GameData, toUserId, ErrorType.GameFinalizedAlready.name());
+            }
+            else{
+                gameSandBox.sendUpdate(RoomUpdateType.GameData, ErrorType.GameFinalizedAlready.name());
+            }
         }
         else{
-            gameData = gameDataContract.getCurrentGameData();
-        }
+            String gameData;
+            if(!dataGeneratedBefore){
+                gameData = gameDataContract.generateGameData();
+                dataGeneratedBefore = true;
+            }
+            else{
+                gameData = gameDataContract.getCurrentGameData();
+            }
 
-        String msg = gameDataToJsonString(gameData);
+            String msg = gameDataToJsonString(gameData);
 
-        if(isPrivate){
-            gameSandBox.sendPrivateUpdate(RoomUpdateType.GameData, toUserId, msg);
-        }
-        else{
-            gameSandBox.sendUpdate(RoomUpdateType.GameData, msg);
+            if(isPrivate){
+                gameSandBox.sendPrivateUpdate(RoomUpdateType.GameData, toUserId, msg);
+            }
+            else{
+                gameSandBox.sendUpdate(RoomUpdateType.GameData, msg);
+            }
         }
     }
 
@@ -226,25 +237,30 @@ public class GameDataHelper implements Disposable {
            return;
         }
 
-        try {
-            JsonObj jsonObj = new JsonObj(msg);
-            String usersHasDataMapJson = jsonObj.getString("usersHasDataMapJson");
-            String gameData = jsonObj.getString("gameData");
+        if(msg.equals(ErrorType.GameFinalizedAlready.name())){
+            gameDataFailedToRetrieve(ErrorType.GameFinalizedAlready);
+        }
+        else{
+            try {
+                JsonObj jsonObj = new JsonObj(msg);
+                String usersHasDataMapJson = jsonObj.getString("usersHasDataMapJson");
+                String gameData = jsonObj.getString("gameData");
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            ConcurrentHashMap<String, Boolean> receivedUsersHasDataMap = objectMapper.readValue(usersHasDataMapJson, ConcurrentHashMap.class);
-            receivedUsersHasDataMap.put(myUserId, true);
-            usersHasDataMap = receivedUsersHasDataMap;
-            meHaveDataChanged();
+                ObjectMapper objectMapper = new ObjectMapper();
+                ConcurrentHashMap<String, Boolean> receivedUsersHasDataMap = objectMapper.readValue(usersHasDataMapJson, ConcurrentHashMap.class);
+                receivedUsersHasDataMap.put(myUserId, true);
+                usersHasDataMap = receivedUsersHasDataMap;
+                meHaveDataChanged();
 
-            gameDataContract.onGameDataReceived(gameData);
+                gameDataContract.onGameDataReceived(gameData);
 
-            if(onGameDataReceivedRunnable != null) onGameDataReceivedRunnable.run();
+                if(onGameDataReceivedRunnable != null) onGameDataReceivedRunnable.run();
 
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -254,11 +270,16 @@ public class GameDataHelper implements Disposable {
         }
     }
 
-    public void gameDataFailedToRetrieve(){
+    public void gameDataFailedToRetrieve(ErrorType errorType){
         if(safeThread != null) safeThread.kill();
 
         if(!gameDataContract.onFailedRetrieve()){
-            gameCoordinator.raiseGameFailedError(Texts.failedToExchangeGameData);
+            if(errorType == ErrorType.GameFinalizedAlready){
+                gameCoordinator.raiseGameFailedError(Texts.gameAlreadyFinalized);
+            }
+            else if(errorType == ErrorType.TimeOut){
+                gameCoordinator.raiseGameFailedError(Texts.failedToExchangeGameData);
+            }
         }
     }
 
@@ -325,10 +346,20 @@ public class GameDataHelper implements Disposable {
         }
     }
 
+    //game is finalize, sending of gamedata is not allowed anymore
+    public void gameFinalized(){
+        finalized = true;
+    }
+
     @Override
     public void dispose() {
         if(safeThread != null) safeThread.kill();
         if(safeThread2 != null) safeThread2.kill();
         disconnectOverlayControl.hideOverlay();
     }
+
+    private enum ErrorType{
+        TimeOut, GameFinalizedAlready
+    }
+
 }

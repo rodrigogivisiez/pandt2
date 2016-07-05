@@ -13,6 +13,7 @@ import com.mygdx.potatoandtomato.enums.ConnectionStatus;
 import com.mygdx.potatoandtomato.enums.RoomUserState;
 import com.mygdx.potatoandtomato.enums.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.models.*;
+import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.models.Team;

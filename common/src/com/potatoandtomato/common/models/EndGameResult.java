@@ -12,6 +12,7 @@ public class EndGameResult {
     private ArrayList<Team> _loserTeams;
     private boolean  _won;
     private boolean _abandon;
+    private boolean willLoseStreak;
     private ArrayList<Player> _myTeam;
 
     public EndGameResult() {
@@ -56,6 +57,14 @@ public class EndGameResult {
 
     public void setAbandon(boolean _abandon) {
         this._abandon = _abandon;
+    }
+
+    public boolean isWillLoseStreak() {
+        return willLoseStreak;
+    }
+
+    public void setWillLoseStreak(boolean willLoseStreak) {
+        this.willLoseStreak = willLoseStreak;
     }
 
     public ArrayList<ScoreDetails> getMyTeamWinnerScoreDetails(String userId){

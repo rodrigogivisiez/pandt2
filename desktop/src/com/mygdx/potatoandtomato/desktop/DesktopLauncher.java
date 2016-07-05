@@ -24,6 +24,7 @@ import com.potatoandtomato.common.utils.Threadings;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 
 public class DesktopLauncher {
 
@@ -79,6 +80,14 @@ public class DesktopLauncher {
 				obj.run(false);
 			}
 		});
+
+		_broadcaster.subscribe(BroadcastEvent.IAB_PRODUCTS_REQUEST, new BroadcastListener() {
+			@Override
+			public void onCallback(Object obj, Status st) {
+				_broadcaster.broadcast(BroadcastEvent.IAB_PRODUCTS_RESPONSE, new ArrayList());
+			}
+		});
+
 	}
 
 	public static void subscribeOrientationChanged(){

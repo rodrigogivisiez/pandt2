@@ -11,6 +11,7 @@ import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.controls.DisposableActor;
+import com.potatoandtomato.common.enums.ConfirmMsgType;
 import com.potatoandtomato.common.enums.RoomUpdateType;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.helpers.DesktopImageLoader;
@@ -64,12 +65,17 @@ public abstract class MockGame extends Game implements IPTGame {
         _processors = new Array<InputProcessor>();
         _gameCoordinator = new GameCoordinator("", "", "", new ArrayList<Team>(), 360, 640, this, _spriteBatch, "", new IGameSandBox() {
             @Override
-            public void useConfirm(String msg, Runnable yesRunnable, Runnable noRunnable) {
-                System.out.println("show confirm: " + msg);
-                if (msg.equals("PTTEXT_ABANDON")) {
+            public void useConfirm(ConfirmMsgType msgType, Runnable yesRunnable, Runnable noRunnable) {
+                if (msgType == ConfirmMsgType.AbandonGameNoCons ||
+                        msgType == ConfirmMsgType.AbandonGameConsLoseStreak) {
                     yesRunnable.run();
                     _mockGamingKit.sendUpdate(-1, "SURRENDER", false, "");
                 }
+            }
+
+            @Override
+            public void useConfirm(String msg, Runnable yesRunnable, Runnable noRunnable) {
+
             }
 
             @Override
@@ -224,7 +230,7 @@ public abstract class MockGame extends Game implements IPTGame {
             }
 
             @Override
-            public void initCoinMachine(int expectingCoin, String transactionId, ArrayList<Pair<String, String>> userIdToNamePairs) {
+            public void initCoinMachine(int expectingCoin, String transactionId, ArrayList<Pair<String, String>> userIdToNamePairs, boolean requestFromOthers) {
 
             }
 

@@ -6,6 +6,7 @@ import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.models.ScoreDetails;
 import com.potatoandtomato.common.models.Streak;
 import com.potatoandtomato.common.models.Team;
+import com.potatoandtomato.common.utils.HashMapUtils;
 import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.common.utils.ThreadsPool;
@@ -47,8 +48,8 @@ public class ScoresHandler implements Disposable{
     public static final double EASY_WIN = 50;
     public static final double NORMAL_WIN = 300;
     public static final double HARD_WIN = 500;
-    public static final double PAWN_LEADERBOARD_OPPONENT = 200;
-    public static final double FIRST_TIME_WIN_THIS_OPPONENT = 1000;
+    public static final double PAWN_LEADERBOARD_OPPONENT = 100;
+    public static final double FIRST_TIME_WIN_THIS_OPPONENT = 1100;
 
 
     public ScoresHandler(GameCoordinator coordinator, Database database, Texts texts, GameDataController gameDataController) {
@@ -185,7 +186,7 @@ public class ScoresHandler implements Disposable{
     }
 
     public double getMultiply(ArrayList<ScoreDetails> scoreDetails, boolean canAddStreak){
-        double result = 1f;
+        HashMap<ScoreDetails, Double> resultMaps = new HashMap();
 
         ///////////////////////////////
         ///check in losing streak start
@@ -206,9 +207,8 @@ public class ScoresHandler implements Disposable{
         }
 
         if(isInLosingStreak){
-            result = CATCH_UP_MULTIPLIER;
-            scoreDetails.add(0, new ScoreDetails(result, texts.timeToCatchUp() , false, true));
-            return result;
+            double result = CATCH_UP_MULTIPLIER;
+            resultMaps.put(new ScoreDetails(result, texts.timeToCatchUp() , false, canAddStreak), result);
         }
 
        //----------------------------------------------------------------------------------------------------------------------//
@@ -216,8 +216,8 @@ public class ScoresHandler implements Disposable{
         /////////////////////////////////////
         ///check enemy streak and my streak
         ////////////////////////////////////
-        Streak winnerStreak = this.winnerTeam.getLeaderboardRecord().getStreak().clone();
-        Streak loserStreak = this.loserTeam.getLeaderboardRecord().getStreak().clone();
+        Streak winnerStreak = getWinnerStreak();
+        Streak loserStreak = getLoserStreak();
         if(canAddStreak){
             winnerStreak.addStreak(1);
         }
@@ -232,20 +232,30 @@ public class ScoresHandler implements Disposable{
             loserStreakCount = loserStreak.getStreakCount();
         }
 
-        if(winnerStreakCount != 0 || loserStreakCount != 0){
-            if(loserStreakCount > winnerStreakCount){
-                result = 1 + (loserStreakCount * KILL_STREAK_MULTIPLIER);
-                scoreDetails.add(0, new ScoreDetails(result, String.format(texts.breakEnemyXWinStreak(), loserStreakCount), false, true));
-            }
-            else{
-                if(canAddStreak){
-                    result = 1 + (winnerStreakCount * KILL_STREAK_MULTIPLIER);
-                    scoreDetails.add(0, new ScoreDetails(result, String.format(texts.xWinStreak(), winnerStreakCount) , false, true));
-                }
-            }
+        if(winnerStreakCount != 0 && canAddStreak){     //use my own streak only when canAddStreak is true
+            double result =  1 + (winnerStreakCount * KILL_STREAK_MULTIPLIER);;
+            resultMaps.put(new ScoreDetails(result, String.format(texts.xWinStreak(), winnerStreakCount) , false, canAddStreak), result);
         }
 
-        return result;
+        if(loserStreakCount != 0){
+            double result =  1 + (loserStreakCount * KILL_STREAK_MULTIPLIER);;
+            resultMaps.put(new ScoreDetails(result, String.format(texts.breakEnemyXWinStreak(), loserStreakCount) , false, canAddStreak), result);
+        }
+
+        HashMapUtils<ScoreDetails> hashMapUtils = new HashMapUtils<ScoreDetails>();
+        HashMap<ScoreDetails, Double> sortedResultMaps = hashMapUtils.sortByValue(resultMaps, false);
+
+        if(sortedResultMaps.size() > 0){
+            for(ScoreDetails details : sortedResultMaps.keySet()){
+                scoreDetails.add(0, details);
+                return sortedResultMaps.get(details);
+            }
+        }
+        else{
+            return 1f;
+        }
+
+        return 1f;
     }
 
     public boolean checkWinSituation(ArrayList<ScoreDetails> scoreDetails, BoardModel boardModel, GraveModel graveModel){
@@ -329,6 +339,15 @@ public class ScoresHandler implements Disposable{
         return this.loserTeam.getPlayersUserIds().get(0);
     }
 
+    public Streak getWinnerStreak(){
+        Streak winnerStreak = this.winnerTeam.getLeaderboardRecord().getStreak().clone();
+        return winnerStreak;
+    }
+
+    public Streak getLoserStreak(){
+        Streak loserStreak = this.loserTeam.getLeaderboardRecord().getStreak().clone();
+        return loserStreak;
+    }
 
     @Override
     public void dispose() {

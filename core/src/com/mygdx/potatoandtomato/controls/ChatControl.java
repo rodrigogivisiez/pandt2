@@ -197,13 +197,13 @@ public class ChatControl {
         roomUsersButtonRootTrans.add(roomUsersButtonTrans).width(BUTTON_WIDTH);
         roomUsersButtonRootTrans.addActor(roomUsersLabelTrans);
 
-        keyboardToggleButton = new CheckButton(new TextureRegionDrawable(assets.getTextures().get(Textures.Name.ROOM_USERS_BTN)),
-                        new TextureRegionDrawable(assets.getTextures().get(Textures.Name.ROOM_USERS_BTN_ONPRESS)),
-                        new TextureRegionDrawable(assets.getTextures().get(Textures.Name.ROOM_USERS_BTN_ONPRESS)));
+        keyboardToggleButton = new CheckButton(new TextureRegionDrawable(assets.getTextures().get(Textures.Name.KEYBOARD_BTN)),
+                        new TextureRegionDrawable(assets.getTextures().get(Textures.Name.KEYBOARD_BTN_ONPRESS)),
+                        new TextureRegionDrawable(assets.getTextures().get(Textures.Name.KEYBOARD_BTN_ONPRESS)));
 
 
-        keyboardToggleButtonTrans = new Button(new TextureRegionDrawable(assets.getTextures().get(Textures.Name.SEND_BTN_TRANS)),
-                new TextureRegionDrawable(assets.getTextures().get(Textures.Name.SEND_BTN_TRANS)));
+        keyboardToggleButtonTrans = new Button(new TextureRegionDrawable(assets.getTextures().get(Textures.Name.KEYBOARD_BTN_TRANS)),
+                new TextureRegionDrawable(assets.getTextures().get(Textures.Name.KEYBOARD_BTN_TRANS)));
 
 
         sendingRoot = new Table();

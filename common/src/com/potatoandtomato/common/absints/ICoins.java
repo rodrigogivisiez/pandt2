@@ -13,7 +13,8 @@ public interface ICoins {
     void hideCoinMachine();
     void reset();
     void requestCoinsMachineStateFromOthers();
-    void initCoinMachine(int expectingCoin, String transactionId, ArrayList<Pair<String, String>> userIdToNamePairs);
+    void initCoinMachine(int expectingCoin, String transactionId, ArrayList<Pair<String, String>> userIdToNamePairs,
+                         boolean requestFromOthers);
     void startDeductCoins();
     void setCoinListener(CoinListener coinListener);
 

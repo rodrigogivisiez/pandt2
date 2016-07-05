@@ -42,6 +42,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
     private boolean _leaderboardReady, _scoreUpdated;
     private SafeThread safeThread;
     private OneTimeRunnable _addScoreOnePartDoneRunnable;
+    private boolean handled;
 
     public EndGameLeaderBoardLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
@@ -58,6 +59,9 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
     @Override
     public void onShow() {
         super.onShow();
+
+        if(handled) return;
+        handled = true;
 
         Threadings.setContinuousRenderLock(true);
         _scene.setLoadingToUpdatingScores();
@@ -102,12 +106,36 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
         _scene.leaderboardDataLoaded(_game, _records);
         _scene.hideLoading(_game);
         _scene.setMascots(LeaderBoardScene.MascotType.BORING);
-        Threadings.delay(1000, new Runnable() {
-            @Override
-            public void run() {
-                _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
-            }
-        });
+
+        if(_endGameData.getEndGameResult().isAbandon()){
+            _scene.setLeaderboardScrollPaneScrollable(_game, false);
+            Threadings.delay(1000, new Runnable() {
+                @Override
+                public void run() {
+                    int myCurrentRank = _myRankRecordPair.getFirst();
+                    if(_room.getGame().isStreakEnabled() && _endGameData.getEndGameResult().isWillLoseStreak()) {
+                        _scene.loseStreakAnimate(_game, myCurrentRank);
+                        _scene.setMascots(LeaderBoardScene.MascotType.CRY);
+                        _scene.setLeaderboardScrollPaneScrollable(_game, true);
+                        _services.getDatabase().resetUserStreak(_game, _services.getProfile().getUserId(), null);
+                    }
+                    Threadings.delay(1000, new Runnable() {
+                        @Override
+                        public void run() {
+                            _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
+                        }
+                    });
+                }
+            });
+        }
+        else{
+            Threadings.delay(1000, new Runnable() {
+                @Override
+                public void run() {
+                    _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
+                }
+            });
+        }
     }
 
     public void loserHandling(){
@@ -117,6 +145,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
+                _scene.setLeaderboardScrollPaneScrollable(_game, false);
                 _scene.leaderboardDataLoaded(_game, _records);
 
                 if(_records.size() > _leaderboardSize){     //appended not in list record in leaderboard also
@@ -145,6 +174,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                         if(_room.getGame().isStreakEnabled() && myLeaderboardRecord.getStreak().hasValidStreak()){
                                             _scene.loseStreakAnimate(_game, myCurrentRank);
                                             _scene.setMascots(LeaderBoardScene.MascotType.CRY);
+                                            _scene.setLeaderboardScrollPaneScrollable(_game, true);
                                             reviveStreakProcess(myLeaderboardRecord.getStreak(), myCurrentRank);
                                         }
                                     }
@@ -155,6 +185,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                 }
                 else{
                     _scene.hideLoading(_game);
+                    _scene.setLeaderboardScrollPaneScrollable(_game, true);
                 }
             }
         });
@@ -168,6 +199,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
             public void run() {
                 _scene.leaderboardDataLoaded(_game, _records);
                 if (_scoreDetails.size() > 0 && !_endGameData.getEndGameResult().isEmpty()) {
+                    _scene.setLeaderboardScrollPaneScrollable(_game, false);
                     _scene.populateAnimateTable(_game, _myLeaderboardRecord, currentRank, currentRank == _leaderboardSize);
                     Threadings.delay(10, new Runnable() {
                         @Override
@@ -229,6 +261,8 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                                                                         _scene.invalidateNameStreakTable(_game, _myLeaderboardRecord,
                                                                                                 finalRank1, true);
                                                                                     }
+
+                                                                                    _scene.setLeaderboardScrollPaneScrollable(_game, true);
 
                                                                                     if (finalRank1 == _leaderboardSize) {  //no enough pt to move up any rank
                                                                                         _scene.setMascots(LeaderBoardScene.MascotType.BORING);
@@ -406,7 +440,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
 
             _services.getCoins().initCoinMachine(MathUtils.floor(revivingStreakCount / 2),
                     _room.getId() + "_" + _room.getRoundCounter() + "_" + teamUserIdsString,
-                    userIdToNamePairs);
+                    userIdToNamePairs, false);
 
             _services.getCoins().setCoinListener(new CoinListener() {
                 @Override

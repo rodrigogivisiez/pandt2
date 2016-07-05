@@ -135,6 +135,9 @@ public class Room {
     }
 
     public ArrayList<Team> getTeams() {
+        if(teams == null){
+            teams = new ArrayList();
+        }
         return teams;
     }
 
@@ -380,7 +383,7 @@ public class Room {
 
     @JsonIgnore
     public Player getPlayerByUserId(String userId){
-        for(Team team : teams){
+        for(Team team : getTeams()){
             for(Player player : team.getPlayers()){
                 if(player.getUserId().equals(userId)){
                     return player;

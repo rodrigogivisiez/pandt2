@@ -1,5 +1,7 @@
 package com.mygdx.potatoandtomato.services;
 
+import com.mygdx.potatoandtomato.statics.Global;
+
 /**
  * Created by SiongLeng on 6/12/2015.
  */
@@ -131,7 +133,7 @@ public class Texts {
     public String gameNameIs() { return "Game name: %s";}
 
     public String gameStarting() { return "Game will be starting soon after %s coin(s) inserted.";}
-    public String gameStartStop() { return "Game start process is stopped by %s...";}
+    public String gameStartStop() { return "Game start process is stopped by %s.";}
 
     public String invitationAccepted() { return "%s has accepted the game invitation and is joining soon.";}
     public String invitationRejected() { return "%s is too busy for a game at this moment.";}
@@ -151,18 +153,17 @@ public class Texts {
     public String waitAllUsersReady() { return "Please wait for all users ready before start.";}
     public String waitTemporaryDisconnectedUsers() { return "Please wait for all users connection stabilize before start.";}
     public String fairTeamNeeded() { return "All teams must have equal amount of players to start.";}
-    public String confirmAbandon() { return "Are you sure you want to abandon this game?"; }
 
     public String notificationAbandon() { return "%s has abandoned the game!";}
-    public String notificationAbandonDueToTimeout() { return "%s has abandoned the game because of failed to reconnect in one minute.";}
+    public String notificationAbandonDueToTimeout() { return "%s has abandoned the game because of failed to reconnect in " + Global.ABANDON_TOLERANCE_SECS + " seconds.";}
     public String notificationConnected() { return "%s has connected to the game.";}
-    public String notificationDisconnected() { return "%s has disconnected from the game, he/she has one minute to reconnect, please wait.";}
+    public String notificationDisconnected() { return "%s has disconnected from the game, he/she has " + Global.ABANDON_TOLERANCE_SECS + " seconds to reconnect, please wait.";}
 
     public String notificationYouAbandon() { return "You have abandoned the game!";}
-    public String notificationYouAbandonDueToTimeout() { return "You have abandoned the game because of failed to reconnect in one minute.";}
+    public String notificationYouAbandonDueToTimeout() { return "You have abandoned the game because of failed to reconnect in " + Global.ABANDON_TOLERANCE_SECS + " seconds.";}
 
     public String notificationYouConnected() { return "You have connected to the game.";}
-    public String notificationYouDisconnected() { return "You have disconnected from the game, you have one minute to reconnect.";}
+    public String notificationYouDisconnected() { return "You have disconnected from the game, you have " + Global.ABANDON_TOLERANCE_SECS + " seconds to reconnect.";}
 
 
     public String notificationYouKicked() { return "You have been kicked from the room, game will now be abandoned.";}
@@ -214,13 +215,8 @@ public class Texts {
     public String PUSHRoomUpdateGameStartedTitle() { return "Game started!";}
 
 
-
-    public String getSpecialText(String name){
-        if(name.equals("PTTEXT_ABANDON")){
-            return confirmAbandon();
-        }
-        return null;
-    }
+    public String confirmAbandonNoCons(){ return "Are you sure you want to abandon this game? \n\n(No consequence)";}
+    public String confirmAbandonLoseStreak(){ return "Are you sure you want to abandon this game? \n\n(You will be penalized and lose your winning streaks by doing so)";}
 
 
 }

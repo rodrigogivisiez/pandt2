@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Disposable;
 import com.mygdx.potatoandtomato.PTScreen;
+import com.mygdx.potatoandtomato.assets.MyAssets;
 import com.mygdx.potatoandtomato.services.Texts;
 import com.mygdx.potatoandtomato.models.Services;
 import com.potatoandtomato.common.absints.IPTGame;
@@ -16,7 +17,7 @@ import com.potatoandtomato.common.utils.Threadings;
  */
 public abstract class SceneAbstract implements Disposable {
 
-    protected Assets _assets;
+    protected MyAssets _assets;
     protected Services _services;
     protected Texts _texts;
     protected AutoDisposeTable _root;

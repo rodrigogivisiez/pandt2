@@ -4,11 +4,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
@@ -22,11 +21,15 @@ import com.mygdx.potatoandtomato.models.CoinProduct;
 import com.mygdx.potatoandtomato.models.RetrievableCoinsData;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.utils.DateTimes;
+import com.mygdx.potatoandtomato.utils.Positions;
 import com.mygdx.potatoandtomato.utils.Sizes;
 import com.potatoandtomato.common.controls.Animator;
+import com.potatoandtomato.common.utils.HashMapUtils;
 import com.potatoandtomato.common.utils.Threadings;
+import javafx.geometry.Pos;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -35,9 +38,12 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
  */
 public class ShopScene extends SceneAbstract {
 
-    private Table purseImagesTable, productsTable, watchAdsItemTable, growthRateTable;
+    private Table purseImagesTable, productsTable, watchAdsItemTable, growthRateTable,
+                    loadingTable, shopContentTable;
     private Label purseCountLabel;
     private Actor retrieveCoinsButton;
+    private HashMap<Integer, Image> screensMap;
+    private ShopArcadeScreensAnimation shopArcadeScreensAnimation;
 
     public ShopScene(Services services, PTScreen screen) {
         super(services, screen);
@@ -45,6 +51,8 @@ public class ShopScene extends SceneAbstract {
 
     @Override
     public void populateRoot() {
+        screensMap = new HashMap();
+
         TopBar topBar = new TopBar(_root, _services.getTexts().shopTitle(), false, _assets, _screen, _services.getCoins());
         topBar.setDarkTheme();
 
@@ -57,9 +65,28 @@ public class ShopScene extends SceneAbstract {
 
         Image floorImage = new Image(_assets.getTextures().get(Textures.Name.FLOOR_BG));
 
-        Image arcadeBgImage = new Image(_assets.getTextures().get(Textures.Name.ARCADE_BG));
+        Image arcadeBgImage = new Image(_assets.getTextures().get(Textures.Name.ARCADE_MACHINES));
         arcadeBgImage.setPosition(0, 405);
 
+        Table arcadeScreensTable = new Table();
+        arcadeScreensTable.align(Align.top);
+        arcadeScreensTable.setSize(197, 100);
+        arcadeScreensTable.setPosition(80, Positions.getHeight() - 119 - arcadeScreensTable.getHeight());
+
+        Image arcadeFadedScreens = new Image(_assets.getTextures().get(Textures.Name.ARCADE_SCREENS));
+        arcadeScreensTable.add(arcadeFadedScreens).colspan(6);
+        arcadeScreensTable.row();
+
+        for(int i = 1; i<= 12; i++){
+            TextureRegion region = _assets.getTextures().getArcadeScreen(i);
+            Image screenImage = new Image(region);
+            screenImage.getColor().a = 0.2f;
+            arcadeScreensTable.add(screenImage);
+            if(i == 6) arcadeScreensTable.row();
+
+            screensMap.put(i, screenImage);
+        }
+        shopArcadeScreensAnimation = new ShopArcadeScreensAnimation(screensMap);
 
         Image arcadeWorldImage = new Image(_assets.getTextures().get(Textures.Name.SHOP_ARCADE_WORLD));
         arcadeWorldImage.getColor().a = 0.5f;
@@ -117,19 +144,36 @@ public class ShopScene extends SceneAbstract {
         shopTable.align(Align.top);
         shopTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.SHOP_TABLE)));
 
+        loadingTable = new Table();
+        loadingTable.setTransform(true);
+        Label loadingLabel = new Label(_texts.loading(),
+                    new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_S_ITALIC), null));
+        loadingTable.add(loadingLabel);
+        loadingTable.setFillParent(true);
+
+        shopContentTable = new Table();
+        shopContentTable.setFillParent(true);
+        shopContentTable.setTransform(true);
+        shopContentTable.setPosition(Positions.getWidth(), 0);
+
         Table purseTable = getPurseTable();
 
         productsTable = new Table();
+        productsTable.align(Align.topLeft);
         ScrollPane productScrollPane = new ScrollPane(productsTable);
 
-        shopTable.add(purseTable).expandX().fillX().padTop(25).padLeft(50).padRight(28);
-        shopTable.row();
-        shopTable.add(productScrollPane).expand().fill().padTop(20).padLeft(20).padRight(28);
+        shopContentTable.add(purseTable).expandX().fillX().padTop(25).padLeft(50).padRight(28);
+        shopContentTable.row();
+        shopContentTable.add(productScrollPane).expand().fill().padTop(20).padLeft(20).padRight(28);
+
+        shopTable.addActor(loadingTable);
+        shopTable.addActor(shopContentTable);
 
         ///////////////////////////////////////////////////////////////
         //population of root
         /////////////////////////////////////////////////////////////////
         _root.addActor(floorImage);
+        _root.addActor(arcadeScreensTable);
         _root.addActor(arcadeBgImage);
         _root.add(arcadeWorldImage).padTop(13);
         _root.row();
@@ -220,12 +264,12 @@ public class ShopScene extends SceneAbstract {
         topContentTable.add(purseCountLabel).padLeft(5).padTop(15);
         topContentTable.add(detailsTable).expandX().fillX().padRight(10);
 
-        Table retrieveButton = getWoodButton(_services.getTexts().retrieveCoins());
+        TextButton retrieveButton = getWoodButton(_services.getTexts().retrieveCoins());
         retrieveCoinsButton = retrieveButton;
 
         purseRootTable.add(topContentTable).expandX().fillX().height(63);
         purseRootTable.row();
-        purseRootTable.add(retrieveButton).right().pad(4, 0, 7, 7);
+        purseRootTable.add(retrieveButton).size(retrieveButton.getPrefWidth(), retrieveButton.getPrefHeight()).right().pad(4, 0, 7, 7);
         purseRootTable.addActor(purseImagesTable);
 
         return purseRootTable;
@@ -244,6 +288,10 @@ public class ShopScene extends SceneAbstract {
                             productsTable.row();
                         }
                     }
+                }
+
+                for(int i = coinProducts.size(); i < 2; i++){
+                    productsTable.add(new Table()).space(5).uniformX().expandX().fillX();
                 }
             }
         });
@@ -299,7 +347,7 @@ public class ShopScene extends SceneAbstract {
         topContentTable.add(itemImageTable).width(70).expandY().fillY();
         topContentTable.add(detailsTable).expand().fill();
 
-        Table retrieveButton = getWoodButton(productAction != ProductAction.WatchVideo ? _texts.buyCoins() : _texts.watchAds());
+        TextButton retrieveButton = getWoodButton(productAction != ProductAction.WatchVideo ? _texts.buyCoins() : _texts.watchAds());
         retrieveButton.setName(coinProduct.getId());
 
         if(productAction == ProductAction.WatchVideo){
@@ -308,7 +356,7 @@ public class ShopScene extends SceneAbstract {
 
         itemRootTable.add(topContentTable).expandX().fillX().height(63);
         itemRootTable.row();
-        itemRootTable.add(retrieveButton).right().pad(7, 0, 7, 7);
+        itemRootTable.add(retrieveButton).size(retrieveButton.getPrefWidth(), retrieveButton.getPrefHeight()).right().pad(7, 0, 7, 7);
 
         return itemRootTable;
     }
@@ -330,6 +378,7 @@ public class ShopScene extends SceneAbstract {
             public void run() {
                 if(isOutOfStock){
                     Table outOfStockTable = new Table();
+                    outOfStockTable.getColor().a = 0.3f;
                     outOfStockTable.setName("outOfStockTable");
                     outOfStockTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.LESS_TRANS_BLACK_BG)));
                     outOfStockTable.add(new Image(_assets.getTextures().get(Textures.Name.OUT_OF_STOCK_ICON))).pad(10);
@@ -388,6 +437,17 @@ public class ShopScene extends SceneAbstract {
         });
     }
 
+    public void finishLoading(){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _services.getSoundsPlayer().playSoundEffect(Sounds.Name.SLIDING);
+                loadingTable.addAction(Actions.moveBy(-Positions.getWidth(), 0, 0.5f));
+                shopContentTable.addAction(Actions.moveBy(-Positions.getWidth(), 0, 0.5f));
+            }
+        });
+    }
+
     public void refreshNextCoinTimer(final int nextCoinInSecs, final boolean maxCoinReached){
         Threadings.postRunnable(new Runnable() {
             @Override
@@ -409,18 +469,32 @@ public class ShopScene extends SceneAbstract {
         });
     }
 
-    public Table getWoodButton(String text){
-        Table buttonTable = new Table();
-        new DummyButton(buttonTable, _assets);
-        buttonTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.SHOP_WOOD_BTN)));
+    public void randomAnimateStyle(){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                shopArcadeScreensAnimation.start();
+            }
+        });
+    }
 
-        Label.LabelStyle labelStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.PIZZA_S_REGULAR_B_ffffff_000000_1),
-                                        null);
-        Label buttonLabel = new Label(text, labelStyle);
+    public TextButton getWoodButton(String text){
 
-        buttonTable.add(buttonLabel).pad(3, 15, 3, 15);
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = _assets.getFonts().get(Fonts.FontId.PIZZA_S_REGULAR_B_ffffff_000000_1);
+        textButtonStyle.up = new NinePatchDrawable(_assets.getPatches().get(Patches.Name.SHOP_WOOD_BTN));
+        textButtonStyle.down = new NinePatchDrawable(_assets.getPatches().get(Patches.Name.SHOP_WOOD_BTN_ONPRESS));
+        TextButton woodButton = new TextButton(text, textButtonStyle);
+        woodButton.getLabelCell().pad(3, 8, 3, 8);
+        woodButton.addListener(new ClickListener(){
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                _services.getSoundsPlayer().playSoundEffect(Sounds.Name.WOOD_BTN_CLICK);
+                return super.touchDown(event, x, y, pointer, button);
+            }
+        });
 
-        return buttonTable;
+        return woodButton;
     }
 
     public Actor getProductButtonById(String productId){
@@ -429,5 +503,11 @@ public class ShopScene extends SceneAbstract {
 
     public Actor getRetrieveCoinsButton() {
         return retrieveCoinsButton;
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        if(shopArcadeScreensAnimation != null) shopArcadeScreensAnimation.dispose();
     }
 }

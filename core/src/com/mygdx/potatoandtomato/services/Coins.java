@@ -106,7 +106,8 @@ public class Coins implements ICoins {
         gamingKit.updateRoomMates(UpdateRoomMatesCode.PUT_COIN, transactionId);
     }
 
-    public void initCoinMachine(int expectingCoin, String transactionId, ArrayList<Pair<String, String>> userIdToNamePairs){
+    public void initCoinMachine(int expectingCoin, String transactionId, ArrayList<Pair<String, String>> userIdToNamePairs,
+                                boolean requestFromOthers){
         coinsAlreadyEnough = false;
         puttingCoin = false;
         this.coinListener = null;
@@ -116,7 +117,7 @@ public class Coins implements ICoins {
         this.deductedSuccessCoinsCount = 0;
         this.userIdToNamePairs = userIdToNamePairs;
         sync(userIdToNamePairs);
-        requestCoinsMachineStateFromOthers();
+        if(requestFromOthers) requestCoinsMachineStateFromOthers();
     }
 
 

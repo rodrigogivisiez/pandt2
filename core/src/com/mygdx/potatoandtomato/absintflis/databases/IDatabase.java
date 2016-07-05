@@ -98,6 +98,8 @@ public interface IDatabase {
 
      void getTeamStreak(Game game, ArrayList<String> userIds, DatabaseListener<Streak> listener);
 
+     void resetUserStreak(Game game, String userId, DatabaseListener listener);
+
      void getLeaderBoardAndStreak(Game game, int expectedCount, DatabaseListener<ArrayList<LeaderboardRecord>> listener);
 
      void getTeamHighestLeaderBoardRecordAndStreak(Game game, ArrayList<String> teamUserIds, DatabaseListener<LeaderboardRecord> listener);

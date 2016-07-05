@@ -4,6 +4,7 @@ import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.services.IRestfulApi;
 import com.mygdx.potatoandtomato.absintflis.uploader.IUploader;
+import com.mygdx.potatoandtomato.assets.MyAssets;
 import com.mygdx.potatoandtomato.services.*;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.absints.IDownloader;
@@ -16,7 +17,7 @@ import com.potatoandtomato.common.assets.Assets;
 public class Services {
 
     Texts _texts;
-    Assets _assets;
+    MyAssets _assets;
     Preferences _preferences;
     Profile _profile;
     IDatabase _database;
@@ -37,7 +38,7 @@ public class Services {
     ConnectionWatcher _connectionWatcher;
     Coins _coins;
 
-    public Services(Assets assets, Texts texts, Preferences preferences,
+    public Services(MyAssets assets, Texts texts, Preferences preferences,
                     Profile profile, IDatabase database, Shaders shaders, GamingKit gamingKit, IDownloader downloader,
                     Chat chat, Socials socials, GCMSender gcmSender, Confirm confirm, Notification notification,
                     Recorder recorder, SoundsPlayer soundsPlayer, VersionControl versionControl,
@@ -200,7 +201,7 @@ public class Services {
         this._gcmSender = _gcmSender;
     }
 
-    public Assets getAssets() {
+    public MyAssets getAssets() {
         return _assets;
     }
 

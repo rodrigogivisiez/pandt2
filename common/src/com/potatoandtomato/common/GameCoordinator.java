@@ -9,10 +9,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.firebase.client.Firebase;
 import com.potatoandtomato.common.absints.*;
-import com.potatoandtomato.common.enums.CoinRequestType;
-import com.potatoandtomato.common.enums.RoomUpdateType;
-import com.potatoandtomato.common.enums.SelfConnectionStatus;
-import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.enums.*;
 import com.potatoandtomato.common.helpers.DecisionsMaker;
 import com.potatoandtomato.common.helpers.GameDataHelper;
 import com.potatoandtomato.common.models.*;
@@ -206,7 +203,11 @@ public class GameCoordinator implements Disposable {
 
     public void abandon(final Runnable confirmedAbandon){
         if(!finalized){
-            gameSandBox.useConfirm("PTTEXT_ABANDON", new Runnable() {
+
+            ConfirmMsgType confirmMsgType = ConfirmMsgType.AbandonGameNoCons;
+            if(willAbandonLoseStreak()) confirmMsgType = ConfirmMsgType.AbandonGameConsLoseStreak;
+
+            gameSandBox.useConfirm(confirmMsgType, new Runnable() {
                 @Override
                 public void run() {     //yes
                     gameSandBox.userAbandoned(getMyUserId());
@@ -218,6 +219,23 @@ public class GameCoordinator implements Disposable {
 
                 }
             });
+        }
+    }
+
+    public boolean willAbandonLoseStreak(){
+        int otherConnectedPlayerCount = 0;
+        ArrayList<Player> players = getAllConnectedPlayers();
+        for(Player player : players){
+            if(!player.getUserId().equals(myUserId)){
+                otherConnectedPlayerCount++;
+            }
+        }
+
+        if(getMyLeaderRecord() != null && getMyLeaderRecord().getStreak().hasValidStreak() && otherConnectedPlayerCount > 0){
+             return true;
+        }
+        else{
+            return false;
         }
     }
 
@@ -363,6 +381,10 @@ public class GameCoordinator implements Disposable {
         this.gameLeaderboardRecords = _gameLeaderboardRecords;
     }
 
+    public LeaderboardRecord getMyLeaderRecord(){
+        return getMyTeam().getLeaderboardRecord();
+    }
+
     /////////////////////////////////////////////////////////////////////////////////////////
     //Ingame update
     /////////////////////////////////////////////////////////////////////////////////////////
@@ -496,8 +518,15 @@ public class GameCoordinator implements Disposable {
     /////////////////////////////////////////////////////////////////////////////////////////
 
     //finalize game, after this method, other user will not be allowed to reconnect back to game
+    public void finalizeAndEndGame(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers, boolean abandon){
+        finalizeGame(winners, losers, abandon);
+        endGame();
+    }
+
     public void finalizeGame(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers, boolean abandon){
         finalized = true;
+
+        gameDataHelper.gameFinalized();
 
         if(winners == null) winners = new HashMap<Team, ArrayList<ScoreDetails>>();
         if(losers == null) losers = new ArrayList<Team>();
@@ -507,12 +536,14 @@ public class GameCoordinator implements Disposable {
         if(winners.size() == 0 && losers.size() == 0){
             this.endGameResult = new EndGameResult();
             this.endGameResult.setAbandon(abandon);
+            if(abandon) this.endGameResult.setWillLoseStreak(willAbandonLoseStreak());
             return;
         }
 
         this.endGameResult = new EndGameResult();
         this.endGameResult.setAbandon(abandon);
         this.endGameResult.setMyTeam(getMyTeamPlayers());
+        if(abandon) this.endGameResult.setWillLoseStreak(willAbandonLoseStreak());
 
         for(Team loserTeam : losers){
             if(loserTeam.hasUser(getMyUserId())){
@@ -573,7 +604,7 @@ public class GameCoordinator implements Disposable {
                 break;
         }
 
-        iCoins.initCoinMachine(coinPerPerson * userIdToNamePairs.size(), roomId + "_game", userIdToNamePairs);
+        iCoins.initCoinMachine(coinPerPerson * userIdToNamePairs.size(), roomId + "_game", userIdToNamePairs, true);
         iCoins.setCoinListener(new CoinListener() {
             @Override
             public void onEnoughCoins() {

@@ -61,4 +61,17 @@ public class ScoreDetails {
     public void setAddOrMultiply(boolean addOrMultiply) {
         this.addOrMultiply = addOrMultiply;
     }
+
+    @Override
+    public int hashCode()
+    {
+        return reason.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        return this.reason.equals(o);
+    }
+
 }

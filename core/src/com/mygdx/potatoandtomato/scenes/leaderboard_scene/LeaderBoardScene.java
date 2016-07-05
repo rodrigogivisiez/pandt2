@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -184,6 +185,18 @@ public class LeaderBoardScene extends SceneAbstract {
                     _loadingTable.add(loadingLabel);
                     _loadingTable.setFillParent(true);
                     _ranksTable.addActor(_loadingTable);
+                }
+            }
+        });
+    }
+
+    public void setLeaderboardScrollPaneScrollable(final Game game, final boolean enable){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                ScrollPane scrollPane = _leaderboardScrolls.get(game.getAbbr());
+                if(scrollPane != null){
+                    scrollPane.setTouchable(enable ? Touchable.enabled : Touchable.disabled);
                 }
             }
         });

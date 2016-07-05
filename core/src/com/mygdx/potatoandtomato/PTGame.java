@@ -7,11 +7,15 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
+import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import com.mygdx.potatoandtomato.assets.*;
+import com.mygdx.potatoandtomato.enums.LeaderboardType;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.models.*;
+import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
 import com.mygdx.potatoandtomato.services.*;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.mygdx.potatoandtomato.statics.Terms;
@@ -21,6 +25,11 @@ import com.potatoandtomato.common.absints.PTAssetsManager;
 import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
+import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.models.EndGameResult;
+import com.potatoandtomato.common.models.Player;
+import com.potatoandtomato.common.models.ScoreDetails;
+import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.utils.Downloader;
 import com.potatoandtomato.common.utils.Threadings;
 
@@ -31,7 +40,7 @@ import java.util.Map;
 public class PTGame extends Game implements IPTGame {
 
 	Services _services;
-	Assets _assets;
+	MyAssets _assets;
 	PTScreen _screen;
 	Texts _texts;
 	SpriteBatch _batch;
@@ -108,7 +117,7 @@ public class PTGame extends Game implements IPTGame {
 				_coins.setPtScreen(_screen);
 				setScreen(_screen);
 
-				_screen.toScene(SceneEnum.BOOT);
+				_screen.toScene(SceneEnum.SHOP);
 			}
 		});
 	}
@@ -240,7 +249,7 @@ public class PTGame extends Game implements IPTGame {
 		Textures textures = new Textures(manager, "ui_pack.atlas");
 		Fonts fonts = new Fonts(manager);
 
-		_assets = new Assets(manager, fonts, animations, sounds, patches, textures);
+		_assets = new MyAssets(manager, fonts, animations, sounds, patches, textures);
 	}
 
 	@Override

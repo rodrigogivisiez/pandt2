@@ -19,6 +19,7 @@ import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.services.Confirm;
 import com.mygdx.potatoandtomato.services.Notification;
 import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
+import com.potatoandtomato.common.enums.ConfirmMsgType;
 import com.potatoandtomato.common.enums.RoomUpdateType;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.models.Player;
@@ -324,7 +325,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                 if(connectionStatus == ConnectionStatus.Abandoned){
                     coordinator.userAbandon(userId);
                     if(userId.equals(_services.getProfile().getUserId())){
-                        endGame();
+                        coordinator.finalizeAndEndGame(null, null, true);
                     }
                 }
                 else if(connectionStatus == ConnectionStatus.Disconnected){
@@ -451,15 +452,26 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     // called from in game
     ////////////////////////////////////////////////
     @Override
+    public void useConfirm(ConfirmMsgType msgType, Runnable yesRunnable, Runnable noRunnable) {
+        String text = "";
+        if(msgType == ConfirmMsgType.AbandonGameConsLoseStreak){
+            text = _texts.confirmAbandonLoseStreak();
+        }
+        else if(msgType == ConfirmMsgType.AbandonGameNoCons){
+            text = _texts.confirmAbandonNoCons();
+        }
+        useConfirm(text, yesRunnable, noRunnable);
+    }
+
+
+    @Override
     public void useConfirm(String msg, final Runnable yesRunnable, final Runnable noRunnable) {
         Confirm.Type type = Confirm.Type.YESNO;
         if(noRunnable == null){
             type = Confirm.Type.YES;
         }
-        String text = _texts.getSpecialText(msg);
-        if(text == null) text = msg;
 
-        _confirm.show(text, type, new ConfirmResultListener() {
+        _confirm.show(msg, type, new ConfirmResultListener() {
             @Override
             public void onResult(Result result) {
                 if(result == Result.YES){
@@ -506,9 +518,8 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             }
         }
 
-        connectionsController.dispose();
         _services.getConnectionWatcher().gameEnded();
-        connectionsController.updateMyPlayingState(false, false);
+        connectionsController.updateMyPlayingState(false, abandoned);
     }
 
     public void onLockUpdateScorePropertySuccess(){

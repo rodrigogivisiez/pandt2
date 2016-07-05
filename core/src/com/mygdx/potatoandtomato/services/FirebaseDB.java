@@ -489,6 +489,11 @@ public class
     }
 
     @Override
+    public void resetUserStreak(Game game, String userId, DatabaseListener listener) {
+        save(getTable(_tableStreak).child(game.getAbbr()).child(userId).child("streakCount"), 0, listener);
+    }
+
+    @Override
     public void getTeamHighestLeaderBoardRecordAndStreak(final Game game, ArrayList<String> teamUserIds, final DatabaseListener<LeaderboardRecord> listener) {
         getLeaderBoardRecordAndStreakById(game, userIdsToKey(teamUserIds), listener);
     }
@@ -844,7 +849,7 @@ public class
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                listener.onCallback(0, Status.FAILED);
+                listener.onCallback(null, Status.FAILED);
             }
         });
     }
@@ -863,7 +868,7 @@ public class
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                if(listener != null) listener.onCallback(0, Status.FAILED);
+                if(listener != null) listener.onCallback(null, Status.FAILED);
             }
         });
     }
@@ -882,7 +887,7 @@ public class
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                listener.onCallback(0, Status.FAILED);
+                listener.onCallback(null, Status.FAILED);
             }
         };
         ref.addValueEventListener(valueEventListener);
@@ -932,7 +937,7 @@ public class
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                listener.onCallback(0, Status.FAILED);
+                listener.onCallback(null, Status.FAILED);
             }
         };
 

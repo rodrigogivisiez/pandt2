@@ -1,5 +1,6 @@
 package com.potatoandtomato.common.absints;
 
+import com.potatoandtomato.common.enums.ConfirmMsgType;
 import com.potatoandtomato.common.enums.RoomUpdateType;
 import com.potatoandtomato.common.models.ScoreDetails;
 import com.potatoandtomato.common.models.Team;
@@ -12,6 +13,7 @@ import java.util.HashMap;
  */
 public interface IGameSandBox {
 
+    void useConfirm(ConfirmMsgType msgType, Runnable yesRunnable, Runnable noRunnable);
     void useConfirm(String msg, Runnable yesRunnable, Runnable noRunnable);
     void userAbandoned(String userId);
     void endGame();

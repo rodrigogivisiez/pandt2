@@ -31,6 +31,7 @@ public class ShopLogic extends LogicAbstract {
     private RetrievableCoinsData currentRetrievableCoinsData;
     private SafeThread safeThread;
     private ArrayList<CoinProduct> coinProducts;
+    private int retrievedSuccessCount = 0;
 
     public ShopLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
@@ -44,6 +45,13 @@ public class ShopLogic extends LogicAbstract {
         refreshProducts();
         refreshAdsAvailability();
         refreshRetrievableCoinsCount();
+
+    }
+
+    @Override
+    public void onShown() {
+        super.onShown();
+        shopScene.randomAnimateStyle();
     }
 
     @Override
@@ -65,6 +73,7 @@ public class ShopLogic extends LogicAbstract {
                     shopScene.setProductsDesign(coinProducts);
                     shopScene.setCanWatchAds(canWatchAds);
                     setCoinProductsListeners();
+                    addRetrievedSuccessCount();
                 }
             }
         });
@@ -78,6 +87,7 @@ public class ShopLogic extends LogicAbstract {
             public void onCallback(RetrievableCoinsData obj, Status st) {
                 if(st == Status.SUCCESS && obj != null){
                     updateCurrentRetrievableCoinsData(obj);
+                    addRetrievedSuccessCount();
                 }
             }
         });
@@ -130,6 +140,12 @@ public class ShopLogic extends LogicAbstract {
         });
     }
 
+    private void addRetrievedSuccessCount(){
+        retrievedSuccessCount++;
+        if(retrievedSuccessCount == 2){
+            shopScene.finishLoading();
+        }
+    }
 
     @Override
     public void setListeners() {

@@ -502,6 +502,10 @@ public class Chat {
         return chatControl;
     }
 
+    public int getCurrentMode() {
+        return mode;
+    }
+
     public String getClassTag(){
         return this.getClass().getName();
     }
