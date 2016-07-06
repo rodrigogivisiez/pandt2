@@ -21,11 +21,13 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.files.FileHandle;
 import com.chartboost.sdk.Chartboost;
 import com.firebase.client.Firebase;
+import com.flurry.android.FlurryAgent;
 import com.mygdx.potatoandtomato.PTGame;
 import com.mygdx.potatoandtomato.absintflis.entrance.EntranceLoaderListener;
 import com.mygdx.potatoandtomato.android.controls.MyEditText;
 import com.mygdx.potatoandtomato.models.PushNotification;
 import com.mygdx.potatoandtomato.statics.Global;
+import com.mygdx.potatoandtomato.statics.Terms;
 import com.potatoandtomato.common.*;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
@@ -59,12 +61,12 @@ public class AndroidLauncher extends AndroidApplication {
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		initFlurry();
 		setBuildNumber();
 		setContentView(R.layout.main_activity);
 		RelativeLayout lg=(RelativeLayout)findViewById(R.id.root);
 		_this = this;
 		reset();
-
 
 		_broadcaster = new Broadcaster();
 		_inAppPurchaseHelper = new InAppPurchaseHelper(this, _broadcaster);
@@ -89,6 +91,13 @@ public class AndroidLauncher extends AndroidApplication {
 
 		startService(new Intent(getBaseContext(), OnClearFromRecentService.class));
 
+	}
+
+	private void initFlurry(){
+		FlurryAgent.init(this, Terms.FLURRY_KEY());
+		FlurryAgent.onStartSession(this, Terms.FLURRY_KEY());
+
+		FlurryAgent.logEvent("startGame");
 	}
 
 	private void setBuildNumber(){
@@ -225,6 +234,7 @@ public class AndroidLauncher extends AndroidApplication {
 		stopService(new Intent(getBaseContext(), OnClearFromRecentService.class));
 		reset();
 		if(_chartBoostHelper != null) _chartBoostHelper.onDestroy();
+		FlurryAgent.onEndSession(this);
 		super.onDestroy();
 	}
 

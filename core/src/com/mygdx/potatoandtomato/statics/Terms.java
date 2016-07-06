@@ -41,4 +41,8 @@ public class Terms {
                 "e8d0cda539241037828634e01504aa017b28bfb0519b8884f6ebfafc0062fc96";
     }
 
+    public static String FLURRY_KEY(){
+        return !Global.DEBUG ? "GHZ8NVQHWMN24MSFYKMR" : "";
+    }
+
 }
