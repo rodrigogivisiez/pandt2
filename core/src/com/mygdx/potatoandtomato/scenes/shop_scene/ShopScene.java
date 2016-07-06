@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
@@ -53,7 +54,7 @@ public class ShopScene extends SceneAbstract {
     public void populateRoot() {
         screensMap = new HashMap();
 
-        TopBar topBar = new TopBar(_root, _services.getTexts().shopTitle(), false, _assets, _screen, _services.getCoins());
+        topBar = new TopBar(_root, _services.getTexts().shopTitle(), false, _assets, _screen, _services.getCoins());
         topBar.setDarkTheme();
 
         _root.align(Align.top);
@@ -383,6 +384,8 @@ public class ShopScene extends SceneAbstract {
                     outOfStockTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.LESS_TRANS_BLACK_BG)));
                     outOfStockTable.add(new Image(_assets.getTextures().get(Textures.Name.OUT_OF_STOCK_ICON))).pad(10);
                     outOfStockTable.setFillParent(true);
+                    Table dummyButton = new DummyButton(outOfStockTable, _assets);
+
 
                     itemRootTable.addActor(outOfStockTable);
                 }
@@ -443,7 +446,12 @@ public class ShopScene extends SceneAbstract {
             public void run() {
                 _services.getSoundsPlayer().playSoundEffect(Sounds.Name.SLIDING);
                 loadingTable.addAction(Actions.moveBy(-Positions.getWidth(), 0, 0.5f));
-                shopContentTable.addAction(Actions.moveBy(-Positions.getWidth(), 0, 0.5f));
+                shopContentTable.addAction(sequence(Actions.moveBy(-Positions.getWidth(), 0, 0.5f), new RunnableAction(){
+                    @Override
+                    public void run() {
+                        loadingTable.remove();
+                    }
+                }));
             }
         });
     }

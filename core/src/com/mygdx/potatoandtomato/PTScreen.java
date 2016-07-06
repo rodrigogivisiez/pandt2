@@ -18,6 +18,7 @@ import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.assets.Textures;
+import com.mygdx.potatoandtomato.enums.ConfirmIdentifier;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.scenes.shop_scene.ShopLogic;
 import com.mygdx.potatoandtomato.services.Confirm;
@@ -172,7 +173,8 @@ public class PTScreen implements Screen, InputProcessor {
     }
 
     public void confirmQuitGame(){
-        _services.getConfirm().show(_texts.confirmQuit(), Confirm.Type.YESNO, new ConfirmResultListener() {
+        _services.getConfirm().show(ConfirmIdentifier.QuitGame,
+                _texts.confirmQuit(), Confirm.Type.YESNO, new ConfirmResultListener() {
             @Override
             public void onResult(Result result) {
                 if(result == Result.YES){

@@ -14,6 +14,7 @@ import com.potatoandtomato.common.absints.IGameSandBox;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.utils.Threadings;
 
 /**
  * Created by SiongLeng on 6/6/2016.
@@ -26,6 +27,7 @@ public class GameLoader implements Disposable {
     private GameLoaderListener gameLoaderListener;
     private String broadcastId;
     private IGameSandBox gameSandBox;
+    private GameCoordinator gameCoordinator;
 
     public GameLoader(Room room, Services services, PTScreen ptScreen, IGameSandBox gameSandBox) {
         this.room = room;
@@ -41,6 +43,7 @@ public class GameLoader implements Disposable {
             @Override
             public void onCallback(GameCoordinator obj, Status st) {
                 if (st == Status.SUCCESS) {
+                    gameCoordinator = obj;
                     gameLoaderListener.onFinished(obj, Status.SUCCESS);
                 } else {
                     gameLoaderListener.onFinished(null, Status.FAILED);
@@ -55,6 +58,20 @@ public class GameLoader implements Disposable {
                         room.getId(), services.getSoundsPlayer(), new RemoteHelper(services.getBroadcaster()), services.getTutorials(),
                         services.getPreferences(), Global.LEADERBOARD_COUNT, services.getConnectionWatcher(), services.getCoins()));
 
+    }
+
+    public void disposeGameCoordinator(){
+        if(gameCoordinator != null){
+            if(gameCoordinator.getGameEntrance() != null) {
+                Threadings.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        gameCoordinator.getGameEntrance().dispose();
+                    }
+                });
+            }
+            gameCoordinator.dispose();
+        }
     }
 
     @Override

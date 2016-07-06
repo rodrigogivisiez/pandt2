@@ -91,6 +91,7 @@ public abstract class LogicAbstract implements Disposable {
             setListeners();
             _settedListeners = true;
         }
+        if(getScene() != null) getScene().onShow();
     }
 
     //called everytime scene have complete moving animation, wheteher back or forward direction
@@ -103,6 +104,7 @@ public abstract class LogicAbstract implements Disposable {
     public void onHide(){
         _isVisible = false;
         _isFullyVisible = false;
+        if(getScene() != null) getScene().onHide();
     }
 
     //will only be called when scene init, must be forward direction

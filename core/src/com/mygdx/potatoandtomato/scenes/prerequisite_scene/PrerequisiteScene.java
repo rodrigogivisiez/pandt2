@@ -33,7 +33,7 @@ public class PrerequisiteScene extends SceneAbstract {
 
     @Override
     public void populateRoot() {
-        new TopBar(_root, _texts.loading(), false, _assets, _screen, _services.getCoins());
+        topBar = new TopBar(_root, _texts.loading(), false, _assets, _screen, _services.getCoins());
 
         _loadingTable = new Table();
         _loadingTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WOOD_BG_NORMAL)));

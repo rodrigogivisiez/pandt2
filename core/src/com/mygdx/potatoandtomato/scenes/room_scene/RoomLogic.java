@@ -18,14 +18,12 @@ import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
 import com.mygdx.potatoandtomato.absintflis.push_notifications.PushCode;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
-import com.mygdx.potatoandtomato.absintflis.services.CoinsListener;
 import com.mygdx.potatoandtomato.absintflis.services.IChatRoomUsersConnectionRefresher;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.*;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.services.Confirm;
 import com.mygdx.potatoandtomato.services.VersionControl;
-import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.absints.CoinListener;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.enums.Status;
@@ -58,6 +56,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
     UserBadgeHelper userBadgeHelper;
     GameFileChecker gameFileChecker;
     ConcurrentHashMap<String, SafeThread> addUserSafeThreadMap;
+    ConcurrentHashMap<String, SafeThread> waitRoomUserStateResponseSafeThreadMap;
 
     public Room getRoom() {
         return room;
@@ -72,6 +71,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         userBadgeHelper = new UserBadgeHelper(_services, scene, room.getGame());
         noGameClientUsers = new ConcurrentHashMap();
         addUserSafeThreadMap = new ConcurrentHashMap();
+        waitRoomUserStateResponseSafeThreadMap = new ConcurrentHashMap();
         roomLogicSafeThread = new SafeThread();
 
         onRoomUserChanged();
@@ -166,7 +166,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
     @Override
     public void onQuit(final OnQuitListener listener) {
         if(!forceQuit){
-            _confirm.show(isHost() ? _texts.confirmHostLeaveRoom() : _texts.confirmLeaveRoom(), Confirm.Type.YESNO, new ConfirmResultListener() {
+            _confirm.show(ConfirmIdentifier.Room, isHost() ? _texts.confirmHostLeaveRoom() : _texts.confirmLeaveRoom(), Confirm.Type.YESNO, new ConfirmResultListener() {
                 @Override
                 public void onResult(Result result) {
                     if (result == Result.YES) {
@@ -255,7 +255,8 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                                         @Override
                                         public void clicked(InputEvent event, float x, float y) {
                                             super.clicked(event, x, y);
-                                            _confirm.show(String.format(_texts.confirmKick(), room.getProfileByUserId(userId).getDisplayName(0)),
+                                            _confirm.show(ConfirmIdentifier.Room,
+                                                    String.format(_texts.confirmKick(), room.getProfileByUserId(userId).getDisplayName(0)),
                                                     Confirm.Type.YESNO, new ConfirmResultListener() {
                                                         @Override
                                                         public void onResult(Result result) {
@@ -280,6 +281,10 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
 
     public void sendUpdateRoomMates(int code, String msg){
         _services.getGamingKit().updateRoomMates(code, msg);
+    }
+
+    public void sendPrivateUpdateRoomMates(String toUserId, int code, String msg){
+        _services.getGamingKit().privateUpdateRoomMates(toUserId, code, msg);
     }
 
     public void receivedUpdateRoomMates(int code, final String msg, final String senderId){
@@ -322,17 +327,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
             }
         }
         else if(code == UpdateRoomMatesCode.UPDATE_DOWNLOAD){
-            if(Integer.valueOf(msg) < 100){
-                noGameClientUsers.put(senderId, msg);
-            }
-            else{
-                noGameClientUsers.remove(senderId);
-            }
-            if(noGameClientUsers.size() > 0){
-                Map.Entry<String, String> entry = noGameClientUsers.entrySet().iterator().next();  //first item
-                cancelPutCoins(room.getProfileByUserId(entry.getKey()));
-            }
-            scene.updateDownloadPercentage(senderId, Integer.valueOf(msg));
+            downloadUpdateReceived(msg, senderId);
         }
         else if(code == UpdateRoomMatesCode.START_GAME){
             startPutCoins();
@@ -342,6 +337,12 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         }
         else if(code == UpdateRoomMatesCode.GAME_STARTED){
             if(!gameStarted) gameStarted();
+        }
+        else if(code == UpdateRoomMatesCode.REQUEST_ROOM_STATE){
+            receivedRoomUserStateRequest(senderId);
+        }
+        else if(code == UpdateRoomMatesCode.ROOM_STATE_RESPONSE){
+            receivedRoomUserStateResponse(senderId, RoomUserState.valueOf(msg));
         }
     }
 
@@ -446,6 +447,24 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                 }
             }
         }
+    }
+
+    public void downloadUpdateReceived(String msg, String senderId){
+        if(Integer.valueOf(msg) < 100){
+            noGameClientUsers.put(senderId, msg);
+            RoomUser roomUser = room.getRoomUserByUserId(senderId);
+            if(roomUser != null && roomUser.getRoomUserState() != RoomUserState.NotReady){
+                roomUserStateChanged(senderId, RoomUserState.NotReady);
+            }
+        }
+        else{
+            noGameClientUsers.remove(senderId);
+        }
+        if(noGameClientUsers.size() > 0){
+            Map.Entry<String, String> entry = noGameClientUsers.entrySet().iterator().next();  //first item
+            cancelPutCoins(room.getProfileByUserId(entry.getKey()));
+        }
+        scene.updateDownloadPercentage(senderId, Integer.valueOf(msg));
     }
 
     public void userIsReadyChanged(String userId, boolean isReady){
@@ -563,7 +582,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
             }
 
 
-            _confirm.show(message, Confirm.Type.YES, new ConfirmResultListener() {
+            _confirm.show(ConfirmIdentifier.Room, message, Confirm.Type.YES, new ConfirmResultListener() {
                 @Override
                 public void onResult(Result result) {
                 }
@@ -574,31 +593,37 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
     public int startGameCheck(boolean showMessage){
         if(!room.checkAllTeamHasMinPlayers()){
             if(showMessage){
-                _confirm.show(String.format(_services.getTexts().notEnoughPlayers(), room.getGame().getTeamMinPlayers()), Confirm.Type.YES, null);
+                _confirm.show(ConfirmIdentifier.Room,
+                        String.format(_services.getTexts().notEnoughPlayers(),
+                                room.getGame().getTeamMinPlayers()), Confirm.Type.YES, null);
             }
             return 1;
         }
         else if(room.getGame().getMustFairTeam() && !room.checkAllFairTeam()){
             if(showMessage){
-                _confirm.show(_services.getTexts().fairTeamNeeded(), Confirm.Type.YES, null);
+                _confirm.show(ConfirmIdentifier.Room,
+                        _services.getTexts().fairTeamNeeded(), Confirm.Type.YES, null);
             }
             return 4;
         }
         else if(noGameClientUsers.size() > 0){
             if(showMessage){
-                _confirm.show(_services.getTexts().stillDownloadingClient(), Confirm.Type.YES, null);
+                _confirm.show(ConfirmIdentifier.Room,
+                        _services.getTexts().stillDownloadingClient(), Confirm.Type.YES, null);
             }
             return 2;
         }
         else if(room.getTemporaryDisconnectedCount() > 0){
             if(showMessage){
-                _confirm.show(_services.getTexts().waitTemporaryDisconnectedUsers(), Confirm.Type.YES, null);
+                _confirm.show(ConfirmIdentifier.Room,
+                        _services.getTexts().waitTemporaryDisconnectedUsers(), Confirm.Type.YES, null);
             }
             return 3;
         }
         else if(room.getNotYetReadyCount() > 0){
             if(showMessage){
-                _confirm.show(_services.getTexts().waitAllUsersReady(), Confirm.Type.YES, null);
+                _confirm.show(ConfirmIdentifier.Room,
+                        _services.getTexts().waitAllUsersReady(), Confirm.Type.YES, null);
             }
             return 3;
         }
@@ -722,6 +747,51 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         }
     }
 
+    public void broadcastRoomUserStateRequest(){
+        for(RoomUser roomUser : room.getRoomUsersMap().values()){
+            if(!roomUser.getProfile().getUserId().equals(_services.getProfile().getUserId())){
+                setupRoomUserRoomStateWaitThread(roomUser.getProfile().getUserId());
+            }
+        }
+        sendUpdateRoomMates(UpdateRoomMatesCode.REQUEST_ROOM_STATE, "");
+    }
+
+    public void receivedRoomUserStateRequest(String fromUserId){
+        RoomUser roomUser = room.getRoomUserByUserId(_services.getProfile().getUserId());
+        if(roomUser != null &&
+                roomUser.getRoomUserState() != RoomUserState.TemporaryDisconnected &&
+                !fromUserId.equals(_services.getProfile().getUserId())) {
+            sendPrivateUpdateRoomMates(fromUserId, UpdateRoomMatesCode.ROOM_STATE_RESPONSE, roomUser.getRoomUserState().name());
+        }
+    }
+
+    public void receivedRoomUserStateResponse(String fromUserId, RoomUserState roomUserState){
+        if(waitRoomUserStateResponseSafeThreadMap.containsKey(fromUserId)){
+            waitRoomUserStateResponseSafeThreadMap.get(fromUserId).kill();
+        }
+        roomUserStateChanged(fromUserId, roomUserState);
+    }
+
+    private void setupRoomUserRoomStateWaitThread(final String forUserId){
+        if(room.getRoomUserByUserId(forUserId) != null){
+            final SafeThread safeThread = new SafeThread();
+            waitRoomUserStateResponseSafeThreadMap.put(forUserId, safeThread);
+
+            Threadings.runInBackground(new Runnable() {
+                @Override
+                public void run() {
+                    int i = 5;
+                    while (i > 0){
+                        Threadings.sleep(1000);
+                        i--;
+                        if(safeThread.isKilled()) return;
+                    }
+                    roomUserStateChanged(forUserId, RoomUserState.TemporaryDisconnected);
+                }
+            });
+        }
+    }
+
     public void setAppwarpListener(){
         _services.getGamingKit().addListener(getClassTag(), new UpdateRoomMatesListener() {
             @Override
@@ -772,7 +842,12 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                 }
                 else{
                     if(st == ConnectStatus.CONNECTED_FROM_RECOVER){
-                        refreshRoomPlayersIfIsHost();
+                        if(isHost()){
+                            refreshRoomPlayersIfIsHost();
+                        }
+                        else{
+                            broadcastRoomUserStateRequest();
+                        }
                         sendIsReadyUpdate(false);
                         setCloseRoomOnDisconnectIfHost();   //need to re-set it again since it should alrdy fired when disconnection occured
                     }
@@ -799,6 +874,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                         userBadgeHelper.userJoinedRoom(room.getRoomUserByUserId(roomUserId));
                     }
                 }
+                broadcastRoomUserStateRequest();
             }
 
             @Override

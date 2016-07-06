@@ -35,6 +35,8 @@ public class UpdateRoomMatesCode {
     public final static int COINS_DEDUCTED_FAILED = 24;
     public final static int REQUEST_COINS_STATE = 25;
     public final static int COINS_STATE_RESPONSE = 26;
+    public final static int REQUEST_ROOM_STATE = 27;
+    public final static int ROOM_STATE_RESPONSE = 28;
 
     public static int roomUpdateTypeToUpdateRoomMatesCode(RoomUpdateType roomUpdateType){
         if(roomUpdateType == RoomUpdateType.InGame){

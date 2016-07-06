@@ -1,5 +1,6 @@
 package com.mygdx.potatoandtomato.models;
 
+import com.mygdx.potatoandtomato.enums.ShopProducts;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -82,6 +83,25 @@ public class CoinProduct {
             textureName = "COIN_BAG";
         }
         return textureName;
+    }
+
+    @JsonIgnore
+    public ShopProducts getShopProductType(){
+        if(count == 1){
+            return ShopProducts.ONE_COIN;
+        }
+        else if(count == 5){
+            return ShopProducts.FIVE_COINS;
+        }
+        else if(count == 15){
+            return ShopProducts.FIFTEEN_COINS;
+        }
+        else if(count == 100){
+            return ShopProducts.HUNDRED_COINS;
+        }
+        else{
+            return null;
+        }
     }
 
 }

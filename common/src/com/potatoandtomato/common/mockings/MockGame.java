@@ -324,7 +324,7 @@ public abstract class MockGame extends Game implements IPTGame {
     }
 
     @Override
-    public void addInputProcessor(InputProcessor processor, int index){
+    public void addInputProcessor(InputProcessor processor, int index, boolean external){
         _processors.insert(index, processor);
         setInputProcessors();
     }

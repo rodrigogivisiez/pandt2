@@ -19,6 +19,7 @@ import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogi
 import com.mygdx.potatoandtomato.services.*;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.mygdx.potatoandtomato.statics.Terms;
+import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.absints.IDownloader;
 import com.potatoandtomato.common.absints.IPTGame;
 import com.potatoandtomato.common.absints.PTAssetsManager;
@@ -64,7 +65,7 @@ public class PTGame extends Game implements IPTGame {
 	ArrayList<Runnable> _onResumeRunnables;
 
 	HashMap<InputProcessor, Integer> _processors;
-	HashMap<String, InputProcessor> _idToProcessorMap;
+	ArrayList<InputProcessor> _externalProcessors;
 
 	public PTGame(Broadcaster broadcaster) {
 		_broadcaster = broadcaster;
@@ -77,7 +78,7 @@ public class PTGame extends Game implements IPTGame {
 		_game = this;
 		_preferences = new Preferences();
 		_processors = new HashMap();
-		_idToProcessorMap = new HashMap();
+		_externalProcessors = new ArrayList();
 		Threadings.setMainTreadId();
 		Global.init(_preferences);
 		initiateAssets();
@@ -104,7 +105,7 @@ public class PTGame extends Game implements IPTGame {
 				_restfulApi = new RestfulApi();
 				_connectionWatcher = new ConnectionWatcher(_gamingKit, _broadcaster, _confirm, _texts, _profile);
 				_coins = new Coins(_broadcaster, _assets, _soundsPlayer, _texts,
-						_game, _batch, _profile, _database, _gamingKit);
+						_game, _batch, _profile, _database, _gamingKit, _restfulApi, _confirm);
 
 				_services = new Services(_assets, _texts,
 						_preferences, _profile, _database,
@@ -117,7 +118,7 @@ public class PTGame extends Game implements IPTGame {
 				_coins.setPtScreen(_screen);
 				setScreen(_screen);
 
-				_screen.toScene(SceneEnum.SHOP);
+				_screen.toScene(SceneEnum.BOOT);
 			}
 		});
 	}
@@ -181,18 +182,12 @@ public class PTGame extends Game implements IPTGame {
 	}
 
 	@Override
-	public void addInputProcessor(InputProcessor processor, int priority){
+	public void addInputProcessor(InputProcessor processor, int priority, boolean external) {
 		if(!_processors.containsKey(processor)) {
+			if(external) _externalProcessors.add(processor);
 			_processors.put(processor, priority);
 			setInputProcessors();
 		}
-	}
-
-	@Override
-	public void addInputProcessor(InputProcessor processor, int priority, String id) {
-		removeInputProcessorById(id);
-		_idToProcessorMap.put(id, processor);
-		addInputProcessor(processor, priority);
 	}
 
 	@Override
@@ -210,13 +205,14 @@ public class PTGame extends Game implements IPTGame {
 	}
 
 	@Override
-	public void removeInputProcessorById(String id) {
-		if(_idToProcessorMap.containsKey(id)){
-			InputProcessor processor = _idToProcessorMap.get(id);
-			removeInputProcessor(processor);
-			_idToProcessorMap.remove(id);
+	public void removeAllExternalProcessors() {
+		for(InputProcessor inputProcessor : _externalProcessors){
+			_processors.remove(inputProcessor);
 		}
+		_externalProcessors.clear();
+		setInputProcessors();
 	}
+
 
 	private void setInputProcessors(){
 		Array<InputProcessor> inputProcessors = new Array();

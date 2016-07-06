@@ -296,6 +296,9 @@ public class GameLoadStateMonitor implements Disposable {
 
     }
 
+    public void disposeGameCoordinator(){
+        if(gameLoader != null) gameLoader.disposeGameCoordinator();
+    }
 
     @Override
     public void dispose() {

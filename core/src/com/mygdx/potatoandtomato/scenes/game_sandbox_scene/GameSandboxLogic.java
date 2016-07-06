@@ -6,16 +6,13 @@ import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.LockPropertyListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.ConnectionsControllerListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.GameLoadStateMonitorListener;
+import com.mygdx.potatoandtomato.enums.*;
 import com.potatoandtomato.common.absints.CoinListener;
 import com.mygdx.potatoandtomato.absintflis.services.ConnectionWatcherListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
-import com.mygdx.potatoandtomato.enums.ConnectionStatus;
-import com.mygdx.potatoandtomato.enums.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
-import com.mygdx.potatoandtomato.enums.LeaderboardType;
-import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.services.Confirm;
 import com.mygdx.potatoandtomato.services.Notification;
 import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
@@ -68,6 +65,9 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         isContinue = (Boolean) objs[1];
         safeThread = new SafeThread();
         gameLoadStateMonitor = new GameLoadStateMonitor(room, _services, isContinue ? null : room.getTeams(), _screen, this);
+
+
+
         connectionsController = new ConnectionsController(room, services);
         onGameStartedRunnables = new CopyOnWriteArrayList<Runnable>();
         onHasGameDataReceivedRunnables = new CopyOnWriteArrayList<Runnable>();
@@ -75,10 +75,11 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         initiateUserTables();
         initiateEndGameEssential();
         _services.getChat().hideChat();
-        _services.getConfirm().close();
+        _services.getConfirm().close(ConfirmIdentifier.BackScreen);
 
         setListenersAndThreads();
         Threadings.setContinuousRenderLock(true);
+
     }
 
     @Override
@@ -168,6 +169,8 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         final Runnable startGameRunnable = new Runnable() {
             @Override
             public void run() {
+                if(isDisposing()) return;
+
                 connectionsController.gameStarted();
 
                 _screen.switchToGameScreen();
@@ -341,22 +344,28 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         _services.getConnectionWatcher().addConnectionWatcherListener(new ConnectionWatcherListener() {
             @Override
             public void onConnectionResume() {
-                coordinator.getGameDataHelper().setOnGameDataReceivedRunnable(new OneTimeRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        for(Runnable runnable : onHasGameDataReceivedRunnables){
-                            runnable.run();
-                        }
-                        onHasGameDataReceivedRunnables.clear();
+                if(gameStarted){
+                    coordinator.getGameDataHelper().setOnGameDataReceivedRunnable(new OneTimeRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            for(Runnable runnable : onHasGameDataReceivedRunnables){
+                                runnable.run();
+                            }
+                            onHasGameDataReceivedRunnables.clear();
 
-                        gamePlaying = true;
-                    }
-                }));
+                            gamePlaying = true;
+                        }
+                    }));
+                }
             }
 
             @Override
             public void onConnectionHalt() {
                 gamePlaying = false;
+                if(!gameStarted){
+                    setUserTableDesign(_services.getProfile().getUserId(), true, true);
+                    failLoad(room.getPlayerByUserId(_services.getProfile().getUserId()));
+                }
             }
         });
 
@@ -418,18 +427,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     @Override
     public void dispose() {
         super.dispose();
-        if(coordinator != null){
-            if(coordinator.getGameEntrance() != null) {
-                Threadings.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        coordinator.getGameEntrance().dispose();
-                    }
-                });
-            }
-            coordinator.dispose();
-        }
-
+        gameLoadStateMonitor.disposeGameCoordinator();
         gameLoadStateMonitor.dispose();
         connectionsController.dispose();
 
@@ -471,7 +469,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             type = Confirm.Type.YES;
         }
 
-        _confirm.show(msg, type, new ConfirmResultListener() {
+        _confirm.show(ConfirmIdentifier.GameSandBox, msg, type, new ConfirmResultListener() {
             @Override
             public void onResult(Result result) {
                 if(result == Result.YES){

@@ -35,7 +35,7 @@ public class SettingsScene extends SceneAbstract {
 
     @Override
     public void populateRoot() {
-        new TopBar(_root, _texts.settingsTitle(), false, _assets, _screen, _services.getCoins());
+        topBar = new TopBar(_root, _texts.settingsTitle(), false, _assets, _screen, _services.getCoins());
 
         Label.LabelStyle labelTitleStyle = new Label.LabelStyle();
         labelTitleStyle.fontColor = Color.valueOf("fff6d8");

@@ -364,13 +364,6 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
         }
         else if (connectEvent.getResult() == WarpResponseResultCode .CONNECTION_ERROR_RECOVERABLE ){
             onConnectionChanged(_realUsername, ConnectionChangedListener.ConnectStatus.DISCONNECTED_BUT_RECOVERABLE);
-//            System.out.println("Try connect again.");
-//            Threadings.delay(5000, new Runnable() {
-//                @Override
-//                public void run() {
-//                    _warpInstance.RecoverConnection();
-//                }
-//            });
         }
         else {
             onConnectionChanged(_realUsername, ConnectionChangedListener.ConnectStatus.DISCONNECTED);
@@ -384,15 +377,19 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
     @Override
     public void onUserLeftRoom(RoomData roomData, String s) {
-        if(checkAndSaveEncodeUserId(s)){
-            onConnectionChanged(decodeUserId(s), ConnectionChangedListener.ConnectStatus.DISCONNECTED);
+        if(!decodeUserId(s).equals(_realUsername)){
+            if(checkAndSaveEncodeUserId(s)){
+                onConnectionChanged(decodeUserId(s), ConnectionChangedListener.ConnectStatus.DISCONNECTED);
+            }
         }
     }
 
     @Override
     public void onUserJoinedRoom(RoomData roomData, String s) {
-        if(checkAndSaveEncodeUserId(s)){
-            onConnectionChanged(decodeUserId(s), ConnectionChangedListener.ConnectStatus.CONNECTED);
+        if(!s.equals(_username)){
+            if(checkAndSaveEncodeUserId(s)){
+                onConnectionChanged(decodeUserId(s), ConnectionChangedListener.ConnectStatus.CONNECTED);
+            }
         }
     }
 
@@ -405,8 +402,10 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
     @Override
     public void onUserResumed(String s, boolean b, String s1) {
-        if(checkAndSaveEncodeUserId(s1)){
-            onConnectionChanged(decodeUserId(s1), ConnectionChangedListener.ConnectStatus.CONNECTED_FROM_RECOVER);
+        if(!s1.equals(_username)){
+            if(checkAndSaveEncodeUserId(s1)){
+                onConnectionChanged(decodeUserId(s1), ConnectionChangedListener.ConnectStatus.CONNECTED_FROM_RECOVER);
+            }
         }
     }
 

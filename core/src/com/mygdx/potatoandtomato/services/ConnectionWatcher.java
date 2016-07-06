@@ -5,6 +5,7 @@ import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.ConnectionChangedListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.services.ConnectionWatcherListener;
+import com.mygdx.potatoandtomato.enums.ConfirmIdentifier;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Room;
 import com.potatoandtomato.common.absints.IDisconnectOverlayControl;
@@ -57,14 +58,17 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
     }
 
     public void resetAndBackToBoot(boolean showDisconnectedMsg){
+        gamingKit.disconnect();
         showingResumeGame = false;
         showingLostConnection = false;
-        confirm.close();
+        confirm.close(ConfirmIdentifier.Resiliency);
+        confirm.close(ConfirmIdentifier.ResumingGameSession);
+
         broadcaster.broadcast(BroadcastEvent.DESTROY_ROOM);
         ptScreen.backToBoot();
 
         if(showDisconnectedMsg){
-            confirm.show(texts.noConnection(), Confirm.Type.YES, null);
+            confirm.show(ConfirmIdentifier.Resiliency, texts.noConnection(), Confirm.Type.YES, null);
         }
 
         count = 0;
@@ -144,7 +148,7 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
         String msg = String.format(texts.lostConnection(), remainingSecs);
         if(!showingLostConnection){
             showingLostConnection = true;
-            confirm.show(msg, Confirm.Type.LOADING_WITH_CANCEL, new ConfirmResultListener() {
+            confirm.show(ConfirmIdentifier.Resiliency, msg, Confirm.Type.LOADING_WITH_CANCEL, new ConfirmResultListener() {
                 @Override
                 public void onResult(Result result) {
                     if (result == Result.CANCEL) {
@@ -160,7 +164,7 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
 
     public void hideLostConnection(){
         showingLostConnection = false;
-        confirm.close();
+        confirm.close(ConfirmIdentifier.Resiliency);
 
     }
 
@@ -169,7 +173,7 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
         String msg = String.format(texts.connectionRecovered(), remainingSecs);
         if(!showingResumeGame && !showingLostConnection){
             showingResumeGame = true;
-            confirm.show(msg, Confirm.Type.LOADING_WITH_CANCEL, new ConfirmResultListener() {
+            confirm.show(ConfirmIdentifier.ResumingGameSession, msg, Confirm.Type.LOADING_WITH_CANCEL, new ConfirmResultListener() {
                 @Override
                 public void onResult(Result result) {
                     if (result == Result.CANCEL) {
@@ -185,7 +189,7 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
 
     @Override
     public void hideOverlay() {
-        confirm.close();
+        confirm.close(ConfirmIdentifier.ResumingGameSession);
         showingResumeGame = false;
     }
 

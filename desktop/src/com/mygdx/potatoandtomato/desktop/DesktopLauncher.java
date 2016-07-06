@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
 import com.mygdx.potatoandtomato.PTGame;
 import com.mygdx.potatoandtomato.absintflis.entrance.EntranceLoaderListener;
+import com.mygdx.potatoandtomato.models.CoinProduct;
 import com.mygdx.potatoandtomato.utils.JarUtils;
 import com.mygdx.potatoandtomato.utils.ForAppwarpTesting;
 import com.mygdx.potatoandtomato.utils.Positions;
@@ -84,7 +85,25 @@ public class DesktopLauncher {
 		_broadcaster.subscribe(BroadcastEvent.IAB_PRODUCTS_REQUEST, new BroadcastListener() {
 			@Override
 			public void onCallback(Object obj, Status st) {
-				_broadcaster.broadcast(BroadcastEvent.IAB_PRODUCTS_RESPONSE, new ArrayList());
+				ArrayList<CoinProduct> coinProducts = new ArrayList<CoinProduct>();
+				CoinProduct coinProduct = new CoinProduct("1", 5, "hehe");
+				coinProduct.setCurrency("RM");
+				coinProduct.setPrice(5.00);
+				coinProducts.add(coinProduct);
+
+				_broadcaster.broadcast(BroadcastEvent.IAB_PRODUCTS_RESPONSE, coinProducts);
+			}
+		});
+
+		_broadcaster.subscribe(BroadcastEvent.IAB_PRODUCT_PURCHASE, new BroadcastListener() {
+			@Override
+			public void onCallback(Object obj, Status st) {
+				Threadings.delay(5000, new Runnable() {
+					@Override
+					public void run() {
+						_broadcaster.broadcast(BroadcastEvent.IAB_PRODUCT_PURCHASE_RESPONSE);
+					}
+				});
 			}
 		});
 

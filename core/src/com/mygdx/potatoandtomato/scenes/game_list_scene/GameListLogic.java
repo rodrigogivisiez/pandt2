@@ -11,6 +11,7 @@ import com.mygdx.potatoandtomato.absintflis.gamingkit.RoomInfoListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Sounds;
+import com.mygdx.potatoandtomato.enums.ConfirmIdentifier;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.services.Confirm;
 import com.potatoandtomato.common.utils.RunnableArgs;
@@ -73,7 +74,7 @@ public class GameListLogic extends LogicAbstract {
 
     private void joinGamePreCheck(final Runnable toRun){
         if(_continueRoomId != null){
-            _confirm.show(_texts.confirmNotContinueGame(), Confirm.Type.YESNO, new ConfirmResultListener() {
+            _confirm.show(ConfirmIdentifier.ConfirmAbandon , _texts.confirmNotContinueGame(), Confirm.Type.YESNO, new ConfirmResultListener() {
                 @Override
                 public void onResult(Result result) {
                     if(result == Result.YES){

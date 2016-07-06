@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Disposable;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.assets.MyAssets;
+import com.mygdx.potatoandtomato.controls.TopBar;
 import com.mygdx.potatoandtomato.services.Texts;
 import com.mygdx.potatoandtomato.models.Services;
 import com.potatoandtomato.common.absints.IPTGame;
@@ -24,6 +25,7 @@ public abstract class SceneAbstract implements Disposable {
     protected PTScreen _screen;
     protected IPTGame _ptGame;
     protected boolean disposed;
+    protected TopBar topBar;
 
     public SceneAbstract(Services services, PTScreen screen) {
         _services = services;
@@ -44,6 +46,28 @@ public abstract class SceneAbstract implements Disposable {
     public abstract void populateRoot();
 
     public Actor getRoot(){ return _root; };
+
+    public void onShow(){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(topBar != null){
+                    topBar.onShow();
+                }
+            }
+        });
+    }
+
+    public void onHide(){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(topBar != null){
+                    topBar.onHide();
+                }
+            }
+        });
+    }
 
     @Override
     public void dispose() {

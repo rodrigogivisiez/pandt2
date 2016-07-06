@@ -9,6 +9,7 @@ import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.absintflis.socials.FacebookListener;
+import com.mygdx.potatoandtomato.enums.ConfirmIdentifier;
 import com.mygdx.potatoandtomato.services.Confirm;
 import com.mygdx.potatoandtomato.statics.Terms;
 import com.mygdx.potatoandtomato.models.Profile;
@@ -38,7 +39,7 @@ public class SettingsLogic extends LogicAbstract {
                         _screen.backToBoot();
                     }
                     else{
-                        _confirm.show(_texts.facebookLoginFailed(), Confirm.Type.YES, null);
+                        _confirm.show(ConfirmIdentifier.SettingsScene, _texts.facebookLoginFailed(), Confirm.Type.YES, null);
                     }
                 }
             });
@@ -83,11 +84,11 @@ public class SettingsLogic extends LogicAbstract {
                         _services.getDatabase().updateProfile(_services.getProfile(), null);
                         _screen.back();
                     } else {
-                        _services.getConfirm().show(_texts.duplicateNameError(), Confirm.Type.YES, null);
+                        _services.getConfirm().show(ConfirmIdentifier.SettingsScene, _texts.duplicateNameError(), Confirm.Type.YES, null);
                         clearLoadingSave();
                     }
                 } else {
-                    _services.getConfirm().show(_texts.generalError(), Confirm.Type.YES, null);
+                    _services.getConfirm().show(ConfirmIdentifier.SettingsScene, _texts.generalError(), Confirm.Type.YES, null);
                     clearLoadingSave();
                 }
             }
@@ -117,7 +118,7 @@ public class SettingsLogic extends LogicAbstract {
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
 
-                _confirm.show(_services.getSocials().isFacebookLogon() ? _texts.confirmLogoutFacebook() : _texts.confirmLoginFacebook(),
+                _confirm.show(ConfirmIdentifier.SettingsScene, _services.getSocials().isFacebookLogon() ? _texts.confirmLogoutFacebook() : _texts.confirmLoginFacebook(),
                         Confirm.Type.YESNO, new ConfirmResultListener() {
                             @Override
                             public void onResult(Result result) {

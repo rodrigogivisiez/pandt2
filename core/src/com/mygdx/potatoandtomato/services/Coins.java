@@ -4,12 +4,20 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
+import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.LockPropertyListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
 import com.mygdx.potatoandtomato.absintflis.services.CoinsListener;
+import com.mygdx.potatoandtomato.absintflis.services.CoinsRetrieveListener;
+import com.mygdx.potatoandtomato.absintflis.services.IRestfulApi;
+import com.mygdx.potatoandtomato.absintflis.services.RestfulApiListener;
+import com.mygdx.potatoandtomato.enums.ConfirmIdentifier;
+import com.mygdx.potatoandtomato.enums.ShopProducts;
+import com.mygdx.potatoandtomato.models.CoinProduct;
+import com.mygdx.potatoandtomato.models.RetrievableCoinsData;
 import com.potatoandtomato.common.absints.CoinListener;
 import com.mygdx.potatoandtomato.controls.CoinMachineControl;
 import com.mygdx.potatoandtomato.controls.TopBarCoinControl;
@@ -19,6 +27,8 @@ import com.mygdx.potatoandtomato.models.Profile;
 import com.potatoandtomato.common.absints.ICoins;
 import com.potatoandtomato.common.absints.IPTGame;
 import com.potatoandtomato.common.assets.Assets;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
+import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.*;
@@ -40,11 +50,14 @@ public class Coins implements ICoins {
     private SoundsPlayer soundsPlayer;
     private Texts texts;
     private IPTGame iptGame;
+    private Broadcaster broadcaster;
+    private Confirm confirm;
     private Profile profile;
     private CoinMachineControl coinMachineControl;
     private IDatabase database;
     private GamingKit gamingKit;
     private PTScreen ptScreen;
+    private IRestfulApi restfulApi;
     private SafeDouble myCoinsCount;
     private int expectingCoin;
     private String transactionId;
@@ -53,6 +66,7 @@ public class Coins implements ICoins {
     private ConcurrentHashMap<String, Integer> currentUsersPutCoinNumberMap;
     private CoinListener coinListener;
     private int deductedSuccessCoinsCount;
+    private ShopProducts currentShopProducts;
 
     private ArrayList<String> noCoinUserIds;
     private ArrayList<Pair<String, String>> userIdToNamePairs;
@@ -63,8 +77,12 @@ public class Coins implements ICoins {
 
     public Coins(Broadcaster broadcaster, Assets assets,
                  SoundsPlayer soundsPlayer, Texts texts, IPTGame iptGame, SpriteBatch batch,
-                 Profile profile, IDatabase database, GamingKit gamingKit) {
+                 Profile profile, IDatabase database, GamingKit gamingKit, IRestfulApi restfulApi,
+                 Confirm confirm) {
         _this = this;
+        this.broadcaster = broadcaster;
+        this.confirm = confirm;
+        this.restfulApi = restfulApi;
         this.assets = assets;
         this.soundsPlayer = soundsPlayer;
         this.texts = texts;
@@ -82,6 +100,7 @@ public class Coins implements ICoins {
         topBarCoinControls = new ArrayList();
 
         setListeners();
+
     }
 
     public void profileReady(){
@@ -157,8 +176,9 @@ public class Coins implements ICoins {
                         myCoinsCount.setValue((double) obj);
 
                         for (TopBarCoinControl topBarCoinControl : topBarCoinControls) {
-                            topBarCoinControl.setCoinCount(obj);
+                            topBarCoinControl.setCoinCount(obj, currentShopProducts);
                         }
+                        currentShopProducts = null;
                     }
                 }
             });
@@ -369,6 +389,42 @@ public class Coins implements ICoins {
         }
     }
 
+    public void retrieveFreeCoins(final CoinsRetrieveListener coinsRetrieveListener){
+        confirm.show(ConfirmIdentifier.Coins, texts.workingDoNotClose(), Confirm.Type.LOADING_NO_CANCEL, null);
+        currentShopProducts = ShopProducts.PURSE;
+        restfulApi.retrieveCoins(profile, new RestfulApiListener<RetrievableCoinsData>() {
+            @Override
+            public void onCallback(RetrievableCoinsData obj, Status st) {
+                if(st == Status.SUCCESS){
+                    coinsRetrieveListener.onFreeCoinsRetrieved(obj);
+                }
+                confirm.close(ConfirmIdentifier.Coins);
+            }
+        });
+    }
+
+    public void watchAds(){
+        currentShopProducts = ShopProducts.ONE_COIN;
+        broadcaster.broadcast(BroadcastEvent.SHOW_REWARD_VIDEO);
+    }
+
+    public void purchaseCoins(CoinProduct coinProduct){
+        currentShopProducts = coinProduct.getShopProductType();
+        confirm.show(ConfirmIdentifier.Coins, texts.workingDoNotClose(), Confirm.Type.LOADING_NO_CANCEL, null);
+        broadcaster.subscribeOnceWithTimeout(BroadcastEvent.IAB_PRODUCT_PURCHASE_RESPONSE, 60 * 1000, new BroadcastListener() {
+            @Override
+            public void onCallback(Object obj, Status st) {
+                confirm.close(ConfirmIdentifier.Coins);
+                if (st != Status.SUCCESS) {
+                    confirm.show(ConfirmIdentifier.Coins, texts.purchaseFailed(), Confirm.Type.YES, null);
+                }
+            }
+        });
+        broadcaster.broadcast(BroadcastEvent.IAB_PRODUCT_PURCHASE, new Pair<String, IRestfulApi>(coinProduct.getId(), restfulApi));
+    }
+
+
+
     public void setListeners(){
         Threadings.postRunnable(new Runnable() {
             @Override
@@ -450,7 +506,8 @@ public class Coins implements ICoins {
     }
 
     public TopBarCoinControl getNewTopBarCoinControl(boolean disableClick) {
-        TopBarCoinControl topBarCoinControl = new TopBarCoinControl(assets, myCoinsCount.getValue().intValue(), disableClick, ptScreen);
+        TopBarCoinControl topBarCoinControl = new TopBarCoinControl(assets, myCoinsCount.getValue().intValue(),
+                                            disableClick, ptScreen, soundsPlayer);
         topBarCoinControls.add(topBarCoinControl);
         return topBarCoinControl;
     }

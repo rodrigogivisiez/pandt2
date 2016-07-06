@@ -11,6 +11,7 @@ import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.absintflis.services.RestfulApiListener;
 import com.mygdx.potatoandtomato.absintflis.socials.FacebookListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
+import com.mygdx.potatoandtomato.enums.ConfirmIdentifier;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.services.Confirm;
@@ -228,7 +229,7 @@ public class BootLogic extends LogicAbstract {
         String msg = Logs.getAndDeleteLogMsg();
         if(!Strings.isEmpty(msg)){
             _services.getDatabase().saveLog(msg);
-            _services.getConfirm().show(_texts.appsCrashed(), Confirm.Type.YES, null);
+            _services.getConfirm().show(ConfirmIdentifier.CrashedReportSent, _texts.appsCrashed(), Confirm.Type.YES, null);
         }
     }
 

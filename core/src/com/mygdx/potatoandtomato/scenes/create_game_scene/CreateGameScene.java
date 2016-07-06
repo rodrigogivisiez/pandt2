@@ -51,7 +51,7 @@ public class CreateGameScene extends SceneAbstract {
 
     @Override
     public void populateRoot() {
-        new TopBar(_root, _texts.createGameTitle(), false, _assets, _screen, _services.getCoins());
+        topBar = new TopBar(_root, _texts.createGameTitle(), false, _assets, _screen, _services.getCoins());
         Table clippedRoot = new Table();
         clippedRoot.align(Align.topLeft);
         clippedRoot.setClip(true);

@@ -3,7 +3,6 @@ package com.mygdx.potatoandtomato.services;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
@@ -21,6 +20,7 @@ import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.assets.Patches;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.controls.DummyButton;
+import com.mygdx.potatoandtomato.enums.ConfirmIdentifier;
 import com.mygdx.potatoandtomato.utils.Positions;
 import com.mygdx.potatoandtomato.utils.Sizes;
 import com.potatoandtomato.common.absints.IPTGame;
@@ -50,7 +50,7 @@ public class Confirm {
     Table buttonsTable, msgTable;
     boolean visible;
     long previousTime;
-    String currentMsg;
+    ConfirmIdentifier currentConfirmIdentifier;
     boolean locked;
     ConfirmResultListener confirmResultListener;
     ConfirmStateChangedListener stateChangedListener;
@@ -126,7 +126,7 @@ public class Confirm {
                     StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
                     viewPort.update(Positions.getWidth(), Positions.getHeight(), true);
                     stage = new Stage(viewPort, batch);
-                    game.addInputProcessor(stage, 15, getClassTag());
+                    game.addInputProcessor(stage, 15, false);
                     stage.addActor(confirmRoot);
                 }
                 else{
@@ -141,19 +141,19 @@ public class Confirm {
         });
     }
 
-    public void show(final String msg, final Type type, final ConfirmResultListener listener){
-        show(msg, type, listener, "");
+    public void show(ConfirmIdentifier identifier, final String msg, final Type type, final ConfirmResultListener listener){
+        show(identifier, msg, type, listener, "");
     }
 
-    public void show(final String msg, final Type type, final ConfirmResultListener listener, final String extra){
-        if(currentMsg != null && currentMsg.equals(msg)) return;
+    public void show(ConfirmIdentifier identifier, final String msg, final Type type, final ConfirmResultListener listener, final String extra){
+        if(currentConfirmIdentifier != null && currentConfirmIdentifier == identifier) return;
         if(locked) return;
 
         if(type == Type.LOADING_WITH_CANCEL || type == Type.LOADING_NO_CANCEL){
             locked = true;
         }
         visible = true;
-        currentMsg = msg;
+        currentConfirmIdentifier = identifier;
 
         Threadings.postRunnable(new Runnable() {
             @Override
@@ -294,12 +294,18 @@ public class Confirm {
         this.stateChangedListener = _stateListener;
     }
 
-    public void close(){
+    public void close(ConfirmIdentifier confirmIdentifier){
+        if(currentConfirmIdentifier == confirmIdentifier){
+            close();
+        }
+    }
+
+    private void close(){
         locked = false;
+        currentConfirmIdentifier = null;
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                currentMsg = null;
                 confirmRoot.clearActions();
                 confirmRoot.addAction(sequence(fadeOut(0.2f), new RunnableAction() {
                     @Override

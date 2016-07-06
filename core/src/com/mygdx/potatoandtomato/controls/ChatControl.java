@@ -321,7 +321,7 @@ public class ChatControl {
                     StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
                     viewPort.update(Positions.getWidth(), Positions.getHeight(), true);
                     stage = new Stage(viewPort, batch);
-                    iptGame.addInputProcessor(stage, 10);
+                    iptGame.addInputProcessor(stage, 10, false);
                     stage.addActor(root);
                 }
                 else{

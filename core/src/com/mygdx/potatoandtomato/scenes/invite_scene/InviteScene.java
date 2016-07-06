@@ -72,7 +72,7 @@ public class InviteScene extends SceneAbstract {
     public void populateRoot() {
         _usersHashMap = new MultiHashMap();
         _containersMap = new HashMap<InviteType, Table>();
-        new TopBar(_root, _texts.inviteTitle(), false, _assets, _screen, _services.getCoins());
+        topBar = new TopBar(_root, _texts.inviteTitle(), false, _assets, _screen, _services.getCoins());
 
         Table _invitesRootTable = new Table();
         _invitesRootTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.INVITE_BG)));
@@ -285,7 +285,7 @@ public class InviteScene extends SceneAbstract {
 
                         detailsTable.add(rankBadge).padRight(5);
                         if(streak.hasValidStreak()){
-                            Badge streakBadge = new Badge(BadgeType.Streak, String.valueOf(streak), _assets, 2);
+                            Badge streakBadge = new Badge(BadgeType.Streak, String.valueOf(streak.getStreakCount()), _assets, 2);
                             detailsTable.add(streakBadge).size(28, 30).padRight(5);
                         }
                         detailsTable.add(nameScoreTable).expandX().fillX();

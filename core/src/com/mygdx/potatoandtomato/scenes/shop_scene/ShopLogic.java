@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.absintflis.services.CoinsRetrieveListener;
 import com.mygdx.potatoandtomato.absintflis.services.IRestfulApi;
 import com.mygdx.potatoandtomato.absintflis.services.RestfulApiListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
@@ -155,12 +156,15 @@ public class ShopLogic extends LogicAbstract {
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 if(currentRetrievableCoinsData != null && currentRetrievableCoinsData.getCanRetrieveCoinsCount() > 0){
-                    _services.getRestfulApi().retrieveCoins(_services.getProfile(), new RestfulApiListener<RetrievableCoinsData>() {
+                    _services.getCoins().retrieveFreeCoins(new CoinsRetrieveListener() {
                         @Override
-                        public void onCallback(RetrievableCoinsData obj, Status st) {
-                            updateCurrentRetrievableCoinsData(obj);
+                        public void onFreeCoinsRetrieved(RetrievableCoinsData coinsData) {
+                            updateCurrentRetrievableCoinsData(coinsData);
                         }
                     });
+                }
+                else{
+                    _services.getSoundsPlayer().playSoundEffect(Sounds.Name.WRONG);
                 }
             }
         });
@@ -179,8 +183,13 @@ public class ShopLogic extends LogicAbstract {
                                 public void clicked(InputEvent event, float x, float y) {
                                     super.clicked(event, x, y);
                                     if (canWatchAds) {
-                                        _services.getBroadcaster().broadcast(BroadcastEvent.SHOW_REWARD_VIDEO);
-                                        refreshAdsAvailability();
+                                        _services.getCoins().watchAds();
+                                        Threadings.delay(1000, new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                refreshAdsAvailability();
+                                            }
+                                        });
                                     }
                                 }
                             });
@@ -192,16 +201,7 @@ public class ShopLogic extends LogicAbstract {
                             button.addListener(new ClickListener(){
                                 @Override
                                 public void clicked(InputEvent event, float x, float y) {
-                                    super.clicked(event, x, y);
-                                    subscribeBroadcastOnceWithTimeout(BroadcastEvent.IAB_PRODUCT_PURCHASE_RESPONSE, 60 * 1000, new BroadcastListener() {
-                                        @Override
-                                        public void onCallback(Object obj, Status st) {
-                                            if(st == Status.SUCCESS){
-                                                Logs.show("SUCCESS PURCHASED");
-                                            }
-                                        }
-                                    });
-                                    publishBroadcast(BroadcastEvent.IAB_PRODUCT_PURCHASE, new Pair<String, IRestfulApi>(coinProduct.getId(), _services.getRestfulApi()));
+                                   _services.getCoins().purchaseCoins(coinProduct);
                                 }
                             });
                         }

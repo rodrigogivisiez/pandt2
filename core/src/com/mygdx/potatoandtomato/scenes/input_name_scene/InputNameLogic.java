@@ -7,6 +7,7 @@ import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.enums.ConfirmIdentifier;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.services.Confirm;
 import com.mygdx.potatoandtomato.models.Profile;
@@ -45,10 +46,11 @@ public class InputNameLogic extends LogicAbstract {
     public void saveNameIfValid(String name){
         name = name.trim();
         if(name.equals("")){
-            _services.getConfirm().show(_texts.emptyNameError(), Confirm.Type.YES, null);
+            _services.getConfirm().show(ConfirmIdentifier.InputNameIssue, _texts.emptyNameError(), Confirm.Type.YES, null);
         }
         else if(name.length() > Global.USERNAME_MAX_LENGTH){
-            _services.getConfirm().show(String.format(_texts.nameLengthError(), Global.USERNAME_MAX_LENGTH),
+            _services.getConfirm().show(ConfirmIdentifier.InputNameIssue,
+                    String.format(_texts.nameLengthError(), Global.USERNAME_MAX_LENGTH),
                                 Confirm.Type.YES, null);
         }
         else{
@@ -63,11 +65,13 @@ public class InputNameLogic extends LogicAbstract {
                             _services.getDatabase().updateProfile(_services.getProfile(), null);
                             _screen.toScene(SceneEnum.GAME_LIST);
                         } else {
-                            _services.getConfirm().show(_texts.duplicateNameError(), Confirm.Type.YES, null);
+                            _services.getConfirm().show(ConfirmIdentifier.InputNameIssue,
+                                    _texts.duplicateNameError(), Confirm.Type.YES, null);
                             clearLoading();
                         }
                     } else {
-                        _services.getConfirm().show(_texts.generalError(), Confirm.Type.YES, null);
+                        _services.getConfirm().show(ConfirmIdentifier.InputNameIssue,
+                                _texts.generalError(), Confirm.Type.YES, null);
                         clearLoading();
                     }
                 }

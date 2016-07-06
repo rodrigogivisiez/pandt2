@@ -53,7 +53,6 @@ public class GameCoordinator implements Disposable {
     private boolean gameStarted;
     private boolean finalized;
     private boolean finishLoading;
-    private Array<InputProcessor> processors;
     private ArrayList<InGameUpdateListener> inGameUpdateListeners;
     private ArrayList<LeaderboardRecord> gameLeaderboardRecords;
 
@@ -98,7 +97,6 @@ public class GameCoordinator implements Disposable {
                                                     gameSandBox, game, disconnectOverlayControl, this);
         onResumeRunnables = new ArrayList();
         gameLeaderboardRecords = new ArrayList<LeaderboardRecord>();
-        processors = new Array<InputProcessor>();
         inGameUpdateListeners = new ArrayList<InGameUpdateListener>();
         selfConnectionListeners = new ArrayList<SelfConnectionListener>();
     }
@@ -492,12 +490,10 @@ public class GameCoordinator implements Disposable {
     //For reuse client stage spritebatch
     ////////////////////////////////////////////////////////////////////////////////////////
     public void addInputProcessor(InputProcessor processor){
-        processors.add(processor);
-        game.addInputProcessor(processor);
+        game.addInputProcessor(processor, 0, true);
     }
 
     public void removeInputProcessor(InputProcessor processor){
-        processors.removeValue(processor, false);
         game.removeInputProcessor(processor);
     }
 
@@ -662,10 +658,8 @@ public class GameCoordinator implements Disposable {
                 }
             });
         }
-        for(InputProcessor processor : processors){
-            game.removeInputProcessor(processor);
-        }
-        processors.clear();
+
+        game.removeAllExternalProcessors();
 
         for(Runnable runnable : onResumeRunnables){
             game.removeOnResumeRunnable(runnable);

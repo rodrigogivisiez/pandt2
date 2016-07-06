@@ -8,11 +8,10 @@ import com.badlogic.gdx.Screen;
  */
 public interface IPTGame {
 
-    void addInputProcessor(InputProcessor processor, int priority);
-    void addInputProcessor(InputProcessor processor, int priority, String id);
+    void addInputProcessor(InputProcessor processor, int priority, boolean external);
     void addInputProcessor(InputProcessor processor);
     void removeInputProcessor(InputProcessor processor);
-    void removeInputProcessorById(String id);
+    void removeAllExternalProcessors();
 
     void setScreen(Screen screen);
 

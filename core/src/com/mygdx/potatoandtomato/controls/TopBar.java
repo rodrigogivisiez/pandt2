@@ -32,6 +32,7 @@ public class TopBar {
     private Image iconImg;
     private Label titleLabel;
     private PTScreen screen;
+    private TopBarCoinControl topBarCoinControl;
 
 
     public TopBar(Table root, String title, boolean noPreviousScene,
@@ -66,9 +67,11 @@ public class TopBar {
                 titleLabelStyle.font = assets.getFonts().get(Fonts.FontId.PIZZA_XXL_REGULAR_B_000000_fed271_3);
                 titleLabel = new Label(title, titleLabelStyle);
 
+                topBarCoinControl = coins.getNewTopBarCoinControl(false);
+
                 topBarTable.addActor(iconImg);
                 topBarTable.add(titleLabel).expand().fill().padLeft(90);
-                topBarTable.add(coins.getNewTopBarCoinControl(false)).padBottom(5).padRight(5);
+                topBarTable.add(topBarCoinControl).padBottom(5).padRight(5);
 
                 root.padTop(barHeight);
                 root.addActor(topBarTable);
@@ -91,10 +94,12 @@ public class TopBar {
                 titleLabelStyle.font = assets.getFonts().get(Fonts.FontId.PIZZA_XXL_REGULAR_B_000000_ffffff_3);
                 titleLabel.setStyle(titleLabelStyle);
 
+                topBarCoinControl = coins.getNewTopBarCoinControl(true);
+
                 topBarTable.add(titleLabel).expand().fill().padLeft(90);
                 topBarTable.addActor(darkImage);
                 topBarTable.addActor(iconImg);
-                topBarTable.add(coins.getNewTopBarCoinControl(true)).padBottom(5).padRight(5);
+                topBarTable.add(topBarCoinControl).padBottom(5).padRight(5);
             }
         });
     }
@@ -112,6 +117,14 @@ public class TopBar {
                 });
             }
         });
+    }
+
+    public void onShow(){
+        topBarCoinControl.setShown(true);
+    }
+
+    public void onHide(){
+        topBarCoinControl.setShown(false);
     }
 
 }

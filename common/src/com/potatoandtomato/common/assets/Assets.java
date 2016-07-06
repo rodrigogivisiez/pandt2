@@ -46,6 +46,10 @@ public class Assets implements Disposable {
         manager.startMonitor(new OneTimeRunnable(new Runnable() {
             @Override
             public void run() {
+                if(disposed) {
+                    dispose();
+                    return;
+                }
                 onLoadedAssets();
             }
         }));
@@ -79,6 +83,11 @@ public class Assets implements Disposable {
         }
         if(fontAssets != null) fontAssets.onLoaded();
         if(animationAssets != null) animationAssets.onLoaded();
+
+        if(disposed){
+            dispose();
+            return;
+        }
 
         if(onFinish != null) onFinish.run();
     }

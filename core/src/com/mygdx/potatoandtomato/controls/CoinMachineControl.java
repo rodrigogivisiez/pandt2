@@ -69,6 +69,7 @@ public class CoinMachineControl {
             @Override
             public void run() {
                 root = new Table();
+                root.setVisible(false);
                 root.setBackground(new TextureRegionDrawable(assets.getTextures().get(Textures.Name.COIN_MACHINE_ROOT_BG)));
                 root.setSize(190, Sizes.resize(190, assets.getTextures().get(Textures.Name.COIN_MACHINE_ROOT_BG)).y);
 
@@ -163,19 +164,24 @@ public class CoinMachineControl {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                if(stage != null){
-                    stage.dispose();
-                    iptGame.removeInputProcessorById(getClassTag());
+
+                if(stage == null){
+                    StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
+                    viewPort.update(Positions.getWidth(), Positions.getHeight(), true);
+                    stage = new Stage(viewPort, batch);
+                    iptGame.addInputProcessor(stage, 11, false);
+                    stage.addActor(root);
                 }
-                root.remove();
+                else{
+                    if(stage.getViewport().getWorldWidth() != Positions.getWidth()
+                            || stage.getViewport().getWorldHeight() != Positions.getHeight()){
+                        StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
+                        viewPort.update(Positions.getWidth(), Positions.getHeight(), true);
+                        stage.setViewport(viewPort);
+                    }
+                }
 
                 root.setPosition(Positions.getWidth() - root.getWidth(), Positions.getHeight() / 4);
-                stage = new Stage(new StretchViewport(Positions.getWidth(), Positions.getHeight()), batch);
-                stage.addActor(root);
-
-                if(visible){
-                    iptGame.addInputProcessor(stage, 11, getClassTag());
-                }
             }
         });
     }
@@ -186,20 +192,17 @@ public class CoinMachineControl {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
+                root.setVisible(true);
                 visible = true;
                 root.clearActions();
                 root.setX(Positions.getWidth() + 10);
                 root.addAction(moveTo(Positions.getWidth() - root.getWidth(), root.getY(), 0.3f));
-
-                iptGame.addInputProcessor(stage, 11, getClassTag());
             }
         });
 
     }
 
     public void hide(){
-        iptGame.removeInputProcessorById(getClassTag());
-
         if(!visible) return;
 
         Threadings.postRunnable(new Runnable() {
@@ -209,6 +212,7 @@ public class CoinMachineControl {
                 root.addAction(sequence(moveTo(Positions.getWidth() + 10, root.getY(), 0.3f), new RunnableAction(){
                     @Override
                     public void run() {
+                        root.setVisible(false);
                         visible = false;
                     }
                 }));

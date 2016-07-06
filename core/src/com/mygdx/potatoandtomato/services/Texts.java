@@ -193,7 +193,6 @@ public class Texts {
 
     public String appsCrashed() {return "Opps, looks like P&T has crashed on the last time you played, a error log has been received by Tomato and will be fixed asap.";}
 
-
     public String lostConnection() {return "Lost connection with server, trying to reconnect, \n%s secs remaining";}
     public String connectionRecovered() {return "Connection established, trying to resume game session, \n%s secs remaining";}
     public String clickToDisconnect(){ return "Click to Disconnect";}
@@ -204,6 +203,10 @@ public class Texts {
     public String buyCoins() { return "Buy Now"; }
 
     public String slideUpCancel() { return "Slide up to cancel";}
+
+    public String workingDoNotClose() { return "Potato and Tomato are working now, please do not close apps now...";}
+    public String purchaseFailed() { return "Failed to purchase coins..";}
+
 
     //push notifications part
     public String PUSHGameInvitationsTitle() { return "P&T Game Invitations"; }
