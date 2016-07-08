@@ -124,9 +124,30 @@ public class MainForm extends JFrame {
                 File f = new File("1.jpg");
                 File f2 = new File("2.jpg");
 
+                final int[] count = {0};
+
                 Uploads uploads = new Uploads();
-                uploads.uploadImage(f, key, 1, imageDetails);
-                uploads.uploadImage(f2, key, 2, imageDetails);
+                uploads.uploadImage(f, key, 1, imageDetails, new Runnable() {
+                    @Override
+                    public void run() {
+                        count[0]++;
+
+                    }
+                });
+                uploads.uploadImage(f2, key, 2, imageDetails, new Runnable() {
+                    @Override
+                    public void run() {
+                        count[0]++;
+                    }
+                });
+
+                while (count[0] != 2){
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
 
                 f.delete();
                 f2.delete();

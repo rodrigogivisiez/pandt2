@@ -1,9 +1,11 @@
 package com.ptuploader;
 
+import com.ptuploader.models.FileData;
 import com.ptuploader.process.*;
 import com.ptuploader.utils.Logs;
 
 import java.io.*;
+import java.util.Map;
 
 public class Main {
 
@@ -21,32 +23,61 @@ public class Main {
         Dx dxRunner = new Dx(paths, logs);
         if(!dxRunner.run()) return;
 
-        Zippings zippings = new Zippings(paths, logs);
-        if(!zippings.run()) return;
+       // Zippings zippings = new Zippings(paths, logs);
+        //if(!zippings.run()) return;
 
-        Details details = new Details(paths, logs);
-        if(!details.extract(zippings.hasModified(), testing)) return;
-        details.setGameSize(zippings.getNewFileSize());
+        AssetsHelper assetsHelper = new AssetsHelper(paths.getAssetsDir(), paths.getJarFile());
+        assetsHelper.run();
+
+        Details details = new Details(paths, logs, fireDB, assetsHelper);
+        if(!details.extract(testing, assetsHelper.getFileDatasMap(), assetsHelper.getGameSize())) return;
+
 
         final int[] uploadCount = {0};
+        final int[] deleteCount = {0};
+
+        int totalUploadFiles = details.getToUploadFiles().size();
 
         Uploads uploads = new Uploads(paths, logs, testing);
-        uploads.uploadIcon(details, new Runnable() {
-            @Override
-            public void run() {
-                uploadCount[0]++;
-            }
-        });
-        uploads.uploadGame(details, new Runnable() {
-            @Override
-            public void run() {
-                uploadCount[0]++;
-            }
-        });
+        if(details.isIconModified()){
+            uploads.uploadIcon(details, 1, new Runnable() {
+                @Override
+                public void run() {
+                    uploadCount[0]++;
+                }
+            });
+            totalUploadFiles++;
+        }
 
-        while (uploadCount[0] < 2){
+
+        for (Map.Entry<String, FileData> entry : details.getToUploadFiles().entrySet()) {
+            String fileName = entry.getKey();
+            final FileData fileData = assetsHelper.getFileDatasMap().get(fileName);
+            final boolean[] finish = new boolean[1];
+            uploads.uploadFile(fileName, fileData, 1,new Runnable() {
+                @Override
+                public void run() {
+                    finish[0] = true;
+                    uploadCount[0]++;
+                }
+            });
+        }
+
+        for (Map.Entry<String, FileData> entry : details.getToDeleteFromCloudFiles().entrySet()) {
+            String fileName = entry.getKey();
+            uploads.deleteFile(fileName, new Runnable() {
+                @Override
+                public void run() {
+                    deleteCount[0]++;
+                }
+            });
+        }
+
+        while (uploadCount[0] < (totalUploadFiles) || deleteCount[0] < details.getToDeleteFromCloudFiles().size()){
             Thread.sleep(500);
         }
+
+        details.setGameDataFilesJson(assetsHelper.getFileDatasMap());
 
         details.print();
 

@@ -39,6 +39,7 @@ public class Downloader implements IDownloader{
                         listener.onCallback(null, Status.FAILED);
                         return;
                     }
+
                     completeFileSize = con.getContentLength();
                     File file = targetFile;
                     if (file.exists()) file.delete();
@@ -63,14 +64,16 @@ public class Downloader implements IDownloader{
 
                         // calculate progress
                         final int currentProgress = (int) ((((double) downloadedFileSize) / ((double) completeFileSize)) * 100d);
-                        listener.onStep(currentProgress);
+                        listener.onStep(currentProgress, completeFileSize, downloadedFileSize);
 
                         bos.write(data, 0, x);
                     }
 
+                    con.disconnect();
                     bos.flush();
                     bis.close();
                     bos.close();
+
 
                     listener.onCallback(null, Status.SUCCESS);
 

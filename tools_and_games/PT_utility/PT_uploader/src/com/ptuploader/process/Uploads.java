@@ -1,5 +1,6 @@
 package com.ptuploader.process;
 
+import com.ptuploader.models.FileData;
 import com.ptuploader.utils.Logs;
 import com.ptuploader.utils.ProgressInputStream;
 import com.shephertz.app42.paas.sdk.android.*;
@@ -10,6 +11,12 @@ import com.shephertz.app42.paas.sdk.android.util.Base64;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
 
 /**
  * Created by SiongLeng on 2/3/2016.
@@ -32,8 +39,8 @@ public class Uploads {
         _uploadService = api.buildUploadService();
     }
 
-    public void uploadIcon(final Details details, final Runnable onFinish){
-        logs.write("Uploading Icon...");
+    public void uploadIcon(final Details details, final int tryNumber, final Runnable onFinish){
+        logs.write("*"+ tryNumber + "Uploading Icon...");
         final String fileName = details.getDetailsMap().get(details.ABBR) + "_icon.png";
 
         final Runnable uploadProcess = new Runnable() {
@@ -44,6 +51,28 @@ public class Uploads {
                 String jsonResponse = upload.toString();
                 if(jsonResponse.contains("\"success\":true")){
                     String iconUrl = upload.getFileList().get(0).getUrl();
+
+
+                    URL url = null;
+                    try {
+                        url = new URL(iconUrl);
+                        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                        if (con.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            uploadIcon(details, tryNumber+1, onFinish);
+                            return;
+                        }
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
                     details.setIconUrl(iconUrl);
                     logs.write("Icon upload successfully at " + details.getIconUrl());
                     onFinish.run();
@@ -70,27 +99,49 @@ public class Uploads {
         }
     }
 
-    public void uploadGame(final Details details, final Runnable onFinish){
-        logs.write("Uploading Game...");
-        final String fileName = details.getDetailsMap().get(details.ABBR) + "_game.zip";
+    public void uploadFile(final String fileName, final FileData fileData, final int tryNumber, final Runnable onFinish){
+        final String encodedFileName = encodeFileName(fileName);
+
+        logs.write("*"+ tryNumber + " Uploading " + encodedFileName);
 
         final Runnable uploadProcess = new Runnable() {
             @Override
             public void run() {
-                Upload upload = _uploadService.uploadFile(fileName, paths.getAssetsZip().getAbsolutePath(),
-                        UploadFileType.OTHER, details.getAbbr() + " zip file");
+                Upload upload = _uploadService.uploadFile(encodedFileName, fileData.getAbsolutePath(),
+                        UploadFileType.OTHER, encodedFileName + "_" + fileData.getModifiedAt());
                 String jsonResponse = upload.toString();
                 if(jsonResponse.contains("\"success\":true")){
-                    String gameUrl = upload.getFileList().get(0).getUrl();
-                    details.setGameUrl(gameUrl);
-                    logs.write("Game upload successfully at " + details.getGameUrl());
+                    String fileUrl = upload.getFileList().get(0).getUrl();
+
+
+                    URL url = null;
+                    try {
+                        url = new URL(fileUrl);
+                        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                        if (con.getResponseCode() != HttpURLConnection.HTTP_OK ) {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            uploadFile(fileName, fileData, tryNumber+1, onFinish);
+                            return;
+                        }
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    fileData.setUrl(fileUrl);
+                    logs.write(encodedFileName + " upload successfully.");
                     onFinish.run();
                 }
             }
         };
 
         try{
-            _uploadService.removeFileByName(fileName, new App42CallBack() {
+            _uploadService.removeFileByName(encodedFileName, new App42CallBack() {
                 @Override
                 public void onSuccess(Object o) {
                     uploadProcess.run();
@@ -98,15 +149,49 @@ public class Uploads {
 
                 @Override
                 public void onException(Exception e) {
+//                    try {
+//                        Thread.sleep(3000);
+//                    } catch (InterruptedException e1) {
+//                        e1.printStackTrace();
+//                    }
                     uploadProcess.run();
                 }
             });
         }
         catch (App42Exception ex){
             ex.printStackTrace();
-            logs.write("Game upload failed!");
+            logs.write(encodedFileName + " upload failed!");
         }
     }
 
+
+    public void deleteFile(final String fileName, final Runnable onFinish){
+        final String encodedFileName = encodeFileName(fileName);
+
+        logs.write("Deleting " + encodedFileName);
+
+        try{
+            _uploadService.removeFileByName(encodedFileName, new App42CallBack() {
+                @Override
+                public void onSuccess(Object o) {
+                    onFinish.run();
+                }
+
+                @Override
+                public void onException(Exception e) {
+                    onFinish.run();
+                }
+            });
+        }
+        catch (App42Exception ex){
+            ex.printStackTrace();
+            logs.write(encodedFileName + " delete failed!");
+        }
+    }
+
+    private String encodeFileName(String filename){
+        String encodedFileName =  filename.replaceAll("[^\\p{L}\\p{Nd}]+", "__");
+        return  encodedFileName;
+    }
 
 }

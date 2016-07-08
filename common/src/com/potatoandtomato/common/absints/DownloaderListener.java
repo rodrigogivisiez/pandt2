@@ -9,7 +9,7 @@ public abstract class DownloaderListener {
 
     public abstract void onCallback(byte[] bytes, Status st);
 
-    public void onStep(double percentage){
+    public void onStep(double percentage, long totalSize, long downloadedSize){
 
     }
 

@@ -63,7 +63,7 @@ public abstract class MockGame extends Game implements IPTGame {
         Firebase _ref = new Firebase("https://pttestgame.firebaseio.com");
 
         _processors = new Array<InputProcessor>();
-        _gameCoordinator = new GameCoordinator("", "", "", new ArrayList<Team>(), 360, 640, this, _spriteBatch, "", new IGameSandBox() {
+        _gameCoordinator = new GameCoordinator("", "", new ArrayList<Team>(), 360, 640, this, _spriteBatch, "", new IGameSandBox() {
             @Override
             public void useConfirm(ConfirmMsgType msgType, Runnable yesRunnable, Runnable noRunnable) {
                 if (msgType == ConfirmMsgType.AbandonGameNoCons ||

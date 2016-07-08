@@ -1,11 +1,17 @@
 package com.mygdx.potatoandtomato.models;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
 import com.mygdx.potatoandtomato.utils.DateTimes;
 import com.potatoandtomato.common.utils.Strings;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.shaded.fasterxml.jackson.core.type.TypeReference;
+import com.shaded.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Created by SiongLeng on 13/12/2015.
@@ -14,7 +20,7 @@ import com.shaded.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class Game {
 
     String name, minPlayers, maxPlayers, teamMinPlayers, teamMaxPlayers, teamCount,
-            iconUrl, gameUrl, abbr, description, version, commonVersion, leaderboardType;
+            iconUrl, iconModified, abbr, description, version, commonVersion, leaderboardType, gameFiles;
     long createTimestamp, lastUpdatedTimestamp, gameSize;
     boolean mustFairTeam, streakEnabled;
 
@@ -120,14 +126,6 @@ public class Game {
         this.iconUrl = iconUrl;
     }
 
-    public String getGameUrl() {
-        return gameUrl;
-    }
-
-    public void setGameUrl(String gameUrl) {
-        this.gameUrl = gameUrl;
-    }
-
     public String getAbbr() {
         return abbr;
     }
@@ -192,6 +190,39 @@ public class Game {
         this.streakEnabled = streakEnabled;
     }
 
+    public String getIconModified() {
+        return iconModified;
+    }
+
+    public void setIconModified(String iconModified) {
+        this.iconModified = iconModified;
+    }
+
+    public String getGameFiles() {
+        return gameFiles;
+    }
+
+    public void setGameFiles(String gameFiles) {
+        this.gameFiles = gameFiles;
+    }
+
+    @JsonIgnore
+    public HashMap<String, FileData> getGameFilesMap(){
+        HashMap<String, FileData> map = new HashMap();
+
+        if(!Strings.isEmpty(gameFiles)){
+            TypeReference<HashMap<String,FileData>> typeRef
+                    = new TypeReference<HashMap<String,FileData>>() {};
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                map = objectMapper.readValue(gameFiles, typeRef);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return map;
+    }
+
     @JsonIgnore
     public String getFullBasePath(){
         return Gdx.files.local(getBasePath()).file().getAbsolutePath();
@@ -203,19 +234,13 @@ public class Game {
     }
 
     @JsonIgnore
-    public String getLocalJarPath() {
-        return getBasePath() + "/game.jar";
-    }
-
-    @JsonIgnore
     public String getFullLocalJarPath() {
         return getFullBasePath() + "/game.jar";
     }
 
     @JsonIgnore
-    public String getLocalAssetsPath() {
-        return getBasePath() + "/assets.zip";
+    public FileHandle getFileRelativeToGameBasePath(String relativePath){
+        return Gdx.files.local(getBasePath() + "/" + relativePath);
     }
-
 
 }

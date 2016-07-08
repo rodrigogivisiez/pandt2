@@ -4,6 +4,10 @@ import com.firebase.client.*;
 import com.ptuploader.process.Details;
 import com.ptuploader.utils.Logs;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * Created by SiongLeng on 13/12/2015.
  */
@@ -32,6 +36,46 @@ public class FireDB {
             }
         });
 
+    }
+
+    public void getIconLastModified(final Details details){
+        _ref.child(details.getAbbr()).child(details.ICON_MODIFIED).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if(snapshot.getValue() == null){
+                    details.iconLastModifiedReceived("");
+                }
+                else{
+                    details.iconLastModifiedReceived(snapshot.getValue().toString());
+                }
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                details.iconLastModifiedReceived("");
+            }
+        });
+    }
+
+    public void getFilesData(final Details details){
+        _ref.child(details.getAbbr()).child(details.GAME_FILES).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if(snapshot.getValue() == null){
+                    details.cloudGameFilesRetrieved("");
+                }
+                else{
+                    details.cloudGameFilesRetrieved(snapshot.getValue().toString());
+                }
+
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                details.cloudGameFilesRetrieved("");
+            }
+        });
     }
 
     public void save(Details details, final Runnable onFinish) {

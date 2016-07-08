@@ -27,7 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class GameCoordinator implements Disposable {
 
     private String jarPath;
-    private String assetsPath;
     private String basePath;
     private GameEntrance gameEntrance;
     private ArrayList<Team> teams;
@@ -61,7 +60,7 @@ public class GameCoordinator implements Disposable {
     private ArrayList<Runnable> onResumeRunnables;
     private ArrayList<SelfConnectionListener> selfConnectionListeners;
 
-    public GameCoordinator(String jarPath, String assetsPath,
+    public GameCoordinator(String jarPath,
                            String basePath, ArrayList<Team> teams,
                            float gameWidth, float gameHeight,
                            IPTGame game, SpriteBatch batch,
@@ -73,7 +72,6 @@ public class GameCoordinator implements Disposable {
                            int leaderboardSize, IDisconnectOverlayControl iDisconnectOverlayControl,
                            ICoins iCoins) {
         this.jarPath = jarPath;
-        this.assetsPath = assetsPath;
         this.basePath = basePath;
         this.teams = teams;
         this.gameWidth = gameWidth;
@@ -149,14 +147,6 @@ public class GameCoordinator implements Disposable {
 
     public void setJarPath(String jarPath) {
         this.jarPath = jarPath;
-    }
-
-    public String getAssetsPath() {
-        return assetsPath;
-    }
-
-    public void setAssetsPath(String assetsPath) {
-        this.assetsPath = assetsPath;
     }
 
     public GameEntrance getGameEntrance() {

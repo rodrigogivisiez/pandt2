@@ -33,6 +33,7 @@ import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
 
 import java.io.File;
@@ -94,8 +95,10 @@ public class AndroidLauncher extends AndroidApplication {
 	}
 
 	private void initFlurry(){
-		FlurryAgent.init(this, Terms.FLURRY_KEY());
-		FlurryAgent.onStartSession(this, Terms.FLURRY_KEY());
+		if(!Strings.isEmpty(Terms.FLURRY_KEY())){
+			FlurryAgent.init(this, Terms.FLURRY_KEY());
+			FlurryAgent.onStartSession(this, Terms.FLURRY_KEY());
+		}
 
 		FlurryAgent.logEvent("startGame");
 	}

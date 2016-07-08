@@ -52,7 +52,7 @@ public class GameLoader implements Disposable {
         });
 
         services.getBroadcaster().broadcast(BroadcastEvent.LOAD_GAME_REQUEST, new GameCoordinator(room.getGame().getFullLocalJarPath(),
-                        room.getGame().getLocalAssetsPath(), room.getGame().getBasePath(), room.getTeams(),
+                        room.getGame().getBasePath(), room.getTeams(),
                         Positions.getWidth(), Positions.getHeight(), ptScreen.getGame(), ptScreen.getGame().getSpriteBatch(),
                         services.getProfile().getUserId(), gameSandBox, services.getDatabase().getGameBelongDatabase(room.getGame().getAbbr()),
                         room.getId(), services.getSoundsPlayer(), new RemoteHelper(services.getBroadcaster()), services.getTutorials(),

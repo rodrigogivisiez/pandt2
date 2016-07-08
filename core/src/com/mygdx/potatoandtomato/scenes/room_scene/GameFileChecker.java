@@ -1,137 +1,169 @@
 package com.mygdx.potatoandtomato.scenes.room_scene;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Disposable;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.game_file_checker.GameFileCheckerListener;
-import com.potatoandtomato.common.absints.DownloaderListener;
-import com.potatoandtomato.common.absints.IDownloader;
+import com.mygdx.potatoandtomato.models.FileData;
+import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.services.Preferences;
 import com.mygdx.potatoandtomato.services.VersionControl;
-import com.mygdx.potatoandtomato.utils.Files;
-import com.potatoandtomato.common.utils.SafeThread;
-import com.potatoandtomato.common.utils.Threadings;
-import com.mygdx.potatoandtomato.utils.Zippings;
-import com.mygdx.potatoandtomato.models.Game;
+import com.mygdx.potatoandtomato.utils.Logs;
+import com.potatoandtomato.common.absints.DownloaderListener;
+import com.potatoandtomato.common.absints.IDownloader;
 import com.potatoandtomato.common.enums.Status;
-import net.lingala.zip4j.exception.ZipException;
+import com.potatoandtomato.common.utils.SafeThread;
+import com.potatoandtomato.common.utils.Strings;
+import com.potatoandtomato.common.utils.Threadings;
+import com.shaded.fasterxml.jackson.core.type.TypeReference;
+import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by SiongLeng on 17/12/2015.
  */
 public class GameFileChecker implements Disposable {
 
-    public enum GameFileResult {
-        FAILED_RETRIEVE, CLIENT_OUTDATED, GAME_OUTDATED
-    }
+    private Preferences preferences;
+    private IDownloader downloader;
+    private Game game;
+    private IDatabase database;
+    private VersionControl versionControl;
 
-    private GameFileCheckerListener _listener;
-    double _currentPercent = 0;
-    double _downloadGameWeight = 99, _unzipWeight = 2;     //total must be > 100;
-    Thread _downloadThread;
-    SafeThread _downloadGameThread;
-    Preferences _preferences;
-    IDownloader _downloader;
-    Game _game;
-    IDatabase _database;
-    VersionControl _versionControl;
+    private GameFileCheckerListener listener;
+    private boolean downloadKilled;
+    private ArrayList<SafeThread> downloadGameThreads;
+    private long currentDownloadSize, totalSize;
 
-    public GameFileChecker(Game _game, Preferences _preferences,
-                           IDownloader _downloader, IDatabase database, VersionControl versionControl,
-                           GameFileCheckerListener _listener) {
-        this._listener = _listener;
-        this._game = _game;
-        this._database = database;
-        this._preferences = _preferences;
-        this._downloader = _downloader;
-        this._versionControl = versionControl;
+    public GameFileChecker(Game game, Preferences preferences,
+                           IDownloader downloader, IDatabase database, VersionControl versionControl,
+                           GameFileCheckerListener listener) {
+        this.listener = listener;
+        this.game = game;
+        this.database = database;
+        this.preferences = preferences;
+        this.downloader = downloader;
+        this.versionControl = versionControl;
+        this.totalSize = game.getGameSize();
+        this.downloadGameThreads = new ArrayList();
         getLatestGameModel();
     }
 
     public void getLatestGameModel(){
-        _database.getGameByAbbr(_game.getAbbr(), new DatabaseListener<Game>(Game.class) {
+        database.getGameByAbbr(game.getAbbr(), new DatabaseListener<Game>(Game.class) {
             @Override
             public void onCallback(Game obj, Status st) {
-                if(st == Status.SUCCESS){
-                    if(Integer.valueOf(obj.getCommonVersion()) > Integer.valueOf(_versionControl.getCommonVersion())){
-                        _listener.onCallback(GameFileResult.CLIENT_OUTDATED, Status.FAILED);
-                    }
-                    else{
-                        if(!obj.getVersion().equals(_game.getVersion())){
-                            _listener.onCallback(GameFileResult.GAME_OUTDATED, Status.FAILED);
-                        }
-                        else{
-                            checkGameVersion();
+                if (st == Status.SUCCESS) {
+                    if (Integer.valueOf(obj.getCommonVersion()) > Integer.valueOf(versionControl.getCommonVersion())) {
+                        listener.onCallback(GameFileResult.CLIENT_OUTDATED, Status.FAILED);
+                    } else {
+                        if (!obj.getVersion().equals(game.getVersion())) {
+                            listener.onCallback(GameFileResult.GAME_OUTDATED, Status.FAILED);
+                        } else {
+                            checkGameFiles();
                         }
                     }
-                }
-                else{
-                    _listener.onCallback(GameFileResult.FAILED_RETRIEVE, Status.FAILED);
+                } else {
+                    listener.onCallback(GameFileResult.FAILED_RETRIEVE, Status.FAILED);
                 }
             }
         });
     }
 
-    public void checkGameVersion(){
-        String localVersion;
-        localVersion = _preferences.get(_game.getAbbr());
-        if(localVersion == null || !localVersion.equals(_game.getVersion())
-                || !Gdx.files.local(_game.getLocalJarPath()).exists()){
-            downloadGame();
-        }
-        else{
-            _listener.onCallback(null, Status.SUCCESS);
-        }
-    }
-
-    public void downloadGame(){
-        _downloadThread = Threadings.runInBackground(new Runnable() {
+    public void checkGameFiles(){
+        Threadings.runInBackground(new Runnable() {
             @Override
             public void run() {
+                HashMap<String, FileData> toDownloadFiles = new HashMap();
+                HashMap<String, FileData> toDeleteFiles = new HashMap();
+                HashMap<String, FileData> cloudFiles = game.getGameFilesMap();
+                HashMap<String, FileData> currentFiles = new HashMap();
 
-                final FileHandle jarDownloadPath, gameDownloadPath;
-                final boolean[] completeGame = new boolean[1];
-                ;
-                gameDownloadPath = Files.createIfNotExist(Gdx.files.local(_game.getLocalAssetsPath()));
+                currentFiles = restoreLocalGameFilesData(currentFiles);
 
-                _downloadGameThread = downloadFile(_game.getGameUrl(), gameDownloadPath.file(), _downloadGameWeight, new Runnable() {
-                    @Override
-                    public void run() {
-                        completeGame[0] = true;
+                for (Map.Entry<String, FileData> entry : cloudFiles.entrySet()) {
+                    String cloudFileName = entry.getKey();
+                    FileData cloudFileData = entry.getValue();
+
+                    if(currentFiles.containsKey(cloudFileName)){
+                        FileData currentFileData = currentFiles.get(cloudFileName);
+                        if(currentFileData.getModifiedAt().equals(cloudFileData.getModifiedAt())){
+                            currentDownloadSize += cloudFileData.getSize();
+                            continue;
+                        }
                     }
-                });
 
-                while (!completeGame[0]) {
-                    Threadings.sleep(1000);
-                    if (_downloadGameThread.isKilled()) return;
+                    toDownloadFiles.put(cloudFileName, cloudFileData);
                 }
 
-                try {
-                    Zippings.unZipIt(gameDownloadPath.file().getAbsolutePath(), _game.getFullBasePath());
-                } catch (ZipException e) {
-                    e.printStackTrace();
-                    _listener.onCallback(null, Status.FAILED);
-                    return;
+                for (Map.Entry<String, FileData> entry : currentFiles.entrySet()) {
+                    String currentFileName = entry.getKey();
+                    FileData currentFileData = entry.getValue();
+
+                    if(!cloudFiles.containsKey(currentFileName)){
+                        toDeleteFiles.put(currentFileName, currentFileData);
+                    }
                 }
 
-                _preferences.put(_game.getAbbr(), _game.getVersion());
-                gameDownloadPath.delete();
+                for(String toDeleteFilePath : toDeleteFiles.keySet()){
+                    FileHandle toDeleteFile = game.getFileRelativeToGameBasePath(toDeleteFilePath);
+                    if(toDeleteFile.exists()) toDeleteFile.delete();
+                }
 
-                updatePercent(_unzipWeight);
+                int maxBranch = 5;
+                int currentBranchNumber = 0;
 
-                _listener.onCallback(null, Status.SUCCESS);
+                if(toDownloadFiles.size() > 0){
+                    updateDownloaded(0);
+                }
+
+                for (Map.Entry<String, FileData> entry : toDownloadFiles.entrySet()) {
+                    String downloadFileName = entry.getKey();
+                    FileData downloadFileData = entry.getValue();
+
+                    if(downloadKilled) return;
+
+                    final boolean[] complete = {false};
+                    SafeThread safeThread = downloadFile(downloadFileData.getUrl(), game.getFileRelativeToGameBasePath(downloadFileName).file(), new Runnable() {
+                        @Override
+                        public void run() {
+                            complete[0] = true;
+                        }
+                    });
+
+                    downloadGameThreads.add(safeThread);
+                    currentBranchNumber++;
+                    if(currentBranchNumber > maxBranch){
+                        while (!complete[0]){
+                            Threadings.sleep(100);
+                            if(downloadKilled || safeThread.isKilled()) return;
+                        }
+
+                        currentBranchNumber = 0;
+                        downloadGameThreads.clear();
+                    }
+                }
+
+                saveGameFilesData();
+
+                listener.onCallback(null, Status.SUCCESS);
 
             }
         });
     }
 
-    public SafeThread downloadFile(String url, File f, final double weight, final Runnable complete){
-        final double[] _prevStep = new double[1];
-        return _downloader.downloadFileToPath(url, f, new DownloaderListener() {
+
+    public SafeThread downloadFile(String url, File f, final Runnable complete){
+        final long[] _prevDownloaded = new long[1];
+        _prevDownloaded[0] = 0;
+
+        return downloader.downloadFileToPath(url, f, new DownloaderListener() {
             @Override
             public void onCallback(byte[] bytes, Status st) {
                 if(st == Status.FAILED){
@@ -143,23 +175,60 @@ public class GameFileChecker implements Disposable {
             }
 
             @Override
-            public void onStep(double percentage) {
-                super.onStep(percentage);
-                updatePercent((percentage - _prevStep[0]) * weight/100);
-                _prevStep[0] = percentage;
+            public void onStep(double percentage, long totalSize, long downloadedSize) {
+                super.onStep(percentage, totalSize, downloadedSize);
+                updateDownloaded(downloadedSize - _prevDownloaded[0]);
+                _prevDownloaded[0] = downloadedSize;
             }
         });
     }
 
-    public void updatePercent(final double added){
-        _currentPercent += added;
-        if(_currentPercent > 100) _currentPercent = 100;
-        _listener.onStep(_currentPercent);
+    public void updateDownloaded(long toAdd){
+        currentDownloadSize += toAdd;
+
+        float currentPercent = ((float) currentDownloadSize / (float) totalSize) * 100;
+
+        if(currentPercent > 100) currentPercent = 100;
+        listener.onStep(Math.round(currentPercent));
+    }
+
+    public HashMap<String, FileData> restoreLocalGameFilesData(HashMap<String, FileData> fileDataHashMap){
+        String fileData =  preferences.get(game.getAbbr());
+        if(Strings.isEmpty(fileData)){
+            fileData = "0";
+        }
+        try
+        {
+            Double.parseDouble(fileData);
+            fileData = "";
+        }
+        catch(NumberFormatException e)
+        {
+        }
+
+        if(!Strings.isEmpty(fileData)){
+            ObjectMapper objectMapper = new ObjectMapper();
+            TypeReference<HashMap<String,FileData>> typeRef
+                    = new TypeReference<HashMap<String,FileData>>() {};
+            try {
+                fileDataHashMap = objectMapper.readValue(fileData, typeRef);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return fileDataHashMap;
+    }
+
+    public void saveGameFilesData() {
+        preferences.put(game.getAbbr(), game.getGameFiles());
     }
 
     public void killDownloads(){
-        if(_downloadGameThread != null) _downloadGameThread.kill();
-        _listener.onCallback(GameFileResult.FAILED_RETRIEVE, Status.FAILED);
+        downloadKilled = true;
+        for(SafeThread safeThread : downloadGameThreads){
+            safeThread.kill();
+        }
+        listener.onCallback(GameFileResult.FAILED_RETRIEVE, Status.FAILED);
 
     }
 
@@ -167,4 +236,10 @@ public class GameFileChecker implements Disposable {
     public void dispose() {
         killDownloads();
     }
+
+
+    public enum GameFileResult {
+        FAILED_RETRIEVE, CLIENT_OUTDATED, GAME_OUTDATED
+    }
+
 }
