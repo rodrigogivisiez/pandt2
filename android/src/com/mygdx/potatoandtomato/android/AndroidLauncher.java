@@ -237,7 +237,11 @@ public class AndroidLauncher extends AndroidApplication {
 		stopService(new Intent(getBaseContext(), OnClearFromRecentService.class));
 		reset();
 		if(_chartBoostHelper != null) _chartBoostHelper.onDestroy();
-		FlurryAgent.onEndSession(this);
+
+		if(FlurryAgent.isSessionActive()){
+			FlurryAgent.onEndSession(this);
+		}
+
 		super.onDestroy();
 	}
 

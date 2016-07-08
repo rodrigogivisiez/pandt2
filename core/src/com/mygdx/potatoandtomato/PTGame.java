@@ -40,6 +40,7 @@ import java.util.Map;
 
 public class PTGame extends Game implements IPTGame {
 
+	SplashScreen _splashScreen;
 	Services _services;
 	MyAssets _assets;
 	PTScreen _screen;
@@ -74,6 +75,9 @@ public class PTGame extends Game implements IPTGame {
 
 	@Override
 	public void create () {
+
+		_splashScreen = new SplashScreen();
+		setScreen(_splashScreen);
 
 		_game = this;
 		_preferences = new Preferences();
@@ -116,9 +120,14 @@ public class PTGame extends Game implements IPTGame {
 				_screen = new PTScreen(_game, _services);
 				_connectionWatcher.setPtScreen(_screen);
 				_coins.setPtScreen(_screen);
-				setScreen(_screen);
 
-				_screen.toScene(SceneEnum.BOOT);
+				_splashScreen.close(new Runnable() {
+					@Override
+					public void run() {
+						setScreen(_screen);
+						_screen.toScene(SceneEnum.BOOT);
+					}
+				});
 			}
 		});
 	}
@@ -140,6 +149,7 @@ public class PTGame extends Game implements IPTGame {
 		if(_services != null && _services.getAssets() != null) _services.getAssets().dispose();
 		if(_services != null && _services.getAssets() != null) _services.getGamingKit().dispose();
 		if(_services != null && _services.getDatabase() != null) _services.getDatabase().offline();
+		if(_splashScreen != null) _splashScreen.dispose();
 	}
 
 

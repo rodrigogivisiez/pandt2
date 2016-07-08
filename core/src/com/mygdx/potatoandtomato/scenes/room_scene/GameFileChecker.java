@@ -59,7 +59,7 @@ public class GameFileChecker implements Disposable {
         database.getGameByAbbr(game.getAbbr(), new DatabaseListener<Game>(Game.class) {
             @Override
             public void onCallback(Game obj, Status st) {
-                if (st == Status.SUCCESS) {
+                if (st == Status.SUCCESS && obj != null) {
                     if (Integer.valueOf(obj.getCommonVersion()) > Integer.valueOf(versionControl.getCommonVersion())) {
                         listener.onCallback(GameFileResult.CLIENT_OUTDATED, Status.FAILED);
                     } else {
