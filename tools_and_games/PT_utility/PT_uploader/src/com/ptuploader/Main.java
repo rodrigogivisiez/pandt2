@@ -54,7 +54,7 @@ public class Main {
             String fileName = entry.getKey();
             final FileData fileData = assetsHelper.getFileDatasMap().get(fileName);
             final boolean[] finish = new boolean[1];
-            uploads.uploadFile(fileName, fileData, 1,new Runnable() {
+            uploads.uploadFile(details, fileName, fileData, 1,new Runnable() {
                 @Override
                 public void run() {
                     finish[0] = true;
@@ -65,7 +65,7 @@ public class Main {
 
         for (Map.Entry<String, FileData> entry : details.getToDeleteFromCloudFiles().entrySet()) {
             String fileName = entry.getKey();
-            uploads.deleteFile(fileName, new Runnable() {
+            uploads.deleteFile(details, fileName, new Runnable() {
                 @Override
                 public void run() {
                     deleteCount[0]++;

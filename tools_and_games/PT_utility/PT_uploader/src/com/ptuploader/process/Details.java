@@ -297,7 +297,7 @@ public class Details {
 
     public void cloudGameFilesRetrieved(String data){
         cloudDatas = new HashMap<String, FileData>();
-        HashMap<String, LinkedHashMap<String, String>> dbData = new HashMap();
+        HashMap<String, LinkedHashMap<String, Object>> dbData = new HashMap();
         ObjectMapper objectMapper = new ObjectMapper();
         if(data != null && !data.equals("")){
             try {
@@ -307,12 +307,14 @@ public class Details {
             }
         }
 
-        for(Map.Entry<String, LinkedHashMap<String, String>> entry : dbData.entrySet()){
+        for(Map.Entry<String, LinkedHashMap<String, Object>> entry : dbData.entrySet()){
             String fileName = entry.getKey();
-            LinkedHashMap<String, String> fileDataMap = entry.getValue();
+            LinkedHashMap<String, Object> fileDataMap = entry.getValue();
 
-            cloudDatas.put(fileName, new FileData(fileDataMap.get("modifiedAt"),
-                    fileDataMap.get("url"), "", Long.valueOf(fileDataMap.get("size"))));
+            String size = fileDataMap.get("size").toString();
+
+            cloudDatas.put(fileName, new FileData(fileDataMap.get("modifiedAt").toString(),
+                    fileDataMap.get("url").toString(), "", Long.valueOf(size)));
         }
 
         checkingCloudComplete = true;

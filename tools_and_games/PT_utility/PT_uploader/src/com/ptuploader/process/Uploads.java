@@ -17,6 +17,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 /**
  * Created by SiongLeng on 2/3/2016.
@@ -99,8 +100,8 @@ public class Uploads {
         }
     }
 
-    public void uploadFile(final String fileName, final FileData fileData, final int tryNumber, final Runnable onFinish){
-        final String encodedFileName = encodeFileName(fileName);
+    public void uploadFile(final Details details, final String fileName, final FileData fileData, final int tryNumber, final Runnable onFinish){
+        final String encodedFileName = encodeFileName(details, fileName);
 
         logs.write("*"+ tryNumber + " Uploading " + encodedFileName);
 
@@ -124,7 +125,7 @@ public class Uploads {
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            uploadFile(fileName, fileData, tryNumber+1, onFinish);
+                            uploadFile(details, fileName, fileData, tryNumber+1, onFinish);
                             return;
                         }
                     } catch (MalformedURLException e) {
@@ -165,8 +166,8 @@ public class Uploads {
     }
 
 
-    public void deleteFile(final String fileName, final Runnable onFinish){
-        final String encodedFileName = encodeFileName(fileName);
+    public void deleteFile(final Details details, final String fileName, final Runnable onFinish){
+        final String encodedFileName = encodeFileName(details, fileName);
 
         logs.write("Deleting " + encodedFileName);
 
@@ -189,9 +190,9 @@ public class Uploads {
         }
     }
 
-    private String encodeFileName(String filename){
+    private String encodeFileName(final Details details, String filename){
         String encodedFileName =  filename.replaceAll("[^\\p{L}\\p{Nd}]+", "__");
-        return  encodedFileName;
+        return  details.getAbbr() + ".." + encodedFileName;
     }
 
 }

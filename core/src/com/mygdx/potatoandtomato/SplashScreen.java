@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.mygdx.potatoandtomato.statics.Global;
 import com.mygdx.potatoandtomato.utils.Positions;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
@@ -79,7 +80,7 @@ public class SplashScreen implements Screen {
     @Override
     public void show() {
 
-        arcadeSound.play();
+        if(Global.ENABLE_SOUND) arcadeSound.play();
         arcadeSound.setVolume(0.1f);
         arcadeSound.setLooping(true);
 
