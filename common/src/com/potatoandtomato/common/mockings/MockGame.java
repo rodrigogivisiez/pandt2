@@ -17,6 +17,7 @@ import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.helpers.DesktopImageLoader;
 import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.models.ScoreDetails;
+import com.potatoandtomato.common.models.SpeechAction;
 import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.statics.CommonVersion;
 import com.potatoandtomato.common.utils.*;
@@ -75,6 +76,11 @@ public abstract class MockGame extends Game implements IPTGame {
 
             @Override
             public void useConfirm(String msg, Runnable yesRunnable, Runnable noRunnable) {
+
+            }
+
+            @Override
+            public void useNotification(String msg) {
 
             }
 
@@ -149,7 +155,7 @@ public abstract class MockGame extends Game implements IPTGame {
                 System.out.println("Game failed to resume " + msg);
             }
 
-        }, _ref.child("gameBelongData").child(gameId), "1", new MockSoundManager(),
+        }, _ref.child("gameBelongData").child(gameId), "1", 0, new MockSoundManager(),
                 new IRemoteHelper() {
                     @Override
                     public void getRemoteImage(final String url, final WebImageListener listener) {
@@ -230,9 +236,10 @@ public abstract class MockGame extends Game implements IPTGame {
             }
 
             @Override
-            public void initCoinMachine(int expectingCoin, String transactionId, ArrayList<Pair<String, String>> userIdToNamePairs, boolean requestFromOthers) {
+            public void initCoinMachine(String coinsPurpose, int expectingCoin, String transactionId, ArrayList<Pair<String, String>> userIdToNamePairs, boolean requestFromOthers, ArrayList<SpeechAction> potatoSpeechActions, ArrayList<SpeechAction> tomatoSpeechActions, String dismissText) {
 
             }
+
 
             @Override
             public void startDeductCoins() {

@@ -38,7 +38,7 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
     private MultiHashMap<String, byte[]> _bytePieces;
     private ConcurrentHashMap<String, String> _bytePiecesOwner;
     private String _gettingRoomId;
-    private String _lockingProperty;
+    private String _lockingProperty, _unlockingProperty;
 
     public Appwarp(String appKey, String secretKey){
         _appKey = appKey;
@@ -265,6 +265,13 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
         HashMap<String, Object> table = new HashMap();
         table.put(key, value);
         _warpInstance.lockProperties(table);
+    }
+
+    @Override
+    public void unLockProperty(String key) {
+        _unlockingProperty = key;
+        String[] keys = new String[]{key};
+        _warpInstance.unlockProperties(keys);
     }
 
     public boolean checkIsBytesUpdate(byte[] data){
@@ -548,6 +555,14 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
         }
     }
 
+    @Override
+    public void onUnlockPropertiesDone(byte b) {
+        if(b == 0){
+            onUnlockPropertySuccess(_unlockingProperty);
+            _unlockingProperty = "";
+        }
+    }
+
     private String encodeUserId(String userId){
         return userId + "_(pandt)_" + System.currentTimeMillis();
     }
@@ -665,11 +680,6 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
     @Override
     public void onUpdatePropertyDone(LiveRoomInfoEvent liveRoomInfoEvent) {
-
-    }
-
-    @Override
-    public void onUnlockPropertiesDone(byte b) {
 
     }
 

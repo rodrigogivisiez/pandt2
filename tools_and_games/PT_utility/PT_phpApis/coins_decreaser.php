@@ -1,5 +1,9 @@
 <?php
-	function decreaseCoinFromUser($userId, $count, $checkOrActualDecrease, $firebase){
+
+include 'coins_log.php';
+
+
+	function decreaseCoinFromUser($userId, $count, $checkOrActualDecrease, $reason, $extra, $firebase){
 		
 		if($count == 0) return true;
 		
@@ -12,6 +16,7 @@
 			$currentUserCoins = (int)json_decode($currentUserCoinsString);
 		}
 		
+		$originalCoins = $currentUserCoins;
 		$currentUserCoins -= $count;
 		
 		if($checkOrActualDecrease == 0){
@@ -28,6 +33,9 @@
 			}
 			
 			$firebase->set("coins/".$userId."/count", $currentUserCoins);
+			
+			addCoinLog($userId, $originalCoins, $currentUserCoins, $reason, $extra, false, $firebase);
+			
 		}
 	}
 

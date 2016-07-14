@@ -36,6 +36,7 @@ public class
     private String _tableUserLeaderboardLog = "userLeaderboardLog";
     private String _tableStreak = "streaks";
     private String _tableCoins = "coins";
+    private String _tableCoinDecreaseAgreement = "coinDecreaseAgreements";
     private String _tableUpdatedScores = "updatedScores";
     private String _tableCoinsProducts = "coinsProducts";
     private String _tableServerTimeInfo = ".info/serverTimeOffset";
@@ -245,18 +246,8 @@ public class
     }
 
     @Override
-    public void deductUserCoins(String userId, int finalCoins, final DatabaseListener listener) {
-        getTable(_tableCoins).child(userId).child("count").setValue(finalCoins, new Firebase.CompletionListener() {
-            @Override
-            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                if(firebaseError != null){
-                    listener.onCallback(null, Status.FAILED);
-                }
-                else{
-                    listener.onCallback(null, Status.SUCCESS);
-                }
-            }
-        });
+    public void signCoinDecreaseAgreement(String userId, String transactionId, DatabaseListener listener) {
+        save(getTable(_tableCoinDecreaseAgreement).child(userId).child(transactionId), 1, listener);
     }
 
     @Override

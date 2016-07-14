@@ -26,12 +26,11 @@ import com.potatoandtomato.common.absints.PTAssetsManager;
 import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
+import com.potatoandtomato.common.enums.SpeechActionType;
 import com.potatoandtomato.common.enums.Status;
-import com.potatoandtomato.common.models.EndGameResult;
-import com.potatoandtomato.common.models.Player;
-import com.potatoandtomato.common.models.ScoreDetails;
-import com.potatoandtomato.common.models.Team;
+import com.potatoandtomato.common.models.*;
 import com.potatoandtomato.common.utils.Downloader;
+import com.potatoandtomato.common.utils.Pair;
 import com.potatoandtomato.common.utils.Threadings;
 
 import java.util.ArrayList;
@@ -109,7 +108,7 @@ public class PTGame extends Game implements IPTGame {
 				_restfulApi = new RestfulApi();
 				_connectionWatcher = new ConnectionWatcher(_gamingKit, _broadcaster, _confirm, _texts, _profile);
 				_coins = new Coins(_broadcaster, _assets, _soundsPlayer, _texts,
-						_game, _batch, _profile, _database, _gamingKit, _restfulApi, _confirm);
+						_game, _batch, _profile, _database, _gamingKit, _restfulApi, _confirm, _connectionWatcher);
 
 				_services = new Services(_assets, _texts,
 						_preferences, _profile, _database,
@@ -126,8 +125,34 @@ public class PTGame extends Game implements IPTGame {
 					public void run() {
 						setScreen(_screen);
 						_screen.toScene(SceneEnum.BOOT);
+
+
 					}
 				});
+
+//				ArrayList<SpeechAction> speechActions = new ArrayList<SpeechAction>();
+//				speechActions.add(new SpeechAction("let me tell you something about me hehe", SpeechActionType.Add));
+//				speechActions.add(new SpeechAction(SpeechActionType.Delay, 2000));
+//				speechActions.add(new SpeechAction(SpeechActionType.Clear));
+//				speechActions.add(new SpeechAction("HOLIDAY!!!", SpeechActionType.Add));
+//
+//				ArrayList<SpeechAction> tomatoSpeechActions = new ArrayList<SpeechAction>();
+//				tomatoSpeechActions.add(new SpeechAction(SpeechActionType.Delay, 30*100));
+//				tomatoSpeechActions.add(new SpeechAction("I am a tomato!!", SpeechActionType.Add));
+//
+//				setScreen(_screen);
+//				_screen.toScene(SceneEnum.CREATE_GAME);
+//
+//				ArrayList<Pair<String, String>> pairs = new ArrayList<Pair<String, String>>();
+//				pairs.add(new Pair<String, String>("123", "Jonjo Shelvey"));
+//				pairs.add(new Pair<String, String>("1234", "Steven Gerrard"));
+//
+//				_services.getCoins().initCoinMachine(5, "123", pairs, false,
+//						speechActions, tomatoSpeechActions, "Quit");
+//
+//				_services.getCoins().showCoinMachine();
+//				_services.getBroadcaster().broadcast(BroadcastEvent.DEVICE_ORIENTATION, 1);
+
 			}
 		});
 	}
@@ -184,8 +209,8 @@ public class PTGame extends Game implements IPTGame {
 			if(_chat != null) _chat.screenTouched(Gdx.input.getX(), Gdx.input.getY());
 		}
 
-		if(_chat != null) _chat.render(Gdx.graphics.getDeltaTime());
 		if(_coins != null) _coins.render(Gdx.graphics.getDeltaTime());
+		if(_chat != null) _chat.render(Gdx.graphics.getDeltaTime());
 		if(_tutorials != null) _tutorials.render(Gdx.graphics.getDeltaTime());
 		if(_confirm != null) _confirm.render(Gdx.graphics.getDeltaTime());
 		if(_notification != null) _notification.render(Gdx.graphics.getDeltaTime());

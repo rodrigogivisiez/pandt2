@@ -14,7 +14,7 @@ public class UpdateRoomMatesCode {
     public final static int INVTE_USERS = 13;
     public final static int KICK_USER = 14;
     public final static int START_GAME = 1;
-   // public final static int PLAYER_CANCEL_START_GAME = 9;
+    public final static int PLAYER_CANCEL_START_GAME = 9;
     public final static int USER_IS_READY = 2;
     public final static int ASK_FOR_USER_READY = 3;
     public final static int IN_GAME_UPDATE = 4;
@@ -37,6 +37,7 @@ public class UpdateRoomMatesCode {
     public final static int COINS_STATE_RESPONSE = 26;
     public final static int REQUEST_ROOM_STATE = 27;
     public final static int ROOM_STATE_RESPONSE = 28;
+    public final static int COINS_WINDOW_DISMISS = 29;
 
     public static int roomUpdateTypeToUpdateRoomMatesCode(RoomUpdateType roomUpdateType){
         if(roomUpdateType == RoomUpdateType.InGame){

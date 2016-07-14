@@ -1,6 +1,12 @@
 package com.mygdx.potatoandtomato.services;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.mygdx.potatoandtomato.statics.Global;
+import com.potatoandtomato.common.enums.SpeechActionType;
+import com.potatoandtomato.common.models.SpeechAction;
+import com.potatoandtomato.common.utils.Pair;
+
+import java.util.ArrayList;
 
 /**
  * Created by SiongLeng on 6/12/2015.
@@ -9,7 +15,6 @@ public class Texts {
 
     public String insert() { return "Insert";}
     public String coin() { return "Coin";}
-    public String coinsInsertedTitle() { return "Coins Inserted";}
 
     public String mascotQuestion() { return "Are you a Potato or \nTomato?";};
     public String mascotPotato() { return "Potatoes welcome \nYOU!";};
@@ -186,7 +191,7 @@ public class Texts {
     public String remainingTime() { return "Remaining Time: ";}
     public String purseTitle() { return "Mum's purse";}
     public String growthRate() { return "Grow Coin In";}
-    public String maxPurse() { return "Maximum Reached";}
+    public String maxPurse() { return "Full";}
 
     public String xPoints() {return "%s points";}
     public String xCoin() {return "Coin x %s";}
@@ -200,13 +205,15 @@ public class Texts {
     public String retrieveCoins() { return "Retrieve Now"; }
     public String watchAds() { return "Watch Now"; }
     public String watchAdsDescription() { return "30secs video ads"; }
-    public String buyCoins() { return "Buy Now"; }
+    public String buyNow() { return "Buy Now"; }
 
     public String slideUpCancel() { return "Slide up to cancel";}
 
     public String workingDoNotClose() { return "Potato and Tomato are working now, please do not close apps now...";}
     public String purchaseFailed() { return "Failed to purchase coins..";}
 
+    public String coinsInserted() { return "Coins Inserted";}
+    public String buyCoins() { return "Buy Coins"; }
 
     //push notifications part
     public String PUSHGameInvitationsTitle() { return "P&T Game Invitations"; }
@@ -220,6 +227,67 @@ public class Texts {
 
     public String confirmAbandonNoCons(){ return "Are you sure you want to abandon this game? \n\n(No consequence)";}
     public String confirmAbandonLoseStreak(){ return "Are you sure you want to abandon this game? \n\n(You will be penalized and lose your winning streaks by doing so)";}
+    public String confirmCannotAbandon(){ return "You are not allowed to abandon at this point.";}
+
+
+    //Speech
+    public Pair<ArrayList<SpeechAction>, ArrayList<SpeechAction>> getRandomMascotsSpeechAboutStartGame(){
+        ArrayList<SpeechAction> potatoSpeechActions = new ArrayList();
+        ArrayList<SpeechAction> tomatoSpeechActions = new ArrayList();
+
+        int style = MathUtils.random(0, 0);
+        if(style == 0){
+            potatoSpeechActions.add(new SpeechAction("We need %expectingCoin% coin(s) to start", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction(SpeechActionType.Delay, 2000));
+            tomatoSpeechActions.add(new SpeechAction("Insert coin to the slot below", SpeechActionType.Add));
+        }
+
+        return new Pair<>(potatoSpeechActions, tomatoSpeechActions);
+    }
+
+
+    public Pair<ArrayList<SpeechAction>, ArrayList<SpeechAction>> getRandomMascotsSpeechAboutPurse(){
+        ArrayList<SpeechAction> potatoSpeechActions = new ArrayList();
+        ArrayList<SpeechAction> tomatoSpeechActions = new ArrayList();
+
+        int style = MathUtils.random(0, 0);
+        if(style == 0){
+            potatoSpeechActions.add(new SpeechAction("free coin free coin free coin", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction("i want more!!", SpeechActionType.Add));
+        }
+
+        return new Pair<>(potatoSpeechActions, tomatoSpeechActions);
+    }
+
+
+    public Pair<ArrayList<SpeechAction>, ArrayList<SpeechAction>> getRandomMascotsSpeechAboutPurchaseCoins(){
+        ArrayList<SpeechAction> potatoSpeechActions = new ArrayList();
+        ArrayList<SpeechAction> tomatoSpeechActions = new ArrayList();
+
+        int style = MathUtils.random(0, 0);
+        if(style == 0){
+            potatoSpeechActions.add(new SpeechAction("hmmmmmmmmm", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction("hahahahahhaha", SpeechActionType.Add));
+        }
+
+        return new Pair<>(potatoSpeechActions, tomatoSpeechActions);
+    }
+
+    public Pair<ArrayList<SpeechAction>, ArrayList<SpeechAction>> getRandomMascotsSpeechAboutEnoughCoin(){
+        ArrayList<SpeechAction> potatoSpeechActions = new ArrayList();
+        ArrayList<SpeechAction> tomatoSpeechActions = new ArrayList();
+
+        int style = MathUtils.random(0, 0);
+        if(style == 0){
+            potatoSpeechActions.add(new SpeechAction("Lets rollll", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction("Gogogogo", SpeechActionType.Add));
+        }
+
+        return new Pair<>(potatoSpeechActions, tomatoSpeechActions);
+    }
+
+
+
 
 
 }

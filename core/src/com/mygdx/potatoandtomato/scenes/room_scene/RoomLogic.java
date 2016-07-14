@@ -28,6 +28,7 @@ import com.potatoandtomato.common.absints.CoinListener;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.models.Player;
+import com.potatoandtomato.common.models.SpeechAction;
 import com.potatoandtomato.common.utils.*;
 
 import java.util.ArrayList;
@@ -430,7 +431,9 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
     }
 
     public void onRoomUserChanged(){
-        initCoinMachine();
+        if(!gameStarted && !isContinue){
+            initCoinMachine();
+        }
     }
 
     public void moveSlot(String userId, int toSlot){
@@ -479,7 +482,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
             }
             refreshRoomDesign();
 
-            if(roomUserState != RoomUserState.Normal){
+            if(roomUserState == RoomUserState.TemporaryDisconnected){
                 cancelPutCoins(room.getRoomUserByUserId(userId).getProfile());
             }
             refreshChatRoomUsersConnectStatus();
@@ -489,8 +492,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
     public boolean checkHostInRoom(){
         if(forceQuit || roomErrorOccured != null) return false;
         if(gameStarted) return true;
-
-
+        
         boolean found = false;
         for(RoomUser roomUser : room.getRoomUsersMap().values()){
             if(roomUser.getProfile().equals(room.getHost())){
@@ -851,7 +853,11 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                         sendIsReadyUpdate(false);
                         setCloseRoomOnDisconnectIfHost();   //need to re-set it again since it should alrdy fired when disconnection occured
                     }
+                    else if(st == ConnectStatus.DISCONNECTED_BUT_RECOVERABLE){
+                        roomUserStateChanged(userId, RoomUserState.TemporaryDisconnected);
+                    }
                 }
+
             }
         });
 
@@ -1059,8 +1065,8 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
             }
 
             @Override
-            public void onDeductCoinsDone(String extra, Status status) {
-
+            public void onDismiss(String dismissUserId) {
+                cancelPutCoins(room.getRoomUserByUserId(dismissUserId).getProfile());
             }
         });
 
@@ -1129,7 +1135,11 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         for(RoomUser roomUser : room.getRoomUsersMap().values()){
             userIdToNamePairs.add(new Pair<String, String>(roomUser.getProfile().getUserId(), roomUser.getProfile().getDisplayName(99)));
         }
-        _services.getCoins().initCoinMachine(room.getRoomUsersCount(), room.getId() + "_" + room.getRoundCounter(), userIdToNamePairs, false);
+
+        Pair<ArrayList<SpeechAction>, ArrayList<SpeechAction>> pair = _texts.getRandomMascotsSpeechAboutStartGame();
+
+        _services.getCoins().initCoinMachine("Start game", room.getRoomUsersCount(), room.getId() + "_" + room.getRoundCounter() + "_start",
+                userIdToNamePairs, false, pair.getFirst(), pair.getSecond(), _texts.cancel());
     }
 
     @Override

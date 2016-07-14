@@ -5,6 +5,6 @@ package com.potatoandtomato.common.enums;
  */
 public enum ConfirmMsgType {
 
-    AbandonGameNoCons, AbandonGameConsLoseStreak
+    AbandonGameNoCons, AbandonGameConsLoseStreak, CannotAbandon
 
 }

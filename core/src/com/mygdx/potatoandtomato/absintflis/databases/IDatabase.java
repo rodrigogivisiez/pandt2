@@ -34,7 +34,7 @@ public interface IDatabase {
 
      void monitorUserCoinsCount(String userId, DatabaseListener<Integer> listener);
 
-     void deductUserCoins(String userId, int finalCoins, DatabaseListener listener);
+     void signCoinDecreaseAgreement(String userId, String transactionId, DatabaseListener listener);
 
      void updateProfile(Profile profile, DatabaseListener listener);
 

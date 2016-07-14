@@ -61,6 +61,7 @@ public class MockModel {
         RoomUser user2 = new RoomUser();
         user1.setProfile(mockProfile());
         user1.setSlotIndex(0);
+        user1.getProfile().setGameName("Steven Gerrard");
         user1.setRoomUserState(RoomUserState.Normal);
         user2.setProfile(mockProfile("another"));
         user2.setSlotIndex(99);

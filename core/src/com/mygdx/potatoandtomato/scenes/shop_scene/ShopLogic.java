@@ -6,15 +6,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
-import com.mygdx.potatoandtomato.absintflis.services.CoinsRetrieveListener;
-import com.mygdx.potatoandtomato.absintflis.services.IRestfulApi;
+import com.mygdx.potatoandtomato.absintflis.services.ClientInternalCoinListener;
 import com.mygdx.potatoandtomato.absintflis.services.RestfulApiListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.models.CoinProduct;
 import com.mygdx.potatoandtomato.models.RetrievableCoinsData;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.statics.Terms;
-import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.enums.Status;
@@ -29,8 +27,6 @@ public class ShopLogic extends LogicAbstract {
 
     private ShopScene shopScene;
     private boolean canWatchAds;
-    private RetrievableCoinsData currentRetrievableCoinsData;
-    private SafeThread safeThread;
     private ArrayList<CoinProduct> coinProducts;
     private int retrievedSuccessCount = 0;
 
@@ -42,17 +38,16 @@ public class ShopLogic extends LogicAbstract {
 
         services.getSoundsPlayer().stopMusic(Sounds.Name.THEME_MUSIC);
         services.getSoundsPlayer().playMusic(Sounds.Name.SHOP_MUSIC);
-
-        refreshProducts();
-        refreshAdsAvailability();
-        refreshRetrievableCoinsCount();
-
     }
 
     @Override
     public void onShown() {
         super.onShown();
         shopScene.randomAnimateStyle();
+
+        refreshProducts();
+        refreshAdsAvailability();
+        refreshRetrievableCoinsCount();
     }
 
     @Override
@@ -65,71 +60,31 @@ public class ShopLogic extends LogicAbstract {
     }
 
     public void refreshProducts(){
-        _services.getBroadcaster().subscribeOnce(BroadcastEvent.IAB_PRODUCTS_RESPONSE, new BroadcastListener<ArrayList<CoinProduct>>() {
+        _services.getCoins().getProducts(new ClientInternalCoinListener() {
             @Override
-            public void onCallback(ArrayList<CoinProduct> refreshedCoinProducts, Status st) {
-                if(st == Status.SUCCESS){
-                    refreshedCoinProducts.add(0, new CoinProduct(Terms.WATCH_ADS_ID, 1, _texts.watchAdsDescription()));
-                    coinProducts = refreshedCoinProducts;
-                    shopScene.setProductsDesign(coinProducts);
-                    shopScene.setCanWatchAds(canWatchAds);
-                    setCoinProductsListeners();
-                    addRetrievedSuccessCount();
-                }
+            public void onProductsRetrieved(ArrayList<CoinProduct> refreshedCoinProducts) {
+                super.onProductsRetrieved(refreshedCoinProducts);
+                coinProducts = refreshedCoinProducts;
+                coinProducts.add(0, new CoinProduct(Terms.WATCH_ADS_ID, 1, _texts.watchAdsDescription()));
+                shopScene.setProductsDesign(coinProducts);
+                shopScene.setCanWatchAds(canWatchAds);
+                setCoinProductsListeners();
+                addRetrievedSuccessCount();
             }
         });
-
-        _services.getBroadcaster().broadcast(BroadcastEvent.IAB_PRODUCTS_REQUEST, _services.getDatabase());
     }
 
     public void refreshRetrievableCoinsCount(){
-        _services.getRestfulApi().getRetrievableCoinsData(_services.getProfile(), new RestfulApiListener<RetrievableCoinsData>() {
-            @Override
-            public void onCallback(RetrievableCoinsData obj, Status st) {
-                if(st == Status.SUCCESS && obj != null){
-                    updateCurrentRetrievableCoinsData(obj);
-                    addRetrievedSuccessCount();
-                }
-            }
-        });
+        _services.getCoins().refreshRetrievableCoins();
     }
 
     public void updateCurrentRetrievableCoinsData(RetrievableCoinsData newData){
-        currentRetrievableCoinsData = newData;
-        shopScene.refreshPurseDesign(currentRetrievableCoinsData);
+        shopScene.refreshPurseDesign(newData);
 
-        if(currentRetrievableCoinsData.getCanRetrieveCoinsCount() < currentRetrievableCoinsData.getMaxRetrieveableCoins()){
-            safeThread = new SafeThread();
-            Threadings.runInBackground(new Runnable() {
-                @Override
-                public void run() {
-                    int duration = currentRetrievableCoinsData.getNextCoinInSecs();
-                    while (true){
-                        if(safeThread.isKilled()) break;
-                        else{
-                            shopScene.refreshNextCoinTimer(duration, false);
-                            Threadings.sleep(1000);
-                            duration--;
-                            if(duration <= -1){
-                                addPurseRetrievableCount();
-                                break;
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        else{
+        if(newData.getCanRetrieveCoinsCount() >= newData.getMaxRetrieveableCoins()) {
             shopScene.refreshNextCoinTimer(0, true);
         }
     }
-
-    public void addPurseRetrievableCount(){
-        currentRetrievableCoinsData.setCanRetrieveCoinsCount(currentRetrievableCoinsData.getCanRetrieveCoinsCount() + 1);
-        currentRetrievableCoinsData.setNextCoinInSecs(currentRetrievableCoinsData.getSecsPerCoin());
-        updateCurrentRetrievableCoinsData(currentRetrievableCoinsData);
-    }
-
 
     public void refreshAdsAvailability(){
         _services.getBroadcaster().broadcast(BroadcastEvent.HAS_REWARD_VIDEO, new RunnableArgs<Boolean>() {
@@ -155,19 +110,27 @@ public class ShopLogic extends LogicAbstract {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                if(currentRetrievableCoinsData != null && currentRetrievableCoinsData.getCanRetrieveCoinsCount() > 0){
-                    _services.getCoins().retrieveFreeCoins(new CoinsRetrieveListener() {
-                        @Override
-                        public void onFreeCoinsRetrieved(RetrievableCoinsData coinsData) {
-                            updateCurrentRetrievableCoinsData(coinsData);
-                        }
-                    });
-                }
-                else{
+                if(!_services.getCoins().retrieveFreeCoins()){
                     _services.getSoundsPlayer().playSoundEffect(Sounds.Name.WRONG);
                 }
             }
         });
+
+        _services.getCoins().addCoinsListener(getClassTag(), new ClientInternalCoinListener(true) {
+            @Override
+            public void retrievableCoinChanged(RetrievableCoinsData coinsData) {
+                super.retrievableCoinChanged(coinsData);
+                updateCurrentRetrievableCoinsData(coinsData);
+                addRetrievedSuccessCount();
+            }
+
+            @Override
+            public void nextCoinTimeChanged(int nextCoinSecs) {
+                super.nextCoinTimeChanged(nextCoinSecs);
+                shopScene.refreshNextCoinTimer(nextCoinSecs, false);
+            }
+        });
+
     }
 
     public void setCoinProductsListeners(){
@@ -214,7 +177,7 @@ public class ShopLogic extends LogicAbstract {
     @Override
     public void dispose() {
         super.dispose();
-        if(safeThread != null) safeThread.kill();
+        _services.getCoins().removeCoinsListenersByClassTag(getClassTag());
     }
 
     @Override

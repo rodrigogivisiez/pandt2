@@ -277,15 +277,8 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                 if(!isContinue){
                     _services.getCoins().setCoinListener(new CoinListener() {
                         @Override
-                        public void onEnoughCoins() {
-
-                        }
-
-                        @Override
-                        public void onDeductCoinsDone(String extra, Status status) {
-                            if(status == Status.SUCCESS){
-                                gameStart();
-                            }
+                        public void onDeductCoinsDone() {
+                            gameStart();
                         }
                     });
 
@@ -330,10 +323,11 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                     if(userId.equals(_services.getProfile().getUserId())){
                         coordinator.finalizeAndEndGame(null, null, true);
                     }
+                    _services.getCoins().onUserDisconnected(userId);
                 }
                 else if(connectionStatus == ConnectionStatus.Disconnected){
                     coordinator.userConnectionChanged(userId, false);
-
+                    _services.getCoins().onUserDisconnected(userId);
                 }
                 else if(connectionStatus == ConnectionStatus.Connected){
                     coordinator.userConnectionChanged(userId, true);
@@ -458,6 +452,9 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         else if(msgType == ConfirmMsgType.AbandonGameNoCons){
             text = _texts.confirmAbandonNoCons();
         }
+        else if(msgType == ConfirmMsgType.CannotAbandon){
+            text = _texts.confirmCannotAbandon();
+        }
         useConfirm(text, yesRunnable, noRunnable);
     }
 
@@ -480,6 +477,11 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                 }
             }
         });
+    }
+
+    @Override
+    public void useNotification(String msg) {
+        _notification.info(msg);
     }
 
     @Override

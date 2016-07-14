@@ -125,6 +125,14 @@ public abstract class GamingKit {
         }
     }
 
+    public void onUnlockPropertySuccess(String property){
+        for(LockPropertyListener listener : _lockPropertyListeners.values()) {
+            if(listener.getProperty().equals(property)){
+                listener.onUnLockSucceed();
+            }
+        }
+    }
+
     public ConcurrentHashMap<String, ConnectionChangedListener> getConnectionChangedListeners() {
         return _connectionChangedListeners;
     }
@@ -160,6 +168,8 @@ public abstract class GamingKit {
     public abstract void privateUpdateRoomMates(String toUserId, byte identifier, byte[] bytes);
 
     public abstract void lockProperty(String key, String value);
+
+    public abstract void unLockProperty(String key);
 
     public abstract void recoverConnection();
 

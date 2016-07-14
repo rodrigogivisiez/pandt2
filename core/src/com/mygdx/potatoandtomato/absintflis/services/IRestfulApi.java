@@ -30,4 +30,9 @@ public interface IRestfulApi {
     void reviveStreak(String teamUserIdsString, ArrayList<CoinsMeta> coinsMetas, String gameAbbr,
                                     String roomId, String roundCounter, RestfulApiListener<String> listener);
 
+
+    void useCoins(ArrayList<CoinsMeta> coinsMetas, String transactionId, int expectingCoins,
+                      String purpose, RestfulApiListener<String> listener);
+
+
 }

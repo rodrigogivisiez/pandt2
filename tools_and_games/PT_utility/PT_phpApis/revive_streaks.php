@@ -40,7 +40,8 @@
 				$canceled = false;
 				
 				foreach($coinsMeta as $meta){
-					if(!decreaseCoinFromUser($meta->userId, $meta->coinsCount, 0, $firebase)){
+					
+					if(!decreaseCoinFromUser($meta->userId, $meta->coinsCount, 0, "", "", $firebase)){
 						$canceled = true;
 						break;
 					}
@@ -55,13 +56,14 @@
 					
 					$firebase->set('streaksRevived/'.$roomId.'/'.$roundCounter.'/'.$teamUserIdsString, $currentDateTimeString);
 					
-					foreach($coinsMeta as $meta){
-						decreaseCoinFromUser($meta->userId, $meta->coinsCount, 1, $firebase);
-					}
 					
 					if($originalStreak->streakCount > 0){	//streak never killed before
 						echo "0";
 						return;
+					}
+					
+					foreach($coinsMeta as $meta){
+						decreaseCoinFromUser($meta->userId, $meta->coinsCount, 1, "Revive streaks", $originalStreak->beforeStreakCount, $firebase);
 					}
 					
 					$streakMap = array(

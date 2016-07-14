@@ -7,6 +7,7 @@ import com.potatoandtomato.common.absints.PTAssetsManager;
 import com.potatoandtomato.common.assets.FontAssets;
 import com.potatoandtomato.common.assets.FontDetailsGenerator;
 import com.potatoandtomato.common.assets.MyFreetypeFontLoader;
+import com.potatoandtomato.common.utils.Strings;
 
 /**
  * Created by SiongLeng on 9/2/2016.
@@ -80,6 +81,17 @@ public class Fonts extends FontAssets {
         IMPACT_XS_REGULAR_S_a74828_1_1,
         IMPACT_S_REGULAR_S_a74828_1_1,
         IMPACT_M_REGULAR,
+        IMPACT_S_REGULAR,
+
+        DIGIVOLVE_XS_REGULAR,
+        DIGIVOLVE_S_REGULAR,
+        DIGIVOLVE_M_REGULAR,
+        DIGIVOLVE_XL_REGULAR_B_ffffff_580202_1,
+        DIGIVOLVE_XXL_REGULAR,
+        DIGIVOLVE_50_REGULAR,
+
+        ARCADE_S_REGULAR,
+
     }
 
 
@@ -107,6 +119,12 @@ public class Fonts extends FontAssets {
                 case IMPACT:
                     path = "fonts/Impact-%s.otf";
                     break;
+                case DIGIVOLVE:
+                    path = "fonts/Digivolve-%s.otf";
+                    break;
+                case ARCADE:
+                    path = "fonts/Arcade-%s.ttf";
+                    break;
             }
 
             String styleName = "";
@@ -131,6 +149,7 @@ public class Fonts extends FontAssets {
                     break;
                 case HEAVYITALIC:
                     styleName = "HvIt";
+                    break;
             }
 
             return String.format(path, styleName);
@@ -138,6 +157,9 @@ public class Fonts extends FontAssets {
 
         @Override
         public int getSize(String fontSizeString) {
+            if(Strings.isNumeric(fontSizeString)){
+                return Integer.valueOf(fontSizeString);
+            }
             FontSize fontSize = FontSize.valueOf(fontSizeString);
             switch (fontSize){
                 case XXS:
@@ -164,7 +186,7 @@ public class Fonts extends FontAssets {
     }
 
     private enum  FontName {
-        PIZZA, MYRIAD, HELVETICA, CARTER, IMPACT
+        PIZZA, MYRIAD, HELVETICA, CARTER, IMPACT, DIGIVOLVE, ARCADE
     }
 
     private enum FontStyle {

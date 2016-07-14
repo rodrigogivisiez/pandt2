@@ -38,6 +38,7 @@ public class GameCoordinator implements Disposable {
     private UserStateListener userStateListener;
     private Object database;
     private String roomId;
+    private int roundCounter;
     private ISoundsPlayer soundsPlayer;
     private PTAssetsManager ptAssetsManager;
     private DecisionsMaker decisionsMaker;
@@ -50,7 +51,7 @@ public class GameCoordinator implements Disposable {
 
     private boolean landscape;
     private boolean gameStarted;
-    private boolean finalized;
+    private boolean finalized, requestingCoins;
     private boolean finishLoading;
     private ArrayList<InGameUpdateListener> inGameUpdateListeners;
     private ArrayList<LeaderboardRecord> gameLeaderboardRecords;
@@ -65,7 +66,7 @@ public class GameCoordinator implements Disposable {
                            float gameWidth, float gameHeight,
                            IPTGame game, SpriteBatch batch,
                            String myUserId, IGameSandBox gameSandBox,
-                           Object database, String roomId,
+                           Object database, String roomId, int roundCounter,
                            ISoundsPlayer sounds, IRemoteHelper remoteHelper,
                            ITutorials tutorials,
                            GamePreferencesAbstract gamePreferences,
@@ -82,6 +83,7 @@ public class GameCoordinator implements Disposable {
         this.gameSandBox = gameSandBox;
         this.database = database;
         this.roomId = roomId;
+        this.roundCounter = roundCounter;
         this.soundsPlayer = sounds;
         this.tutorials = tutorials;
         this.gamePreferences = gamePreferences;
@@ -190,8 +192,15 @@ public class GameCoordinator implements Disposable {
     }
 
     public void abandon(final Runnable confirmedAbandon){
-        if(!finalized){
+        if(finalized || requestingCoins){
+            gameSandBox.useConfirm(ConfirmMsgType.CannotAbandon, new Runnable() {
+                @Override
+                public void run() {
 
+                }
+            }, null);
+        }
+        else{
             ConfirmMsgType confirmMsgType = ConfirmMsgType.AbandonGameNoCons;
             if(willAbandonLoseStreak()) confirmMsgType = ConfirmMsgType.AbandonGameConsLoseStreak;
 
@@ -563,8 +572,11 @@ public class GameCoordinator implements Disposable {
     //////////////////////////////////////////////////////////////////////////////////
     //about coins
     ////////////////////////////////////////////////////////////////////////////////////
-    public void coinsInputRequest(CoinRequestType coinRequestType, int coinPerPerson, final CoinListener coinListener){
+    public void coinsInputRequest(String purpose, CoinRequestType coinRequestType, int coinPerPerson, final CoinListener coinListener,
+                                  ArrayList<SpeechAction> potatoSpeechActions, ArrayList<SpeechAction> tomatoSpeechActions,
+                                  String dismissText){
         iCoins.reset();
+        requestingCoins = true;
 
         ArrayList<Pair<String, String>> userIdToNamePairs = new ArrayList();
         switch (coinRequestType){
@@ -590,18 +602,27 @@ public class GameCoordinator implements Disposable {
                 break;
         }
 
-        iCoins.initCoinMachine(coinPerPerson * userIdToNamePairs.size(), roomId + "_game", userIdToNamePairs, true);
+        iCoins.initCoinMachine(purpose, coinPerPerson * userIdToNamePairs.size(),
+                roomId + "_" + roundCounter + "_game", userIdToNamePairs, true,
+                potatoSpeechActions, tomatoSpeechActions, dismissText);
         iCoins.setCoinListener(new CoinListener() {
             @Override
             public void onEnoughCoins() {
                 coinListener.onEnoughCoins();
-                iCoins.hideCoinMachine();
                 iCoins.startDeductCoins();
             }
 
             @Override
-            public void onDeductCoinsDone(String extra, Status status) {
-                coinListener.onDeductCoinsDone(extra, status);
+            public void onDeductCoinsDone() {
+                iCoins.hideCoinMachine();
+                coinListener.onDeductCoinsDone();
+                requestingCoins = false;
+            }
+
+            @Override
+            public void onDismiss(String dismissUserId) {
+                coinListener.onDismiss(dismissUserId);
+                requestingCoins = false;
             }
         });
         iCoins.showCoinMachine();
@@ -630,6 +651,10 @@ public class GameCoordinator implements Disposable {
         if(gameStarted){
             gameDataHelper.onGameStarted(isContinue);
         }
+    }
+
+    public void showNotification(String msg){
+        gameSandBox.useNotification(msg);
     }
 
 

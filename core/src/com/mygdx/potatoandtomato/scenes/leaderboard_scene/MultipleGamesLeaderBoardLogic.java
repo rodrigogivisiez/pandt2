@@ -101,6 +101,8 @@ public class MultipleGamesLeaderBoardLogic extends LogicAbstract {
                 @Override
                 public void onCallback(final ArrayList<LeaderboardRecord> records, Status st) {
                     if(st == Status.SUCCESS){
+                        if(isDisposing()) return;
+
                         final boolean found = LeaderboardHelper.isMyRecordInLeaderboard(records, _services.getProfile().getUserId());
 
                         final Runnable populateRunnable = new Runnable() {

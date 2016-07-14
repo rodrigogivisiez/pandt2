@@ -66,7 +66,7 @@ public class Strings {
         if(limit == 0) limit = 9999;
         if(input == null) return null;
         if(input.length() > limit) {
-            input = input.substring(0, limit);
+            input = input.substring(0, limit - 2);
             input+="..";
         }
         return input;

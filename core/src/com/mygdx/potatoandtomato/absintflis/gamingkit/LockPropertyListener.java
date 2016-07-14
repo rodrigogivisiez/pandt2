@@ -17,4 +17,6 @@ public abstract class LockPropertyListener {
 
     public abstract void onLockSucceed();
 
+    public void onUnLockSucceed(){}
+
 }

@@ -216,6 +216,22 @@ public class RestfulApi implements IRestfulApi {
         }
     }
 
+    @Override
+    public void useCoins(ArrayList<CoinsMeta> coinsMetas, String transactionId, int expectingCoins, String purpose, RestfulApiListener<String> listener) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            String coinsMetaJson = objectMapper.writeValueAsString(coinsMetas);
+            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(4);
+            nameValuePairs.add(new BasicNameValuePair("transactionId", transactionId));
+            nameValuePairs.add(new BasicNameValuePair("coinsMetaJson", coinsMetaJson));
+            nameValuePairs.add(new BasicNameValuePair("expectingCoins", String.valueOf(expectingCoins)));
+            nameValuePairs.add(new BasicNameValuePair("purpose", purpose));
+            callApi("use_coins", nameValuePairs, listener);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void callApi(String name, RestfulApiListener listener){
         callApi(name, new ArrayList<NameValuePair>(), listener);
     }

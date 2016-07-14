@@ -16,6 +16,7 @@ import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.*;
 import com.mygdx.potatoandtomato.controls.DummyButton;
+import com.mygdx.potatoandtomato.controls.PurseControl;
 import com.mygdx.potatoandtomato.controls.TopBar;
 import com.mygdx.potatoandtomato.enums.ProductAction;
 import com.mygdx.potatoandtomato.models.CoinProduct;
@@ -25,9 +26,7 @@ import com.mygdx.potatoandtomato.utils.DateTimes;
 import com.mygdx.potatoandtomato.utils.Positions;
 import com.mygdx.potatoandtomato.utils.Sizes;
 import com.potatoandtomato.common.controls.Animator;
-import com.potatoandtomato.common.utils.HashMapUtils;
 import com.potatoandtomato.common.utils.Threadings;
-import javafx.geometry.Pos;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,12 +38,13 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
  */
 public class ShopScene extends SceneAbstract {
 
-    private Table purseImagesTable, productsTable, watchAdsItemTable, growthRateTable,
+    private Table productsTable, watchAdsItemTable, growthRateTable,
                     loadingTable, shopContentTable;
     private Label purseCountLabel;
     private Actor retrieveCoinsButton;
     private HashMap<Integer, Image> screensMap;
     private ShopArcadeScreensAnimation shopArcadeScreensAnimation;
+    private PurseControl purseControl;
 
     public ShopScene(Services services, PTScreen screen) {
         super(services, screen);
@@ -192,43 +192,8 @@ public class ShopScene extends SceneAbstract {
         purseRootTable.align(Align.top);
         purseRootTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
 
-        Image backPurseImage = new Image(_assets.getTextures().get(Textures.Name.PURSE_BACK));
-        Image frontPurseImage = new Image(_assets.getTextures().get(Textures.Name.PURSE_FRONT));
-
-        purseImagesTable = new Table();
-        purseImagesTable.setSize(140, 200);
-        purseImagesTable.setPosition(-13, -90);
-        purseImagesTable.align(Align.top);
-
-        Image coin1 = new Image(_assets.getTextures().get(Textures.Name.PURSE_COIN_NORMAL));
-        coin1.setName("coin1");
-        coin1.setVisible(false);
-        coin1.setPosition(15, 150);
-
-        Image coin2 = new Image(_assets.getTextures().get(Textures.Name.PURSE_COIN_NORMAL));
-        coin2.setName("coin2");
-        coin2.setVisible(false);
-        coin2.setPosition(36, 147);
-
-        Image coin3 = new Image(_assets.getTextures().get(Textures.Name.PURSE_COIN_NORMAL));
-        coin3.setName("coin3");
-        coin3.setVisible(false);
-        coin3.setPosition(63, 155);
-
-        Image coin4 = new Image(_assets.getTextures().get(Textures.Name.PURSE_COIN_SLEEP));
-        coin4.setName("coin4");
-        coin4.setVisible(false);
-        coin4.setPosition(40, 187);
-
-        purseImagesTable.add(backPurseImage).padLeft(-10);
-        purseImagesTable.row();
-
-        purseImagesTable.addActor(coin1);
-        purseImagesTable.addActor(coin3);
-        purseImagesTable.addActor(coin2);
-        purseImagesTable.addActor(coin4);
-
-        purseImagesTable.add(frontPurseImage).padTop(-20);
+        purseControl = new PurseControl(_assets, 0);
+        purseControl.setPosition(-13, -90);
 
         Table topContentTable = new Table();
         topContentTable.align(Align.left);
@@ -271,7 +236,7 @@ public class ShopScene extends SceneAbstract {
         purseRootTable.add(topContentTable).expandX().fillX().height(63);
         purseRootTable.row();
         purseRootTable.add(retrieveButton).size(retrieveButton.getPrefWidth(), retrieveButton.getPrefHeight()).right().pad(4, 0, 7, 7);
-        purseRootTable.addActor(purseImagesTable);
+        purseRootTable.addActor(purseControl);
 
         return purseRootTable;
     }
@@ -348,7 +313,7 @@ public class ShopScene extends SceneAbstract {
         topContentTable.add(itemImageTable).width(70).expandY().fillY();
         topContentTable.add(detailsTable).expand().fill();
 
-        TextButton retrieveButton = getWoodButton(productAction != ProductAction.WatchVideo ? _texts.buyCoins() : _texts.watchAds());
+        TextButton retrieveButton = getWoodButton(productAction != ProductAction.WatchVideo ? _texts.buyNow() : _texts.watchAds());
         retrieveButton.setName(coinProduct.getId());
 
         if(productAction == ProductAction.WatchVideo){
@@ -400,40 +365,11 @@ public class ShopScene extends SceneAbstract {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                Actor coin1 = purseImagesTable.findActor("coin1");
-                Actor coin2 = purseImagesTable.findActor("coin2");
-                Actor coin3 = purseImagesTable.findActor("coin3");
-                Actor coin4 = purseImagesTable.findActor("coin4");
-
-                coin1.setVisible(false);
-                coin2.setVisible(false);
-                coin3.setVisible(false);
-                coin4.setVisible(false);
-
                 if(retrievableCoinsData == null){
-
                     purseCountLabel.setText("?");
                 }
                 else{
-                    if(retrievableCoinsData.getCanRetrieveCoinsCount() > 0 && retrievableCoinsData.getCanRetrieveCoinsCount() <= 1){
-                        coin1.setVisible(true);
-                    }
-                    else if(retrievableCoinsData.getCanRetrieveCoinsCount() > 1 && retrievableCoinsData.getCanRetrieveCoinsCount() <= 2){
-                        coin1.setVisible(true);
-                        coin2.setVisible(true);
-                    }
-                    else if(retrievableCoinsData.getCanRetrieveCoinsCount() > 2 && retrievableCoinsData.getCanRetrieveCoinsCount() <= 3){
-                        coin1.setVisible(true);
-                        coin2.setVisible(true);
-                        coin3.setVisible(true);
-                    }
-                    else if(retrievableCoinsData.getCanRetrieveCoinsCount() > 3){
-                        coin1.setVisible(true);
-                        coin2.setVisible(true);
-                        coin3.setVisible(true);
-                        coin4.setVisible(true);
-                    }
-
+                    purseControl.changeCoinsNumber(retrievableCoinsData.getCanRetrieveCoinsCount());
                     purseCountLabel.setText(String.valueOf(retrievableCoinsData.getCanRetrieveCoinsCount()));
                 }
             }

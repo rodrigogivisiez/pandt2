@@ -15,6 +15,8 @@ public interface IGameSandBox {
 
     void useConfirm(ConfirmMsgType msgType, Runnable yesRunnable, Runnable noRunnable);
     void useConfirm(String msg, Runnable yesRunnable, Runnable noRunnable);
+    void useNotification(String msg);
+
     void userAbandoned(String userId);
     void endGame();
     void sendUpdate(RoomUpdateType updateType, String msg);

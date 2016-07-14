@@ -2,18 +2,20 @@ package com.mygdx.potatoandtomato.services;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
-import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.LockPropertyListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
-import com.mygdx.potatoandtomato.absintflis.services.CoinsListener;
-import com.mygdx.potatoandtomato.absintflis.services.CoinsRetrieveListener;
+import com.mygdx.potatoandtomato.absintflis.services.ClientInternalCoinListener;
+import com.mygdx.potatoandtomato.absintflis.services.ConnectionWatcherListener;
 import com.mygdx.potatoandtomato.absintflis.services.IRestfulApi;
 import com.mygdx.potatoandtomato.absintflis.services.RestfulApiListener;
+import com.mygdx.potatoandtomato.assets.Sounds;
+import com.mygdx.potatoandtomato.enums.CoinMachineTabType;
 import com.mygdx.potatoandtomato.enums.ConfirmIdentifier;
 import com.mygdx.potatoandtomato.enums.ShopProducts;
 import com.mygdx.potatoandtomato.models.CoinProduct;
@@ -30,14 +32,15 @@ import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
+import com.potatoandtomato.common.enums.SpeechActionType;
 import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.models.SpeechAction;
 import com.potatoandtomato.common.utils.*;
 import com.shaded.fasterxml.jackson.core.JsonProcessingException;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -52,6 +55,8 @@ public class Coins implements ICoins {
     private IPTGame iptGame;
     private Broadcaster broadcaster;
     private Confirm confirm;
+    private ConnectionWatcher connectionWatcher;
+
     private Profile profile;
     private CoinMachineControl coinMachineControl;
     private IDatabase database;
@@ -59,31 +64,41 @@ public class Coins implements ICoins {
     private PTScreen ptScreen;
     private IRestfulApi restfulApi;
     private SafeDouble myCoinsCount;
+    private String coinsPurpose;
     private int expectingCoin;
     private String transactionId;
+    private String dismissText;
     private boolean puttingCoin;
     private boolean coinsAlreadyEnough;
+    private boolean waitingDeductCoinResult;
     private ConcurrentHashMap<String, Integer> currentUsersPutCoinNumberMap;
     private CoinListener coinListener;
-    private int deductedSuccessCoinsCount;
-    private ShopProducts currentShopProducts;
+    private ShopProducts currentShopProduct;
 
+    private SafeThread waitingDeductCoinResultSafeThread;
+    private SafeThread tomatoSpeechSafeThread, potatoSpeechSafeThread;
+    private ArrayList<SpeechAction> tomatoDefaultSpeechActions;
+    private ArrayList<SpeechAction> potatoDefaultSpeechActions;
+    private ArrayList<CoinProduct> coinProducts;
+    private int currentProductIndex;
     private ArrayList<String> noCoinUserIds;
     private ArrayList<Pair<String, String>> userIdToNamePairs;
     private ArrayList<TopBarCoinControl> topBarCoinControls;
     private ArrayList<String> monitoringUserIds;
-    private ConcurrentHashMap<String, CoinsListener> tagTocoinsListenersMap;
+    private ArrayList<String> deductedSuccessTransactions;
+    private ConcurrentHashMap<String, ClientInternalCoinListener> tagToClientInternalCoinListenersMap;
 
 
     public Coins(Broadcaster broadcaster, Assets assets,
                  SoundsPlayer soundsPlayer, Texts texts, IPTGame iptGame, SpriteBatch batch,
                  Profile profile, IDatabase database, GamingKit gamingKit, IRestfulApi restfulApi,
-                 Confirm confirm) {
+                 Confirm confirm, ConnectionWatcher connectionWatcher) {
         _this = this;
         this.broadcaster = broadcaster;
         this.confirm = confirm;
         this.restfulApi = restfulApi;
         this.assets = assets;
+        this.connectionWatcher = connectionWatcher;
         this.soundsPlayer = soundsPlayer;
         this.texts = texts;
         this.database = database;
@@ -93,7 +108,8 @@ public class Coins implements ICoins {
         this.monitoringUserIds = new ArrayList();
         this.currentUsersPutCoinNumberMap = new ConcurrentHashMap();
         this.noCoinUserIds = new ArrayList();
-        this.tagTocoinsListenersMap = new ConcurrentHashMap();
+        this.tagToClientInternalCoinListenersMap = new ConcurrentHashMap();
+        this.deductedSuccessTransactions = new ArrayList();
         this.myCoinsCount = new SafeDouble(0.0);
 
         coinMachineControl = new CoinMachineControl(broadcaster, assets, soundsPlayer, texts, iptGame, batch);
@@ -108,7 +124,7 @@ public class Coins implements ICoins {
     }
 
     private void mePutCoin(){
-        if(puttingCoin) return;
+        if(puttingCoin || coinsAlreadyEnough) return;
 
         if(getUserPutCoinCount(profile.getUserId()) + 1 > myCoinsCount.getValue().intValue()){
             return;
@@ -125,27 +141,57 @@ public class Coins implements ICoins {
         gamingKit.updateRoomMates(UpdateRoomMatesCode.PUT_COIN, transactionId);
     }
 
-    public void initCoinMachine(int expectingCoin, String transactionId, ArrayList<Pair<String, String>> userIdToNamePairs,
-                                boolean requestFromOthers){
+    public void initCoinMachine(String coinsPurpose, int expectingCoin, String transactionId, ArrayList<Pair<String, String>> userIdToNamePairs,
+                                boolean requestFromOthers, ArrayList<SpeechAction> potatoSpeechActions,
+                                ArrayList<SpeechAction> tomatoSpeechActions, String dismissText){
         coinsAlreadyEnough = false;
         puttingCoin = false;
+        this.coinsPurpose = coinsPurpose;
         this.coinListener = null;
         this.currentUsersPutCoinNumberMap.clear();
         this.expectingCoin = expectingCoin;
         this.transactionId = transactionId;
-        this.deductedSuccessCoinsCount = 0;
         this.userIdToNamePairs = userIdToNamePairs;
+        this.potatoDefaultSpeechActions = potatoSpeechActions;
+        this.tomatoDefaultSpeechActions = tomatoSpeechActions;
+        this.dismissText = dismissText;
+        this.coinMachineControl.updateExpectingCoins(expectingCoin);
+        this.coinMachineControl.updateDismissText(dismissText);
         sync(userIdToNamePairs);
         if(requestFromOthers) requestCoinsMachineStateFromOthers();
+
+        database.signCoinDecreaseAgreement(profile.getUserId(), transactionId, null);
+    }
+
+    public void reinitCoinMachine(){
+        hideCoinMachine();
+        initCoinMachine(coinsPurpose, expectingCoin, transactionId, userIdToNamePairs, false,
+                potatoDefaultSpeechActions, tomatoDefaultSpeechActions, dismissText);
+        showCoinMachine();
     }
 
 
     public void showCoinMachine(){
+        coinMachineControl.updateMyCoinsCount(myCoinsCount.getValue().intValue());
         coinMachineControl.show();
+        refreshRetrievableCoins();
+        refreshCoinMachineProducts();
+        Threadings.delay(1000, new Runnable() {
+            @Override
+            public void run() {
+                startSpeech(CoinMachineTabType.PlayersInsertCoinStatus);
+            }
+        });
     }
 
     public void hideCoinMachine(){
-        coinMachineControl.hide();
+        coinMachineControl.hide(new Runnable() {
+            @Override
+            public void run() {
+                stopSpeech(true);
+                stopSpeech(false);
+            }
+        });
     }
 
     private void addCoinMonitor(final String userId, final String username){
@@ -161,24 +207,25 @@ public class Coins implements ICoins {
 
                     if(obj == 0 && !noCoinUserIds.contains(userId)){
                         noCoinUserIds.add(userId);
-                        for(CoinsListener coinsListener : tagTocoinsListenersMap.values()){
-                            coinsListener.userHasCoinChanged(userId, false);
+                        for(ClientInternalCoinListener clientInternalCoinListener : tagToClientInternalCoinListenersMap.values()){
+                            clientInternalCoinListener.userHasCoinChanged(userId, false);
                         }
                     }
                     else if(obj != 0 && noCoinUserIds.contains(userId)){
                         noCoinUserIds.remove(userId);
-                        for(CoinsListener coinsListener : tagTocoinsListenersMap.values()){
-                            coinsListener.userHasCoinChanged(userId, true);
+                        for(ClientInternalCoinListener clientInternalCoinListener : tagToClientInternalCoinListenersMap.values()){
+                            clientInternalCoinListener.userHasCoinChanged(userId, true);
                         }
                     }
 
                     if(userId.equals(profile.getUserId())){
                         myCoinsCount.setValue((double) obj);
+                        coinMachineControl.updateMyCoinsCount(myCoinsCount.getValue().intValue());
 
                         for (TopBarCoinControl topBarCoinControl : topBarCoinControls) {
-                            topBarCoinControl.setCoinCount(obj, currentShopProducts);
+                            topBarCoinControl.setCoinCount(obj, currentShopProduct);
                         }
-                        currentShopProducts = null;
+                        currentShopProduct = null;
                     }
                 }
             });
@@ -216,6 +263,8 @@ public class Coins implements ICoins {
            checkSufficientCoins();
 
            if(fromUserId.equals(profile.getUserId())){
+               coinMachineControl.updateMyCoinsCount(
+                       myCoinsCount.getValue().intValue() - getUserPutCoinCount(profile.getUserId()));
                puttingCoin = false;
            }
        }
@@ -223,9 +272,16 @@ public class Coins implements ICoins {
 
     private void checkSufficientCoins(){
         int count = getTotalCoinsPut();
+        updateExpectingCoins();
         if(count >= expectingCoin){
             coinsAlreadyEnough = true;
-            if(coinListener != null) coinListener.onEnoughCoins();
+            startSpeech(CoinMachineTabType.EnoughCoinsInserted);
+            Threadings.delayNoPost(2000, new Runnable() {
+                @Override
+                public void run() {
+                    if (coinListener != null) coinListener.onEnoughCoins();
+                }
+            });
         }
     }
 
@@ -235,6 +291,11 @@ public class Coins implements ICoins {
             count += value;
         }
         return count;
+    }
+
+    private void updateExpectingCoins(){
+        int count = getTotalCoinsPut();
+        this.coinMachineControl.updateExpectingCoins(expectingCoin - count);
     }
 
     //will run the runnable only if success in becoming the decision maker
@@ -256,29 +317,64 @@ public class Coins implements ICoins {
     }
 
     public void startDeductCoins(){
-        if(currentUsersPutCoinNumberMap.containsKey(profile.getUserId())){
-            database.deductUserCoins(profile.getUserId(),
-                    myCoinsCount.getValue().intValue() - currentUsersPutCoinNumberMap.get(profile.getUserId()), new DatabaseListener() {
-                @Override
-                public void onCallback(Object obj, Status st) {
-                    gamingKit.updateRoomMates(st == Status.SUCCESS ? UpdateRoomMatesCode.COINS_DEDUCTED_SUCCESS :
-                                                    UpdateRoomMatesCode.COINS_DEDUCTED_FAILED, transactionId);
-                }
-            });
-        }
-        else{
-            gamingKit.updateRoomMates(UpdateRoomMatesCode.COINS_DEDUCTED_SUCCESS, transactionId);
-        }
+        waitingDeductCoinResult = true;
+        checkMeIsCoinsCollectedDecisionMaker(new Runnable() {
+            @Override
+            public void run() {
+                callDeductCoins();
+            }
+        });
+
+        startDeductCoinsWaitingThread();
     }
 
-    private void coinDeductedSuccess(String userId){
-        if(currentUsersPutCoinNumberMap.containsKey(userId)){
-            deductedSuccessCoinsCount += currentUsersPutCoinNumberMap.get(userId);
-        }
+    private void callDeductCoins(){
+        restfulApi.useCoins(getCurrentUsersPutCoinsMeta(), transactionId, expectingCoin, coinsPurpose, new RestfulApiListener<String>() {
+            @Override
+            public void onCallback(String obj, Status st) {
+                if(st == Status.FAILED){
+                    gamingKit.updateRoomMates(UpdateRoomMatesCode.COINS_DEDUCTED_FAILED, transactionId);
+                }
+                else{
+                    gamingKit.updateRoomMates(UpdateRoomMatesCode.COINS_DEDUCTED_SUCCESS, transactionId);
+                }
+            }
+        });
+    }
 
-        if(deductedSuccessCoinsCount >= expectingCoin){
-            if(coinListener != null) coinListener.onDeductCoinsDone(null, Status.SUCCESS);
-        }
+    private void coinDeductedSuccess(){
+        waitingDeductCoinResult = false;
+        if(waitingDeductCoinResultSafeThread != null) waitingDeductCoinResultSafeThread.kill();
+        if(coinListener != null) coinListener.onDeductCoinsDone();
+        deductedSuccessTransactions.add(transactionId);
+    }
+
+    private void coinDeductFailed(){
+        waitingDeductCoinResult = false;
+        if(waitingDeductCoinResultSafeThread != null) waitingDeductCoinResultSafeThread.kill();
+        reinitCoinMachine();
+    }
+
+    //wait 20 secs, if no respond received, call deduct coins api myself
+    private void startDeductCoinsWaitingThread(){
+        waitingDeductCoinResultSafeThread = new SafeThread();
+        Threadings.runInBackground(new Runnable() {
+            @Override
+            public void run() {
+                int i = 0;
+                while (i < 20){
+                    if(waitingDeductCoinResultSafeThread.isKilled()) return;
+                    else{
+                        Threadings.sleep(500);
+                    }
+                    i++;
+                }
+
+                //if still waiting, call deduct myself
+                if(waitingDeductCoinResult) callDeductCoins();
+            }
+        });
+
     }
 
     private void sync(ArrayList<Pair<String, String>> userIdToNamePairs){
@@ -301,10 +397,8 @@ public class Coins implements ICoins {
         }
 
         for(Pair<String, String> pair : userIdToNamePairs){
-            int insertedCoin = 0;
-            if(currentUsersPutCoinNumberMap.containsKey(pair.getFirst())){
-                insertedCoin = currentUsersPutCoinNumberMap.get(pair.getFirst());
-            }
+            int insertedCoin = getUserPutCoinCount(pair.getFirst());
+
             coinMachineControl.updateUserTable(pair.getFirst(), pair.getSecond(),
                     insertedCoin, !noCoinUserIds.contains(pair.getFirst()));
         }
@@ -320,50 +414,150 @@ public class Coins implements ICoins {
         }
     }
 
-    public void reset(){
-        for(String userId : monitoringUserIds){
-            if(!userId.equals(profile.getUserId())){
-                database.clearListenersByTag(userId);
+    private void dismissWindowsReceived(String fromUserId){
+        if(coinListener != null) coinListener.onDismiss(fromUserId);
+        hideCoinMachine();
+        clearAll();
+    }
+
+    public void onUserDisconnected(String dcUserId){
+        currentUsersPutCoinNumberMap.remove(dcUserId);
+        updateExpectingCoins();
+        sync(this.userIdToNamePairs);
+    }
+
+    /////////////////////////////////////////////////////
+    //about speeching
+    ////////////////////////////////////////////////////////
+    private void startSpeech(final CoinMachineTabType coinMachineTabType){
+        stopSpeech(true);
+        stopSpeech(false);
+
+        ArrayList<SpeechAction> potatoSpeechActions = null, tomatoSpeechActions = null;
+        if(coinMachineTabType == CoinMachineTabType.PlayersInsertCoinStatus){
+            potatoSpeechActions = potatoDefaultSpeechActions;
+            tomatoSpeechActions = tomatoDefaultSpeechActions;
+        }
+        else if(coinMachineTabType == CoinMachineTabType.RetrieveCoins){
+            Pair<ArrayList<SpeechAction>, ArrayList<SpeechAction>> pair = texts.getRandomMascotsSpeechAboutPurse();
+            potatoSpeechActions = pair.getFirst();
+            tomatoSpeechActions = pair.getSecond();
+        }
+        else if(coinMachineTabType == CoinMachineTabType.PurchaseCoins){
+            Pair<ArrayList<SpeechAction>, ArrayList<SpeechAction>> pair = texts.getRandomMascotsSpeechAboutPurchaseCoins();
+            potatoSpeechActions = pair.getFirst();
+            tomatoSpeechActions = pair.getSecond();
+        }
+        else if(coinMachineTabType == CoinMachineTabType.EnoughCoinsInserted){
+            Pair<ArrayList<SpeechAction>, ArrayList<SpeechAction>> pair = texts.getRandomMascotsSpeechAboutEnoughCoin();
+            potatoSpeechActions = pair.getFirst();
+            tomatoSpeechActions = pair.getSecond();
+        }
+
+        final ArrayList<SpeechAction> finalPotatoSpeechActions = potatoSpeechActions;
+        Threadings.runInBackground(new Runnable() {
+            @Override
+            public void run() {
+                potatoSpeechSafeThread = new SafeThread();
+                for(SpeechAction speechAction : finalPotatoSpeechActions){
+                    handleSpeech(true, speechAction);
+                    if(potatoSpeechSafeThread != null && potatoSpeechSafeThread.isKilled()) break;
+                }
             }
-        }
-        monitoringUserIds.clear();
-        monitoringUserIds.add(profile.getUserId());
+        });
 
-        coinMachineControl.hide();
-        transactionId = "";
-        coinListener = null;
-        currentUsersPutCoinNumberMap.clear();
+        final ArrayList<SpeechAction> finalTomatoSpeechActions = tomatoSpeechActions;
+        Threadings.runInBackground(new Runnable() {
+            @Override
+            public void run() {
+                tomatoSpeechSafeThread = new SafeThread();
+                for(SpeechAction speechAction : finalTomatoSpeechActions){
+                    handleSpeech(false, speechAction);
+                    if(tomatoSpeechSafeThread != null && tomatoSpeechSafeThread.isKilled()) break;
+                }
+            }
+        });
     }
 
-    public void dispose(){
-        for(String userId : monitoringUserIds){
-            database.clearListenersByTag(userId);
-        }
+    private void handleSpeech(boolean potato, SpeechAction speechAction){
+        if(speechAction.getSpeechActionType() == SpeechActionType.Add){
+            SafeThread safeThread;
+            if(potato){
+                safeThread = potatoSpeechSafeThread;
+            }
+            else{
+                safeThread = tomatoSpeechSafeThread;
+            }
 
-        coinMachineControl.hide();
-        monitoringUserIds.clear();
-        currentUsersPutCoinNumberMap.clear();
-        topBarCoinControls.clear();
+            coinMachineControl.startSpeechAnimation(potato);
+            long eachCharDuration = speechAction.getEachCharDuration();
+
+            String msg = processSpeech(speechAction.getMsg());
+            String[] arr = msg.split(" ");
+            for(String word : arr){
+                for (int i = 0; i < word.length(); i++) {
+                    if(safeThread.isKilled()) break;
+                    coinMachineControl.updateSpeechText(potato, String.valueOf(word.charAt(i)), i == 0 ? word : "");
+                    Threadings.sleep(eachCharDuration);
+                }
+                if(safeThread.isKilled()) break;
+                coinMachineControl.updateSpeechText(potato, " ", " ");
+                Threadings.sleep(eachCharDuration);
+            }
+            if(!safeThread.isKilled()) coinMachineControl.stopSpeechAnimation(potato);
+        }
+        else if(speechAction.getSpeechActionType() == SpeechActionType.Delay){
+            Threadings.sleep(speechAction.getEachCharDuration());
+        }
+        else if(speechAction.getSpeechActionType() == SpeechActionType.Clear){
+           coinMachineControl.clearSpeechText(potato);
+        }
     }
 
+    private void stopSpeech(final boolean potato){
+        if(potato){
+            if(potatoSpeechSafeThread != null) potatoSpeechSafeThread.kill();
+        }
+        else{
+            if(tomatoSpeechSafeThread != null) tomatoSpeechSafeThread.kill();
+        }
+        coinMachineControl.stopSpeechAnimation(potato);
+        coinMachineControl.clearSpeechText(potato);
+    }
+
+    private String processSpeech(String input){
+        return input.replace("%expectingCoin%", String.valueOf(expectingCoin));
+    }
+
+    /////////////////////////////////////////////////////
+    //about request coin machine states
+    ////////////////////////////////////////////////////////
     public void requestCoinsMachineStateFromOthers(){
         if(userIdToNamePairs.size() > 1){
             gamingKit.updateRoomMates(UpdateRoomMatesCode.REQUEST_COINS_STATE, transactionId);
         }
     }
 
-    private void coinsMachineStateRequestReceived(String fromUserId){
-        if(getTotalCoinsPut() > 0 && !fromUserId.equals(profile.getUserId())){
-            try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonObj jsonObj = new JsonObj();
-                jsonObj.put("transactionId", transactionId);
-                jsonObj.put("currentUsersPutCoinNumberMapJson", objectMapper.writeValueAsString(currentUsersPutCoinNumberMap));
-                gamingKit.privateUpdateRoomMates(fromUserId, UpdateRoomMatesCode.COINS_STATE_RESPONSE, jsonObj.toString());
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
+    private void coinsMachineStateRequestReceived(String fromUserId, String askingTransactionId){
+        if(deductedSuccessTransactions.contains(askingTransactionId)){
+            //coins already deducted success, no need reply state again, instead resend coin deduct success update to sender
+            gamingKit.privateUpdateRoomMates(fromUserId, UpdateRoomMatesCode.COINS_DEDUCTED_SUCCESS, askingTransactionId);
+        }
+        else{
+            if(askingTransactionId.equals(this.transactionId) && getTotalCoinsPut() > 0 && !fromUserId.equals(profile.getUserId())){
+                try {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    JsonObj jsonObj = new JsonObj();
+                    jsonObj.put("transactionId", transactionId);
+                    jsonObj.put("currentUsersPutCoinNumberMapJson", objectMapper.writeValueAsString(currentUsersPutCoinNumberMap));
+                    gamingKit.privateUpdateRoomMates(fromUserId, UpdateRoomMatesCode.COINS_STATE_RESPONSE, jsonObj.toString());
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
             }
         }
+
+
     }
 
     private void coinsMachineStateResponseReceived(String response){
@@ -382,6 +576,7 @@ public class Coins implements ICoins {
                             currentUsersPutCoinNumberMap.get(userId) + receivedUsersPutCoinNumberMap.get(userId));
                 }
                 sync(this.userIdToNamePairs);
+                updateExpectingCoins();
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -389,27 +584,138 @@ public class Coins implements ICoins {
         }
     }
 
-    public void retrieveFreeCoins(final CoinsRetrieveListener coinsRetrieveListener){
-        confirm.show(ConfirmIdentifier.Coins, texts.workingDoNotClose(), Confirm.Type.LOADING_NO_CANCEL, null);
-        currentShopProducts = ShopProducts.PURSE;
-        restfulApi.retrieveCoins(profile, new RestfulApiListener<RetrievableCoinsData>() {
+    /////////////////////////////////////////////////////
+    //about free coins
+    ////////////////////////////////////////////////////////
+    private RetrievableCoinsData currentRetrievableCoinsData;
+    private SafeThread retrievableCoinsDataSafeThread;
+
+    public void refreshRetrievableCoins(){
+        if(retrievableCoinsDataSafeThread != null) retrievableCoinsDataSafeThread.kill();
+        restfulApi.getRetrievableCoinsData(profile, new RestfulApiListener<RetrievableCoinsData>() {
             @Override
             public void onCallback(RetrievableCoinsData obj, Status st) {
-                if(st == Status.SUCCESS){
-                    coinsRetrieveListener.onFreeCoinsRetrieved(obj);
+                if(st == Status.SUCCESS && obj != null){
+                    currentRetrievableCoinsData = obj;
+                    retrievableCoinsChanged();
                 }
-                confirm.close(ConfirmIdentifier.Coins);
             }
         });
     }
 
+    public void retrievableCoinsChanged(){
+        for(ClientInternalCoinListener clientInternalCoinListener : tagToClientInternalCoinListenersMap.values()){
+            clientInternalCoinListener.retrievableCoinChanged(currentRetrievableCoinsData);
+        }
+        if(retrievableCoinsDataSafeThread != null) retrievableCoinsDataSafeThread.kill();
+
+        if(currentRetrievableCoinsData.getCanRetrieveCoinsCount() < currentRetrievableCoinsData.getMaxRetrieveableCoins()){
+            retrievableCoinsDataSafeThread = new SafeThread();
+            Threadings.runInBackground(new Runnable() {
+                @Override
+                public void run() {
+                    int duration = currentRetrievableCoinsData.getNextCoinInSecs();
+                    while (true){
+                        if(retrievableCoinsDataSafeThread.isKilled()) break;
+                        else{
+                            coinMachineControl.updatePurse(currentRetrievableCoinsData.getCanRetrieveCoinsCount(), duration);
+                            for(ClientInternalCoinListener clientInternalCoinListener : tagToClientInternalCoinListenersMap.values()){
+                                clientInternalCoinListener.nextCoinTimeChanged(duration);
+                            }
+                            Threadings.sleep(1000);
+                            duration--;
+                            if(duration <= -1){
+                                addPurseRetrievableCount();
+                                break;
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        else{
+            coinMachineControl.updatePurse(currentRetrievableCoinsData.getCanRetrieveCoinsCount(), -1);
+        }
+
+    }
+
+    public void addPurseRetrievableCount(){
+        currentRetrievableCoinsData.setCanRetrieveCoinsCount(currentRetrievableCoinsData.getCanRetrieveCoinsCount() + 1);
+        currentRetrievableCoinsData.setNextCoinInSecs(currentRetrievableCoinsData.getSecsPerCoin());
+        retrievableCoinsChanged();
+    }
+
+
+    public boolean retrieveFreeCoins(){
+        if(currentRetrievableCoinsData != null && currentRetrievableCoinsData.getCanRetrieveCoinsCount() > 0){
+            confirm.show(ConfirmIdentifier.Coins, texts.workingDoNotClose(), Confirm.Type.LOADING_NO_CANCEL, null);
+            currentShopProduct = ShopProducts.PURSE;
+            restfulApi.retrieveCoins(profile, new RestfulApiListener<RetrievableCoinsData>() {
+                @Override
+                public void onCallback(RetrievableCoinsData obj, Status st) {
+                    if(st == Status.SUCCESS){
+                        if(retrievableCoinsDataSafeThread != null) retrievableCoinsDataSafeThread.kill();
+                        currentRetrievableCoinsData = obj;
+                        retrievableCoinsChanged();
+                    }
+                    confirm.close(ConfirmIdentifier.Coins);
+                }
+            });
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    /////////////////////////////////////////////////////
+    //about ads
+    ////////////////////////////////////////////////////////
     public void watchAds(){
-        currentShopProducts = ShopProducts.ONE_COIN;
+        currentShopProduct = ShopProducts.ONE_COIN;
         broadcaster.broadcast(BroadcastEvent.SHOW_REWARD_VIDEO);
     }
 
+
+    /////////////////////////////////////////////////////
+    //about purchase coins
+    ////////////////////////////////////////////////////////
+    public void refreshCoinMachineProducts(){
+        getProducts(new ClientInternalCoinListener() {
+            @Override
+            public void onProductsRetrieved(ArrayList<CoinProduct> refreshedCoinProducts) {
+                super.onProductsRetrieved(refreshedCoinProducts);
+                coinProducts = refreshedCoinProducts;
+                changeCoinMachineCurrentProduct(true, coinProducts.get(0));
+            }
+        });
+    }
+
+    public void getProducts(final ClientInternalCoinListener clientInternalCoinListener){
+        broadcaster.subscribeOnce(BroadcastEvent.IAB_PRODUCTS_RESPONSE, new BroadcastListener<ArrayList<CoinProduct>>() {
+            @Override
+            public void onCallback(ArrayList<CoinProduct> refreshedCoinProducts, Status st) {
+                if (st == Status.SUCCESS) {
+                    clientInternalCoinListener.onProductsRetrieved(refreshedCoinProducts);
+                }
+            }
+        });
+
+        broadcaster.broadcast(BroadcastEvent.IAB_PRODUCTS_REQUEST, database);
+    }
+
+    public void changeCoinMachineCurrentProduct(boolean next, CoinProduct coinProduct){
+        coinMachineControl.goToNextProduct(next, coinProduct, new RunnableArgs<TextButton>() {
+            @Override
+            public void run() {
+                setBuyButtonListener(this.getFirstArg());
+            }
+        });
+    }
+
+
     public void purchaseCoins(CoinProduct coinProduct){
-        currentShopProducts = coinProduct.getShopProductType();
+        currentShopProduct = coinProduct.getShopProductType();
         confirm.show(ConfirmIdentifier.Coins, texts.workingDoNotClose(), Confirm.Type.LOADING_NO_CANCEL, null);
         broadcaster.subscribeOnceWithTimeout(BroadcastEvent.IAB_PRODUCT_PURCHASE_RESPONSE, 60 * 1000, new BroadcastListener() {
             @Override
@@ -423,8 +729,50 @@ public class Coins implements ICoins {
         broadcaster.broadcast(BroadcastEvent.IAB_PRODUCT_PURCHASE, new Pair<String, IRestfulApi>(coinProduct.getId(), restfulApi));
     }
 
+    /////////////////////////////////////////////////////
+    //disposing
+    ////////////////////////////////////////////////////////
+    //clear inserted coins data, but not monitoring data
+    public void clearAll(){
+        coinMachineControl.updateMyCoinsCount(myCoinsCount.getValue().intValue());
+        currentUsersPutCoinNumberMap.clear();
+        puttingCoin = false;
+        sync(this.userIdToNamePairs);
+    }
+
+    //remove everything except my own coin data
+    public void reset(){
+        hideCoinMachine();
+
+        for(String userId : monitoringUserIds){
+            if(!userId.equals(profile.getUserId())){
+                database.clearListenersByTag(userId);
+            }
+        }
+        monitoringUserIds.clear();
+        monitoringUserIds.add(profile.getUserId());
+
+        transactionId = "";
+        coinListener = null;
+        currentUsersPutCoinNumberMap.clear();
+    }
+
+    //remove everything
+    public void dispose(){
+        reset();
+
+        for(String userId : monitoringUserIds){
+            database.clearListenersByTag(userId);
+        }
+
+        monitoringUserIds.clear();
+        topBarCoinControls.clear();
+    }
 
 
+    /////////////////////////////////////////////////////
+    //listeners and getters
+    ////////////////////////////////////////////////////////
     public void setListeners(){
         Threadings.postRunnable(new Runnable() {
             @Override
@@ -436,6 +784,76 @@ public class Coins implements ICoins {
                         mePutCoin();
                     }
                 });
+
+                coinMachineControl.getLeftButton().addListener(new ClickListener(){
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        if(coinMachineControl.canGoToNextProduct()){
+                            currentProductIndex--;
+                            if(currentProductIndex < 0) currentProductIndex = coinProducts.size() - 1;
+                            changeCoinMachineCurrentProduct(false, coinProducts.get(currentProductIndex));
+                        }
+                    }
+                });
+
+                coinMachineControl.getRightButton().addListener(new ClickListener(){
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        if(coinMachineControl.canGoToNextProduct()){
+                            currentProductIndex++;
+                            if(currentProductIndex > coinProducts.size() - 1) currentProductIndex = 0;
+                            changeCoinMachineCurrentProduct(true, coinProducts.get(currentProductIndex));
+                        }
+                    }
+                });
+
+                coinMachineControl.getRetrieveCoinsButton().addListener(new ClickListener(){
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        if(!retrieveFreeCoins()) {
+                            soundsPlayer.playSoundEffect(Sounds.Name.WRONG);
+                        }
+                    }
+                });
+
+                coinMachineControl.getDismissButton().addListener(new ClickListener(){
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        if(!coinsAlreadyEnough) {
+                            hideCoinMachine();
+                            gamingKit.updateRoomMates(UpdateRoomMatesCode.COINS_WINDOW_DISMISS, "");
+                        }
+                    }
+                });
+
+                coinMachineControl.getBuyCoinsTabButton().addListener(new ClickListener(){
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        startSpeech(CoinMachineTabType.PurchaseCoins);
+                    }
+                });
+
+                coinMachineControl.getPlayerInsertCoinStatusTabButton().addListener(new ClickListener(){
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        startSpeech(CoinMachineTabType.PlayersInsertCoinStatus);
+                    }
+                });
+
+                coinMachineControl.getRetrieveCoinsTabButton().addListener(new ClickListener(){
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        startSpeech(CoinMachineTabType.RetrieveCoins);
+                    }
+                });
+
             }
         });
 
@@ -447,21 +865,22 @@ public class Coins implements ICoins {
                 }
                 else if(code == UpdateRoomMatesCode.COINS_DEDUCTED_SUCCESS){
                     if(msg.equals(_this.transactionId)){        //msg is transactionId
-                        coinDeductedSuccess(senderId);
+                        coinDeductedSuccess();
                     }
                 }
                 else if(code == UpdateRoomMatesCode.COINS_DEDUCTED_FAILED){
                     if(msg.equals(_this.transactionId)){        //msg is transactionId
-                        if(coinListener != null) coinListener.onDeductCoinsDone(senderId, Status.FAILED);
+                        coinDeductFailed();
                     }
                 }
                 else if(code == UpdateRoomMatesCode.REQUEST_COINS_STATE){
-                    if(msg.equals(_this.transactionId)){        //msg is transactionId
-                        coinsMachineStateRequestReceived(senderId);
-                    }
+                    coinsMachineStateRequestReceived(senderId, msg);
                 }
                 else if(code == UpdateRoomMatesCode.COINS_STATE_RESPONSE){
                     coinsMachineStateResponseReceived(msg);        //msg is json
+                }
+                else if(code == UpdateRoomMatesCode.COINS_WINDOW_DISMISS){
+                    dismissWindowsReceived(senderId);
                 }
             }
 
@@ -470,10 +889,34 @@ public class Coins implements ICoins {
 
             }
         });
+
+        connectionWatcher.addConnectionWatcherListener(new ConnectionWatcherListener() {
+            @Override
+            public void onConnectionResume() {
+                requestCoinsMachineStateFromOthers();
+            }
+
+            @Override
+            public void onConnectionHalt() {
+                currentUsersPutCoinNumberMap.clear();
+                sync(userIdToNamePairs);
+            }
+        });
+
     }
 
-    public void addCoinsListener(String classTag, CoinsListener listener){
-        tagTocoinsListenersMap.put(classTag, listener);
+    public void setBuyButtonListener(TextButton buyButton){
+        buyButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                purchaseCoins(coinProducts.get(currentProductIndex));
+            }
+        });
+    }
+
+    public void addCoinsListener(String classTag, ClientInternalCoinListener listener){
+        tagToClientInternalCoinListenersMap.put(classTag, listener);
 
         for(String userID : noCoinUserIds){
             listener.userHasCoinChanged(userID, false);
@@ -482,7 +925,15 @@ public class Coins implements ICoins {
     }
 
     public void removeCoinsListenersByClassTag(String classTag){
-        tagTocoinsListenersMap.remove(classTag);
+        tagToClientInternalCoinListenersMap.remove(classTag);
+
+        for(ClientInternalCoinListener clientInternalCoinListener : tagToClientInternalCoinListenersMap.values()){
+            if(clientInternalCoinListener.isMonitorNextCoin()){
+                return;
+            }
+        }
+
+        if(retrievableCoinsDataSafeThread != null) retrievableCoinsDataSafeThread.kill();
     }
 
     public void render(float delta){
@@ -496,7 +947,9 @@ public class Coins implements ICoins {
     public ArrayList<CoinsMeta> getCurrentUsersPutCoinsMeta(){
         ArrayList<CoinsMeta> result = new ArrayList();
         for(String userId : currentUsersPutCoinNumberMap.keySet()){
-            result.add(new CoinsMeta(userId, currentUsersPutCoinNumberMap.get(userId)));
+            if(currentUsersPutCoinNumberMap.get(userId) > 0){
+                result.add(new CoinsMeta(userId, currentUsersPutCoinNumberMap.get(userId)));
+            }
         }
         return result;
     }

@@ -6,84 +6,84 @@ filter: Linear,Linear
 repeat: none
 ARCADE_10_SCREEN
   rotate: false
-  xy: 393, 2
+  xy: 1217, 1188
   size: 33, 28
   orig: 33, 28
   offset: 0, 0
   index: -1
 ARCADE_11_SCREEN
   rotate: false
-  xy: 968, 334
+  xy: 1915, 1380
   size: 33, 28
   orig: 33, 28
   offset: 0, 0
   index: -1
 ARCADE_12_SCREEN
   rotate: false
-  xy: 1775, 1337
+  xy: 1412, 1364
   size: 33, 28
   orig: 33, 28
   offset: 0, 0
   index: -1
 ARCADE_1_SCREEN
   rotate: false
-  xy: 1126, 1196
+  xy: 1482, 1370
   size: 33, 28
   orig: 33, 28
   offset: 0, 0
   index: -1
 ARCADE_2_SCREEN
   rotate: false
-  xy: 968, 364
+  xy: 1060, 640
   size: 33, 29
   orig: 33, 29
   offset: 0, 0
   index: -1
 ARCADE_3_SCREEN
   rotate: false
-  xy: 1061, 729
+  xy: 1060, 609
   size: 33, 29
   orig: 33, 29
   offset: 0, 0
   index: -1
 ARCADE_4_SCREEN
   rotate: false
-  xy: 1126, 1166
+  xy: 873, 58
   size: 33, 28
   orig: 33, 28
   offset: 0, 0
   index: -1
 ARCADE_5_SCREEN
   rotate: false
-  xy: 1061, 698
+  xy: 1061, 578
   size: 33, 29
   orig: 33, 29
   offset: 0, 0
   index: -1
 ARCADE_6_SCREEN
   rotate: false
-  xy: 1063, 613
+  xy: 1447, 1369
   size: 33, 29
   orig: 33, 29
   offset: 0, 0
   index: -1
 ARCADE_7_SCREEN
   rotate: false
-  xy: 1126, 1136
+  xy: 873, 28
   size: 33, 28
   orig: 33, 28
   offset: 0, 0
   index: -1
 ARCADE_8_SCREEN
   rotate: false
-  xy: 1118, 1106
+  xy: 1972, 1515
   size: 33, 28
   orig: 33, 28
   offset: 0, 0
   index: -1
 ARCADE_9_SCREEN
   rotate: false
-  xy: 1121, 1076
+  xy: 899, 161
   size: 33, 28
   orig: 33, 28
   offset: 0, 0
@@ -97,21 +97,21 @@ ARCADE_MACHINES
   index: -1
 ARCADE_SCREENS
   rotate: false
-  xy: 345, 119
+  xy: 789, 515
   size: 197, 32
   orig: 197, 32
   offset: 0, 0
   index: -1
 AUDIO_MSG_BG
   rotate: false
-  xy: 789, 311
+  xy: 915, 396
   size: 119, 26
   orig: 119, 26
   offset: 0, 0
   index: -1
 AUDIO_MSG_TIMELINE
   rotate: false
-  xy: 2026, 1449
+  xy: 672, 319
   size: 20, 4
   orig: 20, 4
   offset: 0, 0
@@ -125,14 +125,14 @@ AUDIO_MSG_WAVE_ONE
   index: -1
 AUDIO_MSG_WAVE_THREE
   rotate: false
-  xy: 428, 11
+  xy: 2039, 1625
   size: 7, 19
   orig: 7, 19
   offset: 0, 0
   index: -1
 AUDIO_MSG_WAVE_TWO
   rotate: false
-  xy: 1160, 1588
+  xy: 641, 2
   size: 6, 13
   orig: 6, 13
   offset: 0, 0
@@ -153,14 +153,14 @@ AUTUMN_GROUND
   index: -1
 BACK_ICON
   rotate: false
-  xy: 254, 22
+  xy: 915, 424
   size: 92, 89
   orig: 92, 89
   offset: 0, 0
   index: -1
 BACK_ICON_DARK
   rotate: false
-  xy: 1799, 1525
+  xy: 707, 248
   size: 82, 79
   orig: 82, 79
   offset: 0, 0
@@ -172,9 +172,18 @@ BLUE_BG
   orig: 400, 710
   offset: 0, 0
   index: -1
+BLUE_FRAME_PIXEL
+  rotate: false
+  xy: 483, 7
+  size: 61, 47
+  split: 26, 25, 22, 20
+  pad: 0, 0, 0, 0
+  orig: 61, 47
+  offset: 0, 0
+  index: -1
 BTN_BLUE
   rotate: false
-  xy: 1933, 1696
+  xy: 789, 177
   size: 100, 59
   split: 53, 41, 21, 26
   pad: 7, 7, 6, 7
@@ -183,7 +192,7 @@ BTN_BLUE
   index: -1
 BTN_GREEN
   rotate: false
-  xy: 532, 2
+  xy: 1816, 1471
   size: 100, 59
   split: 55, 39, 25, 29
   pad: 7, 7, 6, 7
@@ -199,7 +208,7 @@ BULLET_ICON
   index: -1
 CHATBOX_FOCUS
   rotate: false
-  xy: 1119, 1350
+  xy: 1086, 996
   size: 48, 42
   split: 16, 18, 17, 19
   pad: 12, 16, 5, 8
@@ -208,7 +217,7 @@ CHATBOX_FOCUS
   index: -1
 CHATBOX_UNFOCUS
   rotate: false
-  xy: 1119, 1306
+  xy: 1257, 1294
   size: 48, 42
   split: 15, 19, 17, 19
   pad: 12, 16, 5, 8
@@ -217,7 +226,7 @@ CHATBOX_UNFOCUS
   index: -1
 CHAT_BOX
   rotate: false
-  xy: 544, 96
+  xy: 647, 329
   size: 148, 55
   split: 37, 91, 21, 26
   pad: 1, 0, 0, 0
@@ -233,14 +242,14 @@ CHAT_CONTAINER
   index: -1
 CHAT_POPUP_ARROW
   rotate: false
-  xy: 1933, 1683
+  xy: 1899, 1370
   size: 14, 11
   orig: 14, 11
   offset: 0, 0
   index: -1
 CHAT_POPUP_BG
   rotate: false
-  xy: 1057, 1208
+  xy: 1262, 1338
   size: 54, 26
   split: 25, 27, 11, 12
   pad: 0, 3, 1, 3
@@ -249,21 +258,21 @@ CHAT_POPUP_BG
   index: -1
 CHAT_POPUP_CLOSE_BTN
   rotate: false
-  xy: 1859, 1434
+  xy: 616, 575
   size: 18, 17
   orig: 18, 17
   offset: 0, 0
   index: -1
 CHAT_TEMPLATE_BTN
   rotate: false
-  xy: 1787, 1395
+  xy: 1981, 1545
   size: 38, 37
   orig: 38, 37
   offset: 0, 0
   index: -1
 CHAT_TEMPLATE_BTN_ONPRESS
   rotate: false
-  xy: 1827, 1395
+  xy: 1062, 736
   size: 38, 37
   orig: 38, 37
   offset: 0, 0
@@ -277,7 +286,7 @@ CHAT_TEMPLATE_BTN_TRANS
   index: -1
 CHAT_TEMPLATE_CHECKBOX
   rotate: false
-  xy: 2032, 1839
+  xy: 790, 2
   size: 14, 15
   orig: 14, 15
   offset: 0, 0
@@ -291,21 +300,21 @@ CHAT_TEMPLATE_CHECKBOX_CHECKED
   index: -1
 COIN_BAG
   rotate: false
-  xy: 1057, 1306
+  xy: 1000, 745
   size: 60, 70
   orig: 60, 70
   offset: 0, 0
   index: -1
 COIN_FIFTEEN
   rotate: false
-  xy: 991, 549
+  xy: 723, 42
   size: 65, 52
   orig: 65, 52
   offset: 0, 0
   index: -1
 COIN_FIVE
   rotate: false
-  xy: 1739, 1342
+  xy: 1057, 671
   size: 34, 24
   orig: 34, 24
   offset: 0, 0
@@ -319,21 +328,21 @@ COIN_FLAT
   index: -1
 COIN_ICON_SMALL
   rotate: false
-  xy: 532, 107
-  size: 10, 10
-  orig: 10, 10
+  xy: 2029, 1763
+  size: 17, 17
+  orig: 17, 17
   offset: 0, 0
   index: -1
 COIN_MACHINE_BG
   rotate: false
-  xy: 1057, 1236
+  xy: 1069, 1157
   size: 59, 68
   orig: 59, 68
   offset: 0, 0
   index: -1
 COIN_MACHINE_BLINK_BG
   rotate: false
-  xy: 1734, 1443
+  xy: 1057, 1299
   size: 63, 77
   orig: 63, 77
   offset: 0, 0
@@ -347,77 +356,77 @@ COIN_MACHINE_HOLE
   index: -1
 COIN_MACHINE_ROOT_BG
   rotate: false
-  xy: 789, 506
+  xy: 547, 44
   size: 174, 107
   orig: 174, 107
   offset: 0, 0
   index: -1
 COIN_MACHINE_SEPARATOR
   rotate: false
-  xy: 879, 255
+  xy: 1136, 1005
   size: 29, 2
   orig: 29, 2
   offset: 0, 0
   index: -1
 COIN_MACHINE_USERS_BG
   rotate: false
-  xy: 1000, 672
+  xy: 1069, 1087
   size: 59, 68
   orig: 59, 68
   offset: 0, 0
   index: -1
 COIN_ONE
   rotate: false
-  xy: 1069, 1076
+  xy: 1135, 1224
   size: 50, 24
   orig: 50, 24
   offset: 0, 0
   index: -1
 COIN_PURSE
   rotate: false
-  xy: 916, 341
+  xy: 1205, 1300
   size: 50, 43
   orig: 50, 43
   offset: 0, 0
   index: -1
 COIN_WITH_ANGLE
   rotate: false
-  xy: 634, 3
+  xy: 1913, 1536
   size: 15, 58
   orig: 15, 58
   offset: 0, 0
   index: -1
 COLLAPSED_ICON
   rotate: false
-  xy: 314, 2
+  xy: 2029, 1802
   size: 17, 18
   orig: 17, 18
   offset: 0, 0
   index: -1
 CROSS_ICON
   rotate: false
-  xy: 1883, 1523
+  xy: 707, 165
   size: 80, 81
   orig: 80, 81
   offset: 0, 0
   index: -1
 CURSOR_BLACK
   rotate: false
-  xy: 2029, 1813
+  xy: 1169, 1091
   size: 1, 41
   orig: 1, 41
   offset: 0, 0
   index: -1
 DISCONNECTED_ICON
   rotate: false
-  xy: 616, 575
+  xy: 1393, 1350
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 DOWNLOAD_ICON
   rotate: false
-  xy: 965, 506
+  xy: 765, 2
   size: 6, 5
   orig: 6, 5
   offset: 0, 0
@@ -431,14 +440,14 @@ DOWNWARD_EGG_BUTTON
   index: -1
 EMPTY
   rotate: false
-  xy: 345, 116
+  xy: 786, 162
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 EXPANDABLE_TITLE_BG
   rotate: false
-  xy: 1118, 1226
+  xy: 748, 9
   size: 40, 31
   split: 17, 19, 8, 19
   pad: 0, 0, 0, 5
@@ -447,21 +456,21 @@ EXPANDABLE_TITLE_BG
   index: -1
 EXPANDED_ICON
   rotate: false
-  xy: 2006, 1450
+  xy: 1236, 1281
   size: 18, 17
   orig: 18, 17
   offset: 0, 0
   index: -1
 FACEBOOK_ICON
   rotate: false
-  xy: 1169, 1307
+  xy: 706, 2
   size: 40, 38
   orig: 40, 38
   offset: 0, 0
   index: -1
 FACEBOOK_INVITE_ICON
   rotate: false
-  xy: 1128, 1581
+  xy: 1918, 1471
   size: 30, 20
   orig: 30, 20
   offset: 0, 0
@@ -480,9 +489,16 @@ FULL_BLACK_BG
   orig: 200, 177
   offset: 0, 0
   index: -1
+FULL_WHITE_BG
+  rotate: false
+  xy: 1330, 1400
+  size: 200, 177
+  orig: 200, 177
+  offset: 0, 0
+  index: -1
 GAMELIST_BG
   rotate: false
-  xy: 879, 259
+  xy: 958, 563
   size: 40, 50
   split: 0, 0, 11, 15
   pad: 0, 0, 7, 8
@@ -491,16 +507,25 @@ GAMELIST_BG
   index: -1
 GAMELIST_HIGHLIGHT
   rotate: false
-  xy: 1118, 1412
+  xy: 1933, 1683
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
 GAMELIST_TITLE_BG
   rotate: false
-  xy: 768, 116
+  xy: 873, 88
   size: 20, 29
   orig: 20, 29
+  offset: 0, 0
+  index: -1
+GREEN_FRAME_PIXEL
+  rotate: false
+  xy: 254, 2
+  size: 46, 22
+  split: 18, 18, 9, 9
+  pad: 0, 0, 0, 0
+  orig: 46, 22
   offset: 0, 0
   index: -1
 GREEN_GROUND
@@ -512,23 +537,44 @@ GREEN_GROUND
   index: -1
 GREY_HORIZONTAL_LINE
   rotate: false
-  xy: 345, 575
+  xy: 915, 393
   size: 5, 1
   orig: 5, 1
   offset: 0, 0
   index: -1
 GREY_ROUNDED_BG
   rotate: false
-  xy: 1061, 676
+  xy: 1128, 1581
   size: 28, 20
   split: 11, 11, 6, 9
   pad: 4, 6, 0, 1
   orig: 28, 20
   offset: 0, 0
   index: -1
+INSERT_COIN_FRAME_ONE
+  rotate: false
+  xy: 1060, 910
+  size: 34, 63
+  orig: 34, 63
+  offset: 0, 0
+  index: -1
+INSERT_COIN_FRAME_THREE
+  rotate: false
+  xy: 2039, 1646
+  size: 7, 45
+  orig: 7, 45
+  offset: 0, 0
+  index: -1
+INSERT_COIN_FRAME_TWO
+  rotate: false
+  xy: 1899, 1383
+  size: 14, 54
+  orig: 14, 54
+  offset: 0, 0
+  index: -1
 INVITED_ICON
   rotate: false
-  xy: 1116, 1048
+  xy: 934, 171
   size: 30, 26
   orig: 30, 26
   offset: 0, 0
@@ -544,7 +590,7 @@ INVITE_BG
   index: -1
 INVITE_TAB_CENTER
   rotate: false
-  xy: 2026, 1455
+  xy: 990, 549
   size: 18, 12
   split: 6, 7, 3, 3
   pad: 0, 0, 0, 0
@@ -553,7 +599,7 @@ INVITE_TAB_CENTER
   index: -1
 INVITE_TAB_LEFT
   rotate: false
-  xy: 694, 113
+  xy: 1262, 1366
   size: 72, 32
   split: 31, 21, 25, 0
   pad: 0, 0, 0, 0
@@ -562,7 +608,7 @@ INVITE_TAB_LEFT
   index: -1
 INVITE_TAB_RIGHT
   rotate: false
-  xy: 707, 147
+  xy: 1336, 1368
   size: 74, 24
   split: 20, 30, 22, 0
   pad: 0, 0, 0, 0
@@ -571,35 +617,35 @@ INVITE_TAB_RIGHT
   index: -1
 KEYBOARD_BTN
   rotate: false
-  xy: 1060, 799
+  xy: 1057, 697
   size: 37, 37
   orig: 37, 37
   offset: 0, 0
   index: -1
 KEYBOARD_BTN_ONPRESS
   rotate: false
-  xy: 1057, 760
+  xy: 920, 277
   size: 37, 37
   orig: 37, 37
   offset: 0, 0
   index: -1
 KEYBOARD_BTN_TRANS
   rotate: false
-  xy: 1060, 967
+  xy: 1130, 1134
   size: 38, 41
   orig: 38, 41
   offset: 0, 0
   index: -1
 KICK_ICON
   rotate: false
-  xy: 1949, 1683
+  xy: 1799, 1604
   size: 12, 11
   orig: 12, 11
   offset: 0, 0
   index: -1
 LEADERBOARD_ANIMATING_BASE
   rotate: false
-  xy: 1867, 1397
+  xy: 621, 2
   size: 18, 13
   split: 8, 5, 6, 6
   pad: 0, 0, 0, 0
@@ -608,21 +654,21 @@ LEADERBOARD_ANIMATING_BASE
   index: -1
 LEADERBOARD_ICON
   rotate: false
-  xy: 1739, 1368
+  xy: 1930, 1521
   size: 40, 26
   orig: 40, 26
   offset: 0, 0
   index: -1
 LEADERBOARD_INVITE_ICON
   rotate: false
-  xy: 1781, 1367
+  xy: 1918, 1493
   size: 40, 26
   orig: 40, 26
   offset: 0, 0
   index: -1
 LEADERBOARD_MAIN_ICON
   rotate: false
-  xy: 348, 2
+  xy: 1172, 1188
   size: 43, 28
   orig: 43, 28
   offset: 0, 0
@@ -636,14 +682,21 @@ LEADER_BOARD_BG
   index: -1
 LEADER_BOARD_SEPARATOR
   rotate: false
-  xy: 352, 575
+  xy: 345, 575
   size: 5, 1
   orig: 5, 1
   offset: 0, 0
   index: -1
+LEFT_BUTTON_PIXEL
+  rotate: false
+  xy: 988, 515
+  size: 18, 32
+  orig: 18, 32
+  offset: 0, 0
+  index: -1
 LEFT_CURVE_TAB_HEADER
   rotate: false
-  xy: 663, 67
+  xy: 616, 594
   size: 23, 27
   split: 16, 4, 13, 9
   pad: 0, 0, 1, 1
@@ -652,7 +705,7 @@ LEFT_CURVE_TAB_HEADER
   index: -1
 LESS_TRANS_BLACK_BG
   rotate: false
-  xy: 1330, 1399
+  xy: 1532, 1437
   size: 200, 178
   orig: 200, 178
   offset: 0, 0
@@ -673,7 +726,7 @@ LOADING_PAGE
   index: -1
 LOGGING_IN_MASCOTS
   rotate: false
-  xy: 1532, 1520
+  xy: 345, 56
   size: 200, 95
   orig: 200, 95
   offset: 0, 0
@@ -694,9 +747,23 @@ LOGO_POTATO_WEAPON
   index: -1
 LOGO_TOMATO_WEAPON
   rotate: false
-  xy: 1000, 742
+  xy: 1000, 670
   size: 55, 73
   orig: 55, 73
+  offset: 0, 0
+  index: -1
+MASCOTS_PIXEL
+  rotate: false
+  xy: 1813, 1596
+  size: 129, 85
+  orig: 129, 85
+  offset: 0, 0
+  index: -1
+MASCOT_HANDS_PIXEL
+  rotate: false
+  xy: 789, 151
+  size: 108, 24
+  orig: 108, 24
   offset: 0, 0
   index: -1
 MIC_BIG_ICON
@@ -715,49 +782,56 @@ MIC_ICON
   index: -1
 MIC_WAVE_ONE
   rotate: false
-  xy: 694, 84
+  xy: 1000, 571
   size: 59, 27
   orig: 59, 27
   offset: 0, 0
   index: -1
 MIC_WAVE_THREE
   rotate: false
-  xy: 787, 339
+  xy: 791, 271
   size: 127, 43
   orig: 127, 43
   offset: 0, 0
   index: -1
 MIC_WAVE_TWO
   rotate: false
-  xy: 437, 10
+  xy: 1944, 1584
   size: 89, 32
   orig: 89, 32
   offset: 0, 0
   index: -1
 NEXT_LEADERBOARD_CLICKED
   rotate: false
-  xy: 1965, 1646
+  xy: 790, 69
   size: 81, 48
   orig: 81, 48
   offset: 0, 0
   index: -1
 NEXT_LEADERBOARD_NORMAL
   rotate: false
-  xy: 1965, 1596
+  xy: 790, 19
   size: 81, 48
   orig: 81, 48
   offset: 0, 0
   index: -1
 NO_COIN_ICON
   rotate: false
-  xy: 1984, 1447
+  xy: 1009, 314
   size: 20, 20
   orig: 20, 20
   offset: 0, 0
   index: -1
+NO_COIN_ICON_BLACK
+  rotate: false
+  xy: 2029, 1782
+  size: 17, 18
+  orig: 17, 18
+  offset: 0, 0
+  index: -1
 NO_COIN_ICON_SMALL
   rotate: false
-  xy: 755, 101
+  xy: 707, 153
   size: 10, 10
   orig: 10, 10
   offset: 0, 0
@@ -771,14 +845,14 @@ NO_IMAGE
   index: -1
 ORANGE_HORIZONTAL_LINE
   rotate: false
-  xy: 359, 575
+  xy: 922, 393
   size: 5, 1
   orig: 5, 1
   offset: 0, 0
   index: -1
 ORANGE_ROUNDED_BG
   rotate: false
-  xy: 1867, 1412
+  xy: 302, 4
   size: 28, 20
   split: 10, 11, 6, 9
   pad: 0, 2, 0, 2
@@ -787,46 +861,67 @@ ORANGE_ROUNDED_BG
   index: -1
 ORANGE_VERTICAL_LINE
   rotate: false
-  xy: 528, 32
+  xy: 719, 153
   size: 2, 10
   orig: 2, 10
   offset: 0, 0
   index: -1
 OUT_OF_STOCK_ICON
   rotate: false
-  xy: 647, 333
+  xy: 343, 3
   size: 138, 51
   orig: 138, 51
   offset: 0, 0
   index: -1
 PLAY_ICON
   rotate: false
-  xy: 915, 436
+  xy: 1000, 600
   size: 58, 68
   orig: 58, 68
   offset: 0, 0
   index: -1
 POINT_LEFT_ICON
   rotate: false
-  xy: 1813, 1606
+  xy: 797, 316
   size: 150, 75
   orig: 150, 75
   offset: 0, 0
   index: -1
 POPUP_BG
   rotate: false
-  xy: 965, 513
+  xy: 1060, 975
   size: 24, 100
   split: 0, 0, 2, 2
   pad: 0, 0, 1, 0
   orig: 24, 100
   offset: 0, 0
   index: -1
+POTATO_CLOSE_MOUTH
+  rotate: false
+  xy: 748, 2
+  size: 15, 5
+  orig: 15, 5
+  offset: 0, 0
+  index: -1
 POTATO_HI
   rotate: false
-  xy: 1799, 1453
+  xy: 1057, 1227
   size: 76, 70
   orig: 76, 70
+  offset: 0, 0
+  index: -1
+POTATO_OPEN_MOUTH
+  rotate: false
+  xy: 1172, 1177
+  size: 17, 9
+  orig: 17, 9
+  offset: 0, 0
+  index: -1
+POTATO_SMILE_MOUTH
+  rotate: false
+  xy: 1236, 1263
+  size: 20, 16
+  orig: 20, 16
   offset: 0, 0
   index: -1
 POTATO_SUNGLASS
@@ -838,35 +933,35 @@ POTATO_SUNGLASS
   index: -1
 PREV_LEADERBOARD_CLICKED
   rotate: false
-  xy: 1965, 1546
+  xy: 1122, 1350
   size: 81, 48
   orig: 81, 48
   offset: 0, 0
   index: -1
 PREV_LEADERBOARD_NORMAL
   rotate: false
-  xy: 1965, 1496
+  xy: 1122, 1300
   size: 81, 48
   orig: 81, 48
   offset: 0, 0
   index: -1
 PURSE_BACK
   rotate: false
-  xy: 532, 63
+  xy: 791, 238
   size: 129, 31
   orig: 129, 31
   offset: 0, 0
   index: -1
 PURSE_COIN_NORMAL
   rotate: false
-  xy: 1069, 1153
+  xy: 1205, 1345
   size: 55, 53
   orig: 55, 53
   offset: 0, 0
   index: -1
 PURSE_COIN_SLEEP
   rotate: false
-  xy: 1060, 1045
+  xy: 1187, 1218
   size: 54, 29
   orig: 54, 29
   offset: 0, 0
@@ -880,35 +975,42 @@ PURSE_FRONT
   index: -1
 QUIT_ICON
   rotate: false
-  xy: 1000, 603
+  xy: 723, 96
   size: 61, 67
   orig: 61, 67
   offset: 0, 0
   index: -1
 RANK_ICON
   rotate: false
-  xy: 616, 593
+  xy: 2021, 1554
   size: 25, 28
   orig: 25, 28
   offset: 0, 0
   index: -1
 RATE_ICON
   rotate: false
-  xy: 915, 386
+  xy: 1135, 1250
   size: 50, 48
   orig: 50, 48
   offset: 0, 0
   index: -1
 RECENT_ICON
   rotate: false
-  xy: 1063, 644
+  xy: 1924, 1439
   size: 30, 30
   orig: 30, 30
   offset: 0, 0
   index: -1
+RIGHT_BUTTON_PIXEL
+  rotate: false
+  xy: 2029, 1822
+  size: 17, 32
+  orig: 17, 32
+  offset: 0, 0
+  index: -1
 RIGHT_CURVE_TAB_HEADER
   rotate: false
-  xy: 1879, 1434
+  xy: 1318, 1337
   size: 23, 27
   split: 9, 12, 15, 9
   pad: 0, 0, 1, 1
@@ -917,21 +1019,21 @@ RIGHT_CURVE_TAB_HEADER
   index: -1
 ROOM_USERS_BTN
   rotate: false
-  xy: 1823, 1356
+  xy: 922, 238
   size: 37, 37
   orig: 37, 37
   offset: 0, 0
   index: -1
 ROOM_USERS_BTN_ONPRESS
   rotate: false
-  xy: 975, 473
+  xy: 959, 278
   size: 37, 37
   orig: 37, 37
   offset: 0, 0
   index: -1
 ROOM_USERS_BTN_TRANS
   rotate: false
-  xy: 1060, 924
+  xy: 1130, 1091
   size: 37, 41
   orig: 37, 41
   offset: 0, 0
@@ -945,14 +1047,14 @@ ROPE
   index: -1
 SCROLLBAR_GREY_BG
   rotate: false
-  xy: 1959, 1517
+  xy: 791, 323
   size: 4, 4
   orig: 4, 4
   offset: 0, 0
   index: -1
 SCROLLBAR_GREY_HANDLE
   rotate: false
-  xy: 694, 147
+  xy: 1172, 1218
   size: 4, 4
   orig: 4, 4
   offset: 0, 0
@@ -967,42 +1069,42 @@ SCROLLBAR_VERTICAL_HANDLE
   index: -1
 SELECT_BOX
   rotate: false
-  xy: 1118, 1259
+  xy: 891, 191
   size: 40, 45
   orig: 40, 45
   offset: 0, 0
   index: -1
 SEND_BTN
   rotate: false
-  xy: 1014, 473
+  xy: 961, 239
   size: 37, 37
   orig: 37, 37
   offset: 0, 0
   index: -1
 SEND_BTN_ONPRESS
   rotate: false
-  xy: 975, 434
+  xy: 1136, 1009
   size: 37, 37
   orig: 37, 37
   offset: 0, 0
   index: -1
 SEND_BTN_TRANS
   rotate: false
-  xy: 1060, 881
+  xy: 1062, 775
   size: 37, 41
   orig: 37, 41
   offset: 0, 0
   index: -1
 SETTINGS_ICON
   rotate: false
-  xy: 1069, 1102
+  xy: 1187, 1249
   size: 47, 49
   orig: 47, 49
   offset: 0, 0
   index: -1
 SHOP_ARCADE_WORLD
   rotate: false
-  xy: 1532, 1369
+  xy: 789, 549
   size: 167, 64
   orig: 167, 64
   offset: 0, 0
@@ -1016,7 +1118,7 @@ SHOP_TABLE
   index: -1
 SHOP_WOOD_BTN
   rotate: false
-  xy: 254, 3
+  xy: 1809, 1363
   size: 58, 17
   split: 26, 25, 1, 1
   pad: 3, 5, 0, 0
@@ -1025,7 +1127,7 @@ SHOP_WOOD_BTN
   index: -1
 SHOP_WOOD_BTN_ONPRESS
   rotate: false
-  xy: 1799, 1434
+  xy: 949, 317
   size: 58, 17
   split: 27, 26, 1, 1
   pad: 4, 5, 1, 0
@@ -1034,14 +1136,28 @@ SHOP_WOOD_BTN_ONPRESS
   index: -1
 SMALL_STAR_ICON
   rotate: false
-  xy: 1799, 1606
+  xy: 332, 15
   size: 9, 9
   orig: 9, 9
   offset: 0, 0
   index: -1
+SPEECH_LEFT_PIXEL
+  rotate: false
+  xy: 1799, 1532
+  size: 112, 62
+  orig: 112, 62
+  offset: 0, 0
+  index: -1
+SPEECH_RIGHT_PIXEL
+  rotate: false
+  xy: 1933, 1693
+  size: 112, 62
+  orig: 112, 62
+  offset: 0, 0
+  index: -1
 STREAK_ICON
   rotate: false
-  xy: 1962, 1444
+  xy: 1371, 1343
   size: 20, 23
   orig: 20, 23
   offset: 0, 0
@@ -1062,7 +1178,7 @@ SUNRISE
   index: -1
 TEXT_FIELD_BG
   rotate: false
-  xy: 991, 512
+  xy: 546, 7
   size: 73, 35
   split: 23, 31, 16, 17
   pad: 15, 14, 0, 0
@@ -1071,35 +1187,56 @@ TEXT_FIELD_BG
   index: -1
 TICK_ICON
   rotate: false
-  xy: 707, 250
+  xy: 1734, 1439
   size: 80, 81
   orig: 80, 81
   offset: 0, 0
   index: -1
+TOMATO_CLOSE_MOUTH
+  rotate: false
+  xy: 647, 319
+  size: 23, 4
+  orig: 23, 4
+  offset: 0, 0
+  index: -1
 TOMATO_HI
   rotate: false
-  xy: 1877, 1463
+  xy: 949, 336
   size: 80, 58
   orig: 80, 58
   offset: 0, 0
   index: -1
+TOMATO_OPEN_MOUTH
+  rotate: false
+  xy: 1086, 984
+  size: 27, 10
+  orig: 27, 10
+  offset: 0, 0
+  index: -1
+TOMATO_SMILE_MOUTH
+  rotate: false
+  xy: 958, 549
+  size: 30, 12
+  orig: 30, 12
+  offset: 0, 0
+  index: -1
 TOMATO_SUNGLASS
   rotate: false
-  xy: 348, 32
+  xy: 254, 26
   size: 87, 85
   orig: 87, 85
   offset: 0, 0
   index: -1
 TOMATO_SUNGLASS_LEFT_HAND
   rotate: false
-  xy: 1934, 1440
+  xy: 1343, 1345
   size: 26, 21
   orig: 26, 21
   offset: 0, 0
   index: -1
 TOMATO_SUNGLASS_RIGHT_HAND
   rotate: false
-  xy: 1060, 1010
+  xy: 1930, 1549
   size: 49, 33
   orig: 49, 33
   offset: 0, 0
@@ -1113,7 +1250,7 @@ TOP_BAR_BG
   index: -1
 TOP_BAR_COIN_COUNT
   rotate: false
-  xy: 789, 254
+  xy: 1809, 1382
   size: 88, 55
   orig: 88, 55
   offset: 0, 0
@@ -1135,14 +1272,14 @@ TRANS_BLACK_ROUNDED_BG
   index: -1
 TRANS_WHITE_BG
   rotate: false
-  xy: 647, 321
+  xy: 1734, 1350
   size: 50, 10
   orig: 50, 10
   offset: 0, 0
   index: -1
 TUTORIAL_BG
   rotate: false
-  xy: 1701, 1351
+  xy: 1915, 1410
   size: 36, 27
   split: 13, 9, 8, 11
   pad: 0, 0, 0, 0
@@ -1151,28 +1288,28 @@ TUTORIAL_BG
   index: -1
 TUTORIAL_MASCOT
   rotate: false
-  xy: 437, 44
+  xy: 1944, 1618
   size: 93, 73
   orig: 93, 73
   offset: 0, 0
   index: -1
 UNKNOWN_ICON
   rotate: false
-  xy: 1701, 1380
+  xy: 1060, 855
   size: 36, 53
   orig: 36, 53
   offset: 0, 0
   index: -1
 UNSELECT_BOX
   rotate: false
-  xy: 1169, 1347
+  xy: 1130, 1177
   size: 40, 45
   orig: 40, 45
   offset: 0, 0
   index: -1
 UPRIGHT_EGG_BUTTON
   rotate: false
-  xy: 793, 384
+  xy: 793, 393
   size: 120, 120
   orig: 120, 120
   offset: 0, 0
@@ -1186,49 +1323,63 @@ VERTICAL_DOTS
   index: -1
 VOICE_BTN
   rotate: false
-  xy: 1014, 434
+  xy: 933, 199
   size: 37, 37
   orig: 37, 37
   offset: 0, 0
   index: -1
 VOICE_BTN_ONPRESS
   rotate: false
-  xy: 967, 395
+  xy: 972, 200
   size: 37, 37
   orig: 37, 37
   offset: 0, 0
   index: -1
 VOICE_BTN_TRANS
   rotate: false
-  xy: 1060, 838
+  xy: 1134, 1048
   size: 37, 41
   orig: 37, 41
   offset: 0, 0
   index: -1
 VOICE_ICON
   rotate: false
-  xy: 1006, 397
+  xy: 1060, 818
   size: 36, 35
   orig: 36, 35
   offset: 0, 0
   index: -1
+WHITE_BUTTON_PIXEL
+  rotate: false
+  xy: 1816, 1439
+  size: 106, 30
+  orig: 106, 30
+  offset: 0, 0
+  index: -1
+WHITE_BUTTON_PIXEL_ONPRESS
+  rotate: false
+  xy: 786, 119
+  size: 106, 30
+  orig: 106, 30
+  offset: 0, 0
+  index: -1
 WHITE_DOT
   rotate: false
-  xy: 532, 96
+  xy: 332, 4
   size: 9, 9
   orig: 9, 9
   offset: 0, 0
   index: -1
 WHITE_HORIZONTAL_LINE
   rotate: false
-  xy: 1220, 1396
+  xy: 647, 325
   size: 34, 2
   orig: 34, 2
   offset: 0, 0
   index: -1
 WHITE_ROUNDED_BG
   rotate: false
-  xy: 1904, 1441
+  xy: 1869, 1360
   size: 28, 20
   split: 11, 13, 7, 9
   pad: 5, 7, 0, 0
@@ -1237,28 +1388,28 @@ WHITE_ROUNDED_BG
   index: -1
 WHITE_ROUND_BUTTON_BG
   rotate: false
-  xy: 707, 173
+  xy: 1734, 1362
   size: 73, 75
   orig: 73, 75
   offset: 0, 0
   index: -1
 WHITE_VERTICAL_LINE
   rotate: false
-  xy: 643, 611
+  xy: 789, 503
   size: 2, 10
   orig: 2, 10
   offset: 0, 0
   index: -1
 WOOD_BG_FAT
   rotate: false
-  xy: 1532, 1435
+  xy: 1532, 1352
   size: 200, 83
   orig: 200, 83
   offset: 0, 0
   index: -1
 WOOD_BG_FAT_PATCH
   rotate: false
-  xy: 1532, 1435
+  xy: 1532, 1352
   size: 200, 83
   split: 61, 81, 18, 43
   pad: 0, 0, 0, 0
@@ -1297,21 +1448,21 @@ WOOD_BG_TALL
   index: -1
 WOOD_BG_TITLE
   rotate: false
-  xy: 1959, 1469
+  xy: 621, 17
   size: 83, 25
   orig: 83, 25
   offset: 0, 0
   index: -1
 WOOD_SEPARATOR_HORIZONTAL
   rotate: false
-  xy: 1118, 1394
+  xy: 1336, 1394
   size: 100, 4
   orig: 100, 4
   offset: 0, 0
   index: -1
 YELLOW_GRADIENT_BOX
   rotate: false
-  xy: 1739, 1396
+  xy: 1086, 1040
   size: 46, 45
   split: 0, 0, 1, 3
   pad: 0, 0, 0, 0

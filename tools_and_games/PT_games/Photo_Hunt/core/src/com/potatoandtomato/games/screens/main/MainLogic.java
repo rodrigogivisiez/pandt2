@@ -13,6 +13,8 @@ import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.absints.*;
 import com.potatoandtomato.common.enums.CoinRequestType;
 import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.models.SpeechAction;
+import com.potatoandtomato.common.utils.Pair;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.absintf.*;
@@ -348,31 +350,34 @@ public class MainLogic extends GameLogic {
         if(!_gameModel.isContinueChanceUsed()){
             coinRequestPhase();
         }
-        showEndGameTable();
+        else{
+            showEndGameTable();
+        }
     }
 
     private void coinRequestPhase(){
         Threadings.delay(3000, new Runnable() {
             @Override
             public void run() {
-                getCoordinator().coinsInputRequest(CoinRequestType.MyTeam, 1, new CoinListener() {
-                    @Override
-                    public void onEnoughCoins() {
+                Pair<ArrayList<SpeechAction>, ArrayList<SpeechAction>> pair = _services.getTexts().getMascotsSpeechAboutContinue();
 
+                getCoordinator().coinsInputRequest("Continue photo hunt", CoinRequestType.MyTeam, 1, new CoinListener() {
+                    @Override
+                    public void onDeductCoinsDone() {
+                        _gameModel.setContinueChanceUsed(true);
+                        sendGoToNextStageIfIsDecisionMaker(-1);
                     }
 
                     @Override
-                    public void onDeductCoinsDone(String s, Status status) {
-                        if(status == Status.FAILED){
-                            coinRequestPhase();
-                        }
-                        else{
-                            _screen.hideEndGameTable();
-                            _gameModel.setContinueChanceUsed(true);
-                            sendGoToNextStageIfIsDecisionMaker(-1);
-                        }
+                    public void onDismiss(String dismissUserId) {
+                        super.onDismiss(dismissUserId);
+                        getCoordinator().showNotification(
+                                String.format(_services.getTexts().xDecidedNotToContinue(),
+                                        getCoordinator().getPlayerByUserId(dismissUserId).getName()));
+                        showEndGameTable();
                     }
-                });
+
+                }, pair.getFirst(), pair.getSecond(), _services.getTexts().notContinue());
             }
         });
     }
@@ -388,18 +393,13 @@ public class MainLogic extends GameLogic {
     }
 
     private void showEndGameTable(){
-        Threadings.delay(1000, new Runnable() {
+        getCoordinator().finalizeGame(_scoresLogic.getFinalScoreDetails(), null, false);
+        _screen.showEndGameTable();
+        _screen.getEndGameTable().addListener(new ClickListener() {
             @Override
-            public void run() {
-                _screen.showEndGameTable();
-                _screen.getEndGameTable().addListener(new ClickListener(){
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        super.clicked(event, x, y);
-                        getCoordinator().finalizeGame(_scoresLogic.getFinalScoreDetails(), null, false);
-                        getCoordinator().endGame();
-                    }
-                });
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                getCoordinator().endGame();
             }
         });
     }
@@ -615,7 +615,9 @@ public class MainLogic extends GameLogic {
         getCoordinator().getDecisionsMaker().addDecisionMakerChangedListener(new DecisionMakerChangedListener() {
             @Override
             public void onChanged(String s) {
-                sendGoToNextStageIfIsDecisionMaker(-1);
+                if(_gameModel.getGameState() != GameState.Lose){
+                    sendGoToNextStageIfIsDecisionMaker(-1);
+                }
                 _imageStorage.initiateDownloadsIfNoImagesAndIsCoordinator();
             }
         });

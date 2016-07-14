@@ -84,7 +84,7 @@ public class SoundsPlayer implements ISoundsPlayer {
             @Override
             public void run() {
                 Sound sound = _assets.getSounds().getSound(soundName);
-                long id = sound.play(_volume);
+                long id = sound.play(_volume > 0 ? 1 : _volume);
                 sound.setLooping(id, true);
                 _soundIdsMap.put(soundName, id);
             }

@@ -438,9 +438,9 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                 userIdToNamePairs.add(new Pair<String, String>(player.getUserId(), player.getName()));
             }
 
-            _services.getCoins().initCoinMachine(MathUtils.floor(revivingStreakCount / 2),
-                    _room.getId() + "_" + _room.getRoundCounter() + "_" + teamUserIdsString,
-                    userIdToNamePairs, false);
+            _services.getCoins().initCoinMachine("Revive streaks", MathUtils.floor(revivingStreakCount / 2),
+                    _room.getId() + "_" + _room.getRoundCounter() + "_" + teamUserIdsString+ "_streaks",
+                    userIdToNamePairs, false, new ArrayList<SpeechAction>(), new ArrayList<SpeechAction>(), "nonono");
 
             _services.getCoins().setCoinListener(new CoinListener() {
                 @Override
@@ -460,11 +460,6 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                 });
                         }
                     });
-                }
-
-                @Override
-                public void onDeductCoinsDone(String extra, Status status) {
-
                 }
             });
 

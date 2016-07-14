@@ -36,3 +36,7 @@ handlers:
 - url: /revive_streaks
   script: revive_streaks.php
   secure: always
+ 
+- url: /use_coins
+  script: use_coins.php
+  secure: always

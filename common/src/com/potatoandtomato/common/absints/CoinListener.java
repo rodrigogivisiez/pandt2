@@ -7,8 +7,10 @@ import com.potatoandtomato.common.enums.Status;
  */
 public abstract class CoinListener {
 
-    public abstract void onEnoughCoins();
+    public void onEnoughCoins(){}
 
-    public abstract void onDeductCoinsDone(String extra, Status status);
+    public void onDeductCoinsDone(){}
+
+    public void onDismiss(String dismissUserId){}
 
 }

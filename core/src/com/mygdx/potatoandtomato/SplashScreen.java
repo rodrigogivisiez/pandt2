@@ -112,19 +112,19 @@ public class SplashScreen implements Screen {
 
     public void close(final Runnable onFinish){
         rootTable.addAction(sequence(
-                parallel(alpha(0.6f, 1f), new RunnableAction(){
+                parallel(alpha(0.6f, 0), new RunnableAction(){
                     @Override
                     public void run() {
                         arcadeSound.setVolume(0.3f);
                     }
                 }),
-                parallel(alpha(0.3f, 1f), new RunnableAction(){
+                parallel(alpha(0.3f, 0), new RunnableAction(){
                     @Override
                     public void run() {
                         arcadeSound.setVolume(0.2f);
                     }
                 }),
-                parallel(alpha(0f, 1f), new RunnableAction(){
+                parallel(alpha(0f, 0), new RunnableAction(){
                     @Override
                     public void run() {
                         arcadeSound.setVolume(0.1f);

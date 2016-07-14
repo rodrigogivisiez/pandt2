@@ -1,4 +1,7 @@
 <?php
+
+include 'coins_log.php';
+
 	function addCoinToUser($userId, $count, $reason, $extra, $firebase){
 		$currentUserCoinsString = $firebase->get("coins/".$userId."/count");
 			
@@ -9,22 +12,12 @@
 			$currentUserCoins = (int)json_decode($currentUserCoinsString);
 		}
 		
+		
+		$originalCoins = $currentUserCoins;
 		$currentUserCoins += $count;
 		$firebase->set("coins/".$userId."/count", $currentUserCoins);
 		
-		date_default_timezone_set("Asia/Singapore");
-		$currentDateTimeString = date("Y-m-d H:i:s");
-		$log = array(
-			"userId" => $userId,
-			"count" => $count,
-			"reason" => $reason,
-			"extra" => $extra,
-			"dateTime" => $currentDateTimeString
-		);
-		
-		
-		
-		$firebase->push("coinsAddLogs", $log);
+		addCoinLog($userId, $originalCoins, $currentUserCoins, $reason, $extra, true, $firebase);
 		
 	}
 

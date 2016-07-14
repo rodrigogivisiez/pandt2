@@ -2,7 +2,7 @@ package com.mygdx.potatoandtomato.scenes.room_scene;
 
 import com.badlogic.gdx.utils.Disposable;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
-import com.mygdx.potatoandtomato.absintflis.services.CoinsListener;
+import com.mygdx.potatoandtomato.absintflis.services.ClientInternalCoinListener;
 import com.mygdx.potatoandtomato.enums.BadgeType;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.RoomUser;
@@ -12,7 +12,6 @@ import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.models.LeaderboardRecord;
 import com.potatoandtomato.common.models.Streak;
 import com.potatoandtomato.common.utils.ArrayUtils;
-import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
 
 import java.util.ArrayList;
@@ -169,7 +168,7 @@ public class UserBadgeHelper implements Disposable {
     }
 
     public void setListeners(){
-        _services.getCoins().addCoinsListener(getClassTag(), new CoinsListener() {
+        _services.getCoins().addCoinsListener(getClassTag(), new ClientInternalCoinListener() {
             @Override
             public void userHasCoinChanged(String userId, boolean userHasCoin) {
                 userHasCoinChangedUpdateBadge(userId, userHasCoin);

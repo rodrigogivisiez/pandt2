@@ -1,5 +1,6 @@
 package com.potatoandtomato.common.absints;
 
+import com.potatoandtomato.common.models.SpeechAction;
 import com.potatoandtomato.common.utils.Pair;
 
 import java.util.ArrayList;
@@ -13,8 +14,9 @@ public interface ICoins {
     void hideCoinMachine();
     void reset();
     void requestCoinsMachineStateFromOthers();
-    void initCoinMachine(int expectingCoin, String transactionId, ArrayList<Pair<String, String>> userIdToNamePairs,
-                         boolean requestFromOthers);
+    void initCoinMachine(String coinsPurpose, int expectingCoin, String transactionId, ArrayList<Pair<String, String>> userIdToNamePairs,
+                         boolean requestFromOthers, ArrayList<SpeechAction> potatoSpeechActions,
+                         ArrayList<SpeechAction> tomatoSpeechActions, String dismissText);
     void startDeductCoins();
     void setCoinListener(CoinListener coinListener);
 
