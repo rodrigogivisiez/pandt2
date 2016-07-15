@@ -565,17 +565,24 @@ public class CoinMachineControl {
             public void run() {
                 tabContentTable.clear();
 
+                setTabButtonSelectedStyle(buyCoinsTabButton, false);
+                setTabButtonSelectedStyle(playerInsertCoinStatusTabButton, false);
+                setTabButtonSelectedStyle(retrieveCoinsTabButton, false);
+
                 if(tabType == CoinMachineTabType.PlayersInsertCoinStatus){
+                    setTabButtonSelectedStyle(playerInsertCoinStatusTabButton, true);
                     tabContentTable.pad(20, 20, 20, 20);
                     tabContentTable.add(playersScrollPane).expand().fill();
                     enableLeftRight(false, false);
                 }
                 else if(tabType == CoinMachineTabType.RetrieveCoins){
+                    setTabButtonSelectedStyle(retrieveCoinsTabButton, true);
                     tabContentTable.pad(10, 10, 10, 10);
                     tabContentTable.add(retrieveCoinTable).expand().fill();
                     enableLeftRight(false, false);
                 }
                 else if(tabType == CoinMachineTabType.PurchaseCoins){
+                    setTabButtonSelectedStyle(buyCoinsTabButton, true);
                     tabContentTable.pad(0);
                     purchaseCoinTable.setFillParent(true);
                     tabContentTable.addActor(purchaseCoinTable);
@@ -583,6 +590,15 @@ public class CoinMachineControl {
                 }
             }
         });
+    }
+
+    private void setTabButtonSelectedStyle(TextButton textButton, boolean selected){
+        if(selected){
+            textButton.setColor(Color.valueOf("0c00f8"));
+        }
+        else{
+            textButton.setColor(Color.valueOf("ffffff"));
+        }
     }
 
     public boolean canGoToNextProduct(){
@@ -734,10 +750,12 @@ public class CoinMachineControl {
         if(potato){
             safeThread = potatoMouthSafeThread;
             mouthTable = potatoMouthTable;
+            soundsPlayer.stopSoundEffectLoop(Sounds.Name.EIGHT_BIT_SPEAKING_POTATO);
         }
         else{
             safeThread = tomatoMouthSafeThread;
             mouthTable = tomatoMouthTable;
+            soundsPlayer.stopSoundEffectLoop(Sounds.Name.EIGHT_BIT_SPEAKING_TOMATO);
         }
 
         if(safeThread != null) safeThread.kill();
@@ -745,13 +763,6 @@ public class CoinMachineControl {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                if(potato){
-                    soundsPlayer.stopSoundEffectLoop(Sounds.Name.EIGHT_BIT_SPEAKING_POTATO);
-                }
-                else{
-                    soundsPlayer.stopSoundEffectLoop(Sounds.Name.EIGHT_BIT_SPEAKING_TOMATO);
-                }
-
 
                 final Image openImage = mouthTable.findActor("open");
                 final Image closeImage = mouthTable.findActor("close");

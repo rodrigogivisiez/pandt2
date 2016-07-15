@@ -58,6 +58,7 @@ public class BootLogic extends LogicAbstract {
         _fbStepPast = false;
         _logined = false;
         _services.getDatabase().online();
+        _services.getDatabase().unauth();
         checkCrashedBefore();
     }
 
@@ -182,7 +183,6 @@ public class BootLogic extends LogicAbstract {
     }
 
     public void loginPTWithToken(final String token){
-        _services.getDatabase().unauth();
         _services.getDatabase().authenticateUserByToken(token, new DatabaseListener<Profile>(Profile.class) {
             @Override
             public void onCallback(Profile obj, Status st) {

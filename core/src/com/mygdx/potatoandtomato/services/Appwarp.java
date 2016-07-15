@@ -63,6 +63,7 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
         try {
             _warpInstance = WarpClient.getInstance();
             _warpInstance.setRecoveryAllowance(30);
+            WarpClient.enableTrace(true);
             reflectionClearListeners();
 
             _warpInstance.addConnectionRequestListener(this);

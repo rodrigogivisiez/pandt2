@@ -706,15 +706,75 @@ public class LeaderBoardScene extends SceneAbstract {
         return nameStreakTable;
     }
 
-    public void loseStreakAnimate(final Game game, final int rank){
+    public void loseStreakAnimatePhaseOne(final Game game, final int rank){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
                 Table rankTable = getRankTable(game);
                 Table recordTable = (Table) rankTable.getCells().get(rank).getActor();
                 Table streakTable = recordTable.findActor("streakTable");
-                streakTable.addAction(fadeOut(0.2f));
+
+                final Image extinguisherImage = new Image(_assets.getTextures().get(Textures.Name.EXTINGUISHER));
+                extinguisherImage.setName("extinguisherImage");
+                extinguisherImage.setPosition(-40, 0);
+                extinguisherImage.getColor().a = 0f;
+                streakTable.addActor(extinguisherImage);
+
+                final Animator animator = new Animator(0.03f, _assets.getAnimations().get(Animations.Name.KILL_STREAK));
+                animator.setName("animator");
+                animator.overrideSize(70, 43);
+                animator.setPaused(true);
+                animator.setVisible(false);
+                animator.setPosition(-39, -10);
+
+
+                streakTable.addActor(animator);
+
+                extinguisherImage.addAction(sequence(Actions.moveBy(-40, 0, 0f), fadeIn(0f), new RunnableAction(){
+                            @Override
+                            public void run() {
+                                _services.getSoundsPlayer().playSoundEffect(Sounds.Name.SWOOSH);
+                            }
+                        },
+                        Actions.moveBy(40, 0, 0.4f, Interpolation.exp10Out), delay(1f), new RunnableAction(){
+                            @Override
+                            public void run() {
+                                extinguisherImage.remove();
+                                animator.setPaused(false);
+                                animator.setVisible(true);
+                                _services.getSoundsPlayer().playSoundEffectLoop(Sounds.Name.EXTINGUISH_SOUND);
+                            }
+                        }));
+
+            }
+        });
+    }
+
+    public void loseStreakAnimatePhaseTwo(final Game game, final int rank){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Table rankTable = getRankTable(game);
+                Table recordTable = (Table) rankTable.getCells().get(rank).getActor();
+                final Table streakTable = recordTable.findActor("streakTable");
+
+                final Animator animator = streakTable.findActor("animator");
+
                 _services.getSoundsPlayer().playSoundEffect(Sounds.Name.STREAK_DIED);
+                for(Actor actor : streakTable.getChildren()){
+                    if(actor != animator){
+                        actor.remove();
+                    }
+                }
+                Threadings.delay(3000, new Runnable() {
+                    @Override
+                    public void run() {
+                        streakTable.addAction(fadeOut(0.1f));
+                        _services.getSoundsPlayer().stopSoundEffectLoop(Sounds.Name.EXTINGUISH_SOUND);
+                    }
+                });
+
+
             }
         });
     }
@@ -726,7 +786,10 @@ public class LeaderBoardScene extends SceneAbstract {
                 Table rankTable = getRankTable(game);
                 Table recordTable = (Table) rankTable.getCells().get(rank).getActor();
                 Table streakTable = recordTable.findActor("streakTable");
-                streakTable.addAction(fadeIn(0.2f));
+
+                final Animator animator = streakTable.findActor("animator");
+                animator.remove();
+                _services.getSoundsPlayer().stopSoundEffectLoop(Sounds.Name.EXTINGUISH_SOUND);
                 _services.getSoundsPlayer().playSoundEffect(Sounds.Name.STREAK);
             }
         });

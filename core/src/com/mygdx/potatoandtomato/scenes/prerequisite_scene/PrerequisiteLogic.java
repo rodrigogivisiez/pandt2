@@ -76,9 +76,7 @@ public class PrerequisiteLogic extends LogicAbstract {
                     _services.getGamingKit().addListener(getClassTag(), new JoinRoomListener() {
                         @Override
                         public void onRoomJoined(String roomId) {
-
-
-
+                            if(isDisposing()) return;
                             createRoomSuccess(roomId);
                         }
 
@@ -105,6 +103,7 @@ public class PrerequisiteLogic extends LogicAbstract {
             @Override
             public void onCallback(Room obj, Status st) {
                 if(st == Status.SUCCESS){
+                    if(isDisposing()) return;
 
                     int minusMe = (obj.getRoomUserByUserId(_services.getProfile().getUserId()) == null) ? 0 : 1;
 
@@ -132,6 +131,8 @@ public class PrerequisiteLogic extends LogicAbstract {
                             _services.getGamingKit().addListener(getClassTag(), new RoomInfoListener(roomId) {
                                 @Override
                                 public void onRoomInfoRetrievedSuccess(String[] inRoomUserIds) {
+                                    if(isDisposing()) return;
+
                                     if(!_roomInfoRetrieved){
                                         _roomInfoRetrieved = true;
                                         if(inRoomUserIds.length == 1){  //only one people and thats myself, error
@@ -170,6 +171,8 @@ public class PrerequisiteLogic extends LogicAbstract {
     }
 
     public void joinRoomFailed(final int reason){
+        if(isDisposing()) return;
+
         if(reason == 0){    //general msg
             _scene.failedMessage(_texts.joinRoomFailed());
         }
@@ -192,6 +195,8 @@ public class PrerequisiteLogic extends LogicAbstract {
     }
 
     public void createRoomSuccess(final String roomId){
+        if(isDisposing()) return;
+
         _scene.changeMessage(_texts.joiningRoom());
         _joiningRoom = new Room();
         _joiningRoom.setWarpRoomId(roomId);
@@ -204,6 +209,8 @@ public class PrerequisiteLogic extends LogicAbstract {
         _services.getDatabase().saveRoom(_joiningRoom, true, new DatabaseListener<String>() {
             @Override
             public void onCallback(String obj, Status st) {
+                if(isDisposing()) return;
+
                 if (st == Status.SUCCESS) {
                     _screen.toScene(SceneEnum.ROOM, _joiningRoom, false);
                 } else {
@@ -214,6 +221,8 @@ public class PrerequisiteLogic extends LogicAbstract {
     }
 
     public void joinRoomSuccess(){
+        if(isDisposing()) return;
+
         _screen.toScene(SceneEnum.ROOM, _joiningRoom, _joinType == JoinType.CONTINUING);
     }
 

@@ -177,7 +177,7 @@ public class
     public void authenticateUserByToken(String token, final DatabaseListener<Profile> listener) {
         _ref.authWithCustomToken(token, new Firebase.AuthResultHandler() {
             @Override
-            public void onAuthenticated(AuthData authData) {
+            public void onAuthenticated(final AuthData authData) {
                 if(authData.getUid() != null) getProfileByUserId(authData.getUid(), listener);
             }
 

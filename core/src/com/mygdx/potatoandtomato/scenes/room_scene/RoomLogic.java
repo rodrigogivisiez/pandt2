@@ -75,8 +75,6 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         waitRoomUserStateResponseSafeThreadMap = new ConcurrentHashMap();
         roomLogicSafeThread = new SafeThread();
 
-        onRoomUserChanged();
-
         scene.populateGameDetails(room.getGame());
         if(isHost()) scene.setStartButtonText(_texts.startGame());
     }
@@ -112,6 +110,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
     @Override
     public void onShow() {
         super.onShow();
+        _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
 
         if(roomErrorOccured != null){
             return;
@@ -129,7 +128,6 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
             if(!isContinue && isHost()){
                 _services.getDatabase().updateRoomPlayingAndOpenState(room, false, true, null);
             }
-            _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
             refreshChatRoomUsersConnectStatus();
             sendIsReadyUpdate(true);
         }
@@ -388,7 +386,6 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                 RoomUser roomUser = room.getRoomUserByUserId(userId);
                 userJoinLeftAddChat(roomUser.getProfile(), true);
                 cancelPutCoins(roomUser.getProfile());
-                onRoomUserChanged();
                 refreshRoomDesign();
                 userBadgeHelper.userJoinedRoom(roomUser);
 
@@ -418,7 +415,6 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                 userJoinLeftAddChat(roomUser.getProfile(), false);
 
                 checkHostInRoom();
-                onRoomUserChanged();
                 refreshRoomDesign();
                 userBadgeHelper.userLeftRoom(roomUser);
 
@@ -427,12 +423,6 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                     refreshChatRoomUsersConnectStatus();
                 }
             }
-        }
-    }
-
-    public void onRoomUserChanged(){
-        if(!gameStarted && !isContinue){
-            initCoinMachine();
         }
     }
 
@@ -532,15 +522,14 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         }
 
         publishBroadcast(BroadcastEvent.UPDATE_ROOM, push);
-        //_services.getGcmSender().send(_services.getProfile(), push);
     }
 
-    public void hostSendGameStartedPush(){
+    public void hostSendGameStartingPush(){
         if(isHost()){       //only host can send push notification to update room state
             PushNotification push = new PushNotification();
             push.setId(PushCode.UPDATE_ROOM);
             push.setSticky(true);
-            push.setTitle(_texts.PUSHRoomUpdateGameStartedTitle());
+            push.setTitle(_texts.PUSHRoomUpdateGameStartingTitle());
             push.setMessage(String.format(_texts.PUSHRoomUpdateContent(), room.getRoomUsersCount(), room.getGame().getMaxPlayers()));
             push.setSilentNotification(false);
             push.setSilentIfInGame(true);
@@ -656,6 +645,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         initCoinMachine();
         setCoinListener();
         _services.getCoins().showCoinMachine();
+        hostSendGameStartingPush();
     }
 
     public void cancelPutCoins(Profile profile){
@@ -675,7 +665,6 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         if(gameStarted) return;
 
         gameStarted = true;
-        hostSendGameStartedPush();
         room.setOpen(false);
         room.setPlaying(true);
         room.setRoundCounter(room.getRoundCounter()+1);

@@ -1,5 +1,6 @@
 package com.mygdx.potatoandtomato.scenes.shop_scene;
 
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -36,8 +37,7 @@ public class ShopLogic extends LogicAbstract {
         Threadings.setContinuousRenderLock(true);
         shopScene = new ShopScene(services, screen);
 
-        services.getSoundsPlayer().stopMusic(Sounds.Name.THEME_MUSIC);
-        services.getSoundsPlayer().playMusic(Sounds.Name.SHOP_MUSIC);
+        services.getSoundsPlayer().pauseCurrentAndPlayAnotherMusic(Sounds.Name.SHOP_MUSIC);
     }
 
     @Override
@@ -55,8 +55,7 @@ public class ShopLogic extends LogicAbstract {
         super.onHide();
         Threadings.setContinuousRenderLock(false);
 
-        _services.getSoundsPlayer().stopMusic(Sounds.Name.SHOP_MUSIC);
-        _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
+        _services.getSoundsPlayer().resumeCurrentMusic();
     }
 
     public void refreshProducts(){

@@ -143,15 +143,16 @@ public class PTScreen implements Screen, InputProcessor {
             @Override
             public void run() {
 
-                if (_logicStacks.size() == 1) {
-                    confirmQuitGame();
-                    return;
-                }
-
                 _logicStacks.peek().getLogic().onQuit(new OnQuitListener() {
                     @Override
                     public void onResult(Result result) {
                         if (result == Result.YES) {
+                            if (_logicStacks.size() == 1) {
+                                confirmQuitGame();
+                                return;
+                            }
+
+
                             final LogicEnumPair current = _logicStacks.pop();
                             final LogicEnumPair previous = _logicStacks.peek();
                             current.getLogic().onHide();

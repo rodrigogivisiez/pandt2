@@ -25,16 +25,16 @@ public class SoundsPlayer implements ISoundsPlayer {
     private Assets _assets;
     private float _volume;
     private Music _currentMusic;
+    private Music _storedMusic;
     private HashMap<Music, Boolean> _musicMap;
     private Broadcaster _broadcaster;
-    private HashMap<Sounds.Name, Long> _soundIdsMap;
     private HashMap<Sound, Long> _externalSoundIdsMap;
+
 
     public SoundsPlayer(Assets assets, Broadcaster broadcaster) {
         this._assets = assets;
         this._broadcaster = broadcaster;
         _musicMap = new HashMap();
-        _soundIdsMap = new HashMap<Sounds.Name, Long>();
         _externalSoundIdsMap = new HashMap();
         setVolume(1);
 
@@ -60,6 +60,17 @@ public class SoundsPlayer implements ISoundsPlayer {
         stopMusic(music);
     }
 
+    public void pauseCurrentAndPlayAnotherMusic(Sounds.Name name){
+        _storedMusic = _currentMusic;
+        playMusic(name);
+    }
+
+    public void resumeCurrentMusic(){
+        stopMusic(_currentMusic);
+        if(_storedMusic != null){
+            playMusic(_storedMusic, false, true);
+        }
+    }
 
     public Music playMusicFromFile(FileHandle fileHandle){
         final Music music = Gdx.audio.newMusic(fileHandle);
@@ -84,9 +95,7 @@ public class SoundsPlayer implements ISoundsPlayer {
             @Override
             public void run() {
                 Sound sound = _assets.getSounds().getSound(soundName);
-                long id = sound.play(_volume > 0 ? 1 : _volume);
-                sound.setLooping(id, true);
-                _soundIdsMap.put(soundName, id);
+                sound.loop(_volume);
             }
         });
     }
@@ -95,12 +104,8 @@ public class SoundsPlayer implements ISoundsPlayer {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                if(_soundIdsMap.containsKey(soundName)){
-                    Sound sound = _assets.getSounds().getSound(soundName);
-                    sound.setLooping(_soundIdsMap.get(soundName), false);
-                    _soundIdsMap.remove(soundName);
-                }
-
+                Sound sound = _assets.getSounds().getSound(soundName);
+                sound.stop();
             }
         });
     }
@@ -191,6 +196,7 @@ public class SoundsPlayer implements ISoundsPlayer {
                 @Override
                 public void run() {
                     music.stop();
+                    _currentMusic = null;
                 }
             });
         }
@@ -204,6 +210,7 @@ public class SoundsPlayer implements ISoundsPlayer {
                 for(Music music : _musicMap.keySet()){
                     music.stop();
                 }
+                _currentMusic = null;
             }
         });
     }
@@ -244,5 +251,9 @@ public class SoundsPlayer implements ISoundsPlayer {
             music.dispose();
             _musicMap.remove(music);
         }
+    }
+
+    public Music getCurrentMusic() {
+        return _currentMusic;
     }
 }

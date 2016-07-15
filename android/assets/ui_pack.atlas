@@ -461,6 +461,13 @@ EXPANDED_ICON
   orig: 18, 17
   offset: 0, 0
   index: -1
+EXTINGUISHER
+  rotate: false
+  xy: 2021, 1549
+  size: 25, 33
+  orig: 25, 33
+  offset: 0, 0
+  index: -1
 FACEBOOK_ICON
   rotate: false
   xy: 706, 2
@@ -982,7 +989,7 @@ QUIT_ICON
   index: -1
 RANK_ICON
   rotate: false
-  xy: 2021, 1554
+  xy: 2021, 1519
   size: 25, 28
   orig: 25, 28
   offset: 0, 0

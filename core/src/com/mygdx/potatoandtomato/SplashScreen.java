@@ -80,27 +80,29 @@ public class SplashScreen implements Screen {
     @Override
     public void show() {
 
-        if(Global.ENABLE_SOUND) arcadeSound.play();
-        arcadeSound.setVolume(0.1f);
-        arcadeSound.setLooping(true);
+        if(Global.ENABLE_SOUND) {
+            arcadeSound.play();
+            arcadeSound.setVolume(0.1f);
+            arcadeSound.setLooping(true);
+        }
 
         rootTable.addAction(sequence(
                 parallel(alpha(0.3f, 1f), new RunnableAction(){
                     @Override
                     public void run() {
-                        arcadeSound.setVolume(0.2f);
+                        if(Global.ENABLE_SOUND) arcadeSound.setVolume(0.2f);
                     }
                 }) ,
                 parallel(alpha(0.6f, 1f), new RunnableAction(){
                     @Override
                     public void run() {
-                        arcadeSound.setVolume(0.4f);
+                        if(Global.ENABLE_SOUND) arcadeSound.setVolume(0.4f);
                     }
                 }),
                 parallel(alpha(1f, 1f), new RunnableAction(){
                     @Override
                     public void run() {
-                        arcadeSound.setVolume(0.6f);
+                        if(Global.ENABLE_SOUND)  arcadeSound.setVolume(0.6f);
                     }
                 })
         ));
@@ -115,19 +117,19 @@ public class SplashScreen implements Screen {
                 parallel(alpha(0.6f, 0), new RunnableAction(){
                     @Override
                     public void run() {
-                        arcadeSound.setVolume(0.3f);
+                        if(Global.ENABLE_SOUND) arcadeSound.setVolume(0.3f);
                     }
                 }),
                 parallel(alpha(0.3f, 0), new RunnableAction(){
                     @Override
                     public void run() {
-                        arcadeSound.setVolume(0.2f);
+                        if(Global.ENABLE_SOUND) arcadeSound.setVolume(0.2f);
                     }
                 }),
                 parallel(alpha(0f, 0), new RunnableAction(){
                     @Override
                     public void run() {
-                        arcadeSound.setVolume(0.1f);
+                        if(Global.ENABLE_SOUND) arcadeSound.setVolume(0.1f);
                     }
                 }), new RunnableAction(){
                     @Override

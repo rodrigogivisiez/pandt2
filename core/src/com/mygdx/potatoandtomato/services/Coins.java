@@ -127,6 +127,8 @@ public class Coins implements ICoins {
         if(puttingCoin || coinsAlreadyEnough) return;
 
         if(getUserPutCoinCount(profile.getUserId()) + 1 > myCoinsCount.getValue().intValue()){
+            soundsPlayer.playSoundEffect(Sounds.Name.WRONG);
+            startSpeech(CoinMachineTabType.NoMoreCoins);
             return;
         }
 
@@ -347,6 +349,7 @@ public class Coins implements ICoins {
         if(waitingDeductCoinResultSafeThread != null) waitingDeductCoinResultSafeThread.kill();
         if(coinListener != null) coinListener.onDeductCoinsDone();
         deductedSuccessTransactions.add(transactionId);
+        reset();
     }
 
     private void coinDeductFailed(){
@@ -378,6 +381,8 @@ public class Coins implements ICoins {
     }
 
     private void sync(ArrayList<Pair<String, String>> userIdToNamePairs){
+        if(userIdToNamePairs == null) return;
+
         for(int i = monitoringUserIds.size() - 1; i >= 0; i--){
             String userId = monitoringUserIds.get(i);
             boolean found = false;
@@ -430,9 +435,6 @@ public class Coins implements ICoins {
     //about speeching
     ////////////////////////////////////////////////////////
     private void startSpeech(final CoinMachineTabType coinMachineTabType){
-        stopSpeech(true);
-        stopSpeech(false);
-
         ArrayList<SpeechAction> potatoSpeechActions = null, tomatoSpeechActions = null;
         if(coinMachineTabType == CoinMachineTabType.PlayersInsertCoinStatus){
             potatoSpeechActions = potatoDefaultSpeechActions;
@@ -453,30 +455,45 @@ public class Coins implements ICoins {
             potatoSpeechActions = pair.getFirst();
             tomatoSpeechActions = pair.getSecond();
         }
+        else if(coinMachineTabType == CoinMachineTabType.NoMoreCoins){
+            Pair<ArrayList<SpeechAction>, ArrayList<SpeechAction>> pair = texts.getRandomMascotsSpeechAboutNoMoreCoins();
+            potatoSpeechActions = pair.getFirst();
+            tomatoSpeechActions = pair.getSecond();
+        }
 
-        final ArrayList<SpeechAction> finalPotatoSpeechActions = potatoSpeechActions;
-        Threadings.runInBackground(new Runnable() {
-            @Override
-            public void run() {
-                potatoSpeechSafeThread = new SafeThread();
-                for(SpeechAction speechAction : finalPotatoSpeechActions){
-                    handleSpeech(true, speechAction);
-                    if(potatoSpeechSafeThread != null && potatoSpeechSafeThread.isKilled()) break;
-                }
-            }
-        });
 
-        final ArrayList<SpeechAction> finalTomatoSpeechActions = tomatoSpeechActions;
-        Threadings.runInBackground(new Runnable() {
-            @Override
-            public void run() {
-                tomatoSpeechSafeThread = new SafeThread();
-                for(SpeechAction speechAction : finalTomatoSpeechActions){
-                    handleSpeech(false, speechAction);
-                    if(tomatoSpeechSafeThread != null && tomatoSpeechSafeThread.isKilled()) break;
+        if(potatoSpeechActions.size() > 0){
+            stopSpeech(true);
+            final ArrayList<SpeechAction> finalPotatoSpeechActions = potatoSpeechActions;
+            Threadings.runInBackground(new Runnable() {
+                @Override
+                public void run() {
+                    SafeThread safeThread = new SafeThread();
+                    potatoSpeechSafeThread = safeThread;
+                    for(SpeechAction speechAction : finalPotatoSpeechActions){
+                        handleSpeech(true, speechAction);
+                        if(safeThread.isKilled()) break;
+                    }
                 }
-            }
-        });
+            });
+        }
+
+        if(tomatoSpeechActions.size() > 0){
+            stopSpeech(false);
+            final ArrayList<SpeechAction> finalTomatoSpeechActions = tomatoSpeechActions;
+            Threadings.runInBackground(new Runnable() {
+                @Override
+                public void run() {
+                    SafeThread safeThread = new SafeThread();
+                    tomatoSpeechSafeThread = safeThread;
+                    for(SpeechAction speechAction : finalTomatoSpeechActions){
+                        handleSpeech(false, speechAction);
+                        if(safeThread.isKilled()) break;
+                    }
+                }
+            });
+        }
+
     }
 
     private void handleSpeech(boolean potato, SpeechAction speechAction){
@@ -610,13 +627,14 @@ public class Coins implements ICoins {
         if(retrievableCoinsDataSafeThread != null) retrievableCoinsDataSafeThread.kill();
 
         if(currentRetrievableCoinsData.getCanRetrieveCoinsCount() < currentRetrievableCoinsData.getMaxRetrieveableCoins()){
-            retrievableCoinsDataSafeThread = new SafeThread();
+            final SafeThread safeThread = new SafeThread();
+            retrievableCoinsDataSafeThread = safeThread;
             Threadings.runInBackground(new Runnable() {
                 @Override
                 public void run() {
                     int duration = currentRetrievableCoinsData.getNextCoinInSecs();
                     while (true){
-                        if(retrievableCoinsDataSafeThread.isKilled()) break;
+                        if(safeThread.isKilled()) break;
                         else{
                             coinMachineControl.updatePurse(currentRetrievableCoinsData.getCanRetrieveCoinsCount(), duration);
                             for(ClientInternalCoinListener clientInternalCoinListener : tagToClientInternalCoinListenersMap.values()){
@@ -742,8 +760,6 @@ public class Coins implements ICoins {
 
     //remove everything except my own coin data
     public void reset(){
-        hideCoinMachine();
-
         for(String userId : monitoringUserIds){
             if(!userId.equals(profile.getUserId())){
                 database.clearListenersByTag(userId);

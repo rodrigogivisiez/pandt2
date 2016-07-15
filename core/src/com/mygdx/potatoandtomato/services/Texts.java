@@ -222,7 +222,7 @@ public class Texts {
     public String PUSHRoomUpdateTitle() { return "Room Update";}
     public String PUSHRoomUpdateContent() { return "Current players %s / %s";}
     public String PUSHRoomUpdateGameReadyTitle() { return "Game is ready to start";}
-    public String PUSHRoomUpdateGameStartedTitle() { return "Game started!";}
+    public String PUSHRoomUpdateGameStartingTitle() { return "Game starting!";}
 
 
     public String confirmAbandonNoCons(){ return "Are you sure you want to abandon this game? \n\n(No consequence)";}
@@ -286,7 +286,32 @@ public class Texts {
         return new Pair<>(potatoSpeechActions, tomatoSpeechActions);
     }
 
+    public Pair<ArrayList<SpeechAction>, ArrayList<SpeechAction>> getRandomMascotsSpeechAboutNoMoreCoins(){
+        ArrayList<SpeechAction> potatoSpeechActions = new ArrayList();
+        ArrayList<SpeechAction> tomatoSpeechActions = new ArrayList();
 
+        int style = MathUtils.random(0, 0);
+        if(style == 0){
+            //potatoSpeechActions.add(new SpeechAction("Lets rollll", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction("No coin no coin no coin!!", SpeechActionType.Add));
+        }
+
+        return new Pair<>(potatoSpeechActions, tomatoSpeechActions);
+    }
+
+
+    public Pair<ArrayList<SpeechAction>, ArrayList<SpeechAction>> getRandomMascotsSpeechAboutLostStreaks(int streakCount){
+        ArrayList<SpeechAction> potatoSpeechActions = new ArrayList();
+        ArrayList<SpeechAction> tomatoSpeechActions = new ArrayList();
+
+        int style = MathUtils.random(0, 0);
+        if(style == 0){
+            potatoSpeechActions.add(new SpeechAction("Revive your " + streakCount + " streaks?", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction("More streak more scores", SpeechActionType.Add));
+        }
+
+        return new Pair<>(potatoSpeechActions, tomatoSpeechActions);
+    }
 
 
 

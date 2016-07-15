@@ -78,7 +78,7 @@ public class GCMClientManager {
             if (regid.isEmpty()) {
                 registerInBackground(handler);
             } else { // got id from cache
-                Log.i(TAG, regid);
+                //Log.i(TAG, regid);
                 handler.onSuccess(regid, false);
             }
         } else { // no play services
@@ -102,7 +102,7 @@ public class GCMClientManager {
                     }
                     InstanceID instanceID = InstanceID.getInstance(getContext());
                     regid = instanceID.getToken(projectNumber, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-                    Log.i(TAG, regid);
+                    //Log.i(TAG, regid);
 
                     // Persist the regID - no need to register again.
                     storeRegistrationId(getContext(), regid);
@@ -163,7 +163,7 @@ public class GCMClientManager {
     private void storeRegistrationId(Context context, String regId) {
         final SharedPreferences prefs = getGCMPreferences(context);
         int appVersion = getAppVersion(context);
-        Log.i(TAG, "Saving regId on app version " + appVersion);
+        //Log.i(TAG, "Saving regId on app version " + appVersion);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(PROPERTY_REG_ID, regId);
         editor.putInt(PROPERTY_APP_VERSION, appVersion);

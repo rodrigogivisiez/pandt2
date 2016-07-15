@@ -5,6 +5,7 @@ package com.mygdx.potatoandtomato.enums;
  */
 public enum  CoinMachineTabType {
 
-    PlayersInsertCoinStatus, RetrieveCoins, PurchaseCoins, EnoughCoinsInserted
+    PlayersInsertCoinStatus, RetrieveCoins, PurchaseCoins, EnoughCoinsInserted,
+    NoMoreCoins
 
 }

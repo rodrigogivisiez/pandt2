@@ -2,6 +2,7 @@ package com.mygdx.potatoandtomato.scenes.leaderboard_scene;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.mygdx.potatoandtomato.PTScreen;
+import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
@@ -43,6 +44,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
     private SafeThread safeThread;
     private OneTimeRunnable _addScoreOnePartDoneRunnable;
     private boolean handled;
+    private boolean hasChanceToReviveStreak;
 
     public EndGameLeaderBoardLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
@@ -59,6 +61,10 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
     @Override
     public void onShow() {
         super.onShow();
+
+        if(hasChanceToReviveStreak){
+            reviveStreakProcess();
+        }
 
         if(handled) return;
         handled = true;
@@ -100,7 +106,20 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
     public void onHide() {
         super.onHide();
         Threadings.setContinuousRenderLock(false);
+        _services.getCoins().hideCoinMachine();
     }
+
+    @Override
+    public void onQuit(OnQuitListener listener) {
+        if(hasChanceToReviveStreak){
+            listener.onResult(OnQuitListener.Result.NO);
+        }
+        else{
+            super.onQuit(listener);
+            _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
+        }
+    }
+
 
     public void noHandling(){
         _scene.leaderboardDataLoaded(_game, _records);
@@ -112,33 +131,27 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
             Threadings.delay(1000, new Runnable() {
                 @Override
                 public void run() {
-                    int myCurrentRank = _myRankRecordPair.getFirst();
+                    final int myCurrentRank = _myRankRecordPair.getFirst();
                     if(_room.getGame().isStreakEnabled() && _endGameData.getEndGameResult().isWillLoseStreak()) {
-                        _scene.loseStreakAnimate(_game, myCurrentRank);
-                        _scene.setMascots(LeaderBoardScene.MascotType.CRY);
+                        _scene.loseStreakAnimatePhaseOne(_game, myCurrentRank);
+                        Threadings.delay(1000, new Runnable() {
+                            @Override
+                            public void run() {
+                                _scene.loseStreakAnimatePhaseTwo(_game, myCurrentRank);
+                                _scene.setMascots(LeaderBoardScene.MascotType.CRY);
+                            }
+                        });
                         _scene.setLeaderboardScrollPaneScrollable(_game, true);
                         _services.getDatabase().resetUserStreak(_game, _services.getProfile().getUserId(), null);
                     }
-                    Threadings.delay(1000, new Runnable() {
-                        @Override
-                        public void run() {
-                            _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
-                        }
-                    });
-                }
-            });
-        }
-        else{
-            Threadings.delay(1000, new Runnable() {
-                @Override
-                public void run() {
-                    _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
                 }
             });
         }
     }
 
+
     public void loserHandling(){
+        hasChanceToReviveStreak = true;
         final int myCurrentRank = _myRankRecordPair.getFirst();
         final LeaderboardRecord myLeaderboardRecord = _myRankRecordPair.getSecond();
 
@@ -153,12 +166,6 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                 }
 
                 _services.getSoundsPlayer().playSoundEffect(Sounds.Name.LOSE);
-                Threadings.delay(8000, new Runnable() {
-                    @Override
-                    public void run() {
-                        _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
-                    }
-                });
 
                 _scene.setMascots(LeaderBoardScene.MascotType.BORING);
                 if(myCurrentRank != _leaderboardSize || myLeaderboardRecord.getScore() != 0){        //lose streak
@@ -172,18 +179,29 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                     @Override
                                     public void run() {
                                         if(_room.getGame().isStreakEnabled() && myLeaderboardRecord.getStreak().hasValidStreak()){
-                                            _scene.loseStreakAnimate(_game, myCurrentRank);
-                                            _scene.setMascots(LeaderBoardScene.MascotType.CRY);
+                                            _scene.loseStreakAnimatePhaseOne(_game, myCurrentRank);
                                             _scene.setLeaderboardScrollPaneScrollable(_game, true);
-                                            reviveStreakProcess(myLeaderboardRecord.getStreak(), myCurrentRank);
+                                            Threadings.delay(4000, new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    reviveStreakProcess();
+                                                }
+                                            });
+                                        }
+                                        else{
+                                            hasChanceToReviveStreak = false;
                                         }
                                     }
                                 });
+                            }
+                            else{
+                                hasChanceToReviveStreak = false;
                             }
                         }
                     });
                 }
                 else{
+                    hasChanceToReviveStreak = false;
                     _scene.hideLoading(_game);
                     _scene.setLeaderboardScrollPaneScrollable(_game, true);
                 }
@@ -274,8 +292,6 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                                                                     else {
                                                                                         _scene.setMascots(LeaderBoardScene.MascotType.HAPPY);
                                                                                     }
-
-                                                                                    _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
                                                                                 }
                                                                             });
                                                                         }
@@ -286,23 +302,18 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                                     });
                                                     }
                                                 }
-
-                                                );
+                                            );
                                             }
                                         }
-
-                                        );
+                                    );
                                     }
                                 }
-
                             );
                             }
                         }
-
                     );
                     }else {
                         _scene.hideLoading(_game);
-                        _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
                     }
             }
         });
@@ -424,7 +435,15 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
         }
     }
 
-    public void reviveStreakProcess(Streak streak, final int myCurrentRank){
+    public void reviveStreakProcess(){
+        _services.getSoundsPlayer().stopSoundEffectLoop(Sounds.Name.EXTINGUISH_SOUND);
+        if(!isSceneVisible()) return;
+
+        _services.getCoins().reset();
+        final int myCurrentRank = _myRankRecordPair.getFirst();
+        final LeaderboardRecord myLeaderboardRecord = _myRankRecordPair.getSecond();
+        Streak streak = myLeaderboardRecord.getStreak();
+
         int revivingStreakCount = streak.getStreakCount();
         if(revivingStreakCount == 0){
             revivingStreakCount = streak.getBeforeStreakCount();
@@ -433,20 +452,31 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
         if(revivingStreakCount > 0){
             final String teamUserIdsString = Strings.joinArr(getMyTeamUserIds(), ",");
 
+            Pair<ArrayList<SpeechAction>, ArrayList<SpeechAction>> speechPair =
+                                    _texts.getRandomMascotsSpeechAboutLostStreaks(revivingStreakCount);
+
             ArrayList<Pair<String, String>> userIdToNamePairs = new ArrayList();
             for(Player player : _myTeam){
                 userIdToNamePairs.add(new Pair<String, String>(player.getUserId(), player.getName()));
             }
 
             _services.getCoins().initCoinMachine("Revive streaks", MathUtils.floor(revivingStreakCount / 2),
-                    _room.getId() + "_" + _room.getRoundCounter() + "_" + teamUserIdsString+ "_streaks",
-                    userIdToNamePairs, false, new ArrayList<SpeechAction>(), new ArrayList<SpeechAction>(), "nonono");
+                    _room.getId() + "_" + _room.getRoundCounter() + "_" + teamUserIdsString + "_streaks",
+                    userIdToNamePairs, false, speechPair.getFirst(), speechPair.getSecond(), "nonono");
 
             _services.getCoins().setCoinListener(new CoinListener() {
                 @Override
                 public void onEnoughCoins() {
-                    _scene.reviveStreakAnimate(_game, myCurrentRank);
-                    _scene.setMascots(LeaderBoardScene.MascotType.HAPPY);
+                    hasChanceToReviveStreak = false;
+                    _services.getSoundsPlayer().playSoundEffectLoop(Sounds.Name.EXTINGUISH_SOUND);
+                    Threadings.delay(1000, new Runnable() {
+                        @Override
+                        public void run() {
+                            _scene.reviveStreakAnimate(_game, myCurrentRank);
+                            _scene.setMascots(LeaderBoardScene.MascotType.HAPPY);
+                        }
+                    });
+
                     _services.getCoins().hideCoinMachine();
                     _services.getCoins().checkMeIsCoinsCollectedDecisionMaker(new Runnable() {
                         @Override
@@ -461,9 +491,27 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                         }
                     });
                 }
+
+                @Override
+                public void onDismiss(String dismissUserId) {
+                    super.onDismiss(dismissUserId);
+                    hasChanceToReviveStreak = false;
+                    _services.getSoundsPlayer().playSoundEffectLoop(Sounds.Name.EXTINGUISH_SOUND);
+                    Threadings.delay(1000, new Runnable() {
+                        @Override
+                        public void run() {
+                            _scene.setMascots(LeaderBoardScene.MascotType.CRY);
+                            _scene.loseStreakAnimatePhaseTwo(_game, myCurrentRank);
+                        }
+                    });
+
+                }
             });
 
             _services.getCoins().showCoinMachine();
+        }
+        else{
+            hasChanceToReviveStreak = false;
         }
     }
 
@@ -658,6 +706,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
         super.dispose();
         if(safeThread != null) safeThread.kill();
         _services.getCoins().reset();
+        _services.getSoundsPlayer().stopSoundEffectLoop(Sounds.Name.EXTINGUISH_SOUND);
     }
 
     public LeaderboardRecord getMyLeaderboardRecord() {

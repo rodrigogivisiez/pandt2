@@ -75,8 +75,6 @@ public class PTGame extends Game implements IPTGame {
 	@Override
 	public void create () {
 
-		_splashScreen = new SplashScreen();
-		setScreen(_splashScreen);
 
 		_game = this;
 		_preferences = new Preferences();
@@ -84,6 +82,8 @@ public class PTGame extends Game implements IPTGame {
 		_externalProcessors = new ArrayList();
 		Threadings.setMainTreadId();
 		Global.init(_preferences);
+		_splashScreen = new SplashScreen();
+		setScreen(_splashScreen);
 		initiateAssets();
 
 		//run when assets done loading
@@ -125,33 +125,8 @@ public class PTGame extends Game implements IPTGame {
 					public void run() {
 						setScreen(_screen);
 						_screen.toScene(SceneEnum.BOOT);
-
-
 					}
 				});
-
-//				ArrayList<SpeechAction> speechActions = new ArrayList<SpeechAction>();
-//				speechActions.add(new SpeechAction("let me tell you something about me hehe", SpeechActionType.Add));
-//				speechActions.add(new SpeechAction(SpeechActionType.Delay, 2000));
-//				speechActions.add(new SpeechAction(SpeechActionType.Clear));
-//				speechActions.add(new SpeechAction("HOLIDAY!!!", SpeechActionType.Add));
-//
-//				ArrayList<SpeechAction> tomatoSpeechActions = new ArrayList<SpeechAction>();
-//				tomatoSpeechActions.add(new SpeechAction(SpeechActionType.Delay, 30*100));
-//				tomatoSpeechActions.add(new SpeechAction("I am a tomato!!", SpeechActionType.Add));
-//
-//				setScreen(_screen);
-//				_screen.toScene(SceneEnum.CREATE_GAME);
-//
-//				ArrayList<Pair<String, String>> pairs = new ArrayList<Pair<String, String>>();
-//				pairs.add(new Pair<String, String>("123", "Jonjo Shelvey"));
-//				pairs.add(new Pair<String, String>("1234", "Steven Gerrard"));
-//
-//				_services.getCoins().initCoinMachine(5, "123", pairs, false,
-//						speechActions, tomatoSpeechActions, "Quit");
-//
-//				_services.getCoins().showCoinMachine();
-//				_services.getBroadcaster().broadcast(BroadcastEvent.DEVICE_ORIENTATION, 1);
 
 			}
 		});
