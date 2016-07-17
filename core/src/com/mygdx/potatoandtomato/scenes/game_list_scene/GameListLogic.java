@@ -100,7 +100,7 @@ public class GameListLogic extends LogicAbstract {
                 public void onCallback(final Room obj, Status st) {
                     if(st == Status.SUCCESS && obj != null){
                         if(obj.canContinue(_services.getProfile())){
-                            _services.getGamingKit().addListener(getClassTag(), new RoomInfoListener(obj.getWarpRoomId()) {
+                            _services.getGamingKit().addListener(getClassTag(), new RoomInfoListener(obj.getWarpRoomId(), getClassTag()) {
                                 @Override
                                 public void onRoomInfoRetrievedSuccess(String[] inRoomUserIds) {
                                     _services.getGamingKit().removeListenersByClassTag(getClassTag());
@@ -121,7 +121,7 @@ public class GameListLogic extends LogicAbstract {
                                     _services.getGamingKit().removeListenersByClassTag(getClassTag());
                                 }
                             });
-                            _services.getGamingKit().getRoomInfo(obj.getWarpRoomId());
+                            _services.getGamingKit().getRoomInfo(obj.getWarpRoomId(), getClassTag());
                         } else {
                             _services.getProfile().getUserPlayingState().abandonGame();
                             _services.getDatabase().updateProfile(_services.getProfile(), null);
@@ -151,12 +151,13 @@ public class GameListLogic extends LogicAbstract {
                      public void run() {
                          if(this.getFirstArg() != null){
                              final Actor clicked = this.getFirstArg();
+                             clicked.clearListeners();
                              clicked.addListener(new ClickListener() {
                                  @Override
                                  public void clicked(InputEvent event, float x, float y) {
                                      super.clicked(event, x, y);
                                      _selectedRoom = room;
-                                     _scene.gameRowHighlight(clicked.getName());
+                                     _scene.gameRowHighlight(room.getId());
                                  }
                              });
                          }

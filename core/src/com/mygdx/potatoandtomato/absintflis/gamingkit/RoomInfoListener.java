@@ -8,9 +8,15 @@ import com.badlogic.gdx.utils.Array;
 public abstract class RoomInfoListener {
 
     private String roomId;
+    private String classTag;
 
-    public RoomInfoListener(String roomId) {
+    public RoomInfoListener(String roomId, String classTag) {
         this.roomId = roomId;
+        this.classTag = classTag;
+    }
+
+    public String getClassTag() {
+        return classTag;
     }
 
     public String getRoomId() {

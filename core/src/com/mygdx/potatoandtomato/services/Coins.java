@@ -302,7 +302,7 @@ public class Coins implements ICoins {
 
     //will run the runnable only if success in becoming the decision maker
     public void checkMeIsCoinsCollectedDecisionMaker(final Runnable isDecisionMakerRunnable){
-        if(userIdToNamePairs.size() <= 1){
+        if(userIdToNamePairs  != null && userIdToNamePairs.size() <= 1){
             isDecisionMakerRunnable.run();
         }
         else{
@@ -550,7 +550,7 @@ public class Coins implements ICoins {
     //about request coin machine states
     ////////////////////////////////////////////////////////
     public void requestCoinsMachineStateFromOthers(){
-        if(userIdToNamePairs.size() > 1){
+        if(userIdToNamePairs != null && userIdToNamePairs.size() > 1){
             gamingKit.updateRoomMates(UpdateRoomMatesCode.REQUEST_COINS_STATE, transactionId);
         }
     }
@@ -763,8 +763,11 @@ public class Coins implements ICoins {
         for(String userId : monitoringUserIds){
             if(!userId.equals(profile.getUserId())){
                 database.clearListenersByTag(userId);
+                noCoinUserIds.remove(userId);
+                coinMachineControl.removeUserTable(userId);
             }
         }
+
         monitoringUserIds.clear();
         monitoringUserIds.add(profile.getUserId());
 
@@ -906,7 +909,7 @@ public class Coins implements ICoins {
             }
         });
 
-        connectionWatcher.addConnectionWatcherListener(new ConnectionWatcherListener() {
+        connectionWatcher.addConnectionWatcherListener(getClassTag(), new ConnectionWatcherListener() {
             @Override
             public void onConnectionResume() {
                 requestCoinsMachineStateFromOthers();

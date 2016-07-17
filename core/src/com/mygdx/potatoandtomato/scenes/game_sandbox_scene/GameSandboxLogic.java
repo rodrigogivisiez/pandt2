@@ -335,7 +335,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             }
         });
 
-        _services.getConnectionWatcher().addConnectionWatcherListener(new ConnectionWatcherListener() {
+        _services.getConnectionWatcher().addConnectionWatcherListener(getClassTag(), new ConnectionWatcherListener() {
             @Override
             public void onConnectionResume() {
                 if(gameStarted){
@@ -427,6 +427,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
 
         _services.getBroadcaster().broadcast(BroadcastEvent.DEVICE_ORIENTATION, 0);
         _services.getConnectionWatcher().gameEnded();
+        _services.getConnectionWatcher().clearConnectionWatcherListenerByClassTag(getClassTag());
         _screen.switchToPTScreen();
         _services.getChat().setMode(1);
 

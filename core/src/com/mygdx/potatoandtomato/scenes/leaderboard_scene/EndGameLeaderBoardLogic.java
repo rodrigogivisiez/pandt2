@@ -126,7 +126,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
         _scene.hideLoading(_game);
         _scene.setMascots(LeaderBoardScene.MascotType.BORING);
 
-        if(_endGameData.getEndGameResult().isAbandon()){
+        if(_endGameData.getEndGameResult() != null && _endGameData.getEndGameResult().isAbandon()){
             _scene.setLeaderboardScrollPaneScrollable(_game, false);
             Threadings.delay(1000, new Runnable() {
                 @Override

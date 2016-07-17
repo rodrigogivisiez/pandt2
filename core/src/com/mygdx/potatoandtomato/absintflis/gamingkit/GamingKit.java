@@ -101,17 +101,17 @@ public abstract class GamingKit {
         }
     }
 
-    public void onRoomInfoReceivedSuccess(String roomId, String[] inRoomUserIds){
+    public void onRoomInfoReceivedSuccess(String identifier, String roomId, String[] inRoomUserIds){
         for(RoomInfoListener listener : _roomInfoListeners.values()) {
-            if(listener.getRoomId().equals(roomId)){
+            if(listener.getRoomId().equals(roomId) && listener.getClassTag().equals(identifier)){
                 listener.onRoomInfoRetrievedSuccess(inRoomUserIds);
             }
         }
     }
 
-    public void onRoomInfoReceivedFailed(String roomId){
+    public void onRoomInfoReceivedFailed(String identifier, String roomId){
         for(RoomInfoListener listener : _roomInfoListeners.values()) {
-            if(listener.getRoomId().equals(roomId)){
+            if(listener.getRoomId().equals(roomId) && listener.getClassTag().equals(identifier)){
                 listener.onRoomInfoFailed();
             }
         }
@@ -157,7 +157,7 @@ public abstract class GamingKit {
 
     public abstract void leaveRoom();
 
-    public abstract void getRoomInfo(String roomId);
+    public abstract void getRoomInfo(String roomId, String identifier);
 
     public abstract void updateRoomMates(int updateRoomMatesCode, String msg);
 

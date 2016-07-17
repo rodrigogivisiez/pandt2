@@ -447,7 +447,7 @@ public class CoinMachineControl {
             public void run() {
                 Table playersTable = playersScrollPane.findActor("playersTable");
                 Actor existUserTable = playersTable.findActor(userId);
-                existUserTable.remove();
+                if(existUserTable != null) existUserTable.remove();
             }
         });
     }

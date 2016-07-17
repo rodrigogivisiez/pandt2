@@ -119,7 +119,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         _services.getChat().setMode(1);
         _services.getChat().showChat();
 
-       toggleConfirmStateListener(true);
+        toggleConfirmStateListener(true);
 
         //come back from game end
         if(gameStarted){
@@ -200,7 +200,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
 
     public void refreshRoomPlayersIfIsHost(){
         if(isHost()){
-            _services.getGamingKit().getRoomInfo(room.getWarpRoomId());
+            _services.getGamingKit().getRoomInfo(room.getWarpRoomId(), getClassTag());
         }
     }
 
@@ -213,6 +213,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                     int i = 0;
                     for(final Table t : scene.getSlotsTable()){
                         final int finalI = i;
+                        t.clearListeners();
                         t.addListener(new ClickListener(){
                             @Override
                             public void clicked(InputEvent event, float x, float y) {
@@ -289,13 +290,16 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
     public void receivedUpdateRoomMates(int code, final String msg, final String senderId){
 
         if(code == UpdateRoomMatesCode.JOIN_ROOM){
-            if(isHost()) addUserToRoom(senderId, null, -1);
+            if(isHost()){
+                addUserToRoom(senderId, null, -1);
+            }
+            sendMyCurrentIsReadyToUser(senderId);
         }
         else if(code == UpdateRoomMatesCode.LEFT_ROOM){
             if(isHost())  removeUserFromRoom(senderId);
         }
         else if(code == UpdateRoomMatesCode.MOVE_SLOT){
-            if(isHost()) moveSlot(senderId,  Integer.valueOf(msg));
+            if(isHost()) moveSlot(senderId,  Integer.valueOf(msg), true);
         }
         else if(code == UpdateRoomMatesCode.UPDATE_USER_READY){
             userIsReadyChanged(senderId, msg.equals("1"));
@@ -367,7 +371,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
 
                             room.addRoomUser(this.getFirstArg(), slotIndex, RoomUserState.NotReady);
                             _services.getDatabase().addUserToRoom(room, this.getFirstArg(),
-                                                room.getSlotIndexByUserId(userId), RoomUserState.NotReady, null);
+                                    room.getSlotIndexByUserId(userId), RoomUserState.NotReady, null);
                             added[0] = true;
                         }
                     });
@@ -384,6 +388,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                 }
 
                 RoomUser roomUser = room.getRoomUserByUserId(userId);
+                if(roomUser == null) return;
                 userJoinLeftAddChat(roomUser.getProfile(), true);
                 cancelPutCoins(roomUser.getProfile());
                 refreshRoomDesign();
@@ -426,7 +431,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         }
     }
 
-    public void moveSlot(String userId, int toSlot){
+    public void moveSlot(String userId, int toSlot, boolean updateDb){
         if(room.getRoomUserByUserId(userId) != null){
             Profile profile = room.getRoomUserByUserId(userId).getProfile();
             int fromSlot = room.getSlotIndexByUserId(userId);
@@ -435,7 +440,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                 room.changeSlotIndex(toSlot, profile);
                 refreshRoomDesign();
 
-                if(isHost()){
+                if(isHost() && updateDb){
                     _services.getDatabase().setRoomUserSlotIndex(room, userId, room.getSlotIndexByUserId(userId), null);
                 }
             }
@@ -461,7 +466,14 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
     }
 
     public void userIsReadyChanged(String userId, boolean isReady){
-        roomUserStateChanged(userId, isReady ? RoomUserState.Normal : RoomUserState.NotReady);
+        RoomUser roomUserModel = room.getRoomUserByUserId(userId);
+        if(roomUserModel != null){
+            RoomUserState currentRoomUserState = roomUserModel.getRoomUserState();
+            RoomUserState newRoomUserState = isReady ? RoomUserState.Normal : RoomUserState.NotReady;
+            if(currentRoomUserState != newRoomUserState){
+                roomUserStateChanged(userId, newRoomUserState);
+            }
+        }
     }
 
     public void roomUserStateChanged(String userId, RoomUserState roomUserState){
@@ -482,7 +494,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
     public boolean checkHostInRoom(){
         if(forceQuit || roomErrorOccured != null) return false;
         if(gameStarted) return true;
-        
+
         boolean found = false;
         for(RoomUser roomUser : room.getRoomUsersMap().values()){
             if(roomUser.getProfile().equals(room.getHost())){
@@ -497,8 +509,17 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
     }
 
     private void sendIsReadyUpdate(boolean isReady){
-        if(isReady && isSceneVisible() || !isReady){
+        if(finishGameFileCheck && isReady && isSceneVisible() || !isReady){
             sendUpdateRoomMates(UpdateRoomMatesCode.UPDATE_USER_READY, isReady ? "1" : "0");
+        }
+    }
+
+    private void sendMyCurrentIsReadyToUser(String toUser){
+        RoomUser myRoomUserModel = room.getRoomUserByUserId(_services.getProfile().getUserId());
+        if(myRoomUserModel != null){
+            sendPrivateUpdateRoomMates(toUser, UpdateRoomMatesCode.UPDATE_USER_READY,
+                    myRoomUserModel.getRoomUserState() == RoomUserState.Normal ? "1" : "0");
+
         }
     }
 
@@ -738,6 +759,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         }
     }
 
+    //request room state from all users in room, in no reply, deem as temporary disconnected
     public void broadcastRoomUserStateRequest(){
         for(RoomUser roomUser : room.getRoomUsersMap().values()){
             if(!roomUser.getProfile().getUserId().equals(_services.getProfile().getUserId())){
@@ -850,7 +872,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
             }
         });
 
-        _services.getGamingKit().addListener(this.getClassTag(), new RoomInfoListener(room.getWarpRoomId()) {
+        _services.getGamingKit().addListener(this.getClassTag(), new RoomInfoListener(room.getWarpRoomId(), getClassTag()) {
             @Override
             public void onRoomInfoRetrievedSuccess(String[] inRoomUserIds) {
                 ArrayList<String> inRoomUserIdsArr = new ArrayList<String>(Arrays.asList(inRoomUserIds));
@@ -926,7 +948,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                     if(isSceneVisible() && !_confirm.isVisible()){
                         RoomUser roomUser = room.getRoomUserByUserId(_services.getProfile().getUserId());
                         if(roomUser != null){
-                            if(roomUser.getRoomUserState() != RoomUserState.Normal && finishGameFileCheck){
+                            if(roomUser.getRoomUserState() != RoomUserState.Normal){
                                 sendIsReadyUpdate(true);
                             }
                         }
@@ -943,7 +965,6 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
     }
 
     public void initRoomDbMonitor(final OneTimeRunnable onSuccess){
-
         _services.getDatabase().monitorRoomById(room.getId(), getClassTag(), new DatabaseListener<Room>(Room.class) {
             @Override
             public void onCallback(Room roomObj, Status st) {
@@ -960,7 +981,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                     }
 
                     for(RoomUser u : changedSlotUsers){
-                        moveSlot(u.getProfile().getUserId(), u.getSlotIndex());
+                        moveSlot(u.getProfile().getUserId(), u.getSlotIndex(), false);
                     }
 
                     if(justJoinedUsers.size() > 0 || justLeftUsers.size() > 0){
@@ -1055,7 +1076,10 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
 
             @Override
             public void onDismiss(String dismissUserId) {
-                cancelPutCoins(room.getRoomUserByUserId(dismissUserId).getProfile());
+                RoomUser dismissRoomUser = room.getRoomUserByUserId(dismissUserId);
+                if(dismissRoomUser != null){
+                    cancelPutCoins(dismissRoomUser.getProfile());
+                }
             }
         });
 
@@ -1065,7 +1089,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
     public void dispose() {
         super.dispose();
 
-        if(isHost()){
+        if(isHost()) {
             removeUserFromRoom(_services.getProfile().getUserId());
             _services.getDatabase().updateRoomPlayingAndOpenState(room, null, false, null);
         }

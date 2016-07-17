@@ -146,10 +146,6 @@ public class MainLogic extends GameLogic {
             return;
         }
 
-        if(_gameModel.getGameState() == GameState.Playing || _gameModel.getGameState() == GameState.PrePlaying){
-            return;
-        }
-
         _gameModel.setScore((double) currentScores, true);
         _currentImagePair = null;
 

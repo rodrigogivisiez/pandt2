@@ -52,7 +52,7 @@ public class ConnectionsController implements Disposable, IChatRoomUsersConnecti
 
     public void gameStarted(){
         gameStarted = true;
-        services.getConnectionWatcher().addConnectionWatcherListener(new ConnectionWatcherListener() {
+        services.getConnectionWatcher().addConnectionWatcherListener(getClassTag(), new ConnectionWatcherListener() {
             @Override
             public void onConnectionResume() {
                 sendMeConnected();
@@ -119,7 +119,7 @@ public class ConnectionsController implements Disposable, IChatRoomUsersConnecti
 
     public void refreshAllConnectStates(Runnable onFinish){
         if(onFinish != null) onRefreshFinishedRunnables.add(onFinish);
-        services.getGamingKit().getRoomInfo(room.getWarpRoomId());
+        services.getGamingKit().getRoomInfo(room.getWarpRoomId(), getClassTag());
     }
 
     public void receivedRoomInfo(final String[] inRoomUserIds){
@@ -285,7 +285,7 @@ public class ConnectionsController implements Disposable, IChatRoomUsersConnecti
             }
         });
 
-        services.getGamingKit().addListener(getClassTag(), new RoomInfoListener(room.getWarpRoomId()) {
+        services.getGamingKit().addListener(getClassTag(), new RoomInfoListener(room.getWarpRoomId(), getClassTag()) {
             @Override
             public void onRoomInfoRetrievedSuccess(String[] inRoomUserIds) {
                 receivedRoomInfo(inRoomUserIds);
@@ -332,6 +332,7 @@ public class ConnectionsController implements Disposable, IChatRoomUsersConnecti
         }
         safeThread.kill();
         services.getGamingKit().removeListenersByClassTag(getClassTag());
+        services.getConnectionWatcher().clearConnectionWatcherListenerByClassTag(getClassTag());
         services.getConnectionWatcher().gameEnded();
     }
 

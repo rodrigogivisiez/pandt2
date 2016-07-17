@@ -24,6 +24,7 @@ import com.potatoandtomato.common.utils.Threadings;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by SiongLeng on 9/12/2015.
@@ -32,7 +33,6 @@ public class GameListScene extends SceneAbstract {
 
     Table _gameListTable, _gameTitleTable;
     Label _titleGameLabel, _titlePlayersLabel, _titleHostLabel;
-    HashMap<String, Table> _gameRowsTableMap;
     HashMap<String, String> _hostToRoomIdMaps;
     ScrollPane _gameListScrollPane;
     Table _scrollTable;
@@ -43,13 +43,8 @@ public class GameListScene extends SceneAbstract {
     Table _settingsTable, _leaderBoardsTable;
     Image _settingsIconImg, _leaderBoardsIconImg;
 
-    public int getGameRowsCount() {
-        return _gameRowsTableMap.size();
-    }
-
     public GameListScene(Services services, PTScreen screen) {
         super(services, screen);
-        _gameRowsTableMap = new HashMap();
         _hostToRoomIdMaps = new HashMap();
     }
 
@@ -165,67 +160,58 @@ public class GameListScene extends SceneAbstract {
     }
 
     public void addNewRoomRow(final Room room, final boolean isInvited, final RunnableArgs<Actor> onFinish){
+        final Button dummyButton = new Button(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
+        final Table gameRowTable = new Table();
+        gameRowTable.setName(room.getId());
+        _hostToRoomIdMaps.put(room.getHost().getUserId(), room.getId());
 
-        Threadings.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                final Button dummyButton = new Button(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
-                final Table gameRowTable = new Table();
-                gameRowTable.setName(isInvited ? "invited" : "");
-                _gameRowsTableMap.put(room.getId(), gameRowTable);
-                _hostToRoomIdMaps.put(room.getHost().getUserId(), room.getId());
+        Label.LabelStyle contentLabelStyle = new Label.LabelStyle();
+        contentLabelStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_S_BOLD);
 
-                Label.LabelStyle contentLabelStyle = new Label.LabelStyle();
-                contentLabelStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_S_BOLD);
+        Table gameNameInvitationTable = new Table();
+        gameNameInvitationTable.align(Align.topLeft);
+        gameNameInvitationTable.setName("gameNameInvitationTable");
+        Image invitedImage = new Image(_assets.getTextures().get(Textures.Name.INVITED_ICON));
+        gameNameInvitationTable.add(invitedImage).size(isInvited ? 12 : 0, 10).padRight(3);
+        Label gameNameLabel = new Label(room.getGame().getName(), contentLabelStyle);
+        gameNameLabel.setWrap(true);
+        gameNameInvitationTable.add(gameNameLabel).expand().fill();
 
-                Table gameNameInvitationTable = new Table();
-                gameNameInvitationTable.align(Align.topLeft);
-                gameNameInvitationTable.setName("gameNameInvitationTable");
-                Image invitedImage = new Image(_assets.getTextures().get(Textures.Name.INVITED_ICON));
-                gameNameInvitationTable.add(invitedImage).size(isInvited ? 12 : 0, 10).padRight(3);
-                Label gameNameLabel = new Label(room.getGame().getName(), contentLabelStyle);
-                gameNameLabel.setWrap(true);
-                gameNameInvitationTable.add(gameNameLabel).expand().fill();
+        Label hostNameLabel = new Label(room.getHost().getDisplayName(15), contentLabelStyle);
+        hostNameLabel.setWrap(true);
+        Label playersCountLabel = new Label(String.format("%s / %s", room.getRoomUsersCount(), room.getGame().getMaxPlayers()), contentLabelStyle);
+        playersCountLabel.setName("playerCount");
+        playersCountLabel.setWrap(true);
 
-                Label hostNameLabel = new Label(room.getHost().getDisplayName(15), contentLabelStyle);
-                hostNameLabel.setWrap(true);
-                Label playersCountLabel = new Label(String.format("%s / %s", room.getRoomUsersCount(), room.getGame().getMaxPlayers()), contentLabelStyle);
-                playersCountLabel.setName("playerCount");
-                playersCountLabel.setWrap(true);
+        dummyButton.setFillParent(true);
 
-                dummyButton.setFillParent(true);
+        gameRowTable.add(gameNameInvitationTable).width(100).padLeft(18).padRight(10);
+        gameRowTable.add(hostNameLabel).width(95).padLeft(8).padRight(10);
+        gameRowTable.add(playersCountLabel).expandX().left().padLeft(8).padRight(20);
+        gameRowTable.padTop(5).padBottom(5);
+        gameRowTable.addActor(dummyButton);
+        _scrollTable.add(gameRowTable).expandX().fillX();
+        _scrollTable.row();
 
-                gameRowTable.add(gameNameInvitationTable).width(100).padLeft(18).padRight(10);
-                gameRowTable.add(hostNameLabel).width(95).padLeft(8).padRight(10);
-                gameRowTable.add(playersCountLabel).expandX().left().padLeft(8).padRight(20);
-                gameRowTable.padTop(5).padBottom(5);
-                gameRowTable.addActor(dummyButton);
-                _scrollTable.add(gameRowTable).expandX().fillX();
-                _scrollTable.row();
+        dummyButton.setName(String.valueOf(room.getId()));
 
-                dummyButton.setName(String.valueOf(room.getId()));
-
-                onFinish.run(dummyButton);
-            }
-        });
-
+        onFinish.run(dummyButton);
     }
 
-    public void gameRowHighlight(final String tableName){
+    public void gameRowHighlight(final String roomId){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
                 boolean found = false;
-                for (Map.Entry<String, Table> entry : _gameRowsTableMap.entrySet()) {
-                    String key = entry.getKey();
-                    Table gameRowTable = entry.getValue();
 
-                    if(String.valueOf(key).equals(tableName)){
+                for(Actor actor : _scrollTable.getChildren()){
+                    Table gameRow = (Table) actor;
+                    if(gameRow.getName() != null && gameRow.getName().equals(roomId)){
                         found = true;
-                        gameRowTable.background(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.GAMELIST_HIGHLIGHT)));
+                        gameRow.background(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.GAMELIST_HIGHLIGHT)));
                     }
                     else{
-                        gameRowTable.background(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
+                        gameRow.background(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.EMPTY)));
                     }
                 }
 
@@ -240,7 +226,7 @@ public class GameListScene extends SceneAbstract {
     }
 
     public boolean alreadyContainsRoom(Room room){
-        return _gameRowsTableMap.containsKey(room.getId());
+        return getGameRowById(room.getId()) != null;
     }
 
     public void updatedRoom(final Room room, final RunnableArgs<Actor> onFinish){
@@ -248,7 +234,7 @@ public class GameListScene extends SceneAbstract {
             @Override
             public void run() {
                 final boolean isInvited = (room.getUserIsInvited(_services.getProfile().getUserId()));
-                if(!_gameRowsTableMap.containsKey(room.getId())){
+                if(!alreadyContainsRoom(room)){
                     if(_hostToRoomIdMaps.containsKey(room.getHost().getUserId())){
                         removeRoom(_hostToRoomIdMaps.get(room.getHost().getUserId()));
                     }
@@ -256,13 +242,15 @@ public class GameListScene extends SceneAbstract {
                     addNewRoomRow(room, isInvited, onFinish);
                 }
                 else{
+                    Table gameRowTable = getGameRowById(room.getId());
+
                     if(isInvited){
-                        Table table = _gameRowsTableMap.get(room.getId()).findActor("gameNameInvitationTable");
+                        Table table = gameRowTable.findActor("gameNameInvitationTable");
                         table.getCells().get(0).width(12);
                         table.invalidate();
                     }
 
-                    Label playerCountLabel = _gameRowsTableMap.get(room.getId()).findActor("playerCount");
+                    Label playerCountLabel = gameRowTable.findActor("playerCount");
                     playerCountLabel.setText(String.format("%s / %s", room.getRoomUsersCount(), room.getGame().getMaxPlayers()));
                     playerCountLabel.invalidate();
 
@@ -272,17 +260,18 @@ public class GameListScene extends SceneAbstract {
         });
     }
 
-    public void removeRoom(String roomId){
-        if(_gameRowsTableMap.containsKey(roomId)){
-            final Actor actor = _gameRowsTableMap.get(roomId);
-            Threadings.postRunnable(new Runnable() {
-                @Override
-                public void run() {
-                    actor.remove();
-                }
-            });
-            _gameRowsTableMap.remove(roomId);
-        }
+    public void removeRoom(final String roomId){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                final Actor actor = _scrollTable.findActor(roomId);
+                if(actor != null) actor.remove();
+            }
+        });
+    }
+
+    private Table getGameRowById(String id){
+        return _scrollTable.findActor(id);
     }
 
     public void setUsername(final String username){

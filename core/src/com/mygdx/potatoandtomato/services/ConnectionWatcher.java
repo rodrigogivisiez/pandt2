@@ -14,7 +14,7 @@ import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
 
-import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by SiongLeng on 27/5/2016.
@@ -29,7 +29,7 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
     private boolean playingGame;
     private Room room;
     private Profile profile;
-    private ArrayList<ConnectionWatcherListener> connectionWatcherListeners;
+    private ConcurrentHashMap<String, ConnectionWatcherListener> connectionWatcherListenersMap;
     private int count;
     private boolean showingResumeGame, showingLostConnection;
     private SafeThread safeThread;
@@ -41,7 +41,7 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
         this.confirm = confirm;
         this.texts = texts;
         this.profile = profile;
-        connectionWatcherListeners = new ArrayList();
+        connectionWatcherListenersMap = new ConcurrentHashMap();
         setListeners();
     }
 
@@ -54,7 +54,7 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
     public void gameEnded(){
         playingGame = false;
         room = null;
-        connectionWatcherListeners.clear();
+        connectionWatcherListenersMap.clear();
     }
 
     public void resetAndBackToBoot(boolean showDisconnectedMsg){
@@ -75,10 +75,13 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
         if(safeThread != null) safeThread.kill();
     }
 
-    public void addConnectionWatcherListener(ConnectionWatcherListener listener){
-        connectionWatcherListeners.add(listener);
+    public void addConnectionWatcherListener(String classTag, ConnectionWatcherListener listener){
+        connectionWatcherListenersMap.put(classTag, listener);
     }
 
+    public void clearConnectionWatcherListenerByClassTag(String classTag){
+        connectionWatcherListenersMap.remove(classTag);
+    }
 
     public void setListeners(){
         gamingKit.addListener(this.getClass().getName(), new ConnectionChangedListener() {
@@ -90,7 +93,7 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
                     }
                     else if(st == ConnectStatus.DISCONNECTED_BUT_RECOVERABLE){
                         if(count == 0){
-                            for(ConnectionWatcherListener connectionWatcherListener : connectionWatcherListeners){
+                            for(ConnectionWatcherListener connectionWatcherListener : connectionWatcherListenersMap.values()){
                                 connectionWatcherListener.onConnectionHalt();
                             }
 
@@ -122,7 +125,7 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
                         count = 0;
                         if(safeThread != null) safeThread.kill();
 
-                        for(ConnectionWatcherListener connectionWatcherListener : connectionWatcherListeners){
+                        for(ConnectionWatcherListener connectionWatcherListener : connectionWatcherListenersMap.values()){
                             connectionWatcherListener.onConnectionResume();
                         }
 

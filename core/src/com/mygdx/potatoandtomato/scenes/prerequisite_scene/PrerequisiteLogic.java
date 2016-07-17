@@ -128,7 +128,7 @@ public class PrerequisiteLogic extends LogicAbstract {
                         @Override
                         public void onRoomJoined(String roomId) {
                             _scene.changeMessage(_texts.joiningRoom());
-                            _services.getGamingKit().addListener(getClassTag(), new RoomInfoListener(roomId) {
+                            _services.getGamingKit().addListener(getClassTag(), new RoomInfoListener(roomId, getClassTag()) {
                                 @Override
                                 public void onRoomInfoRetrievedSuccess(String[] inRoomUserIds) {
                                     if(isDisposing()) return;
@@ -152,7 +152,7 @@ public class PrerequisiteLogic extends LogicAbstract {
                                     }
                                 }
                             });
-                            _services.getGamingKit().getRoomInfo(_joiningRoom.getWarpRoomId());
+                            _services.getGamingKit().getRoomInfo(_joiningRoom.getWarpRoomId(), getClassTag());
                         }
 
                         @Override

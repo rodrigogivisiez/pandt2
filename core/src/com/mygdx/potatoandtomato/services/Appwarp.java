@@ -37,7 +37,7 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
     private MultiHashMap<String, String> _msgPieces;
     private MultiHashMap<String, byte[]> _bytePieces;
     private ConcurrentHashMap<String, String> _bytePiecesOwner;
-    private String _gettingRoomId;
+    private String _gettingRoomId, _gettingRoomIdentifier;
     private String _lockingProperty, _unlockingProperty;
 
     public Appwarp(String appKey, String secretKey){
@@ -127,8 +127,9 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
     }
 
     @Override
-    public void getRoomInfo(String roomId) {
+    public void getRoomInfo(String roomId, String identifier) {
         _gettingRoomId = roomId;
+        _gettingRoomIdentifier = identifier;
         _warpInstance.getLiveRoomInfo(roomId);
     }
 
@@ -457,10 +458,10 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
                 }
             }
 
-            onRoomInfoReceivedSuccess(liveRoomInfoEvent.getData().getId(), decodeUsers);
+            onRoomInfoReceivedSuccess(_gettingRoomIdentifier, liveRoomInfoEvent.getData().getId(), decodeUsers);
         }
         else{
-            onRoomInfoReceivedFailed(_gettingRoomId);
+            onRoomInfoReceivedFailed(_gettingRoomIdentifier, _gettingRoomId);
         }
     }
 

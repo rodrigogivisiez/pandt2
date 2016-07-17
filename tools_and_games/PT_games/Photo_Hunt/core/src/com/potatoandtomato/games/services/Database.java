@@ -129,7 +129,7 @@ public class Database {
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                listener.onCallback(0, Status.FAILED);
+                listener.onCallback(null, Status.FAILED);
             }
         });
     }
@@ -149,7 +149,7 @@ public class Database {
             }
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                listener.onCallback(0, Status.FAILED);
+                listener.onCallback(null, Status.FAILED);
             }
         });
     }
