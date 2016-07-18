@@ -46,6 +46,7 @@ public class CoinMachineControl {
     private SoundsPlayer soundsPlayer;
     private Texts texts;
     private Table root;
+    private Image overlayImage;
     private Table tabsTable, contentTable, bottomPartTable;
     private Table tabContentTable;
     private Table dismissTable;
@@ -98,6 +99,12 @@ public class CoinMachineControl {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
+
+                overlayImage = new Image(assets.getTextures().get(Textures.Name.LESS_TRANS_BLACK_BG));
+                overlayImage.getColor().a = 0.5f;
+                overlayImage.setFillParent(true);
+                overlayImage.setVisible(false);
+
                 root = new Table();
                 root.setVisible(false);
                 root.align(Align.top);
@@ -204,8 +211,10 @@ public class CoinMachineControl {
                     StretchViewport viewPort = new StretchViewport(Positions.getWidth(), Positions.getHeight());
                     viewPort.update(Positions.getWidth(), Positions.getHeight(), true);
                     stage = new Stage(viewPort, batch);
-                    iptGame.addInputProcessor(stage, 11, false);
+                    iptGame.addInputProcessor(stage, 9, false);
+                    stage.addActor(overlayImage);
                     stage.addActor(root);
+
                 }
                 else{
                     if(stage.getViewport().getWorldWidth() != Positions.getWidth()
@@ -298,6 +307,7 @@ public class CoinMachineControl {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
+                overlayImage.setVisible(true);
                 visible = true;
                 root.clearActions();
                 root.setX(Positions.getWidth() + 10);
@@ -319,6 +329,7 @@ public class CoinMachineControl {
                     @Override
                     public void run() {
                         hideSpeech();
+                        overlayImage.setVisible(false);
                         root.setVisible(false);
                         toInsertCoinBlinkImage.clearActions();
                         toInsertCoinBlinkImage.getColor().a = 0f;
@@ -391,6 +402,7 @@ public class CoinMachineControl {
                         Color.valueOf("fff08d"));
 
                 Table userTable = new Table();
+                userTable.padBottom(3);
                 userTable.setName(userId);
                 Label usernameLabel = new Label(Strings.cutOff(userName, 18), labelStyle);
 
@@ -434,7 +446,7 @@ public class CoinMachineControl {
 
                 }
                 else{
-                    playersTable.add(userTable).expandX().fillX().padLeft(3).padRight(3).padBottom(3);
+                    playersTable.add(userTable).expandX().fillX().padLeft(3).padRight(3);
                     playersTable.row();
                 }
             }
@@ -447,7 +459,9 @@ public class CoinMachineControl {
             public void run() {
                 Table playersTable = playersScrollPane.findActor("playersTable");
                 Actor existUserTable = playersTable.findActor(userId);
-                if(existUserTable != null) existUserTable.remove();
+                if(existUserTable != null){
+                    existUserTable.remove();
+                }
             }
         });
     }
@@ -1158,6 +1172,13 @@ public class CoinMachineControl {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
+                overlayImage.addListener(new ClickListener(){
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                    }
+                });
+
                 getBuyCoinsTabButton().addListener(new ClickListener(){
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -1174,7 +1195,7 @@ public class CoinMachineControl {
                     }
                 });
 
-                getRetrieveCoinsTabButton().addListener(new ClickListener(){
+                getRetrieveCoinsTabButton().addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         super.clicked(event, x, y);

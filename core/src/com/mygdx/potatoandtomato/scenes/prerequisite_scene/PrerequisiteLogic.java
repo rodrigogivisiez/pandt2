@@ -67,7 +67,7 @@ public class PrerequisiteLogic extends LogicAbstract {
     public void createRoom(){
         _scene.changeMessage(_texts.lookingForServer());
 
-        _services.getDatabase().getGameByAbbr(_game.getAbbr(), new DatabaseListener<Game>(Game.class) {
+        _services.getDatabase().getGameSimpleByAbbr(_game.getAbbr(), new DatabaseListener<Game>(Game.class) {
             @Override
             public void onCallback(Game obj, Status st) {
                 if(st == Status.SUCCESS){

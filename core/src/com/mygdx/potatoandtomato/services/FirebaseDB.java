@@ -27,6 +27,7 @@ public class
     Firebase _ref;
     private String _tableUsers = "users";
     private String _tableGames = "games";
+    private String _tableGamesSimple = "gamesSimple";
     private String _tableRooms = "rooms";
     private String _tableRoomInvitations = "roomInvitations";
     private String _tableHistories = "histories";
@@ -256,8 +257,8 @@ public class
     }
 
     @Override
-    public void getAllGames(final DatabaseListener<ArrayList<Game>> listener) {
-        getData(getTable(_tableGames).orderByChild("createTimestamp"), new DatabaseListener<ArrayList<Game>>(Game.class) {
+    public void getAllGamesSimple(final DatabaseListener<ArrayList<Game>> listener) {
+        getData(getTable(_tableGamesSimple).orderByChild("createTimestamp"), new DatabaseListener<ArrayList<Game>>(Game.class) {
                     @Override
                     public void onCallback(ArrayList<Game> result, Status st) {
                         if(st == Status.SUCCESS){
@@ -382,6 +383,11 @@ public class
     @Override
     public void getGameByAbbr(String abbr, DatabaseListener<Game> listener) {
         getSingleData(getTable(_tableGames).child(abbr), listener);
+    }
+
+    @Override
+    public void getGameSimpleByAbbr(String abbr, DatabaseListener<Game> listener) {
+        getSingleData(getTable(_tableGamesSimple).child(abbr), listener);
     }
 
     @Override

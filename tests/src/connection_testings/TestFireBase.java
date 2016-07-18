@@ -191,7 +191,7 @@ public class TestFireBase extends TestAbstract {
 //    @Test
 //    public void testGetAllGames(){
 //        final boolean[] waiting = {true};
-//        databases.getAllGames(new DatabaseListener<ArrayList<Game>>(Game.class) {
+//        databases.getAllGamesSimple(new DatabaseListener<ArrayList<Game>>(Game.class) {
 //            @Override
 //            public void onCallback(ArrayList<Game> obj, Status st) {
 //                Assert.assertEquals(false, st == Status.FAILED);

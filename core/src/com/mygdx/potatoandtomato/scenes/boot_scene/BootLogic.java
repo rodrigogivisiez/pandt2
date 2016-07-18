@@ -21,6 +21,7 @@ import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.Strings;
+import com.potatoandtomato.common.utils.Threadings;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -48,6 +49,7 @@ public class BootLogic extends LogicAbstract {
         _services.getDatabase().clearAllListeners();
         _services.getChat().hideChat();
         _services.getCoins().dispose();
+        _services.getDataCaches().dispose();
         _services.getProfile().reset();
         _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
         _screen.showRotateSunrise();
@@ -221,6 +223,7 @@ public class BootLogic extends LogicAbstract {
     public void loginPTSuccess(){
         _services.getDatabase().updateProfile(_services.getProfile(), null);
         _services.getCoins().profileReady();
+        _services.getDataCaches().startCaches();
         _services.getGamingKit().connect(_services.getProfile());
         _services.getBroadcaster().broadcast(BroadcastEvent.USER_READY, _services.getProfile());
     }
@@ -241,7 +244,6 @@ public class BootLogic extends LogicAbstract {
                 super.clicked(event, x, y);
                 _services.getSoundsPlayer().playSoundEffect(Sounds.Name.TOGETHER_CHEERS);
                 showLoginBox();
-                //getBroadcaster().broadcast(BroadcastEvent.SHOW_REWARD_VIDEO);
             }
         });
 

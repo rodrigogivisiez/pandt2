@@ -65,7 +65,7 @@ public class MockDB implements IDatabase {
     }
 
     @Override
-    public void getAllGames(DatabaseListener<ArrayList<Game>> listener) {
+    public void getAllGamesSimple(DatabaseListener<ArrayList<Game>> listener) {
 
     }
 

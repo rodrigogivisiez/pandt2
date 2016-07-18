@@ -381,7 +381,7 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
     @Override
     public void onDisconnectDone(ConnectEvent connectEvent) {
-        //onConnectionChanged(false);
+
     }
 
     @Override

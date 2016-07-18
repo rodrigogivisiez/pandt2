@@ -163,6 +163,14 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
     }
 
     @Override
+    public void onChangedScene(SceneEnum toScene) {
+        super.onChangedScene(toScene);
+        if(toScene != SceneEnum.GAME_SANDBOX){
+            sendUpdateRoomMates(UpdateRoomMatesCode.PLAYER_CANCEL_START_GAME, "");
+        }
+    }
+
+    @Override
     public void onQuit(final OnQuitListener listener) {
         if(!forceQuit){
             _confirm.show(ConfirmIdentifier.Room, isHost() ? _texts.confirmHostLeaveRoom() : _texts.confirmLeaveRoom(), Confirm.Type.YESNO, new ConfirmResultListener() {
@@ -346,6 +354,12 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         }
         else if(code == UpdateRoomMatesCode.ROOM_STATE_RESPONSE){
             receivedRoomUserStateResponse(senderId, RoomUserState.valueOf(msg));
+        }
+        else if(code == UpdateRoomMatesCode.PLAYER_CANCEL_START_GAME){
+            RoomUser roomUser = room.getRoomUserByUserId(senderId);
+            if(roomUser != null){
+                cancelPutCoins(roomUser.getProfile());
+            }
         }
     }
 

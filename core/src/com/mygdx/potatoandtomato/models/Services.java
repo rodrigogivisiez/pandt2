@@ -37,13 +37,14 @@ public class Services {
     IRestfulApi _restfulApi;
     ConnectionWatcher _connectionWatcher;
     Coins _coins;
+    DataCaches _dataCaches;
 
     public Services(MyAssets assets, Texts texts, Preferences preferences,
                     Profile profile, IDatabase database, Shaders shaders, GamingKit gamingKit, IDownloader downloader,
                     Chat chat, Socials socials, GCMSender gcmSender, Confirm confirm, Notification notification,
                     Recorder recorder, SoundsPlayer soundsPlayer, VersionControl versionControl,
                     Broadcaster broadcaster, ITutorials tutorials, IRestfulApi restfulApi, ConnectionWatcher connectionWatcher,
-                    Coins coins) {
+                    Coins coins, DataCaches dataCaches) {
         _texts = texts;
         _assets = assets;
         _preferences = preferences;
@@ -65,6 +66,11 @@ public class Services {
         _restfulApi = restfulApi;
         _connectionWatcher = connectionWatcher;
         _coins = coins;
+        _dataCaches = dataCaches;
+    }
+
+    public DataCaches getDataCaches() {
+        return _dataCaches;
     }
 
     public Coins getCoins() {

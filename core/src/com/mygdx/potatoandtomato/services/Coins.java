@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
+import com.mygdx.potatoandtomato.absintflis.cachings.CacheListener;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
@@ -87,12 +88,13 @@ public class Coins implements ICoins {
     private ArrayList<String> monitoringUserIds;
     private ArrayList<String> deductedSuccessTransactions;
     private ConcurrentHashMap<String, ClientInternalCoinListener> tagToClientInternalCoinListenersMap;
+    private DataCaches dataCaches;
 
 
     public Coins(Broadcaster broadcaster, Assets assets,
                  SoundsPlayer soundsPlayer, Texts texts, IPTGame iptGame, SpriteBatch batch,
                  Profile profile, IDatabase database, GamingKit gamingKit, IRestfulApi restfulApi,
-                 Confirm confirm, ConnectionWatcher connectionWatcher) {
+                 Confirm confirm, ConnectionWatcher connectionWatcher, DataCaches dataCaches) {
         _this = this;
         this.broadcaster = broadcaster;
         this.confirm = confirm;
@@ -111,6 +113,7 @@ public class Coins implements ICoins {
         this.tagToClientInternalCoinListenersMap = new ConcurrentHashMap();
         this.deductedSuccessTransactions = new ArrayList();
         this.myCoinsCount = new SafeDouble(0.0);
+        this.dataCaches = dataCaches;
 
         coinMachineControl = new CoinMachineControl(broadcaster, assets, soundsPlayer, texts, iptGame, batch);
         topBarCoinControls = new ArrayList();
@@ -606,18 +609,20 @@ public class Coins implements ICoins {
     ////////////////////////////////////////////////////////
     private RetrievableCoinsData currentRetrievableCoinsData;
     private SafeThread retrievableCoinsDataSafeThread;
+    private CacheListener<RetrievableCoinsData> retrieveCoinsCacheListener;
 
     public void refreshRetrievableCoins(){
         if(retrievableCoinsDataSafeThread != null) retrievableCoinsDataSafeThread.kill();
-        restfulApi.getRetrievableCoinsData(profile, new RestfulApiListener<RetrievableCoinsData>() {
+        if(retrieveCoinsCacheListener != null) retrieveCoinsCacheListener.dispose();
+
+        retrieveCoinsCacheListener = new CacheListener<RetrievableCoinsData>() {
             @Override
-            public void onCallback(RetrievableCoinsData obj, Status st) {
-                if(st == Status.SUCCESS && obj != null){
-                    currentRetrievableCoinsData = obj;
-                    retrievableCoinsChanged();
-                }
+            public void onResult(RetrievableCoinsData result) {
+                currentRetrievableCoinsData = result;
+                retrievableCoinsChanged();
             }
-        });
+        };
+        dataCaches.getRetrieveCoinDataCache().getData(retrieveCoinsCacheListener);
     }
 
     public void retrievableCoinsChanged(){
@@ -675,6 +680,7 @@ public class Coins implements ICoins {
                         if(retrievableCoinsDataSafeThread != null) retrievableCoinsDataSafeThread.kill();
                         currentRetrievableCoinsData = obj;
                         retrievableCoinsChanged();
+                        dataCaches.getRetrieveCoinDataCache().resetCache();
                     }
                     confirm.close(ConfirmIdentifier.Coins);
                 }

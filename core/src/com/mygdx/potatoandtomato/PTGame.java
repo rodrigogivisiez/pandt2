@@ -59,6 +59,7 @@ public class PTGame extends Game implements IPTGame {
 	Tutorials _tutorials;
 	ConnectionWatcher _connectionWatcher;
 	Coins _coins;
+	DataCaches _dataCaches;
 	Profile _profile;
 	IDatabase _database;
 	PTAssetsManager _monitoringPTAssetsManager;
@@ -107,15 +108,18 @@ public class PTGame extends Game implements IPTGame {
 				_tutorials = new Tutorials(_game, _batch, _soundsPlayer, _assets, _broadcaster);
 				_restfulApi = new RestfulApi();
 				_connectionWatcher = new ConnectionWatcher(_gamingKit, _broadcaster, _confirm, _texts, _profile);
+				_dataCaches = new DataCaches(_database, _restfulApi, _profile);
 				_coins = new Coins(_broadcaster, _assets, _soundsPlayer, _texts,
-						_game, _batch, _profile, _database, _gamingKit, _restfulApi, _confirm, _connectionWatcher);
+						_game, _batch, _profile, _database, _gamingKit, _restfulApi, _confirm, _connectionWatcher,
+						_dataCaches);
+
 
 				_services = new Services(_assets, _texts,
 						_preferences, _profile, _database,
 						new Shaders(), _gamingKit, _downloader, _chat,
 						new Socials(_preferences, _broadcaster), new GCMSender(), _confirm, _notification,
 						_recorder, _soundsPlayer, new VersionControl(), _broadcaster,
-						_tutorials, _restfulApi, _connectionWatcher, _coins);
+						_tutorials, _restfulApi, _connectionWatcher, _coins, _dataCaches);
 				_screen = new PTScreen(_game, _services);
 				_connectionWatcher.setPtScreen(_screen);
 				_coins.setPtScreen(_screen);
@@ -149,6 +153,7 @@ public class PTGame extends Game implements IPTGame {
 		if(_services != null && _services.getAssets() != null) _services.getAssets().dispose();
 		if(_services != null && _services.getAssets() != null) _services.getGamingKit().dispose();
 		if(_services != null && _services.getDatabase() != null) _services.getDatabase().offline();
+		if(_services != null && _services.getDataCaches() != null) _services.getDataCaches().dispose();
 		if(_splashScreen != null) _splashScreen.dispose();
 	}
 

@@ -44,4 +44,13 @@ public class RetrievableCoinsData {
     public void setNextCoinInSecs(int nextCoinInSecs) {
         this.nextCoinInSecs = nextCoinInSecs;
     }
+
+    public void oneSecondTicked(){
+        nextCoinInSecs--;
+        if(nextCoinInSecs <= 0 && canRetrieveCoinsCount < maxRetrieveableCoins){
+            nextCoinInSecs = secsPerCoin;
+            canRetrieveCoinsCount++;
+        }
+    }
+
 }

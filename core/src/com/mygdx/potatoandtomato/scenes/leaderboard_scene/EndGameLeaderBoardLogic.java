@@ -354,7 +354,14 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
     }
 
     public void addScoresRecur(final int index, final Runnable onFinish){
+        if(!_scoreDetails.get(index).isAddOrMultiply() && _scoreDetails.get(index).getValue() == 1){
+            if(index + 1 <= _scoreDetails.size() - 1){
+                addScoresRecur(index + 1, onFinish);
+            }
+            return;
+        }
         _services.getSoundsPlayer().playSoundEffect(Sounds.Name.SCORE_APPEAR);
+
         _scene.addScore(_scoreDetails.get(index), new Runnable() {
             @Override
             public void run() {

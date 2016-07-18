@@ -221,7 +221,7 @@ public class ScoresHandler implements Disposable{
         if(canAddStreak){
             winnerStreak.addStreak(1);
         }
-        loserStreak.addStreak(1);
+        //loserStreak.addStreak(1);
         int winnerStreakCount = 0, loserStreakCount = 0;
 
         if(winnerStreak.hasValidStreak()){
@@ -252,24 +252,26 @@ public class ScoresHandler implements Disposable{
             }
         }
         else{
+            scoreDetails.add(0, new ScoreDetails(1f, "", false, canAddStreak));
             return 1f;
         }
 
+        scoreDetails.add(0, new ScoreDetails(1f, "", false, canAddStreak));
         return 1f;
     }
 
     public boolean checkWinSituation(ArrayList<ScoreDetails> scoreDetails, BoardModel boardModel, GraveModel graveModel){
         double baseScore;
-        boolean canAddStreak = false;
+        boolean canAddStreak;
 //        if(boardModel.isCrackHappened()){       //hard fought win
 //            baseScore = HARD_WIN;
 //            scoreDetails.add(new ScoreDetails(baseScore, texts.hardFoughtWin(), true, false));
 //            canAddStreak = true;
 //        }
 //        else
-        if(graveModel.getLeftTimeInt(winnerColor) >= EZ_WIN_TRIGGERING_TIME_LEFT    //easy win
-                || boardModel.getAccTurnCount() <= EZ_WIN_TRIGGERING_TURN_COUNT){
+        if(boardModel.getAccTurnCount() <= EZ_WIN_TRIGGERING_TURN_COUNT){       //ez win turn count
             baseScore = EASY_WIN;
+            canAddStreak = false;
             scoreDetails.add(new ScoreDetails(baseScore, texts.easyWin(), true, false));
         }
         else{

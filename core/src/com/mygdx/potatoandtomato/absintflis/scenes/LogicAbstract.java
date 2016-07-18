@@ -3,9 +3,12 @@ package com.mygdx.potatoandtomato.absintflis.scenes;
 import com.badlogic.gdx.utils.Disposable;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
+import com.mygdx.potatoandtomato.absintflis.cachings.CacheListener;
+import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.services.Confirm;
 import com.mygdx.potatoandtomato.services.Texts;
 import com.mygdx.potatoandtomato.utils.Logs;
+import com.potatoandtomato.common.utils.RunnableArgs;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Services;
@@ -33,6 +36,7 @@ public abstract class LogicAbstract implements Disposable {
     private Broadcaster _broadcaster;
     private boolean _settedListeners;
     private boolean _disposing;
+    private ArrayList<CacheListener> cacheListeners;
 
     public LogicAbstract(PTScreen screen, Services services, Object... objs) {
         setClassTag();
@@ -43,6 +47,7 @@ public abstract class LogicAbstract implements Disposable {
         _broadcaster = _services.getBroadcaster();
         setSaveToStack(true);
         _broadcastSubscribes = new ArrayList();
+        cacheListeners = new ArrayList();
     }
 
     public void subscribeBroadcast(int event, BroadcastListener listener){
@@ -60,6 +65,17 @@ public abstract class LogicAbstract implements Disposable {
 
     public void publishBroadcast(int event, Object object){
         _broadcaster.broadcast(event, object);
+    }
+
+    public CacheListener getNewCacheListener(final RunnableArgs onFinish){
+        CacheListener cacheListener = new CacheListener(){
+            @Override
+            public void onResult(Object result) {
+                onFinish.run(result);
+            }
+        };
+        cacheListeners.add(cacheListener);
+        return cacheListener;
     }
 
     public void setClassTag(){
@@ -110,6 +126,11 @@ public abstract class LogicAbstract implements Disposable {
     //will only be called when scene init, must be forward direction
     public void onInit(){
         _alive = true;
+    }
+
+    //on changing scene
+    public void onChangedScene(SceneEnum toScene){
+
     }
 
     protected String getClassTag(){
@@ -172,6 +193,10 @@ public abstract class LogicAbstract implements Disposable {
             _broadcaster.unsubscribe(id);
         }
         _broadcastSubscribes.clear();
+        for(CacheListener cacheListener : cacheListeners){
+            cacheListener.dispose();
+        }
+        cacheListeners.clear();
         if(getScene() != null) getScene().dispose();
     }
 

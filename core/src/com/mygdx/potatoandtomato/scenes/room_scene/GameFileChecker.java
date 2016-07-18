@@ -9,7 +9,6 @@ import com.mygdx.potatoandtomato.models.FileData;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.services.Preferences;
 import com.mygdx.potatoandtomato.services.VersionControl;
-import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.absints.DownloaderListener;
 import com.potatoandtomato.common.absints.IDownloader;
 import com.potatoandtomato.common.enums.Status;
@@ -32,7 +31,7 @@ public class GameFileChecker implements Disposable {
 
     private Preferences preferences;
     private IDownloader downloader;
-    private Game game;
+    private Game gameModel;
     private IDatabase database;
     private VersionControl versionControl;
 
@@ -45,17 +44,16 @@ public class GameFileChecker implements Disposable {
                            IDownloader downloader, IDatabase database, VersionControl versionControl,
                            GameFileCheckerListener listener) {
         this.listener = listener;
-        this.game = game;
         this.database = database;
         this.preferences = preferences;
         this.downloader = downloader;
         this.versionControl = versionControl;
         this.totalSize = game.getGameSize();
         this.downloadGameThreads = new ArrayList();
-        getLatestGameModel();
+        getLatestGameModel(game);
     }
 
-    public void getLatestGameModel(){
+    public void getLatestGameModel(final Game game){
         database.getGameByAbbr(game.getAbbr(), new DatabaseListener<Game>(Game.class) {
             @Override
             public void onCallback(Game obj, Status st) {
@@ -66,6 +64,7 @@ public class GameFileChecker implements Disposable {
                         if (!obj.getVersion().equals(game.getVersion())) {
                             listener.onCallback(GameFileResult.GAME_OUTDATED, Status.FAILED);
                         } else {
+                            gameModel = obj;
                             checkGameFiles();
                         }
                     }
@@ -82,7 +81,7 @@ public class GameFileChecker implements Disposable {
             public void run() {
                 HashMap<String, FileData> toDownloadFiles = new HashMap();
                 HashMap<String, FileData> toDeleteFiles = new HashMap();
-                HashMap<String, FileData> cloudFiles = game.getGameFilesMap();
+                HashMap<String, FileData> cloudFiles = gameModel.getGameFilesMap();
                 HashMap<String, FileData> currentFiles = new HashMap();
 
                 currentFiles = restoreLocalGameFilesData(currentFiles);
@@ -112,7 +111,7 @@ public class GameFileChecker implements Disposable {
                 }
 
                 for(String toDeleteFilePath : toDeleteFiles.keySet()){
-                    FileHandle toDeleteFile = game.getFileRelativeToGameBasePath(toDeleteFilePath);
+                    FileHandle toDeleteFile = gameModel.getFileRelativeToGameBasePath(toDeleteFilePath);
                     if(toDeleteFile.exists()) toDeleteFile.delete();
                 }
 
@@ -130,7 +129,7 @@ public class GameFileChecker implements Disposable {
                     if(downloadKilled) return;
 
                     final boolean[] complete = {false};
-                    SafeThread safeThread = downloadFile(downloadFileData.getUrl(), game.getFileRelativeToGameBasePath(downloadFileName).file(), new Runnable() {
+                    SafeThread safeThread = downloadFile(downloadFileData.getUrl(), gameModel.getFileRelativeToGameBasePath(downloadFileName).file(), new Runnable() {
                         @Override
                         public void run() {
                             complete[0] = true;
@@ -193,7 +192,7 @@ public class GameFileChecker implements Disposable {
     }
 
     public HashMap<String, FileData> restoreLocalGameFilesData(HashMap<String, FileData> fileDataHashMap){
-        String fileData =  preferences.get(game.getAbbr());
+        String fileData =  preferences.get(gameModel.getAbbr());
         if(Strings.isEmpty(fileData)){
             fileData = "0";
         }
@@ -220,7 +219,7 @@ public class GameFileChecker implements Disposable {
     }
 
     public void saveGameFilesData() {
-        preferences.put(game.getAbbr(), game.getGameFiles());
+        preferences.put(gameModel.getAbbr(), gameModel.getGameFiles());
     }
 
     public void killDownloads(){

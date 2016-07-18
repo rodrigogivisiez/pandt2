@@ -38,7 +38,7 @@ public interface IDatabase {
 
      void updateProfile(Profile profile, DatabaseListener listener);
 
-     void getAllGames(DatabaseListener<ArrayList<Game>> listener);
+     void getAllGamesSimple(DatabaseListener<ArrayList<Game>> listener);
 
      ///////////////all about iab//////////////////////////
      void getAllProducts(DatabaseListener<ArrayList<CoinProduct>> listener);
@@ -93,6 +93,8 @@ public interface IDatabase {
      void getPlayedHistories(Profile profile, DatabaseListener<ArrayList<GameHistory>> listener);
 
      void getGameByAbbr(String abbr, DatabaseListener<Game> listener);
+
+     void getGameSimpleByAbbr(String abbr, DatabaseListener<Game> listener);
 
      Object getGameBelongDatabase(String abbr);
 

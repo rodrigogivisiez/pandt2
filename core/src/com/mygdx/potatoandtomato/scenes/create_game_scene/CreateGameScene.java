@@ -112,14 +112,14 @@ public class CreateGameScene extends SceneAbstract {
                 innerTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WOOD_BG_FAT)));
 
                 innerTable.add(gameIcon).size(90).right().expandX().fillX().padLeft(150).padTop(5).padBottom(10).padRight(15);
-                innerTable.getColor().a = 0;
+                //innerTable.getColor().a = 0;
                 innerTable.setSize(210, 110);
-                innerTable.setPosition(-200, 0);
+                //innerTable.setPosition(-200, 0);
                 gameTable.addActor(innerTable);
                 _gameList.add(gameTable).width(innerTable.getWidth()).height(innerTable.getHeight()).padLeft(-100).padBottom(7);
                 _gameList.row();
 
-                innerTable.addAction(sequence(fadeIn(0f), moveBy(200, 0, 1f, Interpolation.bounceOut)));
+               // innerTable.addAction(sequence(fadeIn(0f), moveBy(200, 0, 1f, Interpolation.bounceOut)));
 
                 runnableArgs.run(gameIcon);
             }

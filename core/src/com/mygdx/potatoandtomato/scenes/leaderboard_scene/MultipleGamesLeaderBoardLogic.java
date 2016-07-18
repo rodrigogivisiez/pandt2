@@ -11,7 +11,6 @@ import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.enums.Status;
-import com.potatoandtomato.common.utils.ArrayUtils;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.common.models.LeaderboardRecord;
 
@@ -50,12 +49,12 @@ public class MultipleGamesLeaderBoardLogic extends LogicAbstract {
     }
 
     private void init(){
-        _services.getDatabase().getAllGames(new DatabaseListener<ArrayList<Game>>(Game.class) {
+        _services.getDatabase().getAllGamesSimple(new DatabaseListener<ArrayList<Game>>(Game.class) {
             @Override
             public void onCallback(ArrayList<Game> games, Status st) {
-                if(st == Status.SUCCESS){
-                    for(Game game : games){
-                        if(game.hasLeaderboard()){
+                if (st == Status.SUCCESS) {
+                    for (Game game : games) {
+                        if (game.hasLeaderboard()) {
                             _games.add(game);
                         }
                     }

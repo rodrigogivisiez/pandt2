@@ -32,28 +32,26 @@ public class CreateGameLogic extends LogicAbstract {
     }
 
     public void getAllGames(){
-        _services.getDatabase().getAllGames(new DatabaseListener<ArrayList<Game>>(Game.class) {
+        _services.getDataCaches().getGamesListCache().getData(getNewCacheListener(new RunnableArgs<ArrayList<Game>>() {
             @Override
-            public void onCallback(ArrayList<Game> obj, Status st) {
-                if(st == Status.SUCCESS) {
-                    _games = obj;
-                    for(final Game game : _games){
-                        _scene.populateGame(game, new RunnableArgs<Actor>() {
-                            @Override
-                            public void run() {
-                                this.getFirstArg().addListener(new ClickListener(){
-                                    @Override
-                                    public void clicked(InputEvent event, float x, float y) {
-                                        super.clicked(event, x, y);
-                                        onGameClicked(game);
-                                    }
-                                });
-                            }
-                        });
-                    }
+            public void run() {
+                _games = this.getFirstArg();
+                for (final Game game : _games) {
+                    _scene.populateGame(game, new RunnableArgs<Actor>() {
+                        @Override
+                        public void run() {
+                            this.getFirstArg().addListener(new ClickListener() {
+                                @Override
+                                public void clicked(InputEvent event, float x, float y) {
+                                    super.clicked(event, x, y);
+                                    onGameClicked(game);
+                                }
+                            });
+                        }
+                    });
                 }
             }
-        });
+        }));
     }
 
     public void onGameClicked(Game game){

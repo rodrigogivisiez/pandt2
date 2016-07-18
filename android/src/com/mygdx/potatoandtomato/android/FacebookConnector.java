@@ -33,6 +33,15 @@ public class FacebookConnector {
         this._activity = activity;
         this._broadcaster = broadcaster;
         FacebookSdk.sdkInitialize(_activity);
+//        FacebookSdk.addLoggingBehavior(LoggingBehavior.DEVELOPER_ERRORS);
+//        FacebookSdk.addLoggingBehavior(LoggingBehavior.REQUESTS);
+//        FacebookSdk.addLoggingBehavior(LoggingBehavior.INCLUDE_ACCESS_TOKENS);
+//        FacebookSdk.addLoggingBehavior(LoggingBehavior.INCLUDE_RAW_RESPONSES);
+//        FacebookSdk.addLoggingBehavior(LoggingBehavior.CACHE);
+//        FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS);
+//        FacebookSdk.addLoggingBehavior(LoggingBehavior.GRAPH_API_DEBUG_WARNING);
+//        FacebookSdk.addLoggingBehavior(LoggingBehavior.GRAPH_API_DEBUG_INFO);
+
         _callbackManager = CallbackManager.Factory.create();
 
         _broadcaster.subscribe(BroadcastEvent.LOGIN_FACEBOOK_REQUEST, new BroadcastListener() {

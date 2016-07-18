@@ -377,4 +377,9 @@ public class Details {
     public boolean isIconModified() {
         return iconModified;
     }
+
+    public void removeNonNecessaryFieldsForGameSimple(){
+        _detailsMap.remove(GAME_FILES);
+    }
+
 }
