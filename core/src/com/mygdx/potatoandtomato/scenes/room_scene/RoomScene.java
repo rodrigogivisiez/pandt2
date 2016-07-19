@@ -713,10 +713,6 @@ public class RoomScene extends SceneAbstract {
         return leaderboardButton;
     }
 
-    public Table getTeamsRoot() {
-        return teamsRoot;
-    }
-
     @Override
     public void dispose() {
         super.dispose();

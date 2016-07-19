@@ -33,7 +33,7 @@ public class Dx {
         }
 
         Runtime rt = Runtime.getRuntime();
-        String command = _dxPath + " --dex --keep-classes --output=\"game.jar\" \""+_jarPath+"\"";
+        String command = _dxPath + " --dex --keep-classes --output=\""+ f.getName() +"\" \""+_jarPath+"\"";
 
         //String command = "dx.bat --dex --keep-classes --output=\"game.jar\" \""+_jarPath+"\"";
 

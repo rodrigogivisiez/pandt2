@@ -142,6 +142,8 @@ public class LeaderBoardScene extends SceneAbstract {
                 _root.row();
                 _root.add(leaderBoardRoot).expand().fill();
                 _root.row();
+
+                _loadingTable = new Table();
             }
         });
     }
@@ -160,7 +162,8 @@ public class LeaderBoardScene extends SceneAbstract {
                 _titleLabel.setText(game.getName());
                 _titleLabel.addAction(sequence(fadeOut(0f), fadeIn(0.2f)));
 
-                _ranksTable.clear();
+                _ranksTable.clearChildren();
+                _ranksTable.clearActions();
                 _ranksTable.addAction(sequence(fadeOut(0f), fadeIn(0.2f)));
 
                 boolean found = _leaderboardScrolls.containsKey(game.getAbbr());
@@ -173,19 +176,23 @@ public class LeaderBoardScene extends SceneAbstract {
                     scroll.getColor().a = 0f;
 
                     _leaderboardScrolls.put(game.getAbbr(), scroll);
+
                 }
 
                 _ranksTable.add(_leaderboardScrolls.get(game.getAbbr())).expand().fill();
 
-                if(!found){
+                Table gameRanksTable = (Table) _leaderboardScrolls.get(game.getAbbr()).findActor("ranksTable");
+
+                if(gameRanksTable.getChildren().size == 0){
                     Label loadingLabel = new Label(_texts.loading(), new Label.LabelStyle(
                             _assets.getFonts().get(Fonts.FontId.MYRIAD_S_ITALIC), Color.BLACK));
                     loadingLabel.setName("loadingLabel");
-                    _loadingTable = new Table();
+                    _loadingTable.clear();
                     _loadingTable.add(loadingLabel);
                     _loadingTable.setFillParent(true);
                     _ranksTable.addActor(_loadingTable);
                 }
+
             }
         });
     }
@@ -441,6 +448,7 @@ public class LeaderBoardScene extends SceneAbstract {
                 }
                 else{
                     _loadingTable.setVisible(false);
+                    scrollPane.setVisible(true);
                     scrollPane.getColor().a = 1f;
                 }
             }

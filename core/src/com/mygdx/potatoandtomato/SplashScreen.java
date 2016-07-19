@@ -29,7 +29,7 @@ public class SplashScreen implements Screen {
     private Image screenImage, screenGlowImage, potatoImage, tomatoImage;
 
 
-    private Table rootTable;
+    private Table rootTable, screenTable, mascotsTable;
     private Stage stage;
     private boolean disposed;
 
@@ -38,6 +38,7 @@ public class SplashScreen implements Screen {
 
         screenTexture = new Texture(Gdx.files.internal("splash/SCREEN.png"));
         screenImage = new Image(screenTexture);
+        screenImage.setPosition(0, 0);
 
         screenGlowTexture = new Texture(Gdx.files.internal("splash/SCREEN_GLOW.png"));
         screenGlowImage = new Image(screenGlowTexture);
@@ -59,20 +60,30 @@ public class SplashScreen implements Screen {
         tomatoImage = new Image(tomatoTexture);
         tomatoImage.setPosition(47, -15);
 
-        Table screenTable = new Table();
+        screenTable = new Table();
+        screenTable.getColor().a = 0f;
         screenTable.setSize(120, 120);
-        screenTable.add(screenImage);
+        screenTable.setPosition(Positions.getWidth() / 2 - screenTable.getWidth() / 2 + 10,
+                Positions.getHeight() / 2 - screenTable.getHeight() / 2 + 10);
+        screenTable.addActor(screenImage);
         screenTable.addActor(screenGlowImage);
         screenTable.addActor(controllerImage);
         screenTable.addActor(controllerImage2);
-        screenTable.addActor(potatoImage);
-        screenTable.addActor(tomatoImage);
+
+        mascotsTable = new Table();
+        mascotsTable.setSize(120, 120);
+        mascotsTable.getColor().a = 0f;
+        mascotsTable.setPosition(Positions.getWidth() / 2 - mascotsTable.getWidth() / 2 + 10,
+                Positions.getHeight() / 2 - mascotsTable.getHeight() / 2 + 10);
+        mascotsTable.addActor(potatoImage);
+        mascotsTable.addActor(tomatoImage);
 
         stage = new Stage(new StretchViewport(Positions.getWidth(), Positions.getHeight()));
         rootTable = new Table();
-        rootTable.getColor().a = 0f;
+
         rootTable.setFillParent(true);
-        rootTable.add(screenTable);
+        rootTable.addActor(screenTable);
+        rootTable.addActor(mascotsTable);
 
         stage.addActor(rootTable);
     }
@@ -86,7 +97,7 @@ public class SplashScreen implements Screen {
             arcadeSound.setLooping(true);
         }
 
-        rootTable.addAction(sequence(
+        screenTable.addAction(sequence(
                 parallel(alpha(0.3f, 1f), new RunnableAction(){
                     @Override
                     public void run() {
@@ -107,38 +118,42 @@ public class SplashScreen implements Screen {
                 })
         ));
 
+        mascotsTable.addAction(fadeIn(1.5f));
+
         screenGlowImage.addAction(forever(sequence(alpha(0.9f, 1f), alpha(0.4f, 1f))));
         potatoImage.addAction(forever(sequence(rotateBy(1f, 0.2f), rotateBy(-1f, 0.2f))));
         tomatoImage.addAction(forever(sequence(rotateBy(1f, 0.1f), rotateBy(-1f, 0.1f))));
     }
 
     public void close(final Runnable onFinish){
-        rootTable.addAction(sequence(
-                parallel(alpha(0.6f, 0), new RunnableAction(){
-                    @Override
-                    public void run() {
-                        if(Global.ENABLE_SOUND) arcadeSound.setVolume(0.3f);
-                    }
-                }),
-                parallel(alpha(0.3f, 0), new RunnableAction(){
-                    @Override
-                    public void run() {
-                        if(Global.ENABLE_SOUND) arcadeSound.setVolume(0.2f);
-                    }
-                }),
-                parallel(alpha(0f, 0), new RunnableAction(){
-                    @Override
-                    public void run() {
-                        if(Global.ENABLE_SOUND) arcadeSound.setVolume(0.1f);
-                    }
-                }), new RunnableAction(){
-                    @Override
-                    public void run() {
-                        onFinish.run();
-                        dispose();
-                    }
-                }
-        ));
+        onFinish.run();
+        dispose();
+
+//        rootTable.addAction(sequence(
+//                parallel(alpha(0.6f, 0), new RunnableAction(){
+//                    @Override
+//                    public void run() {
+//                        if(Global.ENABLE_SOUND) arcadeSound.setVolume(0.3f);
+//                    }
+//                }),
+//                parallel(alpha(0.3f, 0), new RunnableAction(){
+//                    @Override
+//                    public void run() {
+//                        if(Global.ENABLE_SOUND) arcadeSound.setVolume(0.2f);
+//                    }
+//                }),
+//                parallel(alpha(0f, 0), new RunnableAction(){
+//                    @Override
+//                    public void run() {
+//                        if(Global.ENABLE_SOUND) arcadeSound.setVolume(0.1f);
+//                    }
+//                }), new RunnableAction(){
+//                    @Override
+//                    public void run() {
+//
+//                    }
+//                }
+//        ));
 
     }
 

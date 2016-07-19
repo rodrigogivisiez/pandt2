@@ -17,6 +17,8 @@ public class Paths {
     private File jarFile;
     private File dxBat;
     private File iconFile;
+    private File proguardJarFile;
+    private File proguardConfigFile;
 
     public Paths(Logs logs) {
         this.logs = logs;
@@ -62,6 +64,35 @@ public class Paths {
                 e.printStackTrace();
             }
         }
+
+
+
+        String proguardPath = "proguard.jar";
+        File proguardPathFile = new File(workingDir + "/proguard_path.txt");
+        if(proguardPathFile.exists()){
+            proguardPath = FileIO.read(proguardPathFile);
+        }
+
+
+        this.proguardJarFile = new File(proguardPath);
+        if(!fileOrDirExist("proguard.jar", proguardJarFile)){
+            logs.write("Cannot find proguard.jar file, please input the file path manually:");
+            try {
+                BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                proguardPath = br.readLine();
+                this.proguardJarFile = new File(proguardPath);
+                if(!fileOrDirExist("proguard.jar", proguardJarFile)) return false;
+                else{
+                    FileIO.write(proguardPathFile, proguardPath);
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        this.proguardConfigFile = new File(workingDir.getAbsolutePath() + "/myconfig.pro");
+        if(!fileOrDirExist("Proguard config file", proguardConfigFile)) return false;
 
 
         logs.write("Path analyzing completed successfully.");
@@ -110,14 +141,22 @@ public class Paths {
     }
 
     public File getAfterDxGameJar(){
-        return new File(workingDir.getAbsolutePath() + "/game.jar");
+        return new File(workingDir.getAbsolutePath() + "/game_before.jar");
     }
 
-    public File getAssetsZip(){
-        return new File(workingDir.getAbsolutePath() + "/assets.zip");
+    public File getFinishProcessGameJar() {
+        return new File(workingDir.getAbsolutePath() + "/game.jar");
     }
 
     public File getIconFile() {
         return iconFile;
+    }
+
+    public File getProguardJarFile() {
+        return proguardJarFile;
+    }
+
+    public File getProguardConfigFile() {
+        return proguardConfigFile;
     }
 }

@@ -32,7 +32,7 @@ include 'coins_log.php';
 				$currentUserCoins = 0;
 			}
 			
-			$firebase->set("coins/".$userId."/count", $currentUserCoins);
+			$firebase->set("coins/".$userId."/count", (string) $currentUserCoins);
 			
 			addCoinLog($userId, $originalCoins, $currentUserCoins, $reason, $extra, false, $firebase);
 			

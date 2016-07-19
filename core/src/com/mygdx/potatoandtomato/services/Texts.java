@@ -13,6 +13,9 @@ import java.util.ArrayList;
  */
 public class Texts {
 
+    public String ok(){ return "OK";}
+    public String quit(){ return "Quit";}
+
     public String insert() { return "Insert";}
     public String coin() { return "Coin";}
 

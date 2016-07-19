@@ -300,15 +300,13 @@ public class CoinMachineControl {
     }
 
     public void show(){
-        if(visible) return;
-
-        switchTab(CoinMachineTabType.PlayersInsertCoinStatus);
-
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                overlayImage.setVisible(true);
+                if(visible) return;
                 visible = true;
+                switchTab(CoinMachineTabType.PlayersInsertCoinStatus);
+                overlayImage.setVisible(true);
                 root.clearActions();
                 root.setX(Positions.getWidth() + 10);
                 root.setVisible(true);
@@ -319,11 +317,10 @@ public class CoinMachineControl {
     }
 
     public void hide(final Runnable onDone){
-        if(!visible) return;
-
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
+                if(!visible) return;
                 root.clearActions();
                 root.addAction(sequence(moveTo(Positions.getWidth() + 10, root.getY(), 0.3f), new RunnableAction(){
                     @Override

@@ -1,5 +1,6 @@
 package com.potatoandtomato.common.utils;
 
+import javax.xml.bind.annotation.XmlElementDecl;
 import java.io.*;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -13,6 +14,8 @@ import java.util.zip.GZIPOutputStream;
  * Created by SiongLeng on 27/1/2016.
  */
 public class Strings {
+
+    public static String Salt = "default";
 
     public static String joinArr(ArrayList<String> arr, String sSep) {
         StringBuilder sbStr = new StringBuilder();
@@ -161,6 +164,7 @@ public class Strings {
     }
 
     public static String getHash(String input){
+        input = input + Strings.Salt;
         MessageDigest m = null;
         try {
             m = MessageDigest.getInstance("MD5");

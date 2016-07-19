@@ -12,20 +12,20 @@ import org.junit.Test;
  */
 public class TestConfirm extends TestAbstract {
 
-    @Test
-    public void testConfirm(){
-
-        Services services = T_Services.mockServices();
-        final boolean[] waiting = {true};
-
-        Confirm _confirm = services.getConfirm();
-        _confirm.show("test", Confirm.Type.YESNO, new ConfirmResultListener() {
-            @Override
-            public void onResult(Result result) {
-
-            }
-        });
-
-    }
+//    @Test
+//    public void testConfirm(){
+//
+//        Services services = T_Services.mockServices();
+//        final boolean[] waiting = {true};
+//
+//        Confirm _confirm = services.getConfirm();
+//        _confirm.show("test", Confirm.Type.YESNO, new ConfirmResultListener() {
+//            @Override
+//            public void onResult(Result result) {
+//
+//            }
+//        });
+//
+//    }
 
 }

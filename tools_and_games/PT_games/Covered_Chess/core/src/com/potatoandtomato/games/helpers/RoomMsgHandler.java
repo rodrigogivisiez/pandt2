@@ -4,16 +4,17 @@ import com.badlogic.gdx.Gdx;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.absints.InGameUpdateListener;
 import com.potatoandtomato.games.screens.BoardLogic;
-import org.json.JSONException;
-import org.json.JSONObject;
+
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by SiongLeng on 19/2/2016.
  */
 public class RoomMsgHandler {
 
+    private UpdateRoomHelper updateRoomHelper;
     private BoardLogic _boardLogic;
     private GameCoordinator _coordinator;
     private ArrayList<Runnable> _messagesQueue;
@@ -22,6 +23,7 @@ public class RoomMsgHandler {
     public RoomMsgHandler(BoardLogic boardLogic, GameCoordinator coordinator) {
         this._boardLogic = boardLogic;
         this._coordinator = coordinator;
+        updateRoomHelper = new UpdateRoomHelper();
         _messagesQueue = new ArrayList<Runnable>();
 
         _coordinator.addInGameUpdateListener(new InGameUpdateListener() {
@@ -34,116 +36,111 @@ public class RoomMsgHandler {
     }
 
     public void receivedInGameUpdate(final String msg, final String senderId){
-        try {
+        if(senderId.equals(_coordinator.getMyUserId())) return;
 
-            if(senderId.equals(_coordinator.getMyUserId())) return;
-
-            JSONObject jsonObject = new JSONObject(msg);
-            int code = jsonObject.getInt("code");
-            final String receivedMsg = jsonObject.getString("msg");
-            String[] tmp;
-            String enemyLeftTime = null;
-            String realMsg = null;
-            if(!receivedMsg.equals("")){
-                tmp = receivedMsg.split("@!!");
-                if(tmp.length > 1){
-                    enemyLeftTime = tmp[0];
-                    realMsg = tmp[1];
-                }
-                else{
-                    realMsg = tmp[0];
-                }
+        HashMap<String, String> map = updateRoomHelper.jsonToMap(msg);
+        int code = Integer.valueOf(map.get("code"));
+        final String receivedMsg = map.get("msg");
+        String[] tmp;
+        String enemyLeftTime = null;
+        String realMsg = null;
+        if(!receivedMsg.equals("")){
+            tmp = receivedMsg.split("@!!");
+            if(tmp.length > 1){
+                enemyLeftTime = tmp[0];
+                realMsg = tmp[1];
             }
+            else{
+                realMsg = tmp[0];
+            }
+        }
 
-            if(!_gameScreenReady){
-                _messagesQueue.add(new Runnable() {
+        if(!_gameScreenReady){
+            _messagesQueue.add(new Runnable() {
+                @Override
+                public void run() {
+                    receivedInGameUpdate(msg, senderId);
+                }
+            });
+            return;
+        }
+
+        if(enemyLeftTime != null) _boardLogic.updateEnemyLeftTime(enemyLeftTime);
+
+        final String[] arr;
+        switch (code){
+            case UpdateCode.TERRAIN_SELECTED:
+                arr = realMsg.split(",");
+                Gdx.app.postRunnable(new Runnable() {
                     @Override
                     public void run() {
-                        receivedInGameUpdate(msg, senderId);
+                        _boardLogic.terrainSelected(Integer.valueOf(arr[0]), Integer.valueOf(arr[1]));
                     }
                 });
-                return;
-            }
-
-            if(enemyLeftTime != null) _boardLogic.updateEnemyLeftTime(enemyLeftTime);
-
-            final String[] arr;
-            switch (code){
-                case UpdateCode.TERRAIN_SELECTED:
-                    arr = realMsg.split(",");
-                    Gdx.app.postRunnable(new Runnable() {
-                        @Override
-                        public void run() {
-                            _boardLogic.terrainSelected(Integer.valueOf(arr[0]), Integer.valueOf(arr[1]));
-                        }
-                    });
-                    break;
-                case UpdateCode.CHESS_OPEN_FULL:
-                    String[] tmp2 = realMsg.split("\\|");
-                    arr = tmp2[0].split(",");
-                    final String randomString = tmp2[1];
-                    Gdx.app.postRunnable(new Runnable() {
-                        @Override
-                        public void run() {
-                            _boardLogic.openChess(Integer.valueOf(arr[0]), Integer.valueOf(arr[1]), randomString);
-                        }
-                    });
-                    break;
-                case UpdateCode.CHESS_MOVE:
-                    arr = realMsg.split("\\|");
-                    final String[] from = arr[0].split(",");
-                    final String[] to = arr[1].split(",");
-                    final boolean isFromWon = arr[2].equals("1");
-                    final String random = arr[3];
-                    Gdx.app.postRunnable(new Runnable() {
-                        @Override
-                        public void run() {
-                            _boardLogic.chessMoved(Integer.valueOf(from[0]), Integer.valueOf(from[1]),
-                                    Integer.valueOf(to[0]), Integer.valueOf(to[1]), isFromWon, true, random);
-                        }
-                    });
-                    break;
-                case UpdateCode.SKIP_TURN:
-                    Gdx.app.postRunnable(new Runnable() {
-                        @Override
-                        public void run() {
-                            _boardLogic.skipTurn();
-                        }
-                    });
-                    break;
-                case UpdateCode.SURRENDER:
-                    Gdx.app.postRunnable(new Runnable() {
-                        @Override
-                        public void run() {
-                            _boardLogic.endGame(true);
-                        }
-                    });
-                    break;
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+                break;
+            case UpdateCode.CHESS_OPEN_FULL:
+                String[] tmp2 = realMsg.split("\\|");
+                arr = tmp2[0].split(",");
+                final String randomString = tmp2[1];
+                Gdx.app.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        _boardLogic.openChess(Integer.valueOf(arr[0]), Integer.valueOf(arr[1]), randomString);
+                    }
+                });
+                break;
+            case UpdateCode.CHESS_MOVE:
+                arr = realMsg.split("\\|");
+                final String[] from = arr[0].split(",");
+                final String[] to = arr[1].split(",");
+                final boolean isFromWon = arr[2].equals("1");
+                final String random = arr[3];
+                Gdx.app.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        _boardLogic.chessMoved(Integer.valueOf(from[0]), Integer.valueOf(from[1]),
+                                Integer.valueOf(to[0]), Integer.valueOf(to[1]), isFromWon, true, random);
+                    }
+                });
+                break;
+            case UpdateCode.SKIP_TURN:
+                Gdx.app.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        _boardLogic.skipTurn();
+                    }
+                });
+                break;
+            case UpdateCode.SURRENDER:
+                Gdx.app.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        _boardLogic.endGame(true);
+                    }
+                });
+                break;
         }
     }
 
     public void skipTurn(int myLeftTime){
-        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.SKIP_TURN, myLeftTime + "@!!0"));
+        _coordinator.sendRoomUpdate(updateRoomHelper.convertToJson(UpdateCode.SKIP_TURN, myLeftTime + "@!!0"));
     }
 
     public void sendTerrainSelected(int col, int row, int myLeftTime){
-        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.TERRAIN_SELECTED, myLeftTime + "@!!" + col + "," + row));
+        _coordinator.sendRoomUpdate(updateRoomHelper.convertToJson(UpdateCode.TERRAIN_SELECTED, myLeftTime + "@!!" + col + "," + row));
     }
 
     public void sendChessOpenFull(int col, int row, String random, int myLeftTime){
-        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.CHESS_OPEN_FULL, myLeftTime + "@!!" + col + "," + row + "|" + random));
+        _coordinator.sendRoomUpdate(updateRoomHelper.convertToJson(UpdateCode.CHESS_OPEN_FULL, myLeftTime + "@!!" + col + "," + row + "|" + random));
     }
 
     public void sendMoveChess(int fromCol, int fromRow, int toCol, int toRow, boolean isFromWon, String random, int myLeftTime){
-        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.CHESS_MOVE, myLeftTime + "@!!" +
+        _coordinator.sendRoomUpdate(updateRoomHelper.convertToJson(UpdateCode.CHESS_MOVE, myLeftTime + "@!!" +
                 fromCol +"," + fromRow + "|" + toCol + "," + toRow + "|" + (isFromWon ? "1" : "0") + "|" + random));
     }
 
     public void sendSurrender(){
-        _coordinator.sendRoomUpdate(UpdateRoomHelper.convertToJson(UpdateCode.SURRENDER, ""));
+        _coordinator.sendRoomUpdate(updateRoomHelper.convertToJson(UpdateCode.SURRENDER, ""));
     }
 
 

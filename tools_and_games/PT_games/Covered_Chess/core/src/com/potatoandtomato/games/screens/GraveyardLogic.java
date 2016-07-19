@@ -1,18 +1,12 @@
 package com.potatoandtomato.games.screens;
 
-import com.badlogic.gdx.Application;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.potatoandtomato.common.GameCoordinator;
-import com.potatoandtomato.common.models.ScoreDetails;
-import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
-import com.potatoandtomato.games.absint.ScoresListener;
 import com.potatoandtomato.games.assets.MyAssets;
-import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
 import com.potatoandtomato.games.models.BoardModel;
@@ -20,9 +14,6 @@ import com.potatoandtomato.games.models.GraveModel;
 import com.potatoandtomato.games.models.Services;
 import com.potatoandtomato.games.services.SoundsWrapper;
 import com.potatoandtomato.games.services.Texts;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by SiongLeng on 19/2/2016.
@@ -110,19 +101,19 @@ public class GraveyardLogic implements Disposable {
 
     public void setListener(){
 
-        _graveyardActor.getGraveIcon().addListener(new ClickListener() {
+        _graveyardActor.getGraveButton().addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                _graveyardActor.expand(true);
+                _graveyardActor.toggle(true);
             }
         });
 
-        _graveyardActor.getTutorialIcon().addListener(new ClickListener() {
+        _graveyardActor.getTutorialButton().addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                _graveyardActor.expand(false);
+                _graveyardActor.toggle(false);
             }
         });
 

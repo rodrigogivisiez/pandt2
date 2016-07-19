@@ -23,8 +23,9 @@ public class Main {
         Dx dxRunner = new Dx(paths, logs);
         if(!dxRunner.run()) return;
 
-       // Zippings zippings = new Zippings(paths, logs);
-        //if(!zippings.run()) return;
+        Proguard proguard = new Proguard(paths, logs);
+        if(!proguard.run()) return;
+
 
         AssetsHelper assetsHelper = new AssetsHelper(paths.getAssetsDir(), paths.getJarFile());
         assetsHelper.run();

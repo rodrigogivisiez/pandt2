@@ -54,7 +54,7 @@ public class T_Services {
         Textures textures = new Textures(manager, "ui_pack.atlas");
         Fonts fonts = new Fonts(manager);
 
-        Assets assets  = new Assets(manager, fonts, animations, sounds, patches, textures);
+        MyAssets assets  = new MyAssets(manager, fonts, animations, sounds, patches, textures);
 
         assets.loadSync(null);
         MockGamingKit gamingKit = new MockGamingKit();
@@ -68,7 +68,7 @@ public class T_Services {
                 new Socials(preferences, broadcaster), new GCMSender(), new Confirm(mock(SpriteBatch.class), mock(PTGame.class), assets, broadcaster),
                 new Notification(mock(SpriteBatch.class), assets, mock(PTGame.class), broadcaster), mock(Recorder.class),
                 mock(SoundsPlayer.class), mock(VersionControl.class), broadcaster, mock(ITutorials.class), new MockRestfulApi(),
-                mock(ConnectionWatcher.class));
+                mock(ConnectionWatcher.class), mock(Coins.class), mock(DataCaches.class));
     }
 
 }

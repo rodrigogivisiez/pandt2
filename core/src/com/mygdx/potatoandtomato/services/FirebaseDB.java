@@ -838,19 +838,6 @@ public class
         });
     }
 
-    private void getDataCount(Query ref, final DatabaseListener<Integer> listener){
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                listener.onCallback((int) snapshot.getChildrenCount(), Status.SUCCESS);
-            }
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                listener.onCallback(null, Status.FAILED);
-            }
-        });
-    }
-
     private void getSingleData(Query ref, final DatabaseListener listener){
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

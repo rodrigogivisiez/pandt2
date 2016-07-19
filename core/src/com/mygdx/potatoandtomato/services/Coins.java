@@ -42,6 +42,7 @@ import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -87,6 +88,7 @@ public class Coins implements ICoins {
     private ArrayList<TopBarCoinControl> topBarCoinControls;
     private ArrayList<String> monitoringUserIds;
     private ArrayList<String> deductedSuccessTransactions;
+    private HashMap<String, String> dismissedTransactionsMap;
     private ConcurrentHashMap<String, ClientInternalCoinListener> tagToClientInternalCoinListenersMap;
     private DataCaches dataCaches;
 
@@ -112,6 +114,7 @@ public class Coins implements ICoins {
         this.noCoinUserIds = new ArrayList();
         this.tagToClientInternalCoinListenersMap = new ConcurrentHashMap();
         this.deductedSuccessTransactions = new ArrayList();
+        this.dismissedTransactionsMap = new HashMap();
         this.myCoinsCount = new SafeDouble(0.0);
         this.dataCaches = dataCaches;
 
@@ -172,21 +175,24 @@ public class Coins implements ICoins {
         hideCoinMachine();
         initCoinMachine(coinsPurpose, expectingCoin, transactionId, userIdToNamePairs, false,
                 potatoDefaultSpeechActions, tomatoDefaultSpeechActions, dismissText);
-        showCoinMachine();
+        showCoinMachine(false);
     }
 
 
-    public void showCoinMachine(){
-        coinMachineControl.updateMyCoinsCount(myCoinsCount.getValue().intValue());
-        coinMachineControl.show();
-        refreshRetrievableCoins();
-        refreshCoinMachineProducts();
-        Threadings.delay(1000, new Runnable() {
-            @Override
-            public void run() {
-                startSpeech(CoinMachineTabType.PlayersInsertCoinStatus);
-            }
-        });
+    public void showCoinMachine(boolean forceShow){
+        if(forceShow ||
+                !dismissedTransactionsMap.containsKey(transactionId) && !deductedSuccessTransactions.contains(transactionId)){
+            coinMachineControl.updateMyCoinsCount(myCoinsCount.getValue().intValue());
+            coinMachineControl.show();
+            refreshRetrievableCoins();
+            refreshCoinMachineProducts();
+            Threadings.delay(1000, new Runnable() {
+                @Override
+                public void run() {
+                    startSpeech(CoinMachineTabType.PlayersInsertCoinStatus);
+                }
+            });
+        }
     }
 
     public void hideCoinMachine(){
@@ -423,9 +429,12 @@ public class Coins implements ICoins {
     }
 
     private void dismissWindowsReceived(String fromUserId){
-        if(coinListener != null) coinListener.onDismiss(fromUserId);
-        hideCoinMachine();
-        clearAll();
+        if(!coinsAlreadyEnough){
+            dismissedTransactionsMap.put(transactionId, fromUserId);
+            if(coinListener != null) coinListener.onDismiss(fromUserId);
+            hideCoinMachine();
+            clearAll();
+        }
     }
 
     public void onUserDisconnected(String dcUserId){
@@ -562,6 +571,11 @@ public class Coins implements ICoins {
         if(deductedSuccessTransactions.contains(askingTransactionId)){
             //coins already deducted success, no need reply state again, instead resend coin deduct success update to sender
             gamingKit.privateUpdateRoomMates(fromUserId, UpdateRoomMatesCode.COINS_DEDUCTED_SUCCESS, askingTransactionId);
+        }
+        else if(dismissedTransactionsMap.containsKey(askingTransactionId)){
+            //similar to above
+            gamingKit.privateUpdateRoomMates(fromUserId, UpdateRoomMatesCode.COINS_WINDOW_DISMISS,
+                    dismissedTransactionsMap.get(askingTransactionId));
         }
         else{
             if(askingTransactionId.equals(this.transactionId) && getTotalCoinsPut() > 0 && !fromUserId.equals(profile.getUserId())){
@@ -849,8 +863,7 @@ public class Coins implements ICoins {
                     public void clicked(InputEvent event, float x, float y) {
                         super.clicked(event, x, y);
                         if(!coinsAlreadyEnough) {
-                            hideCoinMachine();
-                            gamingKit.updateRoomMates(UpdateRoomMatesCode.COINS_WINDOW_DISMISS, "");
+                            gamingKit.updateRoomMates(UpdateRoomMatesCode.COINS_WINDOW_DISMISS, profile.getUserId());
                         }
                     }
                 });
@@ -905,7 +918,7 @@ public class Coins implements ICoins {
                     coinsMachineStateResponseReceived(msg);        //msg is json
                 }
                 else if(code == UpdateRoomMatesCode.COINS_WINDOW_DISMISS){
-                    dismissWindowsReceived(senderId);
+                    dismissWindowsReceived(msg);
                 }
             }
 

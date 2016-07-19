@@ -515,7 +515,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                 }
             });
 
-            _services.getCoins().showCoinMachine();
+            _services.getCoins().showCoinMachine(false);
         }
         else{
             hasChanceToReviveStreak = false;

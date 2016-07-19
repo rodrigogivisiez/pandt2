@@ -8,6 +8,7 @@ import com.potatoandtomato.games.enums.StageType;
 import com.potatoandtomato.games.helpers.Logs;
 import com.potatoandtomato.games.statics.Global;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
+import com.shaded.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.shaded.fasterxml.jackson.core.JsonProcessingException;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 
@@ -18,6 +19,7 @@ import java.util.Map;
 /**
  * Created by SiongLeng on 6/4/2016.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GameModel {
 
     private int stageNumber;
@@ -124,6 +126,10 @@ public class GameModel {
 
     public int getRemainingMiliSecs() {
         return remainingMiliSecs;
+    }
+
+    public void setRemainingMiliSecs(int remainingMiliSecs){
+        setRemainingMiliSecs(remainingMiliSecs, true);
     }
 
     public void setRemainingMiliSecs(int remainingMiliSecs, boolean notify) {

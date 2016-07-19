@@ -83,6 +83,7 @@ public class GameFileChecker implements Disposable {
                 HashMap<String, FileData> toDeleteFiles = new HashMap();
                 HashMap<String, FileData> cloudFiles = gameModel.getGameFilesMap();
                 HashMap<String, FileData> currentFiles = new HashMap();
+                HashMap<String, FileData> shouldExistFiles = new HashMap();
 
                 currentFiles = restoreLocalGameFilesData(currentFiles);
 
@@ -94,6 +95,7 @@ public class GameFileChecker implements Disposable {
                         FileData currentFileData = currentFiles.get(cloudFileName);
                         if(currentFileData.getModifiedAt().equals(cloudFileData.getModifiedAt())){
                             currentDownloadSize += cloudFileData.getSize();
+                            shouldExistFiles.put(cloudFileName, cloudFileData);
                             continue;
                         }
                     }
@@ -114,6 +116,18 @@ public class GameFileChecker implements Disposable {
                     FileHandle toDeleteFile = gameModel.getFileRelativeToGameBasePath(toDeleteFilePath);
                     if(toDeleteFile.exists()) toDeleteFile.delete();
                 }
+
+                for(String shouldExistFilePath : shouldExistFiles.keySet()){
+                    FileHandle toCheckFile = gameModel.getFileRelativeToGameBasePath(shouldExistFilePath);
+                    if(toCheckFile.exists()){
+                        if(toCheckFile.file().length() == shouldExistFiles.get(shouldExistFilePath).getSize()){
+                            continue;
+                        }
+                    }
+
+                    toDownloadFiles.put(shouldExistFilePath, cloudFiles.get(shouldExistFilePath));
+                }
+
 
                 int maxBranch = 5;
                 int currentBranchNumber = 0;

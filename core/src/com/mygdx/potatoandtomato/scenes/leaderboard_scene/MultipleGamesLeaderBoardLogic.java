@@ -3,6 +3,7 @@ package com.mygdx.potatoandtomato.scenes.leaderboard_scene;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
+import com.mygdx.potatoandtomato.absintflis.cachings.CacheListener;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
@@ -49,17 +50,15 @@ public class MultipleGamesLeaderBoardLogic extends LogicAbstract {
     }
 
     private void init(){
-        _services.getDatabase().getAllGamesSimple(new DatabaseListener<ArrayList<Game>>(Game.class) {
+        _services.getDataCaches().getGamesListCache().getData(new CacheListener<ArrayList<Game>>() {
             @Override
-            public void onCallback(ArrayList<Game> games, Status st) {
-                if (st == Status.SUCCESS) {
-                    for (Game game : games) {
-                        if (game.hasLeaderboard()) {
-                            _games.add(game);
-                        }
+            public void onResult(ArrayList<Game> games) {
+                for (Game game : games) {
+                    if (game.hasLeaderboard()) {
+                        _games.add(game);
                     }
-                    showGame(0);
                 }
+                showGame(0);
             }
         });
     }
@@ -92,10 +91,11 @@ public class MultipleGamesLeaderBoardLogic extends LogicAbstract {
         _scene.showGameLeaderboard(game);
 
         if(_loadedGameAbbrToFoundInLeaderboardMap.containsKey(game.getAbbr())){
-            boolean found = _loadedGameAbbrToFoundInLeaderboardMap.get(game.getAbbr());
-            _scene.setMascots(found ? LeaderBoardScene.MascotType.HAPPY : LeaderBoardScene.MascotType.BORING);
+            Boolean found = _loadedGameAbbrToFoundInLeaderboardMap.get(game.getAbbr());
+            if(found != null) _scene.setMascots(found ? LeaderBoardScene.MascotType.HAPPY : LeaderBoardScene.MascotType.BORING);
         }
         else{
+            _loadedGameAbbrToFoundInLeaderboardMap.put(game.getAbbr(), null);
             _services.getDatabase().getLeaderBoardAndStreak(game, Global.LEADERBOARD_COUNT, new DatabaseListener<ArrayList<LeaderboardRecord>>(LeaderboardRecord.class) {
                 @Override
                 public void onCallback(final ArrayList<LeaderboardRecord> records, Status st) {

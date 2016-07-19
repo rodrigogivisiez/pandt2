@@ -174,19 +174,19 @@ public class PrerequisiteLogic extends LogicAbstract {
         if(isDisposing()) return;
 
         if(reason == 0){    //general msg
-            _scene.failedMessage(_texts.joinRoomFailed());
+            _scene.failedMessage(_texts.joinRoomFailed(), true);
         }
         else if(reason == 1){    //full room
-            _scene.failedMessage(_texts.roomIsFull());
+            _scene.failedMessage(_texts.roomIsFull(), true);
         }
         else if(reason == 2){    //room is not open
-            _scene.failedMessage(_texts.roomNotAvailable());
+            _scene.failedMessage(_texts.roomNotAvailable(), false);
         }
         else if(reason == 3){   //cannot continue game
-            _scene.failedMessage(_texts.cannotContinue());
+            _scene.failedMessage(_texts.cannotContinue(), false);
         }
         else if(reason == 4){     //room no user anymore
-            _scene.failedMessage(_texts.roomNotAvailable());
+            _scene.failedMessage(_texts.roomNotAvailable(), false);
             _services.getDatabase().updateRoomPlayingAndOpenState(_joiningRoom, false, false, null);
         }
 
@@ -222,7 +222,6 @@ public class PrerequisiteLogic extends LogicAbstract {
 
     public void joinRoomSuccess(){
         if(isDisposing()) return;
-
         _screen.toScene(SceneEnum.ROOM, _joiningRoom, _joinType == JoinType.CONTINUING);
     }
 
@@ -242,6 +241,15 @@ public class PrerequisiteLogic extends LogicAbstract {
                 restart();     //retry whole process
             }
         }));
+
+        _scene.getQuitButton().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                _screen.back();
+            }
+        });
+
     }
 
     @Override

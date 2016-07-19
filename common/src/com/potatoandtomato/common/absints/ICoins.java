@@ -10,7 +10,7 @@ import java.util.ArrayList;
  */
 public interface ICoins {
 
-    void showCoinMachine();
+    void showCoinMachine(boolean forceShow);
     void hideCoinMachine();
     void reset();
     void requestCoinsMachineStateFromOthers();

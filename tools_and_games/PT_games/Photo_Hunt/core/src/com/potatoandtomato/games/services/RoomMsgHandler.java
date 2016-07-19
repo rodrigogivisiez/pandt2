@@ -16,11 +16,10 @@ import com.shaded.fasterxml.jackson.core.JsonParseException;
 import com.shaded.fasterxml.jackson.core.JsonProcessingException;
 import com.shaded.fasterxml.jackson.databind.JsonMappingException;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by SiongLeng on 6/4/2016.
@@ -29,9 +28,11 @@ public class RoomMsgHandler {
 
     private GameCoordinator gameCoordinator;
     private RoomMsgListener listener;
+    private ObjectMapper objectMapper;
 
     public RoomMsgHandler(GameCoordinator gameCoordinator) {
         this.gameCoordinator = gameCoordinator;
+        this.objectMapper = new ObjectMapper();
 
         gameCoordinator.addInGameUpdateListener(new InGameUpdateListener() {
             @Override
@@ -43,9 +44,12 @@ public class RoomMsgHandler {
 
     private void received(final String json, final String userId){
         try {
-            JSONObject jsonObject = new JSONObject(json);
-            String msg = jsonObject.getString("msg");
-            RoomMsgType type = RoomMsgType.valueOf(jsonObject.getString("type"));
+
+            HashMap<String, String> map;
+            map = objectMapper.readValue(json, HashMap.class);
+
+            String msg = map.get("msg");
+            RoomMsgType type = RoomMsgType.valueOf(map.get("type"));
 
             if(type == RoomMsgType.Touched){
                 ObjectMapper objectMapper = new ObjectMapper();
@@ -82,8 +86,6 @@ public class RoomMsgHandler {
                         jsonObj.getString("extra"));
             }
 
-        } catch (JSONException e) {
-            e.printStackTrace();
         } catch (JsonMappingException e) {
             e.printStackTrace();
         } catch (JsonParseException e) {
@@ -94,27 +96,29 @@ public class RoomMsgHandler {
     }
 
     private void send(String msg, RoomMsgType type){
-        JSONObject jsonObject = new JSONObject();
+        HashMap<String, String> map = new HashMap();
+        map.put("msg", msg);
+        map.put("type", type.name());
+
         try {
-            jsonObject.put("msg", msg);
-            jsonObject.put("type", type.name());
-        } catch (JSONException e) {
+            String json = objectMapper.writeValueAsString(map);
+            gameCoordinator.sendRoomUpdate(json);
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-
-        gameCoordinator.sendRoomUpdate(jsonObject.toString());
     }
 
     private void sendPrivate(String msg, String toUserId, RoomMsgType type){
-        JSONObject jsonObject = new JSONObject();
+        HashMap<String, String> map = new HashMap();
+        map.put("msg", msg);
+        map.put("type", type.name());
+
         try {
-            jsonObject.put("msg", msg);
-            jsonObject.put("type", type.name());
-        } catch (JSONException e) {
+            String json = objectMapper.writeValueAsString(map);
+            gameCoordinator.sendPrivateRoomUpdate(toUserId, json);
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-
-        gameCoordinator.sendPrivateRoomUpdate(toUserId, jsonObject.toString());
     }
 
     public void sendTouched(float x, float y, int remaninigMiliSecs, int hintLeft, SimpleRectangle correctRect){

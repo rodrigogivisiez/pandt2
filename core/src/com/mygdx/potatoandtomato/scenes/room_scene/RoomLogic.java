@@ -24,6 +24,8 @@ import com.mygdx.potatoandtomato.enums.*;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.services.Confirm;
 import com.mygdx.potatoandtomato.services.VersionControl;
+import com.mygdx.potatoandtomato.statics.Global;
+import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.absints.CoinListener;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.enums.Status;
@@ -82,6 +84,8 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
     @Override
     public void onInit() {
         super.onInit();
+
+        Logs.LAST_GAME = room.getGame().getAbbr();
 
         _services.getChat().initChat(room, _services.getProfile().getUserId());
         _services.getChat().resetAllChat();
@@ -408,10 +412,8 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                 refreshRoomDesign();
                 userBadgeHelper.userJoinedRoom(roomUser);
 
-                if (isHost()) {
-                    selfUpdateRoomStatePush();
-                    refreshChatRoomUsersConnectStatus();
-                }
+                selfUpdateRoomStatePush();
+                refreshChatRoomUsersConnectStatus();
             }
         });
     }
@@ -437,16 +439,14 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                 refreshRoomDesign();
                 userBadgeHelper.userLeftRoom(roomUser);
 
-                if(isHost()){
-                    selfUpdateRoomStatePush();
-                    refreshChatRoomUsersConnectStatus();
-                }
+                selfUpdateRoomStatePush();
+                refreshChatRoomUsersConnectStatus();
             }
         }
     }
 
     public void moveSlot(String userId, int toSlot, boolean updateDb){
-        if(room.getRoomUserByUserId(userId) != null){
+        if(room.getRoomUserByUserId(userId) != null && !starting){
             Profile profile = room.getRoomUserByUserId(userId).getProfile();
             int fromSlot = room.getSlotIndexByUserId(userId);
 
@@ -671,7 +671,6 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
 
     public void startPutCoins(){
         starting = true;
-        scene.getTeamsRoot().setTouchable(Touchable.disabled);
 
         _services.getSoundsPlayer().playSoundEffect(Sounds.Name.COUNT_DOWN);
         _services.getChat().newMessage(new ChatMessage(String.format(_texts.gameStarting(), room.getRoomUsersCount()),
@@ -679,7 +678,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
 
         initCoinMachine();
         setCoinListener();
-        _services.getCoins().showCoinMachine();
+        _services.getCoins().showCoinMachine(true);
         hostSendGameStartingPush();
     }
 
@@ -709,7 +708,6 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         _services.getChat().newMessage(new ChatMessage(_texts.gameStarted(), ChatMessage.FromType.SYSTEM, null, ""));
 
         _screen.toScene(SceneEnum.GAME_SANDBOX, room, false);
-        scene.getTeamsRoot().setTouchable(Touchable.enabled);
     }
 
     public void continueGame() {
@@ -949,6 +947,9 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                         }
                     });
         }
+        else{
+            finishGameFileCheck = true;
+        }
     }
 
     public void sendJoinRoomAndSetupGameReadyMonitorThread(){
@@ -996,11 +997,6 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
 
                     for(RoomUser u : changedSlotUsers){
                         moveSlot(u.getProfile().getUserId(), u.getSlotIndex(), false);
-                    }
-
-                    if(justJoinedUsers.size() > 0 || justLeftUsers.size() > 0){
-                        selfUpdateRoomStatePush();
-                        refreshChatRoomUsersConnectStatus();
                     }
 
                     room.setOpen(roomObj.isOpen());

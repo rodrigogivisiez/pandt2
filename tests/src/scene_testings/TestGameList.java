@@ -24,61 +24,61 @@ import static org.mockito.Mockito.mock;
  */
 public class TestGameList extends TestAbstract {
 
-    @Test
-    public void testGameListLogicScene(){
-        GameListLogic logic = new GameListLogic(mock(PTScreen.class), T_Services.mockServices());
-        GameListScene scene = (GameListScene) logic.getScene();
-        Assert.assertEquals(true, ((Table) scene.getRoot()).hasChildren());
-    }
-
-    @Test
-    public void testGameListLogicSceneAddRemoveRecord(){
-        Services services = T_Services.mockServices();
-        services.getProfile().setUserId("999");
-
-        GameListLogic logic = new GameListLogic(mock(PTScreen.class), services);
-        logic.onShow();
-        GameListScene scene = (GameListScene) logic.getScene();
-        Room room = MockModel.mockRoom("1");
-        room.addInvitedUser(MockModel.mockProfile());
-        room.setOpen(true);
-        for(int i = 0; i<20; i++){
-            logic.roomDataChanged(room, false);
-        }
-
-        Threadings.sleep(100);
-
-        scene.gameRowHighlight("0");
-        Assert.assertEquals(1, scene.getGameRowsCount());
-
-        room.setOpen(false);
-        logic.roomDataChanged(room, false);
-
-        Threadings.sleep(100);
-        Assert.assertEquals(0, scene.getGameRowsCount());
-
-    }
-
-    @Test
-    public void testCanContinue(){
-        final Room room = MockModel.mockRoom("1");
-        room.setPlaying(true);
-        room.setRoundCounter(1);
-        room.setOpen(false);
-
-        Services services = T_Services.mockServices();
-        services.getProfile().setUserPlayingState(new UserPlayingState(room.getId(), 1));
-        services.setDatabase(new MockDB() {
-            @Override
-            public void getRoomById(String id, DatabaseListener<Room> listener) {
-                listener.onCallback(room, Status.SUCCESS);
-            }
-        });
-        GameListLogic logic = new GameListLogic(mock(PTScreen.class), services);
-        Assert.assertEquals(false, ((GameListScene) logic.getScene()).getContinueGameButton().isEnabled());
-        logic.onShow();
-        Assert.assertEquals(true, ((GameListScene) logic.getScene()).getContinueGameButton().isEnabled());
-    }
+//    @Test
+//    public void testGameListLogicScene(){
+//        GameListLogic logic = new GameListLogic(mock(PTScreen.class), T_Services.mockServices());
+//        GameListScene scene = (GameListScene) logic.getScene();
+//        Assert.assertEquals(true, ((Table) scene.getRoot()).hasChildren());
+//    }
+//
+//    @Test
+//    public void testGameListLogicSceneAddRemoveRecord(){
+//        Services services = T_Services.mockServices();
+//        services.getProfile().setUserId("999");
+//
+//        GameListLogic logic = new GameListLogic(mock(PTScreen.class), services);
+//        logic.onShow();
+//        GameListScene scene = (GameListScene) logic.getScene();
+//        Room room = MockModel.mockRoom("1");
+//        room.addInvitedUser(MockModel.mockProfile());
+//        room.setOpen(true);
+//        for(int i = 0; i<20; i++){
+//            logic.roomDataChanged(room, false);
+//        }
+//
+//        Threadings.sleep(100);
+//
+//        scene.gameRowHighlight("0");
+//        Assert.assertEquals(1, scene.getGameRowsCount());
+//
+//        room.setOpen(false);
+//        logic.roomDataChanged(room, false);
+//
+//        Threadings.sleep(100);
+//        Assert.assertEquals(0, scene.getGameRowsCount());
+//
+//    }
+//
+//    @Test
+//    public void testCanContinue(){
+//        final Room room = MockModel.mockRoom("1");
+//        room.setPlaying(true);
+//        room.setRoundCounter(1);
+//        room.setOpen(false);
+//
+//        Services services = T_Services.mockServices();
+//        services.getProfile().setUserPlayingState(new UserPlayingState(room.getId(), 1));
+//        services.setDatabase(new MockDB() {
+//            @Override
+//            public void getRoomById(String id, DatabaseListener<Room> listener) {
+//                listener.onCallback(room, Status.SUCCESS);
+//            }
+//        });
+//        GameListLogic logic = new GameListLogic(mock(PTScreen.class), services);
+//        Assert.assertEquals(false, ((GameListScene) logic.getScene()).getContinueGameButton().isEnabled());
+//        logic.onShow();
+//        Assert.assertEquals(true, ((GameListScene) logic.getScene()).getContinueGameButton().isEnabled());
+//    }
 
 
 

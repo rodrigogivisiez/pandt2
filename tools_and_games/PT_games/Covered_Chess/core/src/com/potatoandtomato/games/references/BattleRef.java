@@ -1,6 +1,7 @@
 package com.potatoandtomato.games.references;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.potatoandtomato.common.utils.SafeDouble;
 import com.potatoandtomato.games.enums.ChessType;
 import com.potatoandtomato.games.enums.Status;
 import com.potatoandtomato.games.helpers.Logs;
@@ -13,10 +14,10 @@ import java.util.HashMap;
  */
 public class BattleRef {
 
-    private HashMap<String, HashMap<String, Integer>> refs;
+    private HashMap<String, HashMap<String, SafeDouble>> refs;
 
     public BattleRef() {
-        refs = new HashMap<String, HashMap<String, Integer>>();
+        refs = new HashMap<String, HashMap<String, SafeDouble>>();
         populateAll();
     }
 
@@ -30,87 +31,87 @@ public class BattleRef {
         refs.put("ELEPHANT", elephant());
     }
 
-    private HashMap<String, Integer> mouse(){
-        HashMap<String, Integer> result = new HashMap<String, Integer>();
-        result.put("MOUSE", 50);
-        result.put("CAT", 0);
-        result.put("DOG", 4);
-        result.put("WOLF", 1);
-        result.put("TIGER", 1);
-        result.put("LION", 1);
-        result.put("ELEPHANT", 95);
+    private HashMap<String, SafeDouble> mouse(){
+        HashMap<String, SafeDouble> result = new HashMap<String, SafeDouble>();
+        result.put("MOUSE", new SafeDouble(50));
+        result.put("CAT", new SafeDouble(0));
+        result.put("DOG", new SafeDouble(4));
+        result.put("WOLF", new SafeDouble(1));
+        result.put("TIGER", new SafeDouble(1));
+        result.put("LION", new SafeDouble(1));
+        result.put("ELEPHANT", new SafeDouble(95));
         return result;
     }
 
-    private HashMap<String, Integer> cat(){
-        HashMap<String, Integer> result = new HashMap<String, Integer>();
-        result.put("MOUSE", 100);
-        result.put("CAT", 50);
-        result.put("DOG", 40);
-        result.put("WOLF", 10);
-        result.put("TIGER", 1);
-        result.put("LION", 1);
-        result.put("ELEPHANT", 1);
+    private HashMap<String, SafeDouble> cat(){
+        HashMap<String, SafeDouble> result = new HashMap<String, SafeDouble>();
+        result.put("MOUSE", new SafeDouble(100));
+        result.put("CAT", new SafeDouble(50));
+        result.put("DOG", new SafeDouble(40));
+        result.put("WOLF", new SafeDouble(10));
+        result.put("TIGER", new SafeDouble(1));
+        result.put("LION", new SafeDouble(1));
+        result.put("ELEPHANT", new SafeDouble(1));
         return result;
     }
 
-    private HashMap<String, Integer> dog(){
-        HashMap<String, Integer> result = new HashMap<String, Integer>();
-        result.put("MOUSE", 100);
-        result.put("CAT", 60);
-        result.put("DOG", 52);
-        result.put("WOLF", 20);
-        result.put("TIGER", 3);
-        result.put("LION", 1);
-        result.put("ELEPHANT", 1);
+    private HashMap<String, SafeDouble> dog(){
+        HashMap<String, SafeDouble> result = new HashMap<String, SafeDouble>();
+        result.put("MOUSE", new SafeDouble(100));
+        result.put("CAT", new SafeDouble(60));
+        result.put("DOG", new SafeDouble(52));
+        result.put("WOLF", new SafeDouble(20));
+        result.put("TIGER", new SafeDouble(3));
+        result.put("LION", new SafeDouble(1));
+        result.put("ELEPHANT", new SafeDouble(1));
         return result;
     }
 
-    private HashMap<String, Integer> wolf(){
-        HashMap<String, Integer> result = new HashMap<String, Integer>();
-        result.put("MOUSE", 100);
-        result.put("CAT", 100);
-        result.put("DOG", 80);
-        result.put("WOLF", 52);
-        result.put("TIGER", 10);
-        result.put("LION", 5);
-        result.put("ELEPHANT", 1);
+    private HashMap<String, SafeDouble> wolf(){
+        HashMap<String, SafeDouble> result = new HashMap<String, SafeDouble>();
+        result.put("MOUSE", new SafeDouble(100));
+        result.put("CAT", new SafeDouble(100));
+        result.put("DOG", new SafeDouble(80));
+        result.put("WOLF", new SafeDouble(52));
+        result.put("TIGER", new SafeDouble(10));
+        result.put("LION", new SafeDouble(5));
+        result.put("ELEPHANT", new SafeDouble(1));
         return result;
     }
 
-    private HashMap<String, Integer> tiger(){
-        HashMap<String, Integer> result = new HashMap<String, Integer>();
-        result.put("MOUSE", 100);
-        result.put("CAT", 100);
-        result.put("DOG", 100);
-        result.put("WOLF", 90);
-        result.put("TIGER", 53);
-        result.put("LION", 30);
-        result.put("ELEPHANT", 1);
+    private HashMap<String, SafeDouble> tiger(){
+        HashMap<String, SafeDouble> result = new HashMap<String, SafeDouble>();
+        result.put("MOUSE", new SafeDouble(100));
+        result.put("CAT", new SafeDouble(100));
+        result.put("DOG", new SafeDouble(100));
+        result.put("WOLF", new SafeDouble(90));
+        result.put("TIGER", new SafeDouble(53));
+        result.put("LION", new SafeDouble(30));
+        result.put("ELEPHANT", new SafeDouble(1));
         return result;
     }
 
-    private HashMap<String, Integer> lion(){
-        HashMap<String, Integer> result = new HashMap<String, Integer>();
-        result.put("MOUSE", 100);
-        result.put("CAT", 100);
-        result.put("DOG", 100);
-        result.put("WOLF", 95);
-        result.put("TIGER", 70);
-        result.put("LION", 53);
-        result.put("ELEPHANT", 3);
+    private HashMap<String, SafeDouble> lion(){
+        HashMap<String, SafeDouble> result = new HashMap<String, SafeDouble>();
+        result.put("MOUSE", new SafeDouble(100));
+        result.put("CAT", new SafeDouble(100));
+        result.put("DOG", new SafeDouble(100));
+        result.put("WOLF", new SafeDouble(95));
+        result.put("TIGER", new SafeDouble(70));
+        result.put("LION", new SafeDouble(53));
+        result.put("ELEPHANT", new SafeDouble(3));
         return result;
     }
 
-    private HashMap<String, Integer> elephant(){
-        HashMap<String, Integer> result = new HashMap<String, Integer>();
-        result.put("MOUSE", 10);
-        result.put("CAT", 100);
-        result.put("DOG", 100);
-        result.put("WOLF", 100);
-        result.put("TIGER", 94);
-        result.put("LION", 90);
-        result.put("ELEPHANT", 55);
+    private HashMap<String, SafeDouble> elephant(){
+        HashMap<String, SafeDouble> result = new HashMap<String, SafeDouble>();
+        result.put("MOUSE", new SafeDouble(10));
+        result.put("CAT", new SafeDouble(100));
+        result.put("DOG", new SafeDouble(100));
+        result.put("WOLF", new SafeDouble(100));
+        result.put("TIGER", new SafeDouble(94));
+        result.put("LION", new SafeDouble(90));
+        result.put("ELEPHANT", new SafeDouble(55));
         return result;
     }
 
@@ -121,7 +122,7 @@ public class BattleRef {
         }
         else{
             String toAnimal = to.getChessType().name().split("_")[1];
-            return processStatusPoint(refs.get(fromAnimal).get(toAnimal), from, to);
+            return processStatusPoint(refs.get(fromAnimal).get(toAnimal).getIntValue(), from, to);
         }
     }
 
@@ -135,6 +136,9 @@ public class BattleRef {
 
         if(percent == 0){
             return false;
+        }
+        else if(percent == 100){
+            return true;
         }
         else{
             if(random <= percent){

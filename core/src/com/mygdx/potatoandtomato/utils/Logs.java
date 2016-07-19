@@ -21,6 +21,7 @@ public class Logs {
     private static FPSLogger _fps;
     private static SafeThread _fpsThread;
     private static ArrayList<String> _logs = new ArrayList();
+    public static String LAST_GAME = "EMPTY";
 
     public static void add(){
         final Throwable t = new Throwable();
@@ -109,10 +110,11 @@ public class Logs {
         Date date = new Date();
         System.out.println(dateFormat.format(date));
         FileHandle handle = Gdx.files.local("pt_logs.txt");
-        msg = "Report date: " + dateFormat.format(date) + "\n" + msg;
-        msg += "-------------------------------\n";
+        msg = "Last game: " + LAST_GAME  + "\n ";
+        msg = "Report date: " + dateFormat.format(date) + "\n " + msg;
+        msg += "-------------------------------\n ";
         for(String callLog : getAllLogs()){
-            msg += callLog + "\n";
+            msg += callLog + "\n ";
         }
         handle.writeString(msg, false);
     }

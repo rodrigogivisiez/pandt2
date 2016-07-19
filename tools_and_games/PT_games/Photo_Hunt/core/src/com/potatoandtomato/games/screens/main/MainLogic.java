@@ -355,25 +355,27 @@ public class MainLogic extends GameLogic {
         Threadings.delay(3000, new Runnable() {
             @Override
             public void run() {
-                Pair<ArrayList<SpeechAction>, ArrayList<SpeechAction>> pair = _services.getTexts().getMascotsSpeechAboutContinue();
+                if(_gameModel.getGameState() == GameState.Lose){
+                    Pair<ArrayList<SpeechAction>, ArrayList<SpeechAction>> pair = _services.getTexts().getMascotsSpeechAboutContinue();
 
-                getCoordinator().coinsInputRequest("Continue photo hunt", CoinRequestType.MyTeam, 1, new CoinListener() {
-                    @Override
-                    public void onDeductCoinsDone() {
-                        _gameModel.setContinueChanceUsed(true);
-                        sendGoToNextStageIfIsDecisionMaker(-1);
-                    }
+                    getCoordinator().coinsInputRequest("Continue photo hunt", CoinRequestType.MyTeam, 1, new CoinListener() {
+                        @Override
+                        public void onDeductCoinsDone() {
+                            _gameModel.setContinueChanceUsed(true);
+                            sendGoToNextStageIfIsDecisionMaker(-1);
+                        }
 
-                    @Override
-                    public void onDismiss(String dismissUserId) {
-                        super.onDismiss(dismissUserId);
-                        getCoordinator().showNotification(
-                                String.format(_services.getTexts().xDecidedNotToContinue(),
-                                        getCoordinator().getPlayerByUserId(dismissUserId).getName()));
-                        showEndGameTable();
-                    }
+                        @Override
+                        public void onDismiss(String dismissUserId) {
+                            super.onDismiss(dismissUserId);
+                            getCoordinator().showNotification(
+                                    String.format(_services.getTexts().xDecidedNotToContinue(),
+                                            getCoordinator().getPlayerByUserId(dismissUserId).getName()));
+                            showEndGameTable();
+                        }
 
-                }, pair.getFirst(), pair.getSecond(), _services.getTexts().notContinue());
+                    }, pair.getFirst(), pair.getSecond(), _services.getTexts().notContinue());
+                }
             }
         });
     }

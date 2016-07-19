@@ -33,6 +33,7 @@ public class ShopLogic extends LogicAbstract {
 
     public ShopLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
+        setSaveToStack(false);
 
         Threadings.setContinuousRenderLock(true);
         shopScene = new ShopScene(services, screen);

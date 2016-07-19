@@ -38,6 +38,7 @@ public class GraveyardActor extends Table {
     private GameCoordinator _gameCoordinator;
     private Image _pointLeftImage, _pointRightImage;
     private Image _tutorialIcon, _graveIcon;
+    private Image tutorialButton, graveButton;
     private Container _turnCountContainer;
     private Table _graveTable, _tutorialTable, _containerTable;
     private SoundsWrapper _soundsWrapper;
@@ -125,11 +126,18 @@ public class GraveyardActor extends Table {
         //////////////////////////////////
         //tiny icons
         ///////////////////////////////////
+        tutorialButton = new Image(_assets.getTextures().get(Textures.Name.EMPTY));
         _tutorialIcon = new Image(_assets.getTextures().get(Textures.Name.TUTORIAL_ICON));
         _tutorialIcon.setPosition(_gameCoordinator.getGameWidth() - 2 - _tutorialIcon.getPrefWidth(), -13.4f);
+        tutorialButton.setPosition(_tutorialIcon.getX() - _tutorialIcon.getPrefWidth()/2, _tutorialIcon.getY() - _tutorialIcon.getPrefHeight()/2 + 7);
+        tutorialButton.setSize(_tutorialIcon.getPrefWidth() * 2, _tutorialIcon.getPrefHeight() * 2);
 
+        graveButton = new Image(_assets.getTextures().get(Textures.Name.EMPTY));
         _graveIcon = new Image(_assets.getTextures().get(Textures.Name.GRAVE_ICON));
         _graveIcon.setPosition(2, -13.4f);
+        graveButton.setPosition(_graveIcon.getX() - _graveIcon.getPrefWidth()/2, _graveIcon.getY() - _graveIcon.getPrefHeight()/2 + 7);
+        graveButton.setSize(_graveIcon.getPrefWidth() * 2, _graveIcon.getPrefHeight() * 2);
+
         /////////////////////////
         //pointing icons
         ////////////////////////
@@ -154,7 +162,9 @@ public class GraveyardActor extends Table {
         topInfoTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.YELLOW_GRADIENT_BOX)));
 
         topInfoTable.addActor(_tutorialIcon);
+        topInfoTable.addActor(tutorialButton);
         topInfoTable.addActor(_graveIcon);
+        topInfoTable.addActor(graveButton);
         /////////////////////////
         //yellow grave table
         ////////////////////////
@@ -271,7 +281,7 @@ public class GraveyardActor extends Table {
         grave.add(img).uniform().space(5);
     }
 
-    public void expand(boolean isGraveyard){
+    public void toggle(boolean isGraveyard){
         _containerTable.clear();
         if(isGraveyard){
             _containerTable.add(_graveTable).expand().fill();
@@ -283,6 +293,9 @@ public class GraveyardActor extends Table {
             this.setName("showed");
             this.addAction(Actions.moveBy(0, -(400 - 55), 0.5f));
             _soundsWrapper.playSounds(Sounds.Name.OPEN_SLIDE);
+        }
+        else{
+            hide();
         }
 
     }
@@ -300,12 +313,12 @@ public class GraveyardActor extends Table {
         return _graveLabel;
     }
 
-    public Image getTutorialIcon() {
-        return _tutorialIcon;
+    public Image getGraveButton() {
+        return graveButton;
     }
 
-    public Image getGraveIcon() {
-        return _graveIcon;
+    public Image getTutorialButton() {
+        return tutorialButton;
     }
 
     public Image getGraveCloseImage() {

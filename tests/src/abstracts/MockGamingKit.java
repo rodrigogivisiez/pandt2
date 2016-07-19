@@ -47,9 +47,10 @@ public class MockGamingKit extends GamingKit {
     }
 
     @Override
-    public void getRoomInfo(String roomId) {
+    public void getRoomInfo(String roomId, String identifier) {
 
     }
+
 
     @Override
     public void updateRoomMates(int updateRoomMatesCode, String msg) {
@@ -75,6 +76,11 @@ public class MockGamingKit extends GamingKit {
 
     @Override
     public void lockProperty(String key, String value) {
+
+    }
+
+    @Override
+    public void unLockProperty(String key) {
 
     }
 

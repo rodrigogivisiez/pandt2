@@ -625,7 +625,7 @@ public class GameCoordinator implements Disposable {
                 requestingCoins = false;
             }
         });
-        iCoins.showCoinMachine();
+        iCoins.showCoinMachine(false);
 
     }
 

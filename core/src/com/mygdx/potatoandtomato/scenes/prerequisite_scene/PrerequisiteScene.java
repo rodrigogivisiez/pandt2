@@ -19,62 +19,74 @@ import com.potatoandtomato.common.utils.Threadings;
  */
 public class PrerequisiteScene extends SceneAbstract {
 
-    Table _loadingTable;
-    Label _msgLabel;
-    BtnColor _retryButton;
+    Table loadingTable,  buttonsTable;
+    Label msgLabel;
+    BtnColor retryButton;
+    BtnColor quitButton;
 
     public PrerequisiteScene(Services services, PTScreen screen) {
         super(services, screen);
     }
 
-    public BtnColor getRetryButton() {
-        return _retryButton;
-    }
 
     @Override
     public void populateRoot() {
         topBar = new TopBar(_root, _texts.loading(), false, _assets, _screen, _services.getCoins());
 
-        _loadingTable = new Table();
-        _loadingTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WOOD_BG_NORMAL)));
+        loadingTable = new Table();
+        loadingTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WOOD_BG_NORMAL)));
 
         Label.LabelStyle msgLabelStyle = new Label.LabelStyle();
         msgLabelStyle.fontColor = Color.valueOf("fff6d8");
         msgLabelStyle.font = _assets.getFonts().get(Fonts.FontId.PIZZA_XXL_REGULAR_S_a05e00_1_1);
-        _msgLabel = new Label("", msgLabelStyle);
-        _msgLabel.setWrap(true);
-        _msgLabel.setAlignment(Align.center);
+        msgLabel = new Label("", msgLabelStyle);
+        msgLabel.setWrap(true);
+        msgLabel.setAlignment(Align.center);
 
-        _retryButton = new BtnColor(BtnColor.ColorChoice.RED, _assets);
-        _retryButton.setText(_texts.retry());
-        _retryButton.setVisible(false);
+        buttonsTable = new Table();
 
-        _loadingTable.add(_msgLabel).expandX().fillX().padLeft(10).padRight(10);
-        _loadingTable.row();
-        _loadingTable.add(_retryButton).width(140).padTop(20);
-        _root.add(_loadingTable);
+        retryButton = new BtnColor(BtnColor.ColorChoice.BLUE, _assets);
+        retryButton.setText(_texts.retry());
+
+        quitButton = new BtnColor(BtnColor.ColorChoice.RED, _assets);
+        quitButton.setText(_texts.quit());
+
+        loadingTable.add(msgLabel).expandX().fillX().padLeft(10).padRight(10);
+        loadingTable.row();
+        loadingTable.add(buttonsTable).width(140).height(60).padTop(20);
+        _root.add(loadingTable);
     }
 
     public void changeMessage(final String text){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                _msgLabel.setText(text);
-                _retryButton.setVisible(false);
+                msgLabel.setText(text);
+                buttonsTable.clear();
             }
         });
     }
 
-    public void failedMessage(final String text){
+    public void failedMessage(final String text, final boolean canRetry){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                _msgLabel.setText(text);
-                _retryButton.setVisible(true);
+                msgLabel.setText(text);
+                if(canRetry){
+                    buttonsTable.add(retryButton).expand().fill();
+                }
+                else{
+                    buttonsTable.add(quitButton).expand().fill();
+                }
             }
         });
     }
 
+    public BtnColor getRetryButton() {
+        return retryButton;
+    }
 
-
+    public BtnColor getQuitButton() {
+        return quitButton;
+    }
 }

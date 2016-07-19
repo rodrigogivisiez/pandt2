@@ -215,8 +215,9 @@ public abstract class MockGame extends Game implements IPTGame {
 
             }
         }, new ICoins() {
+
             @Override
-            public void showCoinMachine() {
+            public void showCoinMachine(boolean forceShow) {
 
             }
 
@@ -405,6 +406,11 @@ public abstract class MockGame extends Game implements IPTGame {
     @Override
     public void removeOnResumeRunnable(Runnable toRun) {
         _onResumeRunnables.remove(toRun);
+    }
+
+    @Override
+    public void removeAllExternalProcessors() {
+
     }
 
     public boolean isContinue() {

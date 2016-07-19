@@ -73,8 +73,8 @@ public class BtnColor extends Table {
         if(_colorChoice == ColorChoice.GREEN){
             return _assets.getPatches().get(Patches.Name.BTN_GREEN);
         }
-        else if(_colorChoice == ColorChoice.BLUE){
-            return _assets.getPatches().get(Patches.Name.BTN_BLUE);
+        else if(_colorChoice == ColorChoice.RED){
+            return _assets.getPatches().get(Patches.Name.BTN_RED);
         }
         else{
             return  _assets.getPatches().get(Patches.Name.BTN_BLUE);

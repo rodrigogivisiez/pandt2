@@ -1,0 +1,1 @@
+C:\Program Files (x86)\proguard5.2.1\proguard5.2.1\lib\proguard.jar

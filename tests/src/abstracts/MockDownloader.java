@@ -13,7 +13,7 @@ import java.io.File;
 public class MockDownloader implements IDownloader {
     @Override
     public SafeThread downloadFileToPath(String urlString, File targetFile, DownloaderListener listener) {
-        listener.onStep(100);
+        //listener.onStep(100);
         listener.onCallback(null, Status.SUCCESS);
         return new SafeThread();
     }

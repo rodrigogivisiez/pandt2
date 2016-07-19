@@ -325,10 +325,10 @@ public class Details {
         toDeleteFromCloudFiles = new HashMap();
 
         File jarFile = _paths.getJarFile();
-        File afterDxFile = _paths.getAfterDxGameJar();
+        File finishProcessGameJarFile = _paths.getFinishProcessGameJar();
 
-        currentFileDatas.put(afterDxFile.getName(), new FileData(String.valueOf(jarFile.lastModified()), "",
-                afterDxFile.getAbsolutePath(), afterDxFile.length()));
+        currentFileDatas.put(finishProcessGameJarFile.getName(), new FileData(String.valueOf(jarFile.lastModified()), "",
+                finishProcessGameJarFile.getAbsolutePath(), finishProcessGameJarFile.length()));
 
         for (Map.Entry<String, FileData> entry : currentFileDatas.entrySet()) {
             String fileName = entry.getKey();

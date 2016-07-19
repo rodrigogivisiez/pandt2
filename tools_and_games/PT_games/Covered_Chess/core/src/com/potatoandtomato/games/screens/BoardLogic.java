@@ -6,9 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.absints.BackKeyListener;
-import com.potatoandtomato.common.absints.SelfConnectionListener;
 import com.potatoandtomato.common.absints.UserStateListener;
-import com.potatoandtomato.common.enums.SelfConnectionStatus;
 import com.potatoandtomato.common.models.ScoreDetails;
 import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.utils.SafeThread;
@@ -16,26 +14,21 @@ import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.common.utils.ThreadsPool;
 import com.potatoandtomato.games.absint.ActionListener;
-import com.potatoandtomato.games.absint.DatabaseListener;
 import com.potatoandtomato.games.absint.ScoresListener;
 import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.enums.ActionType;
 import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
-import com.potatoandtomato.games.helpers.*;
+import com.potatoandtomato.games.helpers.ArrayLists;
+import com.potatoandtomato.games.helpers.GameDataContract;
+import com.potatoandtomato.games.helpers.RoomMsgHandler;
+import com.potatoandtomato.games.helpers.Terrains;
 import com.potatoandtomato.games.models.*;
 import com.potatoandtomato.games.references.BattleRef;
 import com.potatoandtomato.games.references.MovementRef;
 import com.potatoandtomato.games.references.StatusRef;
 import com.potatoandtomato.games.services.GameDataController;
-import com.potatoandtomato.common.enums.Status;
-import com.shaded.fasterxml.jackson.core.JsonParseException;
-import com.shaded.fasterxml.jackson.databind.JsonMappingException;
-import com.shaded.fasterxml.jackson.databind.ObjectMapper;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -533,7 +526,9 @@ public class BoardLogic implements Disposable{
                 if(terrainLogic.getChessLogic().getChessModel().getChessColor() == _gameDataController.getMyChessColor() &&
                         terrainLogic.getChessLogic().getChessModel().getStatus() != com.potatoandtomato.games.enums.Status.PARALYZED &&
                         terrainLogic.getChessLogic().getChessModel().getChessType() != ChessType.NONE){
-                    return true;
+                    if(_movementRef.getPossibleValidMoves(_terrains, terrainLogic).size() > 0){
+                        return true;
+                    }
                 }
             }
         }

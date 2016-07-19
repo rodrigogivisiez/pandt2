@@ -1,5 +1,6 @@
 package com.potatoandtomato.common.utils;
 
+import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
 import com.shaded.fasterxml.jackson.annotation.JsonValue;
 
 /**
@@ -18,16 +19,27 @@ public class SafeDouble {
         setValue(value);
     }
 
+    public SafeDouble(Integer value) {
+        setValue(Double.valueOf(value));
+    }
+
     @JsonValue
     public Double getValue() {
         checking();
         return value;
     }
 
+    @JsonIgnore
+    public Integer getIntValue() {
+        checking();
+        return value.intValue();
+    }
+
     @JsonValue
     public void setValue(Double value) {
         this.value = value;
         this.valueChanged = true;
+        checking();
     }
 
     private void checking(){

@@ -169,43 +169,43 @@ public class TestAppwarp extends TestAbstract {
         Assert.assertEquals(2, monitorCount[0]);
 
     }
-
-    @Test
-    public void testLockProperty(){
-
-        _gamingKit.addListener(getClassTag(), new JoinRoomListener() {
-            @Override
-            public void onRoomJoined(String roomId) {
-                Threadings.oneTaskFinish();
-            }
-
-            @Override
-            public void onJoinRoomFailed() {
-            }
-        });
-
-        _gamingKit.createAndJoinRoom();
-
-        Threadings.waitTasks(1);
-
-
-        _gamingKit.addListener("", new UpdateRoomMatesListener() {
-            @Override
-            public void onUpdateRoomMatesReceived(int code, String msg, String senderId) {
-                Assert.assertEquals(UpdateRoomMatesCode.LOCK_PROPERTY_SUCCESS, code);
-                Assert.assertEquals("0", msg);
-                Threadings.oneTaskFinish();
-            }
-
-            @Override
-            public void onUpdateRoomMatesReceived(byte identifier, byte[] data, String senderId) {
-
-            }
-        });
-
-        _gamingKit.lockProperty("hi", "123");
-
-        Threadings.waitTasks(1);
-    }
+//
+//    @Test
+//    public void testLockProperty(){
+//
+//        _gamingKit.addListener(getClassTag(), new JoinRoomListener() {
+//            @Override
+//            public void onRoomJoined(String roomId) {
+//                Threadings.oneTaskFinish();
+//            }
+//
+//            @Override
+//            public void onJoinRoomFailed() {
+//            }
+//        });
+//
+//        _gamingKit.createAndJoinRoom();
+//
+//        Threadings.waitTasks(1);
+//
+//
+//        _gamingKit.addListener("", new UpdateRoomMatesListener() {
+//            @Override
+//            public void onUpdateRoomMatesReceived(int code, String msg, String senderId) {
+//                Assert.assertEquals(UpdateRoomMatesCode.LOCK_PROPERTY_SUCCESS, code);
+//                Assert.assertEquals("0", msg);
+//                Threadings.oneTaskFinish();
+//            }
+//
+//            @Override
+//            public void onUpdateRoomMatesReceived(byte identifier, byte[] data, String senderId) {
+//
+//            }
+//        });
+//
+//        _gamingKit.lockProperty("hi", "123");
+//
+//        Threadings.waitTasks(1);
+//    }
 
 }
