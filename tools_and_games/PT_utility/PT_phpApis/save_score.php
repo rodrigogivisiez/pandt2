@@ -4,6 +4,7 @@
 	include 'firebaseLib.php';
 	include 'firebase_details.php';
 	include 'facebook_helpers.php';
+	include 'secret_check.php';
 	
 	function checkRoomAndUserValid($firebase, $toCheckRoom, $userId, $userToken, $winners, $losers){
 		try {
@@ -187,6 +188,12 @@
 			}
 		}
 		
+	}
+	
+	
+	if(!checkSecretMatched($_POST["restSecret"])){
+		echo -1;
+		return;
 	}
 	
 	$winnersJson = $_POST["winnersJson"];

@@ -13,6 +13,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
+import com.mygdx.potatoandtomato.statics.Terms;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
@@ -28,7 +29,7 @@ public class GCMClientManager {
     // Member variables
     private GoogleCloudMessaging gcm;
     private String regid;
-    private final String projectNumber = "171699917132";
+    private final String projectNumber = Terms.GCM_PROJECT_NUMBER;
     private Activity activity;
     private Broadcaster broadcaster;
 

@@ -110,8 +110,11 @@ public class Logs {
         Date date = new Date();
         System.out.println(dateFormat.format(date));
         FileHandle handle = Gdx.files.local("pt_logs.txt");
-        msg = "Last game: " + LAST_GAME  + "\n ";
-        msg = "Report date: " + dateFormat.format(date) + "\n " + msg;
+        String details = "Last game: " + LAST_GAME  + "\n ";
+        details += "Report date: " + dateFormat.format(date) + "\n ";
+
+
+        msg = details + msg;
         msg += "-------------------------------\n ";
         for(String callLog : getAllLogs()){
             msg += callLog + "\n ";

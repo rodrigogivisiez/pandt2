@@ -4,6 +4,7 @@
 	include 'firebaseLib.php';
 	include 'firebase_details.php';
 	include 'coins_adder.php';
+	include 'secret_check.php';
 	
 	date_default_timezone_set("Asia/Singapore");
 	
@@ -25,6 +26,11 @@
 		$result->maxRetrieveableCoins = $limit;
 		$result->secsPerCoin = $secsPerCoin;
 		return $result;
+	}
+
+	if(!checkSecretMatched($_POST["restSecret"])){
+		echo -1;
+		return;
 	}
 
 	$retrieveRequest = $_POST["retrieveRequest"];

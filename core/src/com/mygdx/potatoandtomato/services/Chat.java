@@ -180,7 +180,10 @@ public class Chat {
                 Threadings.delay(1000, new Runnable() {
                     @Override
                     public void run() {
-                        if(!recorder.isRecording()) soundsPlayer.setVolume(1);
+                        if(!recorder.isRecording()) {
+                            chatControl.hideRecording();
+                            soundsPlayer.setVolume(1);
+                        }
                     }
                 });
             }

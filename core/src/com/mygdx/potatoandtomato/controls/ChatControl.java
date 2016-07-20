@@ -566,15 +566,15 @@ public class ChatControl {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                recordingTable.clearActions();
-                recordingTable.addAction(sequence(fadeOut(0.2f), new RunnableAction(){
-                    @Override
-                    public void run() {
-                        recordingTable.setVisible(false);
-                    }
-                }));
-
-
+                if(recordingTable.isVisible()){
+                    recordingTable.clearActions();
+                    recordingTable.addAction(sequence(fadeOut(0.2f), new RunnableAction(){
+                        @Override
+                        public void run() {
+                            recordingTable.setVisible(false);
+                        }
+                    }));
+                }
             }
         });
     }

@@ -4,6 +4,7 @@
 	include 'firebaseLib.php';
 	include 'firebase_details.php';
 	include 'coins_decreaser.php';
+	include 'secret_check.php';
 	
 	
 	function checkAlreadyUpdate($firebase, $transactionId){
@@ -25,6 +26,11 @@
 		else{
 			return false;
 		}
+	}
+	
+	if(!checkSecretMatched($_POST["restSecret"])){
+		echo -1;
+		return;
 	}
 	
 	

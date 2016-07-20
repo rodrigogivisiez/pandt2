@@ -4,7 +4,13 @@
 	include 'firebaseLib.php';
 	include 'firebase_details.php';
 	include 'coins_decreaser.php';
+	include 'secret_check.php';
 	
+	
+	if(!checkSecretMatched($_POST["restSecret"])){
+		echo -1;
+		return;
+	}
 	
 	$teamUserIdsString = $_POST["teamUserIdsString"];
 	$coinsMetaJson = $_POST["coinsMetaJson"];

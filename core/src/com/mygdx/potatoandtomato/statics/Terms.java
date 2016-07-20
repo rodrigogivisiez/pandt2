@@ -22,6 +22,9 @@ public class Terms {
     public static String LOCAL_HOST = "localhost";
     public static String WATCH_ADS_ID = "WATCH_ADS";
     public static String PUSH_CODE = "pushCode";
+    public static String GCM_PROJECT_NUMBER = "171699917132";
+    public static String GCM_KEY = "AIzaSyAsjcqh5WJFtwEOYPqrddtMjZZgEIpEZAQ";
+
 
     public static String FIREBASE_URL(){
         return !Global.DEBUG ? "https://glaring-inferno-8572.firebaseIO.com" : "https://ptapptest.firebaseio.com/";

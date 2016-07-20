@@ -553,28 +553,29 @@ com.potatoandtomato.games.models.GameModel -> com.potatoandtomato.games.models.G
     201:201:com.potatoandtomato.games.enums.GameState getGameState() -> getGameState
     205:216:void setGameState(com.potatoandtomato.games.enums.GameState) -> setGameState
     220:223:java.lang.Double getScore() -> getScore
-    227:240:void setScore(java.lang.Double,boolean) -> setScore
-    243:243:int getStageNumber() -> getStageNumber
-    247:251:void setStageNumber(int) -> setStageNumber
-    255:256:void addStageNumber() -> d
-    260:262:void convertStageNumberToRemainingMiliSecs() -> e
-    266:276:int getThisStageTotalMiliSecs() -> getThisStageTotalMiliSecs
-    281:281:int getThisStageTotalMovingMiliSecs() -> getThisStageTotalMovingMiliSecs
-    286:287:int getThisStageTotalAtkMiliSecs() -> getThisStageTotalAtkMiliSecs
-    293:303:void addUserClickedCount(java.lang.String) -> a
-    307:311:int getUserClickedCount(java.lang.String) -> getUserClickedCount
-    317:322:boolean isAreaAlreadyHandled(com.potatoandtomato.games.models.SimpleRectangle) -> a
-    327:335:boolean isAreaAlreadyHandled(com.badlogic.gdx.math.Rectangle) -> a
-    340:347:boolean addHandledArea(com.potatoandtomato.games.models.SimpleRectangle,int) -> a
-    352:357:boolean isAreaAlreadyConfirmClicked(com.potatoandtomato.games.models.SimpleRectangle) -> b
-    362:367:void setConfirmAreaClickedBy(com.potatoandtomato.games.models.SimpleRectangle,java.lang.String) -> setConfirmAreaClickedBy
-    371:372:void clearHandledAreas() -> f
-    376:382:java.lang.String toJson() -> g
-    387:388:com.potatoandtomato.games.absintf.GameModelListener addGameModelListener(com.potatoandtomato.games.absintf.GameModelListener) -> a
-    393:394:void removeGameModelListener(com.potatoandtomato.games.absintf.GameModelListener) -> b
-    398:398:boolean isPlaying() -> h
-    404:405:boolean isNextStageBonus() -> i
-    409:410:void dispose() -> j
+    227:228:void setScore(java.lang.Double) -> setScore
+    231:244:void setScore(java.lang.Double,boolean) -> setScore
+    247:247:int getStageNumber() -> getStageNumber
+    251:255:void setStageNumber(int) -> setStageNumber
+    259:260:void addStageNumber() -> d
+    264:266:void convertStageNumberToRemainingMiliSecs() -> e
+    270:280:int getThisStageTotalMiliSecs() -> getThisStageTotalMiliSecs
+    285:285:int getThisStageTotalMovingMiliSecs() -> getThisStageTotalMovingMiliSecs
+    290:291:int getThisStageTotalAtkMiliSecs() -> getThisStageTotalAtkMiliSecs
+    297:307:void addUserClickedCount(java.lang.String) -> a
+    311:315:int getUserClickedCount(java.lang.String) -> getUserClickedCount
+    321:326:boolean isAreaAlreadyHandled(com.potatoandtomato.games.models.SimpleRectangle) -> a
+    331:339:boolean isAreaAlreadyHandled(com.badlogic.gdx.math.Rectangle) -> a
+    344:351:boolean addHandledArea(com.potatoandtomato.games.models.SimpleRectangle,int) -> a
+    356:361:boolean isAreaAlreadyConfirmClicked(com.potatoandtomato.games.models.SimpleRectangle) -> b
+    366:371:void setConfirmAreaClickedBy(com.potatoandtomato.games.models.SimpleRectangle,java.lang.String) -> setConfirmAreaClickedBy
+    375:376:void clearHandledAreas() -> f
+    380:386:java.lang.String toJson() -> g
+    391:392:com.potatoandtomato.games.absintf.GameModelListener addGameModelListener(com.potatoandtomato.games.absintf.GameModelListener) -> a
+    397:398:void removeGameModelListener(com.potatoandtomato.games.absintf.GameModelListener) -> b
+    402:402:boolean isPlaying() -> h
+    408:409:boolean isNextStageBonus() -> i
+    413:414:void dispose() -> j
 com.potatoandtomato.games.models.ImageDetails -> com.potatoandtomato.games.models.ImageDetails:
     com.potatoandtomato.games.models.CorrectArea area1 -> a
     com.potatoandtomato.games.models.CorrectArea area2 -> b
@@ -2085,45 +2086,45 @@ com.potatoandtomato.games.screens.review.ReviewLogic -> com.potatoandtomato.game
     com.potatoandtomato.common.GameCoordinator gameCoordinator -> d
     com.potatoandtomato.games.absintf.ReviewLogicListener reviewLogicListener -> e
     boolean confirmDeleted -> f
-    27:34:void <init>(com.potatoandtomato.games.models.GameModel,com.potatoandtomato.games.models.Services,com.potatoandtomato.common.GameCoordinator) -> <init>
-    37:41:void invalidate() -> a
-    45:109:void setListeners() -> c
-    118:118:com.potatoandtomato.games.screens.review.ReviewActor getReviewActor() -> b
-    122:123:void setReviewLogicListener(com.potatoandtomato.games.absintf.ReviewLogicListener) -> a
-    18:18:com.potatoandtomato.games.models.GameModel access$000(com.potatoandtomato.games.screens.review.ReviewLogic) -> a
-    18:18:com.potatoandtomato.games.absintf.ReviewLogicListener access$100(com.potatoandtomato.games.screens.review.ReviewLogic) -> b
-    18:18:com.potatoandtomato.games.screens.review.ReviewActor access$200(com.potatoandtomato.games.screens.review.ReviewLogic) -> c
-    18:18:boolean access$300(com.potatoandtomato.games.screens.review.ReviewLogic) -> d
-    18:18:boolean access$302(com.potatoandtomato.games.screens.review.ReviewLogic,boolean) -> a
-    18:18:com.potatoandtomato.games.models.Services access$400(com.potatoandtomato.games.screens.review.ReviewLogic) -> e
+    28:35:void <init>(com.potatoandtomato.games.models.GameModel,com.potatoandtomato.games.models.Services,com.potatoandtomato.common.GameCoordinator) -> <init>
+    38:42:void invalidate() -> a
+    46:113:void setListeners() -> c
+    122:122:com.potatoandtomato.games.screens.review.ReviewActor getReviewActor() -> b
+    126:127:void setReviewLogicListener(com.potatoandtomato.games.absintf.ReviewLogicListener) -> a
+    19:19:com.potatoandtomato.games.models.GameModel access$000(com.potatoandtomato.games.screens.review.ReviewLogic) -> a
+    19:19:com.potatoandtomato.games.absintf.ReviewLogicListener access$100(com.potatoandtomato.games.screens.review.ReviewLogic) -> b
+    19:19:com.potatoandtomato.games.screens.review.ReviewActor access$200(com.potatoandtomato.games.screens.review.ReviewLogic) -> c
+    19:19:boolean access$300(com.potatoandtomato.games.screens.review.ReviewLogic) -> d
+    19:19:boolean access$302(com.potatoandtomato.games.screens.review.ReviewLogic,boolean) -> a
+    19:19:com.potatoandtomato.games.models.Services access$400(com.potatoandtomato.games.screens.review.ReviewLogic) -> e
 com.potatoandtomato.games.screens.review.ReviewLogic$1 -> com.potatoandtomato.games.screens.c.b$1:
     com.potatoandtomato.games.screens.review.ReviewLogic this$0 -> a
-    45:45:void <init>(com.potatoandtomato.games.screens.review.ReviewLogic) -> <init>
-    48:52:void onGameStateChanged(com.potatoandtomato.games.enums.GameState,com.potatoandtomato.games.enums.GameState) -> a
+    46:46:void <init>(com.potatoandtomato.games.screens.review.ReviewLogic) -> <init>
+    49:53:void onGameStateChanged(com.potatoandtomato.games.enums.GameState,com.potatoandtomato.games.enums.GameState) -> a
 com.potatoandtomato.games.screens.review.ReviewLogic$2 -> com.potatoandtomato.games.screens.c.b$2:
     com.potatoandtomato.games.screens.review.ReviewLogic this$0 -> a
-    56:56:void <init>(com.potatoandtomato.games.screens.review.ReviewLogic) -> <init>
-    59:105:void run() -> run
+    57:57:void <init>(com.potatoandtomato.games.screens.review.ReviewLogic) -> <init>
+    60:109:void run() -> run
 com.potatoandtomato.games.screens.review.ReviewLogic$2$1 -> com.potatoandtomato.games.screens.c.b$2$1:
     com.potatoandtomato.games.screens.review.ReviewLogic$2 this$1 -> a
-    59:59:void <init>(com.potatoandtomato.games.screens.review.ReviewLogic$2) -> <init>
-    62:65:void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float) -> clicked
+    60:60:void <init>(com.potatoandtomato.games.screens.review.ReviewLogic$2) -> <init>
+    63:66:void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float) -> clicked
 com.potatoandtomato.games.screens.review.ReviewLogic$2$2 -> com.potatoandtomato.games.screens.c.b$2$2:
     com.potatoandtomato.games.screens.review.ReviewLogic$2 this$1 -> a
-    68:68:void <init>(com.potatoandtomato.games.screens.review.ReviewLogic$2) -> <init>
-    71:78:void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float) -> clicked
+    69:69:void <init>(com.potatoandtomato.games.screens.review.ReviewLogic$2) -> <init>
+    72:82:void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float) -> clicked
 com.potatoandtomato.games.screens.review.ReviewLogic$2$3 -> com.potatoandtomato.games.screens.c.b$2$3:
     com.potatoandtomato.games.screens.review.ReviewLogic$2 this$1 -> a
-    81:81:void <init>(com.potatoandtomato.games.screens.review.ReviewLogic$2) -> <init>
-    84:103:void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float) -> clicked
+    85:85:void <init>(com.potatoandtomato.games.screens.review.ReviewLogic$2) -> <init>
+    88:107:void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float) -> clicked
 com.potatoandtomato.games.screens.review.ReviewLogic$2$3$1 -> com.potatoandtomato.games.screens.c.b$2$3$1:
     com.potatoandtomato.games.screens.review.ReviewLogic$2$3 this$2 -> a
-    91:91:void <init>(com.potatoandtomato.games.screens.review.ReviewLogic$2$3) -> <init>
-    94:100:void onCallback(java.lang.Object,com.potatoandtomato.common.enums.Status) -> a
+    95:95:void <init>(com.potatoandtomato.games.screens.review.ReviewLogic$2$3) -> <init>
+    98:104:void onCallback(java.lang.Object,com.potatoandtomato.common.enums.Status) -> a
 com.potatoandtomato.games.screens.review.ReviewLogic$2$3$1$1 -> com.potatoandtomato.games.screens.c.b$2$3$1$1:
     com.potatoandtomato.games.screens.review.ReviewLogic$2$3$1 this$3 -> a
-    94:94:void <init>(com.potatoandtomato.games.screens.review.ReviewLogic$2$3$1) -> <init>
-    97:98:void run() -> run
+    98:98:void <init>(com.potatoandtomato.games.screens.review.ReviewLogic$2$3$1) -> <init>
+    101:102:void run() -> run
 com.potatoandtomato.games.screens.scores.ScoresActor -> com.potatoandtomato.games.screens.d.a:
     com.badlogic.gdx.scenes.scene2d.ui.Table _this -> a
     com.potatoandtomato.games.models.Services services -> b

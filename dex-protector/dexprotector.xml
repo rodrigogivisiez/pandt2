@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<dexprotector>
+    <verbose>true</verbose>
+    <optimize>false</optimize>
+    <signMode>release</signMode>
+    <proguardMapFile>C:\Users\SiongLeng\Desktop\Project\pandtmapping.txt</proguardMapFile>
+    <keystore>C:\Users\SiongLeng\keys\pandt.jks</keystore>
+    <alias>potatoandtomato</alias>
+    <storepass>984025</storepass>
+    <keypass>984025</keypass>
+    <stringEncryption mode="all">
+        <filters>
+            <filter><![CDATA[glob:!**/**]]></filter>
+            <filter><![CDATA[glob:com/mygdx/potatoandtomato/**]]></filter>
+            <filter><![CDATA[glob:com/potatoandtomato/common/**]]></filter>
+        </filters>
+    </stringEncryption>
+    <classEncryption mode="all">
+        <filters>
+            <filter><![CDATA[glob:!**/**]]></filter>
+            <filter><![CDATA[glob:com/mygdx/potatoandtomato/**]]></filter>
+            <filter><![CDATA[glob:com/potatoandtomato/common/**]]></filter>
+        </filters>
+    </classEncryption>
+    <hideAccess mode="all">
+        <filters>
+            <filter><![CDATA[glob:!**/**]]></filter>
+            <filter><![CDATA[glob:com/mygdx/potatoandtomato/statics/**]]></filter>
+            <filter><![CDATA[glob:com/mygdx/potatoandtomato/services/FirebaseDB]]></filter>
+            <filter><![CDATA[glob:com/mygdx/potatoandtomato/services/RestfulApi]]></filter>
+            <filter><![CDATA[glob:com/mygdx/potatoandtomato/services/GCMSender]]></filter>
+            <filter><![CDATA[glob:com/mygdx/potatoandtomato/android/InAppPurchaseHelper]]></filter>
+        </filters>
+    </hideAccess>
+    <integrityControl mode="all">
+        <checkCertificate>on</checkCertificate>
+    </integrityControl>
+</dexprotector>

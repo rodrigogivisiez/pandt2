@@ -3,6 +3,7 @@ package com.mygdx.potatoandtomato.services;
 import com.mygdx.potatoandtomato.absintflis.services.IRestfulApi;
 import com.mygdx.potatoandtomato.absintflis.services.RestfulApiListener;
 import com.mygdx.potatoandtomato.models.*;
+import com.mygdx.potatoandtomato.statics.Global;
 import com.mygdx.potatoandtomato.statics.Terms;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.models.ScoreDetails;
@@ -52,7 +53,7 @@ public class RestfulApi implements IRestfulApi {
 
     @Override
     public void createNewUserWithFacebookProfile(FacebookProfile facebookProfile, final RestfulApiListener<UserIdSecretModel> listener) {
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
         nameValuePairs.add(new BasicNameValuePair("fbUserId", facebookProfile.getUserId()));
         nameValuePairs.add(new BasicNameValuePair("fbUsername", facebookProfile.getName()));
         nameValuePairs.add(new BasicNameValuePair("fbToken", facebookProfile.getToken()));
@@ -72,7 +73,7 @@ public class RestfulApi implements IRestfulApi {
 
     @Override
     public void loginUser(String userId, String secret, FacebookProfile facebookProfile, final RestfulApiListener<String> listener) {
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(4);
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
         nameValuePairs.add(new BasicNameValuePair("userId", userId));
         nameValuePairs.add(new BasicNameValuePair("secret", secret));
         nameValuePairs.add(new BasicNameValuePair("fbUserId", facebookProfile == null ? "" : facebookProfile.getUserId()));
@@ -118,7 +119,7 @@ public class RestfulApi implements IRestfulApi {
             String winnersJson = objectMapper.writeValueAsString(processedWinners);
             String losersJson = objectMapper.writeValueAsString(processedLosers);
             String roomJson = objectMapper.writeValueAsString(room);
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(5);
+            ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
             nameValuePairs.add(new BasicNameValuePair("winnersJson", winnersJson));
             nameValuePairs.add(new BasicNameValuePair("losersJson", losersJson));
             nameValuePairs.add(new BasicNameValuePair("roomJson", roomJson));
@@ -136,7 +137,7 @@ public class RestfulApi implements IRestfulApi {
 
     @Override
     public void getRetrievableCoinsData(Profile myProfile, final RestfulApiListener<RetrievableCoinsData> listener) {
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
         nameValuePairs.add(new BasicNameValuePair("userId", myProfile.getUserId()));
         nameValuePairs.add(new BasicNameValuePair("userToken", myProfile.getToken()));
         nameValuePairs.add(new BasicNameValuePair("retrieveRequest", "0"));
@@ -161,7 +162,7 @@ public class RestfulApi implements IRestfulApi {
 
     @Override
     public void retrieveCoins(Profile myProfile, final RestfulApiListener<RetrievableCoinsData> listener) {
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
         nameValuePairs.add(new BasicNameValuePair("userId", myProfile.getUserId()));
         nameValuePairs.add(new BasicNameValuePair("userToken", myProfile.getToken()));
         nameValuePairs.add(new BasicNameValuePair("retrieveRequest", "1"));
@@ -187,7 +188,7 @@ public class RestfulApi implements IRestfulApi {
     @Override
     public void purchasedProducts(String productId, String productToken, String orderId, Profile myProfile, int phase,
                                   final RestfulApiListener<String> listener) {
-        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(6);
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
         nameValuePairs.add(new BasicNameValuePair("userId", myProfile.getUserId()));
         nameValuePairs.add(new BasicNameValuePair("userToken", myProfile.getToken()));
         nameValuePairs.add(new BasicNameValuePair("productId", productId));
@@ -204,7 +205,7 @@ public class RestfulApi implements IRestfulApi {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             String coinsMetaJson = objectMapper.writeValueAsString(coinsMetas);
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(5);
+            ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
             nameValuePairs.add(new BasicNameValuePair("teamUserIdsString", teamUserIdsString));
             nameValuePairs.add(new BasicNameValuePair("coinsMetaJson", coinsMetaJson));
             nameValuePairs.add(new BasicNameValuePair("gameAbbr", gameAbbr));
@@ -221,7 +222,7 @@ public class RestfulApi implements IRestfulApi {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             String coinsMetaJson = objectMapper.writeValueAsString(coinsMetas);
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(4);
+            ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
             nameValuePairs.add(new BasicNameValuePair("transactionId", transactionId));
             nameValuePairs.add(new BasicNameValuePair("coinsMetaJson", coinsMetaJson));
             nameValuePairs.add(new BasicNameValuePair("expectingCoins", String.valueOf(expectingCoins)));
@@ -236,7 +237,9 @@ public class RestfulApi implements IRestfulApi {
         callApi(name, new ArrayList<NameValuePair>(), listener);
     }
 
-    private void callApi(final String name,  final List<NameValuePair> nameValuePairs, final RestfulApiListener listener){
+    private void callApi(final String name,  final ArrayList<NameValuePair> nameValuePairs, final RestfulApiListener listener){
+        nameValuePairs.add(new BasicNameValuePair("restSecret", Global.RESTAPI_KEY));
+
         Threadings.runInBackground(new Runnable() {
             @Override
             public void run() {

@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.absintf.DatabaseListener;
 import com.potatoandtomato.games.absintf.GameModelListener;
@@ -70,10 +71,13 @@ public class ReviewLogic {
                     public void clicked(InputEvent event, float x, float y) {
                         super.clicked(event, x, y);
                         String goToIndex = reviewActor.getGoToTextField().getText();
-                        if(Integer.valueOf(goToIndex) != gameModel.getImageDetails().getIndex()){
-                            reviewActor.getStage().setKeyboardFocus(reviewActor.getGoToLabel());
-                            gameModel.setGameState(GameState.BlockingReview);
-                            reviewLogicListener.onGoToIndex(Integer.valueOf(goToIndex));
+                        goToIndex = goToIndex.trim();
+                        if(Strings.isNumeric(goToIndex)){
+                            if(Integer.valueOf(goToIndex) != gameModel.getImageDetails().getIndex()){
+                                reviewActor.getStage().setKeyboardFocus(reviewActor.getGoToLabel());
+                                gameModel.setGameState(GameState.BlockingReview);
+                                reviewLogicListener.onGoToIndex(Integer.valueOf(goToIndex));
+                            }
                         }
                     }
                 });

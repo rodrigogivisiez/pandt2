@@ -223,6 +223,10 @@ public class GameModel {
         return score.getValue();
     }
 
+    public void setScore(Double score) {
+        setScore(score, true);
+    }
+
     public void setScore(Double score, boolean notify) {
         if(this.score == null){
             this.score = new SafeDouble(score);

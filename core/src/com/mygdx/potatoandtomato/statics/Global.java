@@ -17,6 +17,7 @@ public class Global {
     public static int USERNAME_MAX_LENGTH = 25;
     public static String SALT = "luizsuarecScoressss";
     public static String LAST_PLAY_GAME = "";
+    public static String RESTAPI_KEY = "cvRm3wKa7MQ0vuAmiN60329jP2qjFvfIR5uAftlqz4YBv5g66dLlKt4Xexw497mz";
 
     public static void init(Preferences preferences){
         Strings.Salt = SALT;

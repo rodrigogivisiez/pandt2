@@ -1,5 +1,0 @@
-BASE="C:\Users\SiongLeng\Desktop\Potato Tomato 2\pandt2\tools_and_games\PT_games\<DIRECTORY>\"
-ASSETS={BASE}"android\assets\"
-WORKING={BASE}"android\assets\"
-JAR={BASE}"out\artifacts\core_jar\core.jar"
-DX="C:\Users\SiongLeng\AppData\Local\Android\sdk\build-tools\22.0.1\dx.bat"

@@ -56,9 +56,6 @@ public class SettingsLogic extends LogicAbstract {
                 }
             });
         }
-
-
-
     }
 
     public void toggleSounds(){

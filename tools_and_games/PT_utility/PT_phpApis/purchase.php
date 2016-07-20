@@ -5,9 +5,16 @@
 	include 'firebase_details.php';
 	include 'google_iab_helpers.php';
 	include 'coins_adder.php';
+	include 'secret_check.php';
 	
 	
 	date_default_timezone_set("Asia/Singapore");
+	
+	
+	if(!checkSecretMatched($_POST["restSecret"])){
+		echo -1;
+		return;
+	}
 	
 	$phase = $_POST["phase"];
 	$userId = $_POST["userId"];

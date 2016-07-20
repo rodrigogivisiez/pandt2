@@ -4,6 +4,7 @@
 	include 'firebaseLib.php';
 	include 'firebase_details.php';
 	include 'facebook_helpers.php';
+	include 'secret_check.php';
 	
 	function generateRandomString($length = 30) {
 	    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -13,6 +14,11 @@
 	        $randomString .= $characters[rand(0, $charactersLength - 1)];
 	    }
 	    return $randomString;
+	}
+	
+	if(!checkSecretMatched($_POST["restSecret"])){
+		echo -1;
+		return;
 	}
 	
 	

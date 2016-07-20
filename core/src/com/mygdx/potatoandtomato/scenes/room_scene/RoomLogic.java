@@ -1013,24 +1013,26 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         _services.getDatabase().monitorRoomInvitations(room.getId(), getClassTag(), new DatabaseListener<ArrayList<HashMap>>() {
             @Override
             public void onCallback(ArrayList<HashMap> maps, Status st) {
-                for(HashMap map : maps){
-                    for(Object key : map.keySet()){
-                        String userId = key.toString();
-                        final String statusCode = map.get(key).toString();
+                if(st == Status.SUCCESS && maps != null){
+                    for(HashMap map : maps){
+                        for(Object key : map.keySet()){
+                            String userId = key.toString();
+                            final String statusCode = map.get(key).toString();
 
-                        _services.getDatabase().getProfileByUserId(userId, new DatabaseListener<Profile>(Profile.class) {
-                            @Override
-                            public void onCallback(Profile obj, Status st) {
-                                if(statusCode.equals("0")){
-                                    _services.getChat().newMessage(new ChatMessage(String.format(_texts.invitationRejected(), obj.getDisplayName(0)),
-                                            ChatMessage.FromType.IMPORTANT, null, ""));
+                            _services.getDatabase().getProfileByUserId(userId, new DatabaseListener<Profile>(Profile.class) {
+                                @Override
+                                public void onCallback(Profile obj, Status st) {
+                                    if(statusCode.equals("0")){
+                                        _services.getChat().newMessage(new ChatMessage(String.format(_texts.invitationRejected(), obj.getDisplayName(0)),
+                                                ChatMessage.FromType.IMPORTANT, null, ""));
+                                    }
+                                    else if(statusCode.equals("1")){
+                                        _services.getChat().newMessage(new ChatMessage(String.format(_texts.invitationAccepted(), obj.getDisplayName(0)),
+                                                ChatMessage.FromType.IMPORTANT, null, ""));
+                                    }
                                 }
-                                else if(statusCode.equals("1")){
-                                    _services.getChat().newMessage(new ChatMessage(String.format(_texts.invitationAccepted(), obj.getDisplayName(0)),
-                                            ChatMessage.FromType.IMPORTANT, null, ""));
-                                }
-                            }
-                        });
+                            });
+                        }
                     }
                 }
             }
@@ -1112,7 +1114,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         userBadgeHelper.dispose();
         Gdx.files.local("records").deleteDirectory();
         if(roomLogicSafeThread != null) roomLogicSafeThread.kill();
-        checkReadyThread.kill();
+        if(checkReadyThread != null) checkReadyThread.kill();
         _services.getChat().setMode(1);
         _services.getChat().resetChat();
         if(gameFileChecker != null) gameFileChecker.dispose();

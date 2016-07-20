@@ -3,6 +3,7 @@ package com.mygdx.potatoandtomato.services;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.MulticastResult;
 import com.google.android.gcm.server.Sender;
+import com.mygdx.potatoandtomato.statics.Terms;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.PushNotification;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
  */
 public class GCMSender {
 
-    private final String _apiKey = "AIzaSyAsjcqh5WJFtwEOYPqrddtMjZZgEIpEZAQ";
+    private final String _apiKey = Terms.GCM_KEY;
 
     public boolean send(ArrayList<Profile> profiles, PushNotification msg){
 
