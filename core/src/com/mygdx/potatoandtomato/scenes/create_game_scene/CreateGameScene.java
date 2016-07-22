@@ -3,7 +3,6 @@ package com.mygdx.potatoandtomato.scenes.create_game_scene;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -51,7 +50,7 @@ public class CreateGameScene extends SceneAbstract {
 
     @Override
     public void populateRoot() {
-        topBar = new TopBar(_root, _texts.createGameTitle(), false, _assets, _screen, _services.getCoins());
+        topBar = new TopBar(_root, _texts.createGameSceneTitle(), false, _assets, _screen, _services.getCoins());
         Table clippedRoot = new Table();
         clippedRoot.align(Align.topLeft);
         clippedRoot.setClip(true);
@@ -89,7 +88,7 @@ public class CreateGameScene extends SceneAbstract {
         _gameDetails.add(pickAGameLabel).padTop(10);
 
         _createButton = new BtnEggDownward(_assets, _services.getSoundsPlayer());
-        _createButton.setText(_texts.create());
+        _createButton.setText(_texts.btnTextCreate());
         _createButton.setPosition(60, -80);
         _createButton.setVisible(false);
         _gameDetailsParent.addActor(_createButton);

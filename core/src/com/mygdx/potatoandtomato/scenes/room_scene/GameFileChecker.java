@@ -15,6 +15,7 @@ import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
+import com.potatoandtomato.common.utils.ThreadsPool;
 import com.shaded.fasterxml.jackson.core.type.TypeReference;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 
@@ -83,7 +84,6 @@ public class GameFileChecker implements Disposable {
                 HashMap<String, FileData> toDeleteFiles = new HashMap();
                 HashMap<String, FileData> cloudFiles = gameModel.getGameFilesMap();
                 HashMap<String, FileData> currentFiles = new HashMap();
-                HashMap<String, FileData> shouldExistFiles = new HashMap();
 
                 currentFiles = restoreLocalGameFilesData(currentFiles);
 
@@ -94,9 +94,13 @@ public class GameFileChecker implements Disposable {
                     if(currentFiles.containsKey(cloudFileName)){
                         FileData currentFileData = currentFiles.get(cloudFileName);
                         if(currentFileData.getModifiedAt().equals(cloudFileData.getModifiedAt())){
-                            currentDownloadSize += cloudFileData.getSize();
-                            shouldExistFiles.put(cloudFileName, cloudFileData);
-                            continue;
+                            FileHandle toCheckFile = gameModel.getFileRelativeToGameBasePath(cloudFileName);
+                            if(toCheckFile.exists()){
+                                if(toCheckFile.file().length() == cloudFileData.getSize()){
+                                    currentDownloadSize += cloudFileData.getSize();
+                                    continue;
+                                }
+                            }
                         }
                     }
 
@@ -117,24 +121,13 @@ public class GameFileChecker implements Disposable {
                     if(toDeleteFile.exists()) toDeleteFile.delete();
                 }
 
-                for(String shouldExistFilePath : shouldExistFiles.keySet()){
-                    FileHandle toCheckFile = gameModel.getFileRelativeToGameBasePath(shouldExistFilePath);
-                    if(toCheckFile.exists()){
-                        if(toCheckFile.file().length() == shouldExistFiles.get(shouldExistFilePath).getSize()){
-                            continue;
-                        }
-                    }
-
-                    toDownloadFiles.put(shouldExistFilePath, cloudFiles.get(shouldExistFilePath));
-                }
-
-
                 int maxBranch = 5;
-                int currentBranchNumber = 0;
 
                 if(toDownloadFiles.size() > 0){
                     updateDownloaded(0);
                 }
+
+                ThreadsPool threadsPool = new ThreadsPool();
 
                 for (Map.Entry<String, FileData> entry : toDownloadFiles.entrySet()) {
                     String downloadFileName = entry.getKey();
@@ -142,25 +135,32 @@ public class GameFileChecker implements Disposable {
 
                     if(downloadKilled) return;
 
-                    final boolean[] complete = {false};
+                    final Threadings.ThreadFragment threadFragment = new Threadings.ThreadFragment();
+
                     SafeThread safeThread = downloadFile(downloadFileData.getUrl(), gameModel.getFileRelativeToGameBasePath(downloadFileName).file(), new Runnable() {
                         @Override
                         public void run() {
-                            complete[0] = true;
+                            threadFragment.setFinished(true);
                         }
                     });
 
                     downloadGameThreads.add(safeThread);
-                    currentBranchNumber++;
-                    if(currentBranchNumber > maxBranch){
-                        while (!complete[0]){
-                            Threadings.sleep(100);
-                            if(downloadKilled || safeThread.isKilled()) return;
-                        }
+                    threadsPool.addFragment(threadFragment);
 
-                        currentBranchNumber = 0;
-                        downloadGameThreads.clear();
+                    while (true){
+                        if(downloadKilled) return;
+                        if(threadsPool.getUnfinishedFragmentSize() > maxBranch){
+                            Threadings.sleep(100);
+                        }
+                        else{
+                            break;
+                        }
                     }
+                }
+
+                while (!threadsPool.allFinished()){
+                    if(downloadKilled) return;
+                    Threadings.sleep(100);
                 }
 
                 saveGameFilesData();

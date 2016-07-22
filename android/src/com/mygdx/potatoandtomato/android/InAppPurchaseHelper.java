@@ -108,6 +108,10 @@ public class InAppPurchaseHelper implements BillingProcessor.IBillingHandler {
 
     @Override
     public void onProductPurchased(final String productId, final TransactionDetails transactionDetails) {
+        goToPhaseZero(productId, transactionDetails, 0);
+    }
+
+    public void goToPhaseZero(final String productId, final TransactionDetails transactionDetails, final int tryCount){
         Threadings.runInBackground(new Runnable() {
             @Override
             public void run() {
@@ -116,28 +120,46 @@ public class InAppPurchaseHelper implements BillingProcessor.IBillingHandler {
                             @Override
                             public void onCallback(String obj, Status st) {
                                 if(st == Status.FAILED){
-                                    broadcaster.broadcast(BroadcastEvent.IAB_PRODUCT_PURCHASE_RESPONSE, "failed phase 0", Status.FAILED);
+                                    if(tryCount == 0){
+                                        Threadings.sleep(3000);     //retry again 3secs
+                                        goToPhaseZero(productId, transactionDetails, 1);
+                                    }
+                                    else{
+                                        broadcaster.broadcast(BroadcastEvent.IAB_PRODUCT_PURCHASE_RESPONSE, "failed phase 0", Status.FAILED);
+                                    }
                                 }
                                 else{
-                                    billingProcessor.consumePurchase(productId);
-                                    restfulApi.purchasedProducts(productId, transactionDetails.purchaseToken, transactionDetails.orderId, myProfile, 1,
-                                            new RestfulApiListener<String>() {
-                                                @Override
-                                                public void onCallback(String obj, Status st) {
-                                                    if(st == Status.FAILED){
-                                                        broadcaster.broadcast(BroadcastEvent.IAB_PRODUCT_PURCHASE_RESPONSE, "failed phase 1", Status.FAILED);
-                                                    }
-                                                    else{
-                                                        broadcaster.broadcast(BroadcastEvent.IAB_PRODUCT_PURCHASE_RESPONSE, Status.SUCCESS);
-                                                    }
-                                                }
-                                            });
+                                    goToPhaseOne(productId, transactionDetails);
+                                }
+                            }
+                        });
+            }
+        });
+
+
+    }
+
+    public void goToPhaseOne(final String productId, final TransactionDetails transactionDetails){
+        Threadings.runInBackground(new Runnable() {
+            @Override
+            public void run() {
+                billingProcessor.consumePurchase(productId);
+                restfulApi.purchasedProducts(productId, transactionDetails.purchaseToken, transactionDetails.orderId, myProfile, 1,
+                        new RestfulApiListener<String>() {
+                            @Override
+                            public void onCallback(String obj, Status st) {
+                                if(st == Status.FAILED){
+                                    broadcaster.broadcast(BroadcastEvent.IAB_PRODUCT_PURCHASE_RESPONSE, "failed phase 1", Status.FAILED);
+                                }
+                                else{
+                                    broadcaster.broadcast(BroadcastEvent.IAB_PRODUCT_PURCHASE_RESPONSE, Status.SUCCESS);
                                 }
                             }
                         });
             }
         });
     }
+
 
     @Override
     public void onPurchaseHistoryRestored() {

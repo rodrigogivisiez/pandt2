@@ -17,7 +17,6 @@ import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.enums.Status;
-import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -38,9 +37,9 @@ public class InviteLogic extends LogicAbstract {
 
         _room = (Room) objs[0];
 
-        _scene.addTitleToContainer(_texts.recentlyPlay(), InviteScene.InviteType.Recent);
-        _scene.addTitleToContainer(_texts.faebookFriends(), InviteScene.InviteType.Facebook);
-        _scene.addTitleToContainer(_room.getGame().getName() + " " + _texts.leaderBoards(), InviteScene.InviteType.Leaderboard);
+        _scene.addTitleToContainer(_texts.recentlyPlayTabTitle(), InviteScene.InviteType.Recent);
+        _scene.addTitleToContainer(_texts.faebookFriendsTabTitle(), InviteScene.InviteType.Facebook);
+        _scene.addTitleToContainer(_room.getGame().getName() + " " + _texts.leaderBoardsTabTitle(), InviteScene.InviteType.Leaderboard);
         _scene.changeTab(InviteScene.InviteType.Recent);
     }
 
@@ -283,10 +282,10 @@ public class InviteLogic extends LogicAbstract {
 
                                 boolean nameChanged = !(latestProfile.getDisplayName(0).equals(user.getDisplayName(0)));
 
-                                String msg = String.format(_texts.xInvitedX(),
+                                String msg = String.format(_texts.chatMsgxInvitedX(),
                                         _services.getProfile().getDisplayName(0), user.getDisplayName(0));
                                 if(nameChanged){
-                                    msg = String.format(_texts.xInvitedXAlias(),
+                                    msg = String.format(_texts.chatMsgxInvitedXAlias(),
                                             _services.getProfile().getDisplayName(0), latestProfile.getDisplayName(0),
                                             user.getDisplayName(0));
                                 }

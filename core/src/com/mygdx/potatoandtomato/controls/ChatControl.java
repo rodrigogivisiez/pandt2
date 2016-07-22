@@ -28,12 +28,10 @@ import com.mygdx.potatoandtomato.utils.Positions;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.absints.IPTGame;
 import com.potatoandtomato.common.assets.Assets;
-import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.utils.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
@@ -155,7 +153,7 @@ public class ChatControl {
         chatBoxBackground = new Image(new NinePatchDrawable(assets.getPatches().get(Patches.Name.YELLOW_GRADIENT_BOX)));
         chatBoxBackground.setFillParent(true);
 
-        messageTextField = new PTTextField(assets);
+        messageTextField = new PTTextField(assets, false);
 
         ///////////////////////////////
         //Various Button
@@ -677,7 +675,7 @@ public class ChatControl {
             lblUsernameStyle.font = assets.getFonts().get(Fonts.FontId.MYRIAD_S_BOLD);
             lblUsernameStyle.fontColor = Color.BLACK;
 
-            lblMessageStyle.font = assets.getFonts().get(Fonts.FontId.MYRIAD_S_REGULAR);
+            lblMessageStyle.font = assets.getFonts().get(Fonts.FontId.PT_S_REGULAR);
             lblMessageStyle.fontColor = Color.BLACK;
 
             lblInfoStyle.font = assets.getFonts().get(Fonts.FontId.MYRIAD_S_REGULAR);
@@ -692,13 +690,13 @@ public class ChatControl {
                 lblUsernameStyle.fontColor = ColorUtils.getUserColorByIndex(senderSlotIndex);
             }
 
-            lblMessageStyle.font = assets.getFonts().get(Fonts.FontId.MYRIAD_S_BOLD_B_ffffff_000000_1);
+            lblMessageStyle.font = assets.getFonts().get(Fonts.FontId.PT_S_REGULAR_B_ffffff_000000_1);
             lblMessageStyle.fontColor = Color.WHITE;
 
-            lblInfoStyle.font = assets.getFonts().get(Fonts.FontId.MYRIAD_S_BOLD_B_ffffff_000000_1);
+            lblInfoStyle.font = assets.getFonts().get(Fonts.FontId.PT_S_REGULAR_B_ffffff_000000_1);
             lblInfoStyle.fontColor = Color.valueOf("11b1bf");
 
-            lblImportantStyle.font = assets.getFonts().get(Fonts.FontId.MYRIAD_S_BOLD_B_ffffff_000000_1);
+            lblImportantStyle.font = assets.getFonts().get(Fonts.FontId.PT_S_REGULAR_B_ffffff_000000_1);
             lblImportantStyle.fontColor = Color.valueOf("F56C57");
         }
 

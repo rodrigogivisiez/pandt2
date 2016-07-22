@@ -100,39 +100,42 @@ public class GraveyardLogic implements Disposable {
     }
 
     public void setListener(){
-
-        _graveyardActor.getGraveButton().addListener(new ClickListener() {
+        Threadings.postRunnable(new Runnable() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                _graveyardActor.toggle(true);
+            public void run() {
+                _graveyardActor.getGraveButton().addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        _graveyardActor.toggle(true);
+                    }
+                });
+
+                _graveyardActor.getTutorialButton().addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        _graveyardActor.toggle(false);
+                    }
+                });
+
+                _graveyardActor.getGraveCloseImage().addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        _graveyardActor.hide();
+                    }
+                });
+
+                _graveyardActor.getTutorialCloseImage().addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        super.clicked(event, x, y);
+                        _graveyardActor.hide();
+                    }
+                });
             }
         });
-
-        _graveyardActor.getTutorialButton().addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                _graveyardActor.toggle(false);
-            }
-        });
-
-        _graveyardActor.getGraveCloseImage().addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                _graveyardActor.hide();
-            }
-        });
-
-        _graveyardActor.getTutorialCloseImage().addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                _graveyardActor.hide();
-            }
-        });
-
     }
 
     @Override

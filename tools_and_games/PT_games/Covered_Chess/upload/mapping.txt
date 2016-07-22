@@ -57,40 +57,42 @@ com.potatoandtomato.games.absint.ScoresListener -> com.potatoandtomato.games.a.f
     12:12:void <init>() -> <init>
     void onCallBack(java.util.HashMap,java.util.ArrayList) -> a
 com.potatoandtomato.games.assets.Fonts -> com.potatoandtomato.games.assets.Fonts:
-    14:15:void <init>(com.potatoandtomato.common.absints.PTAssetsManager) -> <init>
-    19:22:void loadFonts() -> loadFonts
-    26:27:void setFontDetailsGenerator() -> setFontDetailsGenerator
+    15:16:void <init>(com.potatoandtomato.common.absints.PTAssetsManager) -> <init>
+    20:23:void loadFonts() -> loadFonts
+    27:28:void setFontDetailsGenerator() -> setFontDetailsGenerator
 com.potatoandtomato.games.assets.Fonts$1 -> com.potatoandtomato.games.assets.Fonts$1:
     int[] $SwitchMap$com$potatoandtomato$games$assets$Fonts$FontName -> a
     int[] $SwitchMap$com$potatoandtomato$games$assets$Fonts$FontStyle -> b
     int[] $SwitchMap$com$potatoandtomato$games$assets$Fonts$FontSize -> c
-    55:98:void <clinit>() -> <clinit>
+    58:108:void <clinit>() -> <clinit>
 com.potatoandtomato.games.assets.Fonts$FontId -> com.potatoandtomato.games.assets.Fonts$a:
-    com.potatoandtomato.games.assets.Fonts$FontId MYRIAD_S_REGULAR -> a
-    com.potatoandtomato.games.assets.Fonts$FontId MYRIAD_M_REGULAR -> b
-    com.potatoandtomato.games.assets.Fonts$FontId MYRIAD_M_REGULAR_B_000000_588e54_1 -> c
-    com.potatoandtomato.games.assets.Fonts$FontId MYRIAD_XXL_REGULAR -> d
-    com.potatoandtomato.games.assets.Fonts$FontId HELVETICA_XS_BlACKCONDENSEDITALIC -> e
-    com.potatoandtomato.games.assets.Fonts$FontId HELVETICA_XL_HEAVY -> f
-    com.potatoandtomato.games.assets.Fonts$FontId HELVETICA_XXL_BlACKCONDENSEDITALIC_B_ffffff_56380a_1 -> g
-    com.potatoandtomato.games.assets.Fonts$FontId HELVETICA_MAX_BlACKCONDENSEDITALIC_B_ffffff_f0c266_2_S_000000_1_1 -> h
-    com.potatoandtomato.games.assets.Fonts$FontId HELVETICA_MAX_BlACKCONDENSEDITALIC_B_ffffff_f46767_2_S_000000_1_1 -> i
-    com.potatoandtomato.games.assets.Fonts$FontId PIZZA_XXL_REGULAR -> j
-    com.potatoandtomato.games.assets.Fonts$FontId PIZZA_XXXL_REGULAR_B_000000_ffffff_3 -> k
-    com.potatoandtomato.games.assets.Fonts$FontId[] $VALUES -> l
-    30:30:com.potatoandtomato.games.assets.Fonts$FontId[] values() -> values
-    30:30:com.potatoandtomato.games.assets.Fonts$FontId valueOf(java.lang.String) -> valueOf
-    30:30:void <init>(java.lang.String,int) -> <init>
-    30:43:void <clinit>() -> <clinit>
+    com.potatoandtomato.games.assets.Fonts$FontId HANDWRITING_25_REGULAR -> a
+    com.potatoandtomato.games.assets.Fonts$FontId MYRIAD_S_REGULAR -> b
+    com.potatoandtomato.games.assets.Fonts$FontId MYRIAD_M_REGULAR -> c
+    com.potatoandtomato.games.assets.Fonts$FontId MYRIAD_M_REGULAR_B_000000_588e54_1 -> d
+    com.potatoandtomato.games.assets.Fonts$FontId MYRIAD_XXL_REGULAR -> e
+    com.potatoandtomato.games.assets.Fonts$FontId HELVETICA_XS_BlACKCONDENSEDITALIC -> f
+    com.potatoandtomato.games.assets.Fonts$FontId HELVETICA_XL_HEAVY -> g
+    com.potatoandtomato.games.assets.Fonts$FontId HELVETICA_XXL_BlACKCONDENSEDITALIC_B_ffffff_56380a_1 -> h
+    com.potatoandtomato.games.assets.Fonts$FontId HELVETICA_MAX_BlACKCONDENSEDITALIC_B_ffffff_f0c266_2_S_000000_1_1 -> i
+    com.potatoandtomato.games.assets.Fonts$FontId HELVETICA_MAX_BlACKCONDENSEDITALIC_B_ffffff_f46767_2_S_000000_1_1 -> j
+    com.potatoandtomato.games.assets.Fonts$FontId PIZZA_XXL_REGULAR -> k
+    com.potatoandtomato.games.assets.Fonts$FontId PIZZA_XXXL_REGULAR_S_000000_2_2 -> l
+    com.potatoandtomato.games.assets.Fonts$FontId[] $VALUES -> m
+    31:31:com.potatoandtomato.games.assets.Fonts$FontId[] values() -> values
+    31:31:com.potatoandtomato.games.assets.Fonts$FontId valueOf(java.lang.String) -> valueOf
+    31:31:void <init>(java.lang.String,int) -> <init>
+    31:46:void <clinit>() -> <clinit>
 com.potatoandtomato.games.assets.Fonts$FontName -> com.potatoandtomato.games.assets.Fonts$b:
     com.potatoandtomato.games.assets.Fonts$FontName PIZZA -> a
     com.potatoandtomato.games.assets.Fonts$FontName MYRIAD -> b
     com.potatoandtomato.games.assets.Fonts$FontName HELVETICA -> c
-    com.potatoandtomato.games.assets.Fonts$FontName[] $VALUES -> d
-    120:120:com.potatoandtomato.games.assets.Fonts$FontName[] values() -> values
-    120:120:com.potatoandtomato.games.assets.Fonts$FontName valueOf(java.lang.String) -> valueOf
-    120:120:void <init>(java.lang.String,int) -> <init>
-    120:121:void <clinit>() -> <clinit>
+    com.potatoandtomato.games.assets.Fonts$FontName HANDWRITING -> d
+    com.potatoandtomato.games.assets.Fonts$FontName[] $VALUES -> e
+    130:130:com.potatoandtomato.games.assets.Fonts$FontName[] values() -> values
+    130:130:com.potatoandtomato.games.assets.Fonts$FontName valueOf(java.lang.String) -> valueOf
+    130:130:void <init>(java.lang.String,int) -> <init>
+    130:131:void <clinit>() -> <clinit>
 com.potatoandtomato.games.assets.Fonts$FontSize -> com.potatoandtomato.games.assets.Fonts$c:
     com.potatoandtomato.games.assets.Fonts$FontSize XS -> a
     com.potatoandtomato.games.assets.Fonts$FontSize S -> b
@@ -101,10 +103,10 @@ com.potatoandtomato.games.assets.Fonts$FontSize -> com.potatoandtomato.games.ass
     com.potatoandtomato.games.assets.Fonts$FontSize XXXL -> g
     com.potatoandtomato.games.assets.Fonts$FontSize MAX -> h
     com.potatoandtomato.games.assets.Fonts$FontSize[] $VALUES -> i
-    128:128:com.potatoandtomato.games.assets.Fonts$FontSize[] values() -> values
-    128:128:com.potatoandtomato.games.assets.Fonts$FontSize valueOf(java.lang.String) -> valueOf
-    128:128:void <init>(java.lang.String,int) -> <init>
-    128:129:void <clinit>() -> <clinit>
+    138:138:com.potatoandtomato.games.assets.Fonts$FontSize[] values() -> values
+    138:138:com.potatoandtomato.games.assets.Fonts$FontSize valueOf(java.lang.String) -> valueOf
+    138:138:void <init>(java.lang.String,int) -> <init>
+    138:139:void <clinit>() -> <clinit>
 com.potatoandtomato.games.assets.Fonts$FontStyle -> com.potatoandtomato.games.assets.Fonts$d:
     com.potatoandtomato.games.assets.Fonts$FontStyle SEMIBOLD -> a
     com.potatoandtomato.games.assets.Fonts$FontStyle REGULAR -> b
@@ -114,16 +116,16 @@ com.potatoandtomato.games.assets.Fonts$FontStyle -> com.potatoandtomato.games.as
     com.potatoandtomato.games.assets.Fonts$FontStyle HEAVY -> f
     com.potatoandtomato.games.assets.Fonts$FontStyle BlACKCONDENSEDITALIC -> g
     com.potatoandtomato.games.assets.Fonts$FontStyle[] $VALUES -> h
-    124:124:com.potatoandtomato.games.assets.Fonts$FontStyle[] values() -> values
-    124:124:com.potatoandtomato.games.assets.Fonts$FontStyle valueOf(java.lang.String) -> valueOf
-    124:124:void <init>(java.lang.String,int) -> <init>
-    124:125:void <clinit>() -> <clinit>
+    134:134:com.potatoandtomato.games.assets.Fonts$FontStyle[] values() -> values
+    134:134:com.potatoandtomato.games.assets.Fonts$FontStyle valueOf(java.lang.String) -> valueOf
+    134:134:void <init>(java.lang.String,int) -> <init>
+    134:135:void <clinit>() -> <clinit>
 com.potatoandtomato.games.assets.Fonts$MyFontDetailsGenerator -> com.potatoandtomato.games.assets.Fonts$MyFontDetailsGenerator:
     com.potatoandtomato.games.assets.Fonts this$0 -> a
-    47:47:void <init>(com.potatoandtomato.games.assets.Fonts) -> <init>
-    51:92:java.lang.String getPath(java.lang.String,java.lang.String) -> getPath
-    97:116:int getSize(java.lang.String) -> getSize
-    47:47:void <init>(com.potatoandtomato.games.assets.Fonts,com.potatoandtomato.games.assets.Fonts$1) -> <init>
+    50:50:void <init>(com.potatoandtomato.games.assets.Fonts) -> <init>
+    54:98:java.lang.String getPath(java.lang.String,java.lang.String) -> getPath
+    103:126:int getSize(java.lang.String) -> getSize
+    50:50:void <init>(com.potatoandtomato.games.assets.Fonts,com.potatoandtomato.games.assets.Fonts$1) -> <init>
 com.potatoandtomato.games.assets.MyAssets -> com.potatoandtomato.games.assets.MyAssets:
     com.potatoandtomato.games.assets.Textures textures -> a
     16:18:void <init>(com.potatoandtomato.common.absints.PTAssetsManager,com.potatoandtomato.common.assets.FontAssets,com.potatoandtomato.common.assets.AnimationAssets,com.potatoandtomato.common.assets.SoundAssets,com.potatoandtomato.common.assets.PatchAssets,com.potatoandtomato.games.assets.Textures) -> <init>
@@ -222,11 +224,12 @@ com.potatoandtomato.games.assets.Textures$Name -> com.potatoandtomato.games.asse
     com.potatoandtomato.games.assets.Textures$Name YOU_WIN_YELLOW -> W
     com.potatoandtomato.games.assets.Textures$Name YOU_LOSE_RED -> X
     com.potatoandtomato.games.assets.Textures$Name YOU_WIN_RED -> Y
-    com.potatoandtomato.games.assets.Textures$Name[] $VALUES -> Z
+    com.potatoandtomato.games.assets.Textures$Name TUTORIAL_BG -> Z
+    com.potatoandtomato.games.assets.Textures$Name[] $VALUES -> aa
     28:28:com.potatoandtomato.games.assets.Textures$Name[] values() -> values
     28:28:com.potatoandtomato.games.assets.Textures$Name valueOf(java.lang.String) -> valueOf
     28:28:void <init>(java.lang.String,int) -> <init>
-    28:40:void <clinit>() -> <clinit>
+    28:41:void <clinit>() -> <clinit>
 com.potatoandtomato.games.controls.AnimateLabel -> com.potatoandtomato.games.b.a:
     18:45:void <init>(java.lang.String,com.badlogic.gdx.graphics.g2d.BitmapFont) -> <init>
 com.potatoandtomato.games.controls.CloneableTable -> com.potatoandtomato.games.b.b:
@@ -551,109 +554,110 @@ com.potatoandtomato.games.references.MovementRef$1 -> com.potatoandtomato.games.
 com.potatoandtomato.games.references.StatusRef -> com.potatoandtomato.games.d.c:
     com.potatoandtomato.games.services.SoundsWrapper _soundsWrapper -> a
     long _abilityTriggeredAnimateTime -> b
-    21:25:void <init>(com.potatoandtomato.games.services.SoundsWrapper) -> <init>
-    28:47:void chessOpened(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic,com.potatoandtomato.games.enums.ChessColor,java.lang.String) -> a
-    52:66:void chessMoved(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic,com.potatoandtomato.games.enums.ChessType,com.potatoandtomato.games.enums.ChessType,java.lang.String) -> a
-    69:75:void suddenDeathStatus(java.util.ArrayList) -> a
-    78:96:void turnOver(java.util.ArrayList) -> b
-    99:119:void lionEffect(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic) -> a
-    122:129:java.util.ArrayList getLionEffectTargets(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic) -> b
-    133:153:void tigerEffect(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic) -> c
-    156:163:java.util.ArrayList getTigerEffectTargets(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic) -> d
-    167:186:void elephantEffect(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic) -> e
-    189:196:java.util.ArrayList getElephantEffectTargets(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic) -> f
-    200:233:void wolfEffect(java.util.ArrayList,com.potatoandtomato.games.enums.ChessType) -> a
-    236:249:void mouseEffect(com.potatoandtomato.games.screens.TerrainLogic,com.potatoandtomato.games.enums.ChessType) -> a
-    253:287:void catEffect(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic,java.lang.String) -> a
-    291:323:java.util.ArrayList getCatEffectTargets(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic,java.lang.String) -> b
-    327:352:void dogEffect(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic,com.potatoandtomato.games.enums.ChessColor) -> a
-    355:363:java.util.ArrayList getDogEffectTargets(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic) -> g
-    367:376:java.util.ArrayList getAdjacentTerrains(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic) -> h
-    380:393:java.util.ArrayList getTerrainsByChessType(java.util.ArrayList,com.potatoandtomato.games.enums.ChessType,boolean) -> a
-    397:410:java.util.ArrayList getTerrainsByAnimalType(java.util.ArrayList,com.potatoandtomato.games.enums.ChessAnimal,boolean) -> a
-    414:422:boolean setStatus(com.potatoandtomato.games.screens.TerrainLogic,com.potatoandtomato.games.enums.Status,boolean) -> a
-    427:429:void showAbility(com.potatoandtomato.games.screens.TerrainLogic,com.potatoandtomato.games.enums.ChessType,boolean,com.potatoandtomato.games.enums.ChessAnimal) -> a
-    432:432:boolean isNegativeStatus(com.potatoandtomato.games.enums.Status) -> a
-    437:441:void transformAnimalIfNeeded(com.potatoandtomato.games.screens.TerrainLogic,java.lang.String) -> a
-    18:18:boolean access$000(com.potatoandtomato.games.references.StatusRef,com.potatoandtomato.games.screens.TerrainLogic,com.potatoandtomato.games.enums.Status,boolean) -> a
-    18:18:com.potatoandtomato.games.services.SoundsWrapper access$100(com.potatoandtomato.games.references.StatusRef) -> a
-    18:18:void access$200(com.potatoandtomato.games.references.StatusRef,com.potatoandtomato.games.screens.TerrainLogic,com.potatoandtomato.games.enums.ChessType,boolean,com.potatoandtomato.games.enums.ChessAnimal) -> a
-    18:18:long access$300(com.potatoandtomato.games.references.StatusRef) -> b
+    23:27:void <init>(com.potatoandtomato.games.services.SoundsWrapper) -> <init>
+    30:49:void chessOpened(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic,com.potatoandtomato.games.enums.ChessColor,java.lang.String) -> a
+    54:68:void chessMoved(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic,com.potatoandtomato.games.enums.ChessType,com.potatoandtomato.games.enums.ChessType,java.lang.String) -> a
+    71:77:void suddenDeathStatus(java.util.ArrayList) -> a
+    80:98:void turnOver(java.util.ArrayList) -> b
+    101:121:void lionEffect(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic) -> a
+    124:131:java.util.ArrayList getLionEffectTargets(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic) -> b
+    135:155:void tigerEffect(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic) -> c
+    158:165:java.util.ArrayList getTigerEffectTargets(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic) -> d
+    169:188:void elephantEffect(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic) -> e
+    191:198:java.util.ArrayList getElephantEffectTargets(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic) -> f
+    202:235:void wolfEffect(java.util.ArrayList,com.potatoandtomato.games.enums.ChessType) -> a
+    238:255:void mouseEffect(com.potatoandtomato.games.screens.TerrainLogic,com.potatoandtomato.games.enums.ChessType) -> a
+    259:293:void catEffect(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic,java.lang.String) -> a
+    297:329:java.util.ArrayList getCatEffectTargets(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic,java.lang.String) -> b
+    333:358:void dogEffect(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic,com.potatoandtomato.games.enums.ChessColor) -> a
+    361:369:java.util.ArrayList getDogEffectTargets(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic) -> g
+    373:382:java.util.ArrayList getAdjacentTerrains(java.util.ArrayList,com.potatoandtomato.games.screens.TerrainLogic) -> h
+    386:399:java.util.ArrayList getTerrainsByChessType(java.util.ArrayList,com.potatoandtomato.games.enums.ChessType,boolean) -> a
+    403:416:java.util.ArrayList getTerrainsByAnimalType(java.util.ArrayList,com.potatoandtomato.games.enums.ChessAnimal,boolean) -> a
+    420:429:boolean setStatus(com.potatoandtomato.games.screens.TerrainLogic,com.potatoandtomato.games.enums.Status,boolean) -> a
+    434:436:void showAbility(com.potatoandtomato.games.screens.TerrainLogic,com.potatoandtomato.games.enums.ChessType,boolean,com.potatoandtomato.games.enums.ChessAnimal) -> a
+    439:439:boolean isNegativeStatus(com.potatoandtomato.games.enums.Status) -> a
+    444:448:void transformAnimalIfNeeded(com.potatoandtomato.games.screens.TerrainLogic,java.lang.String) -> a
+    20:20:boolean access$000(com.potatoandtomato.games.references.StatusRef,com.potatoandtomato.games.screens.TerrainLogic,com.potatoandtomato.games.enums.Status,boolean) -> a
+    20:20:com.potatoandtomato.games.services.SoundsWrapper access$100(com.potatoandtomato.games.references.StatusRef) -> a
+    20:20:void access$200(com.potatoandtomato.games.references.StatusRef,com.potatoandtomato.games.screens.TerrainLogic,com.potatoandtomato.games.enums.ChessType,boolean,com.potatoandtomato.games.enums.ChessAnimal) -> a
+    20:20:long access$300(com.potatoandtomato.games.references.StatusRef) -> b
 com.potatoandtomato.games.references.StatusRef$1 -> com.potatoandtomato.games.d.c$1:
     com.potatoandtomato.games.screens.TerrainLogic val$lionLogic -> a
     java.util.ArrayList val$targetLogics -> b
     com.potatoandtomato.games.references.StatusRef this$0 -> c
-    106:106:void <init>(com.potatoandtomato.games.references.StatusRef,com.potatoandtomato.games.screens.TerrainLogic,java.util.ArrayList) -> <init>
-    109:115:void run() -> run
+    108:108:void <init>(com.potatoandtomato.games.references.StatusRef,com.potatoandtomato.games.screens.TerrainLogic,java.util.ArrayList) -> <init>
+    111:117:void run() -> run
 com.potatoandtomato.games.references.StatusRef$2 -> com.potatoandtomato.games.d.c$2:
     com.potatoandtomato.games.screens.TerrainLogic val$tigerLogic -> a
     java.util.ArrayList val$targetLogics -> b
     com.potatoandtomato.games.references.StatusRef this$0 -> c
-    140:140:void <init>(com.potatoandtomato.games.references.StatusRef,com.potatoandtomato.games.screens.TerrainLogic,java.util.ArrayList) -> <init>
-    143:150:void run() -> run
+    142:142:void <init>(com.potatoandtomato.games.references.StatusRef,com.potatoandtomato.games.screens.TerrainLogic,java.util.ArrayList) -> <init>
+    145:152:void run() -> run
 com.potatoandtomato.games.references.StatusRef$3 -> com.potatoandtomato.games.d.c$3:
     java.util.ArrayList val$targetLogics -> a
     com.potatoandtomato.games.references.StatusRef this$0 -> b
-    174:174:void <init>(com.potatoandtomato.games.references.StatusRef,java.util.ArrayList) -> <init>
-    177:183:void run() -> run
+    176:176:void <init>(com.potatoandtomato.games.references.StatusRef,java.util.ArrayList) -> <init>
+    179:185:void run() -> run
 com.potatoandtomato.games.references.StatusRef$4 -> com.potatoandtomato.games.d.c$4:
     com.potatoandtomato.games.screens.TerrainLogic val$terrainLogic -> a
     com.potatoandtomato.games.enums.ChessType val$wolfChessType -> b
     com.potatoandtomato.games.references.StatusRef this$0 -> c
-    203:203:void <init>(com.potatoandtomato.games.references.StatusRef,com.potatoandtomato.games.screens.TerrainLogic,com.potatoandtomato.games.enums.ChessType) -> <init>
-    206:214:void run() -> run
+    205:205:void <init>(com.potatoandtomato.games.references.StatusRef,com.potatoandtomato.games.screens.TerrainLogic,com.potatoandtomato.games.enums.ChessType) -> <init>
+    208:216:void run() -> run
 com.potatoandtomato.games.references.StatusRef$4$1 -> com.potatoandtomato.games.d.c$4$1:
     com.potatoandtomato.games.references.StatusRef$4 this$1 -> a
-    208:208:void <init>(com.potatoandtomato.games.references.StatusRef$4) -> <init>
-    211:212:void run() -> run
+    210:210:void <init>(com.potatoandtomato.games.references.StatusRef$4) -> <init>
+    213:214:void run() -> run
 com.potatoandtomato.games.references.StatusRef$5 -> com.potatoandtomato.games.d.c$5:
     java.lang.Runnable val$effectRunnable -> a
     com.potatoandtomato.games.references.StatusRef this$0 -> b
-    218:218:void <init>(com.potatoandtomato.games.references.StatusRef,java.lang.Runnable) -> <init>
-    221:222:void run() -> run
+    220:220:void <init>(com.potatoandtomato.games.references.StatusRef,java.lang.Runnable) -> <init>
+    223:224:void run() -> run
 com.potatoandtomato.games.references.StatusRef$6 -> com.potatoandtomato.games.d.c$6:
     com.potatoandtomato.games.screens.TerrainLogic val$terrainLogic -> a
     com.potatoandtomato.games.enums.ChessType val$mouseChessType -> b
-    com.potatoandtomato.games.references.StatusRef this$0 -> c
-    237:237:void <init>(com.potatoandtomato.games.references.StatusRef,com.potatoandtomato.games.screens.TerrainLogic,com.potatoandtomato.games.enums.ChessType) -> <init>
-    240:247:void run() -> run
+    com.potatoandtomato.games.models.ChessModel val$chessModel -> c
+    com.potatoandtomato.games.references.StatusRef this$0 -> d
+    241:241:void <init>(com.potatoandtomato.games.references.StatusRef,com.potatoandtomato.games.screens.TerrainLogic,com.potatoandtomato.games.enums.ChessType,com.potatoandtomato.games.models.ChessModel) -> <init>
+    244:253:void run() -> run
 com.potatoandtomato.games.references.StatusRef$6$1 -> com.potatoandtomato.games.d.c$6$1:
     com.potatoandtomato.games.references.StatusRef$6 this$1 -> a
-    241:241:void <init>(com.potatoandtomato.games.references.StatusRef$6) -> <init>
-    244:245:void run() -> run
+    245:245:void <init>(com.potatoandtomato.games.references.StatusRef$6) -> <init>
+    248:251:void run() -> run
 com.potatoandtomato.games.references.StatusRef$7 -> com.potatoandtomato.games.d.c$7:
     com.potatoandtomato.games.screens.TerrainLogic val$openedLogic -> a
     java.util.ArrayList val$targetLogics -> b
     com.potatoandtomato.games.references.StatusRef this$0 -> c
-    259:259:void <init>(com.potatoandtomato.games.references.StatusRef,com.potatoandtomato.games.screens.TerrainLogic,java.util.ArrayList) -> <init>
-    262:284:void run() -> run
+    265:265:void <init>(com.potatoandtomato.games.references.StatusRef,com.potatoandtomato.games.screens.TerrainLogic,java.util.ArrayList) -> <init>
+    268:290:void run() -> run
 com.potatoandtomato.games.references.StatusRef$7$1 -> com.potatoandtomato.games.d.c$7$1:
     int[] val$i -> a
     com.potatoandtomato.games.references.StatusRef$7 this$1 -> b
-    263:263:void <init>(com.potatoandtomato.games.references.StatusRef$7,int[]) -> <init>
-    266:282:void run() -> run
+    269:269:void <init>(com.potatoandtomato.games.references.StatusRef$7,int[]) -> <init>
+    272:288:void run() -> run
 com.potatoandtomato.games.references.StatusRef$7$1$1 -> com.potatoandtomato.games.d.c$7$1$1:
     com.potatoandtomato.games.references.StatusRef$7$1 this$2 -> a
-    268:268:void <init>(com.potatoandtomato.games.references.StatusRef$7$1) -> <init>
-    271:279:void run() -> run
+    274:274:void <init>(com.potatoandtomato.games.references.StatusRef$7$1) -> <init>
+    277:285:void run() -> run
 com.potatoandtomato.games.references.StatusRef$7$1$1$1 -> com.potatoandtomato.games.d.c$7$1$1$1:
     com.potatoandtomato.games.references.StatusRef$7$1$1 this$3 -> a
-    272:272:void <init>(com.potatoandtomato.games.references.StatusRef$7$1$1) -> <init>
-    275:276:void run() -> run
+    278:278:void <init>(com.potatoandtomato.games.references.StatusRef$7$1$1) -> <init>
+    281:282:void run() -> run
 com.potatoandtomato.games.references.StatusRef$8 -> com.potatoandtomato.games.d.c$8:
     com.potatoandtomato.games.screens.TerrainLogic val$openedLogic -> a
     java.util.ArrayList val$targetLogics -> b
     boolean val$revealChess -> c
     com.potatoandtomato.games.references.StatusRef this$0 -> d
-    335:335:void <init>(com.potatoandtomato.games.references.StatusRef,com.potatoandtomato.games.screens.TerrainLogic,java.util.ArrayList,boolean) -> <init>
-    339:349:void run() -> run
+    341:341:void <init>(com.potatoandtomato.games.references.StatusRef,com.potatoandtomato.games.screens.TerrainLogic,java.util.ArrayList,boolean) -> <init>
+    345:355:void run() -> run
 com.potatoandtomato.games.references.StatusRef$8$1 -> com.potatoandtomato.games.d.c$8$1:
     com.potatoandtomato.games.references.StatusRef$8 this$1 -> a
-    341:341:void <init>(com.potatoandtomato.games.references.StatusRef$8) -> <init>
-    344:347:void run() -> run
+    347:347:void <init>(com.potatoandtomato.games.references.StatusRef$8) -> <init>
+    350:353:void run() -> run
 com.potatoandtomato.games.references.StatusRef$9 -> com.potatoandtomato.games.d.c$9:
     int[] $SwitchMap$com$potatoandtomato$games$enums$ChessAnimal -> a
-    28:28:void <clinit>() -> <clinit>
+    30:30:void <clinit>() -> <clinit>
 com.potatoandtomato.games.screens.BoardLogic -> com.potatoandtomato.games.screens.a:
     com.potatoandtomato.games.models.Services _services -> a
     com.potatoandtomato.common.GameCoordinator _coordinator -> b
@@ -803,40 +807,88 @@ com.potatoandtomato.games.screens.BoardScreen -> com.potatoandtomato.games.scree
     com.potatoandtomato.common.assets.Assets _assets -> k
     boolean _paused -> l
     boolean _abandoning -> m
-    57:91:void <init>(com.potatoandtomato.common.GameCoordinator,com.potatoandtomato.games.models.Services,com.potatoandtomato.games.screens.SplashActor,com.potatoandtomato.games.screens.GraveyardActor) -> <init>
-    94:115:void thunderAnimation() -> a
-    118:119:void setSuddenDeathBg() -> b
-    122:135:void populateTerrains(java.util.ArrayList) -> a
-    138:144:void setCanTouchChessTable(boolean) -> a
-    147:153:void populateEndGameTable() -> c
-    156:172:void showEndGameTable(boolean,com.potatoandtomato.games.enums.ChessColor) -> a
-    175:189:void setPaused(boolean,boolean) -> a
-    193:193:void show() -> show
-    197:203:void render(float) -> render
-    206:206:com.badlogic.gdx.scenes.scene2d.ui.Table getEndGameRootTable() -> d
-    214:214:void resize(int,int) -> resize
-    219:219:void pause() -> pause
-    224:224:void resume() -> resume
-    229:229:void hide() -> hide
-    234:234:void dispose() -> dispose
-    39:39:com.potatoandtomato.games.models.Services access$000(com.potatoandtomato.games.screens.BoardScreen) -> a
-    39:39:boolean access$100(com.potatoandtomato.games.screens.BoardScreen) -> b
-    39:39:com.badlogic.gdx.scenes.scene2d.ui.Table access$200(com.potatoandtomato.games.screens.BoardScreen) -> c
+    57:96:void <init>(com.potatoandtomato.common.GameCoordinator,com.potatoandtomato.games.models.Services,com.potatoandtomato.games.screens.SplashActor,com.potatoandtomato.games.screens.GraveyardActor) -> <init>
+    99:124:void thunderAnimation() -> a
+    127:133:void setSuddenDeathBg() -> b
+    136:154:void populateTerrains(java.util.ArrayList) -> a
+    157:168:void setCanTouchChessTable(boolean) -> a
+    171:182:void populateEndGameTable() -> c
+    185:204:void showEndGameTable(boolean,com.potatoandtomato.games.enums.ChessColor) -> a
+    207:220:void setPaused(boolean,boolean) -> a
+    224:224:void show() -> show
+    228:234:void render(float) -> render
+    237:237:com.badlogic.gdx.scenes.scene2d.ui.Table getEndGameRootTable() -> d
+    245:245:void resize(int,int) -> resize
+    250:250:void pause() -> pause
+    255:255:void resume() -> resume
+    260:260:void hide() -> hide
+    265:265:void dispose() -> dispose
+    39:39:com.badlogic.gdx.scenes.scene2d.Stage access$002(com.potatoandtomato.games.screens.BoardScreen,com.badlogic.gdx.scenes.scene2d.Stage) -> a
+    39:39:com.badlogic.gdx.scenes.scene2d.ui.Table access$102(com.potatoandtomato.games.screens.BoardScreen,com.badlogic.gdx.scenes.scene2d.ui.Table) -> a
+    39:39:com.badlogic.gdx.scenes.scene2d.ui.Table access$100(com.potatoandtomato.games.screens.BoardScreen) -> a
+    39:39:com.potatoandtomato.common.assets.Assets access$200(com.potatoandtomato.games.screens.BoardScreen) -> b
+    39:39:com.badlogic.gdx.scenes.scene2d.ui.Table access$302(com.potatoandtomato.games.screens.BoardScreen,com.badlogic.gdx.scenes.scene2d.ui.Table) -> b
+    39:39:com.badlogic.gdx.scenes.scene2d.ui.Table access$300(com.potatoandtomato.games.screens.BoardScreen) -> c
+    39:39:com.badlogic.gdx.scenes.scene2d.ui.Table access$402(com.potatoandtomato.games.screens.BoardScreen,com.badlogic.gdx.scenes.scene2d.ui.Table) -> c
+    39:39:com.badlogic.gdx.scenes.scene2d.ui.Table access$400(com.potatoandtomato.games.screens.BoardScreen) -> d
+    39:39:com.badlogic.gdx.scenes.scene2d.Stage access$000(com.potatoandtomato.games.screens.BoardScreen) -> e
+    39:39:com.potatoandtomato.games.models.Services access$500(com.potatoandtomato.games.screens.BoardScreen) -> f
+    39:39:com.badlogic.gdx.scenes.scene2d.ui.Table access$602(com.potatoandtomato.games.screens.BoardScreen,com.badlogic.gdx.scenes.scene2d.ui.Table) -> d
+    39:39:com.badlogic.gdx.scenes.scene2d.ui.Table access$600(com.potatoandtomato.games.screens.BoardScreen) -> g
+    39:39:com.badlogic.gdx.scenes.scene2d.ui.Table access$702(com.potatoandtomato.games.screens.BoardScreen,com.badlogic.gdx.scenes.scene2d.ui.Table) -> e
+    39:39:com.badlogic.gdx.scenes.scene2d.ui.Table access$700(com.potatoandtomato.games.screens.BoardScreen) -> h
+    39:39:com.badlogic.gdx.scenes.scene2d.ui.Table access$802(com.potatoandtomato.games.screens.BoardScreen,com.badlogic.gdx.scenes.scene2d.ui.Table) -> f
+    39:39:com.badlogic.gdx.scenes.scene2d.ui.Table access$800(com.potatoandtomato.games.screens.BoardScreen) -> i
+    39:39:boolean access$900(com.potatoandtomato.games.screens.BoardScreen) -> j
 com.potatoandtomato.games.screens.BoardScreen$1 -> com.potatoandtomato.games.screens.BoardScreen$1:
-    com.potatoandtomato.games.screens.BoardScreen this$0 -> a
-    101:101:void <init>(com.potatoandtomato.games.screens.BoardScreen) -> <init>
-    104:105:void run() -> run
+    com.potatoandtomato.games.screens.SplashActor val$splashActor -> a
+    com.potatoandtomato.games.screens.GraveyardActor val$graveyardActor -> b
+    com.potatoandtomato.games.screens.BoardScreen this$0 -> c
+    62:62:void <init>(com.potatoandtomato.games.screens.BoardScreen,com.potatoandtomato.games.screens.SplashActor,com.potatoandtomato.games.screens.GraveyardActor) -> <init>
+    65:94:void run() -> run
 com.potatoandtomato.games.screens.BoardScreen$2 -> com.potatoandtomato.games.screens.BoardScreen$2:
     com.potatoandtomato.games.screens.BoardScreen this$0 -> a
-    108:108:void <init>(com.potatoandtomato.games.screens.BoardScreen) -> <init>
-    111:112:void run() -> run
+    99:99:void <init>(com.potatoandtomato.games.screens.BoardScreen) -> <init>
+    102:122:void run() -> run
+com.potatoandtomato.games.screens.BoardScreen$2$1 -> com.potatoandtomato.games.screens.BoardScreen$2$1:
+    com.potatoandtomato.games.screens.BoardScreen$2 this$1 -> a
+    109:109:void <init>(com.potatoandtomato.games.screens.BoardScreen$2) -> <init>
+    112:113:void run() -> run
+com.potatoandtomato.games.screens.BoardScreen$2$2 -> com.potatoandtomato.games.screens.BoardScreen$2$2:
+    com.potatoandtomato.games.screens.BoardScreen$2 this$1 -> a
+    116:116:void <init>(com.potatoandtomato.games.screens.BoardScreen$2) -> <init>
+    119:120:void run() -> run
 com.potatoandtomato.games.screens.BoardScreen$3 -> com.potatoandtomato.games.screens.BoardScreen$3:
+    com.potatoandtomato.games.screens.BoardScreen this$0 -> a
+    127:127:void <init>(com.potatoandtomato.games.screens.BoardScreen) -> <init>
+    130:131:void run() -> run
+com.potatoandtomato.games.screens.BoardScreen$4 -> com.potatoandtomato.games.screens.BoardScreen$4:
+    java.util.ArrayList val$terrainLogics -> a
+    com.potatoandtomato.games.screens.BoardScreen this$0 -> b
+    136:136:void <init>(com.potatoandtomato.games.screens.BoardScreen,java.util.ArrayList) -> <init>
+    139:152:void run() -> run
+com.potatoandtomato.games.screens.BoardScreen$5 -> com.potatoandtomato.games.screens.BoardScreen$5:
+    boolean val$canTouch -> a
+    com.potatoandtomato.games.screens.BoardScreen this$0 -> b
+    157:157:void <init>(com.potatoandtomato.games.screens.BoardScreen,boolean) -> <init>
+    160:166:void run() -> run
+com.potatoandtomato.games.screens.BoardScreen$6 -> com.potatoandtomato.games.screens.BoardScreen$6:
+    com.potatoandtomato.games.screens.BoardScreen this$0 -> a
+    171:171:void <init>(com.potatoandtomato.games.screens.BoardScreen) -> <init>
+    174:180:void run() -> run
+com.potatoandtomato.games.screens.BoardScreen$7 -> com.potatoandtomato.games.screens.BoardScreen$7:
+    com.potatoandtomato.games.enums.ChessColor val$chessColor -> a
+    boolean val$won -> b
+    com.potatoandtomato.games.screens.BoardScreen this$0 -> c
+    185:185:void <init>(com.potatoandtomato.games.screens.BoardScreen,com.potatoandtomato.games.enums.ChessColor,boolean) -> <init>
+    188:202:void run() -> run
+com.potatoandtomato.games.screens.BoardScreen$8 -> com.potatoandtomato.games.screens.BoardScreen$8:
     boolean val$isMyTurn -> a
     com.potatoandtomato.games.screens.BoardScreen this$0 -> b
-    176:176:void <init>(com.potatoandtomato.games.screens.BoardScreen,boolean) -> <init>
-    179:187:void run() -> run
+    208:208:void <init>(com.potatoandtomato.games.screens.BoardScreen,boolean) -> <init>
+    211:218:void run() -> run
 com.potatoandtomato.games.screens.ChessActor -> com.potatoandtomato.games.screens.b:
-    com.potatoandtomato.games.screens.ChessActor _me -> a
+    com.potatoandtomato.games.screens.ChessActor _this -> a
     com.badlogic.gdx.scenes.scene2d.ui.Table _coverChess -> b
     com.badlogic.gdx.scenes.scene2d.ui.Table _previewChess -> c
     com.potatoandtomato.games.controls.CloneableTable _animalChess -> d
@@ -851,82 +903,154 @@ com.potatoandtomato.games.screens.ChessActor -> com.potatoandtomato.games.screen
     com.badlogic.gdx.scenes.scene2d.ui.Table _defendSuccessTable -> m
     com.potatoandtomato.games.enums.Status _currentStatus -> n
     boolean _previewing -> o
-    53:53:com.badlogic.gdx.scenes.scene2d.ui.Table getCoverChess() -> a
-    56:106:void <init>(com.potatoandtomato.games.assets.MyAssets,com.potatoandtomato.games.services.SoundsWrapper) -> <init>
-    109:127:void previewChess(boolean,java.lang.Runnable) -> a
-    131:132:void openChess(java.lang.Runnable) -> a
-    135:151:void flipChessAnimation(com.badlogic.gdx.scenes.scene2d.Actor,com.badlogic.gdx.scenes.scene2d.Actor,java.lang.Runnable) -> a
-    155:171:boolean openChess(float,float) -> a
-    176:178:void resetOpenChess() -> b
-    181:192:void setAnimal(com.potatoandtomato.games.enums.ChessType) -> a
-    196:221:void setSurface(boolean,com.potatoandtomato.games.enums.ChessType) -> a
-    224:231:void moving(float,float,float,float) -> a
-    234:262:void defendSuccess() -> c
-    266:276:void draw(com.badlogic.gdx.graphics.g2d.Batch,float) -> draw
-    279:283:void fixChessSizePosition(com.badlogic.gdx.scenes.scene2d.Actor,int) -> a
-    286:287:com.badlogic.gdx.scenes.scene2d.Actor clone() -> d
-    291:305:void invalidate(com.potatoandtomato.games.models.ChessModel,boolean) -> a
-    309:337:void showAbilityTriggered(com.potatoandtomato.games.enums.ChessType,boolean) -> a
-    340:373:void setStatusIcon(com.potatoandtomato.games.enums.Status,boolean) -> a
-    376:376:boolean isPreviewing() -> e
-    380:381:void setPreviewing(boolean) -> a
-    36:36:java.lang.Object clone() -> clone
-    36:36:com.potatoandtomato.games.controls.CloneableTable access$000(com.potatoandtomato.games.screens.ChessActor) -> a
-    36:36:com.badlogic.gdx.scenes.scene2d.ui.Table access$100(com.potatoandtomato.games.screens.ChessActor) -> b
-    36:36:com.badlogic.gdx.scenes.scene2d.ui.Table access$200(com.potatoandtomato.games.screens.ChessActor) -> c
-    36:36:boolean access$302(com.potatoandtomato.games.screens.ChessActor,boolean) -> a
-    36:36:void access$400(com.potatoandtomato.games.screens.ChessActor,com.badlogic.gdx.scenes.scene2d.Actor,com.badlogic.gdx.scenes.scene2d.Actor,java.lang.Runnable) -> a
-    36:36:com.badlogic.gdx.scenes.scene2d.ui.Table access$500(com.potatoandtomato.games.screens.ChessActor) -> d
-    36:36:com.potatoandtomato.games.assets.MyAssets access$600(com.potatoandtomato.games.screens.ChessActor) -> e
-    36:36:com.potatoandtomato.games.services.SoundsWrapper access$700(com.potatoandtomato.games.screens.ChessActor) -> f
-    36:36:com.badlogic.gdx.scenes.scene2d.ui.Image access$800(com.potatoandtomato.games.screens.ChessActor) -> g
-    36:36:com.potatoandtomato.games.screens.ChessActor access$900(com.potatoandtomato.games.screens.ChessActor) -> h
-    36:36:com.badlogic.gdx.scenes.scene2d.ui.Table access$1000(com.potatoandtomato.games.screens.ChessActor) -> i
+    51:57:void <init>(com.potatoandtomato.games.assets.MyAssets,com.potatoandtomato.games.services.SoundsWrapper) -> <init>
+    60:110:void populate() -> a
+    113:136:void previewChess(boolean,java.lang.Runnable) -> a
+    140:141:void openChess(java.lang.Runnable) -> a
+    144:165:void flipChessAnimation(com.badlogic.gdx.scenes.scene2d.Actor,com.badlogic.gdx.scenes.scene2d.Actor,java.lang.Runnable) -> a
+    168:190:boolean openChess(float,float) -> a
+    195:204:void resetOpenChess() -> b
+    207:222:void setAnimal(com.potatoandtomato.games.enums.ChessType) -> a
+    226:256:void setSurface(boolean,com.potatoandtomato.games.enums.ChessType) -> a
+    259:271:void moving(float,float,float,float) -> a
+    274:302:void defendSuccess() -> c
+    306:316:void draw(com.badlogic.gdx.graphics.g2d.Batch,float) -> draw
+    319:329:void fixChessSizePosition(com.badlogic.gdx.scenes.scene2d.Actor,int) -> a
+    332:333:com.badlogic.gdx.scenes.scene2d.Actor clone() -> d
+    337:357:void invalidate(com.potatoandtomato.games.models.ChessModel,boolean) -> a
+    361:389:void showAbilityTriggered(com.potatoandtomato.games.enums.ChessType,boolean) -> a
+    392:429:void setStatusIcon(com.potatoandtomato.games.enums.Status,boolean) -> a
+    432:432:boolean isPreviewing() -> e
+    436:437:void setPreviewing(boolean) -> a
+    440:440:com.badlogic.gdx.scenes.scene2d.ui.Table getCoverChess() -> f
+    35:35:java.lang.Object clone() -> clone
+    35:35:com.potatoandtomato.games.screens.ChessActor access$000(com.potatoandtomato.games.screens.ChessActor) -> a
+    35:35:com.badlogic.gdx.scenes.scene2d.ui.Table access$102(com.potatoandtomato.games.screens.ChessActor,com.badlogic.gdx.scenes.scene2d.ui.Table) -> a
+    35:35:com.badlogic.gdx.scenes.scene2d.ui.Table access$100(com.potatoandtomato.games.screens.ChessActor) -> b
+    35:35:com.potatoandtomato.games.assets.MyAssets access$200(com.potatoandtomato.games.screens.ChessActor) -> c
+    35:35:com.badlogic.gdx.scenes.scene2d.ui.Table access$302(com.potatoandtomato.games.screens.ChessActor,com.badlogic.gdx.scenes.scene2d.ui.Table) -> b
+    35:35:com.badlogic.gdx.scenes.scene2d.ui.Table access$300(com.potatoandtomato.games.screens.ChessActor) -> d
+    35:35:com.potatoandtomato.games.controls.CloneableTable access$402(com.potatoandtomato.games.screens.ChessActor,com.potatoandtomato.games.controls.CloneableTable) -> a
+    35:35:com.potatoandtomato.games.controls.CloneableTable access$400(com.potatoandtomato.games.screens.ChessActor) -> e
+    35:35:com.badlogic.gdx.scenes.scene2d.ui.Image access$502(com.potatoandtomato.games.screens.ChessActor,com.badlogic.gdx.scenes.scene2d.ui.Image) -> a
+    35:35:com.badlogic.gdx.scenes.scene2d.ui.Image access$500(com.potatoandtomato.games.screens.ChessActor) -> f
+    35:35:com.badlogic.gdx.scenes.scene2d.ui.Table access$602(com.potatoandtomato.games.screens.ChessActor,com.badlogic.gdx.scenes.scene2d.ui.Table) -> c
+    35:35:com.badlogic.gdx.scenes.scene2d.ui.Table access$600(com.potatoandtomato.games.screens.ChessActor) -> g
+    35:35:com.badlogic.gdx.scenes.scene2d.ui.Table access$702(com.potatoandtomato.games.screens.ChessActor,com.badlogic.gdx.scenes.scene2d.ui.Table) -> d
+    35:35:com.badlogic.gdx.scenes.scene2d.ui.Table access$700(com.potatoandtomato.games.screens.ChessActor) -> h
+    35:35:boolean access$802(com.potatoandtomato.games.screens.ChessActor,boolean) -> a
+    35:35:void access$900(com.potatoandtomato.games.screens.ChessActor,com.badlogic.gdx.scenes.scene2d.Actor,com.badlogic.gdx.scenes.scene2d.Actor,java.lang.Runnable) -> a
+    35:35:com.potatoandtomato.games.services.SoundsWrapper access$1000(com.potatoandtomato.games.screens.ChessActor) -> i
+    35:35:com.badlogic.gdx.scenes.scene2d.ui.Image access$1102(com.potatoandtomato.games.screens.ChessActor,com.badlogic.gdx.scenes.scene2d.ui.Image) -> b
+    35:35:com.badlogic.gdx.scenes.scene2d.ui.Image access$1100(com.potatoandtomato.games.screens.ChessActor) -> j
+    35:35:boolean access$1200(com.potatoandtomato.games.screens.ChessActor) -> k
+    35:35:boolean access$1202(com.potatoandtomato.games.screens.ChessActor,boolean) -> b
+    35:35:com.potatoandtomato.games.enums.Status access$1300(com.potatoandtomato.games.screens.ChessActor) -> l
+    35:35:com.potatoandtomato.games.enums.Status access$1302(com.potatoandtomato.games.screens.ChessActor,com.potatoandtomato.games.enums.Status) -> a
 com.potatoandtomato.games.screens.ChessActor$1 -> com.potatoandtomato.games.screens.b$1:
-    boolean val$revealChess -> a
-    java.lang.Runnable val$toRun -> b
-    com.potatoandtomato.games.screens.ChessActor this$0 -> c
-    110:110:void <init>(com.potatoandtomato.games.screens.ChessActor,boolean,java.lang.Runnable) -> <init>
-    113:125:void run() -> run
-com.potatoandtomato.games.screens.ChessActor$1$1 -> com.potatoandtomato.games.screens.b$1$1:
-    com.potatoandtomato.games.screens.ChessActor$1 this$1 -> a
-    113:113:void <init>(com.potatoandtomato.games.screens.ChessActor$1) -> <init>
-    116:123:void run() -> run
-com.potatoandtomato.games.screens.ChessActor$1$1$1 -> com.potatoandtomato.games.screens.b$1$1$1:
-    com.potatoandtomato.games.screens.ChessActor$1$1 this$2 -> a
-    116:116:void <init>(com.potatoandtomato.games.screens.ChessActor$1$1) -> <init>
-    119:121:void run() -> run
-com.potatoandtomato.games.screens.ChessActor$2 -> com.potatoandtomato.games.screens.b$2:
-    com.badlogic.gdx.scenes.scene2d.Actor val$showingChess -> a
-    java.lang.Runnable val$toRun -> b
-    com.potatoandtomato.games.screens.ChessActor this$0 -> c
-    142:142:void <init>(com.potatoandtomato.games.screens.ChessActor,com.badlogic.gdx.scenes.scene2d.Actor,java.lang.Runnable) -> <init>
-    145:147:boolean act(float) -> act
-com.potatoandtomato.games.screens.ChessActor$3 -> com.potatoandtomato.games.screens.b$3:
     com.potatoandtomato.games.screens.ChessActor this$0 -> a
-    234:234:void <init>(com.potatoandtomato.games.screens.ChessActor) -> <init>
-    237:260:void run() -> run
-com.potatoandtomato.games.screens.ChessActor$3$1 -> com.potatoandtomato.games.screens.b$3$1:
-    com.badlogic.gdx.scenes.scene2d.ui.Image val$star1Image -> a
-    com.badlogic.gdx.scenes.scene2d.ui.Image val$star2Image -> b
-    com.potatoandtomato.games.screens.ChessActor$3 this$1 -> c
-    249:249:void <init>(com.potatoandtomato.games.screens.ChessActor$3,com.badlogic.gdx.scenes.scene2d.ui.Image,com.badlogic.gdx.scenes.scene2d.ui.Image) -> <init>
-    252:255:void run() -> run
-com.potatoandtomato.games.screens.ChessActor$4 -> com.potatoandtomato.games.screens.b$4:
+    60:60:void <init>(com.potatoandtomato.games.screens.ChessActor) -> <init>
+    63:108:void run() -> run
+com.potatoandtomato.games.screens.ChessActor$10 -> com.potatoandtomato.games.screens.b$2:
+    com.badlogic.gdx.scenes.scene2d.Actor val$chessTable -> a
+    int val$offsetSize -> b
+    com.potatoandtomato.games.screens.ChessActor this$0 -> c
+    319:319:void <init>(com.potatoandtomato.games.screens.ChessActor,com.badlogic.gdx.scenes.scene2d.Actor,int) -> <init>
+    322:326:void run() -> run
+com.potatoandtomato.games.screens.ChessActor$11 -> com.potatoandtomato.games.screens.b$3:
+    com.potatoandtomato.games.models.ChessModel val$chessModel -> a
+    boolean val$invalidateStatus -> b
+    com.potatoandtomato.games.screens.ChessActor this$0 -> c
+    337:337:void <init>(com.potatoandtomato.games.screens.ChessActor,com.potatoandtomato.games.models.ChessModel,boolean) -> <init>
+    340:352:void run() -> run
+com.potatoandtomato.games.screens.ChessActor$12 -> com.potatoandtomato.games.screens.b$4:
     com.potatoandtomato.games.enums.ChessType val$chessType -> a
     boolean val$hideChessAnimal -> b
     com.potatoandtomato.games.screens.ChessActor this$0 -> c
-    309:309:void <init>(com.potatoandtomato.games.screens.ChessActor,com.potatoandtomato.games.enums.ChessType,boolean) -> <init>
-    312:335:void run() -> run
-com.potatoandtomato.games.screens.ChessActor$4$1 -> com.potatoandtomato.games.screens.b$4$1:
+    361:361:void <init>(com.potatoandtomato.games.screens.ChessActor,com.potatoandtomato.games.enums.ChessType,boolean) -> <init>
+    364:387:void run() -> run
+com.potatoandtomato.games.screens.ChessActor$12$1 -> com.potatoandtomato.games.screens.b$4$1:
     com.badlogic.gdx.scenes.scene2d.ui.Image val$fadeOutAnimalImage -> a
-    com.potatoandtomato.games.screens.ChessActor$4 this$1 -> b
-    325:325:void <init>(com.potatoandtomato.games.screens.ChessActor$4,com.badlogic.gdx.scenes.scene2d.ui.Image) -> <init>
-    328:330:boolean act(float) -> act
-com.potatoandtomato.games.screens.ChessActor$5 -> com.potatoandtomato.games.screens.b$5:
+    com.potatoandtomato.games.screens.ChessActor$12 this$1 -> b
+    377:377:void <init>(com.potatoandtomato.games.screens.ChessActor$12,com.badlogic.gdx.scenes.scene2d.ui.Image) -> <init>
+    380:382:boolean act(float) -> act
+com.potatoandtomato.games.screens.ChessActor$13 -> com.potatoandtomato.games.screens.b$5:
+    com.potatoandtomato.games.enums.Status val$status -> a
+    boolean val$animate -> b
+    com.potatoandtomato.games.screens.ChessActor this$0 -> c
+    392:392:void <init>(com.potatoandtomato.games.screens.ChessActor,com.potatoandtomato.games.enums.Status,boolean) -> <init>
+    395:427:void run() -> run
+com.potatoandtomato.games.screens.ChessActor$13$1 -> com.potatoandtomato.games.screens.b$5$1:
+    com.potatoandtomato.games.screens.ChessActor$13 this$1 -> a
+    401:401:void <init>(com.potatoandtomato.games.screens.ChessActor$13) -> <init>
+    404:406:boolean act(float) -> act
+com.potatoandtomato.games.screens.ChessActor$2 -> com.potatoandtomato.games.screens.b$6:
+    boolean val$revealChess -> a
+    java.lang.Runnable val$toRun -> b
+    com.potatoandtomato.games.screens.ChessActor this$0 -> c
+    113:113:void <init>(com.potatoandtomato.games.screens.ChessActor,boolean,java.lang.Runnable) -> <init>
+    116:134:void run() -> run
+com.potatoandtomato.games.screens.ChessActor$2$1 -> com.potatoandtomato.games.screens.b$6$1:
+    com.potatoandtomato.games.screens.ChessActor$2 this$1 -> a
+    117:117:void <init>(com.potatoandtomato.games.screens.ChessActor$2) -> <init>
+    120:132:void run() -> run
+com.potatoandtomato.games.screens.ChessActor$2$1$1 -> com.potatoandtomato.games.screens.b$6$1$1:
+    com.potatoandtomato.games.screens.ChessActor$2$1 this$2 -> a
+    120:120:void <init>(com.potatoandtomato.games.screens.ChessActor$2$1) -> <init>
+    123:130:void run() -> run
+com.potatoandtomato.games.screens.ChessActor$2$1$1$1 -> com.potatoandtomato.games.screens.b$6$1$1$1:
+    com.potatoandtomato.games.screens.ChessActor$2$1$1 this$3 -> a
+    123:123:void <init>(com.potatoandtomato.games.screens.ChessActor$2$1$1) -> <init>
+    126:128:void run() -> run
+com.potatoandtomato.games.screens.ChessActor$3 -> com.potatoandtomato.games.screens.b$7:
+    com.badlogic.gdx.scenes.scene2d.Actor val$showingChess -> a
+    com.badlogic.gdx.scenes.scene2d.Actor val$hidingChess -> b
+    java.lang.Runnable val$toRun -> c
+    com.potatoandtomato.games.screens.ChessActor this$0 -> d
+    144:144:void <init>(com.potatoandtomato.games.screens.ChessActor,com.badlogic.gdx.scenes.scene2d.Actor,com.badlogic.gdx.scenes.scene2d.Actor,java.lang.Runnable) -> <init>
+    147:163:void run() -> run
+com.potatoandtomato.games.screens.ChessActor$3$1 -> com.potatoandtomato.games.screens.b$7$1:
+    com.potatoandtomato.games.screens.ChessActor$3 this$1 -> a
+    155:155:void <init>(com.potatoandtomato.games.screens.ChessActor$3) -> <init>
+    158:160:boolean act(float) -> act
+com.potatoandtomato.games.screens.ChessActor$4 -> com.potatoandtomato.games.screens.b$8:
+    float val$finalOpenPercentage -> a
+    com.potatoandtomato.games.screens.ChessActor this$0 -> b
+    180:180:void <init>(com.potatoandtomato.games.screens.ChessActor,float) -> <init>
+    183:185:void run() -> run
+com.potatoandtomato.games.screens.ChessActor$5 -> com.potatoandtomato.games.screens.b$9:
     com.potatoandtomato.games.screens.ChessActor this$0 -> a
-    346:346:void <init>(com.potatoandtomato.games.screens.ChessActor) -> <init>
-    349:351:boolean act(float) -> act
+    195:195:void <init>(com.potatoandtomato.games.screens.ChessActor) -> <init>
+    198:202:void run() -> run
+com.potatoandtomato.games.screens.ChessActor$6 -> com.potatoandtomato.games.screens.b$10:
+    com.potatoandtomato.games.enums.ChessType val$chessType -> a
+    com.potatoandtomato.games.screens.ChessActor this$0 -> b
+    207:207:void <init>(com.potatoandtomato.games.screens.ChessActor,com.potatoandtomato.games.enums.ChessType) -> <init>
+    210:220:void run() -> run
+com.potatoandtomato.games.screens.ChessActor$7 -> com.potatoandtomato.games.screens.b$11:
+    com.potatoandtomato.games.enums.ChessType val$chessType -> a
+    boolean val$selected -> b
+    com.potatoandtomato.games.screens.ChessActor this$0 -> c
+    226:226:void <init>(com.potatoandtomato.games.screens.ChessActor,com.potatoandtomato.games.enums.ChessType,boolean) -> <init>
+    229:254:void run() -> run
+com.potatoandtomato.games.screens.ChessActor$8 -> com.potatoandtomato.games.screens.b$12:
+    float val$addedWidth -> a
+    float val$addedHeight -> b
+    float val$addedX -> c
+    float val$addedY -> d
+    com.potatoandtomato.games.screens.ChessActor this$0 -> e
+    259:259:void <init>(com.potatoandtomato.games.screens.ChessActor,float,float,float,float) -> <init>
+    262:269:void run() -> run
+com.potatoandtomato.games.screens.ChessActor$9 -> com.potatoandtomato.games.screens.b$13:
+    com.potatoandtomato.games.screens.ChessActor this$0 -> a
+    274:274:void <init>(com.potatoandtomato.games.screens.ChessActor) -> <init>
+    277:300:void run() -> run
+com.potatoandtomato.games.screens.ChessActor$9$1 -> com.potatoandtomato.games.screens.b$13$1:
+    com.badlogic.gdx.scenes.scene2d.ui.Image val$star1Image -> a
+    com.badlogic.gdx.scenes.scene2d.ui.Image val$star2Image -> b
+    com.potatoandtomato.games.screens.ChessActor$9 this$1 -> c
+    289:289:void <init>(com.potatoandtomato.games.screens.ChessActor$9,com.badlogic.gdx.scenes.scene2d.ui.Image,com.badlogic.gdx.scenes.scene2d.ui.Image) -> <init>
+    292:295:void run() -> run
 com.potatoandtomato.games.screens.ChessLogic -> com.potatoandtomato.games.screens.c:
     com.potatoandtomato.games.models.ChessModel _chessModel -> a
     com.potatoandtomato.games.screens.ChessActor _chessActor -> b
@@ -935,87 +1059,176 @@ com.potatoandtomato.games.screens.ChessLogic -> com.potatoandtomato.games.screen
     com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop _dragAndDrop -> g
     java.util.ArrayList _dragDropTargets -> e
     com.potatoandtomato.games.services.GameDataController _gameDataController -> f
-    37:47:void <init>(com.potatoandtomato.games.models.ChessModel,com.potatoandtomato.games.assets.MyAssets,com.potatoandtomato.games.services.SoundsWrapper,com.potatoandtomato.games.services.GameDataController) -> <init>
-    52:66:void openChess(java.lang.Runnable) -> a
-    69:76:void addDragDropTarget(com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop$Target) -> a
-    79:82:void clearDragDropTargets() -> a
-    85:87:void setSelected(boolean) -> a
-    90:94:void setFocusing(boolean) -> b
-    97:105:void setChessModel(com.potatoandtomato.games.models.ChessModel) -> a
-    108:108:com.badlogic.gdx.scenes.scene2d.Actor cloneActor() -> b
-    112:112:com.potatoandtomato.games.screens.ChessActor getChessActor() -> c
-    116:117:void invalidate(boolean) -> c
-    120:120:com.potatoandtomato.games.models.ChessModel getChessModel() -> d
-    124:125:void setActionListener(com.potatoandtomato.games.absint.ActionListener) -> a
-    128:166:void setListeners() -> e
-    169:206:void setDragDrop() -> f
-    27:27:com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop access$000(com.potatoandtomato.games.screens.ChessLogic) -> a
+    39:49:void <init>(com.potatoandtomato.games.models.ChessModel,com.potatoandtomato.games.assets.MyAssets,com.potatoandtomato.games.services.SoundsWrapper,com.potatoandtomato.games.services.GameDataController) -> <init>
+    54:68:void openChess(java.lang.Runnable) -> a
+    71:78:void addDragDropTarget(com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop$Target) -> a
+    81:84:void clearDragDropTargets() -> a
+    87:89:void setSelected(boolean) -> a
+    92:96:void setFocusing(boolean) -> b
+    99:107:void setChessModel(com.potatoandtomato.games.models.ChessModel) -> a
+    110:110:com.badlogic.gdx.scenes.scene2d.Actor cloneActor() -> b
+    114:114:com.potatoandtomato.games.screens.ChessActor getChessActor() -> c
+    118:119:void invalidate(boolean) -> c
+    122:122:com.potatoandtomato.games.models.ChessModel getChessModel() -> d
+    126:127:void setActionListener(com.potatoandtomato.games.absint.ActionListener) -> a
+    130:171:void setListeners() -> e
+    174:211:void setDragDrop() -> f
+    29:29:com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop access$000(com.potatoandtomato.games.screens.ChessLogic) -> a
 com.potatoandtomato.games.screens.ChessLogic$1 -> com.potatoandtomato.games.screens.c$1:
     java.lang.Runnable val$onFinish -> a
     com.potatoandtomato.games.screens.ChessLogic this$0 -> b
-    53:53:void <init>(com.potatoandtomato.games.screens.ChessLogic,java.lang.Runnable) -> <init>
-    56:57:void run() -> run
+    55:55:void <init>(com.potatoandtomato.games.screens.ChessLogic,java.lang.Runnable) -> <init>
+    58:59:void run() -> run
 com.potatoandtomato.games.screens.ChessLogic$2 -> com.potatoandtomato.games.screens.c$2:
-    float _startDragX -> b
     com.potatoandtomato.games.screens.ChessLogic this$0 -> a
-    128:128:void <init>(com.potatoandtomato.games.screens.ChessLogic) -> <init>
-    133:134:void dragStart(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float,int) -> dragStart
-    138:145:void touchDragged(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float,int) -> touchDragged
-    149:150:boolean touchDown(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float,int,int) -> touchDown
-    156:161:void touchUp(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float,int,int) -> touchUp
+    130:130:void <init>(com.potatoandtomato.games.screens.ChessLogic) -> <init>
+    133:169:void run() -> run
+com.potatoandtomato.games.screens.ChessLogic$2$1 -> com.potatoandtomato.games.screens.c$2$1:
+    float _startDragX -> b
+    com.potatoandtomato.games.screens.ChessLogic$2 this$1 -> a
+    133:133:void <init>(com.potatoandtomato.games.screens.ChessLogic$2) -> <init>
+    138:139:void dragStart(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float,int) -> dragStart
+    143:150:void touchDragged(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float,int) -> touchDragged
+    154:155:boolean touchDown(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float,int,int) -> touchDown
+    161:166:void touchUp(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float,int,int) -> touchUp
 com.potatoandtomato.games.screens.ChessLogic$3 -> com.potatoandtomato.games.screens.c$3:
     com.potatoandtomato.games.screens.ChessLogic this$0 -> a
-    172:172:void <init>(com.potatoandtomato.games.screens.ChessLogic,com.badlogic.gdx.scenes.scene2d.Actor) -> <init>
-    174:182:com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop$Payload dragStart(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float,int) -> dragStart
-    187:204:void dragStop(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float,int,com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop$Payload,com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop$Target) -> dragStop
+    177:177:void <init>(com.potatoandtomato.games.screens.ChessLogic,com.badlogic.gdx.scenes.scene2d.Actor) -> <init>
+    179:187:com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop$Payload dragStart(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float,int) -> dragStart
+    192:209:void dragStop(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float,int,com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop$Payload,com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop$Target) -> dragStop
 com.potatoandtomato.games.screens.ChessLogic$3$1 -> com.potatoandtomato.games.screens.c$3$1:
     com.badlogic.gdx.scenes.scene2d.Actor val$clone -> a
     com.potatoandtomato.games.screens.ChessLogic$3 this$1 -> b
-    193:193:void <init>(com.potatoandtomato.games.screens.ChessLogic$3,com.badlogic.gdx.scenes.scene2d.Actor) -> <init>
-    196:199:boolean act(float) -> act
+    198:198:void <init>(com.potatoandtomato.games.screens.ChessLogic$3,com.badlogic.gdx.scenes.scene2d.Actor) -> <init>
+    201:204:boolean act(float) -> act
 com.potatoandtomato.games.screens.GraveyardActor -> com.potatoandtomato.games.screens.d:
-    com.badlogic.gdx.scenes.scene2d.ui.Table _yellowGraveTable -> a
-    com.badlogic.gdx.scenes.scene2d.ui.Table _redGraveTable -> b
-    com.badlogic.gdx.scenes.scene2d.ui.Table _yellowTotalRootTable -> c
-    com.badlogic.gdx.scenes.scene2d.ui.Table _redTotalRootTable -> d
-    com.badlogic.gdx.scenes.scene2d.ui.Label _yellowTotalLabel -> e
-    com.badlogic.gdx.scenes.scene2d.ui.Label _redTotalLabel -> f
-    com.badlogic.gdx.scenes.scene2d.ui.Label _turnLabel -> g
-    com.badlogic.gdx.scenes.scene2d.ui.Label _turnCountLabel -> h
-    com.badlogic.gdx.scenes.scene2d.ui.Label _yellowPlayerLabel -> i
-    com.badlogic.gdx.scenes.scene2d.ui.Label _redPlayerLabel -> j
-    com.badlogic.gdx.scenes.scene2d.ui.Label _yellowTimer -> k
-    com.badlogic.gdx.scenes.scene2d.ui.Label _redTimer -> l
-    com.badlogic.gdx.scenes.scene2d.ui.Label _graveLabel -> m
-    com.badlogic.gdx.scenes.scene2d.ui.Image _graveCloseImage -> n
-    com.badlogic.gdx.scenes.scene2d.ui.Image _tutorialCloseImage -> o
-    com.potatoandtomato.games.assets.MyAssets _assets -> p
-    com.potatoandtomato.games.services.Texts _texts -> q
-    com.potatoandtomato.common.GameCoordinator _gameCoordinator -> r
-    com.badlogic.gdx.scenes.scene2d.ui.Image _pointLeftImage -> s
-    com.badlogic.gdx.scenes.scene2d.ui.Image _pointRightImage -> t
-    com.badlogic.gdx.scenes.scene2d.ui.Image _tutorialIcon -> u
-    com.badlogic.gdx.scenes.scene2d.ui.Image _graveIcon -> v
-    com.badlogic.gdx.scenes.scene2d.ui.Image tutorialButton -> w
-    com.badlogic.gdx.scenes.scene2d.ui.Image graveButton -> x
-    com.badlogic.gdx.scenes.scene2d.ui.Container _turnCountContainer -> y
-    com.badlogic.gdx.scenes.scene2d.ui.Table _graveTable -> z
-    com.badlogic.gdx.scenes.scene2d.ui.Table _tutorialTable -> A
-    com.badlogic.gdx.scenes.scene2d.ui.Table _containerTable -> B
-    com.potatoandtomato.games.services.SoundsWrapper _soundsWrapper -> C
-    46:53:void <init>(com.potatoandtomato.common.GameCoordinator,com.potatoandtomato.games.services.Texts,com.potatoandtomato.games.assets.MyAssets,com.potatoandtomato.games.services.SoundsWrapper) -> <init>
-    56:232:void populate() -> a
-    235:244:void modelChanged(com.potatoandtomato.games.models.GraveModel) -> a
-    247:249:void setCountDownTime(com.potatoandtomato.games.enums.ChessColor,java.lang.String) -> a
-    252:274:void onBoardModelChanged(com.potatoandtomato.games.models.BoardModel) -> a
-    277:282:void addToGraveyard(com.potatoandtomato.games.enums.ChessType,com.badlogic.gdx.scenes.scene2d.ui.Table) -> a
-    285:301:void toggle(boolean) -> a
-    304:310:void hide() -> b
-    313:313:com.badlogic.gdx.scenes.scene2d.ui.Label getGraveLabel() -> c
-    317:317:com.badlogic.gdx.scenes.scene2d.ui.Image getGraveButton() -> d
-    321:321:com.badlogic.gdx.scenes.scene2d.ui.Image getTutorialButton() -> e
-    325:325:com.badlogic.gdx.scenes.scene2d.ui.Image getGraveCloseImage() -> f
-    329:329:com.badlogic.gdx.scenes.scene2d.ui.Image getTutorialCloseImage() -> g
+    com.potatoandtomato.games.screens.GraveyardActor _this -> a
+    com.badlogic.gdx.scenes.scene2d.ui.Table _yellowGraveTable -> b
+    com.badlogic.gdx.scenes.scene2d.ui.Table _redGraveTable -> c
+    com.badlogic.gdx.scenes.scene2d.ui.Table _yellowTotalRootTable -> d
+    com.badlogic.gdx.scenes.scene2d.ui.Table _redTotalRootTable -> e
+    com.badlogic.gdx.scenes.scene2d.ui.Label _yellowTotalLabel -> f
+    com.badlogic.gdx.scenes.scene2d.ui.Label _redTotalLabel -> g
+    com.badlogic.gdx.scenes.scene2d.ui.Label _turnLabel -> h
+    com.badlogic.gdx.scenes.scene2d.ui.Label _turnCountLabel -> i
+    com.badlogic.gdx.scenes.scene2d.ui.Label _yellowPlayerLabel -> j
+    com.badlogic.gdx.scenes.scene2d.ui.Label _redPlayerLabel -> k
+    com.badlogic.gdx.scenes.scene2d.ui.Label _yellowTimer -> l
+    com.badlogic.gdx.scenes.scene2d.ui.Label _redTimer -> m
+    com.badlogic.gdx.scenes.scene2d.ui.Label _graveLabel -> n
+    com.badlogic.gdx.scenes.scene2d.ui.Image _graveCloseImage -> o
+    com.badlogic.gdx.scenes.scene2d.ui.Image _tutorialCloseImage -> p
+    com.potatoandtomato.games.assets.MyAssets _assets -> q
+    com.potatoandtomato.games.services.Texts _texts -> r
+    com.potatoandtomato.common.GameCoordinator _gameCoordinator -> s
+    com.badlogic.gdx.scenes.scene2d.ui.Image _pointLeftImage -> t
+    com.badlogic.gdx.scenes.scene2d.ui.Image _pointRightImage -> u
+    com.badlogic.gdx.scenes.scene2d.ui.Image _tutorialIcon -> v
+    com.badlogic.gdx.scenes.scene2d.ui.Image _graveIcon -> w
+    com.badlogic.gdx.scenes.scene2d.ui.Image tutorialButton -> x
+    com.badlogic.gdx.scenes.scene2d.ui.Image graveButton -> y
+    com.badlogic.gdx.scenes.scene2d.ui.Container _turnCountContainer -> z
+    com.badlogic.gdx.scenes.scene2d.ui.Table _graveTable -> A
+    com.badlogic.gdx.scenes.scene2d.ui.Table _tutorialTable -> B
+    com.badlogic.gdx.scenes.scene2d.ui.Table _containerTable -> C
+    com.potatoandtomato.games.services.SoundsWrapper _soundsWrapper -> D
+    45:53:void <init>(com.potatoandtomato.common.GameCoordinator,com.potatoandtomato.games.services.Texts,com.potatoandtomato.games.assets.MyAssets,com.potatoandtomato.games.services.SoundsWrapper) -> <init>
+    56:243:void populate() -> a
+    246:268:com.badlogic.gdx.scenes.scene2d.Actor getTutorialDesign() -> b
+    272:286:void modelChanged(com.potatoandtomato.games.models.GraveModel) -> a
+    289:296:void setCountDownTime(com.potatoandtomato.games.enums.ChessColor,java.lang.String) -> a
+    299:326:void onBoardModelChanged(com.potatoandtomato.games.models.BoardModel) -> a
+    329:334:void addToGraveyard(com.potatoandtomato.games.enums.ChessType,com.badlogic.gdx.scenes.scene2d.ui.Table) -> a
+    337:365:void toggle(boolean) -> a
+    368:378:void hide() -> c
+    381:381:com.badlogic.gdx.scenes.scene2d.ui.Image getGraveButton() -> d
+    385:385:com.badlogic.gdx.scenes.scene2d.ui.Image getTutorialButton() -> e
+    389:389:com.badlogic.gdx.scenes.scene2d.ui.Image getGraveCloseImage() -> f
+    393:393:com.badlogic.gdx.scenes.scene2d.ui.Image getTutorialCloseImage() -> g
+    26:26:com.potatoandtomato.games.screens.GraveyardActor access$000(com.potatoandtomato.games.screens.GraveyardActor) -> a
+    26:26:com.potatoandtomato.games.assets.MyAssets access$100(com.potatoandtomato.games.screens.GraveyardActor) -> b
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Table access$202(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Table) -> a
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Table access$200(com.potatoandtomato.games.screens.GraveyardActor) -> c
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Label access$302(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Label) -> a
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Label access$300(com.potatoandtomato.games.screens.GraveyardActor) -> d
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Label access$402(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Label) -> b
+    26:26:com.potatoandtomato.common.GameCoordinator access$500(com.potatoandtomato.games.screens.GraveyardActor) -> e
+    26:26:com.potatoandtomato.games.services.Texts access$600(com.potatoandtomato.games.screens.GraveyardActor) -> f
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Label access$400(com.potatoandtomato.games.screens.GraveyardActor) -> g
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Label access$702(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Label) -> c
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Label access$700(com.potatoandtomato.games.screens.GraveyardActor) -> h
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Table access$802(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Table) -> b
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Table access$800(com.potatoandtomato.games.screens.GraveyardActor) -> i
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Label access$902(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Label) -> d
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Label access$900(com.potatoandtomato.games.screens.GraveyardActor) -> j
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Label access$1002(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Label) -> e
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Label access$1000(com.potatoandtomato.games.screens.GraveyardActor) -> k
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Label access$1102(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Label) -> f
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Label access$1100(com.potatoandtomato.games.screens.GraveyardActor) -> l
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Label access$1202(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Label) -> g
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Label access$1200(com.potatoandtomato.games.screens.GraveyardActor) -> m
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Label access$1302(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Label) -> h
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Label access$1300(com.potatoandtomato.games.screens.GraveyardActor) -> n
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Container access$1402(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Container) -> a
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Container access$1400(com.potatoandtomato.games.screens.GraveyardActor) -> o
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Image access$1502(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Image) -> a
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Image access$1602(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Image) -> b
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Image access$1600(com.potatoandtomato.games.screens.GraveyardActor) -> p
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Image access$1500(com.potatoandtomato.games.screens.GraveyardActor) -> q
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Image access$1702(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Image) -> c
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Image access$1802(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Image) -> d
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Image access$1800(com.potatoandtomato.games.screens.GraveyardActor) -> r
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Image access$1700(com.potatoandtomato.games.screens.GraveyardActor) -> s
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Image access$1902(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Image) -> e
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Image access$2002(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Image) -> f
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Image access$1900(com.potatoandtomato.games.screens.GraveyardActor) -> t
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Image access$2000(com.potatoandtomato.games.screens.GraveyardActor) -> u
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Table access$2102(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Table) -> c
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Table access$2100(com.potatoandtomato.games.screens.GraveyardActor) -> v
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Table access$2202(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Table) -> d
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Table access$2200(com.potatoandtomato.games.screens.GraveyardActor) -> w
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Label access$2302(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Label) -> i
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Label access$2300(com.potatoandtomato.games.screens.GraveyardActor) -> x
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Image access$2402(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Image) -> g
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Image access$2400(com.potatoandtomato.games.screens.GraveyardActor) -> y
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Table access$2502(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Table) -> e
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Table access$2500(com.potatoandtomato.games.screens.GraveyardActor) -> z
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Image access$2602(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Image) -> h
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Image access$2600(com.potatoandtomato.games.screens.GraveyardActor) -> A
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Table access$2702(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Table) -> f
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Table access$2700(com.potatoandtomato.games.screens.GraveyardActor) -> B
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Table access$2802(com.potatoandtomato.games.screens.GraveyardActor,com.badlogic.gdx.scenes.scene2d.ui.Table) -> g
+    26:26:com.badlogic.gdx.scenes.scene2d.ui.Table access$2800(com.potatoandtomato.games.screens.GraveyardActor) -> C
+    26:26:com.potatoandtomato.games.services.SoundsWrapper access$2900(com.potatoandtomato.games.screens.GraveyardActor) -> D
+com.potatoandtomato.games.screens.GraveyardActor$1 -> com.potatoandtomato.games.screens.d$1:
+    com.potatoandtomato.games.screens.GraveyardActor this$0 -> a
+    56:56:void <init>(com.potatoandtomato.games.screens.GraveyardActor) -> <init>
+    59:241:void run() -> run
+com.potatoandtomato.games.screens.GraveyardActor$2 -> com.potatoandtomato.games.screens.d$2:
+    com.potatoandtomato.games.models.GraveModel val$graveModel -> a
+    com.potatoandtomato.games.screens.GraveyardActor this$0 -> b
+    272:272:void <init>(com.potatoandtomato.games.screens.GraveyardActor,com.potatoandtomato.games.models.GraveModel) -> <init>
+    275:284:void run() -> run
+com.potatoandtomato.games.screens.GraveyardActor$3 -> com.potatoandtomato.games.screens.d$3:
+    com.potatoandtomato.games.enums.ChessColor val$chessColor -> a
+    java.lang.String val$time -> b
+    com.potatoandtomato.games.screens.GraveyardActor this$0 -> c
+    289:289:void <init>(com.potatoandtomato.games.screens.GraveyardActor,com.potatoandtomato.games.enums.ChessColor,java.lang.String) -> <init>
+    292:294:void run() -> run
+com.potatoandtomato.games.screens.GraveyardActor$4 -> com.potatoandtomato.games.screens.d$4:
+    com.potatoandtomato.games.models.BoardModel val$boardModel -> a
+    com.potatoandtomato.games.screens.GraveyardActor this$0 -> b
+    299:299:void <init>(com.potatoandtomato.games.screens.GraveyardActor,com.potatoandtomato.games.models.BoardModel) -> <init>
+    302:324:void run() -> run
+com.potatoandtomato.games.screens.GraveyardActor$5 -> com.potatoandtomato.games.screens.d$5:
+    boolean val$isGraveyard -> a
+    com.potatoandtomato.games.screens.GraveyardActor this$0 -> b
+    337:337:void <init>(com.potatoandtomato.games.screens.GraveyardActor,boolean) -> <init>
+    340:363:void run() -> run
+com.potatoandtomato.games.screens.GraveyardActor$6 -> com.potatoandtomato.games.screens.d$6:
+    com.potatoandtomato.games.screens.GraveyardActor this$0 -> a
+    368:368:void <init>(com.potatoandtomato.games.screens.GraveyardActor) -> <init>
+    371:376:void run() -> run
 com.potatoandtomato.games.screens.GraveyardLogic -> com.potatoandtomato.games.screens.e:
     com.potatoandtomato.games.models.GraveModel _graveModel -> a
     com.potatoandtomato.games.screens.GraveyardActor _graveyardActor -> b
@@ -1035,8 +1248,8 @@ com.potatoandtomato.games.screens.GraveyardLogic -> com.potatoandtomato.games.sc
     90:90:com.potatoandtomato.games.models.GraveModel getGraveModel() -> c
     94:96:void setGraveModel(com.potatoandtomato.games.models.GraveModel) -> a
     99:99:com.potatoandtomato.games.screens.GraveyardActor getGraveyardActor() -> d
-    104:136:void setListener() -> e
-    140:141:void dispose() -> dispose
+    103:139:void setListener() -> e
+    143:144:void dispose() -> dispose
     21:21:com.potatoandtomato.common.utils.SafeThread access$000(com.potatoandtomato.games.screens.GraveyardLogic) -> a
     21:21:boolean access$100(com.potatoandtomato.games.screens.GraveyardLogic) -> b
     21:21:com.potatoandtomato.games.enums.ChessColor access$200(com.potatoandtomato.games.screens.GraveyardLogic) -> c
@@ -1052,32 +1265,49 @@ com.potatoandtomato.games.screens.GraveyardLogic$1$1 -> com.potatoandtomato.game
     76:77:void run() -> run
 com.potatoandtomato.games.screens.GraveyardLogic$2 -> com.potatoandtomato.games.screens.e$2:
     com.potatoandtomato.games.screens.GraveyardLogic this$0 -> a
-    104:104:void <init>(com.potatoandtomato.games.screens.GraveyardLogic) -> <init>
-    107:109:void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float) -> clicked
-com.potatoandtomato.games.screens.GraveyardLogic$3 -> com.potatoandtomato.games.screens.e$3:
-    com.potatoandtomato.games.screens.GraveyardLogic this$0 -> a
-    112:112:void <init>(com.potatoandtomato.games.screens.GraveyardLogic) -> <init>
-    115:117:void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float) -> clicked
-com.potatoandtomato.games.screens.GraveyardLogic$4 -> com.potatoandtomato.games.screens.e$4:
-    com.potatoandtomato.games.screens.GraveyardLogic this$0 -> a
-    120:120:void <init>(com.potatoandtomato.games.screens.GraveyardLogic) -> <init>
-    123:125:void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float) -> clicked
-com.potatoandtomato.games.screens.GraveyardLogic$5 -> com.potatoandtomato.games.screens.e$5:
-    com.potatoandtomato.games.screens.GraveyardLogic this$0 -> a
-    128:128:void <init>(com.potatoandtomato.games.screens.GraveyardLogic) -> <init>
-    131:133:void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float) -> clicked
+    103:103:void <init>(com.potatoandtomato.games.screens.GraveyardLogic) -> <init>
+    106:137:void run() -> run
+com.potatoandtomato.games.screens.GraveyardLogic$2$1 -> com.potatoandtomato.games.screens.e$2$1:
+    com.potatoandtomato.games.screens.GraveyardLogic$2 this$1 -> a
+    106:106:void <init>(com.potatoandtomato.games.screens.GraveyardLogic$2) -> <init>
+    109:111:void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float) -> clicked
+com.potatoandtomato.games.screens.GraveyardLogic$2$2 -> com.potatoandtomato.games.screens.e$2$2:
+    com.potatoandtomato.games.screens.GraveyardLogic$2 this$1 -> a
+    114:114:void <init>(com.potatoandtomato.games.screens.GraveyardLogic$2) -> <init>
+    117:119:void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float) -> clicked
+com.potatoandtomato.games.screens.GraveyardLogic$2$3 -> com.potatoandtomato.games.screens.e$2$3:
+    com.potatoandtomato.games.screens.GraveyardLogic$2 this$1 -> a
+    122:122:void <init>(com.potatoandtomato.games.screens.GraveyardLogic$2) -> <init>
+    125:127:void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float) -> clicked
+com.potatoandtomato.games.screens.GraveyardLogic$2$4 -> com.potatoandtomato.games.screens.e$2$4:
+    com.potatoandtomato.games.screens.GraveyardLogic$2 this$1 -> a
+    130:130:void <init>(com.potatoandtomato.games.screens.GraveyardLogic$2) -> <init>
+    133:135:void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float) -> clicked
 com.potatoandtomato.games.screens.SplashActor -> com.potatoandtomato.games.screens.f:
-    com.potatoandtomato.common.assets.Assets _assets -> a
-    com.potatoandtomato.games.services.Texts _texts -> b
-    com.potatoandtomato.common.GameCoordinator _coordinator -> c
-    30:34:void <init>(com.potatoandtomato.common.GameCoordinator,com.potatoandtomato.common.assets.Assets,com.potatoandtomato.games.services.Texts) -> <init>
-    37:113:void populate() -> a
-    116:124:void fadeOutActor(java.lang.Runnable) -> a
+    com.potatoandtomato.games.screens.SplashActor _this -> a
+    com.potatoandtomato.common.assets.Assets _assets -> b
+    com.potatoandtomato.games.services.Texts _texts -> c
+    com.potatoandtomato.common.GameCoordinator _coordinator -> d
+    33:38:void <init>(com.potatoandtomato.common.GameCoordinator,com.potatoandtomato.common.assets.Assets,com.potatoandtomato.games.services.Texts) -> <init>
+    41:122:void populate() -> a
+    125:138:void fadeOutActor(java.lang.Runnable) -> a
+    26:26:com.potatoandtomato.common.assets.Assets access$000(com.potatoandtomato.games.screens.SplashActor) -> a
+    26:26:com.potatoandtomato.games.screens.SplashActor access$100(com.potatoandtomato.games.screens.SplashActor) -> b
+    26:26:com.potatoandtomato.games.services.Texts access$200(com.potatoandtomato.games.screens.SplashActor) -> c
+    26:26:com.potatoandtomato.common.GameCoordinator access$300(com.potatoandtomato.games.screens.SplashActor) -> d
 com.potatoandtomato.games.screens.SplashActor$1 -> com.potatoandtomato.games.screens.f$1:
+    com.potatoandtomato.games.screens.SplashActor this$0 -> a
+    41:41:void <init>(com.potatoandtomato.games.screens.SplashActor) -> <init>
+    44:120:void run() -> run
+com.potatoandtomato.games.screens.SplashActor$2 -> com.potatoandtomato.games.screens.f$2:
     java.lang.Runnable val$runnable -> a
     com.potatoandtomato.games.screens.SplashActor this$0 -> b
-    116:116:void <init>(com.potatoandtomato.games.screens.SplashActor,java.lang.Runnable) -> <init>
-    120:121:boolean act(float) -> act
+    125:125:void <init>(com.potatoandtomato.games.screens.SplashActor,java.lang.Runnable) -> <init>
+    128:136:void run() -> run
+com.potatoandtomato.games.screens.SplashActor$2$1 -> com.potatoandtomato.games.screens.f$2$1:
+    com.potatoandtomato.games.screens.SplashActor$2 this$1 -> a
+    128:128:void <init>(com.potatoandtomato.games.screens.SplashActor$2) -> <init>
+    132:133:boolean act(float) -> act
 com.potatoandtomato.games.screens.SplashLogic -> com.potatoandtomato.games.screens.g:
     com.potatoandtomato.games.screens.SplashActor _splashActor -> a
     com.potatoandtomato.games.models.Services _services -> b
@@ -1098,52 +1328,149 @@ com.potatoandtomato.games.screens.SplashLogic$1$1 -> com.potatoandtomato.games.s
     30:30:void <init>(com.potatoandtomato.games.screens.SplashLogic$1) -> <init>
     33:36:void run() -> run
 com.potatoandtomato.games.screens.TerrainActor -> com.potatoandtomato.games.screens.h:
-    com.potatoandtomato.common.assets.Assets _assets -> a
-    com.badlogic.gdx.scenes.scene2d.ui.Image _glowingTile -> b
-    com.badlogic.gdx.scenes.scene2d.ui.Image _backgroundImage -> c
-    boolean _selected -> d
-    com.badlogic.gdx.scenes.scene2d.ui.Table _chessTable -> e
-    com.badlogic.gdx.scenes.scene2d.ui.Table _greenTile -> f
-    com.badlogic.gdx.scenes.scene2d.ui.Table _redTile -> g
-    com.badlogic.gdx.scenes.scene2d.ui.Label _percentLabel -> h
-    boolean _initialized -> i
-    com.badlogic.gdx.scenes.scene2d.ui.Image _arrowLeft -> j
-    com.badlogic.gdx.scenes.scene2d.ui.Image _arrowRight -> k
-    com.badlogic.gdx.scenes.scene2d.ui.Image _arrowUp -> l
-    com.badlogic.gdx.scenes.scene2d.ui.Image _arrowDown -> m
-    com.badlogic.gdx.scenes.scene2d.ui.Image _arrowTopLeft -> n
-    com.badlogic.gdx.scenes.scene2d.ui.Image _arrowTopRight -> o
-    com.badlogic.gdx.scenes.scene2d.ui.Image _arrowBottomLeft -> p
-    com.badlogic.gdx.scenes.scene2d.ui.Image _arrowBottomRight -> q
-    com.badlogic.gdx.scenes.scene2d.ui.Image _crackImage -> r
-    com.badlogic.gdx.scenes.scene2d.ui.Table _battleTable -> s
-    com.potatoandtomato.games.services.SoundsWrapper _soundsWrapper -> t
-    com.potatoandtomato.games.screens.ChessActor _chessActor -> u
-    46:91:void <init>(com.potatoandtomato.common.assets.Assets,com.potatoandtomato.games.screens.ChessActor,com.potatoandtomato.games.services.SoundsWrapper) -> <init>
-    94:97:void setChessActor(com.potatoandtomato.games.screens.ChessActor) -> a
-    100:120:void setSelected(boolean) -> a
-    123:157:void showPercent(int,com.potatoandtomato.games.enums.Direction) -> a
-    160:163:void hidePercent() -> a
-    166:174:void hideAllArrows() -> g
-    177:178:void showCanMoveTo() -> b
-    181:182:void hideCanMoveTo() -> c
-    185:195:void showBattle() -> d
-    198:199:void hideBattle() -> e
-    203:210:void draw(com.badlogic.gdx.graphics.g2d.Batch,float) -> draw
-    213:289:void initializeArrows() -> h
-    292:293:void initializeCrack() -> i
-    296:304:void animateBroken() -> f
-    307:315:void invalidate(com.potatoandtomato.games.models.TerrainModel) -> a
-    30:30:com.badlogic.gdx.scenes.scene2d.ui.Image access$000(com.potatoandtomato.games.screens.TerrainActor) -> a
-    30:30:com.potatoandtomato.games.screens.ChessActor access$100(com.potatoandtomato.games.screens.TerrainActor) -> b
+    com.potatoandtomato.games.screens.TerrainActor _this -> a
+    com.potatoandtomato.common.assets.Assets _assets -> b
+    com.badlogic.gdx.scenes.scene2d.ui.Image _glowingTile -> c
+    com.badlogic.gdx.scenes.scene2d.ui.Image _backgroundImage -> d
+    boolean _selected -> e
+    com.badlogic.gdx.scenes.scene2d.ui.Table _chessTable -> f
+    com.badlogic.gdx.scenes.scene2d.ui.Table _greenTile -> g
+    com.badlogic.gdx.scenes.scene2d.ui.Table _redTile -> h
+    com.badlogic.gdx.scenes.scene2d.ui.Label _percentLabel -> i
+    boolean _initialized -> j
+    com.badlogic.gdx.scenes.scene2d.ui.Image _arrowLeft -> k
+    com.badlogic.gdx.scenes.scene2d.ui.Image _arrowRight -> l
+    com.badlogic.gdx.scenes.scene2d.ui.Image _arrowUp -> m
+    com.badlogic.gdx.scenes.scene2d.ui.Image _arrowDown -> n
+    com.badlogic.gdx.scenes.scene2d.ui.Image _arrowTopLeft -> o
+    com.badlogic.gdx.scenes.scene2d.ui.Image _arrowTopRight -> p
+    com.badlogic.gdx.scenes.scene2d.ui.Image _arrowBottomLeft -> q
+    com.badlogic.gdx.scenes.scene2d.ui.Image _arrowBottomRight -> r
+    com.badlogic.gdx.scenes.scene2d.ui.Image _crackImage -> s
+    com.badlogic.gdx.scenes.scene2d.ui.Table _battleTable -> t
+    com.potatoandtomato.games.services.SoundsWrapper _soundsWrapper -> u
+    com.potatoandtomato.games.screens.ChessActor _chessActor -> v
+    48:54:void <init>(com.potatoandtomato.common.assets.Assets,com.potatoandtomato.games.screens.ChessActor,com.potatoandtomato.games.services.SoundsWrapper) -> <init>
+    57:104:void populate(com.potatoandtomato.games.screens.ChessActor) -> a
+    107:115:void setChessActor(com.potatoandtomato.games.screens.ChessActor) -> b
+    118:143:void setSelected(boolean) -> a
+    146:185:void showPercent(int,com.potatoandtomato.games.enums.Direction) -> a
+    188:196:void hidePercent() -> a
+    199:207:void hideAllArrows() -> g
+    210:216:void showCanMoveTo() -> b
+    219:225:void hideCanMoveTo() -> c
+    228:243:void showBattle() -> d
+    246:252:void hideBattle() -> e
+    256:263:void draw(com.badlogic.gdx.graphics.g2d.Batch,float) -> draw
+    266:346:void initializeArrows() -> h
+    349:355:void initializeCrack() -> i
+    358:370:void animateBroken() -> f
+    373:386:void invalidate(com.potatoandtomato.games.models.TerrainModel) -> a
+    31:31:com.potatoandtomato.games.screens.TerrainActor access$000(com.potatoandtomato.games.screens.TerrainActor) -> a
+    31:31:com.potatoandtomato.common.assets.Assets access$100(com.potatoandtomato.games.screens.TerrainActor) -> b
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Image access$202(com.potatoandtomato.games.screens.TerrainActor,com.badlogic.gdx.scenes.scene2d.ui.Image) -> a
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Image access$200(com.potatoandtomato.games.screens.TerrainActor) -> c
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Image access$302(com.potatoandtomato.games.screens.TerrainActor,com.badlogic.gdx.scenes.scene2d.ui.Image) -> b
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Image access$300(com.potatoandtomato.games.screens.TerrainActor) -> d
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Image access$402(com.potatoandtomato.games.screens.TerrainActor,com.badlogic.gdx.scenes.scene2d.ui.Image) -> c
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Image access$400(com.potatoandtomato.games.screens.TerrainActor) -> e
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Table access$502(com.potatoandtomato.games.screens.TerrainActor,com.badlogic.gdx.scenes.scene2d.ui.Table) -> a
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Table access$500(com.potatoandtomato.games.screens.TerrainActor) -> f
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Table access$602(com.potatoandtomato.games.screens.TerrainActor,com.badlogic.gdx.scenes.scene2d.ui.Table) -> b
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Table access$600(com.potatoandtomato.games.screens.TerrainActor) -> g
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Table access$702(com.potatoandtomato.games.screens.TerrainActor,com.badlogic.gdx.scenes.scene2d.ui.Table) -> c
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Table access$700(com.potatoandtomato.games.screens.TerrainActor) -> h
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Label access$802(com.potatoandtomato.games.screens.TerrainActor,com.badlogic.gdx.scenes.scene2d.ui.Label) -> a
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Label access$800(com.potatoandtomato.games.screens.TerrainActor) -> i
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Table access$902(com.potatoandtomato.games.screens.TerrainActor,com.badlogic.gdx.scenes.scene2d.ui.Table) -> d
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Table access$900(com.potatoandtomato.games.screens.TerrainActor) -> j
+    31:31:com.potatoandtomato.games.screens.ChessActor access$1002(com.potatoandtomato.games.screens.TerrainActor,com.potatoandtomato.games.screens.ChessActor) -> a
+    31:31:boolean access$1100(com.potatoandtomato.games.screens.TerrainActor) -> k
+    31:31:boolean access$1102(com.potatoandtomato.games.screens.TerrainActor,boolean) -> a
+    31:31:void access$1200(com.potatoandtomato.games.screens.TerrainActor) -> l
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Image access$1300(com.potatoandtomato.games.screens.TerrainActor) -> m
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Image access$1400(com.potatoandtomato.games.screens.TerrainActor) -> n
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Image access$1500(com.potatoandtomato.games.screens.TerrainActor) -> o
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Image access$1600(com.potatoandtomato.games.screens.TerrainActor) -> p
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Image access$1700(com.potatoandtomato.games.screens.TerrainActor) -> q
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Image access$1800(com.potatoandtomato.games.screens.TerrainActor) -> r
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Image access$1900(com.potatoandtomato.games.screens.TerrainActor) -> s
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Image access$2000(com.potatoandtomato.games.screens.TerrainActor) -> t
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Image access$1302(com.potatoandtomato.games.screens.TerrainActor,com.badlogic.gdx.scenes.scene2d.ui.Image) -> d
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Image access$1502(com.potatoandtomato.games.screens.TerrainActor,com.badlogic.gdx.scenes.scene2d.ui.Image) -> e
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Image access$1402(com.potatoandtomato.games.screens.TerrainActor,com.badlogic.gdx.scenes.scene2d.ui.Image) -> f
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Image access$1602(com.potatoandtomato.games.screens.TerrainActor,com.badlogic.gdx.scenes.scene2d.ui.Image) -> g
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Image access$1702(com.potatoandtomato.games.screens.TerrainActor,com.badlogic.gdx.scenes.scene2d.ui.Image) -> h
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Image access$1802(com.potatoandtomato.games.screens.TerrainActor,com.badlogic.gdx.scenes.scene2d.ui.Image) -> i
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Image access$2002(com.potatoandtomato.games.screens.TerrainActor,com.badlogic.gdx.scenes.scene2d.ui.Image) -> j
+    31:31:com.badlogic.gdx.scenes.scene2d.ui.Image access$1902(com.potatoandtomato.games.screens.TerrainActor,com.badlogic.gdx.scenes.scene2d.ui.Image) -> k
+    31:31:com.potatoandtomato.games.screens.ChessActor access$1000(com.potatoandtomato.games.screens.TerrainActor) -> u
 com.potatoandtomato.games.screens.TerrainActor$1 -> com.potatoandtomato.games.screens.h$1:
+    com.potatoandtomato.games.screens.ChessActor val$chessActor -> a
+    com.potatoandtomato.games.screens.TerrainActor this$0 -> b
+    57:57:void <init>(com.potatoandtomato.games.screens.TerrainActor,com.potatoandtomato.games.screens.ChessActor) -> <init>
+    60:102:void run() -> run
+com.potatoandtomato.games.screens.TerrainActor$10 -> com.potatoandtomato.games.screens.h$2:
     com.potatoandtomato.games.screens.TerrainActor this$0 -> a
-    111:111:void <init>(com.potatoandtomato.games.screens.TerrainActor) -> <init>
-    114:115:boolean act(float) -> act
-com.potatoandtomato.games.screens.TerrainActor$2 -> com.potatoandtomato.games.screens.h$2:
+    266:266:void <init>(com.potatoandtomato.games.screens.TerrainActor) -> <init>
+    269:344:void run() -> run
+com.potatoandtomato.games.screens.TerrainActor$11 -> com.potatoandtomato.games.screens.h$3:
     com.potatoandtomato.games.screens.TerrainActor this$0 -> a
-    297:297:void <init>(com.potatoandtomato.games.screens.TerrainActor) -> <init>
-    300:301:void run() -> run
+    349:349:void <init>(com.potatoandtomato.games.screens.TerrainActor) -> <init>
+    352:353:void run() -> run
+com.potatoandtomato.games.screens.TerrainActor$12 -> com.potatoandtomato.games.screens.h$4:
+    com.potatoandtomato.games.screens.TerrainActor this$0 -> a
+    358:358:void <init>(com.potatoandtomato.games.screens.TerrainActor) -> <init>
+    361:368:void run() -> run
+com.potatoandtomato.games.screens.TerrainActor$12$1 -> com.potatoandtomato.games.screens.h$4$1:
+    com.potatoandtomato.games.screens.TerrainActor$12 this$1 -> a
+    362:362:void <init>(com.potatoandtomato.games.screens.TerrainActor$12) -> <init>
+    365:366:void run() -> run
+com.potatoandtomato.games.screens.TerrainActor$13 -> com.potatoandtomato.games.screens.h$5:
+    com.potatoandtomato.games.models.TerrainModel val$model -> a
+    com.potatoandtomato.games.screens.TerrainActor this$0 -> b
+    373:373:void <init>(com.potatoandtomato.games.screens.TerrainActor,com.potatoandtomato.games.models.TerrainModel) -> <init>
+    376:384:void run() -> run
+com.potatoandtomato.games.screens.TerrainActor$2 -> com.potatoandtomato.games.screens.h$6:
+    com.potatoandtomato.games.screens.ChessActor val$chessActor -> a
+    com.potatoandtomato.games.screens.TerrainActor this$0 -> b
+    107:107:void <init>(com.potatoandtomato.games.screens.TerrainActor,com.potatoandtomato.games.screens.ChessActor) -> <init>
+    110:113:void run() -> run
+com.potatoandtomato.games.screens.TerrainActor$3 -> com.potatoandtomato.games.screens.h$7:
+    boolean val$selected -> a
+    com.potatoandtomato.games.screens.TerrainActor this$0 -> b
+    118:118:void <init>(com.potatoandtomato.games.screens.TerrainActor,boolean) -> <init>
+    121:141:void run() -> run
+com.potatoandtomato.games.screens.TerrainActor$3$1 -> com.potatoandtomato.games.screens.h$7$1:
+    com.potatoandtomato.games.screens.TerrainActor$3 this$1 -> a
+    132:132:void <init>(com.potatoandtomato.games.screens.TerrainActor$3) -> <init>
+    135:136:boolean act(float) -> act
+com.potatoandtomato.games.screens.TerrainActor$4 -> com.potatoandtomato.games.screens.h$8:
+    int val$percent -> a
+    com.potatoandtomato.games.enums.Direction val$direction -> b
+    com.potatoandtomato.games.screens.TerrainActor this$0 -> c
+    146:146:void <init>(com.potatoandtomato.games.screens.TerrainActor,int,com.potatoandtomato.games.enums.Direction) -> <init>
+    149:183:void run() -> run
+com.potatoandtomato.games.screens.TerrainActor$5 -> com.potatoandtomato.games.screens.h$9:
+    com.potatoandtomato.games.screens.TerrainActor this$0 -> a
+    188:188:void <init>(com.potatoandtomato.games.screens.TerrainActor) -> <init>
+    191:194:void run() -> run
+com.potatoandtomato.games.screens.TerrainActor$6 -> com.potatoandtomato.games.screens.h$10:
+    com.potatoandtomato.games.screens.TerrainActor this$0 -> a
+    210:210:void <init>(com.potatoandtomato.games.screens.TerrainActor) -> <init>
+    213:214:void run() -> run
+com.potatoandtomato.games.screens.TerrainActor$7 -> com.potatoandtomato.games.screens.h$11:
+    com.potatoandtomato.games.screens.TerrainActor this$0 -> a
+    219:219:void <init>(com.potatoandtomato.games.screens.TerrainActor) -> <init>
+    222:223:void run() -> run
+com.potatoandtomato.games.screens.TerrainActor$8 -> com.potatoandtomato.games.screens.h$12:
+    com.potatoandtomato.games.screens.TerrainActor this$0 -> a
+    228:228:void <init>(com.potatoandtomato.games.screens.TerrainActor) -> <init>
+    231:241:void run() -> run
+com.potatoandtomato.games.screens.TerrainActor$9 -> com.potatoandtomato.games.screens.h$13:
+    com.potatoandtomato.games.screens.TerrainActor this$0 -> a
+    246:246:void <init>(com.potatoandtomato.games.screens.TerrainActor) -> <init>
+    249:250:void run() -> run
 com.potatoandtomato.games.screens.TerrainLogic -> com.potatoandtomato.games.screens.i:
     com.potatoandtomato.games.models.TerrainModel _terrainModel -> a
     com.potatoandtomato.games.screens.TerrainLogic _me -> b
@@ -1399,6 +1726,7 @@ com.potatoandtomato.games.services.Texts -> com.potatoandtomato.games.e.e:
     25:25:java.lang.String normalWin() -> o
     27:27:java.lang.String firstTimeWinPlayer() -> p
     28:28:java.lang.String pawnLeaderboardPlayer() -> q
+    35:35:java.lang.String getTutorialTexts() -> r
 com.potatoandtomato.games.statics.Global -> com.potatoandtomato.games.f.a:
     boolean DEBUG -> a
     boolean NO_ENTRANCE -> b

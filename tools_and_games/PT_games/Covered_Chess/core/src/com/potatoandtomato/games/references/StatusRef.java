@@ -6,6 +6,8 @@ import com.potatoandtomato.games.enums.ChessAnimal;
 import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
 import com.potatoandtomato.games.enums.Status;
+import com.potatoandtomato.games.helpers.Logs;
+import com.potatoandtomato.games.models.ChessModel;
 import com.potatoandtomato.games.services.SoundsWrapper;
 import com.potatoandtomato.games.helpers.Terrains;
 import com.potatoandtomato.games.screens.TerrainLogic;
@@ -234,6 +236,8 @@ public class StatusRef {
 
     private void mouseEffect(final TerrainLogic terrainLogic, final ChessType mouseChessType){
         setStatus(terrainLogic, Status.POISON, false);
+        final ChessModel chessModel = terrainLogic.getChessLogic().getChessModel();
+
         Threadings.delay(500, new Runnable() {
             @Override
             public void run() {
@@ -241,7 +245,9 @@ public class StatusRef {
                 Threadings.delay(_abilityTriggeredAnimateTime, new Runnable() {
                     @Override
                     public void run() {
-                        if(setStatus(terrainLogic, Status.POISON, true)) _soundsWrapper.playSounds(Sounds.Name.POISON);
+                        if(terrainLogic.getChessLogic().getChessModel() == chessModel){
+                            if(setStatus(terrainLogic, Status.POISON, true)) _soundsWrapper.playSounds(Sounds.Name.POISON);
+                        }
                     }
                 });
             }
@@ -411,6 +417,7 @@ public class StatusRef {
     }
 
     private boolean setStatus( final TerrainLogic logic, final Status status, boolean invalidateChess){
+        Logs.show(logic.getChessLogic().getChessModel().getChessAnimal() + " is " + status);
         if( logic.getChessLogic().getChessModel().getStatus() == Status.ANGRY
                 ||  logic.getChessLogic().getChessModel().getStatus() == Status.KING){
             return false;

@@ -18,7 +18,6 @@ import com.mygdx.potatoandtomato.services.Notification;
 import com.mygdx.potatoandtomato.scenes.leaderboard_scene.EndGameLeaderBoardLogic;
 import com.potatoandtomato.common.enums.ConfirmMsgType;
 import com.potatoandtomato.common.enums.RoomUpdateType;
-import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.utils.*;
 import com.mygdx.potatoandtomato.models.*;
@@ -159,7 +158,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         endGameData = new EndGameData(room, _services.getProfile().getUserId());
         if(room.getGame().hasLeaderboard()){
             leaderboardLogic = new EndGameLeaderBoardLogic(_screen, _services, endGameData,
-                                                            room.getUserTeam(_services.getProfile().getUserId()).getPlayers());
+                                                            room.getUserTeam(_services.getProfile().getUserId()).getPlayersSortedByIds());
         }
     }
 
@@ -252,7 +251,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     public void failLoad(Player player){
         failed = true;
 
-        _services.getChat().newMessage(new ChatMessage(_texts.loadGameFailed(),
+        _services.getChat().newMessage(new ChatMessage(_texts.chatMsgLoadGameFailed(),
                                 ChatMessage.FromType.IMPORTANT, null, ""));
 
         Threadings.delay(2000, new Runnable() {
@@ -400,7 +399,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             _services.getBroadcaster().broadcast(BroadcastEvent.DEVICE_ORIENTATION, 0);
             _services.getChat().hideChat();
             _services.getChat().setMode(1);
-            _services.getChat().newMessage(new ChatMessage(_texts.gameEnded(),
+            _services.getChat().newMessage(new ChatMessage(_texts.chatMsgGameEnded(),
                     ChatMessage.FromType.SYSTEM, null, ""));
             _screen.switchToPTScreen();
 

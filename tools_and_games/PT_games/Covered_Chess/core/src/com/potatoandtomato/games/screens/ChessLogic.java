@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.potatoandtomato.common.assets.Assets;
+import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.absint.ActionListener;
 import com.potatoandtomato.games.assets.MyAssets;
 import com.potatoandtomato.games.enums.ChessType;
@@ -16,6 +17,7 @@ import com.potatoandtomato.games.models.ChessModel;
 import com.potatoandtomato.games.services.GameDataController;
 import com.potatoandtomato.games.services.SoundsWrapper;
 
+import javax.swing.plaf.TableHeaderUI;
 import java.util.ArrayList;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
@@ -125,44 +127,47 @@ public class ChessLogic {
     }
 
     public void setListeners(){
-        _chessActor.getCoverChess().addListener(new DragListener() {
-            private float _startDragX;
-
+        Threadings.postRunnable(new Runnable() {
             @Override
-            public void dragStart(InputEvent event, float x, float y, int pointer) {
-                super.dragStart(event, x, y, pointer);
-            }
+            public void run() {
+                _chessActor.getCoverChess().addListener(new DragListener() {
+                    private float _startDragX;
 
-            @Override
-            public void touchDragged(InputEvent event, float x, float y, int pointer) {
-                if(!_chessActor.isPreviewing()){
-                    if(_chessActor.openChess(_startDragX, x) && !_chessModel.getOpened()){
-                        _actionListener.onOpened();
+                    @Override
+                    public void dragStart(InputEvent event, float x, float y, int pointer) {
+                        super.dragStart(event, x, y, pointer);
                     }
-                }
 
-                super.touchDragged(event, x, y, pointer);
-            }
+                    @Override
+                    public void touchDragged(InputEvent event, float x, float y, int pointer) {
+                        if(!_chessActor.isPreviewing()){
+                            if(_chessActor.openChess(_startDragX, x) && !_chessModel.getOpened()){
+                                _actionListener.onOpened();
+                            }
+                        }
 
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                _startDragX = x;
-                return super.touchDown(event, x, y, pointer, button);
+                        super.touchDragged(event, x, y, pointer);
+                    }
 
-            }
+                    @Override
+                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                        _startDragX = x;
+                        return super.touchDown(event, x, y, pointer, button);
 
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if(!_chessModel.getOpened() && !_chessActor.isPreviewing()){
-                    _chessActor.openChess(0, 0);
-                    _chessActor.resetOpenChess();
-                }
-                super.touchUp(event, x, y, pointer, button);
+                    }
+
+                    @Override
+                    public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                        if(!_chessModel.getOpened() && !_chessActor.isPreviewing()){
+                            _chessActor.openChess(0, 0);
+                            _chessActor.resetOpenChess();
+                        }
+                        super.touchUp(event, x, y, pointer, button);
+                    }
+                });
+
             }
         });
-
-
-
     }
 
     public void setDragDrop(){

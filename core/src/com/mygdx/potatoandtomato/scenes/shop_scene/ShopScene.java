@@ -54,7 +54,7 @@ public class ShopScene extends SceneAbstract {
     public void populateRoot() {
         screensMap = new HashMap();
 
-        topBar = new TopBar(_root, _services.getTexts().shopTitle(), false, _assets, _screen, _services.getCoins());
+        topBar = new TopBar(_root, _services.getTexts().shopSceneTitle(), false, _assets, _screen, _services.getCoins());
         topBar.setDarkTheme();
 
         _root.align(Align.top);
@@ -211,7 +211,7 @@ public class ShopScene extends SceneAbstract {
         labelTitle.setWrap(true);
 
         growthRateTable = new Table();
-        Label labelGrowthRate = new Label(_texts.growthRate(), labelSmallStyle);
+        Label labelGrowthRate = new Label(_texts.growthRateForShop(), labelSmallStyle);
         labelGrowthRate.setName("labelGrowthRate");
         labelGrowthRate.setAlignment(Align.right);
         Label nextCoinTimerLabel = new Label("?", labelSmallStyle);
@@ -230,7 +230,7 @@ public class ShopScene extends SceneAbstract {
         topContentTable.add(purseCountLabel).padLeft(5).padTop(15);
         topContentTable.add(detailsTable).expandX().fillX().padRight(10);
 
-        TextButton retrieveButton = getWoodButton(_services.getTexts().retrieveCoins());
+        TextButton retrieveButton = getWoodButton(_services.getTexts().btnTextRetrieveCoins());
         retrieveCoinsButton = retrieveButton;
 
         purseRootTable.add(topContentTable).expandX().fillX().height(63);
@@ -313,7 +313,7 @@ public class ShopScene extends SceneAbstract {
         topContentTable.add(itemImageTable).width(70).expandY().fillY();
         topContentTable.add(detailsTable).expand().fill();
 
-        TextButton retrieveButton = getWoodButton(productAction != ProductAction.WatchVideo ? _texts.buyNow() : _texts.watchAds());
+        TextButton retrieveButton = getWoodButton(productAction != ProductAction.WatchVideo ? _texts.btnTextBuyNow() : _texts.btnTextWatchAds());
         retrieveButton.setName(coinProduct.getId());
 
         if(productAction == ProductAction.WatchVideo){
@@ -401,11 +401,11 @@ public class ShopScene extends SceneAbstract {
                 Label nextCoinTimerLabel = growthRateTable.findActor("nextCoinTimerLabel");
 
                 if(maxCoinReached){
-                    labelGrowthRate.setText(_texts.maxPurse());
+                    labelGrowthRate.setText(_texts.maxPurseTextForShop());
                     nextCoinTimerLabel.setVisible(false);
                 }
                 else{
-                    labelGrowthRate.setText(_texts.growthRate());
+                    labelGrowthRate.setText(_texts.growthRateForShop());
                     nextCoinTimerLabel.setText(DateTimes.getDurationString(nextCoinInSecs));
                     nextCoinTimerLabel.setVisible(true);
                 }

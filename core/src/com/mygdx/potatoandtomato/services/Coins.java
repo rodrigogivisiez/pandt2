@@ -238,6 +238,8 @@ public class Coins implements ICoins {
                         }
                         currentShopProduct = null;
                     }
+
+                    updateCoinMachineUserTable(userId, username);
                 }
             });
         }
@@ -389,7 +391,7 @@ public class Coins implements ICoins {
 
     }
 
-    private void sync(ArrayList<Pair<String, String>> userIdToNamePairs){
+    public void sync(ArrayList<Pair<String, String>> userIdToNamePairs){
         if(userIdToNamePairs == null) return;
 
         for(int i = monitoringUserIds.size() - 1; i >= 0; i--){
@@ -411,13 +413,18 @@ public class Coins implements ICoins {
         }
 
         for(Pair<String, String> pair : userIdToNamePairs){
-            int insertedCoin = getUserPutCoinCount(pair.getFirst());
-
-            coinMachineControl.updateUserTable(pair.getFirst(), pair.getSecond(),
-                    insertedCoin, !noCoinUserIds.contains(pair.getFirst()));
+            updateCoinMachineUserTable(pair.getFirst(), pair.getSecond());
         }
 
     }
+
+    public void updateCoinMachineUserTable(String userId, String username){
+        int insertedCoin = getUserPutCoinCount(userId);
+
+        coinMachineControl.updateUserTable(userId, username,
+                insertedCoin, !noCoinUserIds.contains(userId));
+    }
+
 
     private int getUserPutCoinCount(String userId){
         if(currentUsersPutCoinNumberMap.containsKey(userId)){
@@ -760,7 +767,7 @@ public class Coins implements ICoins {
             public void onCallback(Object obj, Status st) {
                 confirm.close(ConfirmIdentifier.Coins);
                 if (st != Status.SUCCESS) {
-                    confirm.show(ConfirmIdentifier.Coins, texts.purchaseFailed(), Confirm.Type.YES, null);
+                    confirm.show(ConfirmIdentifier.Coins, texts.confirmPurchaseFailed(), Confirm.Type.YES, null);
                 }
             }
         });
@@ -804,7 +811,9 @@ public class Coins implements ICoins {
             database.clearListenersByTag(userId);
         }
 
+        coinMachineControl.removeUserTable(profile.getUserId());
         monitoringUserIds.clear();
+        noCoinUserIds.clear();
         topBarCoinControls.clear();
     }
 

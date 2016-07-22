@@ -32,6 +32,25 @@ public class Team {
         this.players = players;
     }
 
+
+    @JsonIgnore
+    public ArrayList<Player> getPlayersSortedByIds() {
+        ArrayList<Player> players = getPlayers();
+        ArrayList<Player> result = new ArrayList();
+        ArrayList<String> sortedPlayerIds = getPlayersUserIds();
+        for(String playerId: sortedPlayerIds){
+            for(Player player : players){
+                if(player.getUserId().equals(playerId)){
+                    result.add(player);
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+
+
     @JsonIgnore
     public ArrayList<String> getPlayersUserIds(){
         ArrayList<String> result = new ArrayList<String>();

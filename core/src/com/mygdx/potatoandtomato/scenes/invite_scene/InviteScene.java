@@ -72,7 +72,7 @@ public class InviteScene extends SceneAbstract {
     public void populateRoot() {
         _usersHashMap = new MultiHashMap();
         _containersMap = new HashMap<InviteType, Table>();
-        topBar = new TopBar(_root, _texts.inviteTitle(), false, _assets, _screen, _services.getCoins());
+        topBar = new TopBar(_root, _texts.inviteSceneTitle(), false, _assets, _screen, _services.getCoins());
 
         Table _invitesRootTable = new Table();
         _invitesRootTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.INVITE_BG)));

@@ -54,7 +54,7 @@ public class RoomScene extends SceneAbstract {
     @Override
     public void populateRoot() {
 
-        topBar = new TopBar(_root, _texts.roomTitle(), false, _assets, _screen, _services.getCoins());
+        topBar = new TopBar(_root, _texts.roomSceneTitle(), false, _assets, _screen, _services.getCoins());
         _root.align(Align.top);
 
         playerMaps = new ConcurrentHashMap();
@@ -64,7 +64,7 @@ public class RoomScene extends SceneAbstract {
 
         startButton = new BtnEggDownward(_assets, _services.getSoundsPlayer(), _services.getShaders());
         startButton.setEnabled(false);
-        startButton.setText(_texts.waitingHost());
+        startButton.setText(_texts.btnTextWaitingHost());
 
         inviteButton = new BtnEggDownward(_assets, _services.getSoundsPlayer());
         inviteButton.setText(_texts.invite());
@@ -191,7 +191,7 @@ public class RoomScene extends SceneAbstract {
                     }
                     teamTable.align(Align.top);
                     teamTable.padBottom(20);
-                    teamTable.add(getWoodBoardTitleTable(_texts.team() + " " + (i+1))).padTop(-7).colspan(totalTeams == 1 ? 2 : 1);
+                    teamTable.add(getWoodBoardTitleTable(String.format(_texts.teamTitle(), i+1))).padTop(-7).colspan(totalTeams == 1 ? 2 : 1);
                     teamTable.row();
 
 
@@ -382,7 +382,7 @@ public class RoomScene extends SceneAbstract {
         BitmapFont font = _assets.getFonts().get(Fonts.FontId.HELVETICA_XS_BOLD);
         Color fontColor = Color.BLACK;
         if(name == null){
-            name = _texts.open();
+            name = _texts.slotOpen();
             fontColor = Color.valueOf("898887");
         }
 

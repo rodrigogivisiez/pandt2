@@ -111,7 +111,7 @@ public class BootScene extends SceneAbstract {
 
         //Game Version START
         Label.LabelStyle versionStyle = new Label.LabelStyle();
-        versionStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_XS_SEMIBOLD_B_ffffff_000000_1);
+        versionStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_XS_BOLD_B_ffffff_000000_1);
         Label versionLabel = new Label(String.format(_texts.build(), _services.getVersionControl().getClientVersion())
                             + (Global.DEBUG ? " " + _texts.debug() : ""), versionStyle);
         //Game Version END
@@ -174,7 +174,7 @@ public class BootScene extends SceneAbstract {
                 Label.LabelStyle titleStyle = new Label.LabelStyle();
                 titleStyle.fontColor = Color.BLACK;
                 titleStyle.font = _assets.getFonts().get(Fonts.FontId.HELVETICA_L_HEAVY);
-                Label titleLabel = new Label(_texts.socialLogin(), titleStyle);
+                Label titleLabel = new Label(_texts.socialLoginTitle(), titleStyle);
 
                 _titleTable = new Table();
                 _titleTable.add(facebookImage);
@@ -192,7 +192,7 @@ public class BootScene extends SceneAbstract {
 
                 Label.LabelStyle contentStyle = new Label.LabelStyle();
                 contentStyle.fontColor = Color.valueOf("573801");
-                contentStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_M_SEMIBOLD);
+                contentStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR);
                 Label tomatoLabel = new Label(_texts.socialLoginTomato(), contentStyle);
                 tomatoLabel.setWrap(true);
                 Image tomatoHiImage = new Image(_assets.getTextures().get(Textures.Name.TOMATO_HI));
@@ -310,7 +310,7 @@ public class BootScene extends SceneAbstract {
 
                 Label.LabelStyle contentStyle = new Label.LabelStyle();
                 contentStyle.fontColor = Color.valueOf("573801");
-                contentStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_M_SEMIBOLD);
+                contentStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_S_BOLD);
                 Label loadingLabel = new Label(msg, contentStyle);
                 loadingTable.add(loadingLabel);
 
@@ -339,7 +339,7 @@ public class BootScene extends SceneAbstract {
 
                 Label.LabelStyle contentStyle = new Label.LabelStyle();
                 contentStyle.fontColor = Color.valueOf("573801");
-                contentStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_M_SEMIBOLD);   Label loadingLabel = new Label(msg, contentStyle);
+                contentStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_S_BOLD);   Label loadingLabel = new Label(msg, contentStyle);
                 loadingLabel.setWrap(true);
                 msgTable.add(loadingLabel).expand().fill();
 

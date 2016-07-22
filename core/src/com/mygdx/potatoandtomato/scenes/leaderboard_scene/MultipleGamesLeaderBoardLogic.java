@@ -110,6 +110,10 @@ public class MultipleGamesLeaderBoardLogic extends LogicAbstract {
                                 LeaderboardHelper.fillEmptyRecords(records);
                                 _scene.leaderboardDataLoaded(game, records);
 
+                                for(int i = Global.LEADERBOARD_COUNT; i < records.size(); i++){
+                                    _scene.changeRecordTableToUnknownRank(game, i);
+                                }
+
                                 if(_games.get(_current).getAbbr().equals(game.getAbbr())){
                                     _scene.setMascots(found ? LeaderBoardScene.MascotType.HAPPY : LeaderBoardScene.MascotType.BORING);
                                 }

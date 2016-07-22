@@ -68,7 +68,7 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
         ptScreen.backToBoot();
 
         if(showDisconnectedMsg){
-            confirm.show(ConfirmIdentifier.Resiliency, texts.noConnection(), Confirm.Type.YES, null);
+            confirm.show(ConfirmIdentifier.Resiliency, texts.confirmNoConnection(), Confirm.Type.YES, null);
         }
 
         count = 0;
@@ -148,7 +148,7 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
     }
 
     public void showLostConnection(int remainingSecs){
-        String msg = String.format(texts.lostConnection(), remainingSecs);
+        String msg = String.format(texts.confirmLostConnection(), remainingSecs);
         if(!showingLostConnection){
             showingLostConnection = true;
             confirm.show(ConfirmIdentifier.Resiliency, msg, Confirm.Type.LOADING_WITH_CANCEL, new ConfirmResultListener() {
@@ -158,7 +158,7 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
                         resetAndBackToBoot(false);
                     }
                 }
-            }, texts.clickToDisconnect());
+            }, texts.btnTextClickToDisconnect());
         }
         else{
             confirm.updateMessage(msg);
@@ -173,7 +173,7 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
 
     @Override
     public void showResumingGameOverlay(int remainingSecs) {
-        String msg = String.format(texts.connectionRecovered(), remainingSecs);
+        String msg = String.format(texts.confirmConnectionRecovered(), remainingSecs);
         if(!showingResumeGame && !showingLostConnection){
             showingResumeGame = true;
             confirm.show(ConfirmIdentifier.ResumingGameSession, msg, Confirm.Type.LOADING_WITH_CANCEL, new ConfirmResultListener() {
@@ -183,7 +183,7 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
                         resetAndBackToBoot(false);
                     }
                 }
-            }, texts.clickToDisconnect());
+            }, texts.btnTextClickToDisconnect());
         }
         else{
             confirm.updateMessage(msg);

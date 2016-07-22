@@ -6,6 +6,7 @@ import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.absints.CoinListener;
 import com.mygdx.potatoandtomato.absintflis.services.RestfulApiListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
@@ -554,17 +555,42 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
     }
 
     public int getAfterRanking(){
+        ArrayList<String> toCompareLexically = new ArrayList();
+        String myTeamUserIds = Strings.joinArr(_myLeaderboardRecord.getUserIds(), ",");
+        toCompareLexically.add(myTeamUserIds);
+
         int i = 0;
         boolean foundMine = false;
         for(LeaderboardRecord record : _records){
-            if(record.usersMatched(_myLeaderboardRecord.getUserIds())) foundMine = true;
-
-            if(record.getScore() < _myLeaderboardRecord.getScore()){
-                return foundMine ? i -1 : i;
+            if(record.usersMatched(_myLeaderboardRecord.getUserIds())){
+                return i;
+            }
+            else if(record.getScore() == _myLeaderboardRecord.getScore()){
+                toCompareLexically.add(Strings.joinArr(record.getUserIds(), ","));
+            }
+            else if(record.getScore() < _myLeaderboardRecord.getScore()){
+//                if(foundMine){
+//                    i = i -1;
+//                }
+                break;
             }
             i++;
         }
-        return i;
+
+        Collections.sort(toCompareLexically);
+
+        int q = 0;
+        for(String userIds : toCompareLexically){
+            if(userIds.equals(myTeamUserIds)){
+                break;
+            }
+            q++;
+        }
+
+        int finalRank = i - q;
+
+        Logs.show("final rank " + finalRank);
+        return finalRank;
     }
 
     public int getUpperRankingDifferencePercent(){
@@ -718,6 +744,10 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
 
     public LeaderboardRecord getMyLeaderboardRecord() {
         return _myLeaderboardRecord;
+    }
+
+    public void setMyLeaderboardRecord(LeaderboardRecord _myLeaderboardRecord) {
+        this._myLeaderboardRecord = _myLeaderboardRecord;
     }
 
     public void setLeaderboardRecords(ArrayList<LeaderboardRecord> _records) {

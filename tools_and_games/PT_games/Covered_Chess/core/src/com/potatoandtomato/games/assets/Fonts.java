@@ -4,6 +4,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.potatoandtomato.common.absints.PTAssetsManager;
 import com.potatoandtomato.common.assets.FontAssets;
 import com.potatoandtomato.common.assets.FontDetailsGenerator;
+import com.potatoandtomato.common.utils.Strings;
 
 /**
  * Created by SiongLeng on 9/2/2016.
@@ -28,6 +29,8 @@ public class Fonts extends FontAssets {
 
 
     public enum FontId{
+        HANDWRITING_25_REGULAR,
+
         MYRIAD_S_REGULAR,
         MYRIAD_M_REGULAR,
         MYRIAD_M_REGULAR_B_000000_588e54_1,             //dark green
@@ -40,7 +43,7 @@ public class Fonts extends FontAssets {
         HELVETICA_MAX_BlACKCONDENSEDITALIC_B_ffffff_f46767_2_S_000000_1_1,          //red border, black shadow
 
         PIZZA_XXL_REGULAR,
-        PIZZA_XXXL_REGULAR_B_000000_ffffff_3,
+        PIZZA_XXXL_REGULAR_S_000000_2_2,
     }
 
 
@@ -61,6 +64,9 @@ public class Fonts extends FontAssets {
                     break;
                 case HELVETICA:
                     path = "fonts/Helvetica-%s.otf";
+                    break;
+                case HANDWRITING:
+                    path = "fonts/HandWriting-%s.otf";
                     break;
             }
 
@@ -94,6 +100,10 @@ public class Fonts extends FontAssets {
 
         @Override
         public int getSize(String fontSizeString) {
+            if(Strings.isNumeric(fontSizeString)){
+                return Integer.valueOf(fontSizeString);
+            }
+
             FontSize fontSize = FontSize.valueOf(fontSizeString);
             switch (fontSize){
                 case XS:
@@ -118,7 +128,7 @@ public class Fonts extends FontAssets {
     }
 
     private enum  FontName {
-        PIZZA, MYRIAD, HELVETICA
+        PIZZA, MYRIAD, HELVETICA, HANDWRITING
     }
 
     private enum FontStyle {

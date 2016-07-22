@@ -271,7 +271,6 @@ public class RestfulApi implements IRestfulApi {
                         urlParameters = urlParameters.substring(0, urlParameters.length() - 1);
                     }
 
-
                     // Send post request
                     con.setDoOutput(true);
                     DataOutputStream wr = new DataOutputStream(con.getOutputStream());

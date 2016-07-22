@@ -13,154 +13,158 @@ import java.util.ArrayList;
  */
 public class Texts {
 
-    public String ok(){ return "OK";}
-    public String quit(){ return "Quit";}
+    ///////////////////////////////////////////////////////////
+    //boot scene
+    ///////////////////////////////////////////////////////////
+    public String build() {return "Build %s";}
+    public String debug() {return "DEBUG";}
 
-    public String insert() { return "Insert";}
-    public String coin() { return "Coin";}
-
-    public String mascotQuestion() { return "Are you a Potato or \nTomato?";};
-    public String mascotPotato() { return "Potatoes welcome \nYOU!";};
-    public String mascotTomato() { return "Tomatoes welcome \nYOU!";};
-    public String socialLogin() { return "Login with Facebook";};
+    public String socialLoginTitle() { return "Login with Facebook";};
     public String socialLoginTomato() { return "Tomato will help you find more friends to play with you.";}
     public String socialLoginPotato() { return "Potato promises not to post anything on your behalf.";}
-
     public String socialLoginProcessing() { return "Facebook login processing...";}
     public String socialLoginFailed() { return "Login with Facebook failed... \nTry again?";}
+
     public String creatingUser() { return "Creating new user profile..."; }
     public String failedRetrieveProfile() { return "Failed to retrieve data from server, please check your connection and try again."; }
     public String ptIsDown() { return "P&T server is down for maintenance at the moment, please come back later."; }
     public String loginProcessing() { return "Logging in..."; }
 
-    public String build() {return "Build %s";}
-    public String debug() {return "DEBUG";}
-
-    public String gamesList() { return "Games List"; }
-    public String game() { return "GAME"; }
-    public String players() { return "PLAYERS"; }
-    public String host() { return "HOST"; }
-    public String newGame() { return "Create Game"; }
-    public String joinGame() { return "Join\nGame"; }
-    public String pickAGame() { return "Pick A Game"; }
-
-    public String createGameTitle() { return "Create Game"; }
-    public String version() { return "Version %s";}
-    public String xMb() { return "%sMb";}
-    public String xPlayers() { return "From %s to %s players";}
-
-    public String leaderBoard() { return "Leaderboard"; }
-    public String leaderBoards() { return "Leaderboards"; }
-
-    public String roomTitle() { return "Game Room"; }
-    public String settingsTitle() { return "Settings"; }
-    public String favouritesTitle() { return "Favourites"; }
-    public String inviteTitle() { return "Invite Friends"; }
-    public String shopTitle() { return "Shop"; }
+    public String confirmAppsCrashed() {return "Opps, looks like P&T has crashed on the last time you played, a error log has been received by Tomato and will be fixed asap.";}
+    public String confirmQuit() { return "Are you sure you want to quit Potato and Tomato?";}
 
 
-    public String confirm() { return "Confirm"; }
-    public String details() { return "Details"; }
-    public String screenShots() { return "Screen Shots"; }
-    public String description() { return "Description"; }
-    public String create() { return "Create"; }
-    public String startGame() { return "Start\nGame"; }
-    public String invite() { return "Invite"; }
-    public String displayName() { return "Display Name"; }
-    public String sounds() { return "Sounds"; }
-    public String facebook() { return "Facebook"; }
-    public String login() { return "Login"; }
-    public String logout() { return "Logout"; }
+    //////////////////////////////////////////////////////////////////////////
+    //Input name scene
+    //////////////////////////////////////////////////////////////////////////
+    public String askForNameTitle() { return "Please input your in-game display name"; }
+
+    public String confirmDuplicateNameError() { return "This name has already been taken, please use another name.";}
+    public String confirmEmptyNameError() { return "Game name cannot be empty.";}
+    public String confirmNameLengthError() { return "Game name cannot be more than %s characters.";}
+
+    ///////////////////////////////////////////////////////////////////////////
+    //Settings scene
+    //////////////////////////////////////////////////////////////////////////
+    public String settingsSceneTitle() { return "Settings"; }
+
+    public String displayNameTitle() { return "Display Name"; }
+    public String soundsTitle() { return "Sounds"; }
+    public String facebookTitle() { return "Facebook"; }
+
     public String confirmLogoutFacebook() { return "Are you sure you want to logout from facebook? (Potato and Tomato will need to restart after this action.)"; }
     public String confirmLoginFacebook() { return "Are you sure you want to login into facebook? (Potato and Tomato will need to restart after this action.)"; }
-    public String facebookLoginFailed() { return "Facebook request failed..."; }
+    public String confirmFacebookRequestFailed() { return "Facebook request failed..."; }
 
+    ///////////////////////////////////////////////////////////////////////
+    //Create game scene
+    ///////////////////////////////////////////////////////////////////////
+    public String createGameSceneTitle() { return "Create Game"; }
 
-    public String askForName() { return "Please input your in-game display name"; }
+    public String pickAGame() { return "Pick A Game"; }
+    public String btnTextCreate() { return "Create"; }
 
-    public String yes() { return "Yes"; }
-    public String no() { return "No"; }
-    public String retry() { return "Retry"; }
-    public String team() { return "Team"; }
-    public String open() { return "Open"; }
-    public String send() { return "Send"; }
-    public String continueLastGame() { return "Continue"; }
-    public String save() { return "Save"; }
-    public String profile() { return "Profile"; }
-    public String others() { return "Others"; }
+    ///////////////////////////////////////////////////////////////////////
+    //Game List scene
+    //////////////////////////////////////////////////////////////////////
+    public String gamesListSceneTitle() { return "Games List"; }
 
-    public String showReport() { return "Show Report"; }
+    public String gameHeader() { return "GAME"; }
+    public String playersHeader() { return "PLAYERS"; }
+    public String hostHeader() { return "HOST"; }
 
+    public String btnTextNewGame() { return "Create Game"; }
+    public String btnTextJoinGame() { return "Join\nGame"; }
+    public String btnTextContinueLastGame() { return "Continue"; }
 
-    public String loading() { return "Loading..."; }
-    public String updatingScores() { return "Updating Scores..."; }
+    public String confirmNotContinueGame() { return "You still have an unfinished game! Are you sure you want to abandon it?" ;}
 
-    public String generalError() { return "Unexpected error occurred, please try again.";}
-    public String duplicateNameError() { return "This name has already been taken, please use another name.";}
-    public String emptyNameError() { return "Game name cannot be empty.";}
-    public String nameLengthError() { return "Game name cannot be more than %s characters.";}
-
-    public String checkGameVersion() { return "Checking game version..."; }
-    public String downloadingGame() { return "Downloading game content..."; }
-    public String creatingRoom() { return "Hosting game now..."; }
+    /////////////////////////////////////////////////////////////////////////
+    //Prerequisite scene
+    ////////////////////////////////////////////////////////////////////////
     public String joiningRoom() { return "Joining room..."; }
     public String lookingForServer() { return "Looking for server..."; }
     public String locatingRoom() { return "Locating room server..."; }
-    public String gameClientFailed() { return "Failed to retrieve game client, please try again later."; }
+
     public String joinRoomFailed() { return "Failed to join room, please try again later."; }
     public String cannotContinue() { return "Failed to continue game, the game might be already finished.";}
-
     public String roomIsFull() { return "Room is full, please try again later.";}
     public String roomNotAvailable() { return "Game is not available to join.";}
 
+    /////////////////////////////////////////////////////////////////////////////////
+    //Room scene
+    //////////////////////////////////////////////////////////////////////////////////
+    public String roomSceneTitle() { return "Game Room"; }
 
-    public String hostLeft() { return "Room host has left the room, this room will now be dismissed."; }
-    public String roomError() { return "Unexpected error occurred, you will be dismissed from this room now."; }
+    public String btnTextWaitingHost() { return "Waiting For Host";}
+    public String btnTextStartGame() { return "Start\nGame"; }
 
-    public String notEnoughPlayers() { return "You need at least %s players each team to start the game."; }
-    public String stillDownloadingClient() { return "Please wait until all players has downloaded game content."; }
+    public String teamTitle() { return "Team %s"; }
+    public String slotOpen() { return "Open"; }
 
     public String confirmLeaveRoom() { return "Are you sure you want to leave this room?"; }
     public String confirmHostLeaveRoom() { return "Are you sure you want to leave this room? (This room will be dismissed)"; }
+    public String confirmKick() { return "Confirm kick %s from this room?";}
+    public String confirmYouAreKicked() { return "You are kicked from the room.";}
+    public String confirmGameClientOutdated() { return "This game required latest game client to run, please update your P&T game client.";}
+    public String confirmGameVersionOutdated() { return "This game has newer version, host need to recreate the room.";}
+    public String confirmFailedRetriveGameData() { return "Failed to retrive game data, please check your connection and try again.";}
+    public String confirmHostLeft() { return "Room host has left the room, this room will now be dismissed."; }
+    public String confirmRoomError() { return "Unexpected error occurred, you will be dismissed from this room now."; }
 
-    public String userHasJoinedRoom() { return "%s has joined the room."; }
-    public String userHasLeftRoom() { return "%s has left the room."; }
+    public String confirmNotEnoughPlayers() { return "You need at least %s players each team to start the game."; }
+    public String confirmStillDownloadingClient() { return "Please wait until all players has downloaded game content."; }
+    public String confirmWaitAllUsersReady() { return "Please wait for all users ready before start.";}
+    public String confirmWaitTemporaryDisconnectedUsers() { return "Please wait for all users connection stabilize before start.";}
+    public String confirmFairTeamNeeded() { return "All teams must have equal amount of players to start.";}
 
-    public String recentlyPlay() { return "Recently Played Together"; }
-    public String faebookFriends() { return "Facebook Friends"; }
-    public String facebookCannotGetFriends() { return "You need to login with your facebook first.";}
-    public String noRecords() { return "No records found.";}
-    public String requestFailed() { return "Request failed.";}
-    public String noLeaderBoard() { return "This game doesn't have leaderboard function enabled.";}
+    public String chatMsgUserHasJoinedRoom() { return "%s has joined the room."; }
+    public String chatMsgUserHasLeftRoom() { return "%s has left the room."; }
+    public String chatMsgUserKicked() { return "%s has been kicked from the room.";}
+    public String chatMsgGameStarting() { return "Game will be starting soon after %s coin(s) inserted.";}
+    public String chatMsgGameStartStop() { return "Game start process is stopped by %s.";}
+    public String chatMsgGameStarted() { return "Game started.";}
+    public String chatMsgInvitationAccepted() { return "%s has accepted the game invitation and is joining soon.";}
+    public String chatMsgInvitationRejected() { return "%s is too busy for a game at this moment.";}
 
-    public String xInvitedX() { return "%s has invited %s to join this room.";}
-    public String xInvitedXAlias() { return "%s has invited %s (previously known as %s) to join this room.";}
-    public String xInvitedXFailed() { return "%s has invited %s to join this room, but request failed.";}
+    public String PUSHRoomUpdateTitle() { return "Room Update";}
+    public String PUSHRoomUpdateGameReadyTitle() { return "Game is ready to start";}
+    public String PUSHRoomUpdateGameStartingTitle() { return "Game starting!";}
+    public String PUSHRoomUpdateContent() { return "Current players %s / %s";}
+
+    ////////////////////////////////////////////////////////////////////////////
+    //Invite scene
+    /////////////////////////////////////////////////////////////////////////////
+    public String inviteSceneTitle() { return "Invite Friends"; }
+
+    public String recentlyPlayTabTitle() { return "Recently Played Together"; }
+    public String faebookFriendsTabTitle() { return "Facebook Friends"; }
+    public String leaderBoardsTabTitle() { return "Leaderboards"; }
 
     public String playedXAgo() { return "Played %s together %s";}
     public String gameNameIs() { return "Game name: %s";}
+    public String xPoints() {return "%s points";}
 
-    public String gameStarting() { return "Game will be starting soon after %s coin(s) inserted.";}
-    public String gameStartStop() { return "Game start process is stopped by %s.";}
+    public String facebookCannotGetFriends() { return "You need to login with your facebook first.";}
+    public String noLeaderBoard() { return "This game doesn't have leaderboard function enabled.";}
 
-    public String invitationAccepted() { return "%s has accepted the game invitation and is joining soon.";}
-    public String invitationRejected() { return "%s is too busy for a game at this moment.";}
+    public String chatMsgxInvitedX() { return "%s has invited %s to join this room.";}
+    public String chatMsgxInvitedXAlias() { return "%s has invited %s (previously known as %s) to join this room.";}
 
-    public String confirmQuit() { return "Are you sure you want to quit Potato and Tomato?";}
+    public String PUSHGameInvitationsTitle() { return "P&T Game Invitations"; }
+    public String PUSHGameInvitationsContent() { return "You have %s new inviations from your friends.";}
+    public String PUSHGameInvitationContent() { return "%s have invited you to play %s together.";}
 
-    public String loadGameFailed() { return "Some players have failed to load the game.";}
-    public String youLoadGameFailed() { return "You have failed to load the game.";}
-    public String playerLeftCauseGameCancel() { return "Game has cancelled because of players left room.";}
+    /////////////////////////////////////////////////////////////////////
+    //Game Sandbox Scene
+    ////////////////////////////////////////////////////////////////////////
+    public String remainingTime() { return "Remaining Time: ";}
+    public String ready() { return "Ready";}
+    public String failed() { return "Failed";}
 
-    public String gameStarted() { return "Game started.";}
-    public String gameEnded() { return "Game ended.";}
-    public String waitingHost() { return "Waiting For Host";}
-
-    public String cancel() { return "Cancel";}
-
-    public String waitAllUsersReady() { return "Please wait for all users ready before start.";}
-    public String waitTemporaryDisconnectedUsers() { return "Please wait for all users connection stabilize before start.";}
-    public String fairTeamNeeded() { return "All teams must have equal amount of players to start.";}
+    //show on chat messaging when any player failed to load game
+    public String chatMsgLoadGameFailed() { return "Some players have failed to load the game.";}
+    public String chatMsgGameEnded() { return "Game ended.";}
 
     public String notificationAbandon() { return "%s has abandoned the game!";}
     public String notificationAbandonDueToTimeout() { return "%s has abandoned the game because of failed to reconnect in " + Global.ABANDON_TOLERANCE_SECS + " seconds.";}
@@ -173,67 +177,94 @@ public class Texts {
     public String notificationYouConnected() { return "You have connected to the game.";}
     public String notificationYouDisconnected() { return "You have disconnected from the game, you have " + Global.ABANDON_TOLERANCE_SECS + " seconds to reconnect.";}
 
-
     public String notificationYouKicked() { return "You have been kicked from the room, game will now be abandoned.";}
     public String notificationKicked() { return "%s has been kicked from the room.";}
-    public String notificationGameFailed() { return "Failed to retrieve game data.";}
-
-    public String noConnection() { return "You have been disconnected from the server, please check your connection."; }
-
-    public String confirmNotContinueGame() { return "You still have an unfinished game! Are you sure you want to abandon it?" ;}
-    public String failedRetriveGameData() { return "Failed to retrive game data, please check your connection and try again.";}
-    public String gameClientOutdated() { return "This game required latest game client to run, please update your P&T game client.";}
-    public String gameVersionOutdated() { return "This game has newer version, host need to recreate the room.";}
-
-    public String confirmKick() { return "Confirm kick %s from this room?";}
-    public String youAreKicked() { return "You are kicked from the room.";}
-    public String userKicked() { return "%s has been kicked from the room.";}
-
-    public String ready() { return "Ready";}
-    public String failed() { return "Failed";}
-    public String remainingTime() { return "Remaining Time: ";}
-    public String purseTitle() { return "Mum's purse";}
-    public String growthRate() { return "Grow Coin In";}
-    public String maxPurse() { return "Full";}
-
-    public String xPoints() {return "%s points";}
-    public String xCoin() {return "Coin x %s";}
-
-    public String appsCrashed() {return "Opps, looks like P&T has crashed on the last time you played, a error log has been received by Tomato and will be fixed asap.";}
-
-    public String lostConnection() {return "Lost connection with server, trying to reconnect, \n%s secs remaining";}
-    public String connectionRecovered() {return "Connection established, trying to resume game session, \n%s secs remaining";}
-    public String clickToDisconnect(){ return "Click to Disconnect";}
-
-    public String retrieveCoins() { return "Retrieve Now"; }
-    public String watchAds() { return "Watch Now"; }
-    public String watchAdsDescription() { return "30secs video ads"; }
-    public String buyNow() { return "Buy Now"; }
-
-    public String slideUpCancel() { return "Slide up to cancel";}
-
-    public String workingDoNotClose() { return "Potato and Tomato are working now, please do not close apps now...";}
-    public String purchaseFailed() { return "Failed to purchase coins..";}
-
-    public String coinsInserted() { return "Coins Inserted";}
-    public String buyCoins() { return "Buy Coins"; }
-
-    //push notifications part
-    public String PUSHGameInvitationsTitle() { return "P&T Game Invitations"; }
-    public String PUSHGameInvitationsContent() { return "You have %s new inviations from your friends.";}
-    public String PUSHGameInvitationContent() { return "%s have invited you to play %s together.";}
-    public String PUSHRoomUpdateTitle() { return "Room Update";}
-    public String PUSHRoomUpdateContent() { return "Current players %s / %s";}
-    public String PUSHRoomUpdateGameReadyTitle() { return "Game is ready to start";}
-    public String PUSHRoomUpdateGameStartingTitle() { return "Game starting!";}
-
 
     public String confirmAbandonNoCons(){ return "Are you sure you want to abandon this game? \n\n(No consequence)";}
     public String confirmAbandonLoseStreak(){ return "Are you sure you want to abandon this game? \n\n(You will be penalized and lose your winning streaks by doing so)";}
     public String confirmCannotAbandon(){ return "You are not allowed to abandon at this point.";}
 
+    ///////////////////////////////////////////////////////////////
+    //Leaderboard scene
+    ////////////////////////////////////////////////////////////////
+    public String leaderBoardSceneTitle() { return "Leaderboards"; }
 
-    //Speech
+    public String updatingScores() { return "Updating Scores..."; }
+
+    ////////////////////////////////////////////////////////////////////////
+    //Shop scene and coins
+    /////////////////////////////////////////////////////////////////////////
+    public String shopSceneTitle() { return "Shop"; }
+
+    public String purseTitle() { return "Mum's purse";}
+    public String growthRateForShop() { return "Grow Coin In";}
+    public String maxPurseTextForShop() { return "Full";}
+    public String watchAdsDescription() { return "30secs video ads"; }
+
+    public String btnTextRetrieveCoins() { return "Retrieve Now"; }
+    public String btnTextWatchAds() { return "Watch Now"; }
+    public String btnTextBuyNow() { return "Buy Now"; }
+
+    public String xCoin() {return "Coin x %s";}
+
+    public String confirmPurchaseFailed() { return "Failed to purchase coins..";}
+
+    //coin machines tab title
+    public String freeCoinsTabTitle() { return "Mum's purse";}
+    public String coinsInsertedTabTitle() { return "Coins Inserted";}
+    public String buyCoinsTabTitle() { return "Buy Coins"; }
+
+    ///////////////////////////////////////////////////////////////////////
+    //Connection related
+    /////////////////////////////////////////////////////////////////////////
+    public String confirmLostConnection() {return "Lost connection with server, trying to reconnect, \n%s secs remaining";}
+    public String confirmConnectionRecovered() {return "Connection established, trying to resume game session, \n%s secs remaining";}
+    public String confirmNoConnection() { return "You have been disconnected from the server, please check your connection."; }
+
+    public String btnTextClickToDisconnect(){ return "Click to Disconnect";}
+
+    ///////////////////////////////////////////////////////////
+    //Chats
+    /////////////////////////////////////////////////////////////
+    //audio recorder
+    public String slideUpCancel() { return "Slide up to cancel";}
+
+    //chat templates
+    public String settingsTitle() { return "Settings"; }
+    public String favouritesTitle() { return "Favourites"; }
+
+    /////////////////////////////////////////////////////////////
+    //Game info
+    //////////////////////////////////////////////////////////
+    public String details() { return "Details"; }
+    public String version() { return "Version %s";}
+    public String xMb() { return "%sMb";}
+    public String xPlayers() { return "From %s to %s players";}
+    public String description() { return "Description"; }
+
+    ///////////////////////////////////////////////////////////
+    //Shared
+    //////////////////////////////////////////////////////////
+    public String loading() { return "Loading..."; }
+    public String confirm() { return "Confirm"; }
+    public String invite() { return "Invite"; }
+    public String quit(){ return "Quit";}
+    public String retry() { return "Retry"; }
+    public String cancel() { return "Cancel";}
+    public String login() { return "Login"; }
+    public String logout() { return "Logout"; }
+    public String insert() { return "Insert";}
+    public String coin() { return "Coin";}
+    public String save() { return "Save"; }
+
+    public String noRecords() { return "No records found.";}
+    public String requestFailed() { return "Request failed.";}
+    public String generalError() { return "Unexpected error occurred, please try again.";}
+    public String workingDoNotClose() { return "Potato and Tomato are working now, please do not close apps now...";}
+
+    ///////////////////////////////////////////////////////////
+    //Mascots speeches in coin machine
+    //////////////////////////////////////////////////////////
     public Pair<ArrayList<SpeechAction>, ArrayList<SpeechAction>> getRandomMascotsSpeechAboutStartGame(){
         ArrayList<SpeechAction> potatoSpeechActions = new ArrayList();
         ArrayList<SpeechAction> tomatoSpeechActions = new ArrayList();

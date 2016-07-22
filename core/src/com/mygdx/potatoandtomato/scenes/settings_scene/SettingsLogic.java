@@ -39,7 +39,7 @@ public class SettingsLogic extends LogicAbstract {
                         _screen.backToBoot();
                     }
                     else{
-                        _confirm.show(ConfirmIdentifier.SettingsScene, _texts.facebookLoginFailed(), Confirm.Type.YES, null);
+                        _confirm.show(ConfirmIdentifier.SettingsScene, _texts.confirmFacebookRequestFailed(), Confirm.Type.YES, null);
                     }
                 }
             });
@@ -81,7 +81,7 @@ public class SettingsLogic extends LogicAbstract {
                         _services.getDatabase().updateProfile(_services.getProfile(), null);
                         _screen.back();
                     } else {
-                        _services.getConfirm().show(ConfirmIdentifier.SettingsScene, _texts.duplicateNameError(), Confirm.Type.YES, null);
+                        _services.getConfirm().show(ConfirmIdentifier.SettingsScene, _texts.confirmDuplicateNameError(), Confirm.Type.YES, null);
                         clearLoadingSave();
                     }
                 } else {

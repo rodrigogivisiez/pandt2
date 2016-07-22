@@ -37,8 +37,11 @@ public class Fonts extends FontAssets {
     }
 
     public enum FontId{
-        MYRIAD_XS_SEMIBOLD_B_ffffff_000000_1,
-        MYRIAD_S_BOLD_B_ffffff_000000_1,           //black
+        PT_S_REGULAR,
+        PT_S_REGULAR_B_ffffff_000000_1,
+        PT_M_REGULAR,
+
+        MYRIAD_XS_BOLD_B_ffffff_000000_1,
         MYRIAD_S_SEMIBOLD,
         MYRIAD_S_REGULAR,
         MYRIAD_S_REGULAR_B_ffffff_000000_1,
@@ -75,8 +78,8 @@ public class Fonts extends FontAssets {
         PIZZA_XXL_REGULAR_B_000000_ffffff_3,               //light orange
         PIZZA_XXXL_REGULAR,
 
-        CARTER_S_REGULAR_B_ffffff_000000_1,
-        CARTER_L_REGULAR_B_ffffff_000000_1,
+        CARTER_M_REGULAR_B_ffffff_000000_2,
+        CARTER_L_REGULAR_B_ffffff_000000_2,
 
         IMPACT_XS_REGULAR_S_a74828_1_1,
         IMPACT_S_REGULAR_S_a74828_1_1,
@@ -123,7 +126,10 @@ public class Fonts extends FontAssets {
                     path = "fonts/Digivolve-%s.otf";
                     break;
                 case ARCADE:
-                    path = "fonts/Arcade-%s.ttf";
+                    path = "fonts/Arcade-%s.otf";
+                    break;
+                case PT:
+                    path = "fonts/PTFonts-%s.otf";
                     break;
             }
 
@@ -186,7 +192,7 @@ public class Fonts extends FontAssets {
     }
 
     private enum  FontName {
-        PIZZA, MYRIAD, HELVETICA, CARTER, IMPACT, DIGIVOLVE, ARCADE
+        PIZZA, MYRIAD, HELVETICA, CARTER, IMPACT, DIGIVOLVE, ARCADE, PT
     }
 
     private enum FontStyle {

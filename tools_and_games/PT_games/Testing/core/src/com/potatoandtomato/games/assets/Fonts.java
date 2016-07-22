@@ -65,7 +65,7 @@ public class Fonts extends FontAssets {
                     path = "fonts/Helvetica-%s.otf";
                     break;
                 case CHINESE:
-                    path = "fonts/Chinese-%s.ttf";
+                    path = "fonts/Chinese-%s.otf";
                     break;
             }
 

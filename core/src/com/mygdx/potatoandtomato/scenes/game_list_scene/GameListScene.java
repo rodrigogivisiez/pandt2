@@ -5,8 +5,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.SnapshotArray;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Fonts;
@@ -21,10 +19,7 @@ import com.mygdx.potatoandtomato.models.Services;
 import com.potatoandtomato.common.utils.RunnableArgs;
 import com.potatoandtomato.common.utils.Threadings;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by SiongLeng on 9/12/2015.
@@ -70,7 +65,7 @@ public class GameListScene extends SceneAbstract {
 
     @Override
     public void populateRoot() {
-        topBar = new TopBar(_root, _texts.gamesList(), true, _assets, _screen, _services.getCoins());
+        topBar = new TopBar(_root, _texts.gamesListSceneTitle(), true, _assets, _screen, _services.getCoins());
         _root.align(Align.top);
 
         //Game List Table START
@@ -83,9 +78,9 @@ public class GameListScene extends SceneAbstract {
         _gameTitleTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.GAMELIST_TITLE_BG)));
         Label.LabelStyle titleLabelStyle = new Label.LabelStyle();
         titleLabelStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR);
-        _titleGameLabel = new Label(_texts.game(), titleLabelStyle);
-        _titleHostLabel = new Label(_texts.host(), titleLabelStyle);
-        _titlePlayersLabel = new Label(_texts.players(), titleLabelStyle);
+        _titleGameLabel = new Label(_texts.gameHeader(), titleLabelStyle);
+        _titleHostLabel = new Label(_texts.hostHeader(), titleLabelStyle);
+        _titlePlayersLabel = new Label(_texts.playersHeader(), titleLabelStyle);
 
         _gameTitleTable.add(_titleGameLabel).padLeft(20).padRight(10).width(100);
         _gameTitleTable.add(_titleHostLabel).padLeft(8).padRight(10).width(95);
@@ -101,14 +96,14 @@ public class GameListScene extends SceneAbstract {
 
         //Buttons START
         _newGameButton = new BtnEggDownward(_assets, _services.getSoundsPlayer());
-        _newGameButton.setText(_texts.newGame());
+        _newGameButton.setText(_texts.btnTextNewGame());
 
         _joinGameButton = new BtnEggDownward(_assets, _services.getSoundsPlayer(), _services.getShaders());
-        _joinGameButton.setText(_texts.joinGame());
+        _joinGameButton.setText(_texts.btnTextJoinGame());
         _joinGameButton.setEnabled(false);
 
         _continueGameButton = new BtnEggDownward(_assets, _services.getSoundsPlayer(), _services.getShaders());
-        _continueGameButton.setText(_texts.continueLastGame());
+        _continueGameButton.setText(_texts.btnTextContinueLastGame());
         _continueGameButton.setEnabled(false);
 
         Table buttonsTable = new Table();

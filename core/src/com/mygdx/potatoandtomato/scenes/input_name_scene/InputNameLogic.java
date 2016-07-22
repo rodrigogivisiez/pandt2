@@ -46,11 +46,11 @@ public class InputNameLogic extends LogicAbstract {
     public void saveNameIfValid(String name){
         name = name.trim();
         if(name.equals("")){
-            _services.getConfirm().show(ConfirmIdentifier.InputNameIssue, _texts.emptyNameError(), Confirm.Type.YES, null);
+            _services.getConfirm().show(ConfirmIdentifier.InputNameIssue, _texts.confirmEmptyNameError(), Confirm.Type.YES, null);
         }
         else if(name.length() > Global.USERNAME_MAX_LENGTH){
             _services.getConfirm().show(ConfirmIdentifier.InputNameIssue,
-                    String.format(_texts.nameLengthError(), Global.USERNAME_MAX_LENGTH),
+                    String.format(_texts.confirmNameLengthError(), Global.USERNAME_MAX_LENGTH),
                                 Confirm.Type.YES, null);
         }
         else{
@@ -66,7 +66,7 @@ public class InputNameLogic extends LogicAbstract {
                             _screen.toScene(SceneEnum.GAME_LIST);
                         } else {
                             _services.getConfirm().show(ConfirmIdentifier.InputNameIssue,
-                                    _texts.duplicateNameError(), Confirm.Type.YES, null);
+                                    _texts.confirmDuplicateNameError(), Confirm.Type.YES, null);
                             clearLoading();
                         }
                     } else {

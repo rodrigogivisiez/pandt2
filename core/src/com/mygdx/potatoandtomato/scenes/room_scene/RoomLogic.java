@@ -3,7 +3,6 @@ package com.mygdx.potatoandtomato.scenes.room_scene;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
@@ -24,7 +23,6 @@ import com.mygdx.potatoandtomato.enums.*;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.services.Confirm;
 import com.mygdx.potatoandtomato.services.VersionControl;
-import com.mygdx.potatoandtomato.statics.Global;
 import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.absints.CoinListener;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
@@ -78,7 +76,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         roomLogicSafeThread = new SafeThread();
 
         scene.populateGameDetails(room.getGame());
-        if(isHost()) scene.setStartButtonText(_texts.startGame());
+        if(isHost()) scene.setStartButtonText(_texts.btnTextStartGame());
     }
 
     @Override
@@ -321,7 +319,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
             String userId = jsonObj.getString("userId");
             String name = jsonObj.getString("name");
             removeUserFromRoom(userId);
-            _services.getChat().newMessage(new ChatMessage(String.format(_texts.userKicked(), name), ChatMessage.FromType.SYSTEM, null, ""));
+            _services.getChat().newMessage(new ChatMessage(String.format(_texts.chatMsgUserKicked(), name), ChatMessage.FromType.SYSTEM, null, ""));
             if(userId.equals(_services.getProfile().getUserId())){
                 errorOccurred(RoomError.Kicked);
                 Threadings.delayNoPost(1000, new Runnable() {
@@ -411,7 +409,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                 cancelPutCoins(roomUser.getProfile());
                 refreshRoomDesign();
                 userBadgeHelper.userJoinedRoom(roomUser);
-
+                coinMachineUsersChanged();
                 selfUpdateRoomStatePush();
                 refreshChatRoomUsersConnectStatus();
             }
@@ -438,7 +436,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                 checkHostInRoom();
                 refreshRoomDesign();
                 userBadgeHelper.userLeftRoom(roomUser);
-
+                coinMachineUsersChanged();
                 selfUpdateRoomStatePush();
                 refreshChatRoomUsersConnectStatus();
             }
@@ -523,7 +521,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
     }
 
     private void sendIsReadyUpdate(boolean isReady){
-        if(finishGameFileCheck && isReady && isSceneVisible() || !isReady){
+        if((finishGameFileCheck && isReady && isSceneVisible()) || !isReady){
             sendUpdateRoomMates(UpdateRoomMatesCode.UPDATE_USER_READY, isReady ? "1" : "0");
         }
     }
@@ -587,23 +585,23 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
             String message = "";
             switch (roomError){
                 case Kicked:
-                    message = _texts.youAreKicked();
+                    message = _texts.confirmYouAreKicked();
                     break;
                 case GameClientOutdated:
-                    message = _texts.gameClientOutdated();
+                    message = _texts.confirmGameClientOutdated();
                     break;
                 case GameVersionOutdated:
-                    message = _texts.gameVersionOutdated();
+                    message = _texts.confirmGameVersionOutdated();
                     break;
                 case FailedRetrieveGameData:
-                    message = _texts.failedRetriveGameData();
+                    message = _texts.confirmFailedRetriveGameData();
                     break;
                 case HostLeft:
-                    message = _texts.hostLeft();
+                    message = _texts.confirmHostLeft();
                     _services.getDatabase().updateRoomPlayingAndOpenState(room, null, false, null);
                     break;
                 case UnknownError:
-                    message = _texts.roomError();
+                    message = _texts.confirmRoomError();
                     break;
             }
 
@@ -620,7 +618,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         if(!room.checkAllTeamHasMinPlayers()){
             if(showMessage){
                 _confirm.show(ConfirmIdentifier.Room,
-                        String.format(_services.getTexts().notEnoughPlayers(),
+                        String.format(_services.getTexts().confirmNotEnoughPlayers(),
                                 room.getGame().getTeamMinPlayers()), Confirm.Type.YES, null);
             }
             return 1;
@@ -628,28 +626,28 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         else if(room.getGame().getMustFairTeam() && !room.checkAllFairTeam()){
             if(showMessage){
                 _confirm.show(ConfirmIdentifier.Room,
-                        _services.getTexts().fairTeamNeeded(), Confirm.Type.YES, null);
+                        _services.getTexts().confirmFairTeamNeeded(), Confirm.Type.YES, null);
             }
             return 4;
         }
         else if(noGameClientUsers.size() > 0){
             if(showMessage){
                 _confirm.show(ConfirmIdentifier.Room,
-                        _services.getTexts().stillDownloadingClient(), Confirm.Type.YES, null);
+                        _services.getTexts().confirmStillDownloadingClient(), Confirm.Type.YES, null);
             }
             return 2;
         }
         else if(room.getTemporaryDisconnectedCount() > 0){
             if(showMessage){
                 _confirm.show(ConfirmIdentifier.Room,
-                        _services.getTexts().waitTemporaryDisconnectedUsers(), Confirm.Type.YES, null);
+                        _services.getTexts().confirmWaitTemporaryDisconnectedUsers(), Confirm.Type.YES, null);
             }
             return 3;
         }
         else if(room.getNotYetReadyCount() > 0){
             if(showMessage){
                 _confirm.show(ConfirmIdentifier.Room,
-                        _services.getTexts().waitAllUsersReady(), Confirm.Type.YES, null);
+                        _services.getTexts().confirmWaitAllUsersReady(), Confirm.Type.YES, null);
             }
             return 3;
         }
@@ -673,7 +671,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         starting = true;
 
         _services.getSoundsPlayer().playSoundEffect(Sounds.Name.COUNT_DOWN);
-        _services.getChat().newMessage(new ChatMessage(String.format(_texts.gameStarting(), room.getRoomUsersCount()),
+        _services.getChat().newMessage(new ChatMessage(String.format(_texts.chatMsgGameStarting(), room.getRoomUsersCount()),
                 ChatMessage.FromType.IMPORTANT, null, ""));
 
         initCoinMachine();
@@ -689,7 +687,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
 
         _services.getCoins().hideCoinMachine();
         if(profile != null){
-            _services.getChat().newMessage(new ChatMessage(String.format(_texts.gameStartStop(),
+            _services.getChat().newMessage(new ChatMessage(String.format(_texts.chatMsgGameStartStop(),
                     profile.getDisplayName(15)), ChatMessage.FromType.SYSTEM, null, ""));
         }
     }
@@ -705,7 +703,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         room.setTeams(room.convertRoomUsersToTeams());
         _services.getDatabase().saveRoom(room, true, null);
         _services.getDatabase().savePlayedHistory(_services.getProfile(), room, null);
-        _services.getChat().newMessage(new ChatMessage(_texts.gameStarted(), ChatMessage.FromType.SYSTEM, null, ""));
+        _services.getChat().newMessage(new ChatMessage(_texts.chatMsgGameStarted(), ChatMessage.FromType.SYSTEM, null, ""));
 
         _screen.toScene(SceneEnum.GAME_SANDBOX, room, false);
     }
@@ -1023,11 +1021,11 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                                 @Override
                                 public void onCallback(Profile obj, Status st) {
                                     if(statusCode.equals("0")){
-                                        _services.getChat().newMessage(new ChatMessage(String.format(_texts.invitationRejected(), obj.getDisplayName(0)),
+                                        _services.getChat().newMessage(new ChatMessage(String.format(_texts.chatMsgInvitationRejected(), obj.getDisplayName(0)),
                                                 ChatMessage.FromType.IMPORTANT, null, ""));
                                     }
                                     else if(statusCode.equals("1")){
-                                        _services.getChat().newMessage(new ChatMessage(String.format(_texts.invitationAccepted(), obj.getDisplayName(0)),
+                                        _services.getChat().newMessage(new ChatMessage(String.format(_texts.chatMsgInvitationAccepted(), obj.getDisplayName(0)),
                                                 ChatMessage.FromType.IMPORTANT, null, ""));
                                     }
                                 }
@@ -1124,7 +1122,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
     public void userJoinLeftAddChat(Profile profile, boolean joined){
         if(_services.getChat().getCurrentMode() == 1){
             _services.getChat().newMessage(new ChatMessage(String.format(
-                    joined ? _services.getTexts().userHasJoinedRoom() : _services.getTexts().userHasLeftRoom(),
+                    joined ? _services.getTexts().chatMsgUserHasJoinedRoom() : _services.getTexts().chatMsgUserHasLeftRoom(),
                     profile.getDisplayName(0)), ChatMessage.FromType.SYSTEM, null, ""));
         }
     }
@@ -1153,6 +1151,14 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                 }
             }
         });
+    }
+
+    public void coinMachineUsersChanged(){
+        ArrayList<Pair<String, String>> userIdToNamePairs = new ArrayList();
+        for(RoomUser roomUser : room.getRoomUsersMap().values()){
+            userIdToNamePairs.add(new Pair<String, String>(roomUser.getProfile().getUserId(), roomUser.getProfile().getDisplayName(99)));
+        }
+        _services.getCoins().sync(userIdToNamePairs);
     }
 
     public void initCoinMachine(){

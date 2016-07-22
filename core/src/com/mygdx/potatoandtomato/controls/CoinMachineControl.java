@@ -110,13 +110,13 @@ public class CoinMachineControl {
                 root.align(Align.top);
 
                 tabsTable = new Table();
-                Table buyCoinTabTable = getTabDesign(texts.buyCoins());
+                Table buyCoinTabTable = getTabDesign(texts.buyCoinsTabTitle());
                 buyCoinsTabButton = buyCoinTabTable.findActor("textButton");
 
-                Table retrieveCoinTabTable = getTabDesign(texts.purseTitle());
+                Table retrieveCoinTabTable = getTabDesign(texts.freeCoinsTabTitle());
                 retrieveCoinsTabButton = retrieveCoinTabTable.findActor("textButton");
 
-                Table playerInsertCoinStatusTabTable = getTabDesign(texts.coinsInserted());
+                Table playerInsertCoinStatusTabTable = getTabDesign(texts.coinsInsertedTabTitle());
                 playerInsertCoinStatusTabButton = playerInsertCoinStatusTabTable.findActor("textButton");
 
                 tabsTable.add(buyCoinTabTable).expandY().fillY().height(45).width(115.7f).fillX().space(6);
@@ -381,6 +381,8 @@ public class CoinMachineControl {
             public void run() {
 
                 String newText = String.format("x%s", insertedCoins);
+                if(!hasCoin) newText = "noCoin";
+
                 Label existedCoinCountLabel = null;
 
                 Table playersTable = playersScrollPane.findActor("playersTable");
@@ -413,7 +415,11 @@ public class CoinMachineControl {
                 }
                 else{
                     Image coinImage = new Image(assets.getTextures().get(Textures.Name.NO_COIN_ICON_BLACK));
+                    Label coinCountLabel = new Label(newText, labelStyle);
+                    coinCountLabel.setName("coinCountLabel");
+                    coinCountLabel.setVisible(false);
                     coinTable.add(coinImage);
+                    coinTable.add(coinCountLabel).size(0, 0);
                 }
 
                 userTable.add(usernameLabel).expandX().fillX().padRight(2);
@@ -474,7 +480,7 @@ public class CoinMachineControl {
                 purseControl.changeCoinsNumber(retrievableCount);
                 coinCountLabel.setText("x" + retrievableCount);
                 if(nextCoinInSecs <= -1){
-                    nextCoinLabel.setText(texts.maxPurse());
+                    nextCoinLabel.setText(texts.maxPurseTextForShop());
                 }
                 else{
                     nextCoinLabel.setText(DateTimes.getDurationString(nextCoinInSecs));
@@ -630,7 +636,7 @@ public class CoinMachineControl {
                         assets.getFonts().get(Fonts.FontId.DIGIVOLVE_50_REGULAR), Color.valueOf("fff08d"));
                 Label coinCountLabel = new Label("x"+String.valueOf(coinProduct.getCount()), coinCountLabelStyle);
 
-                TextButton buyButton = getPixelTextButtonDesign(texts.buyNow());
+                TextButton buyButton = getPixelTextButtonDesign(texts.btnTextBuyNow());
 
                 Table productTable = new Table();
                 productTable.add(priceLabel).expandX().fillX().colspan(2).padBottom(10);
@@ -1117,7 +1123,7 @@ public class CoinMachineControl {
         Label.LabelStyle nextCoinLabelStyle = new Label.LabelStyle(
                 assets.getFonts().get(Fonts.FontId.ARCADE_S_REGULAR), Color.valueOf("fff08d"));
 
-        Label nextCoinLabelTitle = new Label(texts.growthRate(), nextCoinLabelStyle);
+        Label nextCoinLabelTitle = new Label(texts.growthRateForShop(), nextCoinLabelStyle);
         nextCoinLabelTitle.setAlignment(Align.left);
         Label nextCoinLabel = new Label("-", nextCoinLabelStyle);
         nextCoinLabel.setName("nextCoinLabel");
@@ -1134,7 +1140,7 @@ public class CoinMachineControl {
         Label coinCountLabel = new Label("x0", coinCountLabelStyle);
         coinCountLabel.setName("coinCountLabel");
         coinCountLabel.setAlignment(Align.left);
-        retrieveCoinsButton = getPixelTextButtonDesign(texts.retrieveCoins());
+        retrieveCoinsButton = getPixelTextButtonDesign(texts.btnTextRetrieveCoins());
 
         Table lowerRightTable = new Table();
         lowerRightTable.add(coinIcon).size(45, 45).padRight(15).padBottom(10);

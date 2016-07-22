@@ -46,11 +46,11 @@ public class InputNameScene extends SceneAbstract {
         Label.LabelStyle questionLabelStyle = new Label.LabelStyle();
         questionLabelStyle.fontColor = Color.valueOf("fff6d8");
         questionLabelStyle.font = _assets.getFonts().get(Fonts.FontId.PIZZA_XXL_REGULAR_S_a05e00_1_1);
-        Label questionLabel = new Label(_texts.askForName(), questionLabelStyle);
+        Label questionLabel = new Label(_texts.askForNameTitle(), questionLabelStyle);
         questionLabel.setWrap(true);
         questionLabel.setAlignment(Align.center);
 
-        displayNameTextField = new PTTextField(_assets);
+        displayNameTextField = new PTTextField(_assets, true);
         displayNameTextField.setText(_services.getProfile().getGameName());
 
         btnConfirm = new BtnColor(BtnColor.ColorChoice.GREEN, _assets);

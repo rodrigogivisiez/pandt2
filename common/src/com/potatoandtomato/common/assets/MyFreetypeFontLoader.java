@@ -49,6 +49,7 @@ public class MyFreetypeFontLoader extends AsynchronousAssetLoader<BitmapFont, My
         FreeTypeFontGenerator generator = manager.get(parameter.fontFileName + ".gen", FreeTypeFontGenerator.class);
         generator.scaleForPixelHeight((int)Math.ceil(parameter.fontParameters.size));
         BitmapFont font = generator.generateFont(parameter.fontParameters);
+        font.setUseIntegerPositions(false);
         return font;
     }
 
@@ -66,6 +67,7 @@ public class MyFreetypeFontLoader extends AsynchronousAssetLoader<BitmapFont, My
         MyFreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new MyFreetypeFontLoader.FreeTypeFontLoaderParameter();
         size2Params.fontFileName = path;
         size2Params.fontParameters.size = size;
+        size2Params.fontParameters.incremental = true;
 
         size2Params.fontParameters.color = fontColor;
         size2Params.fontParameters.genMipMaps = true;

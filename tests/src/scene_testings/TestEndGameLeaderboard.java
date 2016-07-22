@@ -317,29 +317,73 @@ public class TestEndGameLeaderboard extends TestAbstract {
 //    }
 //
 //
-//    private ArrayList<LeaderboardRecord> getSampleLeaderboardRecords(boolean lowMark){
-//        final LeaderboardRecord leaderboardRecord1 = new LeaderboardRecord();
-//        leaderboardRecord1.addUserId("0");
-//        leaderboardRecord1.addUserName("0", "0");
-//        leaderboardRecord1.setScore(lowMark ? 200 : 2000);
-//
-//        final LeaderboardRecord leaderboardRecord3 = new LeaderboardRecord();
-//        leaderboardRecord3.addUserId("3");
-//        leaderboardRecord3.addUserName("3", "3");
-//        leaderboardRecord3.setScore(lowMark ? 150 : 1500);
-//
-//        final LeaderboardRecord leaderboardRecord2 = new LeaderboardRecord();
-//        leaderboardRecord2.addUserId("1");
-//        leaderboardRecord2.addUserName("1", "1");
-//        leaderboardRecord2.setScore(lowMark ? 100 : 1000);
-//        leaderboardRecord2.getStreak().setStreakCount(10);
-//
-//        ArrayList<LeaderboardRecord> records = new ArrayList<LeaderboardRecord>();
-//        records.add(leaderboardRecord1);
-//        records.add(leaderboardRecord3);
-//        records.add(leaderboardRecord2);
-//
-//        return  records;
-//    }
+
+    @Test
+    public void testAfterRanking(){
+        ArrayList<LeaderboardRecord> records = getSampleLeaderboardRecords(true);
+        LeaderboardRecord leaderboardRecord = new LeaderboardRecord();
+        leaderboardRecord.addUserId("2");
+        leaderboardRecord.addUserName("2", "noname");
+        leaderboardRecord.setScore(150);
+
+        final EndGameData endGameData = MockModel.mockEndGameData();
+        endGameData.getRoom().getGame().setLeaderbordTypeEnum(LeaderboardType.Normal);
+        endGameData.getRoom().getGame().setStreakEnabled(false);
+
+        EndGameResult endGameResult = endGameData.getEndGameResult();
+        endGameResult.setWon(true);
+
+        EndGameLeaderBoardLogic logic = Mockito.spy(new EndGameLeaderBoardLogic(Mockings.mockPTScreen(), T_Services.mockServices(), endGameData, endGameResult.getMyTeam()){
+            @Override
+            public void getLeaderBoardAndMyCurrentRank() {
+            }
+        });
+
+        logic.setLeaderboardRecords(records);
+        logic.setMyLeaderboardRecord(leaderboardRecord);
+
+        Assert.assertEquals(2, logic.getAfterRanking());
+
+        leaderboardRecord = new LeaderboardRecord();
+        leaderboardRecord.addUserId("99");
+        leaderboardRecord.addUserName("99", "noname");
+        leaderboardRecord.setScore(150);
+        logic.setMyLeaderboardRecord(leaderboardRecord);
+        Assert.assertEquals(1, logic.getAfterRanking());
+
+
+        leaderboardRecord = new LeaderboardRecord();
+        leaderboardRecord.addUserId("3");
+        leaderboardRecord.addUserName("3", "3");
+        leaderboardRecord.setScore(70);
+        logic.setMyLeaderboardRecord(leaderboardRecord);
+        Assert.assertEquals(1, logic.getAfterRanking());
+    }
+
+
+    private ArrayList<LeaderboardRecord> getSampleLeaderboardRecords(boolean lowMark){
+        final LeaderboardRecord leaderboardRecord1 = new LeaderboardRecord();
+        leaderboardRecord1.addUserId("0");
+        leaderboardRecord1.addUserName("0", "0");
+        leaderboardRecord1.setScore(lowMark ? 200 : 2000);
+
+        final LeaderboardRecord leaderboardRecord3 = new LeaderboardRecord();
+        leaderboardRecord3.addUserId("3");
+        leaderboardRecord3.addUserName("3", "3");
+        leaderboardRecord3.setScore(lowMark ? 150 : 1500);
+
+        final LeaderboardRecord leaderboardRecord2 = new LeaderboardRecord();
+        leaderboardRecord2.addUserId("1");
+        leaderboardRecord2.addUserName("1", "1");
+        leaderboardRecord2.setScore(lowMark ? 100 : 1000);
+        leaderboardRecord2.getStreak().setStreakCount(10);
+
+        ArrayList<LeaderboardRecord> records = new ArrayList<LeaderboardRecord>();
+        records.add(leaderboardRecord1);
+        records.add(leaderboardRecord3);
+        records.add(leaderboardRecord2);
+
+        return  records;
+    }
 
 }

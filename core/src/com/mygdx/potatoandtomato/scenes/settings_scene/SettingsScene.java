@@ -5,13 +5,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Fonts;
-import com.mygdx.potatoandtomato.assets.Patches;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.controls.BtnColor;
 import com.mygdx.potatoandtomato.controls.PTTextField;
@@ -35,7 +33,7 @@ public class SettingsScene extends SceneAbstract {
 
     @Override
     public void populateRoot() {
-        topBar = new TopBar(_root, _texts.settingsTitle(), false, _assets, _screen, _services.getCoins());
+        topBar = new TopBar(_root, _texts.settingsSceneTitle(), false, _assets, _screen, _services.getCoins());
 
         Label.LabelStyle labelTitleStyle = new Label.LabelStyle();
         labelTitleStyle.fontColor = Color.valueOf("fff6d8");
@@ -47,7 +45,7 @@ public class SettingsScene extends SceneAbstract {
         /////////////////////////
         //Sounds
         /////////////////////////
-        Label soundsLabel = new Label(_texts.sounds(), labelTitleStyle);
+        Label soundsLabel = new Label(_texts.soundsTitle(), labelTitleStyle);
         _soundsEnabledImage = new Image();
         changeSoundEnabledImage();
 
@@ -59,13 +57,13 @@ public class SettingsScene extends SceneAbstract {
         ///////////////////
         //Display name
         ////////////////////
-        Label displayNameLabel = new Label(_texts.displayName(), labelTitleStyle);
+        Label displayNameLabel = new Label(_texts.displayNameTitle(), labelTitleStyle);
 
         TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle();
         textFieldStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR);
         textFieldStyle.fontColor = Color.BLACK;
         textFieldStyle.cursor = new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.CURSOR_BLACK));
-        _displayNameTextField = new PTTextField(_assets);
+        _displayNameTextField = new PTTextField(_assets, true);
         _displayNameTextField.setText(_services.getProfile().getDisplayName(99));
 
         //////////////////////////
@@ -83,7 +81,7 @@ public class SettingsScene extends SceneAbstract {
         ///////////////////////////
         //Facebook status
         //////////////////////////
-        Label socialLabel = new Label(_texts.facebook(), labelTitleStyle);
+        Label socialLabel = new Label(_texts.facebookTitle(), labelTitleStyle);
 
         _facebookBtn = new BtnColor(BtnColor.ColorChoice.BLUE, _assets);
         _facebookBtn.setText(_services.getSocials().isFacebookLogon() ? _texts.logout() : _texts.login());

@@ -24,4 +24,12 @@ public class ThreadsPool{
         return true;
     }
 
+    public int getUnfinishedFragmentSize(){
+        int i = 0;
+        for(Threadings.ThreadFragment threadFragment : threadFragments){
+            if(!threadFragment.isFinished()) i++;
+        }
+        return i;
+    }
+
 }

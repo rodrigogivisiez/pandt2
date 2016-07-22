@@ -15,21 +15,24 @@ import com.potatoandtomato.common.assets.Assets;
  */
 public class PTTextField extends TextField {
     private Assets assets;
+    private boolean asciiOnly;
 
-    public PTTextField(Assets assets) {
+    public PTTextField(Assets assets, boolean asciiOnly) {
         super("", new TextFieldStyle(assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR),
                 Color.BLACK, new TextureRegionDrawable(assets.getTextures().get(Textures.Name.EMPTY)),
                 new TextureRegionDrawable(assets.getTextures().get(Textures.Name.EMPTY)),
                         new TextureRegionDrawable(assets.getTextures().get(Textures.Name.EMPTY))));
 
         this.assets = assets;
+        this.asciiOnly = asciiOnly;
+
         setStyle();
     }
 
     public void setStyle(){
         TextFieldStyle textFieldStyle = this.getStyle();
         textFieldStyle.selection = new TextureRegionDrawable(assets.getTextures().get(Textures.Name.TRANS_BLACK_BG));
-        textFieldStyle.font = assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR);
+        textFieldStyle.font = assets.getFonts().get(asciiOnly ? Fonts.FontId.MYRIAD_M_REGULAR : Fonts.FontId.PT_M_REGULAR);
         textFieldStyle.fontColor = Color.BLACK;
         textFieldStyle.cursor = new TextureRegionDrawable(assets.getTextures().get(Textures.Name.CURSOR_BLACK));
         textFieldStyle.background = new NinePatchDrawable(assets.getPatches().get(Patches.Name.CHATBOX_UNFOCUS));

@@ -21,7 +21,6 @@ import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.Strings;
-import com.potatoandtomato.common.utils.Threadings;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -232,7 +231,7 @@ public class BootLogic extends LogicAbstract {
         String msg = Logs.getAndDeleteLogMsg();
         if(!Strings.isEmpty(msg)){
             _services.getDatabase().saveLog(msg);
-            _services.getConfirm().show(ConfirmIdentifier.CrashedReportSent, _texts.appsCrashed(), Confirm.Type.YES, null);
+            _services.getConfirm().show(ConfirmIdentifier.CrashedReportSent, _texts.confirmAppsCrashed(), Confirm.Type.YES, null);
         }
     }
 

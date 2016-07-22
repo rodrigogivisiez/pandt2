@@ -1,6 +1,5 @@
 package com.mygdx.potatoandtomato.scenes.leaderboard_scene;
 
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
@@ -50,6 +49,8 @@ public class LeaderBoardScene extends SceneAbstract {
     private Button _nextButton, _prevButton;
     private Table _nextPrevContainer;
     private WebImage _webImage;
+    private Image extinguisherImage;
+    private Animator extinguisherAnimator;
 
     public LeaderBoardScene(Services services, PTScreen screen) {
         super(services, screen);
@@ -61,7 +62,7 @@ public class LeaderBoardScene extends SceneAbstract {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                topBar = new TopBar(_root, _texts.leaderBoards(), false, _assets, _screen, _services.getCoins());
+                topBar = new TopBar(_root, _texts.leaderBoardSceneTitle(), false, _assets, _screen, _services.getCoins());
                 _root.align(Align.top);
 
                 ////////////////////////
@@ -269,8 +270,9 @@ public class LeaderBoardScene extends SceneAbstract {
 
     private Table getRecordTable(Game game, LeaderboardRecord record, int rank){
 
-        Label.LabelStyle style1 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HELVETICA_M_REGULAR), getTextColorOfRecord(record));
-        Label.LabelStyle style2 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HELVETICA_L_BOLD), getTextColorOfRecord(record));
+        Label.LabelStyle style1 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_M_SEMIBOLD),
+                getTextColorOfRecord(record));
+        Label.LabelStyle style2 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_L_BOLD), getTextColorOfRecord(record));
 
         ////////////////////////
         //Index label
@@ -337,7 +339,8 @@ public class LeaderBoardScene extends SceneAbstract {
                 ScrollPane scrollPane = _leaderboardScrolls.get(game.getAbbr());
                 final Table ranksTable = scrollPane.findActor("ranksTable");
 
-                Label.LabelStyle style1 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HELVETICA_M_REGULAR), Color.valueOf("5b3000"));
+                Label.LabelStyle style1 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HELVETICA_M_REGULAR),
+                        Color.valueOf("5b3000"));
                 Label.LabelStyle style3 = new Label.LabelStyle(
                         _assets.getFonts().get(Fonts.FontId.HELVETICA_L_HEAVY), Color.valueOf("5b3000"));
                 Label.LabelStyle style4 = new Label.LabelStyle(
@@ -467,12 +470,12 @@ public class LeaderBoardScene extends SceneAbstract {
                 Color fontColor = scoreDetails.isAddOrMultiply() ? Color.valueOf("fff600") : Color.valueOf("ff7676");
 
                 Label.LabelStyle style5 = new Label.LabelStyle(
-                        _assets.getFonts().get(Fonts.FontId.CARTER_S_REGULAR_B_ffffff_000000_1), null);
+                        _assets.getFonts().get(Fonts.FontId.CARTER_M_REGULAR_B_ffffff_000000_2), null);
                 style5.font.getData().setLineHeight(13);
                 style5.fontColor = fontColor;
 
                 Label.LabelStyle style6 = new Label.LabelStyle(
-                        _assets.getFonts().get(Fonts.FontId.CARTER_L_REGULAR_B_ffffff_000000_1), null);
+                        _assets.getFonts().get(Fonts.FontId.CARTER_L_REGULAR_B_ffffff_000000_2), null);
                 style6.fontColor = fontColor;
 
                 ////////////////////////////////////////
@@ -691,9 +694,7 @@ public class LeaderBoardScene extends SceneAbstract {
             nameStreakTable.setName("nameStreakTable");
         }
 
-        Label.LabelStyle style1 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HELVETICA_M_REGULAR), getTextColorOfRecord(record));
-
-        Label.LabelStyle style2 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_XS_SEMIBOLD_B_ffffff_000000_1), null);
+        Label.LabelStyle style1 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_M_SEMIBOLD), getTextColorOfRecord(record));
 
         Label nameLabel = new Label(record.getAllUsernameCommaSeparated(), style1);
         nameLabel.setAlignment(Align.left);
@@ -722,21 +723,22 @@ public class LeaderBoardScene extends SceneAbstract {
                 Table recordTable = (Table) rankTable.getCells().get(rank).getActor();
                 Table streakTable = recordTable.findActor("streakTable");
 
-                final Image extinguisherImage = new Image(_assets.getTextures().get(Textures.Name.EXTINGUISHER));
+                Vector2 anchorPoint = Positions.actorLocalToStageCoord(streakTable);
+
+                extinguisherImage = new Image(_assets.getTextures().get(Textures.Name.EXTINGUISHER));
                 extinguisherImage.setName("extinguisherImage");
-                extinguisherImage.setPosition(-40, 0);
+                extinguisherImage.setPosition(-40 + anchorPoint.x, 0 + anchorPoint.y);
                 extinguisherImage.getColor().a = 0f;
-                streakTable.addActor(extinguisherImage);
+                _root.addActor(extinguisherImage);
 
-                final Animator animator = new Animator(0.03f, _assets.getAnimations().get(Animations.Name.KILL_STREAK));
-                animator.setName("animator");
-                animator.overrideSize(70, 43);
-                animator.setPaused(true);
-                animator.setVisible(false);
-                animator.setPosition(-39, -10);
+                extinguisherAnimator = new Animator(0.03f, _assets.getAnimations().get(Animations.Name.KILL_STREAK));
+                extinguisherAnimator.setName("animator");
+                extinguisherAnimator.overrideSize(70, 43);
+                extinguisherAnimator.setPaused(true);
+                extinguisherAnimator.setVisible(false);
+                extinguisherAnimator.setPosition(-39 + anchorPoint.x, -10 + anchorPoint.y);
 
-
-                streakTable.addActor(animator);
+                _root.addActor(extinguisherAnimator);
 
                 extinguisherImage.addAction(sequence(Actions.moveBy(-40, 0, 0f), fadeIn(0f), new RunnableAction(){
                             @Override
@@ -747,9 +749,9 @@ public class LeaderBoardScene extends SceneAbstract {
                         Actions.moveBy(40, 0, 0.4f, Interpolation.exp10Out), delay(1f), new RunnableAction(){
                             @Override
                             public void run() {
-                                extinguisherImage.remove();
-                                animator.setPaused(false);
-                                animator.setVisible(true);
+
+                                extinguisherAnimator.setPaused(false);
+                                extinguisherAnimator.setVisible(true);
                                 _services.getSoundsPlayer().playSoundEffectLoop(Sounds.Name.EXTINGUISH_SOUND);
                             }
                         }));
@@ -766,18 +768,14 @@ public class LeaderBoardScene extends SceneAbstract {
                 Table recordTable = (Table) rankTable.getCells().get(rank).getActor();
                 final Table streakTable = recordTable.findActor("streakTable");
 
-                final Animator animator = streakTable.findActor("animator");
-
                 _services.getSoundsPlayer().playSoundEffect(Sounds.Name.STREAK_DIED);
-                for(Actor actor : streakTable.getChildren()){
-                    if(actor != animator){
-                        actor.remove();
-                    }
-                }
-                Threadings.delay(3000, new Runnable() {
+
+                Threadings.delay(1000, new Runnable() {
                     @Override
                     public void run() {
-                        streakTable.addAction(fadeOut(0.1f));
+                        streakTable.remove();
+                        extinguisherAnimator.remove();
+                        extinguisherImage.remove();
                         _services.getSoundsPlayer().stopSoundEffectLoop(Sounds.Name.EXTINGUISH_SOUND);
                     }
                 });
@@ -795,8 +793,8 @@ public class LeaderBoardScene extends SceneAbstract {
                 Table recordTable = (Table) rankTable.getCells().get(rank).getActor();
                 Table streakTable = recordTable.findActor("streakTable");
 
-                final Animator animator = streakTable.findActor("animator");
-                animator.remove();
+                extinguisherAnimator.remove();
+                extinguisherImage.remove();
                 _services.getSoundsPlayer().stopSoundEffectLoop(Sounds.Name.EXTINGUISH_SOUND);
                 _services.getSoundsPlayer().playSoundEffect(Sounds.Name.STREAK);
             }

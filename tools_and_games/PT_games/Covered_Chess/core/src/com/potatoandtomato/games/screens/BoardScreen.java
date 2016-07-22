@@ -53,134 +53,165 @@ public class BoardScreen extends GameScreen {
 
 
     public BoardScreen(GameCoordinator gameCoordinator, Services services,
-                       SplashActor splashActor, GraveyardActor graveyardActor){
+                       final SplashActor splashActor, final GraveyardActor graveyardActor){
         super(gameCoordinator);
         this._services = services;
         this._texts = _services.getTexts();
         this._assets = _services.getAssets();
 
-        _stage = new Stage(new StretchViewport(getCoordinator().getGameWidth(), getCoordinator().getGameHeight()),
-                getCoordinator().getSpriteBatch());
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _stage = new Stage(new StretchViewport(getCoordinator().getGameWidth(), getCoordinator().getGameHeight()),
+                        getCoordinator().getSpriteBatch());
 
-        _root = new Table();
-        _root.setFillParent(true);
-        _root.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.GAME_BG)));
-        _root.align(Align.top);
+                _root = new Table();
+                _root.setFillParent(true);
+                _root.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.GAME_BG)));
+                _root.align(Align.top);
 
-        _overlayTable = new Table();
-        _overlayTable.setFillParent(true);
-        _overlayTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
-        _overlayTable.setVisible(false);
+                _overlayTable = new Table();
+                _overlayTable.setFillParent(true);
+                _overlayTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
+                _overlayTable.setVisible(false);
 
-        splashActor.populate();
-        splashActor.setFillParent(true);
+                splashActor.populate();
+                splashActor.setFillParent(true);
 
-        _thunderTable = new Table();
-        _thunderTable.setFillParent(true);
-        _thunderTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.FULL_BLACK)));
-        _thunderTable.setVisible(false);
+                _thunderTable = new Table();
+                _thunderTable.setFillParent(true);
+                _thunderTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.FULL_BLACK)));
+                _thunderTable.setVisible(false);
 
-        _stage.addActor(_root);
-        _stage.addActor(graveyardActor);
-        _stage.addActor(_overlayTable);
-        _stage.addActor(_thunderTable);
-        _stage.addActor(splashActor);
+                _stage.addActor(_root);
+                _stage.addActor(graveyardActor);
+                _stage.addActor(_overlayTable);
+                _stage.addActor(_thunderTable);
+                _stage.addActor(splashActor);
 
-        getCoordinator().addInputProcessor(_stage);
+                getCoordinator().addInputProcessor(_stage);
 
+            }
+        });
     }
 
     public void thunderAnimation(){
-        _thunderTable.getColor().a = 0f;
-        _thunderTable.setVisible(true);
-
-        _services.getSoundsWrapper().stopTheme();
-        _services.getSoundsWrapper().playSounds(Sounds.Name.THUNDER);
-
-        _thunderTable.addAction(sequence(delay(0.6f), fadeIn(0.05f), alpha(0.6f, 0.4f), delay(0.1f), fadeIn(0.06f), alpha(0.6f, 0.1f),
-                delay(0.2f), fadeIn(0.02f), fadeOut(2f), new RunnableAction(){
-                    @Override
-                    public void run() {
-                        _services.getSoundsWrapper().playThemeMusicSuddenD();;
-                    }
-                }));
-
-        Threadings.delay(1000, new Runnable() {
+        Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
+                _thunderTable.getColor().a = 0f;
+                _thunderTable.setVisible(true);
+
+                _services.getSoundsWrapper().stopTheme();
                 _services.getSoundsWrapper().playSounds(Sounds.Name.THUNDER);
+
+                _thunderTable.addAction(sequence(delay(0.6f), fadeIn(0.05f), alpha(0.6f, 0.4f), delay(0.1f), fadeIn(0.06f), alpha(0.6f, 0.1f),
+                        delay(0.2f), fadeIn(0.02f), fadeOut(2f), new RunnableAction(){
+                            @Override
+                            public void run() {
+                                _services.getSoundsWrapper().playThemeMusicSuddenD();;
+                            }
+                        }));
+
+                Threadings.delay(1000, new Runnable() {
+                    @Override
+                    public void run() {
+                        _services.getSoundsWrapper().playSounds(Sounds.Name.THUNDER);
+                    }
+                });
             }
         });
-
     }
 
     public void setSuddenDeathBg(){
-        _root.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.SUDDEN_DEATH_GAME_BG)));
-    }
-
-    public void populateTerrains(ArrayList<TerrainLogic> terrainLogics){
-        _root.clear();
-
-        _chessesTable = new Table();
-        _root.add(_chessesTable).expand().fill().padTop(60).padBottom(65).padLeft(15).padRight(15);
-
-        int i =0;
-        for(int row = 0; row < 8 ; row++){
-            for(int col = 0; col < 4; col++){
-                _chessesTable.add(terrainLogics.get(i).getTerrainActor()).space(2).expand().fill();
-                i++;
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _root.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.SUDDEN_DEATH_GAME_BG)));
             }
-            _chessesTable.row();
-        }
+        });
     }
 
-    public void setCanTouchChessTable(boolean canTouch){
-        if(canTouch || Global.DEBUG){
-            _root.setTouchable(Touchable.enabled);
-        }
-        else{
-            _root.setTouchable(Touchable.disabled);
-        }
+    public void populateTerrains(final ArrayList<TerrainLogic> terrainLogics){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _root.clear();
+
+                _chessesTable = new Table();
+                _root.add(_chessesTable).expand().fill().padTop(60).padBottom(65).padLeft(15).padRight(15);
+
+                int i =0;
+                for(int row = 0; row < 8 ; row++){
+                    for(int col = 0; col < 4; col++){
+                        _chessesTable.add(terrainLogics.get(i).getTerrainActor()).space(2).expand().fill();
+                        i++;
+                    }
+                    _chessesTable.row();
+                }
+            }
+        });
+    }
+
+    public void setCanTouchChessTable(final boolean canTouch){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(canTouch || Global.DEBUG){
+                    _root.setTouchable(Touchable.enabled);
+                }
+                else{
+                    _root.setTouchable(Touchable.disabled);
+                }
+            }
+        });
     }
 
     public void populateEndGameTable(){
-        _endGameRootTable = new Table();
-        _endGameRootTable.setFillParent(true);
-        new DummyButton(_endGameRootTable, _assets);
-        _endGameTable = new Table();
-        _endGameRootTable.addActor(_endGameTable);
-        _stage.addActor(_endGameRootTable);
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _endGameRootTable = new Table();
+                _endGameRootTable.setFillParent(true);
+                new DummyButton(_endGameRootTable, _assets);
+                _endGameTable = new Table();
+                _endGameRootTable.addActor(_endGameTable);
+                _stage.addActor(_endGameRootTable);
+            }
+        });
     }
 
-    public void showEndGameTable(final boolean won, ChessColor chessColor){
-        _endGameTable.setSize(getCoordinator().getGameWidth(), 350);
-        _endGameTable.setPosition(0, Positions.centerY(getCoordinator().getGameHeight(), 350));
+    public void showEndGameTable(final boolean won, final ChessColor chessColor){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _endGameTable.setSize(getCoordinator().getGameWidth(), 350);
+                _endGameTable.setPosition(0, Positions.centerY(getCoordinator().getGameHeight(), 350));
 
-        Image endImage;
-        if(chessColor == ChessColor.RED){
-            endImage = new Image(_assets.getTextures().get(won ? Textures.Name.YOU_WIN_RED : Textures.Name.YOU_LOSE_RED));
-        }
-        else{
-            endImage = new Image(_assets.getTextures().get(won ? Textures.Name.YOU_WIN_YELLOW : Textures.Name.YOU_LOSE_YELLOW));
-        }
-        endImage.setOrigin(Align.center);
-        _endGameTable.add(endImage).expand().fill().center();
-        endImage.setScale(0, 0);
-        endImage.addAction(Actions.scaleTo(1, 1, 0.3f));
-
-
+                Image endImage;
+                if(chessColor == ChessColor.RED){
+                    endImage = new Image(_assets.getTextures().get(won ? Textures.Name.YOU_WIN_RED : Textures.Name.YOU_LOSE_RED));
+                }
+                else{
+                    endImage = new Image(_assets.getTextures().get(won ? Textures.Name.YOU_WIN_YELLOW : Textures.Name.YOU_LOSE_YELLOW));
+                }
+                endImage.setOrigin(Align.center);
+                _endGameTable.add(endImage).expand().fill().center();
+                endImage.setScale(0, 0);
+                endImage.addAction(Actions.scaleTo(1, 1, 0.3f));
+            }
+        });
     }
 
     public void setPaused(boolean paused, final boolean isMyTurn){
         _paused = paused;
-        Gdx.app.postRunnable(new Runnable() {
+        Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                if(_paused){
+                if (_paused) {
                     _overlayTable.setVisible(true);
                     setCanTouchChessTable(false);
-                }
-                else{
+                } else {
                     _overlayTable.setVisible(false);
                     setCanTouchChessTable(isMyTurn);
                 }

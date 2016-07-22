@@ -50,9 +50,9 @@ public class Entrance extends GameEntrance {
         Fonts fonts = new Fonts(manager);
         Patches patches = new Patches(manager);
         Sounds sounds = new Sounds(manager);
-        //Textures textures = new Textures(manager, "pack.atlas");
+        Textures textures = new Textures(manager, "pack.atlas");
 
-        assets = new MyAssets(manager, fonts, null, sounds, patches, null);
+        assets = new MyAssets(manager, fonts, null, sounds, patches, textures);
 
 
     }
