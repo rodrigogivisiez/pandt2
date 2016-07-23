@@ -33,6 +33,7 @@ import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.utils.Pair;
 import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
+import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -222,7 +223,7 @@ public class Chat {
 
     public void sendMessage(String msg){
         ChatMessage chatMessage = new ChatMessage(msg, ChatMessage.FromType.USER, myUserId, "");
-        gamingKit.sendRoomMessage(chatMessage);
+        gamingKit.updateRoomMates((byte) UpdateRoomMatesCode.TEXT_CHAT, chatMessage.toBytes());
         newMessage(chatMessage);
     }
 
@@ -389,15 +390,6 @@ public class Chat {
             }
         });
 
-        gamingKit.addListener(this.getClass().getName(), new MessagingListener() {
-            @Override
-            public void onRoomMessageReceived(ChatMessage chatMessage, String senderId) {
-                if (!senderId.equals(myUserId)) {
-                    newMessage(chatMessage);
-                }
-            }
-        });
-
         gamingKit.addListener(this.getClass().getName(), new UpdateRoomMatesListener() {
             @Override
             public void onUpdateRoomMatesReceived(int code, String msg, String senderId) {
@@ -426,6 +418,13 @@ public class Chat {
                         e.printStackTrace();
                     }
                 }
+                else if(identifier == UpdateRoomMatesCode.TEXT_CHAT){
+                    if (!senderId.equals(myUserId)) {
+                        ChatMessage chatMessage = new ChatMessage(data);
+                        newMessage(chatMessage);
+                    }
+                }
+
             }
         });
 

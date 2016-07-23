@@ -14,6 +14,7 @@ import com.mygdx.potatoandtomato.android.receivers.InvitationAcceptReceiver;
 import com.mygdx.potatoandtomato.android.receivers.InvitationRejectReceiver;
 import com.mygdx.potatoandtomato.android.receivers.RoomAliveReceiver;
 import com.mygdx.potatoandtomato.models.PushNotification;
+import com.potatoandtomato.common.statics.Vars;
 import com.shaded.fasterxml.jackson.core.JsonProcessingException;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 
@@ -35,7 +36,7 @@ public class GcmMessageHandler extends GcmListenerService {
                 Intent i = new Intent();
                 i.setClass(context, RoomAliveReceiver.class);
                 i.setAction("KEEP");
-                ObjectMapper mapper = new ObjectMapper();
+                ObjectMapper mapper = Vars.getObjectMapper();
                 i.putExtra("push", mapper.writeValueAsString(pushNotification));
                 context.sendBroadcast(i);
             } catch (JsonProcessingException e) {

@@ -3,6 +3,7 @@ package com.mygdx.potatoandtomato.models;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
+import com.potatoandtomato.common.statics.Vars;
 import com.mygdx.potatoandtomato.utils.DateTimes;
 import com.potatoandtomato.common.utils.Strings;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
@@ -213,7 +214,7 @@ public class Game {
         if(!Strings.isEmpty(gameFiles)){
             TypeReference<HashMap<String,FileData>> typeRef
                     = new TypeReference<HashMap<String,FileData>>() {};
-            ObjectMapper objectMapper = new ObjectMapper();
+            ObjectMapper objectMapper = Vars.getObjectMapper();
             try {
                 map = objectMapper.readValue(gameFiles, typeRef);
             } catch (IOException e) {

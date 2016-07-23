@@ -194,6 +194,12 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         }
     }
 
+    @Override
+    public void onBack() {
+        super.onBack();
+        _services.getCoins().reset();
+    }
+
     public void onNewRoom(){
         if(isHost()){
             userJoinLeftAddChat(_services.getProfile(), true);
@@ -686,6 +692,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         starting = false;
 
         _services.getCoins().hideCoinMachine();
+        _services.getCoins().cancelPutCoins();
         if(profile != null){
             _services.getChat().newMessage(new ChatMessage(String.format(_texts.chatMsgGameStartStop(),
                     profile.getDisplayName(15)), ChatMessage.FromType.SYSTEM, null, ""));

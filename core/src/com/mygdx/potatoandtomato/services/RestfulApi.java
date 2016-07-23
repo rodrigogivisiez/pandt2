@@ -8,6 +8,7 @@ import com.mygdx.potatoandtomato.statics.Terms;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.models.ScoreDetails;
 import com.potatoandtomato.common.models.Team;
+import com.potatoandtomato.common.statics.Vars;
 import com.potatoandtomato.common.utils.JsonObj;
 import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
@@ -99,7 +100,7 @@ public class RestfulApi implements IRestfulApi {
     @Override
     public void updateScores(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers,
                              Room room, Profile myProfile, RestfulApiListener<String> listener) {
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = Vars.getObjectMapper();
         try {
 
             HashMap<String, ArrayList<ScoreDetails>> processedWinners = new HashMap();
@@ -149,7 +150,7 @@ public class RestfulApi implements IRestfulApi {
                 }
                 else{
                     try {
-                        ObjectMapper objectMapper = new ObjectMapper();
+                        ObjectMapper objectMapper = Vars.getObjectMapper();
                         RetrievableCoinsData data = objectMapper.readValue(json, RetrievableCoinsData.class);
                         listener.onCallback(data, Status.SUCCESS);
                     } catch (IOException e) {
@@ -174,7 +175,7 @@ public class RestfulApi implements IRestfulApi {
                 }
                 else{
                     try {
-                        ObjectMapper objectMapper = new ObjectMapper();
+                        ObjectMapper objectMapper = Vars.getObjectMapper();
                         RetrievableCoinsData data = objectMapper.readValue(json, RetrievableCoinsData.class);
                         listener.onCallback(data, Status.SUCCESS);
                     } catch (IOException e) {
@@ -202,7 +203,7 @@ public class RestfulApi implements IRestfulApi {
     public void reviveStreak(String teamUserIdsString, ArrayList<CoinsMeta> coinsMetas, String gameAbbr, String roomId,
                              String roundCounter, RestfulApiListener<String> listener) {
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = Vars.getObjectMapper();
         try {
             String coinsMetaJson = objectMapper.writeValueAsString(coinsMetas);
             ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
@@ -219,7 +220,7 @@ public class RestfulApi implements IRestfulApi {
 
     @Override
     public void useCoins(ArrayList<CoinsMeta> coinsMetas, String transactionId, int expectingCoins, String purpose, RestfulApiListener<String> listener) {
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = Vars.getObjectMapper();
         try {
             String coinsMetaJson = objectMapper.writeValueAsString(coinsMetas);
             ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();

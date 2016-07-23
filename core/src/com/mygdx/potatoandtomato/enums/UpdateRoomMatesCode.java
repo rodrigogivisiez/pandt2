@@ -24,7 +24,7 @@ public class UpdateRoomMatesCode {
     public final static int ALL_PLAYERS_LOADED_GAME_SUCCESS = 8;
     public final static int LOAD_FAILED = 15;
     public final static int AUDIO_CHAT = 16;
-    //public final static int LOCK_PROPERTY_SUCCESS = 17;
+    public final static int TEXT_CHAT = 17;
     public final static int GAME_DATA = 18;
     public final static int GAME_DATA_REQUEST = 22;
     public final static int DECISION_MAKER = 19;

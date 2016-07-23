@@ -1,5 +1,6 @@
 package com.mygdx.potatoandtomato.models;
 
+import com.potatoandtomato.common.statics.Vars;
 import com.shaded.fasterxml.jackson.core.JsonProcessingException;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 
@@ -21,7 +22,7 @@ public class InvitationModel {
 
     public InvitationModel(String json){
         pendingInvitationRoomIds = new ArrayList();
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = Vars.getObjectMapper();
         try {
             InvitationModel newInvitationModel = objectMapper.readValue(json, InvitationModel.class);
             this.setInvitedUserId(newInvitationModel.getInvitedUserId());
@@ -48,7 +49,7 @@ public class InvitationModel {
     }
 
     public String toJson(){
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper =Vars.getObjectMapper();
         try {
             return objectMapper.writeValueAsString(this);
         } catch (JsonProcessingException e) {

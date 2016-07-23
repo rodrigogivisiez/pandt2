@@ -1,6 +1,7 @@
 package com.mygdx.potatoandtomato.miscs.serializings;
 
 import com.mygdx.potatoandtomato.models.RoomUser;
+import com.potatoandtomato.common.statics.Vars;
 import com.shaded.fasterxml.jackson.core.JsonParser;
 import com.shaded.fasterxml.jackson.core.ObjectCodec;
 import com.shaded.fasterxml.jackson.databind.DeserializationContext;
@@ -25,7 +26,7 @@ public class IntProfileMapDeserializer extends JsonDeserializer<Map<String, Room
 
         JsonNode node = oc.readTree(jsonParser);
 
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = Vars.getObjectMapper();
 
         Iterator<Map.Entry<String, JsonNode>> nodeIterator = node.fields();
 

@@ -28,6 +28,7 @@ import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
+import com.potatoandtomato.common.enums.ConfirmMsgType;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.Threadings;
 
@@ -51,9 +52,11 @@ public class Confirm {
     boolean visible;
     long previousTime;
     ConfirmIdentifier currentConfirmIdentifier;
+    Type currentType;
     boolean locked;
     ConfirmResultListener confirmResultListener;
     ConfirmStateChangedListener stateChangedListener;
+
 
     public Confirm(SpriteBatch spriteBatch, IPTGame game, Assets assets, Broadcaster broadcaster) {
         batch = spriteBatch;
@@ -154,6 +157,7 @@ public class Confirm {
         }
         visible = true;
         currentConfirmIdentifier = identifier;
+        currentType = type;
 
         Threadings.postRunnable(new Runnable() {
             @Override
@@ -296,6 +300,12 @@ public class Confirm {
 
     public void close(ConfirmIdentifier confirmIdentifier){
         if(currentConfirmIdentifier == confirmIdentifier){
+            close();
+        }
+    }
+
+    public void close(Type type){
+        if(currentType == type){
             close();
         }
     }

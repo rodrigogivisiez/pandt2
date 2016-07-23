@@ -1,6 +1,7 @@
 package fundamental_testings;
 
 import com.potatoandtomato.common.models.ScoreDetails;
+import com.potatoandtomato.common.statics.Vars;
 import com.potatoandtomato.common.utils.SafeDouble;
 import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
@@ -28,7 +29,7 @@ public class TestUtils {
     public void testSafeDouble(){
 
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
+            ObjectMapper objectMapper = Vars.getObjectMapper();
             SafeDouble safeDouble = new SafeDouble(3.0);
             Assert.assertEquals(3.0, safeDouble.getValue(), 0);
             String res = objectMapper.writeValueAsString(safeDouble);

@@ -16,6 +16,7 @@ import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.services.Confirm;
 import com.mygdx.potatoandtomato.statics.Terms;
+import com.potatoandtomato.common.statics.Vars;
 import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
@@ -131,7 +132,7 @@ public class BootLogic extends LogicAbstract {
                 }
                 else{
                     try {
-                        ObjectMapper objectMapper = new ObjectMapper();
+                        ObjectMapper objectMapper = Vars.getObjectMapper();
                         LoginReturnData loginReturnData = objectMapper.readValue(result, LoginReturnData.class);
                         if(!loginReturnData.getUserId().equals(userId)){
                             _services.getPreferences().put(Terms.USERID_2, userId);

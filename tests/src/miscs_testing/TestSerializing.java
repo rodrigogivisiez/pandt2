@@ -3,6 +3,7 @@ package miscs_testing;
 import abstracts.TestAbstract;
 import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import com.mygdx.potatoandtomato.models.Room;
+import com.potatoandtomato.common.statics.Vars;
 import com.shaded.fasterxml.jackson.core.JsonProcessingException;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Assert;
@@ -19,7 +20,7 @@ public class TestSerializing extends TestAbstract {
     public void testTeamSerializer(){
         Room room = MockModel.mockRoom("1");
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = Vars.getObjectMapper();
         try {
             String json = objectMapper.writeValueAsString(room);
 

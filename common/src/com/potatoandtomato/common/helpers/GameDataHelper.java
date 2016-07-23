@@ -11,6 +11,7 @@ import com.potatoandtomato.common.enums.RoomUpdateType;
 import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.models.Team;
 import com.potatoandtomato.common.statics.Texts;
+import com.potatoandtomato.common.statics.Vars;
 import com.potatoandtomato.common.utils.JsonObj;
 import com.potatoandtomato.common.utils.OneTimeRunnable;
 import com.potatoandtomato.common.utils.SafeThread;
@@ -184,7 +185,7 @@ public class GameDataHelper implements Disposable {
     }
 
     private String gameDataToJsonString(String gameData){
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = Vars.getObjectMapper();
         String usersHasDataMapJson = null;
         try {
             usersHasDataMapJson = objectMapper.writeValueAsString(usersHasDataMap);
@@ -246,7 +247,7 @@ public class GameDataHelper implements Disposable {
                 String usersHasDataMapJson = jsonObj.getString("usersHasDataMapJson");
                 String gameData = jsonObj.getString("gameData");
 
-                ObjectMapper objectMapper = new ObjectMapper();
+                ObjectMapper objectMapper = Vars.getObjectMapper();
                 ConcurrentHashMap<String, Boolean> receivedUsersHasDataMap = objectMapper.readValue(usersHasDataMapJson, ConcurrentHashMap.class);
                 receivedUsersHasDataMap.put(myUserId, true);
                 usersHasDataMap = receivedUsersHasDataMap;

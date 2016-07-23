@@ -14,10 +14,7 @@ import com.shephertz.app42.gaming.multiplayer.client.ConnectionState;
 import com.shephertz.app42.gaming.multiplayer.client.WarpClient;
 import com.shephertz.app42.gaming.multiplayer.client.command.WarpResponseResultCode;
 import com.shephertz.app42.gaming.multiplayer.client.events.*;
-import com.shephertz.app42.gaming.multiplayer.client.listener.ConnectionRequestListener;
-import com.shephertz.app42.gaming.multiplayer.client.listener.NotifyListener;
-import com.shephertz.app42.gaming.multiplayer.client.listener.RoomRequestListener;
-import com.shephertz.app42.gaming.multiplayer.client.listener.ZoneRequestListener;
+import com.shephertz.app42.gaming.multiplayer.client.listener.*;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -27,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by SiongLeng on 15/12/2015.
  */
-public class Appwarp extends GamingKit implements ConnectionRequestListener, ZoneRequestListener, RoomRequestListener, NotifyListener {
+public class Appwarp extends GamingKit implements ChatRequestListener, ConnectionRequestListener, ZoneRequestListener, RoomRequestListener, NotifyListener {
 
     private WarpClient _warpInstance;
     private String _appKey = Terms.WARP_API_KEY();
@@ -351,6 +348,7 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
     }
 
     @Override
+    //not using anymore, since it cant send chinese characters, now using update peers instead
     public void sendRoomMessage(ChatMessage msg) {
         try {
             JsonObj data = new JsonObj();
@@ -358,6 +356,7 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
             ObjectMapper mapper = new ObjectMapper();
             data.put("msg", mapper.writeValueAsString(msg));
             _warpInstance.sendChat(data.getJSONObject().toString());
+
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -749,4 +748,18 @@ public class Appwarp extends GamingKit implements ConnectionRequestListener, Zon
 
     }
 
+    @Override
+    public void onSendChatDone(byte b) {
+        System.out.println(b);
+    }
+
+    @Override
+    public void onSendPrivateChatDone(byte b) {
+
+    }
+
+    @Override
+    public void onGetChatHistoryDone(byte b, ArrayList<ChatEvent> arrayList) {
+
+    }
 }

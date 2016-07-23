@@ -6,6 +6,7 @@ import com.mygdx.potatoandtomato.miscs.comparators.RoomUserSlotIndexComparator;
 import com.mygdx.potatoandtomato.miscs.serializings.IntProfileMapDeserializer;
 import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.models.Team;
+import com.potatoandtomato.common.statics.Vars;
 import com.potatoandtomato.common.utils.ColorUtils;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -478,9 +479,9 @@ public class Room {
     @JsonIgnore
     public Room clone(){
         try {
-            ObjectMapper mapper = new ObjectMapper();
+            ObjectMapper mapper = Vars.getObjectMapper();
             String json = mapper.writeValueAsString(this);
-            ObjectMapper mapper2 = new ObjectMapper();
+            ObjectMapper mapper2 = Vars.getObjectMapper();
             return mapper2.readValue(json, Room.class);
         } catch (JsonProcessingException e) {
             e.printStackTrace();

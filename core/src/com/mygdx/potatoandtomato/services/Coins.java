@@ -21,6 +21,7 @@ import com.mygdx.potatoandtomato.enums.ConfirmIdentifier;
 import com.mygdx.potatoandtomato.enums.ShopProducts;
 import com.mygdx.potatoandtomato.models.CoinProduct;
 import com.mygdx.potatoandtomato.models.RetrievableCoinsData;
+import com.potatoandtomato.common.statics.Vars;
 import com.potatoandtomato.common.absints.CoinListener;
 import com.mygdx.potatoandtomato.controls.CoinMachineControl;
 import com.mygdx.potatoandtomato.controls.TopBarCoinControl;
@@ -73,6 +74,7 @@ public class Coins implements ICoins {
     private boolean puttingCoin;
     private boolean coinsAlreadyEnough;
     private boolean waitingDeductCoinResult;
+    private boolean cancelPutCoins;
     private ConcurrentHashMap<String, Integer> currentUsersPutCoinNumberMap;
     private CoinListener coinListener;
     private ShopProducts currentShopProduct;
@@ -154,6 +156,7 @@ public class Coins implements ICoins {
                                 ArrayList<SpeechAction> tomatoSpeechActions, String dismissText){
         coinsAlreadyEnough = false;
         puttingCoin = false;
+        cancelPutCoins = false;
         this.coinsPurpose = coinsPurpose;
         this.coinListener = null;
         this.currentUsersPutCoinNumberMap.clear();
@@ -182,6 +185,7 @@ public class Coins implements ICoins {
     public void showCoinMachine(boolean forceShow){
         if(forceShow ||
                 !dismissedTransactionsMap.containsKey(transactionId) && !deductedSuccessTransactions.contains(transactionId)){
+            confirm.close(Confirm.Type.YESNO);
             coinMachineControl.updateMyCoinsCount(myCoinsCount.getValue().intValue());
             coinMachineControl.show();
             refreshRetrievableCoins();
@@ -203,6 +207,10 @@ public class Coins implements ICoins {
                 stopSpeech(false);
             }
         });
+    }
+
+    public void cancelPutCoins(){
+        cancelPutCoins = true;
     }
 
     private void addCoinMonitor(final String userId, final String username){
@@ -292,6 +300,7 @@ public class Coins implements ICoins {
             Threadings.delayNoPost(2000, new Runnable() {
                 @Override
                 public void run() {
+                    if(cancelPutCoins) return;
                     if (coinListener != null) coinListener.onEnoughCoins();
                 }
             });
@@ -356,6 +365,7 @@ public class Coins implements ICoins {
     }
 
     private void coinDeductedSuccess(){
+        if(cancelPutCoins) return;
         waitingDeductCoinResult = false;
         if(waitingDeductCoinResultSafeThread != null) waitingDeductCoinResultSafeThread.kill();
         if(coinListener != null) coinListener.onDeductCoinsDone();
@@ -364,12 +374,13 @@ public class Coins implements ICoins {
     }
 
     private void coinDeductFailed(){
+        if(cancelPutCoins) return;
         waitingDeductCoinResult = false;
         if(waitingDeductCoinResultSafeThread != null) waitingDeductCoinResultSafeThread.kill();
         reinitCoinMachine();
     }
 
-    //wait 20 secs, if no respond received, call deduct coins api myself
+    //wait 10 secs, if no respond received, call deduct coins api myself
     private void startDeductCoinsWaitingThread(){
         waitingDeductCoinResultSafeThread = new SafeThread();
         Threadings.runInBackground(new Runnable() {
@@ -385,6 +396,7 @@ public class Coins implements ICoins {
                 }
 
                 //if still waiting, call deduct myself
+                if(cancelPutCoins) return;
                 if(waitingDeductCoinResult) callDeductCoins();
             }
         });
@@ -437,6 +449,7 @@ public class Coins implements ICoins {
 
     private void dismissWindowsReceived(String fromUserId){
         if(!coinsAlreadyEnough){
+            cancelPutCoins = true;
             dismissedTransactionsMap.put(transactionId, fromUserId);
             if(coinListener != null) coinListener.onDismiss(fromUserId);
             hideCoinMachine();
@@ -587,7 +600,7 @@ public class Coins implements ICoins {
         else{
             if(askingTransactionId.equals(this.transactionId) && getTotalCoinsPut() > 0 && !fromUserId.equals(profile.getUserId())){
                 try {
-                    ObjectMapper objectMapper = new ObjectMapper();
+                    ObjectMapper objectMapper = Vars.getObjectMapper();
                     JsonObj jsonObj = new JsonObj();
                     jsonObj.put("transactionId", transactionId);
                     jsonObj.put("currentUsersPutCoinNumberMapJson", objectMapper.writeValueAsString(currentUsersPutCoinNumberMap));
@@ -604,7 +617,7 @@ public class Coins implements ICoins {
     private void coinsMachineStateResponseReceived(String response){
         JsonObj jsonObj = new JsonObj(response);
         if(jsonObj.getString("transactionId").equals(transactionId)){
-            ObjectMapper objectMapper = new ObjectMapper();
+            ObjectMapper objectMapper = Vars.getObjectMapper();
             try {
                 ConcurrentHashMap<String, Integer> receivedUsersPutCoinNumberMap = objectMapper.readValue(jsonObj.getString("currentUsersPutCoinNumberMapJson"),
                         ConcurrentHashMap.class);

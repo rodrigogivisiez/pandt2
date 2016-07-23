@@ -123,6 +123,11 @@ public abstract class LogicAbstract implements Disposable {
         if(getScene() != null) getScene().onHide();
     }
 
+    //will be called everytime scene back to other scene
+    public void onBack(){
+
+    }
+
     //will only be called when scene init, must be forward direction
     public void onInit(){
         _alive = true;

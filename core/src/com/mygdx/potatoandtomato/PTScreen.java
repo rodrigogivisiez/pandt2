@@ -156,6 +156,7 @@ public class PTScreen implements Screen, InputProcessor {
 
                             final LogicEnumPair current = _logicStacks.pop();
                             final LogicEnumPair previous = _logicStacks.peek();
+                            current.getLogic().onBack();
                             current.getLogic().onHide();
                             current.getLogic().onChangedScene(previous.getSceneEnum());
 
@@ -195,6 +196,7 @@ public class PTScreen implements Screen, InputProcessor {
                 while(_logicStacks.size() > 0){
                     LogicEnumPair logicEnumPair = _logicStacks.pop();
                     logicEnumPair.getLogic().getScene().getRoot().remove();
+                    logicEnumPair.getLogic().onBack();
                     logicEnumPair.getLogic().onHide();
                     logicEnumPair.getLogic().dispose();
                 }

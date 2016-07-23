@@ -1,5 +1,6 @@
 package com.mygdx.potatoandtomato.models;
 
+import com.potatoandtomato.common.statics.Vars;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
 import com.shaded.fasterxml.jackson.core.JsonProcessingException;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +24,7 @@ public class PushNotification {
     }
 
     public PushNotification(String jsonInString) {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = Vars.getObjectMapper();
         try {
             PushNotification p = mapper.readValue(jsonInString, PushNotification.class);
             this.setExtras(p.getExtras());
@@ -102,7 +103,7 @@ public class PushNotification {
     @JsonIgnore
     @Override
     public String toString() {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = Vars.getObjectMapper();
         try {
             return mapper.writeValueAsString(this);
         } catch (JsonProcessingException e) {

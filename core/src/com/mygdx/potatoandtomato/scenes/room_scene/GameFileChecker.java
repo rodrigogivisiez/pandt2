@@ -12,6 +12,7 @@ import com.mygdx.potatoandtomato.services.VersionControl;
 import com.potatoandtomato.common.absints.DownloaderListener;
 import com.potatoandtomato.common.absints.IDownloader;
 import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.statics.Vars;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
@@ -220,7 +221,7 @@ public class GameFileChecker implements Disposable {
         }
 
         if(!Strings.isEmpty(fileData)){
-            ObjectMapper objectMapper = new ObjectMapper();
+            ObjectMapper objectMapper = Vars.getObjectMapper();
             TypeReference<HashMap<String,FileData>> typeRef
                     = new TypeReference<HashMap<String,FileData>>() {};
             try {

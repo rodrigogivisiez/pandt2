@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import com.mygdx.potatoandtomato.android.RoomAliveHelper;
 import com.mygdx.potatoandtomato.models.PushNotification;
+import com.potatoandtomato.common.statics.Vars;
 import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ public class RoomAliveReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if(intent.getAction().equals("KEEP")){
-            ObjectMapper mapper = new ObjectMapper();
+            ObjectMapper mapper = Vars.getObjectMapper();
             try {
                 PushNotification pushNotification = mapper.readValue(intent.getExtras().getString("push"), PushNotification.class);
                 RoomAliveHelper.activate(context, pushNotification);
