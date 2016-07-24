@@ -65,3 +65,5 @@ build/
 
 .pt_downloads/
 logs/
+dex-protector/android.apk
+out/
