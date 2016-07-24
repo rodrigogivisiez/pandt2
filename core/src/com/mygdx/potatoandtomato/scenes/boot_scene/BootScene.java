@@ -209,9 +209,9 @@ public class BootScene extends SceneAbstract {
                 potatoTable.add(potatoHiImage).height(45).width(48).padRight(10);
                 potatoTable.add(potatoLabel).expandX().fillX();
 
-                contentTable.add(tomatoTable).expandX().fillX().padLeft(20).padRight(20);
+                contentTable.add(potatoTable).expandX().fillX().padLeft(20).padRight(20);
                 contentTable.row();
-                contentTable.add(potatoTable).expandX().fillX().padLeft(20).padRight(20).padTop(5);
+                contentTable.add(tomatoTable).expandX().fillX().padLeft(20).padRight(20).padTop(5);
 
                 //////////////////////////////////
                 //Tick Cross Button

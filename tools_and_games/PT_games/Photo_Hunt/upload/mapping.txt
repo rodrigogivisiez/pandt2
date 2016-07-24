@@ -559,23 +559,23 @@ com.potatoandtomato.games.models.GameModel -> com.potatoandtomato.games.models.G
     251:255:void setStageNumber(int) -> setStageNumber
     259:260:void addStageNumber() -> d
     264:266:void convertStageNumberToRemainingMiliSecs() -> e
-    270:280:int getThisStageTotalMiliSecs() -> getThisStageTotalMiliSecs
-    285:285:int getThisStageTotalMovingMiliSecs() -> getThisStageTotalMovingMiliSecs
-    290:291:int getThisStageTotalAtkMiliSecs() -> getThisStageTotalAtkMiliSecs
-    297:307:void addUserClickedCount(java.lang.String) -> a
-    311:315:int getUserClickedCount(java.lang.String) -> getUserClickedCount
-    321:326:boolean isAreaAlreadyHandled(com.potatoandtomato.games.models.SimpleRectangle) -> a
-    331:339:boolean isAreaAlreadyHandled(com.badlogic.gdx.math.Rectangle) -> a
-    344:351:boolean addHandledArea(com.potatoandtomato.games.models.SimpleRectangle,int) -> a
-    356:361:boolean isAreaAlreadyConfirmClicked(com.potatoandtomato.games.models.SimpleRectangle) -> b
-    366:371:void setConfirmAreaClickedBy(com.potatoandtomato.games.models.SimpleRectangle,java.lang.String) -> setConfirmAreaClickedBy
-    375:376:void clearHandledAreas() -> f
-    380:386:java.lang.String toJson() -> g
-    391:392:com.potatoandtomato.games.absintf.GameModelListener addGameModelListener(com.potatoandtomato.games.absintf.GameModelListener) -> a
-    397:398:void removeGameModelListener(com.potatoandtomato.games.absintf.GameModelListener) -> b
-    402:402:boolean isPlaying() -> h
-    408:409:boolean isNextStageBonus() -> i
-    413:414:void dispose() -> j
+    270:279:int getThisStageTotalMiliSecs() -> getThisStageTotalMiliSecs
+    284:284:int getThisStageTotalMovingMiliSecs() -> getThisStageTotalMovingMiliSecs
+    289:290:int getThisStageTotalAtkMiliSecs() -> getThisStageTotalAtkMiliSecs
+    296:306:void addUserClickedCount(java.lang.String) -> a
+    310:314:int getUserClickedCount(java.lang.String) -> getUserClickedCount
+    320:325:boolean isAreaAlreadyHandled(com.potatoandtomato.games.models.SimpleRectangle) -> a
+    330:338:boolean isAreaAlreadyHandled(com.badlogic.gdx.math.Rectangle) -> a
+    343:350:boolean addHandledArea(com.potatoandtomato.games.models.SimpleRectangle,int) -> a
+    355:360:boolean isAreaAlreadyConfirmClicked(com.potatoandtomato.games.models.SimpleRectangle) -> b
+    365:370:void setConfirmAreaClickedBy(com.potatoandtomato.games.models.SimpleRectangle,java.lang.String) -> setConfirmAreaClickedBy
+    374:375:void clearHandledAreas() -> f
+    379:385:java.lang.String toJson() -> g
+    390:391:com.potatoandtomato.games.absintf.GameModelListener addGameModelListener(com.potatoandtomato.games.absintf.GameModelListener) -> a
+    396:397:void removeGameModelListener(com.potatoandtomato.games.absintf.GameModelListener) -> b
+    401:401:boolean isPlaying() -> h
+    407:408:boolean isNextStageBonus() -> i
+    412:413:void dispose() -> j
 com.potatoandtomato.games.models.ImageDetails -> com.potatoandtomato.games.models.ImageDetails:
     com.potatoandtomato.games.models.CorrectArea area1 -> a
     com.potatoandtomato.games.models.CorrectArea area2 -> b
@@ -1928,9 +1928,9 @@ com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene -> com.potat
     com.badlogic.gdx.scenes.scene2d.ui.Table _this -> f
     com.badlogic.gdx.scenes.scene2d.ui.Label messageLabel -> g
     33:40:void <init>(com.potatoandtomato.games.models.Services,com.badlogic.gdx.scenes.scene2d.ui.Table) -> <init>
-    43:99:void populate() -> a
-    102:108:void revealBonus(com.potatoandtomato.games.enums.BonusType,java.lang.String) -> a
-    113:120:void dispose() -> dispose
+    43:101:void populate() -> a
+    104:111:void revealBonus(com.potatoandtomato.games.enums.BonusType,java.lang.String) -> a
+    116:123:void dispose() -> dispose
     25:25:com.badlogic.gdx.scenes.scene2d.ui.Table access$000(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene) -> a
     25:25:com.potatoandtomato.games.assets.MyAssets access$100(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene) -> b
     25:25:com.badlogic.gdx.scenes.scene2d.ui.Table access$200(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene) -> c
@@ -1940,7 +1940,7 @@ com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene -> com.potat
 com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene$1 -> com.potatoandtomato.games.screens.b.a$1:
     com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene this$0 -> a
     43:43:void <init>(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene) -> <init>
-    47:97:void run() -> run
+    47:99:void run() -> run
 com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene$1$1 -> com.potatoandtomato.games.screens.b.a$1$1:
     com.badlogic.gdx.scenes.scene2d.ui.Table val$tracesTable -> a
     com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene$1 this$1 -> b
@@ -1948,13 +1948,14 @@ com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene$1$1 -> com.p
     62:64:void run() -> run
 com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene$2 -> com.potatoandtomato.games.screens.b.a$2:
     com.potatoandtomato.games.enums.BonusType val$bonusType -> a
-    com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene this$0 -> b
-    102:102:void <init>(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene,com.potatoandtomato.games.enums.BonusType) -> <init>
-    105:106:void run() -> run
+    java.lang.String val$extra -> b
+    com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene this$0 -> c
+    104:104:void <init>(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene,com.potatoandtomato.games.enums.BonusType,java.lang.String) -> <init>
+    107:109:void run() -> run
 com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene$3 -> com.potatoandtomato.games.screens.b.a$3:
     com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene this$0 -> a
-    114:114:void <init>(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene) -> <init>
-    117:118:void run() -> run
+    117:117:void <init>(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene) -> <init>
+    120:121:void run() -> run
 com.potatoandtomato.games.screens.papyruses.BeforeStartPapyrusScene -> com.potatoandtomato.games.screens.b.b:
     com.potatoandtomato.games.models.Services services -> c
     com.potatoandtomato.games.assets.MyAssets assets -> d
@@ -2886,34 +2887,34 @@ com.potatoandtomato.games.services.SoundsWrapper -> com.potatoandtomato.games.se
     83:84:void playSounds(com.badlogic.gdx.audio.Sound) -> a
     91:93:void dispose() -> dispose
 com.potatoandtomato.games.services.Texts -> com.potatoandtomato.games.services.d:
-    13:13:void <init>() -> <init>
-    15:15:java.lang.String nextHighScore() -> a
-    16:16:java.lang.String gameStarting() -> b
-    17:17:java.lang.String gameContinue() -> c
-    19:19:java.lang.String verySoon() -> d
-    20:20:java.lang.String gameOver() -> e
-    21:21:java.lang.String memoryStart() -> f
-    22:22:java.lang.String finalScore() -> g
-    23:23:java.lang.String gameContinueFailed() -> h
-    25:25:java.lang.String evilKnightPreparing() -> i
-    26:26:java.lang.String waitingForContinue() -> j
-    27:27:java.lang.String gameOverText() -> k
-    29:29:java.lang.String noPlayer() -> l
-    30:30:java.lang.String totalScores() -> m
-    31:31:java.lang.String waitForNextStage() -> n
-    32:32:java.lang.String slowMessage() -> o
-    33:33:java.lang.String replenishHints() -> p
-    35:35:java.lang.String notContinue() -> q
-    36:36:java.lang.String xDecidedNotToContinue() -> r
-    39:48:com.potatoandtomato.common.utils.Pair getMascotsSpeechAboutContinue() -> s
+    14:58:void <init>() -> <init>
+    16:16:java.lang.String nextHighScore() -> a
+    18:18:java.lang.String memoryStart() -> b
+    19:19:java.lang.String finalScore() -> c
+    20:20:java.lang.String gameContinueFailed() -> d
+    22:22:java.lang.String evilKnightPreparing() -> e
+    23:23:java.lang.String evilKnightComing() -> f
+    25:25:java.lang.String waitingForContinue() -> g
+    26:26:java.lang.String gameOverText() -> h
+    28:28:java.lang.String noPlayer() -> i
+    29:29:java.lang.String totalScores() -> j
+    30:30:java.lang.String waitForNextStage() -> k
+    31:31:java.lang.String slowMessage() -> l
+    32:32:java.lang.String replenishHints() -> m
+    34:34:java.lang.String notContinue() -> n
+    35:35:java.lang.String xDecidedNotToContinue() -> o
+    38:60:java.lang.String getBonusString(com.potatoandtomato.games.enums.BonusType) -> a
+    64:85:com.potatoandtomato.common.utils.Pair getMascotsSpeechAboutContinue() -> p
+com.potatoandtomato.games.services.Texts$1 -> com.potatoandtomato.games.services.d$1:
+    int[] $SwitchMap$com$potatoandtomato$games$enums$BonusType -> a
+    38:38:void <clinit>() -> <clinit>
 com.potatoandtomato.games.statics.Global -> com.potatoandtomato.games.d.a:
     boolean DEBUG -> a
     boolean REVIEW_MODE -> b
     int ATTACK_TIME_PERCENT -> c
-    int ClOSE_DOOR_BUFFER_TIME -> d
-    int BONUS_STAGE_NUMBER -> e
-    int EXPECTED_PLAYERS_DEBUG -> f
+    int BONUS_STAGE_NUMBER -> d
+    int EXPECTED_PLAYERS_DEBUG -> e
     6:6:void <init>() -> <init>
-    16:18:void setDEBUG(boolean) -> a
-    21:23:void setDEBUG_BONUS(boolean) -> b
-    8:13:void <clinit>() -> <clinit>
+    15:16:void setDEBUG(boolean) -> a
+    19:21:void setDEBUG_BONUS(boolean) -> b
+    8:12:void <clinit>() -> <clinit>

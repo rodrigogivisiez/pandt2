@@ -20,24 +20,24 @@ public class Texts {
     public String debug() {return "DEBUG";}
 
     public String socialLoginTitle() { return "Login with Facebook";};
-    public String socialLoginTomato() { return "Tomato will help you find more friends to play with you.";}
-    public String socialLoginPotato() { return "Potato promises not to post anything on your behalf.";}
+    public String socialLoginTomato() { return "And nothing will be posted on your wall!";}
+    public String socialLoginPotato() { return "We can find more friends to play with you...";}
     public String socialLoginProcessing() { return "Facebook login processing...";}
-    public String socialLoginFailed() { return "Login with Facebook failed... \nTry again?";}
+    public String socialLoginFailed() { return "Login with Facebook has failed... \nTry again?";}
 
     public String creatingUser() { return "Creating new user profile..."; }
-    public String failedRetrieveProfile() { return "Failed to retrieve data from server, please check your connection and try again."; }
-    public String ptIsDown() { return "P&T server is down for maintenance at the moment, please come back later."; }
+    public String failedRetrieveProfile() { return "Fail to connect. Please check your connection and try again."; }
+    public String ptIsDown() { return "P&T server is being maintained at the moment, please come back later."; }
     public String loginProcessing() { return "Logging in..."; }
 
-    public String confirmAppsCrashed() {return "Opps, looks like P&T has crashed on the last time you played, a error log has been received by Tomato and will be fixed asap.";}
-    public String confirmQuit() { return "Are you sure you want to quit Potato and Tomato?";}
+    public String confirmAppsCrashed() {return "Opps, looks like P&T has crashed on the last time you played, an error log has been received and we will fix the issue asap.";}
+    public String confirmQuit() { return "Are you sure you are going to leave us?";}
 
 
     //////////////////////////////////////////////////////////////////////////
     //Input name scene
     //////////////////////////////////////////////////////////////////////////
-    public String askForNameTitle() { return "Please input your in-game display name"; }
+    public String askForNameTitle() { return "Please input your in-game name"; }
 
     public String confirmDuplicateNameError() { return "This name has already been taken, please use another name.";}
     public String confirmEmptyNameError() { return "Game name cannot be empty.";}
@@ -52,9 +52,9 @@ public class Texts {
     public String soundsTitle() { return "Sounds"; }
     public String facebookTitle() { return "Facebook"; }
 
-    public String confirmLogoutFacebook() { return "Are you sure you want to logout from facebook? (Potato and Tomato will need to restart after this action.)"; }
-    public String confirmLoginFacebook() { return "Are you sure you want to login into facebook? (Potato and Tomato will need to restart after this action.)"; }
-    public String confirmFacebookRequestFailed() { return "Facebook request failed..."; }
+    public String confirmLogoutFacebook() { return "Are you sure you want to logout from Facebook? (Potato and Tomato will need to restart after this.)"; }
+    public String confirmLoginFacebook() { return "Are you sure you want to login into Facebook? (Potato and Tomato will need to restart after this.)"; }
+    public String confirmFacebookRequestFailed() { return "Facebook request fails..."; }
 
     ///////////////////////////////////////////////////////////////////////
     //Create game scene
@@ -77,19 +77,19 @@ public class Texts {
     public String btnTextJoinGame() { return "Join\nGame"; }
     public String btnTextContinueLastGame() { return "Continue"; }
 
-    public String confirmNotContinueGame() { return "You still have an unfinished game! Are you sure you want to abandon it?" ;}
+    public String confirmNotContinueGame() { return "You still have an unfinished game! Do you want to abandon it?" ;}
 
     /////////////////////////////////////////////////////////////////////////
     //Prerequisite scene
     ////////////////////////////////////////////////////////////////////////
     public String joiningRoom() { return "Joining room..."; }
-    public String lookingForServer() { return "Looking for server..."; }
-    public String locatingRoom() { return "Locating room server..."; }
+    public String lookingForServer() { return "Looking for potato..."; }
+    public String locatingRoom() { return "Locating potato..."; }
 
-    public String joinRoomFailed() { return "Failed to join room, please try again later."; }
-    public String cannotContinue() { return "Failed to continue game, the game might be already finished.";}
-    public String roomIsFull() { return "Room is full, please try again later.";}
-    public String roomNotAvailable() { return "Game is not available to join.";}
+    public String joinRoomFailed() { return "Fail to join room, please try again later."; }
+    public String cannotContinue() { return "Fail to continue game, the game jas finished.";}
+    public String roomIsFull() { return "Room is too crowded, please try again later.";}
+    public String roomNotAvailable() { return "Game is not available.";}
 
     /////////////////////////////////////////////////////////////////////////////////
     //Room scene
@@ -103,26 +103,26 @@ public class Texts {
     public String slotOpen() { return "Open"; }
 
     public String confirmLeaveRoom() { return "Are you sure you want to leave this room?"; }
-    public String confirmHostLeaveRoom() { return "Are you sure you want to leave this room? (This room will be dismissed)"; }
-    public String confirmKick() { return "Confirm kick %s from this room?";}
-    public String confirmYouAreKicked() { return "You are kicked from the room.";}
-    public String confirmGameClientOutdated() { return "This game required latest game client to run, please update your P&T game client.";}
-    public String confirmGameVersionOutdated() { return "This game has newer version, host need to recreate the room.";}
-    public String confirmFailedRetriveGameData() { return "Failed to retrive game data, please check your connection and try again.";}
-    public String confirmHostLeft() { return "Room host has left the room, this room will now be dismissed."; }
-    public String confirmRoomError() { return "Unexpected error occurred, you will be dismissed from this room now."; }
+    public String confirmHostLeaveRoom() { return "Are you sure you want to leave this room? (This room will be gone)"; }
+    public String confirmKick() { return "Confirm kicking %s from this room?";}
+    public String confirmYouAreKicked() { return "You are kicked from this room.";}
+    public String confirmGameClientOutdated() { return "This game requires latest App version to run, please update your P&T in App Store.";}
+    public String confirmGameVersionOutdated() { return "This game has a newer version, a new room needs to be created.";}
+    public String confirmFailedRetriveGameData() { return "Fail to connect, please check your connection and try again.";}
+    public String confirmHostLeft() { return "Room host has left the room, all participants to exit room now."; }
+    public String confirmRoomError() { return "Unexpected error has occurred, you will leave the room now."; }
 
-    public String confirmNotEnoughPlayers() { return "You need at least %s players each team to start the game."; }
-    public String confirmStillDownloadingClient() { return "Please wait until all players has downloaded game content."; }
-    public String confirmWaitAllUsersReady() { return "Please wait for all users ready before start.";}
-    public String confirmWaitTemporaryDisconnectedUsers() { return "Please wait for all users connection stabilize before start.";}
-    public String confirmFairTeamNeeded() { return "All teams must have equal amount of players to start.";}
+    public String confirmNotEnoughPlayers() { return "You need at least %s players in each team to start the game."; }
+    public String confirmStillDownloadingClient() { return "Please wait until all players have finished downloads."; }
+    public String confirmWaitAllUsersReady() { return "Please wait for all users to be ready.";}
+    public String confirmWaitTemporaryDisconnectedUsers() { return "Please wait for all player connection to stabilize.";}
+    public String confirmFairTeamNeeded() { return "All teams must have same number of players to start.";}
 
     public String chatMsgUserHasJoinedRoom() { return "%s has joined the room."; }
     public String chatMsgUserHasLeftRoom() { return "%s has left the room."; }
     public String chatMsgUserKicked() { return "%s has been kicked from the room.";}
-    public String chatMsgGameStarting() { return "Game will be starting soon after %s coin(s) inserted.";}
-    public String chatMsgGameStartStop() { return "Game start process is stopped by %s.";}
+    public String chatMsgGameStarting() { return "Game will be starting soon after %s coin(s) are inserted.";}
+    public String chatMsgGameStartStop() { return "Game start is stopped by %s.";}
     public String chatMsgGameStarted() { return "Game started.";}
     public String chatMsgInvitationAccepted() { return "%s has accepted the game invitation and is joining soon.";}
     public String chatMsgInvitationRejected() { return "%s is too busy for a game at this moment.";}
@@ -145,44 +145,44 @@ public class Texts {
     public String gameNameIs() { return "Game name: %s";}
     public String xPoints() {return "%s points";}
 
-    public String facebookCannotGetFriends() { return "You need to login with your facebook first.";}
-    public String noLeaderBoard() { return "This game doesn't have leaderboard function enabled.";}
+    public String facebookCannotGetFriends() { return "You need to login with your Facebook account first.";}
+    public String noLeaderBoard() { return "This game doesn't have the Leaderboard function enabled.";}
 
     public String chatMsgxInvitedX() { return "%s has invited %s to join this room.";}
     public String chatMsgxInvitedXAlias() { return "%s has invited %s (previously known as %s) to join this room.";}
 
     public String PUSHGameInvitationsTitle() { return "P&T Game Invitations"; }
-    public String PUSHGameInvitationsContent() { return "You have %s new inviations from your friends.";}
-    public String PUSHGameInvitationContent() { return "%s have invited you to play %s together.";}
+    public String PUSHGameInvitationsContent() { return "You have %s new invitations from your friends.";}
+    public String PUSHGameInvitationContent() { return "%s has invited you to play %s together.";}
 
     /////////////////////////////////////////////////////////////////////
     //Game Sandbox Scene
     ////////////////////////////////////////////////////////////////////////
     public String remainingTime() { return "Remaining Time: ";}
     public String ready() { return "Ready";}
-    public String failed() { return "Failed";}
+    public String failed() { return "Fail";}
 
     //show on chat messaging when any player failed to load game
     public String chatMsgLoadGameFailed() { return "Some players have failed to load the game.";}
     public String chatMsgGameEnded() { return "Game ended.";}
 
-    public String notificationAbandon() { return "%s has abandoned the game!";}
-    public String notificationAbandonDueToTimeout() { return "%s has abandoned the game because of failed to reconnect in " + Global.ABANDON_TOLERANCE_SECS + " seconds.";}
+    public String notificationAbandon() { return "%s has abandoned everyone!";}
+    public String notificationAbandonDueToTimeout() { return "%s has abandoned the game because of failure to reconnect in " + Global.ABANDON_TOLERANCE_SECS + " seconds.";}
     public String notificationConnected() { return "%s has connected to the game.";}
     public String notificationDisconnected() { return "%s has disconnected from the game, he/she has " + Global.ABANDON_TOLERANCE_SECS + " seconds to reconnect, please wait.";}
 
     public String notificationYouAbandon() { return "You have abandoned the game!";}
-    public String notificationYouAbandonDueToTimeout() { return "You have abandoned the game because of failed to reconnect in " + Global.ABANDON_TOLERANCE_SECS + " seconds.";}
+    public String notificationYouAbandonDueToTimeout() { return "You have abandoned the game because of failure to reconnect in " + Global.ABANDON_TOLERANCE_SECS + " seconds.";}
 
     public String notificationYouConnected() { return "You have connected to the game.";}
     public String notificationYouDisconnected() { return "You have disconnected from the game, you have " + Global.ABANDON_TOLERANCE_SECS + " seconds to reconnect.";}
 
-    public String notificationYouKicked() { return "You have been kicked from the room, game will now be abandoned.";}
+    public String notificationYouKicked() { return "You have been kicked from the room, the game will now be abandoned.";}
     public String notificationKicked() { return "%s has been kicked from the room.";}
 
-    public String confirmAbandonNoCons(){ return "Are you sure you want to abandon this game? \n\n(No consequence)";}
-    public String confirmAbandonLoseStreak(){ return "Are you sure you want to abandon this game? \n\n(You will be penalized and lose your winning streaks by doing so)";}
-    public String confirmCannotAbandon(){ return "You are not allowed to abandon at this point.";}
+    public String confirmAbandonNoCons(){ return "Are you sure you want to abandon this game? \n\n(No impact on streak)";}
+    public String confirmAbandonLoseStreak(){ return "Are you sure you want to abandon this game? \n\n(You will lose your winning streak)";}
+    public String confirmCannotAbandon(){ return "Sorry, the game cannot be abandoned now this way.";}
 
     ///////////////////////////////////////////////////////////////
     //Leaderboard scene
@@ -197,17 +197,18 @@ public class Texts {
     public String shopSceneTitle() { return "Shop"; }
 
     public String purseTitle() { return "Mum's purse";}
-    public String growthRateForShop() { return "Grow Coin In";}
+    public String growthRateForShop() { return "Grow A Coin In";}
     public String maxPurseTextForShop() { return "Full";}
-    public String watchAdsDescription() { return "30secs video ads"; }
+    public String watchAdsDescription() { return "Words from our sponsors"; }
 
     public String btnTextRetrieveCoins() { return "Retrieve Now"; }
     public String btnTextWatchAds() { return "Watch Now"; }
     public String btnTextBuyNow() { return "Buy Now"; }
 
     public String xCoin() {return "Coin x %s";}
+    public String freexCoin() {return "Free Coin x %s";}
 
-    public String confirmPurchaseFailed() { return "Failed to purchase coins..";}
+    public String confirmPurchaseFailed() { return "Fail to purchase coins..";}
 
     //coin machines tab title
     public String freeCoinsTabTitle() { return "Mum's purse";}
@@ -217,9 +218,9 @@ public class Texts {
     ///////////////////////////////////////////////////////////////////////
     //Connection related
     /////////////////////////////////////////////////////////////////////////
-    public String confirmLostConnection() {return "Lost connection with server, trying to reconnect, \n%s secs remaining";}
+    public String confirmLostConnection() {return "Lost connection and trying to reconnect, \n%s secs remaining";}
     public String confirmConnectionRecovered() {return "Connection established, trying to resume game session, \n%s secs remaining";}
-    public String confirmNoConnection() { return "You have been disconnected from the server, please check your connection."; }
+    public String confirmNoConnection() { return "You have been disconnected, please check your connection."; }
 
     public String btnTextClickToDisconnect(){ return "Click to Disconnect";}
 
@@ -258,8 +259,8 @@ public class Texts {
     public String save() { return "Save"; }
 
     public String noRecords() { return "No records found.";}
-    public String requestFailed() { return "Request failed.";}
-    public String generalError() { return "Unexpected error occurred, please try again.";}
+    public String requestFailed() { return "Request fails.";}
+    public String generalError() { return "Unexpected error occurs, please try again.";}
     public String workingDoNotClose() { return "Potato and Tomato are working now, please do not close apps now...";}
 
     ///////////////////////////////////////////////////////////
@@ -269,11 +270,26 @@ public class Texts {
         ArrayList<SpeechAction> potatoSpeechActions = new ArrayList();
         ArrayList<SpeechAction> tomatoSpeechActions = new ArrayList();
 
-        int style = MathUtils.random(0, 0);
+        int style = MathUtils.random(0, 3);
         if(style == 0){
-            potatoSpeechActions.add(new SpeechAction("We need %expectingCoin% coin(s) to start", SpeechActionType.Add));
+            potatoSpeechActions.add(new SpeechAction("We need %expectingCoin% coin(s) to start this game..", SpeechActionType.Add));
             tomatoSpeechActions.add(new SpeechAction(SpeechActionType.Delay, 2000));
-            tomatoSpeechActions.add(new SpeechAction("Insert coin to the slot below", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction("Let's do it", SpeechActionType.Add));
+        }
+        else if(style == 1){
+            potatoSpeechActions.add(new SpeechAction("From seeds to plants...", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction(SpeechActionType.Delay, 2000));
+            tomatoSpeechActions.add(new SpeechAction("Tomato will never stop at %expectingCoin% coin(s)!", SpeechActionType.Add));
+        }
+        else if(style == 2){
+            potatoSpeechActions.add(new SpeechAction("%expectingCoin% coin(s) beyond that slot below..", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction(SpeechActionType.Delay, 2000));
+            tomatoSpeechActions.add(new SpeechAction("Is where the fun begins!", SpeechActionType.Add));
+        }
+        else if(style == 3){
+            potatoSpeechActions.add(new SpeechAction("Blink, blink, blink, %expectingCoin% more coin(s)..", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction(SpeechActionType.Delay, 2000));
+            tomatoSpeechActions.add(new SpeechAction("Time to roll!", SpeechActionType.Add));
         }
 
         return new Pair<>(potatoSpeechActions, tomatoSpeechActions);
@@ -284,10 +300,25 @@ public class Texts {
         ArrayList<SpeechAction> potatoSpeechActions = new ArrayList();
         ArrayList<SpeechAction> tomatoSpeechActions = new ArrayList();
 
-        int style = MathUtils.random(0, 0);
+        int style = MathUtils.random(0, 3);
         if(style == 0){
-            potatoSpeechActions.add(new SpeechAction("free coin free coin free coin", SpeechActionType.Add));
-            tomatoSpeechActions.add(new SpeechAction("i want more!!", SpeechActionType.Add));
+            potatoSpeechActions.add(new SpeechAction("Shhh...........", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction("Shhh...........", SpeechActionType.Add));
+        }
+        if(style == 1){
+            potatoSpeechActions.add(new SpeechAction("Sometimes I open this purse...", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction(SpeechActionType.Delay, 2000));
+            tomatoSpeechActions.add(new SpeechAction("And coins jump out like frogs!", SpeechActionType.Add));
+        }
+        if(style == 2){
+            potatoSpeechActions.add(new SpeechAction("I am a potato...", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction(SpeechActionType.Delay, 600));
+            tomatoSpeechActions.add(new SpeechAction("Do we really have the same mum?", SpeechActionType.Add));
+        }
+        if(style == 3){
+            potatoSpeechActions.add(new SpeechAction("Should we buy her a new purse?", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction(SpeechActionType.Delay, 2000));
+            tomatoSpeechActions.add(new SpeechAction("Don't fix what is not broken!", SpeechActionType.Add));
         }
 
         return new Pair<>(potatoSpeechActions, tomatoSpeechActions);
@@ -298,11 +329,28 @@ public class Texts {
         ArrayList<SpeechAction> potatoSpeechActions = new ArrayList();
         ArrayList<SpeechAction> tomatoSpeechActions = new ArrayList();
 
-        int style = MathUtils.random(0, 0);
+        int style = MathUtils.random(0, 3);
         if(style == 0){
-            potatoSpeechActions.add(new SpeechAction("hmmmmmmmmm", SpeechActionType.Add));
-            tomatoSpeechActions.add(new SpeechAction("hahahahahhaha", SpeechActionType.Add));
+            potatoSpeechActions.add(new SpeechAction("Every step is not easy...", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction(SpeechActionType.Delay, 2000));
+            tomatoSpeechActions.add(new SpeechAction("But your support brings us a long way!", SpeechActionType.Add));
         }
+        else if(style == 1){
+            potatoSpeechActions.add(new SpeechAction("Every little bit...", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction(SpeechActionType.Delay, 2000));
+            tomatoSpeechActions.add(new SpeechAction("Helps this community to grow into a beautiful farm!", SpeechActionType.Add));
+        }
+        else if(style == 2){
+            potatoSpeechActions.add(new SpeechAction("Thank you, thank you, thank you...", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction(SpeechActionType.Delay, 2000));
+            tomatoSpeechActions.add(new SpeechAction("Even if you are just window shopping!", SpeechActionType.Add));
+        }
+        else if(style == 3){
+            potatoSpeechActions.add(new SpeechAction("Thank you for your support...", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction(SpeechActionType.Delay, 2000));
+            tomatoSpeechActions.add(new SpeechAction("Ka-ching, Ka-ching, Ka-ching!", SpeechActionType.Add));
+        }
+
 
         return new Pair<>(potatoSpeechActions, tomatoSpeechActions);
     }
@@ -311,10 +359,22 @@ public class Texts {
         ArrayList<SpeechAction> potatoSpeechActions = new ArrayList();
         ArrayList<SpeechAction> tomatoSpeechActions = new ArrayList();
 
-        int style = MathUtils.random(0, 0);
+        int style = MathUtils.random(0, 3);
         if(style == 0){
-            potatoSpeechActions.add(new SpeechAction("Lets rollll", SpeechActionType.Add));
-            tomatoSpeechActions.add(new SpeechAction("Gogogogo", SpeechActionType.Add));
+            potatoSpeechActions.add(new SpeechAction("Ready....?", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction("Let's roll!", SpeechActionType.Add));
+        }
+        if(style == 1){
+            potatoSpeechActions.add(new SpeechAction("Potate, potate, potate...", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction("Tomate, Tomate, Tomate!", SpeechActionType.Add));
+        }
+        if(style == 2){
+            potatoSpeechActions.add(new SpeechAction("It is all about the preparation...", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction("Go, go, go!", SpeechActionType.Add));
+        }
+        if(style == 3){
+            potatoSpeechActions.add(new SpeechAction("Defend....", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction("Attack!!!!", SpeechActionType.Add));
         }
 
         return new Pair<>(potatoSpeechActions, tomatoSpeechActions);
@@ -324,25 +384,37 @@ public class Texts {
         ArrayList<SpeechAction> potatoSpeechActions = new ArrayList();
         ArrayList<SpeechAction> tomatoSpeechActions = new ArrayList();
 
-        int style = MathUtils.random(0, 0);
+        int style = MathUtils.random(0, 1);
         if(style == 0){
-            //potatoSpeechActions.add(new SpeechAction("Lets rollll", SpeechActionType.Add));
-            tomatoSpeechActions.add(new SpeechAction("No coin no coin no coin!!", SpeechActionType.Add));
+            potatoSpeechActions.add(new SpeechAction("No more coin! Let's get something from Mum's purse..", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction(SpeechActionType.Delay, 2000));
+            tomatoSpeechActions.add(new SpeechAction("Or give us your support by buying some coins!", SpeechActionType.Add));
         }
-
+        else if(style == 1){
+            potatoSpeechActions.add(new SpeechAction("We have no more coin...", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction(SpeechActionType.Delay, 1000));
+            tomatoSpeechActions.add(new SpeechAction("Hold on! Why don't you go and check what is in the coin shop?", SpeechActionType.Add));
+        }
         return new Pair<>(potatoSpeechActions, tomatoSpeechActions);
     }
 
 
-    public Pair<ArrayList<SpeechAction>, ArrayList<SpeechAction>> getRandomMascotsSpeechAboutLostStreaks(int streakCount){
+    public Pair<ArrayList<SpeechAction>, ArrayList<SpeechAction>> getRandomMascotsSpeechAboutLostStreaks(int coinCount){
         ArrayList<SpeechAction> potatoSpeechActions = new ArrayList();
         ArrayList<SpeechAction> tomatoSpeechActions = new ArrayList();
 
-        int style = MathUtils.random(0, 0);
+        int style = MathUtils.random(0, 1);
         if(style == 0){
-            potatoSpeechActions.add(new SpeechAction("Revive your " + streakCount + " streaks?", SpeechActionType.Add));
-            tomatoSpeechActions.add(new SpeechAction("More streak more scores", SpeechActionType.Add));
+            potatoSpeechActions.add(new SpeechAction("No, no, no...", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction(SpeechActionType.Delay, 800));
+            tomatoSpeechActions.add(new SpeechAction("Don't cry, protect your streak with " + coinCount + " coin(s)!", SpeechActionType.Add));
         }
+        else if(style == 1){
+            potatoSpeechActions.add(new SpeechAction("Put " + coinCount + " coin(s) down that wishing slot...", SpeechActionType.Add));
+            tomatoSpeechActions.add(new SpeechAction(SpeechActionType.Delay, 2000));
+            tomatoSpeechActions.add(new SpeechAction("For one more streak of luck!", SpeechActionType.Add));
+        }
+
 
         return new Pair<>(potatoSpeechActions, tomatoSpeechActions);
     }

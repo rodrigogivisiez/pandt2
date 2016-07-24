@@ -460,15 +460,17 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
         if(revivingStreakCount > 0){
             final String teamUserIdsString = Strings.joinArr(getMyTeamUserIds(), ",");
 
+            int expectingCoins = MathUtils.floor(revivingStreakCount / 2);
+
             Pair<ArrayList<SpeechAction>, ArrayList<SpeechAction>> speechPair =
-                                    _texts.getRandomMascotsSpeechAboutLostStreaks(revivingStreakCount);
+                                    _texts.getRandomMascotsSpeechAboutLostStreaks(expectingCoins);
 
             ArrayList<Pair<String, String>> userIdToNamePairs = new ArrayList();
             for(Player player : _myTeam){
                 userIdToNamePairs.add(new Pair<String, String>(player.getUserId(), player.getName()));
             }
 
-            _services.getCoins().initCoinMachine("Revive streaks", MathUtils.floor(revivingStreakCount / 2),
+            _services.getCoins().initCoinMachine("Revive streaks", expectingCoins,
                     _room.getId() + "_" + _room.getRoundCounter() + "_" + teamUserIdsString + "_streaks",
                     userIdToNamePairs, false, speechPair.getFirst(), speechPair.getSecond(), "nonono");
 

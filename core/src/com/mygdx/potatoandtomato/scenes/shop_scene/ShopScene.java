@@ -278,7 +278,8 @@ public class ShopScene extends SceneAbstract {
         topContentTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.TRANS_BLACK_BG)));
 
         TextureRegion itemTextureRegion = null;
-        String title =  String.format(_texts.xCoin(), coinProduct.getCount());;
+        String title =  String.format(productAction == ProductAction.WatchVideo ? _texts.freexCoin() : _texts.xCoin(),
+                                    coinProduct.getCount());
         itemTextureRegion = _assets.getTextures().get(coinProduct.getTextureNameFromCoinCount());
 
         Image itemImage = new Image();
@@ -298,11 +299,13 @@ public class ShopScene extends SceneAbstract {
         Label.LabelStyle labelSmallStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HELVETICA_XS_BOLD), Color.WHITE);
         Label titleLabel = new Label(title, labelSmallStyle);
         titleLabel.setAlignment(Align.left);
+        titleLabel.setWrap(true);
 
          Label priceLabel = new Label(coinProduct.getCurrency() + " " + coinProduct.getPrice(), labelSmallStyle);
         if(productAction == ProductAction.WatchVideo){
             priceLabel.setText(coinProduct.getDescription());
         }
+        priceLabel.setWrap(true);
         priceLabel.setAlignment(Align.left);
 
         Table detailsTable = new Table();

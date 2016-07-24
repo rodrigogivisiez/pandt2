@@ -174,7 +174,7 @@ public class GameModel {
             setFreezingMiliSecs(freezingMiliSecs + 2000);
         }
         else{
-            setFreezingMiliSecs(freezingMiliSecs + 500);
+            setFreezingMiliSecs(freezingMiliSecs + 1500);
         }
     }
 
@@ -269,11 +269,10 @@ public class GameModel {
     public int getThisStageTotalMiliSecs(){
         double time = 0;
         if(this.stageType == StageType.Bonus){
-            time = 60000;
+            time = 60 * 1000;
         }
         else{
-            time =  Math.max(60000 - (Math.pow(stageNumber, 1.5) * 1000), 0) +
-                    Math.max(3000 - (Math.pow(stageNumber, 0.2) * 1000), 0) + 5500;
+            time =  Math.max(60000 - (Math.pow(stageNumber, 1.3) * 1000), 0) + 5500;
             //time = 60000 * 5;
         }
 

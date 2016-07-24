@@ -1605,9 +1605,9 @@ com.potatoandtomato.games.services.GameDataController -> com.potatoandtomato.gam
     int firstTurnIndex -> b
     20:24:void <init>(com.potatoandtomato.common.GameCoordinator) -> <init>
     27:31:int getFirstTurnIndex() -> a
-    35:58:java.util.ArrayList getGameData() -> b
-    62:63:com.potatoandtomato.games.enums.ChessColor getMyChessColor() -> c
-    67:68:com.potatoandtomato.games.enums.ChessColor getEnemyChessColor() -> d
+    35:98:java.util.ArrayList getGameData() -> b
+    102:103:com.potatoandtomato.games.enums.ChessColor getMyChessColor() -> c
+    107:108:com.potatoandtomato.games.enums.ChessColor getEnemyChessColor() -> d
 com.potatoandtomato.games.services.ScoresHandler -> com.potatoandtomato.games.e.c:
     com.potatoandtomato.games.services.GameDataController gameDataController -> m
     com.potatoandtomato.common.GameCoordinator coordinator -> n
@@ -1659,7 +1659,6 @@ com.potatoandtomato.games.services.ScoresHandler -> com.potatoandtomato.games.e.
     29:29:void access$500(com.potatoandtomato.games.services.ScoresHandler,java.util.ArrayList) -> a
     29:29:java.util.HashMap access$600(com.potatoandtomato.games.services.ScoresHandler,java.util.ArrayList) -> b
     29:29:java.util.ArrayList access$700(com.potatoandtomato.games.services.ScoresHandler) -> f
-    45:45:void <clinit>() -> <clinit>
 com.potatoandtomato.games.services.ScoresHandler$1 -> com.potatoandtomato.games.e.c$1:
     java.lang.String val$userAId -> a
     java.lang.String val$userBId -> b

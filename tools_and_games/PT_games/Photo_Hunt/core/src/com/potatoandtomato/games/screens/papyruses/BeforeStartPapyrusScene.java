@@ -91,7 +91,7 @@ public class BeforeStartPapyrusScene extends PapyrusSceneAbstract {
             @Override
             public void run() {
                 gearIcon.setVisible(false);
-                messageLabel.setText("EVIL KNIGHT IS COMING!!!");
+                messageLabel.setText(services.getTexts().evilKnightComing());
                 messageLabelContainer.addAction(Actions.moveBy(-20f, 0f, 0.5f, Interpolation.bounceOut));
 
                 knightAnimator.setPaused(false);

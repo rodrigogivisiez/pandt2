@@ -42,9 +42,9 @@ public class ScoresHandler implements Disposable{
     public static final int CATCH_UP_TRIGGERING_LOSE_STREAK_COUNT = 3;
     public static final int EZ_WIN_TRIGGERING_TIME_LEFT = 800;
     public static final int EZ_WIN_TRIGGERING_TURN_COUNT = 30;
-    public static int PAWN_LEADERBOARD_TRIGGERING_RANK = 200;
-    public static final double KILL_STREAK_MULTIPLIER = 0.3;
-    public static final double CATCH_UP_MULTIPLIER = 1.20;
+    public static int PAWN_LEADERBOARD_TRIGGERING_RANK;
+    public static final double KILL_STREAK_MULTIPLIER = 0.2;
+    public static final double CATCH_UP_MULTIPLIER = 1.40;
     public static final double EASY_WIN = 50;
     public static final double NORMAL_WIN = 300;
     public static final double HARD_WIN = 500;

@@ -26,6 +26,7 @@ public abstract class FontAssets implements IAssetFragment {
         this._manager = _manager;
         this._preloadParameters = new ArrayList<MyFreetypeFontLoader.FreeTypeFontLoaderParameter>();
         this._storage = new HashMap<String, BitmapFont>();
+        FreeTypeFontGenerator.setMaxTextureSize(128);
         setFontDetailsGenerator();
     }
 

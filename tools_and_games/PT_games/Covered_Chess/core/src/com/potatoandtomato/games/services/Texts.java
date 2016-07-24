@@ -17,15 +17,15 @@ public class Texts {
     public String vs() { return "vs"; }
 
     public String timeToCatchUp() { return "Time to catch up"; }
-    public String xWinStreak() { return "%s wins streak"; }
-    public String breakEnemyXWinStreak() { return "Stop opponent %s wins streak"; }
+    public String xWinStreak() { return "%s steps towards jungle throne"; }
+    public String breakEnemyXWinStreak() { return "Stop opponent %s steps towards jungle throne"; }
 
-    public String easyWin() { return "Ez win"; }
+    public String easyWin() { return "Walk in the park"; }
     //public String hardFoughtWin() { return "Almost lose"; }
-    public String normalWin() { return "Win the match"; }
+    public String normalWin() { return "So much win!"; }
 
-    public String firstTimeWinPlayer() { return "First blood on this opponent"; }
-    public String pawnLeaderboardPlayer() { return "Pawn leaderboard occupant"; }
+    public String firstTimeWinPlayer() { return "First win against this opponent, Roar!"; }
+    public String pawnLeaderboardPlayer() { return "Bring down Jungle King contender"; }
 
     ////////////////////////////////////////////////
     //tutorial texts

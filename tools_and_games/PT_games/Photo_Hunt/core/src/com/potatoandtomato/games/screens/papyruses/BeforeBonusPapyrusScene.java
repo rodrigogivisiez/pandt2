@@ -64,8 +64,10 @@ public class BeforeBonusPapyrusScene extends PapyrusSceneAbstract{
                     }
                 });
 
-                messageLabel = new Label("",
-                                    new Label.LabelStyle(assets.getFonts().get(Fonts.FontId.ENCHANTED_MAX_REGULAR), Color.BLACK));
+                Label.LabelStyle messageLabelStyle = new Label.LabelStyle(assets.getFonts().get(Fonts.FontId.ENCHANTED_MAX_REGULAR), Color.BLACK);
+                messageLabelStyle.font.getData().setLineHeight(29);
+                messageLabel = new Label("", messageLabelStyle);
+
                 messageLabel.setAlignment(Align.center);
                 messageLabel.setWrap(true);
                 messageLabel.getColor().a = 0f;
@@ -98,11 +100,12 @@ public class BeforeBonusPapyrusScene extends PapyrusSceneAbstract{
         });
     }
 
-    public void revealBonus(final BonusType bonusType, String extra){
+    public void revealBonus(final BonusType bonusType, final String extra){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                messageLabel.setText(bonusType.name());
+                String text = String.format(services.getTexts().getBonusString(bonusType), extra);
+                messageLabel.setText(text);
             }
         });
     }

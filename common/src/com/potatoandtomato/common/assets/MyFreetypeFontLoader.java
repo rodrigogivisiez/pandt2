@@ -65,9 +65,11 @@ public class MyFreetypeFontLoader extends AsynchronousAssetLoader<BitmapFont, My
                                                            Color borderColor, int shadowOffsetX, int shadowOffsetY, Color shadowColor,
                                                            int spaceX, int spaceY){
         MyFreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new MyFreetypeFontLoader.FreeTypeFontLoaderParameter();
-        size2Params.fontFileName = path;
         size2Params.fontParameters.size = size;
+        size2Params.fontParameters.characters = "";
         size2Params.fontParameters.incremental = true;
+
+        size2Params.fontFileName = path;
 
         size2Params.fontParameters.color = fontColor;
         size2Params.fontParameters.genMipMaps = true;
