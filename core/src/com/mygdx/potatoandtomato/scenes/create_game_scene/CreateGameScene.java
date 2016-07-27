@@ -38,6 +38,7 @@ public class CreateGameScene extends SceneAbstract {
     AutoDisposeTable _gameDetails;
     ScrollPane _gameDetailsScroll;
     BtnEggDownward _createButton;
+    Actor _firstGameTable;
 
     public CreateGameScene(Services services, PTScreen screen) {
         super(services, screen);
@@ -121,6 +122,11 @@ public class CreateGameScene extends SceneAbstract {
                // innerTable.addAction(sequence(fadeIn(0f), moveBy(200, 0, 1f, Interpolation.bounceOut)));
 
                 runnableArgs.run(gameIcon);
+
+                if(_firstGameTable == null){
+                    _firstGameTable = innerTable;
+                }
+
             }
         });
     }
@@ -212,4 +218,8 @@ public class CreateGameScene extends SceneAbstract {
         });
     }
 
+
+    public Actor getFirstGameTable() {
+        return _firstGameTable;
+    }
 }

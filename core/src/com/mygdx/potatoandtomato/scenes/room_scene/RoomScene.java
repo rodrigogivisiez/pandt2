@@ -74,8 +74,8 @@ public class RoomScene extends SceneAbstract {
         ropeImage1.setPosition(45, 84);
         ropeImage2.setPosition(startButton.getWidth() + 55, 84);
 
-        buttonTable.add(startButton).padRight(10);
-        buttonTable.add(inviteButton).padRight(10);
+        buttonTable.add(startButton).padRight(10).width(startButton.getPrefWidth());
+        buttonTable.add(inviteButton).padRight(10).width(inviteButton.getPrefWidth());
 
         buttonTable.addActor(ropeImage1);
         buttonTable.addActor(ropeImage2);
@@ -114,7 +114,9 @@ public class RoomScene extends SceneAbstract {
             public void run() {
                 WebImage gameImg = new WebImage(game.getIconUrl(), _assets, _services.getBroadcaster(), _ptGame);
 
-                Image separatorImage = new Image(_assets.getTextures().get(Textures.Name.ORANGE_VERTICAL_LINE));
+                Image verticalSeparatorImage = new Image(_assets.getTextures().get(Textures.Name.ORANGE_VERTICAL_LINE));
+                Image horizontalSeparatorImage = new Image(_assets.getTextures().get(Textures.Name.ORANGE_HORIZONTAL_LINE));
+
 
                 Label.LabelStyle titleStyle = new Label.LabelStyle();
                 titleStyle.fontColor = Color.valueOf("573801");
@@ -130,13 +132,14 @@ public class RoomScene extends SceneAbstract {
                 _subRoot.align(Align.topLeft);
 
                 Label titleLabel = new Label(game.getName(), titleStyle);
+                titleLabel.setWrap(true);
 
                 Table titleTable = new Table();
                 titleTable.add(titleLabel).expandX().fillX().padRight(10);
 
                 if(game.hasLeaderboard()){
                     leaderboardButton = new Image(_assets.getTextures().get(Textures.Name.LEADERBOARD_ICON));
-                    titleTable.add(leaderboardButton);
+                    titleTable.add(leaderboardButton).width(leaderboardButton.getPrefWidth());
                 }
 
                 Label playersLabel = new Label(String.format(_texts.xPlayers(), game.getMinPlayers(), game.getMaxPlayers()), smallStyle);
@@ -156,11 +159,13 @@ public class RoomScene extends SceneAbstract {
                 _subRoot.row();
                 _subRoot.add(gameSizeLabel).left();
                 _subRoot.row();
-                _subRoot.add(descriptionTable).left().expandX().fillX().padTop(5);
+                _subRoot.add(horizontalSeparatorImage).expandX().fillX().padTop(5).padBottom(5);
+                _subRoot.row();
+                _subRoot.add(descriptionTable).left().expandX().fillX();
 
                 detailsRoot.pad(10);
                 detailsRoot.add(gameImg).size(120).top();
-                detailsRoot.add(separatorImage).padLeft(5).padRight(10).expandY().fillY();
+                detailsRoot.add(verticalSeparatorImage).padLeft(5).padRight(10).expandY().fillY();
                 detailsRoot.add(_subRoot).expandX().fillX().top();
             }
         });
@@ -711,6 +716,10 @@ public class RoomScene extends SceneAbstract {
 
     public Image getLeaderboardButton() {
         return leaderboardButton;
+    }
+
+    public Table getTeamsRoot() {
+        return teamsRoot;
     }
 
     @Override

@@ -18,6 +18,8 @@ import com.mygdx.potatoandtomato.absintflis.push_notifications.PushCode;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.absintflis.services.IChatRoomUsersConnectionRefresher;
+import com.mygdx.potatoandtomato.statics.Terms;
+import com.potatoandtomato.common.absints.TutorialPartListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.*;
 import com.mygdx.potatoandtomato.models.*;
@@ -26,6 +28,7 @@ import com.mygdx.potatoandtomato.services.VersionControl;
 import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.absints.CoinListener;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
+import com.potatoandtomato.common.enums.GestureType;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.models.SpeechAction;
@@ -40,7 +43,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by SiongLeng on 16/12/2015.
  */
-public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnectionRefresher {
+public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnectionRefresher, TutorialPartListener {
 
     RoomScene scene;
     Room room;
@@ -53,6 +56,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
     boolean isContinue;
     boolean quiting;
     boolean finishGameFileCheck;
+    int tutorialStep;
     RoomError roomErrorOccured;
     UserBadgeHelper userBadgeHelper;
     GameFileChecker gameFileChecker;
@@ -162,6 +166,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         if(roomErrorOccured != null){
             errorOccurred(roomErrorOccured);
         }
+        _services.getTutorials().startTutorialIfNotCompleteBefore(Terms.PREF_BASIC_TUTORIAL, false, this);
     }
 
     @Override
@@ -621,6 +626,10 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
     }
 
     public int startGameCheck(boolean showMessage){
+        if(tutorialStep > 0){       //in tutorial always allow start game
+            return 0;
+        }
+
         if(!room.checkAllTeamHasMinPlayers()){
             if(showMessage){
                 _confirm.show(ConfirmIdentifier.Room,
@@ -1151,7 +1160,8 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
             public void run() {
                 while (true){
                     if(roomLogicSafeThread.isKilled()) return;
-                    if(!room.isOpen() && isSceneFullyVisible() && isHost() && !starting && !gameStarted && !isContinue){
+                    if(!room.isOpen() && isSceneFullyVisible() && isHost() && !starting && !gameStarted && !isContinue
+                                && tutorialStep ==0){
                         _services.getDatabase().updateRoomPlayingAndOpenState(room, false, true, null);
                     }
                     Threadings.sleep(2000);
@@ -1208,4 +1218,70 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
     }
 
 
+    @Override
+    public void nextTutorial() {
+        tutorialStep++;
+        if(tutorialStep == 1){
+            _services.getTutorials().showMessage(null, _texts.tutorialAboutRoom());
+            _services.getCoins().setDisableSpeech(true);
+        }
+        else if(tutorialStep == 2){
+            _services.getTutorials().expectGestureOnActor(GestureType.Tap,
+                                    scene.getStartButton(), _texts.tutorialAboutStartGame(), 0, 0);
+        }
+        else if(tutorialStep == 3){
+            Threadings.delay(1000, new Runnable() {
+                @Override
+                public void run() {
+                    _services.getTutorials().showMessage(null, _texts.tutorialAboutCoinMachine());
+                }
+            });
+        }
+        else if(tutorialStep == 4){
+            _services.getTutorials().expectGestureOnActor(GestureType.PointUp,
+                    _services.getCoins().getCoinMachineControl().getToInsertCoinsRootTable(),
+                    _texts.tutorialAboutCoinCount(), 0, -20);
+        }
+        else if(tutorialStep == 5){
+            _services.getTutorials().expectGestureOnActor(GestureType.Tap,
+                    _services.getCoins().getCoinMachineControl().getCoinInsertRootTable(),
+                    _texts.tutorialAboutInsertCoin(), 0, 0);
+        }
+        else if(tutorialStep == 6){
+            Threadings.delay(1000, new Runnable() {
+                @Override
+                public void run() {
+                    _services.getTutorials().showMessage(null, _texts.tutorialAboutNoCoin());
+                }
+            });
+        }
+        else if(tutorialStep == 7){
+            _services.getTutorials().expectGestureOnActor(GestureType.Tap,
+                    _services.getCoins().getCoinMachineControl().getRetrieveCoinsTabButton(),
+                    _texts.tutorialAboutTapMumPurse(), 0, 0);
+        }
+        else if(tutorialStep == 8){
+            Threadings.delay(1000, new Runnable() {
+                @Override
+                public void run() {
+                    _services.getTutorials().expectGestureOnActor(GestureType.Tap,
+                            _services.getCoins().getCoinMachineControl().getRetrieveCoinsButton(),
+                            _texts.tutorialAboutTapGetFreeCoins(), 0, 0);
+                }
+            });
+        }
+        else if(tutorialStep == 9){
+            Threadings.delay(1000, new Runnable() {
+                @Override
+                public void run() {
+                    _services.getTutorials().showMessage(null, _texts.tutorialAboutGetCoinsSuccess());
+                }
+            });
+        }
+        else if(tutorialStep == 10){
+            forceQuit = true;
+            _services.getCoins().setDisableSpeech(false);
+            _screen.back();
+        }
+    }
 }

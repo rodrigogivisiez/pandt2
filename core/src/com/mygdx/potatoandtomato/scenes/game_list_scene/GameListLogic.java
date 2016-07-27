@@ -10,10 +10,13 @@ import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.RoomInfoListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.statics.Terms;
+import com.potatoandtomato.common.absints.TutorialPartListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.ConfirmIdentifier;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.services.Confirm;
+import com.potatoandtomato.common.enums.GestureType;
 import com.potatoandtomato.common.utils.RunnableArgs;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Room;
@@ -27,12 +30,13 @@ import java.util.ArrayList;
 /**
  * Created by SiongLeng on 9/12/2015.
  */
-public class GameListLogic extends LogicAbstract {
+public class GameListLogic extends LogicAbstract implements TutorialPartListener {
 
     GameListScene _scene;
     ArrayList<Room> _rooms;
     Room _selectedRoom;
     String _continueRoomId;
+    int tutorialStep;
 
     public GameListLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
@@ -64,6 +68,7 @@ public class GameListLogic extends LogicAbstract {
         checkCanContinue();
         super.onShow();
         _scene.setUsername(_services.getProfile().getDisplayName(15));
+        _services.getTutorials().startTutorialIfNotCompleteBefore(Terms.PREF_BASIC_TUTORIAL, true, this);
     }
 
     @Override
@@ -238,5 +243,18 @@ public class GameListLogic extends LogicAbstract {
     @Override
     public SceneAbstract getScene() {
         return _scene;
+    }
+
+    @Override
+    public void nextTutorial() {
+        tutorialStep++;
+        if(tutorialStep == 1){
+            _services.getTutorials().showMessage(null, _texts.tutorialWelcomeMessage());
+        }
+        else if(tutorialStep == 2){
+            _services.getTutorials().expectGestureOnActor(GestureType.Tap,
+                    _scene.getNewGameButton(), _texts.tutorialAboutCreateGame(), 0 ,0);
+
+        }
     }
 }

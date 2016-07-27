@@ -12,6 +12,7 @@ import com.potatoandtomato.common.absints.*;
 import com.potatoandtomato.common.enums.*;
 import com.potatoandtomato.common.helpers.DecisionsMaker;
 import com.potatoandtomato.common.helpers.GameDataHelper;
+import com.potatoandtomato.common.helpers.TutorialsWrapper;
 import com.potatoandtomato.common.models.*;
 import com.potatoandtomato.common.utils.MyFileResolver;
 import com.potatoandtomato.common.utils.Pair;
@@ -46,6 +47,7 @@ public class GameCoordinator implements Disposable {
     private GamePreferencesAbstract gamePreferences;
     private int leaderboardSize;
     private GameDataHelper gameDataHelper;
+    private TutorialsWrapper tutorialsWrapper;
     private IDisconnectOverlayControl disconnectOverlayControl;
     private ICoins iCoins;
 
@@ -93,6 +95,7 @@ public class GameCoordinator implements Disposable {
         this.disconnectOverlayControl = iDisconnectOverlayControl;
         this.iCoins = iCoins;
 
+        tutorialsWrapper = new TutorialsWrapper(tutorials, gamePreferences);
         gameDataHelper = new GameDataHelper(teams, myUserId, decisionsMaker,
                                                     gameSandBox, game, disconnectOverlayControl, this);
         onResumeRunnables = new ArrayList();
@@ -700,8 +703,8 @@ public class GameCoordinator implements Disposable {
         return endGameResult;
     }
 
-    public ITutorials getTutorials() {
-        return tutorials;
+    public TutorialsWrapper getTutorialsWrapper() {
+        return tutorialsWrapper;
     }
 
     public GamePreferencesAbstract getGamePreferences() {

@@ -1,6 +1,7 @@
 package com.mygdx.potatoandtomato.scenes.boot_scene;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
@@ -16,6 +17,9 @@ import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.services.Confirm;
 import com.mygdx.potatoandtomato.statics.Terms;
+import com.mygdx.potatoandtomato.utils.Positions;
+import com.potatoandtomato.common.absints.TutorialPartListener;
+import com.potatoandtomato.common.enums.GestureType;
 import com.potatoandtomato.common.statics.Vars;
 import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
@@ -51,6 +55,7 @@ public class BootLogic extends LogicAbstract {
         _services.getCoins().dispose();
         _services.getDataCaches().dispose();
         _services.getProfile().reset();
+        _services.getTutorials().hide();
         _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
         _screen.showRotateSunrise();
         publishBroadcast(BroadcastEvent.DESTROY_ROOM);
@@ -62,6 +67,8 @@ public class BootLogic extends LogicAbstract {
         _services.getDatabase().online();
         _services.getDatabase().unauth();
         checkCrashedBefore();
+
+
     }
 
     public void showLoginBox(){

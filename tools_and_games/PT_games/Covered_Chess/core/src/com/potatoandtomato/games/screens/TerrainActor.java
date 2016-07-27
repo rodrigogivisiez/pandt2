@@ -44,8 +44,10 @@ public class TerrainActor extends Table {
     private Table _battleTable;
     private SoundsWrapper _soundsWrapper;
     private ChessActor _chessActor;
+    private Table root;
 
-    public TerrainActor(Assets _assets, ChessActor chessActor, SoundsWrapper soundsWrapper) {
+    public TerrainActor(Table root, Assets _assets, ChessActor chessActor, SoundsWrapper soundsWrapper) {
+        this.root = root;
         _this = this;
         this._soundsWrapper = soundsWrapper;
         this._assets = _assets;
@@ -277,7 +279,7 @@ public class TerrainActor extends Table {
                         coords.y + Positions.centerY(_this.getHeight(), _arrowLeft.getHeight()));
                 _arrowLeft.setVisible(false);
                 _arrowLeft.addAction(forever(sequence(Actions.moveBy(3, 0, 0.3f), Actions.moveBy(-3, 0, 0.3f))));
-                _this.getStage().addActor(_arrowLeft);
+                root.addActor(_arrowLeft);
 
                 _arrowRight = new Image(_assets.getTextures().get(Textures.Name.ARROW_LEFT));
                 _arrowRight.setSize(width, height);
@@ -286,7 +288,7 @@ public class TerrainActor extends Table {
                         coords.y + Positions.centerY(_this.getHeight(), _arrowRight.getHeight()));
                 _arrowRight.setVisible(false);
                 _arrowRight.addAction(forever(sequence(Actions.moveBy(-3, 0, 0.3f), Actions.moveBy(3, 0, 0.3f))));
-                _this.getStage().addActor(_arrowRight);
+                root.addActor(_arrowRight);
 
                 _arrowUp = new Image(_assets.getTextures().get(Textures.Name.ARROW_DOWN));
                 _arrowUp.setSize(width, height);
@@ -295,7 +297,7 @@ public class TerrainActor extends Table {
                         coords.y + Positions.centerY(_this.getHeight(), _arrowUp.getHeight()) + _this.getHeight()/2 - _arrowUp.getHeight()/ 2);
                 _arrowUp.setVisible(false);
                 _arrowUp.addAction(forever(sequence(Actions.moveBy(0, -3, 0.3f), Actions.moveBy(0, 3, 0.3f))));
-                _this.getStage().addActor(_arrowUp);
+                root.addActor(_arrowUp);
 
                 _arrowDown = new Image(_assets.getTextures().get(Textures.Name.ARROW_UP));
                 _arrowDown.setSize(width, height);
@@ -304,7 +306,7 @@ public class TerrainActor extends Table {
                         coords.y + Positions.centerY(_this.getHeight(), _arrowDown.getHeight()) - _this.getHeight()/2 + _arrowDown.getHeight() / 2);
                 _arrowDown.setVisible(false);
                 _arrowDown.addAction(forever(sequence(Actions.moveBy(0, 3, 0.3f), Actions.moveBy(0, -3, 0.3f))));
-                _this.getStage().addActor(_arrowDown);
+                root.addActor(_arrowDown);
 
                 _arrowBottomLeft = new Image(_assets.getTextures().get(Textures.Name.ARROW_TOP_RIGHT));
                 _arrowBottomLeft.setSize(20, 20);
@@ -313,7 +315,7 @@ public class TerrainActor extends Table {
                         coords.y);
                 _arrowBottomLeft.setVisible(false);
                 _arrowBottomLeft.addAction(forever(sequence(Actions.moveBy(3, 3, 0.3f), Actions.moveBy(-3, -3, 0.3f))));
-                _this.getStage().addActor(_arrowBottomLeft);
+                root.addActor(_arrowBottomLeft);
 
                 _arrowBottomRight = new Image(_assets.getTextures().get(Textures.Name.ARROW_TOP_LEFT));
                 _arrowBottomRight.setSize(20, 20);
@@ -322,7 +324,7 @@ public class TerrainActor extends Table {
                         coords.y);
                 _arrowBottomRight.setVisible(false);
                 _arrowBottomRight.addAction(forever(sequence(Actions.moveBy(-3, 3, 0.3f), Actions.moveBy(3, -3, 0.3f))));
-                _this.getStage().addActor(_arrowBottomRight);
+                root.addActor(_arrowBottomRight);
 
                 _arrowTopRight = new Image(_assets.getTextures().get(Textures.Name.ARROW_BOTTOM_LEFT));
                 _arrowTopRight.setSize(20, 20);
@@ -331,7 +333,7 @@ public class TerrainActor extends Table {
                         coords.y + _this.getHeight() - _arrowTopRight.getHeight());
                 _arrowTopRight.setVisible(false);
                 _arrowTopRight.addAction(forever(sequence(Actions.moveBy(-3, -3, 0.3f), Actions.moveBy(3, 3, 0.3f))));
-                _this.getStage().addActor(_arrowTopRight);
+                root.addActor(_arrowTopRight);
 
                 _arrowTopLeft = new Image(_assets.getTextures().get(Textures.Name.ARROW_BOTTOM_RIGHT));
                 _arrowTopLeft.setSize(20, 20);
@@ -340,7 +342,7 @@ public class TerrainActor extends Table {
                         coords.y + _this.getHeight() - _arrowTopLeft.getHeight());
                 _arrowTopLeft.setVisible(false);
                 _arrowTopLeft.addAction(forever(sequence(Actions.moveBy(3, -3, 0.3f), Actions.moveBy(-3, 3, 0.3f))));
-                _this.getStage().addActor(_arrowTopLeft);
+                root.addActor(_arrowTopLeft);
             }
         });
     }

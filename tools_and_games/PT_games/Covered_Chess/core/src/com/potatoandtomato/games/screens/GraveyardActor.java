@@ -1,6 +1,7 @@
 package com.potatoandtomato.games.screens;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -8,15 +9,19 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.potatoandtomato.common.GameCoordinator;
+import com.potatoandtomato.common.utils.Pair;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.assets.*;
 import com.potatoandtomato.games.controls.DummyButton;
 import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
+import com.potatoandtomato.games.enums.Status;
 import com.potatoandtomato.games.models.BoardModel;
 import com.potatoandtomato.games.models.GraveModel;
 import com.potatoandtomato.games.services.SoundsWrapper;
 import com.potatoandtomato.games.services.Texts;
+
+import java.util.ArrayList;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -251,21 +256,86 @@ public class GraveyardActor extends Table {
         Table table = new Table();
         table.align(Align.topLeft);
         table.padLeft(10);
-        table.padRight(10);
+        table.padRight(15);
 
         ScrollPane scrollPane = new ScrollPane(table);
 
-        Label.LabelStyle labelStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HANDWRITING_25_REGULAR), Color.BLACK);
+        Table chainImageTable = new Table();
+        chainImageTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.FOOD_CHAIN)));
 
-        Label label1 = new Label(_texts.getTutorialTexts(), labelStyle);
+        Label.LabelStyle labelStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HANDWRITING_25_REGULAR_S_000000_1_1), Color.BLACK);
+        Label label1 = new Label(_texts.tutorialAboutFoodChain(), labelStyle);
         label1.setWrap(true);
         label1.setAlignment(Align.left);
 
         table.add(label1).expandX().fillX();
         table.row();
+        table.add(chainImageTable).center();
+        for(int i = 0; i < 4; i++){
+            table.row();
+            table.add(getTutorialSegment(i)).expandX().fillX();
+        }
+
+
 
         rootTable.add(scrollPane).expand().fill();
         return rootTable;
+    }
+
+    private Table getTutorialSegment(int i){
+        Label.LabelStyle labelStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HANDWRITING_25_REGULAR_S_000000_1_1), Color.BLACK);
+
+        Table segmentTable = new Table();
+        Table contentTable = new Table();
+        contentTable.align(Align.top);
+        Image separator = new Image(_assets.getTextures().get(Textures.Name.GREY_HORIZONTAL_LINE));
+        separator.setColor(Color.BLACK);
+        segmentTable.add(separator).colspan(2).padTop(10).padBottom(10).expandX().fillX();
+        segmentTable.row();
+        segmentTable.add(contentTable).expandX().fillX().padLeft(15).padRight(15);
+
+
+        if(i == 0){
+            Image swipeImage = new Image(_assets.getTextures().get(Textures.Name.SWIPE_TO_OPEN));
+            Label swipeLabel = new Label(_texts.tutorialAboutSwipeOpen(), labelStyle);
+            contentTable.add(swipeImage).padRight(10);
+            contentTable.add(swipeLabel).expandX().fillX().top();
+        }
+        else if(i == 1){
+            Image dragImage = new Image(_assets.getTextures().get(Textures.Name.DRAG_TUTORIAL));
+            Label dragLabel = new Label(_texts.tutorialAboutDrag(), labelStyle);
+            dragLabel.setWrap(true);
+            contentTable.add(dragImage);
+            contentTable.row();
+            contentTable.add(dragLabel).expandX().fillX().top().padTop(-10);
+        }
+        else if(i == 2){
+            ArrayList<Pair<TextureRegion, String>> pairs = new ArrayList();
+            pairs.add(new Pair<TextureRegion, String>(_assets.getTextures().getStatus(Status.POISON), _texts.tutorialAboutPoison()));
+            pairs.add(new Pair<TextureRegion, String>(_assets.getTextures().getStatus(Status.DECREASE), _texts.tutorialAboutAttackDown()));
+            pairs.add(new Pair<TextureRegion, String>(_assets.getTextures().getStatus(Status.VENGEFUL), _texts.tutorialAboutAttackUp()));
+            pairs.add(new Pair<TextureRegion, String>(_assets.getTextures().getStatus(Status.PARALYZED), _texts.tutorialAboutParalyzed()));
+            pairs.add(new Pair<TextureRegion, String>(_assets.getTextures().getStatus(Status.ANGRY), _texts.tutorialAboutAggressive()));
+            pairs.add(new Pair<TextureRegion, String>(_assets.getTextures().getStatus(Status.KING), _texts.tutorialAboutKing()));
+
+            for(Pair<TextureRegion, String> pair : pairs){
+                Image statusImage = new Image(pair.getFirst());
+                Label statusLabel = new Label(pair.getSecond(), labelStyle);
+                statusLabel.setWrap(true);
+                contentTable.add(statusImage).padRight(10).top().padTop(10);
+                contentTable.add(statusLabel).expandX().fillX().top();
+                contentTable.row().padBottom(10);
+            }
+        }
+        else if(i == 3){
+            Label endLabel = new Label(_texts.tutorialEnd(), labelStyle);
+            endLabel.setWrap(true);
+            endLabel.setAlignment(Align.center);
+            contentTable.add(endLabel).expandX().fillX().top().padBottom(20);
+        }
+
+
+        return segmentTable;
     }
 
     public void modelChanged(final GraveModel graveModel){

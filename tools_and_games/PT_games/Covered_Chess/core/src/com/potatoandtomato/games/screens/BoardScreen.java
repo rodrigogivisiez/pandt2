@@ -237,7 +237,9 @@ public class BoardScreen extends GameScreen {
         return _endGameRootTable;
     }
 
-
+    public Table getRoot() {
+        return _root;
+    }
 
     @Override
     public void resize(int width, int height) {

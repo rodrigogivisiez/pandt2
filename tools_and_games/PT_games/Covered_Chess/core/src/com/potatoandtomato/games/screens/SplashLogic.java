@@ -14,6 +14,7 @@ public class SplashLogic {
     private SplashActor _splashActor;
     private Services _services;
     private Runnable _onFinish;
+    private boolean finished;
 
     public SplashLogic(GameCoordinator coordinator, Runnable onFinish, Services services) {
         this._services = services;
@@ -32,6 +33,7 @@ public class SplashLogic {
                     public void run() {
                         _splashActor.remove();
                         _services.getSoundsWrapper().playTheme();
+                        finished = true;
                         _onFinish.run();
                     }
                 });
@@ -42,10 +44,15 @@ public class SplashLogic {
     public void continueGame(){
         _splashActor.remove();
         _services.getSoundsWrapper().playTheme();
+        finished = true;
         _onFinish.run();
     }
 
     public SplashActor getSplashActor() {
         return _splashActor;
+    }
+
+    public boolean isFinished() {
+        return finished;
     }
 }

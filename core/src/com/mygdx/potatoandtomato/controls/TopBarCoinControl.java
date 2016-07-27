@@ -23,9 +23,8 @@ import com.mygdx.potatoandtomato.utils.Sizes;
 import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.common.utils.Threadings;
 
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
 
 /**
  * Created by SiongLeng on 14/6/2016.
@@ -39,6 +38,8 @@ public class TopBarCoinControl extends Table {
     private SoundsPlayer soundsPlayer;
     private boolean disableClick;
     private boolean shown;
+    private Image freeCoinPointImage;
+
 
     public TopBarCoinControl(Assets assets, int myCoinCount, boolean disableClick, PTScreen ptScreen, SoundsPlayer soundsPlayer) {
         this.assets = assets;
@@ -163,6 +164,30 @@ public class TopBarCoinControl extends Table {
             });
         }
     }
+
+    public void showFreeCoinPointing(){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                freeCoinPointImage = new Image(assets.getTextures().get(Textures.Name.FREE_COIN_POINT_RIGHT));
+                freeCoinPointImage.setPosition(-freeCoinPointImage.getPrefWidth() - 20, -_this.getPrefHeight() /2);
+                freeCoinPointImage.addAction(forever(sequence(Actions.moveBy(10f, 0f, 0.7f), Actions.moveBy(-10f, 0f, 0.7f))));
+                _this.addActor(freeCoinPointImage);
+            }
+        });
+    }
+
+    public void hideFreeCoinPointing(){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(freeCoinPointImage != null){
+                    freeCoinPointImage.remove();
+                }
+            }
+        });
+    }
+
 
     public void setShown(boolean shown) {
         this.shown = shown;

@@ -23,9 +23,11 @@ import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.absints.IDownloader;
 import com.potatoandtomato.common.absints.IPTGame;
 import com.potatoandtomato.common.absints.PTAssetsManager;
+import com.potatoandtomato.common.absints.TutorialPartListener;
 import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
+import com.potatoandtomato.common.enums.GestureType;
 import com.potatoandtomato.common.enums.SpeechActionType;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.models.*;
@@ -105,7 +107,7 @@ public class PTGame extends Game implements IPTGame {
 										_soundsPlayer, _recorder, _batch, _game, _preferences);
 				_confirm = new Confirm(_batch, _game, _assets, _broadcaster);
 				_notification = new Notification(_batch, _assets, _game, _broadcaster);
-				_tutorials = new Tutorials(_game, _batch, _soundsPlayer, _assets, _broadcaster);
+				_tutorials = new Tutorials(_game, _batch, _soundsPlayer, _assets, _broadcaster, _preferences, _texts);
 				_restfulApi = new RestfulApi();
 				_connectionWatcher = new ConnectionWatcher(_gamingKit, _broadcaster, _confirm, _texts, _profile);
 				_dataCaches = new DataCaches(_database, _restfulApi, _profile);
@@ -129,8 +131,12 @@ public class PTGame extends Game implements IPTGame {
 					public void run() {
 						setScreen(_screen);
 						_screen.toScene(SceneEnum.BOOT);
+
 					}
 				});
+
+
+
 
 			}
 		});

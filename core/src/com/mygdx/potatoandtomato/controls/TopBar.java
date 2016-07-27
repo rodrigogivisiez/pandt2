@@ -127,4 +127,7 @@ public class TopBar {
         topBarCoinControl.setShown(false);
     }
 
+    public TopBarCoinControl getTopBarCoinControl() {
+        return topBarCoinControl;
+    }
 }

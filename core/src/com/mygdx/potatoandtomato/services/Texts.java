@@ -180,8 +180,8 @@ public class Texts {
     public String notificationYouKicked() { return "You have been kicked from the room, the game will now be abandoned.";}
     public String notificationKicked() { return "%s has been kicked from the room.";}
 
-    public String confirmAbandonNoCons(){ return "Are you sure you want to abandon this game? \n\n(No impact on streak)";}
-    public String confirmAbandonLoseStreak(){ return "Are you sure you want to abandon this game? \n\n(You will lose your winning streak)";}
+    public String confirmAbandonNoCons(){ return "Are you sure you want to abandon this game? \n(You will not be penalized)";}
+    public String confirmAbandonLoseStreak(){ return "Are you sure you want to abandon this game? \n(You will be penalized by losing your winning streak)";}
     public String confirmCannotAbandon(){ return "Sorry, the game cannot be abandoned now this way.";}
 
     ///////////////////////////////////////////////////////////////
@@ -215,10 +215,40 @@ public class Texts {
     public String coinsInsertedTabTitle() { return "Coins Inserted";}
     public String buyCoinsTabTitle() { return "Buy Coins"; }
 
+    ///////////////////////////////////////////////////////////////////////////////
+    //Tutorials
+    //////////////////////////////////////////////////////////////////////////////////
+    public String btnTextSkipTutorial() { return "Skip Tutorial"; }
+    public String btnTextStartTutorial() { return "Start Tutorial"; }
+
+    public String tutorialWelcomeMessage() { return "Welcome to P&T, let us guide you how to create your first game.";}
+    public String tutorialAboutCreateGame() { return "Tap Create Game button";}
+
+    public String tutorialAboutGameList() { return "Here you can see all P&T games, lets try create a game.";}
+    public String tutorialTapChooseGame() { return "Tap this game";}
+    public String tutorialTapCreateGame() { return "Tap to create game";}
+
+    public String tutorialAboutRoom() { return "This is the game room, you can invite your friends, chat with room users here, we leave you to explore more yourself, now let's try to start the game!";}
+    public String tutorialAboutStartGame() { return "Lets try start game!";}
+
+
+    public String tutorialAboutCoinMachine() { return "P&T use coins to start a game.";}
+    public String tutorialAboutCoinCount() { return "This shows you coins number needed";}
+    public String tutorialAboutInsertCoin() { return "Now try to insert coin here";}
+    public String tutorialAboutNoCoin() { return "Looks like you don't have any coin, let's see if there is any free coins in mum's purse....";}
+
+    public String tutorialAboutTapMumPurse() { return "Tap mum purse";}
+    public String tutorialAboutTapGetFreeCoins() { return "Tap to free coins from mum purse!";}
+
+    public String tutorialAboutGetCoinsSuccess() { return "Now you should have enough coins to start game, mum's purse grow coin over time, remember to come back and retrieve it frequently, or you can visit the coin shop to purchase coins if you run out of it.";}
+
+    public String tutorialConclude() { return "Do remember that you can always access coin shop by tapping the coin icon for various free coin method other than mum's purse, that conclude our tutorial, enjoy the games!";}
+
+
     ///////////////////////////////////////////////////////////////////////
     //Connection related
     /////////////////////////////////////////////////////////////////////////
-    public String confirmLostConnection() {return "Lost connection and trying to reconnect, \n%s secs remaining";}
+    public String confirmLostConnection() { return "Lost connection and trying to reconnect, \n%s secs remaining";}
     public String confirmConnectionRecovered() {return "Connection established, trying to resume game session, \n%s secs remaining";}
     public String confirmNoConnection() { return "You have been disconnected, please check your connection."; }
 
@@ -387,7 +417,7 @@ public class Texts {
         int style = MathUtils.random(0, 1);
         if(style == 0){
             potatoSpeechActions.add(new SpeechAction("No more coin! Let's get something from Mum's purse..", SpeechActionType.Add));
-            tomatoSpeechActions.add(new SpeechAction(SpeechActionType.Delay, 2000));
+            tomatoSpeechActions.add(new SpeechAction(SpeechActionType.Delay, 4300));
             tomatoSpeechActions.add(new SpeechAction("Or give us your support by buying some coins!", SpeechActionType.Add));
         }
         else if(style == 1){

@@ -21,6 +21,7 @@ public class Textures extends TextureAssets {
         return get(chessTypeString);
     }
 
+
     public TextureRegion getStatus(Status status){
         return get("STATUS_" + status.name());
     }
@@ -38,7 +39,8 @@ public class Textures extends TextureAssets {
         YELLOW_LION_SPLASH, RED_LION_SPLASH, YELLOW_TIGER_SPLASH, RED_TIGER_SPLASH, YELLOW_WOLF_SPLASH, RED_WOLF_SPLASH,
         CRACK,
         YOU_LOSE_YELLOW, YOU_WIN_YELLOW, YOU_LOSE_RED, YOU_WIN_RED,
-        TUTORIAL_BG,
+        TUTORIAL_BG, FOOD_CHAIN, GREY_HORIZONTAL_LINE, SWIPE_TO_OPEN, DRAG_TUTORIAL,
+        MOUSE_TUTORIAL, CAT_TUTORIAL, DOG_TUTORIAL, WOLF_TUTORIAL, TIGER_TUTORIAL, LION_TUTORIAL, ELEPHANT_TUTORIAL
     }
 
 

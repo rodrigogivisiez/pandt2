@@ -75,6 +75,7 @@ public class Coins implements ICoins {
     private boolean coinsAlreadyEnough;
     private boolean waitingDeductCoinResult;
     private boolean cancelPutCoins;
+    private boolean disableSpeech;
     private ConcurrentHashMap<String, Integer> currentUsersPutCoinNumberMap;
     private CoinListener coinListener;
     private ShopProducts currentShopProduct;
@@ -467,6 +468,8 @@ public class Coins implements ICoins {
     //about speeching
     ////////////////////////////////////////////////////////
     private void startSpeech(final CoinMachineTabType coinMachineTabType){
+        if(disableSpeech) return;
+
         ArrayList<SpeechAction> potatoSpeechActions = null, tomatoSpeechActions = null;
         if(coinMachineTabType == CoinMachineTabType.PlayersInsertCoinStatus){
             potatoSpeechActions = potatoDefaultSpeechActions;
@@ -1037,4 +1040,11 @@ public class Coins implements ICoins {
          return !noCoinUserIds.contains(userId);
     }
 
+    public CoinMachineControl getCoinMachineControl() {
+        return coinMachineControl;
+    }
+
+    public void setDisableSpeech(boolean disableSpeech) {
+        this.disableSpeech = disableSpeech;
+    }
 }

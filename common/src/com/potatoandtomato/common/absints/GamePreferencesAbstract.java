@@ -11,4 +11,5 @@ public abstract class GamePreferencesAbstract {
 
     public abstract void deleteGamePref(String key);
 
+    public abstract String appendAbbrToKey(String key);
 }

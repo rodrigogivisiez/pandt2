@@ -6,112 +6,126 @@ filter: Linear,Linear
 repeat: none
 ARROW_BOTTOM_LEFT
   rotate: false
-  xy: 270, 2
+  xy: 1997, 556
   size: 20, 20
   orig: 20, 20
   offset: 0, 0
   index: -1
 ARROW_BOTTOM_RIGHT
   rotate: false
-  xy: 1019, 307
+  xy: 1997, 534
   size: 20, 20
   orig: 20, 20
   offset: 0, 0
   index: -1
 ARROW_DOWN
   rotate: false
-  xy: 1019, 288
+  xy: 1931, 336
   size: 20, 17
   orig: 20, 17
   offset: 0, 0
   index: -1
 ARROW_LEFT
   rotate: false
-  xy: 292, 2
+  xy: 960, 270
   size: 17, 20
   orig: 17, 20
   offset: 0, 0
   index: -1
 ARROW_RIGHT
   rotate: false
-  xy: 678, 189
+  xy: 979, 279
   size: 17, 20
   orig: 17, 20
   offset: 0, 0
   index: -1
 ARROW_TOP_LEFT
   rotate: false
-  xy: 621, 78
+  xy: 1344, 275
   size: 20, 20
   orig: 20, 20
   offset: 0, 0
   index: -1
 ARROW_TOP_RIGHT
   rotate: false
-  xy: 1100, 300
+  xy: 1366, 275
   size: 20, 20
   orig: 20, 20
   offset: 0, 0
   index: -1
 ARROW_UP
   rotate: false
-  xy: 1122, 303
+  xy: 1953, 336
   size: 20, 17
   orig: 20, 17
   offset: 0, 0
   index: -1
 BATTLE_CLOUD
   rotate: false
-  xy: 1895, 661
+  xy: 759, 214
   size: 77, 76
   orig: 77, 76
   offset: 0, 0
   index: -1
 BATTLE_EFFECT
   rotate: false
-  xy: 1895, 739
+  xy: 1895, 436
   size: 94, 80
   orig: 94, 80
   offset: 0, 0
   index: -1
 BLACK_BG
   rotate: false
-  xy: 1895, 587
+  xy: 838, 218
   size: 58, 72
   orig: 58, 72
   offset: 0, 0
   index: -1
 CHESS_SHIELD
   rotate: false
-  xy: 84, 4
+  xy: 252, 4
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: -1
 CLOSE_ICON
   rotate: false
-  xy: 270, 24
+  xy: 1997, 943
   size: 40, 40
   orig: 40, 40
   offset: 0, 0
   index: -1
 CRACK
   rotate: false
-  xy: 698, 231
+  xy: 979, 301
   size: 101, 79
   orig: 101, 79
   offset: 0, 0
   index: -1
+DRAG_TUTORIAL
+  rotate: false
+  xy: 806, 292
+  size: 171, 88
+  orig: 171, 88
+  offset: 0, 0
+  index: -1
 EMPTY
   rotate: false
-  xy: 2, 2
+  xy: 9, 2
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
+FOOD_CHAIN
+  rotate: false
+  xy: 312, 70
+  size: 263, 240
+  orig: 263, 240
+  offset: 0, 0
+  index: -1
 FULL_BLACK
   rotate: false
-  xy: 1955, 513
+  xy: 998, 283
   size: 20, 16
   orig: 20, 16
   offset: 0, 0
@@ -132,98 +146,105 @@ GLOWING_TILE
   index: -1
 GLOW_CHESS
   rotate: false
-  xy: 146, 4
+  xy: 438, 8
   size: 60, 60
   orig: 60, 60
   offset: 0, 0
   index: -1
 GRAVE_BG
   rotate: false
-  xy: 312, 10
+  xy: 577, 10
   size: 180, 300
   orig: 180, 300
   offset: 0, 0
   index: -1
 GRAVE_ICON
   rotate: false
-  xy: 1957, 493
+  xy: 960, 250
   size: 17, 18
   orig: 17, 18
   offset: 0, 0
   index: -1
 GREEN_TILE
   rotate: false
-  xy: 806, 321
+  xy: 2, 5
   size: 80, 59
   orig: 80, 59
   offset: 0, 0
   index: -1
+GREY_HORIZONTAL_LINE
+  rotate: false
+  xy: 2, 2
+  size: 5, 1
+  orig: 5, 1
+  offset: 0, 0
+  index: -1
 POINT_LEFT_ICON
   rotate: false
-  xy: 528, 9
+  xy: 759, 292
   size: 34, 18
   orig: 34, 18
   offset: 0, 0
   index: -1
 POINT_RIGHT_ICON
   rotate: false
-  xy: 1991, 730
+  xy: 1895, 335
   size: 34, 18
   orig: 34, 18
   offset: 0, 0
   index: -1
 PREVIEW_CHESS
   rotate: false
-  xy: 1895, 327
+  xy: 759, 2
   size: 58, 58
   orig: 58, 58
   offset: 0, 0
   index: -1
 PREVIEW_ICON
   rotate: false
-  xy: 1955, 624
+  xy: 1997, 666
   size: 24, 35
   orig: 24, 35
   offset: 0, 0
   index: -1
 RED_CAT
   rotate: false
-  xy: 596, 100
+  xy: 1531, 302
   size: 46, 28
   orig: 46, 28
   offset: 0, 0
   index: -1
 RED_CHESS
   rotate: false
-  xy: 1042, 322
+  xy: 1164, 276
   size: 58, 58
   orig: 58, 58
   offset: 0, 0
   index: -1
 RED_CHESS_SELECTED
   rotate: false
-  xy: 208, 3
+  xy: 898, 229
   size: 60, 61
   orig: 60, 61
   offset: 0, 0
   index: -1
 RED_CHESS_TOTAL
   rotate: false
-  xy: 644, 94
+  xy: 1997, 739
   size: 34, 34
   orig: 34, 34
   offset: 0, 0
   index: -1
 RED_DOG
   rotate: false
-  xy: 758, 158
+  xy: 1486, 303
   size: 43, 31
   orig: 43, 31
   offset: 0, 0
   index: -1
 RED_ELEPHANT
   rotate: false
-  xy: 1991, 784
+  xy: 1394, 302
   size: 44, 32
   orig: 44, 32
   offset: 0, 0
@@ -237,49 +258,49 @@ RED_LION
   index: -1
 RED_LION_SPLASH
   rotate: false
-  xy: 494, 29
+  xy: 1082, 301
   size: 80, 79
   orig: 80, 79
   offset: 0, 0
   index: -1
 RED_MOUSE
   rotate: false
-  xy: 1997, 902
+  xy: 1997, 899
   size: 36, 42
   orig: 36, 42
   offset: 0, 0
   index: -1
 RED_TIGER
   rotate: false
-  xy: 972, 300
+  xy: 1627, 303
   size: 45, 27
   orig: 45, 27
   offset: 0, 0
   index: -1
 RED_TIGER_SPLASH
   rotate: false
-  xy: 494, 211
+  xy: 1895, 821
   size: 100, 99
   orig: 100, 99
   offset: 0, 0
   index: -1
 RED_TILE
   rotate: false
-  xy: 2, 5
+  xy: 84, 5
   size: 80, 59
   orig: 80, 59
   offset: 0, 0
   index: -1
 RED_WOLF
   rotate: false
-  xy: 758, 191
+  xy: 1997, 815
   size: 37, 38
   orig: 37, 38
   offset: 0, 0
   index: -1
 RED_WOLF_SPLASH
   rotate: false
-  xy: 1895, 821
+  xy: 1895, 720
   size: 100, 99
   orig: 100, 99
   offset: 0, 0
@@ -293,56 +314,56 @@ SPLASH_BG
   index: -1
 STAR
   rotate: false
-  xy: 1974, 722
+  xy: 166, 2
   size: 15, 15
   orig: 15, 15
   offset: 0, 0
   index: -1
 STATUS_ANGRY
   rotate: false
-  xy: 1955, 560
+  xy: 1796, 301
   size: 29, 29
   orig: 29, 29
   offset: 0, 0
   index: -1
 STATUS_DECREASE
   rotate: false
-  xy: 1955, 531
+  xy: 1861, 303
   size: 29, 27
   orig: 29, 27
   offset: 0, 0
   index: -1
 STATUS_INJURED
   rotate: false
-  xy: 643, 65
+  xy: 1997, 607
   size: 28, 27
   orig: 28, 27
   offset: 0, 0
   index: -1
 STATUS_KING
   rotate: false
-  xy: 494, 2
+  xy: 1827, 305
   size: 32, 25
   orig: 32, 25
   offset: 0, 0
   index: -1
 STATUS_PARALYZED
   rotate: false
-  xy: 1955, 591
+  xy: 1766, 299
   size: 28, 31
   orig: 28, 31
   offset: 0, 0
   index: -1
 STATUS_POISON
   rotate: false
-  xy: 1071, 292
+  xy: 1997, 636
   size: 27, 28
   orig: 27, 28
   offset: 0, 0
   index: -1
 STATUS_VENGEFUL
   rotate: false
-  xy: 1041, 293
+  xy: 1997, 578
   size: 28, 27
   orig: 28, 27
   offset: 0, 0
@@ -354,16 +375,23 @@ SUDDEN_DEATH_GAME_BG
   orig: 400, 710
   offset: 0, 0
   index: -1
+SWIPE_TO_OPEN
+  rotate: false
+  xy: 759, 136
+  size: 67, 76
+  orig: 67, 76
+  offset: 0, 0
+  index: -1
 TRANS_BLACK_BG
   rotate: false
-  xy: 1895, 513
+  xy: 759, 62
   size: 58, 72
   orig: 58, 72
   offset: 0, 0
   index: -1
 TRANS_DARK_BROWN_ROUNDED_BG
   rotate: false
-  xy: 888, 335
+  xy: 166, 19
   size: 84, 45
   orig: 84, 45
   offset: 0, 0
@@ -377,70 +405,70 @@ TUTORIAL_BG
   index: -1
 TUTORIAL_ICON
   rotate: false
-  xy: 678, 169
+  xy: 979, 259
   size: 17, 18
   orig: 17, 18
   offset: 0, 0
   index: -1
 UNKNOWN_CHESS
   rotate: false
-  xy: 1102, 322
+  xy: 1224, 276
   size: 58, 58
   orig: 58, 58
   offset: 0, 0
   index: -1
 UNKNOWN_CHESS_SELECTED
   rotate: false
-  xy: 1895, 450
+  xy: 314, 7
   size: 60, 61
   orig: 60, 61
   offset: 0, 0
   index: -1
 YELLOW_CAT
   rotate: false
-  xy: 888, 305
+  xy: 1579, 302
   size: 46, 28
   orig: 46, 28
   offset: 0, 0
   index: -1
 YELLOW_CHESS
   rotate: false
-  xy: 698, 171
+  xy: 1284, 276
   size: 58, 58
   orig: 58, 58
   offset: 0, 0
   index: -1
 YELLOW_CHESS_SELECTED
   rotate: false
-  xy: 1895, 387
+  xy: 376, 7
   size: 60, 61
   orig: 60, 61
   offset: 0, 0
   index: -1
 YELLOW_CHESS_TOTAL
   rotate: false
-  xy: 936, 299
+  xy: 1997, 703
   size: 34, 34
   orig: 34, 34
   offset: 0, 0
   index: -1
 YELLOW_DOG
   rotate: false
-  xy: 576, 67
+  xy: 1721, 299
   size: 43, 31
   orig: 43, 31
   offset: 0, 0
   index: -1
 YELLOW_ELEPHANT
   rotate: false
-  xy: 1991, 750
+  xy: 1440, 302
   size: 44, 32
   orig: 44, 32
   offset: 0, 0
   index: -1
 YELLOW_GRADIENT_BOX
   rotate: false
-  xy: 974, 329
+  xy: 500, 17
   size: 66, 51
   split: 29, 27, 19, 20
   pad: 0, 0, 0, 0
@@ -449,49 +477,49 @@ YELLOW_GRADIENT_BOX
   index: -1
 YELLOW_LION
   rotate: false
-  xy: 1997, 946
+  xy: 1344, 297
   size: 48, 37
   orig: 48, 37
   offset: 0, 0
   index: -1
 YELLOW_LION_SPLASH
   rotate: false
-  xy: 596, 130
+  xy: 1895, 355
   size: 80, 79
   orig: 80, 79
   offset: 0, 0
   index: -1
 YELLOW_MOUSE
   rotate: false
-  xy: 1997, 858
+  xy: 1997, 855
   size: 36, 42
   orig: 36, 42
   offset: 0, 0
   index: -1
 YELLOW_TIGER
   rotate: false
-  xy: 576, 38
+  xy: 1674, 303
   size: 45, 27
   orig: 45, 27
   offset: 0, 0
   index: -1
 YELLOW_TIGER_SPLASH
   rotate: false
-  xy: 494, 110
+  xy: 1895, 619
   size: 100, 99
   orig: 100, 99
   offset: 0, 0
   index: -1
 YELLOW_WOLF
   rotate: false
-  xy: 1997, 818
+  xy: 1997, 775
   size: 37, 38
   orig: 37, 38
   offset: 0, 0
   index: -1
 YELLOW_WOLF_SPLASH
   rotate: false
-  xy: 596, 211
+  xy: 1895, 518
   size: 100, 99
   orig: 100, 99
   offset: 0, 0

@@ -29,7 +29,7 @@ public class Fonts extends FontAssets {
 
 
     public enum FontId{
-        HANDWRITING_25_REGULAR,
+        HANDWRITING_25_REGULAR_S_000000_1_1,
 
         MYRIAD_S_REGULAR,
         MYRIAD_M_REGULAR,

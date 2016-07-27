@@ -139,6 +139,7 @@ public class BootScene extends SceneAbstract {
 
         _tickIcon = new Image(_assets.getTextures().get(Textures.Name.TICK_ICON));
         _crossIcon = new Image(_assets.getTextures().get(Textures.Name.CROSS_ICON));
+
     }
 
     public void reset(){

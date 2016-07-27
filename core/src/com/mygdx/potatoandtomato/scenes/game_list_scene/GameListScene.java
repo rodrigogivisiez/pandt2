@@ -43,26 +43,6 @@ public class GameListScene extends SceneAbstract {
         _hostToRoomIdMaps = new HashMap();
     }
 
-    public BtnEggDownward getNewGameButton() {
-        return _newGameButton;
-    }
-
-    public BtnEggDownward getJoinGameButton() {
-        return _joinGameButton;
-    }
-
-    public BtnEggDownward getContinueGameButton() {
-        return _continueGameButton;
-    }
-
-    public Button getSettingsButton() {
-        return _settingsButton;
-    }
-
-    public Button getLeaderBoardsButton() {
-        return _leaderBoardsButton;
-    }
-
     @Override
     public void populateRoot() {
         topBar = new TopBar(_root, _texts.gamesListSceneTitle(), true, _assets, _screen, _services.getCoins());
@@ -278,6 +258,31 @@ public class GameListScene extends SceneAbstract {
         });
     }
 
+    public BtnEggDownward getNewGameButton() {
+        return _newGameButton;
+    }
 
+    public BtnEggDownward getJoinGameButton() {
+        return _joinGameButton;
+    }
 
+    public BtnEggDownward getContinueGameButton() {
+        return _continueGameButton;
+    }
+
+    public Button getSettingsButton() {
+        return _settingsButton;
+    }
+
+    public Button getLeaderBoardsButton() {
+        return _leaderBoardsButton;
+    }
+
+    public Table getLeaderBoardsTable() {
+        return _leaderBoardsTable;
+    }
+
+    public Table getGameListTable() {
+        return _gameListTable;
+    }
 }

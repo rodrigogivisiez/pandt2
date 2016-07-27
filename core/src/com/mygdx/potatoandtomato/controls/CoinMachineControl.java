@@ -58,7 +58,7 @@ public class CoinMachineControl {
     private ScrollPane playersScrollPane;
     private Table retrieveCoinTable;
     private Table purchaseCoinTable;
-    private Table coinInsertRootTable, coinInsertAnimationTable;
+    private Table coinInsertRootTable, toInsertCoinsRootTable, coinInsertAnimationTable;
     private TextButton buyCoinsTabButton, retrieveCoinsTabButton, playerInsertCoinStatusTabButton;
     private TextButton retrieveCoinsButton, dismissButton;
     private Label toInsertCoinLabel;
@@ -1031,7 +1031,7 @@ public class CoinMachineControl {
 
         coinInsertRootTable.add(coinInsertTable).expand().fill().pad(padSize);
 
-        Table toInsertCoinsRootTable = new Table();
+        toInsertCoinsRootTable = new Table();
         toInsertCoinsRootTable.setBackground(new TextureRegionDrawable(assets.getTextures().get(Textures.Name.COIN_MACHINE_USERS_BG)));
 
         Image coinIcon = new Image(assets.getTextures().get(Textures.Name.PURSE_COIN_NORMAL));
@@ -1120,12 +1120,14 @@ public class CoinMachineControl {
         Table root = new Table();
         root.align(Align.top);
 
-        Label.LabelStyle nextCoinLabelStyle = new Label.LabelStyle(
+        Label.LabelStyle nextCoinLabelStyle1 = new Label.LabelStyle(
+                assets.getFonts().get(Fonts.FontId.ARCADE_XS_REGULAR), Color.valueOf("fff08d"));
+        Label.LabelStyle nextCoinLabelStyle2 = new Label.LabelStyle(
                 assets.getFonts().get(Fonts.FontId.ARCADE_S_REGULAR), Color.valueOf("fff08d"));
 
-        Label nextCoinLabelTitle = new Label(texts.growthRateForShop(), nextCoinLabelStyle);
+        Label nextCoinLabelTitle = new Label(texts.growthRateForShop(), nextCoinLabelStyle1);
         nextCoinLabelTitle.setAlignment(Align.left);
-        Label nextCoinLabel = new Label("-", nextCoinLabelStyle);
+        Label nextCoinLabel = new Label("-", nextCoinLabelStyle2);
         nextCoinLabel.setName("nextCoinLabel");
         nextCoinLabel.setAlignment(Align.left);
 
@@ -1241,8 +1243,14 @@ public class CoinMachineControl {
         return dismissButton;
     }
 
+    public Table getToInsertCoinsRootTable() {
+        return toInsertCoinsRootTable;
+    }
+
     public String getClassTag(){
         return this.getClass().getName();
     }
+
+
 
 }

@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.utils.Align;
@@ -45,7 +46,7 @@ public class TerrainLogic {
     private GameDataController _gameDataController;
     private SoundsWrapper _soundsWrapper;
 
-    public TerrainLogic(TerrainModel _terrainModel, MyAssets _assets,
+    public TerrainLogic(Table root, TerrainModel _terrainModel, MyAssets _assets,
                         GameCoordinator _coordinator, ChessModel chessModel,
                         SoundsWrapper soundsWrapper, GameDataController gameDataController,
                         BattleRef battleRef) {
@@ -58,7 +59,7 @@ public class TerrainLogic {
         this._battleRefs = battleRef;
 
         chessLogic = new ChessLogic(chessModel, _assets, soundsWrapper, gameDataController);
-        terrainActor = new TerrainActor(_assets, chessLogic.getChessActor(), _soundsWrapper);
+        terrainActor = new TerrainActor(root, _assets, chessLogic.getChessActor(), _soundsWrapper);
 
         setListeners();
     }

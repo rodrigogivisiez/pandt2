@@ -33,7 +33,7 @@ public class Services {
     SoundsPlayer _soundsPlayer;
     VersionControl _versionControl;
     Broadcaster _broadcaster;
-    ITutorials _tutorials;
+    Tutorials _tutorials;
     IRestfulApi _restfulApi;
     ConnectionWatcher _connectionWatcher;
     Coins _coins;
@@ -43,7 +43,7 @@ public class Services {
                     Profile profile, IDatabase database, Shaders shaders, GamingKit gamingKit, IDownloader downloader,
                     Chat chat, Socials socials, GCMSender gcmSender, Confirm confirm, Notification notification,
                     Recorder recorder, SoundsPlayer soundsPlayer, VersionControl versionControl,
-                    Broadcaster broadcaster, ITutorials tutorials, IRestfulApi restfulApi, ConnectionWatcher connectionWatcher,
+                    Broadcaster broadcaster, Tutorials tutorials, IRestfulApi restfulApi, ConnectionWatcher connectionWatcher,
                     Coins coins, DataCaches dataCaches) {
         _texts = texts;
         _assets = assets;
@@ -93,11 +93,11 @@ public class Services {
         this._restfulApi = _restfulApi;
     }
 
-    public ITutorials getTutorials() {
+    public Tutorials getTutorials() {
         return _tutorials;
     }
 
-    public void setTutorials(ITutorials _tutorials) {
+    public void setTutorials(Tutorials _tutorials) {
         this._tutorials = _tutorials;
     }
 

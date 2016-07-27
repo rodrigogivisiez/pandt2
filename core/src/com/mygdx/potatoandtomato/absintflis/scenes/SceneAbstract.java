@@ -74,4 +74,8 @@ public abstract class SceneAbstract implements Disposable {
         disposed = true;
         if(_root != null) _root.dispose();
     }
+
+    public TopBar getTopBar() {
+        return topBar;
+    }
 }

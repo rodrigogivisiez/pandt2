@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.absints.BackKeyListener;
+import com.potatoandtomato.common.absints.TutorialPartListener;
 import com.potatoandtomato.common.absints.UserStateListener;
 import com.potatoandtomato.common.models.ScoreDetails;
 import com.potatoandtomato.common.models.Team;
@@ -19,15 +20,13 @@ import com.potatoandtomato.games.assets.Sounds;
 import com.potatoandtomato.games.enums.ActionType;
 import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
-import com.potatoandtomato.games.helpers.ArrayLists;
-import com.potatoandtomato.games.helpers.GameDataContract;
-import com.potatoandtomato.games.helpers.RoomMsgHandler;
-import com.potatoandtomato.games.helpers.Terrains;
+import com.potatoandtomato.games.helpers.*;
 import com.potatoandtomato.games.models.*;
 import com.potatoandtomato.games.references.BattleRef;
 import com.potatoandtomato.games.references.MovementRef;
 import com.potatoandtomato.games.references.StatusRef;
 import com.potatoandtomato.games.services.GameDataController;
+import com.potatoandtomato.games.statics.Terms;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,8 +50,9 @@ public class BoardLogic implements Disposable{
     TerrainLogic _lastActiveTerrainLogic;
     SplashLogic _splashLogic;
     RoomMsgHandler _roomMsgHandler;
+    TutorialsHelper tutorialsHelper;
     GameDataContract _gameDataContract;
-    SafeThread _getGameDataSafeThread, _checkCountTimeExpiredThread;
+    SafeThread _checkCountTimeExpiredThread;
     boolean _crackStarting, _crackHappened, _suddenDeathHappened, _gameEnded;
 
     public BoardLogic(Services services, GameCoordinator coordinator) {
@@ -68,11 +68,12 @@ public class BoardLogic implements Disposable{
         _gameDataController = _services.getGameDataController();
         _graveyard = new GraveyardLogic(new GraveModel(),
                 coordinator, services.getTexts(), services.getAssets(), services, services.getSoundsWrapper());
+        tutorialsHelper = new TutorialsHelper(_graveyard, _coordinator, _services.getTexts());
         _roomMsgHandler = new RoomMsgHandler(this, _coordinator);
         _splashLogic = new SplashLogic(coordinator, new Runnable() {
             @Override
             public void run() {
-                setCountDownThread();
+                onSplashLogicDone();
             }
         }, _services);
 
@@ -95,6 +96,11 @@ public class BoardLogic implements Disposable{
         _roomMsgHandler.onGameReady();
     }
 
+    public void onSplashLogicDone(){
+        setCountDownThread();
+        setTurnTouchable();
+    }
+
     public void gameDataReceived(final BoardModel boardModel, ArrayList<ChessModel> chessModels, GraveModel graveModel){
 
         _terrains.clear();
@@ -107,7 +113,7 @@ public class BoardLogic implements Disposable{
         for(int row = 0; row < 8 ; row++){
             for(int col = 0; col < 4; col++){
                 final ChessModel chessModel = chessModels.get(i);
-                TerrainLogic terrainLogic = new TerrainLogic(new TerrainModel(col, row),
+                TerrainLogic terrainLogic = new TerrainLogic(_screen.getRoot(), new TerrainModel(col, row),
                         _services.getAssets(), _coordinator, chessModel,
                         _services.getSoundsWrapper(), _gameDataController, _battleRef);
                 if(isCrackable(terrainLogic)){
@@ -282,7 +288,14 @@ public class BoardLogic implements Disposable{
     }
 
     private void setTurnTouchable(){
-        _screen.setCanTouchChessTable(isMyTurn());
+        if(_splashLogic.isFinished()){
+            boolean isMyTurn = isMyTurn();
+            _screen.setCanTouchChessTable(isMyTurn);
+
+            if(isMyTurn){
+                tutorialsHelper.switchedToMyTurn(_gameDataController.getMyChessColor(), _terrains, _movementRef);
+            }
+        }
     }
 
     private boolean isMyTurn(){
@@ -584,4 +597,6 @@ public class BoardLogic implements Disposable{
     public ArrayList<TerrainLogic> getTerrains() {
         return _terrains;
     }
+
+
 }

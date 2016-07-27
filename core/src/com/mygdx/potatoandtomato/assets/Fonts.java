@@ -76,6 +76,7 @@ public class Fonts extends FontAssets {
         PIZZA_XXL_REGULAR_B_ffffff_0f5673_1_S_0e516c_1_3, //dark blue
         PIZZA_XXL_REGULAR_B_000000_fed271_3,               //light orange
         PIZZA_XXL_REGULAR_B_000000_ffffff_3,               //light orange
+        PIZZA_XXL_REGULAR_B_ffffff_000000_2,
         PIZZA_XXXL_REGULAR,
 
         CARTER_M_REGULAR_B_ffffff_000000_2,
@@ -93,6 +94,7 @@ public class Fonts extends FontAssets {
         DIGIVOLVE_XXL_REGULAR,
         DIGIVOLVE_50_REGULAR,
 
+        ARCADE_XS_REGULAR,
         ARCADE_S_REGULAR,
 
     }

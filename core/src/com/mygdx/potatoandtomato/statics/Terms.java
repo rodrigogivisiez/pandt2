@@ -13,6 +13,7 @@ public class Terms {
     public static String USER_SECRET_2 = "userSecret2";
     public static String FACEBOOK_USERID = "facebookUserId";
     public static String PREF_NAME = "potatoandtomato";
+    public static String PREF_BASIC_TUTORIAL = "basicTutorials";
     public static String FACEBOOK_USERNAME = "facebookUsername";
     public static String FACEBOOK_TOKEN = "facebookToken";
     public static String GAME_ENTRANCE = "com.potatoandtomato.games.Entrance";

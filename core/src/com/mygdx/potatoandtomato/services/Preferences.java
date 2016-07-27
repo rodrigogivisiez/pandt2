@@ -60,7 +60,8 @@ public class Preferences extends GamePreferencesAbstract {
         delete(appendAbbrToKey(key));
     }
 
-    private String appendAbbrToKey(String key){
+    @Override
+    public String appendAbbrToKey(String key){
         return this._gameAbbr + "_" + key;
     }
 

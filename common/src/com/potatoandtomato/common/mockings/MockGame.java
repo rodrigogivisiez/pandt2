@@ -12,6 +12,7 @@ import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.controls.DisposableActor;
 import com.potatoandtomato.common.enums.ConfirmMsgType;
+import com.potatoandtomato.common.enums.GestureType;
 import com.potatoandtomato.common.enums.RoomUpdateType;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.helpers.DesktopImageLoader;
@@ -186,9 +187,30 @@ public abstract class MockGame extends Game implements IPTGame {
                     }
                 }, new ITutorials() {
             @Override
-            public void show(DisposableActor actor, String text, float duration) {
+            public void startTutorialIfNotCompleteBefore(String id, boolean canSkip, TutorialPartListener listener) {
+                listener.nextTutorial();
+            }
+
+            @Override
+            public void showMessage(DisposableActor actor, String text) {
                 System.out.println("Showing tutorial: " + text);
             }
+
+            @Override
+            public void expectGestureOnPosition(GestureType gestureType, String text, int gestureAndTextDistanceX, int gestureAndTextDistanceY, float x, float y, int gestureActionDistanceX, int gestureActionDistanceY) {
+
+            }
+
+            @Override
+            public void completeTutorial() {
+
+            }
+
+            @Override
+            public boolean completedTutorialBefore(String id) {
+                return false;
+            }
+
         }, new GamePreferencesAbstract() {
             @Override
             public String getGamePref(String key) {
@@ -203,6 +225,11 @@ public abstract class MockGame extends Game implements IPTGame {
             @Override
             public void deleteGamePref(String key) {
 
+            }
+
+            @Override
+            public String appendAbbrToKey(String key) {
+                return "";
             }
         }, 20, new IDisconnectOverlayControl() {
             @Override
