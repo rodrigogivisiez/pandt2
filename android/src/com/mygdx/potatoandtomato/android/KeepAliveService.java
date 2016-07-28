@@ -40,7 +40,7 @@ public class KeepAliveService extends Service {
                     .setContentTitle(title)
                     .setContentIntent(pendingIntent)
                     .setContentText(content)
-                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setSmallIcon(R.drawable.ic_stat_icon)
                     .setWhen(System.currentTimeMillis());
 
             builder.setSound(null);

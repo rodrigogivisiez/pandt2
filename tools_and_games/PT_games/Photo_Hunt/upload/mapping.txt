@@ -65,17 +65,17 @@ com.potatoandtomato.games.PhotoHuntGame$2$1 -> com.potatoandtomato.games.PhotoHu
     com.potatoandtomato.games.PhotoHuntGame$2 this$1 -> a
     105:105:void <init>(com.potatoandtomato.games.PhotoHuntGame$2) -> <init>
     108:113:void run() -> run
-com.potatoandtomato.games.absintf.Announcement -> com.potatoandtomato.games.a.a:
+com.potatoandtomato.games.absintf.Announcement -> com.potatoandtomato.games.absintf.a:
     9:9:void <init>() -> <init>
     void run() -> a
-com.potatoandtomato.games.absintf.DatabaseListener -> com.potatoandtomato.games.a.b:
+com.potatoandtomato.games.absintf.DatabaseListener -> com.potatoandtomato.games.absintf.b:
     java.lang.Class _type -> a
     java.lang.String id -> b
     15:17:void <init>() -> <init>
     19:21:void <init>(java.lang.Class) -> <init>
     24:24:java.lang.Class getType() -> a
     void onCallback(java.lang.Object,com.potatoandtomato.common.enums.Status) -> a
-com.potatoandtomato.games.absintf.GameModelListener -> com.potatoandtomato.games.a.c:
+com.potatoandtomato.games.absintf.GameModelListener -> com.potatoandtomato.games.absintf.GameModelListener:
     10:10:void <init>() -> <init>
     12:12:void onStageNumberChanged(int) -> a
     14:14:void onStageTypeChanged(com.potatoandtomato.games.enums.StageType) -> a
@@ -89,18 +89,18 @@ com.potatoandtomato.games.absintf.GameModelListener -> com.potatoandtomato.games
     30:30:void onAddedClickCount(java.lang.String,int) -> a
     32:32:void onScoresChanged(double) -> a
     34:34:void onHandledAreasChanged() -> b
-com.potatoandtomato.games.absintf.HintsLogicListener -> com.potatoandtomato.games.a.d:
+com.potatoandtomato.games.absintf.HintsLogicListener -> com.potatoandtomato.games.absintf.c:
     8:8:void <init>() -> <init>
     void onHintClicked(com.badlogic.gdx.math.Rectangle,int) -> a
-com.potatoandtomato.games.absintf.ImageStorageListener -> com.potatoandtomato.games.a.e:
+com.potatoandtomato.games.absintf.ImageStorageListener -> com.potatoandtomato.games.absintf.d:
     8:8:void <init>() -> <init>
     12:12:void onPopped(com.potatoandtomato.games.models.ImagePair) -> a
     16:16:void onPeeked(com.potatoandtomato.games.models.ImagePair) -> b
-com.potatoandtomato.games.absintf.ReviewLogicListener -> com.potatoandtomato.games.a.f:
+com.potatoandtomato.games.absintf.ReviewLogicListener -> com.potatoandtomato.games.absintf.e:
     6:6:void <init>() -> <init>
     void onDeleted() -> a
     void onGoToIndex(int) -> a
-com.potatoandtomato.games.absintf.RoomMsgListener -> com.potatoandtomato.games.a.g:
+com.potatoandtomato.games.absintf.RoomMsgListener -> com.potatoandtomato.games.absintf.f:
     14:14:void <init>() -> <init>
     void onTouched(com.potatoandtomato.games.models.TouchedPoint,java.lang.String) -> a
     void onLose(com.potatoandtomato.games.models.GameModel) -> a
@@ -108,12 +108,12 @@ com.potatoandtomato.games.absintf.RoomMsgListener -> com.potatoandtomato.games.a
     void onDownloadImageRequest(java.util.ArrayList) -> a
     void onGoToNextStage(java.lang.String,int,com.potatoandtomato.games.enums.StageType,com.potatoandtomato.games.enums.BonusType,java.lang.String,int) -> a
     void onStartPlaying(java.lang.String,int,com.potatoandtomato.games.enums.StageType,com.potatoandtomato.games.enums.BonusType,java.lang.String) -> a
-com.potatoandtomato.games.absintf.StageImagesHandlerListener -> com.potatoandtomato.games.a.h:
+com.potatoandtomato.games.absintf.StageImagesHandlerListener -> com.potatoandtomato.games.absintf.g:
     6:6:void <init>() -> <init>
     void onTouch(float,float) -> a
     void requestCircleAll() -> a
     void cancelCircleAll() -> b
-com.potatoandtomato.games.absintf.mockings.MockModel -> com.potatoandtomato.games.a.a.a:
+com.potatoandtomato.games.absintf.mockings.MockModel -> com.potatoandtomato.games.absintf.a.a:
     11:11:void <init>() -> <init>
     14:15:com.potatoandtomato.games.models.ImagePair mockImagePair() -> a
     19:21:com.potatoandtomato.games.models.ImageDetails mockImageDetails(java.lang.String) -> a
@@ -363,17 +363,17 @@ com.potatoandtomato.games.assets.Textures$Name -> com.potatoandtomato.games.asse
     21:21:com.potatoandtomato.games.assets.Textures$Name valueOf(java.lang.String) -> valueOf
     21:21:void <init>(java.lang.String,int) -> <init>
     21:42:void <clinit>() -> <clinit>
-com.potatoandtomato.games.controls.Circle -> com.potatoandtomato.games.b.a:
+com.potatoandtomato.games.controls.Circle -> com.potatoandtomato.games.a.a:
     com.potatoandtomato.games.models.Services services -> a
     com.potatoandtomato.common.GameCoordinator gameCoordinator -> b
     com.badlogic.gdx.graphics.Color userColor -> c
     23:49:void <init>(com.potatoandtomato.common.GameCoordinator,com.potatoandtomato.games.models.Services,java.lang.String,com.potatoandtomato.games.models.SimpleRectangle) -> <init>
-com.potatoandtomato.games.controls.Cross -> com.potatoandtomato.games.b.b:
+com.potatoandtomato.games.controls.Cross -> com.potatoandtomato.games.a.b:
     com.potatoandtomato.games.models.Services services -> a
     com.potatoandtomato.common.GameCoordinator gameCoordinator -> b
     com.badlogic.gdx.graphics.Color userColor -> c
     21:29:void <init>(com.potatoandtomato.common.GameCoordinator,com.potatoandtomato.games.models.Services,java.lang.String) -> <init>
-com.potatoandtomato.games.controls.DummyButton -> com.potatoandtomato.games.b.c:
+com.potatoandtomato.games.controls.DummyButton -> com.potatoandtomato.games.a.c:
     15:18:void <init>(com.badlogic.gdx.scenes.scene2d.ui.Table,com.potatoandtomato.common.assets.Assets) -> <init>
 com.potatoandtomato.games.enums.BonusType -> com.potatoandtomato.games.enums.BonusType:
     com.potatoandtomato.games.enums.BonusType NONE -> a
@@ -472,36 +472,36 @@ com.potatoandtomato.games.enums.StageType -> com.potatoandtomato.games.enums.Sta
     6:6:com.potatoandtomato.games.enums.StageType valueOf(java.lang.String) -> valueOf
     6:6:void <init>(java.lang.String,int) -> <init>
     6:7:void <clinit>() -> <clinit>
-com.potatoandtomato.games.helpers.ArrayLists -> com.potatoandtomato.games.c.a:
+com.potatoandtomato.games.helpers.ArrayLists -> com.potatoandtomato.games.b.a:
     11:11:void <init>() -> <init>
     14:18:java.util.ArrayList randomNumericArray(int,int,int) -> a
-com.potatoandtomato.games.helpers.Logs -> com.potatoandtomato.games.c.b:
+com.potatoandtomato.games.helpers.Logs -> com.potatoandtomato.games.b.b:
     8:8:void <init>() -> <init>
     12:13:void show(java.lang.String) -> a
-com.potatoandtomato.games.helpers.NotifyRunnable -> com.potatoandtomato.games.c.c:
+com.potatoandtomato.games.helpers.NotifyRunnable -> com.potatoandtomato.games.b.c:
     boolean finish -> a
     6:6:void <init>() -> <init>
     11:11:boolean isFinish() -> a
     15:16:void setFinish(boolean) -> a
     21:21:void run() -> run
-com.potatoandtomato.games.helpers.Positions -> com.potatoandtomato.games.c.d:
+com.potatoandtomato.games.helpers.Positions -> com.potatoandtomato.games.b.d:
     9:9:void <init>() -> <init>
     12:12:float centerY(float,float) -> a
     16:16:float centerX(float,float) -> b
     20:24:com.badlogic.gdx.math.Vector2 actorLocalToStageCoord(com.badlogic.gdx.scenes.scene2d.Actor) -> a
-com.potatoandtomato.games.helpers.Sizes -> com.potatoandtomato.games.c.e:
+com.potatoandtomato.games.helpers.Sizes -> com.potatoandtomato.games.b.e:
     9:9:void <init>() -> <init>
     12:13:com.badlogic.gdx.math.Vector2 resize(float,com.badlogic.gdx.graphics.g2d.TextureRegion) -> a
     17:18:com.badlogic.gdx.math.Vector2 resizeByH(float,com.badlogic.gdx.graphics.g2d.TextureRegion) -> b
-com.potatoandtomato.games.helpers.Strings -> com.potatoandtomato.games.c.f:
+com.potatoandtomato.games.helpers.Strings -> com.potatoandtomato.games.b.f:
     8:8:void <init>() -> <init>
     11:14:java.lang.String cut(java.lang.String,int) -> a
     18:24:java.lang.String join(java.util.ArrayList) -> a
 com.potatoandtomato.games.models.CorrectArea -> com.potatoandtomato.games.models.CorrectArea:
-    int topLeftX -> a
-    int bottomRightX -> b
-    int topLeftY -> c
-    int bottomRightY -> d
+    int topLeftX -> topLeftX
+    int bottomRightX -> bottomRightX
+    int topLeftY -> topLeftY
+    int bottomRightY -> bottomRightY
     13:14:void <init>() -> <init>
     17:18:void setTopLeftX(int) -> setTopLeftX
     21:22:void setBottomRightX(int) -> setBottomRightX
@@ -512,23 +512,23 @@ com.potatoandtomato.games.models.CorrectArea -> com.potatoandtomato.games.models
     41:41:int getTopLeftY() -> getTopLeftY
     45:45:int getBottomRightY() -> getBottomRightY
 com.potatoandtomato.games.models.GameModel -> com.potatoandtomato.games.models.GameModel:
-    int stageNumber -> a
-    java.util.HashMap userRecords -> b
-    com.potatoandtomato.common.utils.SafeDouble score -> c
-    com.potatoandtomato.games.enums.GameState gameState -> d
-    java.util.ArrayList handledAreas -> e
-    int remainingMiliSecs -> f
-    int hintsLeft -> g
-    int castleAttackedCount -> h
-    int freezingMiliSecs -> i
-    boolean continueChanceUsed -> j
-    com.potatoandtomato.games.models.ImageDetails imageDetails -> k
-    com.potatoandtomato.games.enums.StageType stageType -> l
-    java.util.ArrayList listeners -> m
+    int stageNumber -> stageNumber
+    java.util.HashMap userRecords -> userRecords
+    com.potatoandtomato.common.utils.SafeDouble score -> score
+    com.potatoandtomato.games.enums.GameState gameState -> gameState
+    java.util.ArrayList handledAreas -> handledAreas
+    int remainingMiliSecs -> remainingMiliSecs
+    int hintsLeft -> hintsLeft
+    int castleAttackedCount -> castleAttackedCount
+    int freezingMiliSecs -> freezingMiliSecs
+    boolean continueChanceUsed -> continueChanceUsed
+    com.potatoandtomato.games.models.ImageDetails imageDetails -> imageDetails
+    com.potatoandtomato.games.enums.StageType stageType -> stageType
+    java.util.ArrayList listeners -> listeners
     39:46:void <init>(int,double) -> <init>
     48:53:void <init>() -> <init>
-    56:67:void copyGameModelDataToThis(com.potatoandtomato.games.models.GameModel) -> a
-    70:70:boolean isContinueChanceUsed() -> a
+    56:67:void copyGameModelDataToThis(com.potatoandtomato.games.models.GameModel) -> copyGameModelDataToThis
+    70:70:boolean isContinueChanceUsed() -> isContinueChanceUsed
     74:75:void setContinueChanceUsed(boolean) -> setContinueChanceUsed
     78:78:int getCastleAttackedCount() -> getCastleAttackedCount
     82:86:void setCastleAttackedCount(int) -> setCastleAttackedCount
@@ -538,14 +538,14 @@ com.potatoandtomato.games.models.GameModel -> com.potatoandtomato.games.models.G
     105:106:void setImageDetails(com.potatoandtomato.games.models.ImageDetails) -> setImageDetails
     109:109:int getHintsLeft() -> getHintsLeft
     113:119:void setHintsLeft(int) -> setHintsLeft
-    122:125:void minusHintLeft() -> b
+    122:125:void minusHintLeft() -> minusHintLeft
     128:128:int getRemainingMiliSecs() -> getRemainingMiliSecs
     132:133:void setRemainingMiliSecs(int) -> setRemainingMiliSecs
     136:151:void setRemainingMiliSecs(int,boolean) -> setRemainingMiliSecs
-    154:155:void minusRemainingMiliSecs(int) -> a
+    154:155:void minusRemainingMiliSecs(int) -> minusRemainingMiliSecs
     158:158:int getFreezingMiliSecs() -> getFreezingMiliSecs
     162:166:void setFreezingMiliSecs(int) -> setFreezingMiliSecs
-    169:179:void addFreezeMiliSecs() -> c
+    169:179:void addFreezeMiliSecs() -> addFreezeMiliSecs
     182:182:java.util.HashMap getUserRecords() -> getUserRecords
     186:187:void setUserRecords(java.util.HashMap) -> setUserRecords
     190:190:java.util.ArrayList getHandledAreas() -> getHandledAreas
@@ -557,40 +557,40 @@ com.potatoandtomato.games.models.GameModel -> com.potatoandtomato.games.models.G
     231:244:void setScore(java.lang.Double,boolean) -> setScore
     247:247:int getStageNumber() -> getStageNumber
     251:255:void setStageNumber(int) -> setStageNumber
-    259:260:void addStageNumber() -> d
-    264:266:void convertStageNumberToRemainingMiliSecs() -> e
+    259:260:void addStageNumber() -> addStageNumber
+    264:266:void convertStageNumberToRemainingMiliSecs() -> convertStageNumberToRemainingMiliSecs
     270:279:int getThisStageTotalMiliSecs() -> getThisStageTotalMiliSecs
     284:284:int getThisStageTotalMovingMiliSecs() -> getThisStageTotalMovingMiliSecs
     289:290:int getThisStageTotalAtkMiliSecs() -> getThisStageTotalAtkMiliSecs
-    296:306:void addUserClickedCount(java.lang.String) -> a
+    296:306:void addUserClickedCount(java.lang.String) -> addUserClickedCount
     310:314:int getUserClickedCount(java.lang.String) -> getUserClickedCount
-    320:325:boolean isAreaAlreadyHandled(com.potatoandtomato.games.models.SimpleRectangle) -> a
-    330:338:boolean isAreaAlreadyHandled(com.badlogic.gdx.math.Rectangle) -> a
-    343:350:boolean addHandledArea(com.potatoandtomato.games.models.SimpleRectangle,int) -> a
-    355:360:boolean isAreaAlreadyConfirmClicked(com.potatoandtomato.games.models.SimpleRectangle) -> b
+    320:325:boolean isAreaAlreadyHandled(com.potatoandtomato.games.models.SimpleRectangle) -> isAreaAlreadyHandled
+    330:338:boolean isAreaAlreadyHandled(com.badlogic.gdx.math.Rectangle) -> isAreaAlreadyHandled
+    343:350:boolean addHandledArea(com.potatoandtomato.games.models.SimpleRectangle,int) -> addHandledArea
+    355:360:boolean isAreaAlreadyConfirmClicked(com.potatoandtomato.games.models.SimpleRectangle) -> isAreaAlreadyConfirmClicked
     365:370:void setConfirmAreaClickedBy(com.potatoandtomato.games.models.SimpleRectangle,java.lang.String) -> setConfirmAreaClickedBy
-    374:375:void clearHandledAreas() -> f
-    379:385:java.lang.String toJson() -> g
-    390:391:com.potatoandtomato.games.absintf.GameModelListener addGameModelListener(com.potatoandtomato.games.absintf.GameModelListener) -> a
-    396:397:void removeGameModelListener(com.potatoandtomato.games.absintf.GameModelListener) -> b
-    401:401:boolean isPlaying() -> h
-    407:408:boolean isNextStageBonus() -> i
-    412:413:void dispose() -> j
+    374:375:void clearHandledAreas() -> clearHandledAreas
+    379:385:java.lang.String toJson() -> toJson
+    390:391:com.potatoandtomato.games.absintf.GameModelListener addGameModelListener(com.potatoandtomato.games.absintf.GameModelListener) -> addGameModelListener
+    396:397:void removeGameModelListener(com.potatoandtomato.games.absintf.GameModelListener) -> removeGameModelListener
+    401:401:boolean isPlaying() -> isPlaying
+    407:408:boolean isNextStageBonus() -> isNextStageBonus
+    412:413:void dispose() -> dispose
 com.potatoandtomato.games.models.ImageDetails -> com.potatoandtomato.games.models.ImageDetails:
-    com.potatoandtomato.games.models.CorrectArea area1 -> a
-    com.potatoandtomato.games.models.CorrectArea area2 -> b
-    com.potatoandtomato.games.models.CorrectArea area3 -> c
-    com.potatoandtomato.games.models.CorrectArea area4 -> d
-    com.potatoandtomato.games.models.CorrectArea area5 -> e
-    int width -> f
-    int height -> g
-    int index -> h
-    java.lang.String imageOneUrl -> i
-    java.lang.String imageTwoUrl -> j
-    java.lang.String id -> k
-    int gameImageWidth -> l
-    int gameImageHeight -> m
-    java.util.ArrayList correctRectangles -> n
+    com.potatoandtomato.games.models.CorrectArea area1 -> area1
+    com.potatoandtomato.games.models.CorrectArea area2 -> area2
+    com.potatoandtomato.games.models.CorrectArea area3 -> area3
+    com.potatoandtomato.games.models.CorrectArea area4 -> area4
+    com.potatoandtomato.games.models.CorrectArea area5 -> area5
+    int width -> width
+    int height -> height
+    int index -> index
+    java.lang.String imageOneUrl -> imageOneUrl
+    java.lang.String imageTwoUrl -> imageTwoUrl
+    java.lang.String id -> id
+    int gameImageWidth -> gameImageWidth
+    int gameImageHeight -> gameImageHeight
+    java.util.ArrayList correctRectangles -> correctRectangles
     31:33:void <init>() -> <init>
     36:36:java.lang.String getId() -> getId
     40:41:void setId(java.lang.String) -> setId
@@ -618,14 +618,14 @@ com.potatoandtomato.games.models.ImageDetails -> com.potatoandtomato.games.model
     134:142:java.util.ArrayList getCorrectRects() -> getCorrectRects
     147:151:java.util.ArrayList getCorrectSimpleRects() -> getCorrectSimpleRects
     156:162:java.util.ArrayList getTouchedCorrectRects(float,float) -> getTouchedCorrectRects
-    167:172:com.badlogic.gdx.math.Rectangle convertAreaToRectangle(com.potatoandtomato.games.models.CorrectArea) -> a
-    178:181:com.badlogic.gdx.math.Vector2 convertCoords(int,int,int,int,int,int) -> a
+    167:172:com.badlogic.gdx.math.Rectangle convertAreaToRectangle(com.potatoandtomato.games.models.CorrectArea) -> convertAreaToRectangle
+    178:181:com.badlogic.gdx.math.Vector2 convertCoords(int,int,int,int,int,int) -> convertCoords
     186:186:int getGameImageHeight() -> getGameImageHeight
 com.potatoandtomato.games.models.ImagePair -> com.potatoandtomato.games.models.ImagePair:
-    com.potatoandtomato.games.models.ImageDetails imageDetails -> a
-    com.badlogic.gdx.graphics.Texture imageOne -> b
-    com.badlogic.gdx.graphics.Texture imageTwo -> c
-    java.lang.Integer orderIndex -> d
+    com.potatoandtomato.games.models.ImageDetails imageDetails -> imageDetails
+    com.badlogic.gdx.graphics.Texture imageOne -> imageOne
+    com.badlogic.gdx.graphics.Texture imageTwo -> imageTwo
+    java.lang.Integer orderIndex -> orderIndex
     15:20:void <init>(com.potatoandtomato.games.models.ImageDetails,com.badlogic.gdx.graphics.Texture,com.badlogic.gdx.graphics.Texture,java.lang.Integer) -> <init>
     23:23:com.potatoandtomato.games.models.ImageDetails getImageDetails() -> getImageDetails
     27:28:void setImageDetails(com.potatoandtomato.games.models.ImageDetails) -> setImageDetails
@@ -636,18 +636,18 @@ com.potatoandtomato.games.models.ImagePair -> com.potatoandtomato.games.models.I
     47:47:java.lang.Integer getOrderIndex() -> getOrderIndex
     51:52:void setOrderIndex(java.lang.Integer) -> setOrderIndex
 com.potatoandtomato.games.models.LightTimingModel -> com.potatoandtomato.games.models.LightTimingModel:
-    java.util.ArrayList timePeriodModels -> a
+    java.util.ArrayList timePeriodModels -> timePeriodModels
     16:18:void <init>() -> <init>
     21:21:java.util.ArrayList getTimePeriodModels() -> getTimePeriodModels
     25:26:void setTimePeriodModels(java.util.ArrayList) -> setTimePeriodModels
-    29:35:void randomize() -> a
-    38:44:java.lang.String toJson() -> b
+    29:35:void randomize() -> randomize
+    38:44:java.lang.String toJson() -> toJson
 com.potatoandtomato.games.models.Services -> com.potatoandtomato.games.models.Services:
-    com.potatoandtomato.games.assets.MyAssets assets -> a
-    com.potatoandtomato.games.services.SoundsWrapper soundsWrapper -> b
-    com.potatoandtomato.games.services.Database database -> c
-    com.potatoandtomato.games.services.Texts texts -> d
-    com.potatoandtomato.games.services.RoomMsgHandler roomMsgHandler -> e
+    com.potatoandtomato.games.assets.MyAssets assets -> assets
+    com.potatoandtomato.games.services.SoundsWrapper soundsWrapper -> soundsWrapper
+    com.potatoandtomato.games.services.Database database -> database
+    com.potatoandtomato.games.services.Texts texts -> texts
+    com.potatoandtomato.games.services.RoomMsgHandler roomMsgHandler -> roomMsgHandler
     22:28:void <init>(com.potatoandtomato.games.assets.MyAssets,com.potatoandtomato.games.services.SoundsWrapper,com.potatoandtomato.games.services.Database,com.potatoandtomato.games.services.Texts,com.potatoandtomato.games.services.RoomMsgHandler) -> <init>
     31:31:com.potatoandtomato.games.assets.MyAssets getAssets() -> getAssets
     35:35:com.potatoandtomato.games.services.SoundsWrapper getSoundsWrapper() -> getSoundsWrapper
@@ -658,11 +658,11 @@ com.potatoandtomato.games.models.Services -> com.potatoandtomato.games.models.Se
     55:56:void setDatabase(com.potatoandtomato.games.services.Database) -> setDatabase
     60:62:void dispose() -> dispose
 com.potatoandtomato.games.models.SimpleRectangle -> com.potatoandtomato.games.models.SimpleRectangle:
-    float width -> a
-    float height -> b
-    float x -> c
-    float y -> d
-    java.lang.String userId -> e
+    float width -> width
+    float height -> height
+    float x -> x
+    float y -> y
+    java.lang.String userId -> userId
     16:21:void <init>(float,float,float,float) -> <init>
     23:24:void <init>() -> <init>
     26:31:void <init>(com.badlogic.gdx.math.Rectangle) -> <init>
@@ -678,8 +678,8 @@ com.potatoandtomato.games.models.SimpleRectangle -> com.potatoandtomato.games.mo
     70:71:void setY(float) -> setY
     75:83:boolean equals(java.lang.Object) -> equals
 com.potatoandtomato.games.models.TimePeriodModel -> com.potatoandtomato.games.models.TimePeriodModel:
-    float start -> a
-    float end -> b
+    float start -> start
+    float end -> end
     11:12:void <init>() -> <init>
     14:17:void <init>(float,float) -> <init>
     20:20:float getEnd() -> getEnd
@@ -687,11 +687,11 @@ com.potatoandtomato.games.models.TimePeriodModel -> com.potatoandtomato.games.mo
     28:28:float getStart() -> getStart
     32:33:void setStart(float) -> setStart
 com.potatoandtomato.games.models.TouchedPoint -> com.potatoandtomato.games.models.TouchedPoint:
-    float x -> a
-    float y -> b
-    int remainingMiliSecs -> c
-    int hintLeft -> d
-    com.potatoandtomato.games.models.SimpleRectangle correctRect -> e
+    float x -> x
+    float y -> y
+    int remainingMiliSecs -> remainingMiliSecs
+    int hintLeft -> hintLeft
+    com.potatoandtomato.games.models.SimpleRectangle correctRect -> correctRect
     14:20:void <init>(float,float,int,int,com.potatoandtomato.games.models.SimpleRectangle) -> <init>
     22:23:void <init>() -> <init>
     26:26:com.potatoandtomato.games.models.SimpleRectangle getCorrectRect() -> getCorrectRect
@@ -705,12 +705,12 @@ com.potatoandtomato.games.models.TouchedPoint -> com.potatoandtomato.games.model
     58:58:int getRemainingMiliSecs() -> getRemainingMiliSecs
     62:63:void setRemainingMiliSecs(int) -> setRemainingMiliSecs
 com.potatoandtomato.games.models.WonStageModel -> com.potatoandtomato.games.models.WonStageModel:
-    int stageNumber -> a
-    int beforeScore -> b
-    int remainingSecs -> c
-    int hintsLeft -> d
-    java.lang.String nextStageId -> e
-    com.potatoandtomato.games.enums.StageType nextStageType -> f
+    int stageNumber -> stageNumber
+    int beforeScore -> beforeScore
+    int remainingSecs -> remainingSecs
+    int hintsLeft -> hintsLeft
+    java.lang.String nextStageId -> nextStageId
+    com.potatoandtomato.games.enums.StageType nextStageType -> nextStageType
     17:18:void <init>() -> <init>
     20:27:void <init>(int,int,int,int,java.lang.String,com.potatoandtomato.games.enums.StageType) -> <init>
     30:30:int getHintsLeft() -> getHintsLeft
@@ -2787,7 +2787,7 @@ com.potatoandtomato.games.screens.user_counters.UserCountersLogic$4 -> com.potat
     128:128:void <init>(com.potatoandtomato.games.screens.user_counters.UserCountersLogic,boolean) -> <init>
     131:134:int compare(java.util.Map$Entry,java.util.Map$Entry) -> a
     128:128:int compare(java.lang.Object,java.lang.Object) -> compare
-com.potatoandtomato.games.services.Database -> com.potatoandtomato.games.services.a:
+com.potatoandtomato.games.services.Database -> com.potatoandtomato.games.services.Database:
     com.potatoandtomato.common.GameCoordinator _coordinator -> a
     com.firebase.client.Firebase _ref -> b
     java.lang.String _storageTable -> c
@@ -2805,52 +2805,52 @@ com.potatoandtomato.games.services.Database -> com.potatoandtomato.games.service
     119:135:void getData(com.firebase.client.Query,com.potatoandtomato.games.absintf.DatabaseListener) -> a
     139:155:void getSingleData(com.firebase.client.Query,com.potatoandtomato.games.absintf.DatabaseListener) -> b
     16:16:com.firebase.client.Firebase access$000(com.potatoandtomato.games.services.Database,java.lang.String) -> a
-com.potatoandtomato.games.services.Database$1 -> com.potatoandtomato.games.services.a$1:
+com.potatoandtomato.games.services.Database$1 -> com.potatoandtomato.games.services.Database$1:
     com.potatoandtomato.games.absintf.DatabaseListener val$listener -> a
     com.potatoandtomato.games.services.Database this$0 -> b
     28:28:void <init>(com.potatoandtomato.games.services.Database,java.lang.Class,com.potatoandtomato.games.absintf.DatabaseListener) -> <init>
     31:37:void onCallback(java.lang.Object,com.potatoandtomato.common.enums.Status) -> a
-com.potatoandtomato.games.services.Database$2 -> com.potatoandtomato.games.services.a$2:
+com.potatoandtomato.games.services.Database$2 -> com.potatoandtomato.games.services.Database$2:
     com.potatoandtomato.games.absintf.DatabaseListener val$listener -> a
     com.potatoandtomato.games.services.Database this$0 -> b
     42:42:void <init>(com.potatoandtomato.games.services.Database,java.lang.Class,com.potatoandtomato.games.absintf.DatabaseListener) -> <init>
     45:50:void onCallback(java.util.ArrayList,com.potatoandtomato.common.enums.Status) -> a
     42:42:void onCallback(java.lang.Object,com.potatoandtomato.common.enums.Status) -> a
-com.potatoandtomato.games.services.Database$3 -> com.potatoandtomato.games.services.a$3:
+com.potatoandtomato.games.services.Database$3 -> com.potatoandtomato.games.services.Database$3:
     com.potatoandtomato.games.absintf.DatabaseListener val$listener -> a
     com.potatoandtomato.games.services.Database this$0 -> b
     55:55:void <init>(com.potatoandtomato.games.services.Database,java.lang.Class,com.potatoandtomato.games.absintf.DatabaseListener) -> <init>
     58:64:void onCallback(java.util.ArrayList,com.potatoandtomato.common.enums.Status) -> a
     55:55:void onCallback(java.lang.Object,com.potatoandtomato.common.enums.Status) -> a
-com.potatoandtomato.games.services.Database$4 -> com.potatoandtomato.games.services.a$4:
+com.potatoandtomato.games.services.Database$4 -> com.potatoandtomato.games.services.Database$4:
     com.potatoandtomato.games.absintf.DatabaseListener val$listener -> a
     java.lang.String val$key -> b
     com.potatoandtomato.games.services.Database this$0 -> c
     75:75:void <init>(com.potatoandtomato.games.services.Database,com.potatoandtomato.games.absintf.DatabaseListener,java.lang.String) -> <init>
     78:79:void onComplete(com.firebase.client.FirebaseError,com.firebase.client.Firebase) -> onComplete
-com.potatoandtomato.games.services.Database$5 -> com.potatoandtomato.games.services.a$5:
+com.potatoandtomato.games.services.Database$5 -> com.potatoandtomato.games.services.Database$5:
     com.potatoandtomato.games.absintf.DatabaseListener val$listener -> a
     com.potatoandtomato.games.services.Database this$0 -> b
     88:88:void <init>(com.potatoandtomato.games.services.Database,com.potatoandtomato.games.absintf.DatabaseListener) -> <init>
     91:106:void onComplete(com.firebase.client.FirebaseError,com.firebase.client.Firebase) -> onComplete
-com.potatoandtomato.games.services.Database$5$1 -> com.potatoandtomato.games.services.a$5$1:
+com.potatoandtomato.games.services.Database$5$1 -> com.potatoandtomato.games.services.Database$5$1:
     com.potatoandtomato.games.services.Database$5 this$1 -> a
     93:93:void <init>(com.potatoandtomato.games.services.Database$5,java.lang.Class) -> <init>
     96:102:void onCallback(java.util.ArrayList,com.potatoandtomato.common.enums.Status) -> a
     93:93:void onCallback(java.lang.Object,com.potatoandtomato.common.enums.Status) -> a
-com.potatoandtomato.games.services.Database$6 -> com.potatoandtomato.games.services.a$6:
+com.potatoandtomato.games.services.Database$6 -> com.potatoandtomato.games.services.Database$6:
     com.potatoandtomato.games.absintf.DatabaseListener val$listener -> a
     com.potatoandtomato.games.services.Database this$0 -> b
     119:119:void <init>(com.potatoandtomato.games.services.Database,com.potatoandtomato.games.absintf.DatabaseListener) -> <init>
     122:129:void onDataChange(com.firebase.client.DataSnapshot) -> onDataChange
     132:133:void onCancelled(com.firebase.client.FirebaseError) -> onCancelled
-com.potatoandtomato.games.services.Database$7 -> com.potatoandtomato.games.services.a$7:
+com.potatoandtomato.games.services.Database$7 -> com.potatoandtomato.games.services.Database$7:
     com.potatoandtomato.games.absintf.DatabaseListener val$listener -> a
     com.potatoandtomato.games.services.Database this$0 -> b
     139:139:void <init>(com.potatoandtomato.games.services.Database,com.potatoandtomato.games.absintf.DatabaseListener) -> <init>
     142:149:void onDataChange(com.firebase.client.DataSnapshot) -> onDataChange
     152:153:void onCancelled(com.firebase.client.FirebaseError) -> onCancelled
-com.potatoandtomato.games.services.RoomMsgHandler -> com.potatoandtomato.games.services.b:
+com.potatoandtomato.games.services.RoomMsgHandler -> com.potatoandtomato.games.services.RoomMsgHandler:
     com.potatoandtomato.common.GameCoordinator gameCoordinator -> a
     com.potatoandtomato.games.absintf.RoomMsgListener listener -> b
     com.shaded.fasterxml.jackson.databind.ObjectMapper objectMapper -> c
@@ -2871,7 +2871,7 @@ com.potatoandtomato.games.services.RoomMsgHandler$1 -> com.potatoandtomato.games
     com.potatoandtomato.games.services.RoomMsgHandler this$0 -> a
     37:37:void <init>(com.potatoandtomato.games.services.RoomMsgHandler) -> <init>
     40:41:void onUpdateReceived(java.lang.String,java.lang.String) -> onUpdateReceived
-com.potatoandtomato.games.services.SoundsWrapper -> com.potatoandtomato.games.services.c:
+com.potatoandtomato.games.services.SoundsWrapper -> com.potatoandtomato.games.services.SoundsWrapper:
     com.potatoandtomato.common.assets.Assets _assets -> a
     com.potatoandtomato.common.GameCoordinator _coordinator -> b
     java.util.ArrayList _loopingSounds -> c
@@ -2886,7 +2886,7 @@ com.potatoandtomato.games.services.SoundsWrapper -> com.potatoandtomato.games.se
     76:80:void stopAllLoopingSounds() -> b
     83:84:void playSounds(com.badlogic.gdx.audio.Sound) -> a
     91:93:void dispose() -> dispose
-com.potatoandtomato.games.services.Texts -> com.potatoandtomato.games.services.d:
+com.potatoandtomato.games.services.Texts -> com.potatoandtomato.games.services.Texts:
     14:58:void <init>() -> <init>
     16:16:java.lang.String nextHighScore() -> a
     18:18:java.lang.String memoryStart() -> b
@@ -2905,10 +2905,10 @@ com.potatoandtomato.games.services.Texts -> com.potatoandtomato.games.services.d
     35:35:java.lang.String xDecidedNotToContinue() -> o
     38:60:java.lang.String getBonusString(com.potatoandtomato.games.enums.BonusType) -> a
     64:85:com.potatoandtomato.common.utils.Pair getMascotsSpeechAboutContinue() -> p
-com.potatoandtomato.games.services.Texts$1 -> com.potatoandtomato.games.services.d$1:
+com.potatoandtomato.games.services.Texts$1 -> com.potatoandtomato.games.services.Texts$1:
     int[] $SwitchMap$com$potatoandtomato$games$enums$BonusType -> a
     38:38:void <clinit>() -> <clinit>
-com.potatoandtomato.games.statics.Global -> com.potatoandtomato.games.d.a:
+com.potatoandtomato.games.statics.Global -> com.potatoandtomato.games.c.a:
     boolean DEBUG -> a
     boolean REVIEW_MODE -> b
     int ATTACK_TIME_PERCENT -> c

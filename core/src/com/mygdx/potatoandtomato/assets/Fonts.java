@@ -38,13 +38,13 @@ public class Fonts extends FontAssets {
 
     public enum FontId{
         PT_S_REGULAR,
-        PT_S_REGULAR_B_ffffff_000000_1,
+        PT_S_REGULAR_B_ffffff_000000_2,
         PT_M_REGULAR,
 
         MYRIAD_XS_BOLD_B_ffffff_000000_1,
         MYRIAD_S_SEMIBOLD,
         MYRIAD_S_REGULAR,
-        MYRIAD_S_REGULAR_B_ffffff_000000_1,
+        MYRIAD_S_REGULAR_B_ffffff_000000_2,
         MYRIAD_S_BOLD,
         MYRIAD_S_ITALIC,
         MYRIAD_M_REGULAR,

@@ -186,6 +186,7 @@ public class MainLogic extends GameLogic {
         if(disposed) return;
 
         popImagePairIfCurrentIsNull(id);
+
         if(_currentImagePair != null){
             _gameModel.setImageDetails(_currentImagePair.getImageDetails());
         }
@@ -198,9 +199,9 @@ public class MainLogic extends GameLogic {
         }
         else{
             _screen.setImages(_currentImagePair.getImageOne(), _currentImagePair.getImageTwo());
-            _stageImagesLogic.beforeStartStage(stageType, bonusType, extra);
         }
 
+        _stageImagesLogic.beforeStartStage(stageType, bonusType, extra);
         _gameModel.clearHandledAreas();
         _gameModel.setStageType(stageType);
         _gameModel.setStageNumber(stageNumber);

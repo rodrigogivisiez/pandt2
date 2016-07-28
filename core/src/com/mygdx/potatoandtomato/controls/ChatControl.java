@@ -685,18 +685,18 @@ public class ChatControl {
             lblImportantStyle.fontColor = Color.valueOf("F56C57");
         }
         else if(mode == 2){
-            lblUsernameStyle.font = assets.getFonts().get(Fonts.FontId.MYRIAD_S_REGULAR_B_ffffff_000000_1);
+            lblUsernameStyle.font = assets.getFonts().get(Fonts.FontId.MYRIAD_S_REGULAR_B_ffffff_000000_2);
             if(senderUserId != null){
                 lblUsernameStyle.fontColor = ColorUtils.getUserColorByIndex(senderSlotIndex);
             }
 
-            lblMessageStyle.font = assets.getFonts().get(Fonts.FontId.PT_S_REGULAR_B_ffffff_000000_1);
+            lblMessageStyle.font = assets.getFonts().get(Fonts.FontId.PT_S_REGULAR_B_ffffff_000000_2);
             lblMessageStyle.fontColor = Color.WHITE;
 
-            lblInfoStyle.font = assets.getFonts().get(Fonts.FontId.PT_S_REGULAR_B_ffffff_000000_1);
+            lblInfoStyle.font = assets.getFonts().get(Fonts.FontId.PT_S_REGULAR_B_ffffff_000000_2);
             lblInfoStyle.fontColor = Color.valueOf("11b1bf");
 
-            lblImportantStyle.font = assets.getFonts().get(Fonts.FontId.PT_S_REGULAR_B_ffffff_000000_1);
+            lblImportantStyle.font = assets.getFonts().get(Fonts.FontId.PT_S_REGULAR_B_ffffff_000000_2);
             lblImportantStyle.fontColor = Color.valueOf("F56C57");
         }
 

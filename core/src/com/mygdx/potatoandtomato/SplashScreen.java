@@ -4,13 +4,19 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.mygdx.potatoandtomato.services.Texts;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.mygdx.potatoandtomato.utils.Positions;
 
@@ -24,17 +30,29 @@ public class SplashScreen implements Screen {
     private Texture screenTexture, screenGlowTexture, controllerTexture,
                 tomatoTexture, potatoTexture;
     private Music arcadeSound;
-    private long soundId;
+    private Sound rustySound;
+    private BitmapFont font;
 
     private Image screenImage, screenGlowImage, potatoImage, tomatoImage;
 
 
     private Table rootTable, screenTable, mascotsTable;
+    private Table workTable, bottomTextTable;
     private Stage stage;
     private boolean disposed;
 
     public SplashScreen() {
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Pizza-Regular.otf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 25;
+        font = generator.generateFont(parameter);
+        generator.dispose();
+
+
         arcadeSound = Gdx.audio.newMusic(Gdx.files.internal("splash/ARCADE_BUTTON.ogg"));
+        rustySound = Gdx.audio.newSound(Gdx.files.internal("splash/RUSTY.ogg"));
+
 
         screenTexture = new Texture(Gdx.files.internal("splash/SCREEN.png"));
         screenImage = new Image(screenTexture);
@@ -78,6 +96,36 @@ public class SplashScreen implements Screen {
         mascotsTable.addActor(potatoImage);
         mascotsTable.addActor(tomatoImage);
 
+        Label.LabelStyle normalLabelStyle = new Label.LabelStyle(font, Color.WHITE);
+        Label.LabelStyle specialLabelStyle1 = new Label.LabelStyle(font, Color.valueOf("e44235"));
+        Label.LabelStyle specialLabelStyle2 = new Label.LabelStyle(font, Color.valueOf("d2af5e"));
+
+        Texts texts = new Texts();
+
+        Label topLabel = new Label(texts.splashPhrase1(), normalLabelStyle);
+        topLabel.setAlignment(Align.center);
+
+        bottomTextTable = new Table();
+        bottomTextTable.getColor().a = 0f;
+        Label bottomLabel1 = new Label(texts.splashPhrase2(), normalLabelStyle);
+
+        Label bottomLabel2_1 = new Label(texts.splashPhrase3(), specialLabelStyle1);
+        Label bottomLabel2_2 = new Label(texts.splashPhrase4(), specialLabelStyle2);
+        workTable = new Table();
+        workTable.setTransform(true);
+        workTable.setOrigin(Align.center);
+        workTable.add(bottomLabel2_1);
+        workTable.add(bottomLabel2_2);
+
+        Label bottomLabel3 = new Label(texts.splashPhrase5(), normalLabelStyle);
+        bottomLabel3.setWrap(true);
+        bottomLabel3.setAlignment(Align.center);
+
+        bottomTextTable.add(bottomLabel1).right();
+        bottomTextTable.add(workTable).left();
+        bottomTextTable.row();
+        bottomTextTable.add(bottomLabel3).colspan(2).expandX().fillX();
+
         stage = new Stage(new StretchViewport(Positions.getWidth(), Positions.getHeight()));
         rootTable = new Table();
 
@@ -85,6 +133,9 @@ public class SplashScreen implements Screen {
         rootTable.addActor(screenTable);
         rootTable.addActor(mascotsTable);
 
+        rootTable.add(topLabel).expandX().fillX().padBottom(200).padTop(50);
+        rootTable.row();
+        rootTable.add(bottomTextTable).expandX().fillX();
         stage.addActor(rootTable);
     }
 
@@ -114,6 +165,15 @@ public class SplashScreen implements Screen {
                     @Override
                     public void run() {
                         if(Global.ENABLE_SOUND)  arcadeSound.setVolume(0.6f);
+                        bottomTextTable.addAction(sequence(fadeIn(0.9f), delay(1f), new RunnableAction(){
+                            @Override
+                            public void run() {
+                                if(Global.ENABLE_SOUND) {
+                                    rustySound.play();
+                                }
+                                workTable.addAction(rotateBy(-10, 0.4f));
+                            }
+                        }));
                     }
                 })
         ));
@@ -128,33 +188,6 @@ public class SplashScreen implements Screen {
     public void close(final Runnable onFinish){
         onFinish.run();
         dispose();
-
-//        rootTable.addAction(sequence(
-//                parallel(alpha(0.6f, 0), new RunnableAction(){
-//                    @Override
-//                    public void run() {
-//                        if(Global.ENABLE_SOUND) arcadeSound.setVolume(0.3f);
-//                    }
-//                }),
-//                parallel(alpha(0.3f, 0), new RunnableAction(){
-//                    @Override
-//                    public void run() {
-//                        if(Global.ENABLE_SOUND) arcadeSound.setVolume(0.2f);
-//                    }
-//                }),
-//                parallel(alpha(0f, 0), new RunnableAction(){
-//                    @Override
-//                    public void run() {
-//                        if(Global.ENABLE_SOUND) arcadeSound.setVolume(0.1f);
-//                    }
-//                }), new RunnableAction(){
-//                    @Override
-//                    public void run() {
-//
-//                    }
-//                }
-//        ));
-
     }
 
     @Override
@@ -191,11 +224,13 @@ public class SplashScreen implements Screen {
             rootTable.clear();
             disposed = true;
             screenTexture.dispose();
+            font.dispose();
             screenGlowTexture.dispose();
             controllerTexture.dispose();
             tomatoTexture.dispose();
             potatoTexture.dispose();
             arcadeSound.dispose();
+            rustySound.dispose();
             stage.dispose();
         }
     }

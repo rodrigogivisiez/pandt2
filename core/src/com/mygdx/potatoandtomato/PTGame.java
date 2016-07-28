@@ -134,10 +134,6 @@ public class PTGame extends Game implements IPTGame {
 
 					}
 				});
-
-
-
-
 			}
 		});
 	}

@@ -56,17 +56,33 @@ public class ChatTemplate {
 
     private static ArrayList<String> populateTemplates(){
         ArrayList<String> templates = new ArrayList();
-        templates.add("Good Game.");
-        templates.add("Relax, you are doing fine.");
-        templates.add("Luis suarez scores!.");
-        templates.add("????????");
-        templates.add("Ni hao");
-        templates.add("Omg");
-        templates.add("Holy Shit");
-        templates.add("Gogogogogogo");
-        templates.add("Don't Give up");
-        templates.add("See you again");
-
+        templates.add("Good game well played.");
+        templates.add("Relax, you are doing fine, I think.");
+        templates.add("Good day, monsieur!");
+        templates.add("Bye");
+        templates.add("Be right back...");
+        templates.add("This is getting very interesting...");
+        templates.add("Such is life :(");
+        templates.add("I am just conserving my energy for the next game...");
+        templates.add("Don't give up!");
+        templates.add("See you again.");
+        templates.add("Not my proudest game.");
+        templates.add("So close!!!");
+        templates.add("Roarrrr!");
+        templates.add("Now this is between a rock and a hard place...");
+        templates.add("Victory");
+        templates.add("No such luck my young apprentice!");
+        templates.add("Go go go~");
+        templates.add("Focus, my friends");
+        templates.add("??? but why ???");
+        templates.add("Here comes my trump card...");
+        templates.add("Here goes nothing...");
+        templates.add("Here comes my ulti...");
+        templates.add("I immediately regret my decision.");
+        templates.add("Defend");
+        templates.add("Coin for the coinless please...");
+        templates.add("Help me I am poor");
+        templates.add("It's a disaster!");
         return templates;
     }
 

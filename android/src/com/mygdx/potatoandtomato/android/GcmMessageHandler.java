@@ -57,7 +57,7 @@ public class GcmMessageHandler extends GcmListenerService {
                 .setContentTitle(pushNotification.getTitle())
                 .setContentText(pushNotification.getMessage())
                 .setContentIntent(pendingIntent)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_stat_icon)
                 .setWhen(System.currentTimeMillis());
 
         if(pushNotification.getId() == PushCode.SEND_INVITATION){

@@ -12,6 +12,14 @@ import java.util.ArrayList;
  * Created by SiongLeng on 6/12/2015.
  */
 public class Texts {
+    ////////////////////////////////////////////////////////////////
+    //splash
+    //////////////////////////////////////////////////////////////
+    public String splashPhrase1() { return "Please wait..."; }
+    public String splashPhrase2() { return "The vegetables "; }
+    public String splashPhrase3() { return "wo"; }
+    public String splashPhrase4() { return "rk"; }
+    public String splashPhrase5() { return "to connect you and your friends...."; }
 
     ///////////////////////////////////////////////////////////
     //boot scene
@@ -236,6 +244,8 @@ public class Texts {
     public String tutorialAboutCoinCount() { return "This shows you coins number needed";}
     public String tutorialAboutInsertCoin() { return "Now try to insert coin here";}
     public String tutorialAboutNoCoin() { return "Looks like you don't have any coin, let's see if there is any free coins in mum's purse....";}
+    public String tutorialAboutHasCoin() { return "Looks like you already have some coins, but anyway let's continue our tutorial....";}
+
 
     public String tutorialAboutTapMumPurse() { return "Tap mum purse";}
     public String tutorialAboutTapGetFreeCoins() { return "Tap to free coins from mum purse!";}

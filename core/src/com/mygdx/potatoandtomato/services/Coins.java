@@ -76,6 +76,7 @@ public class Coins implements ICoins {
     private boolean waitingDeductCoinResult;
     private boolean cancelPutCoins;
     private boolean disableSpeech;
+    private boolean tutorialMode;
     private ConcurrentHashMap<String, Integer> currentUsersPutCoinNumberMap;
     private CoinListener coinListener;
     private ShopProducts currentShopProduct;
@@ -149,7 +150,9 @@ public class Coins implements ICoins {
             }
         });
 
-        gamingKit.updateRoomMates(UpdateRoomMatesCode.PUT_COIN, transactionId);
+        if(!tutorialMode){
+            gamingKit.updateRoomMates(UpdateRoomMatesCode.PUT_COIN, transactionId);
+        }
     }
 
     public void initCoinMachine(String coinsPurpose, int expectingCoin, String transactionId, ArrayList<Pair<String, String>> userIdToNamePairs,
@@ -158,6 +161,7 @@ public class Coins implements ICoins {
         coinsAlreadyEnough = false;
         puttingCoin = false;
         cancelPutCoins = false;
+        tutorialMode = false;
         this.coinsPurpose = coinsPurpose;
         this.coinListener = null;
         this.currentUsersPutCoinNumberMap.clear();
@@ -1046,5 +1050,9 @@ public class Coins implements ICoins {
 
     public void setDisableSpeech(boolean disableSpeech) {
         this.disableSpeech = disableSpeech;
+    }
+
+    public void setTutorialMode(boolean tutorialMode) {
+        this.tutorialMode = tutorialMode;
     }
 }

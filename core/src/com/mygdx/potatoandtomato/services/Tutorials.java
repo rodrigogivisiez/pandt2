@@ -254,8 +254,9 @@ public class Tutorials implements ITutorials {
             return false;
         }
         else{
-            completedTutorialsId.add(completed);
-            return true;
+            //completedTutorialsId.add(completed);
+            //return true;
+            return false;
         }
     }
 
@@ -343,7 +344,7 @@ public class Tutorials implements ITutorials {
     @Override
     public void completeTutorial() {
         hide();
-        preferences.put(currentTutorialId, "1");
+        //preferences.put(currentTutorialId, "1");
         completedTutorialsId.add(currentTutorialId);
     }
 
@@ -441,9 +442,8 @@ public class Tutorials implements ITutorials {
         });
     }
 
-
-    public void setBlockRootClick(boolean blockRootClick) {
-        this.blockRootClick = blockRootClick;
+    public boolean isShowing() {
+        return showing;
     }
 
     private class ActorData{

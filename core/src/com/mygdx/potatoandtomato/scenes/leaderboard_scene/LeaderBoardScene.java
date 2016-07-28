@@ -493,15 +493,20 @@ public class LeaderBoardScene extends SceneAbstract {
                 addedScoreTable.add(addedScoreLabel).expandX().fillX();
                 addedScoreTable.row();
                 addedScoreTable.add(addedReasonLabel).minWidth(80).expandX().fillX().padTop(-10);
-                addedScoreTable.layout();
-                addedScoreTable.setSize(addedScoreTable.getPrefWidth(), 30);
+                addedScoreTable.pack();
 
-                addedScoreTable.setPosition(Positions.getWidth() - addedScoreTable.getPrefWidth() - 3, _animatingTableY);
+                float positionY = _animatingTableY + _recordHeight / 2 - addedScoreTable.getPrefHeight() / 2;
+                if(positionY - addedScoreTable.getPrefHeight() < 5){
+                    positionY = 5;
+                }
+
+                addedScoreTable.setPosition(Positions.getWidth() - addedScoreTable.getPrefWidth() - 3, positionY);
 
                 _root.addActor(addedScoreTable);
 
-                float delayDuration = 1.6f;
-                if(scoreDetails.getReason().length() > 10) delayDuration = 2.3f;
+
+                int totalWords = scoreDetails.getReason().split(" ").length;
+                float delayDuration = totalWords * 0.4f;
 
                 addedScoreTable.setOrigin(addedScoreTable.getWidth()/2, addedScoreTable.getHeight()/2);
 

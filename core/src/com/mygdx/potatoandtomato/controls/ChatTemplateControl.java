@@ -145,6 +145,7 @@ public class ChatTemplateControl extends Table {
         Label templateLabel = new Label(msg, templateLabelStyle);
         templateLabel.setName("templateLabel");
         templateLabel.setAlignment(Align.left);
+        templateLabel.setWrap(true);
 
         Image separatorImage = new Image(assets.getTextures().get(Textures.Name.GREY_HORIZONTAL_LINE));
         separatorImage.getColor().a = 0.3f;

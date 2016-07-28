@@ -696,7 +696,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
     }
 
     public void cancelPutCoins(Profile profile){
-        if(!starting || gameStarted) return;
+        if(!starting || gameStarted || tutorialStep > 0) return;
 
         starting = false;
 
@@ -1065,11 +1065,15 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                if (!starting) {
-                    starting = true;
-                    hostSendStartGame();
+                if(tutorialStep > 0){
+                    startPutCoins();
                 }
-
+                else{
+                    if (!starting) {
+                        starting = true;
+                        hostSendStartGame();
+                    }
+                }
             }
         });
 
@@ -1243,15 +1247,20 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                     _texts.tutorialAboutCoinCount(), 0, -20);
         }
         else if(tutorialStep == 5){
+            _services.getCoins().setTutorialMode(true);
             _services.getTutorials().expectGestureOnActor(GestureType.Tap,
                     _services.getCoins().getCoinMachineControl().getCoinInsertRootTable(),
                     _texts.tutorialAboutInsertCoin(), 0, 0);
         }
         else if(tutorialStep == 6){
+            _services.getCoins().setTutorialMode(false);
             Threadings.delay(1000, new Runnable() {
                 @Override
                 public void run() {
-                    _services.getTutorials().showMessage(null, _texts.tutorialAboutNoCoin());
+                    _services.getTutorials().showMessage(null,
+                            !_services.getCoins().checkUserHasCoin(_services.getProfile().getUserId()) ?
+                                    _texts.tutorialAboutNoCoin() :
+                            _texts.tutorialAboutHasCoin());
                 }
             });
         }

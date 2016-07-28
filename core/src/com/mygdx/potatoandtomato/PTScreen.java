@@ -424,7 +424,7 @@ public class PTScreen implements Screen, InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        if(keycode == Input.Keys.BACK) _backRunning = true;
+        if(keycode == Input.Keys.BACK && !_services.getTutorials().isShowing()) _backRunning = true;
         return false;
     }
 

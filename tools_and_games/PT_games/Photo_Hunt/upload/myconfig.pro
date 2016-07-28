@@ -1,3 +1,4 @@
+
 -libraryjars 'C:\Program Files\Java\jre1.8.0_40\lib\rt.jar'
 -libraryjars 'C:\Users\SiongLeng\Desktop\Potato Tomato 2\pandt2\out\artifacts\common_jar\common.jar'
 -libraryjars 'C:\Users\SiongLeng\Desktop\Potato Tomato 2\pandt2\libs\firebase-client-android-2.4.1.jar'
@@ -10,12 +11,16 @@
 
 -keepclasseswithmembers class * extends com.potatoandtomato.common.**
 
--keep class com.potatoandtomato.games.models.** {
-    *** get*(...);
-    *** set*(...);
+-keepclasseswithmembers class com.potatoandtomato.games.models.** {
+    <fields>;
+    <methods>;
 }
 
 -keep class com.potatoandtomato.games.enums.**
+
+-keep class com.potatoandtomato.games.services.**
+
+-keep class com.potatoandtomato.games.absintf.GameModelListener
 
 # Keep - Library. Keep all public and protected classes, fields, and methods.
 -keep public class com.potatoandtomato.games.Entrance {
