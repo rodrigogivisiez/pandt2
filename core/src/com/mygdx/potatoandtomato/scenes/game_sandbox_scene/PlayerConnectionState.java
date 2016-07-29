@@ -57,6 +57,15 @@ public class PlayerConnectionState implements Disposable {
             ConnectionStatus oldConnectionStatus = this.connectionStatus;
 
             if(newConnectionStatus == ConnectionStatus.Disconnected){
+                if(oldConnectionStatus == ConnectionStatus.Abandoned
+                        || oldConnectionStatus == ConnectionStatus.Disconnected_No_CountDown){
+                    return false;
+                }
+                if(oldConnectionStatus == ConnectionStatus.Connected){
+                    playerConnectionStateListener.onPlayerConnectionChanged(player.getUserId(), newConnectionStatus);
+                }
+            }
+            else if(newConnectionStatus == ConnectionStatus.Disconnected_No_CountDown){
                 if(oldConnectionStatus == ConnectionStatus.Abandoned){
                     return false;
                 }

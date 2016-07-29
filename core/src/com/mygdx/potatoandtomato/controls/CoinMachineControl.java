@@ -498,6 +498,37 @@ public class CoinMachineControl {
         });
     }
 
+    public void animateNoCoin(){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+
+                final Color normalColor = Color.valueOf("2fe400");
+                final Color warningColor = Color.valueOf("ff0000");
+
+                yourCoinCountTable.clearActions();
+                yourCoinCountTable.addAction(repeat(5, sequence(delay(0.1f), new RunnableAction(){
+                    @Override
+                    public void run() {
+                        yourCoinCountTable.setColor(warningColor);
+                        for(Actor actor : yourCoinCountTable.getChildren()){
+                            actor.setColor(warningColor);
+                        }
+                    }
+                }, delay(0.1f), new RunnableAction(){
+                    @Override
+                    public void run() {
+                        yourCoinCountTable.setColor(normalColor);
+                        for(Actor actor : yourCoinCountTable.getChildren()){
+                            actor.setColor(normalColor);
+                        }
+                    }
+                })));
+
+            }
+        });
+    }
+
     public void updateDismissText(final String text){
         Threadings.postRunnable(new Runnable() {
             @Override

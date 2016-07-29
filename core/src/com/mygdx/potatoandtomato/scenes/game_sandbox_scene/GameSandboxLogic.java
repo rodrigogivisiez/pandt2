@@ -7,6 +7,7 @@ import com.mygdx.potatoandtomato.absintflis.gamingkit.LockPropertyListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.ConnectionsControllerListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.GameLoadStateMonitorListener;
 import com.mygdx.potatoandtomato.enums.*;
+import com.mygdx.potatoandtomato.helpers.Flurry;
 import com.potatoandtomato.common.absints.CoinListener;
 import com.mygdx.potatoandtomato.absintflis.services.ConnectionWatcherListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
@@ -65,8 +66,6 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         safeThread = new SafeThread();
         gameLoadStateMonitor = new GameLoadStateMonitor(room, _services, isContinue ? null : room.getTeams(), _screen, this);
 
-
-
         connectionsController = new ConnectionsController(room, services);
         onGameStartedRunnables = new CopyOnWriteArrayList<Runnable>();
         onHasGameDataReceivedRunnables = new CopyOnWriteArrayList<Runnable>();
@@ -79,6 +78,11 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         setListenersAndThreads();
         Threadings.setContinuousRenderLock(true);
 
+        HashMap<String, String> map = new HashMap();
+        map.put("gameName", room.getGame().getName());
+        map.put("totalPlayers", String.valueOf(room.getTotalPlayersCount()));
+        map.put("beforeMsgSent", String.valueOf(_services.getGamingKit().getMsgSentCount()));
+        Flurry.log(FlurryEvent.GameSession, map);
     }
 
     @Override
@@ -131,7 +135,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                 connectionsController.sendUserAbandoned(kickedUserId);
                 _services.getGamingKit().leaveRoom();
                 connectionsController.receivedUserAbandoned(kickedUserId, "");
-                exitSandbox();
+                exitSandbox(true);
             }
             else{
                 Player player = room.getPlayerByUserId(kickedUserId);
@@ -249,6 +253,8 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     }
 
     public void failLoad(Player player){
+        Flurry.log(FlurryEvent.LoadGameFailed);
+
         failed = true;
 
         _services.getChat().newMessage(new ChatMessage(_texts.chatMsgLoadGameFailed(),
@@ -257,7 +263,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         Threadings.delay(2000, new Runnable() {
             @Override
             public void run() {
-                exitSandbox();
+                exitSandbox(false);
             }
         });
     }
@@ -394,8 +400,13 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     //exiting sandbox
     //////////////////////////////////////////////////////////////////
 
-    public void exitSandbox(){
+    public void exitSandbox(boolean isAbandon){
         if(!exiting){
+            HashMap<String, String> map = new HashMap();
+            map.put("abandoned", isAbandon ? "yes" : "no");
+            map.put("afterMsgSent", String.valueOf(_services.getGamingKit().getMsgSentCount()));
+            Flurry.log(FlurryEvent.EndGame, map);
+
             _services.getBroadcaster().broadcast(BroadcastEvent.DEVICE_ORIENTATION, 0);
             _services.getChat().hideChat();
             _services.getChat().setMode(1);
@@ -405,6 +416,10 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
 
             exiting = true;
             //gameStarted variable for failed loading case
+            if(gameStarted && !isAbandon){
+                connectionsController.sendMeLeftGame();
+            }
+
             if(room.getGame().getLeaderboardTypeEnum() != LeaderboardType.None && gameStarted){
                 endGameData.setEndGameResult(coordinator.getEndGameResult());
                 _screen.toScene(leaderboardLogic, SceneEnum.END_GAME_LEADER_BOARD);
@@ -413,16 +428,22 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                 _screen.back();
                 _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
             }
+
+            disposeImportantItems();
         }
     }
 
+    public void disposeImportantItems(){
+        gameLoadStateMonitor.disposeGameCoordinator();
+        gameLoadStateMonitor.dispose();
+        connectionsController.dispose();
+    }
 
     @Override
     public void dispose() {
         super.dispose();
-        gameLoadStateMonitor.disposeGameCoordinator();
-        gameLoadStateMonitor.dispose();
-        connectionsController.dispose();
+        disposeImportantItems();
+        Flurry.logTimeEnd(FlurryEvent.GameSession);
 
         _services.getBroadcaster().broadcast(BroadcastEvent.DEVICE_ORIENTATION, 0);
         _services.getConnectionWatcher().gameEnded();
@@ -490,8 +511,8 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     }
 
     @Override
-    public void endGame() {
-        exitSandbox();
+    public void endGame(boolean isAbandon) {
+        exitSandbox(isAbandon);
     }
 
     @Override
@@ -537,7 +558,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         if(coordinator.getAllConnectedPlayers().size() == 1){       //only me
             _services.getDatabase().updateRoomPlayingAndOpenState(room, false, null, null);
         }
-        exitSandbox();
+        exitSandbox(false);
     }
 
 }

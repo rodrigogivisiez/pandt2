@@ -8,7 +8,7 @@ public class Global {
     public static boolean DEBUG = false;         //default false
     public static boolean REVIEW_MODE = false;
     public static int ATTACK_TIME_PERCENT = 25;
-    public static int BONUS_STAGE_NUMBER = 2;      //original 10
+    public static int BONUS_STAGE_NUMBER = 10;      //original 10
     public static int EXPECTED_PLAYERS_DEBUG = 2;
 
     public static void setDEBUG(boolean isDebugging){

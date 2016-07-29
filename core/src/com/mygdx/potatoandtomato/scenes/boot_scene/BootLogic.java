@@ -13,7 +13,9 @@ import com.mygdx.potatoandtomato.absintflis.services.RestfulApiListener;
 import com.mygdx.potatoandtomato.absintflis.socials.FacebookListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.ConfirmIdentifier;
+import com.mygdx.potatoandtomato.enums.FlurryEvent;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
+import com.mygdx.potatoandtomato.helpers.Flurry;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.services.Confirm;
 import com.mygdx.potatoandtomato.statics.Terms;
@@ -79,6 +81,7 @@ public class BootLogic extends LogicAbstract {
     }
 
     public void loginFacebook() {
+        Flurry.log(FlurryEvent.LoginSocial);
         _bootScene.showSocialLoggingIn();
 
         _services.getSocials().loginFacebook(new FacebookListener() {
@@ -208,6 +211,7 @@ public class BootLogic extends LogicAbstract {
     }
 
     public void retrieveUserFailed(){
+        Flurry.log(FlurryEvent.LoginFailed);
         _bootScene.showPTLogInFailed();
     }
 
@@ -235,11 +239,25 @@ public class BootLogic extends LogicAbstract {
         _services.getBroadcaster().broadcast(BroadcastEvent.USER_READY, _services.getProfile());
     }
 
+    public void loginProcessCompleteSucceed(){
+        Flurry.log(FlurryEvent.LoginSuccess);
+
+        _screen.hideRotateSunrise();
+        if(Strings.isEmpty(_services.getProfile().getGameName())){
+            _screen.toScene(SceneEnum.INPUT_NAME);
+        }
+        else{
+            _screen.toScene(SceneEnum.GAME_LIST);
+        }
+        _logined = true;
+    }
+
     private void checkCrashedBefore(){
         String msg = Logs.getAndDeleteLogMsg();
         if(!Strings.isEmpty(msg)){
             _services.getDatabase().saveLog(msg);
             _services.getConfirm().show(ConfirmIdentifier.CrashedReportSent, _texts.confirmAppsCrashed(), Confirm.Type.YES, null);
+            Flurry.log(FlurryEvent.SentCrashMsg);
         }
     }
 
@@ -278,14 +296,7 @@ public class BootLogic extends LogicAbstract {
                 if(_services.getProfile() != null && userId != null && userId.equals(_services.getProfile().getUserId())){
                     if(!_logined){
                         if(st == ConnectStatus.CONNECTED){
-                            _screen.hideRotateSunrise();
-                            if(Strings.isEmpty(_services.getProfile().getGameName())){
-                                _screen.toScene(SceneEnum.INPUT_NAME);
-                            }
-                            else{
-                                _screen.toScene(SceneEnum.GAME_LIST);
-                            }
-                            _logined = true;
+                            loginProcessCompleteSucceed();
                         }
                         else{
                             retrieveUserFailed();

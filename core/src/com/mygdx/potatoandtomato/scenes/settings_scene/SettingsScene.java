@@ -24,7 +24,7 @@ import com.potatoandtomato.common.utils.Threadings;
 public class SettingsScene extends SceneAbstract {
 
     TextField _displayNameTextField;
-    BtnColor _facebookBtn, _saveBtn, _reportBtn;
+    BtnColor _facebookBtn, _saveBtn, creditBtn;
     Image _soundsEnabledImage;
 
     public SettingsScene(Services services, PTScreen screen) {
@@ -69,7 +69,7 @@ public class SettingsScene extends SceneAbstract {
         //////////////////////////
         //Save Button
         //////////////////////////
-        _saveBtn = new BtnColor(BtnColor.ColorChoice.GREEN, _assets);
+        _saveBtn = new BtnColor(BtnColor.ColorChoice.RED, _assets);
         _saveBtn.setText(_texts.save());
 
 
@@ -85,6 +85,19 @@ public class SettingsScene extends SceneAbstract {
 
         _facebookBtn = new BtnColor(BtnColor.ColorChoice.BLUE, _assets);
         _facebookBtn.setText(_services.getSocials().isFacebookLogon() ? _texts.logout() : _texts.login());
+
+        //////////////////////////
+        //Separator
+        //////////////////////////
+        Image separatorImage3 = new Image(_assets.getTextures().get(Textures.Name.WOOD_SEPARATOR_HORIZONTAL));
+
+        ///////////////////////////
+        //Credit
+        //////////////////////////
+        Label creditLabel = new Label(_texts.creditsTitle(), labelTitleStyle);
+
+        creditBtn = new BtnColor(BtnColor.ColorChoice.GREEN, _assets);
+        creditBtn.setText(_texts.btnTextShowCredits());
 
 
         ////////////////////////
@@ -106,6 +119,11 @@ public class SettingsScene extends SceneAbstract {
         settingsTable.row();
         settingsTable.add(socialLabel).left();
         settingsTable.add(_facebookBtn).right();
+        settingsTable.row();
+        settingsTable.add(separatorImage3).expandX().fillX().colspan(2).padTop(10).padBottom(10);
+        settingsTable.row();
+        settingsTable.add(creditLabel).left();
+        settingsTable.add(creditBtn).right();
 
 
         _root.add(settingsTable).width(350);
@@ -127,8 +145,8 @@ public class SettingsScene extends SceneAbstract {
         return _saveBtn;
     }
 
-    public BtnColor getReportBtn() {
-        return _reportBtn;
+    public BtnColor getCreditBtn() {
+        return creditBtn;
     }
 
     public void changeSoundEnabledImage(){
@@ -140,4 +158,6 @@ public class SettingsScene extends SceneAbstract {
             }
         });
     }
+
+
 }

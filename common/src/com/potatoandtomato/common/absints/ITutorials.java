@@ -20,4 +20,6 @@ public interface ITutorials {
 
     boolean completedTutorialBefore(String id);
 
+    void hide();
+
 }

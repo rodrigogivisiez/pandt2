@@ -518,7 +518,7 @@ public class GameCoordinator implements Disposable {
     //finalize game, after this method, other user will not be allowed to reconnect back to game
     public void finalizeAndEndGame(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers, boolean abandon){
         finalizeGame(winners, losers, abandon);
-        endGame();
+        endGame(abandon);
     }
 
     public void finalizeGame(HashMap<Team, ArrayList<ScoreDetails>> winners, ArrayList<Team> losers, boolean abandon){
@@ -560,12 +560,16 @@ public class GameCoordinator implements Disposable {
     }
 
     public void endGame(){
+        endGame(false);
+    }
+
+    private void endGame(boolean isAbandon){
         if(!finalized){
             System.out.println("Error: please call finalizeGame() function before end game.");
             return;
         }
 
-        gameSandBox.endGame();
+        gameSandBox.endGame(isAbandon);
     }
 
     public void raiseGameFailedError(String msg){
@@ -687,6 +691,7 @@ public class GameCoordinator implements Disposable {
         selfConnectionListeners.clear();
         gameDataHelper.dispose();
         decisionsMaker.dispose();
+        tutorialsWrapper.dispose();
         iCoins.reset();
     }
 

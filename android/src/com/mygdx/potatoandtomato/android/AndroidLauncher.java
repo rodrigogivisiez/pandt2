@@ -25,6 +25,8 @@ import com.flurry.android.FlurryAgent;
 import com.mygdx.potatoandtomato.PTGame;
 import com.mygdx.potatoandtomato.absintflis.entrance.EntranceLoaderListener;
 import com.mygdx.potatoandtomato.android.controls.MyEditText;
+import com.mygdx.potatoandtomato.enums.FlurryEvent;
+import com.mygdx.potatoandtomato.helpers.Flurry;
 import com.mygdx.potatoandtomato.models.PushNotification;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.mygdx.potatoandtomato.statics.Terms;
@@ -98,9 +100,10 @@ public class AndroidLauncher extends AndroidApplication {
 		if(!Strings.isEmpty(Terms.FLURRY_KEY())){
 			FlurryAgent.init(this, Terms.FLURRY_KEY());
 			FlurryAgent.onStartSession(this, Terms.FLURRY_KEY());
+			Flurry.setActive(true);
 		}
 
-		FlurryAgent.logEvent("startGame");
+		Flurry.log(FlurryEvent.Initiation);
 	}
 
 	private void setBuildNumber(){

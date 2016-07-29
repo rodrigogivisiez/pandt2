@@ -254,9 +254,8 @@ public class Tutorials implements ITutorials {
             return false;
         }
         else{
-            //completedTutorialsId.add(completed);
-            //return true;
-            return false;
+            completedTutorialsId.add(completed);
+            return true;
         }
     }
 
@@ -343,9 +342,9 @@ public class Tutorials implements ITutorials {
 
     @Override
     public void completeTutorial() {
-        hide();
-        //preferences.put(currentTutorialId, "1");
+        preferences.put(currentTutorialId, "1");
         completedTutorialsId.add(currentTutorialId);
+        hide();
     }
 
     private void goToNextTutorialPart(){
@@ -373,15 +372,19 @@ public class Tutorials implements ITutorials {
         });
     }
 
+    @Override
     public void hide(){
-        clearTutorials();
-        hideMsg(new Runnable() {
-            @Override
-            public void run() {
-                root.setVisible(false);
-                showing = false;
-            }
-        });
+        currentTutorialId = "";
+        if(showing){
+            clearTutorials();
+            hideMsg(new Runnable() {
+                @Override
+                public void run() {
+                    root.setVisible(false);
+                    showing = false;
+                }
+            });
+        }
     }
 
     private void showButtons(){

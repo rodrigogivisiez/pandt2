@@ -18,7 +18,7 @@ public interface IGameSandBox {
     void useNotification(String msg);
 
     void userAbandoned(String userId);
-    void endGame();
+    void endGame(boolean isAbandon);
     void sendUpdate(RoomUpdateType updateType, String msg);
     void sendPrivateUpdate(RoomUpdateType updateType, String toUserId, String msg);
     void vibrate(double periodInMili);

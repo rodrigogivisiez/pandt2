@@ -10,6 +10,7 @@ import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.mygdx.potatoandtomato.utils.Positions;
 import com.potatoandtomato.common.GameCoordinator;
+import com.potatoandtomato.common.absints.GameEntrance;
 import com.potatoandtomato.common.absints.IGameSandBox;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
@@ -63,14 +64,16 @@ public class GameLoader implements Disposable {
     public void disposeGameCoordinator(){
         if(gameCoordinator != null){
             if(gameCoordinator.getGameEntrance() != null) {
+                final GameEntrance gameEntrance = gameCoordinator.getGameEntrance();
                 Threadings.postRunnable(new Runnable() {
                     @Override
                     public void run() {
-                        gameCoordinator.getGameEntrance().dispose();
+                        gameEntrance.dispose();
                     }
                 });
             }
             gameCoordinator.dispose();
+            gameCoordinator = null;
         }
     }
 

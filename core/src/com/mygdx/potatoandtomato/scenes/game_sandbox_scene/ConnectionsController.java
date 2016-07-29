@@ -191,6 +191,10 @@ public class ConnectionsController implements Disposable, IChatRoomUsersConnecti
         services.getGamingKit().updateRoomMates(UpdateRoomMatesCode.USER_CONNECTED, "");
     }
 
+    public void sendMeLeftGame(){
+        services.getGamingKit().updateRoomMates(UpdateRoomMatesCode.USER_LEFT_GAME, "");
+    }
+
     public void setPlayerConnectionState(String userId, ConnectionStatus connectionStatus, String senderId){
          if(playerConnectionStatesMap.containsKey(userId)){
             boolean changed = playerConnectionStatesMap.get(userId).setConnectionStatus(connectionStatus);
@@ -224,6 +228,12 @@ public class ConnectionsController implements Disposable, IChatRoomUsersConnecti
                     //user disconnected
                     services.getNotification().important(isSelf ? services.getTexts().notificationYouDisconnected() :
                                     String.format(services.getTexts().notificationDisconnected(), player.getName()));
+                }
+                else if (connectionStatus == ConnectionStatus.Disconnected_No_CountDown) {
+                    //user left game at the end of the game
+                    if(!isSelf){
+                        services.getNotification().info(String.format(services.getTexts().notificationLeftGame(), player.getName()));
+                    }
                 }
             }
 
@@ -277,6 +287,10 @@ public class ConnectionsController implements Disposable, IChatRoomUsersConnecti
                         setPlayerConnectionState(senderId, ConnectionStatus.Connected, "");
                     }
                 }
+                else if(code == UpdateRoomMatesCode.USER_LEFT_GAME){
+                    setPlayerConnectionState(senderId, ConnectionStatus.Disconnected_No_CountDown, "");
+                }
+
             }
 
             @Override

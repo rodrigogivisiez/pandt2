@@ -18,6 +18,7 @@ import com.mygdx.potatoandtomato.absintflis.push_notifications.PushCode;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.absintflis.services.IChatRoomUsersConnectionRefresher;
+import com.mygdx.potatoandtomato.helpers.Flurry;
 import com.mygdx.potatoandtomato.statics.Terms;
 import com.potatoandtomato.common.absints.TutorialPartListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
@@ -69,6 +70,8 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
 
     public RoomLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
+
+        Flurry.logTimeStart(FlurryEvent.RoomSession);
 
         room = (Room) objs[0];
         isContinue = (Boolean) objs[1];
@@ -584,8 +587,15 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
     }
 
     public void errorOccurred(RoomError roomError){
-        if(!isSceneFullyVisible()){
+        if(roomErrorOccured == null){
             roomErrorOccured = roomError;
+            leaveRoomFinalize();
+        }
+        else{
+            if(roomError != roomErrorOccured) return;
+        }
+
+        if(!isSceneFullyVisible()){
             return;
         }
 
@@ -613,6 +623,9 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                     break;
                 case UnknownError:
                     message = _texts.confirmRoomError();
+                    break;
+                case FullRoom:
+                    message = _texts.confirmFullRoom();
                     break;
             }
 
@@ -976,14 +989,16 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
 
                     if(isSceneVisible() && !_confirm.isVisible()){
                         RoomUser roomUser = room.getRoomUserByUserId(_services.getProfile().getUserId());
-                        if(roomUser != null){
+                        if(roomUser != null && roomUser.getSlotIndex() != -1){
                             if(roomUser.getRoomUserState() != RoomUserState.Normal){
                                 sendIsReadyUpdate(true);
                             }
                         }
                         else{
                             if(!isHost()){
-                                sendUpdateRoomMates(UpdateRoomMatesCode.JOIN_ROOM, "");
+                                if(room.hasNewUserSlot(_services.getProfile().getUserId())){
+                                    sendUpdateRoomMates(UpdateRoomMatesCode.JOIN_ROOM, "");
+                                }
                             }
                         }
                     }
@@ -991,6 +1006,28 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                 }
             }
         });
+
+        Threadings.runInBackground(new Runnable() {
+            @Override
+            public void run() {
+                while (true){
+                    if(checkReadyThread.isKilled()) return;
+
+                    RoomUser roomUser = room.getRoomUserByUserId(_services.getProfile().getUserId());
+                    if(roomUser != null && roomUser.getSlotIndex() != -1){
+                        break;
+                    }
+
+                    if(!room.hasNewUserSlot(_services.getProfile().getUserId())){
+                        errorOccurred(RoomError.FullRoom);
+                        break;
+                    }
+
+                    Threadings.sleep(500);
+                }
+            }
+        });
+
     }
 
     public void initRoomDbMonitor(final OneTimeRunnable onSuccess){
@@ -1115,10 +1152,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
 
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-
+    public void leaveRoomFinalize(){
         if(isHost()) {
             removeUserFromRoom(_services.getProfile().getUserId());
             _services.getDatabase().updateRoomPlayingAndOpenState(room, null, false, null);
@@ -1137,6 +1171,15 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         _services.getChat().resetChat();
         if(gameFileChecker != null) gameFileChecker.dispose();
         _services.getRecorder().reset();
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        leaveRoomFinalize();
+
+        Flurry.log(FlurryEvent.LeavingRoom, "msgSent", String.valueOf(_services.getGamingKit().getMsgSentCount()));
+        Flurry.logTimeEnd(FlurryEvent.RoomSession);
     }
 
     public void userJoinLeftAddChat(Profile profile, boolean joined){

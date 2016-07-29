@@ -9,8 +9,10 @@ import com.mygdx.potatoandtomato.absintflis.gamingkit.JoinRoomListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.RoomInfoListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.enums.FlurryEvent;
 import com.mygdx.potatoandtomato.enums.RoomUserState;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
+import com.mygdx.potatoandtomato.helpers.Flurry;
 import com.mygdx.potatoandtomato.services.Texts;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Room;
@@ -54,6 +56,16 @@ public class PrerequisiteLogic extends LogicAbstract {
     }
 
     public void restart(){
+        if(_joinType == JoinType.CREATING){
+            Flurry.log(FlurryEvent.CreatingGame);
+        }
+        else if(_joinType == JoinType.JOINING){
+            Flurry.log(FlurryEvent.JoiningGame);
+        }
+        else if(_joinType == JoinType.CONTINUING){
+            Flurry.log(FlurryEvent.ContinuingGame);
+        }
+
         _roomInfoRetrieved = false;
         _services.getDatabase().clearAllOnDisconnectListenerModel();
         if(_joinType == JoinType.CREATING){

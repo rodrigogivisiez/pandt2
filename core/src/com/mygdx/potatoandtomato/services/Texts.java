@@ -59,10 +59,31 @@ public class Texts {
     public String displayNameTitle() { return "Display Name"; }
     public String soundsTitle() { return "Sounds"; }
     public String facebookTitle() { return "Facebook"; }
+    public String creditsTitle() { return "Credits"; }
+
+    public String btnTextShowCredits() { return "Show"; }
 
     public String confirmLogoutFacebook() { return "Are you sure you want to logout from Facebook? (Potato and Tomato will need to restart after this.)"; }
     public String confirmLoginFacebook() { return "Are you sure you want to login into Facebook? (Potato and Tomato will need to restart after this.)"; }
     public String confirmFacebookRequestFailed() { return "Facebook request fails..."; }
+
+    public String allCredits(){
+        return "long credits \n " +
+                "www.xxxxxxx.com credit \n " +
+                "wwww.xxxxxx.com credit2\n" +
+                " wwww.xxxxxx.com credit2 \n" +
+                " wwww.xxxxxx.com credit2 \n" +
+                " wwww.xxxxxx.com credit2 \n" +
+                " wwww.xxxxxx.com credit2 \n" +
+                " wwww.xxxxxx.com credit2 \n" +
+                " wwww.xxxxxx.com credit2 \n" +
+                " wwww.xxxxxx.com credit2 \n" +
+                " wwww.xxxxxx.com credit2 \n" +
+                " wwww.xxxxxx.com credit2 \n" +
+                " wwww.xxxxxx.com credit2 \n" +
+                " wwww.xxxxxx.com credit2 \n" +
+                " wwww.xxxxxx.com credit2  ";
+    }
 
     ///////////////////////////////////////////////////////////////////////
     //Create game scene
@@ -118,6 +139,7 @@ public class Texts {
     public String confirmGameVersionOutdated() { return "This game has a newer version, a new room needs to be created.";}
     public String confirmFailedRetriveGameData() { return "Fail to connect, please check your connection and try again.";}
     public String confirmHostLeft() { return "Room host has left the room, all participants to exit room now."; }
+    public String confirmFullRoom() { return "Room is already full."; }
     public String confirmRoomError() { return "Unexpected error has occurred, you will leave the room now."; }
 
     public String confirmNotEnoughPlayers() { return "You need at least %s players in each team to start the game."; }
@@ -178,6 +200,8 @@ public class Texts {
     public String notificationAbandonDueToTimeout() { return "%s has abandoned the game because of failure to reconnect in " + Global.ABANDON_TOLERANCE_SECS + " seconds.";}
     public String notificationConnected() { return "%s has connected to the game.";}
     public String notificationDisconnected() { return "%s has disconnected from the game, he/she has " + Global.ABANDON_TOLERANCE_SECS + " seconds to reconnect, please wait.";}
+    public String notificationLeftGame() { return "%s has left the game.";}
+
 
     public String notificationYouAbandon() { return "You have abandoned the game!";}
     public String notificationYouAbandonDueToTimeout() { return "You have abandoned the game because of failure to reconnect in " + Global.ABANDON_TOLERANCE_SECS + " seconds.";}

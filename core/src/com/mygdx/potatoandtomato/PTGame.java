@@ -106,7 +106,7 @@ public class PTGame extends Game implements IPTGame {
 				_chat = new Chat(_broadcaster, _gamingKit, _texts, _assets,
 										_soundsPlayer, _recorder, _batch, _game, _preferences);
 				_confirm = new Confirm(_batch, _game, _assets, _broadcaster);
-				_notification = new Notification(_batch, _assets, _game, _broadcaster);
+				_notification = new Notification(_batch, _assets, _game, _broadcaster, _soundsPlayer);
 				_tutorials = new Tutorials(_game, _batch, _soundsPlayer, _assets, _broadcaster, _preferences, _texts);
 				_restfulApi = new RestfulApi();
 				_connectionWatcher = new ConnectionWatcher(_gamingKit, _broadcaster, _confirm, _texts, _profile);
@@ -131,9 +131,9 @@ public class PTGame extends Game implements IPTGame {
 					public void run() {
 						setScreen(_screen);
 						_screen.toScene(SceneEnum.BOOT);
-
 					}
 				});
+
 			}
 		});
 	}

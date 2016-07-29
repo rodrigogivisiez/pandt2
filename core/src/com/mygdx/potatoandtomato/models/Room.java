@@ -173,6 +173,20 @@ public class Room {
     }
 
     @JsonIgnore
+    public boolean hasNewUserSlot(String userId){
+        for(int i = 0; i < Integer.valueOf(getGame().getMaxPlayers()); i++){
+            RoomUser roomUser = getRoomUserBySlotIndex(i);
+            if(roomUser == null) return true;
+            else{
+                if(roomUser.getProfile().getUserId().equals(userId)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @JsonIgnore
     public RoomUser getRoomUserByUserId(String userId){
         for(RoomUser user : this.getRoomUsersMap().values()){
             if(user.getProfile().getUserId().equals(userId)){
@@ -470,10 +484,14 @@ public class Room {
         return false;
     }
 
+
     @JsonIgnore
-    public Color getUserColorByUserId(String userId){
-        int slotIndex = getSlotIndexByUserId(userId);
-        return ColorUtils.getUserColorByIndex(slotIndex);
+    public int getTotalPlayersCount(){
+        int result = 0;
+        for(Team team : teams){
+            result += team.getPlayers().size();
+        }
+        return result;
     }
 
     @JsonIgnore

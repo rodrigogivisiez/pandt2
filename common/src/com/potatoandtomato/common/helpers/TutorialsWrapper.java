@@ -1,5 +1,6 @@
 package com.potatoandtomato.common.helpers;
 
+import com.badlogic.gdx.utils.Disposable;
 import com.potatoandtomato.common.absints.GamePreferencesAbstract;
 import com.potatoandtomato.common.absints.ITutorials;
 import com.potatoandtomato.common.absints.TutorialPartListener;
@@ -9,7 +10,7 @@ import com.potatoandtomato.common.enums.GestureType;
 /**
  * Created by SiongLeng on 27/7/2016.
  */
-public class TutorialsWrapper implements ITutorials {
+public class TutorialsWrapper implements ITutorials, Disposable {
 
     private ITutorials tutorials;
     private GamePreferencesAbstract gamePreferencesAbstract;
@@ -47,5 +48,15 @@ public class TutorialsWrapper implements ITutorials {
     public boolean completedTutorialBefore(String id) {
         String wrappedId = gamePreferencesAbstract.appendAbbrToKey(id);
         return tutorials.completedTutorialBefore(wrappedId);
+    }
+
+    @Override
+    public void hide() {
+        tutorials.hide();
+    }
+
+    @Override
+    public void dispose() {
+        hide();
     }
 }

@@ -175,4 +175,6 @@ public abstract class GamingKit {
 
     public abstract void dispose();
 
+    public abstract long getMsgSentCount();
+
 }

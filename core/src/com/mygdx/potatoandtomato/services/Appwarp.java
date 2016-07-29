@@ -36,6 +36,7 @@ public class Appwarp extends GamingKit implements ChatRequestListener, Connectio
     private ConcurrentHashMap<String, String> _bytePiecesOwner;
     private String _gettingRoomId, _gettingRoomIdentifier;
     private String _lockingProperty, _unlockingProperty;
+    private long msgSentCount;
 
     public Appwarp(String appKey, String secretKey){
         _appKey = appKey;
@@ -137,6 +138,7 @@ public class Appwarp extends GamingKit implements ChatRequestListener, Connectio
 
     @Override
     public void joinRoom(String roomId) {
+        msgSentCount = 0;
         _roomId = roomId;
         _userIdToEncodeUserIdMap.clear();
         _warpInstance.joinAndSubscribeRoom(_roomId);
@@ -156,11 +158,13 @@ public class Appwarp extends GamingKit implements ChatRequestListener, Connectio
             String id = Strings.generateUniqueRandomKey(20);
             for(int i = 0; i < results.size(); i++){
                 _warpInstance.sendUpdatePeers(appendDataToPeerUpdate(results.get(i), i, results.size(), id).getBytes());
+                msgSentCount++;
             }
         }
         else{
             for(int i = 0; i < results.size(); i++){
                 _warpInstance.sendUpdatePeers(results.get(i).getBytes());
+                msgSentCount++;
             }
         }
     }
@@ -175,12 +179,14 @@ public class Appwarp extends GamingKit implements ChatRequestListener, Connectio
                 for(int i = 0; i < results.size(); i++){
                     _warpInstance.sendPrivateUpdate(_userIdToEncodeUserIdMap.get(toUserId),
                             appendDataToPeerUpdate(results.get(i), i, results.size(), id).getBytes());
+                    msgSentCount++;
                 }
             }
             else{
                 for(int i = 0; i < results.size(); i++){
                     _warpInstance.sendPrivateUpdate(_userIdToEncodeUserIdMap.get(toUserId),
                             results.get(i).getBytes());
+                    msgSentCount++;
                 }
             }
         }
@@ -761,5 +767,10 @@ public class Appwarp extends GamingKit implements ChatRequestListener, Connectio
     @Override
     public void onGetChatHistoryDone(byte b, ArrayList<ChatEvent> arrayList) {
 
+    }
+
+    @Override
+    public long getMsgSentCount() {
+        return msgSentCount;
     }
 }

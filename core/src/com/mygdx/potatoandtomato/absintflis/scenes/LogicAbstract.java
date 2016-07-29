@@ -5,6 +5,7 @@ import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
 import com.mygdx.potatoandtomato.absintflis.cachings.CacheListener;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
+import com.mygdx.potatoandtomato.helpers.Flurry;
 import com.mygdx.potatoandtomato.services.Confirm;
 import com.mygdx.potatoandtomato.services.Texts;
 import com.mygdx.potatoandtomato.utils.Logs;
@@ -30,7 +31,7 @@ public abstract class LogicAbstract implements Disposable {
     private boolean _alive;
     private ArrayList<String> _broadcastSubscribes;
     protected Confirm _confirm;
-    private String _classTag;
+    private String _classTag, _classTagSimple;
     private boolean _isVisible;
     private boolean _isFullyVisible;
     private Broadcaster _broadcaster;
@@ -80,6 +81,12 @@ public abstract class LogicAbstract implements Disposable {
 
     public void setClassTag(){
         _classTag = Logs.getCallerClassName();
+        _classTagSimple = _classTag;
+        if(_classTag != null){
+            String[] tmp = _classTag.split("\\.");
+            if(tmp.length > 0) _classTagSimple = tmp[tmp.length - 1];
+        }
+
     }
 
     public void onQuit(OnQuitListener listener){
@@ -102,6 +109,7 @@ public abstract class LogicAbstract implements Disposable {
 
     //will be called everytime scene onshow(before moving animation), whether is back or forward direction, root might not have stage parent yet
     public void onShow(){
+        Flurry.logToScene(_classTagSimple);
         _isVisible = true;
         if(!_settedListeners){
             setListeners();

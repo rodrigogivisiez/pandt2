@@ -13,12 +13,14 @@ import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.MessagingListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.ConnectionStatus;
+import com.mygdx.potatoandtomato.enums.FlurryEvent;
 import com.mygdx.potatoandtomato.enums.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
 import com.mygdx.potatoandtomato.absintflis.recorder.RecordListener;
 import com.mygdx.potatoandtomato.controls.ChatControl;
 import com.mygdx.potatoandtomato.controls.ChatTemplateControl;
 import com.mygdx.potatoandtomato.controls.DummyKeyboard;
+import com.mygdx.potatoandtomato.helpers.Flurry;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.utils.BytesUtils;
 import com.mygdx.potatoandtomato.utils.Files;
@@ -205,7 +207,7 @@ public class Chat {
     public void messageFieldSendMessage(){
         String msg = chatControl.getMessageTextField().getText().trim();
         if(!msg.equals("")){
-            sendMessage(msg);
+            sendMessage(msg, false);
             setMessageFieldText("");
         }
     }
@@ -221,10 +223,17 @@ public class Chat {
         });
     }
 
-    public void sendMessage(String msg){
+    public void sendMessage(String msg, boolean fromTemplate){
         ChatMessage chatMessage = new ChatMessage(msg, ChatMessage.FromType.USER, myUserId, "");
         gamingKit.updateRoomMates((byte) UpdateRoomMatesCode.TEXT_CHAT, chatMessage.toBytes());
         newMessage(chatMessage);
+
+        if(fromTemplate){
+            Flurry.log(FlurryEvent.SendChatTemplate);
+        }
+        else{
+            Flurry.log(FlurryEvent.SendChatText);
+        }
     }
 
     public void sendVoiceMessage(final FileHandle file, int totalSecs){
@@ -234,6 +243,8 @@ public class Chat {
         final ChatMessage chatMessage = new ChatMessage(file.file().getAbsolutePath(),
                                         ChatMessage.FromType.USER_VOICE, myUserId, String.valueOf(totalSecs));
         newMessage(chatMessage);
+
+        Flurry.log(FlurryEvent.SendChatAudio);
     }
 
     public void newMessage(ChatMessage chatMessage){
@@ -477,7 +488,7 @@ public class Chat {
         chatTemplateControl.setChatTemplateSelectedListener(new ChatTemplateSelectedListener() {
             @Override
             public void onSelected(String template) {
-                sendMessage(template);
+                sendMessage(template, true);
                 chatControl.hideChatTemplatePopup();
             }
         });

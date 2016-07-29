@@ -48,47 +48,7 @@ public class GameDataController {
         for(int i = 0; i < 1; i++) animals.add(ChessType.RED_ELEPHANT);
         for(int i = 0; i < 1; i++) animals.add(ChessType.YELLOW_ELEPHANT);
 
-        //Collections.shuffle(animals);
-
-        animals.set(1, ChessType.YELLOW_MOUSE);
-        animals.set(0, ChessType.RED_MOUSE);
-        animals.set(2, ChessType.RED_MOUSE);
-        animals.set(3, ChessType.RED_MOUSE);
-        animals.set(4, ChessType.YELLOW_MOUSE);
-        animals.set(5, ChessType.RED_ELEPHANT);
-        animals.set(7, ChessType.YELLOW_MOUSE);
-        animals.set(6, ChessType.RED_MOUSE);
-        animals.set(8, ChessType.YELLOW_MOUSE);
-        animals.set(9, ChessType.YELLOW_MOUSE);
-        animals.set(11, ChessType.RED_DOG);
-        animals.set(10, ChessType.YELLOW_CAT);
-        animals.set(12, ChessType.YELLOW_CAT);
-        animals.set(13, ChessType.RED_CAT);
-        animals.set(15, ChessType.RED_CAT);
-        animals.set(14, ChessType.RED_MOUSE);
-        animals.set(16, ChessType.RED_DOG);
-
-        animals.set(22, ChessType.RED_WOLF);
-        animals.set(21, ChessType.YELLOW_LION);
-        animals.set(28, ChessType.RED_WOLF);
-
-        animals.set(18, ChessType.RED_LION);
-        animals.set(17, ChessType.YELLOW_LION);
-
-        animals.set(30, ChessType.YELLOW_DOG);
-        animals.set(31, ChessType.YELLOW_DOG);
-        animals.set(19, ChessType.RED_TIGER);
-        animals.set(20, ChessType.RED_TIGER);
-
-        animals.set(23, ChessType.YELLOW_TIGER);
-        animals.set(24, ChessType.YELLOW_TIGER);
-
-        animals.set(25, ChessType.YELLOW_WOLF);
-        animals.set(26, ChessType.YELLOW_WOLF);
-        animals.set(27, ChessType.YELLOW_ELEPHANT);
-
-        animals.set(29, ChessType.RED_LION);
-
+        Collections.shuffle(animals);
 
         ArrayList<ChessModel> chessModels = new ArrayList<ChessModel>();
         for(ChessType chessType : animals){

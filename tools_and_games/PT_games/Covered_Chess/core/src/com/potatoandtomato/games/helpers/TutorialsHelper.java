@@ -1,10 +1,12 @@
 package com.potatoandtomato.games.helpers;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Disposable;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.absints.TutorialPartListener;
 import com.potatoandtomato.common.enums.GestureType;
 import com.potatoandtomato.common.utils.Strings;
+import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.references.MovementRef;
 import com.potatoandtomato.games.screens.ChessActor;
@@ -20,17 +22,20 @@ import java.util.ArrayList;
  */
 public class TutorialsHelper implements TutorialPartListener {
 
+    private TutorialsHelper _this;
     private GameCoordinator coordinator;
     private Texts texts;
     private boolean completeMoveTutorial, completeOpenTutorial, completeConcludeTutorial;
     private TerrainLogic suggestOpenTerrainLogic, suggestMoveTerrainLogicFrom, suggestMoveTerrainLogicTo;
     private boolean closeOnNext;
+    private boolean disposed;
     private GraveyardLogic graveyardLogic;
 
     public TutorialsHelper(GraveyardLogic graveyardLogic, GameCoordinator coordinator, Texts texts) {
         this.graveyardLogic = graveyardLogic;
         this.coordinator = coordinator;
         this.texts = texts;
+        _this = this;
 
         check();
     }
@@ -46,18 +51,19 @@ public class TutorialsHelper implements TutorialPartListener {
 
     }
 
-    public void switchedToMyTurn(ChessColor myChessColor, ArrayList<TerrainLogic> terrains, MovementRef movementRef){
+    public void switchedToMyTurn(final ChessColor myChessColor, final ArrayList<TerrainLogic> terrains, final MovementRef movementRef){
         if(terrains.size() == 0) return;
 
         if(!completeOpenTutorial){
             for(int i = 13 ; i < terrains.size(); i++){
                 if(!terrains.get(i).getChessLogic().getChessModel().getOpened()){
                     suggestOpenTerrainLogic = terrains.get(i);
+                    completeOpenTutorial = true;
                     break;
                 }
             }
             coordinator.getTutorialsWrapper().startTutorialIfNotCompleteBefore(Terms.TUTORIAL_OPEN,
-                    false, this);
+                    false, _this);
 
         }
         else if(!completeMoveTutorial){
@@ -69,16 +75,20 @@ public class TutorialsHelper implements TutorialPartListener {
                     if(possibleMovements.size() > 0){
                         suggestMoveTerrainLogicFrom = terrainLogic;
                         suggestMoveTerrainLogicTo = possibleMovements.get(0);
+                        completeMoveTutorial = true;
+                        break;
                     }
                 }
             }
 
             if(suggestMoveTerrainLogicFrom != null && suggestMoveTerrainLogicTo != null){
                 coordinator.getTutorialsWrapper().startTutorialIfNotCompleteBefore(Terms.TUTORIAL_MOVE,
-                        false, this);
+                        false, _this);
             }
 
         }
+
+
     }
 
 
@@ -102,7 +112,6 @@ public class TutorialsHelper implements TutorialPartListener {
             Vector2 position = Positions.actorLocalToStageCoord(suggestOpenTerrainLogic.getChessLogic().getChessActor());
             coordinator.getTutorialsWrapper().expectGestureOnPosition(GestureType.Swipe, "Swipe to Open", 0, 15,
                     position.x, position.y + 20, 60, 0);
-            completeOpenTutorial = true;
             closeOnNext = true;
             suggestOpenTerrainLogic = null;
         }
@@ -113,10 +122,11 @@ public class TutorialsHelper implements TutorialPartListener {
             Vector2 positionTo = Positions.actorLocalToStageCoord(suggestMoveTerrainLogicTo.getChessLogic().getChessActor());
             coordinator.getTutorialsWrapper().expectGestureOnPosition(GestureType.Drag, "Drag to move", 15, 0,
                     positionFrom.x + 23, positionFrom.y + 20, (int) (positionTo.x - positionFrom.x), (int) (positionTo.y - positionFrom.y));
-            completeMoveTutorial = true;
             closeOnNext = true;
             suggestMoveTerrainLogicTo = null;
             suggestMoveTerrainLogicFrom = null;
         }
     }
+
+
 }

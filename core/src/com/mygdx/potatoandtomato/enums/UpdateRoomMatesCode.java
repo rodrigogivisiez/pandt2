@@ -30,6 +30,7 @@ public class UpdateRoomMatesCode {
     public final static int DECISION_MAKER = 19;
     public final static int USER_ABANDON = 20;
     public final static int USER_CONNECTED = 21;
+    public final static int USER_LEFT_GAME = 30;
     public final static int PUT_COIN = 22;
     public final static int COINS_DEDUCTED_SUCCESS = 23;
     public final static int COINS_DEDUCTED_FAILED = 24;

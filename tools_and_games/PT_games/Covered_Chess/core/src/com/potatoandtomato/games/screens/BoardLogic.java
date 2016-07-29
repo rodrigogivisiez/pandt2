@@ -174,10 +174,10 @@ public class BoardLogic implements Disposable{
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                invalidate();
                 _screen.populateTerrains(_terrains);
-                setTurnTouchable();
                 for(TerrainLogic terrainLogic : _terrains) terrainLogic.invalidate();
+                invalidate();
+                setTurnTouchable();
             }
         });
 
@@ -293,7 +293,12 @@ public class BoardLogic implements Disposable{
             _screen.setCanTouchChessTable(isMyTurn);
 
             if(isMyTurn){
-                tutorialsHelper.switchedToMyTurn(_gameDataController.getMyChessColor(), _terrains, _movementRef);
+                Threadings.delay(300, new Runnable() {
+                    @Override
+                    public void run() {
+                        tutorialsHelper.switchedToMyTurn(_gameDataController.getMyChessColor(), _terrains, _movementRef);
+                    }
+                });
             }
         }
     }

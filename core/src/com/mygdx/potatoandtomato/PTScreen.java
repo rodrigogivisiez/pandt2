@@ -153,7 +153,6 @@ public class PTScreen implements Screen, InputProcessor {
                                 return;
                             }
 
-
                             final LogicEnumPair current = _logicStacks.pop();
                             final LogicEnumPair previous = _logicStacks.peek();
                             current.getLogic().onBack();

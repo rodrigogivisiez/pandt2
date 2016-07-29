@@ -142,6 +142,15 @@ public class SettingsLogic extends LogicAbstract {
                 toggleSounds();
             }
         });
+
+        _scene.getCreditBtn().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                _confirm.show(ConfirmIdentifier.Credits, _texts.allCredits(), Confirm.Type.YES, null);
+            }
+        });
+
     }
 
     @Override

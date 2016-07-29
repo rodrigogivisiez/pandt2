@@ -5,6 +5,7 @@ package com.mygdx.potatoandtomato.enums;
  */
 public enum RoomError {
 
-    Kicked, GameVersionOutdated, HostLeft, FailedRetrieveGameData, GameClientOutdated, UnknownError
+    Kicked, GameVersionOutdated, HostLeft, FailedRetrieveGameData, GameClientOutdated, UnknownError,
+    FullRoom,
 
 }

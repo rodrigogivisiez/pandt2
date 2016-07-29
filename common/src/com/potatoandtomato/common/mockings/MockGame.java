@@ -90,11 +90,11 @@ public abstract class MockGame extends Game implements IPTGame {
 
             }
 
-
             @Override
-            public void endGame() {
+            public void endGame(boolean isAbandon) {
 
             }
+
 
             @Override
             public void sendUpdate(final RoomUpdateType updateType, final String msg) {
@@ -209,6 +209,11 @@ public abstract class MockGame extends Game implements IPTGame {
             @Override
             public boolean completedTutorialBefore(String id) {
                 return false;
+            }
+
+            @Override
+            public void hide() {
+
             }
 
         }, new GamePreferencesAbstract() {

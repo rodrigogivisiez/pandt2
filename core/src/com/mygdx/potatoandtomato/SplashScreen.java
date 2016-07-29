@@ -16,9 +16,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.mygdx.potatoandtomato.enums.FlurryEvent;
+import com.mygdx.potatoandtomato.helpers.Flurry;
 import com.mygdx.potatoandtomato.services.Texts;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.mygdx.potatoandtomato.utils.Positions;
+import com.potatoandtomato.common.utils.Threadings;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -42,152 +45,170 @@ public class SplashScreen implements Screen {
     private boolean disposed;
 
     public SplashScreen() {
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Flurry.log(FlurryEvent.LoadingAssets);
 
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Pizza-Regular.otf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 25;
-        font = generator.generateFont(parameter);
-        generator.dispose();
+                FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Pizza-Regular.otf"));
+                FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+                parameter.size = 25;
+                font = generator.generateFont(parameter);
+                generator.dispose();
 
 
-        arcadeSound = Gdx.audio.newMusic(Gdx.files.internal("splash/ARCADE_BUTTON.ogg"));
-        rustySound = Gdx.audio.newSound(Gdx.files.internal("splash/RUSTY.ogg"));
+                arcadeSound = Gdx.audio.newMusic(Gdx.files.internal("splash/ARCADE_BUTTON.ogg"));
+                rustySound = Gdx.audio.newSound(Gdx.files.internal("splash/RUSTY.ogg"));
 
 
-        screenTexture = new Texture(Gdx.files.internal("splash/SCREEN.png"));
-        screenImage = new Image(screenTexture);
-        screenImage.setPosition(0, 0);
+                screenTexture = new Texture(Gdx.files.internal("splash/SCREEN.png"));
+                screenImage = new Image(screenTexture);
+                screenImage.setPosition(0, 0);
 
-        screenGlowTexture = new Texture(Gdx.files.internal("splash/SCREEN_GLOW.png"));
-        screenGlowImage = new Image(screenGlowTexture);
-        screenGlowImage.getColor().a = 0f;
-        screenGlowImage.setPosition(-12, 18);
+                screenGlowTexture = new Texture(Gdx.files.internal("splash/SCREEN_GLOW.png"));
+                screenGlowImage = new Image(screenGlowTexture);
+                screenGlowImage.getColor().a = 0f;
+                screenGlowImage.setPosition(-12, 18);
 
-        controllerTexture = new Texture(Gdx.files.internal("splash/CONTROLLER.png"));
-        Image controllerImage = new Image(controllerTexture);
-        controllerImage.setPosition(15, 28);
+                controllerTexture = new Texture(Gdx.files.internal("splash/CONTROLLER.png"));
+                Image controllerImage = new Image(controllerTexture);
+                controllerImage.setPosition(15, 28);
 
-        Image controllerImage2 = new Image(controllerTexture);
-        controllerImage2.setPosition(55, 28);
+                Image controllerImage2 = new Image(controllerTexture);
+                controllerImage2.setPosition(55, 28);
 
-        potatoTexture = new Texture(Gdx.files.internal("splash/POTATO_ICON.png"));
-        potatoImage = new Image(potatoTexture);
-        potatoImage.setPosition(-30, -17);
+                potatoTexture = new Texture(Gdx.files.internal("splash/POTATO_ICON.png"));
+                potatoImage = new Image(potatoTexture);
+                potatoImage.setPosition(-30, -17);
 
-        tomatoTexture = new Texture(Gdx.files.internal("splash/TOMATO_ICON.png"));
-        tomatoImage = new Image(tomatoTexture);
-        tomatoImage.setPosition(47, -15);
+                tomatoTexture = new Texture(Gdx.files.internal("splash/TOMATO_ICON.png"));
+                tomatoImage = new Image(tomatoTexture);
+                tomatoImage.setPosition(47, -15);
 
-        screenTable = new Table();
-        screenTable.getColor().a = 0f;
-        screenTable.setSize(120, 120);
-        screenTable.setPosition(Positions.getWidth() / 2 - screenTable.getWidth() / 2 + 10,
-                Positions.getHeight() / 2 - screenTable.getHeight() / 2 + 10);
-        screenTable.addActor(screenImage);
-        screenTable.addActor(screenGlowImage);
-        screenTable.addActor(controllerImage);
-        screenTable.addActor(controllerImage2);
+                screenTable = new Table();
+                screenTable.getColor().a = 0f;
+                screenTable.setSize(120, 120);
+                screenTable.setPosition(Positions.getWidth() / 2 - screenTable.getWidth() / 2 + 10,
+                        Positions.getHeight() / 2 - screenTable.getHeight() / 2 + 10);
+                screenTable.addActor(screenImage);
+                screenTable.addActor(screenGlowImage);
+                screenTable.addActor(controllerImage);
+                screenTable.addActor(controllerImage2);
 
-        mascotsTable = new Table();
-        mascotsTable.setSize(120, 120);
-        mascotsTable.getColor().a = 0f;
-        mascotsTable.setPosition(Positions.getWidth() / 2 - mascotsTable.getWidth() / 2 + 10,
-                Positions.getHeight() / 2 - mascotsTable.getHeight() / 2 + 10);
-        mascotsTable.addActor(potatoImage);
-        mascotsTable.addActor(tomatoImage);
+                mascotsTable = new Table();
+                mascotsTable.setSize(120, 120);
+                mascotsTable.getColor().a = 0f;
+                mascotsTable.setPosition(Positions.getWidth() / 2 - mascotsTable.getWidth() / 2 + 10,
+                        Positions.getHeight() / 2 - mascotsTable.getHeight() / 2 + 10);
+                mascotsTable.addActor(potatoImage);
+                mascotsTable.addActor(tomatoImage);
 
-        Label.LabelStyle normalLabelStyle = new Label.LabelStyle(font, Color.WHITE);
-        Label.LabelStyle specialLabelStyle1 = new Label.LabelStyle(font, Color.valueOf("e44235"));
-        Label.LabelStyle specialLabelStyle2 = new Label.LabelStyle(font, Color.valueOf("d2af5e"));
+                Label.LabelStyle normalLabelStyle = new Label.LabelStyle(font, Color.WHITE);
+                Label.LabelStyle specialLabelStyle1 = new Label.LabelStyle(font, Color.valueOf("e44235"));
+                Label.LabelStyle specialLabelStyle2 = new Label.LabelStyle(font, Color.valueOf("d2af5e"));
 
-        Texts texts = new Texts();
+                Texts texts = new Texts();
 
-        Label topLabel = new Label(texts.splashPhrase1(), normalLabelStyle);
-        topLabel.setAlignment(Align.center);
+                Label topLabel = new Label(texts.splashPhrase1(), normalLabelStyle);
+                topLabel.setAlignment(Align.center);
 
-        bottomTextTable = new Table();
-        bottomTextTable.getColor().a = 0f;
-        Label bottomLabel1 = new Label(texts.splashPhrase2(), normalLabelStyle);
+                bottomTextTable = new Table();
+                bottomTextTable.getColor().a = 0f;
+                Label bottomLabel1 = new Label(texts.splashPhrase2(), normalLabelStyle);
 
-        Label bottomLabel2_1 = new Label(texts.splashPhrase3(), specialLabelStyle1);
-        Label bottomLabel2_2 = new Label(texts.splashPhrase4(), specialLabelStyle2);
-        workTable = new Table();
-        workTable.setTransform(true);
-        workTable.setOrigin(Align.center);
-        workTable.add(bottomLabel2_1);
-        workTable.add(bottomLabel2_2);
+                Label bottomLabel2_1 = new Label(texts.splashPhrase3(), specialLabelStyle1);
+                Label bottomLabel2_2 = new Label(texts.splashPhrase4(), specialLabelStyle2);
+                workTable = new Table();
+                workTable.setTransform(true);
+                workTable.setOrigin(Align.center);
+                workTable.add(bottomLabel2_1);
+                workTable.add(bottomLabel2_2);
 
-        Label bottomLabel3 = new Label(texts.splashPhrase5(), normalLabelStyle);
-        bottomLabel3.setWrap(true);
-        bottomLabel3.setAlignment(Align.center);
+                Label bottomLabel3 = new Label(texts.splashPhrase5(), normalLabelStyle);
+                bottomLabel3.setWrap(true);
+                bottomLabel3.setAlignment(Align.center);
 
-        bottomTextTable.add(bottomLabel1).right();
-        bottomTextTable.add(workTable).left();
-        bottomTextTable.row();
-        bottomTextTable.add(bottomLabel3).colspan(2).expandX().fillX();
+                bottomTextTable.add(bottomLabel1).right();
+                bottomTextTable.add(workTable).left();
+                bottomTextTable.row();
+                bottomTextTable.add(bottomLabel3).colspan(2).expandX().fillX();
 
-        stage = new Stage(new StretchViewport(Positions.getWidth(), Positions.getHeight()));
-        rootTable = new Table();
+                stage = new Stage(new StretchViewport(Positions.getWidth(), Positions.getHeight()));
+                rootTable = new Table();
 
-        rootTable.setFillParent(true);
-        rootTable.addActor(screenTable);
-        rootTable.addActor(mascotsTable);
+                rootTable.setFillParent(true);
+                rootTable.addActor(screenTable);
+                rootTable.addActor(mascotsTable);
 
-        rootTable.add(topLabel).expandX().fillX().padBottom(200).padTop(50);
-        rootTable.row();
-        rootTable.add(bottomTextTable).expandX().fillX();
-        stage.addActor(rootTable);
+                rootTable.add(topLabel).expandX().fillX().padBottom(200).padTop(50);
+                rootTable.row();
+                rootTable.add(bottomTextTable).expandX().fillX();
+                stage.addActor(rootTable);
+            }
+        });
+
     }
 
     @Override
     public void show() {
 
-        if(Global.ENABLE_SOUND) {
-            arcadeSound.play();
-            arcadeSound.setVolume(0.1f);
-            arcadeSound.setLooping(true);
-        }
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(Global.ENABLE_SOUND) {
+                    arcadeSound.play();
+                    arcadeSound.setVolume(0.1f);
+                    arcadeSound.setLooping(true);
+                }
 
-        screenTable.addAction(sequence(
-                parallel(alpha(0.3f, 1f), new RunnableAction(){
-                    @Override
-                    public void run() {
-                        if(Global.ENABLE_SOUND) arcadeSound.setVolume(0.2f);
-                    }
-                }) ,
-                parallel(alpha(0.6f, 1f), new RunnableAction(){
-                    @Override
-                    public void run() {
-                        if(Global.ENABLE_SOUND) arcadeSound.setVolume(0.4f);
-                    }
-                }),
-                parallel(alpha(1f, 1f), new RunnableAction(){
-                    @Override
-                    public void run() {
-                        if(Global.ENABLE_SOUND)  arcadeSound.setVolume(0.6f);
-                        bottomTextTable.addAction(sequence(fadeIn(0.9f), delay(1f), new RunnableAction(){
+                screenTable.addAction(sequence(
+                        parallel(alpha(0.3f, 1f), new RunnableAction(){
                             @Override
                             public void run() {
-                                if(Global.ENABLE_SOUND) {
-                                    rustySound.play();
-                                }
-                                workTable.addAction(rotateBy(-10, 0.4f));
+                                if(Global.ENABLE_SOUND) arcadeSound.setVolume(0.2f);
                             }
-                        }));
-                    }
-                })
-        ));
+                        }) ,
+                        parallel(alpha(0.6f, 1f), new RunnableAction(){
+                            @Override
+                            public void run() {
+                                if(Global.ENABLE_SOUND) arcadeSound.setVolume(0.4f);
+                            }
+                        }),
+                        parallel(alpha(1f, 1f), new RunnableAction(){
+                            @Override
+                            public void run() {
+                                if(Global.ENABLE_SOUND)  arcadeSound.setVolume(0.6f);
+                                bottomTextTable.addAction(sequence(fadeIn(0.9f), delay(1f), new RunnableAction(){
+                                    @Override
+                                    public void run() {
+                                        if(Global.ENABLE_SOUND) {
+                                            rustySound.play();
+                                        }
+                                        workTable.addAction(rotateBy(-10, 0.4f));
+                                    }
+                                }));
+                            }
+                        })
+                ));
 
-        mascotsTable.addAction(fadeIn(1.5f));
+                mascotsTable.addAction(fadeIn(1.5f));
 
-        screenGlowImage.addAction(forever(sequence(alpha(0.9f, 1f), alpha(0.4f, 1f))));
-        potatoImage.addAction(forever(sequence(rotateBy(1f, 0.2f), rotateBy(-1f, 0.2f))));
-        tomatoImage.addAction(forever(sequence(rotateBy(1f, 0.1f), rotateBy(-1f, 0.1f))));
+                screenGlowImage.addAction(forever(sequence(alpha(0.9f, 1f), alpha(0.4f, 1f))));
+                potatoImage.addAction(forever(sequence(rotateBy(1f, 0.2f), rotateBy(-1f, 0.2f))));
+                tomatoImage.addAction(forever(sequence(rotateBy(1f, 0.1f), rotateBy(-1f, 0.1f))));
+            }
+        });
+
     }
 
     public void close(final Runnable onFinish){
-        onFinish.run();
-        dispose();
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                onFinish.run();
+                dispose();
+            }
+        });
     }
 
     @Override
@@ -221,17 +242,22 @@ public class SplashScreen implements Screen {
     @Override
     public void dispose() {
         if(!disposed){
-            rootTable.clear();
             disposed = true;
-            screenTexture.dispose();
-            font.dispose();
-            screenGlowTexture.dispose();
-            controllerTexture.dispose();
-            tomatoTexture.dispose();
-            potatoTexture.dispose();
-            arcadeSound.dispose();
-            rustySound.dispose();
-            stage.dispose();
+            Threadings.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    rootTable.clear();
+                    screenTexture.dispose();
+                    font.dispose();
+                    screenGlowTexture.dispose();
+                    controllerTexture.dispose();
+                    tomatoTexture.dispose();
+                    potatoTexture.dispose();
+                    arcadeSound.dispose();
+                    rustySound.dispose();
+                    stage.dispose();
+                }
+            });
         }
     }
 }

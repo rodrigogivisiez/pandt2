@@ -16,16 +16,14 @@ import com.mygdx.potatoandtomato.absintflis.services.ConnectionWatcherListener;
 import com.mygdx.potatoandtomato.absintflis.services.IRestfulApi;
 import com.mygdx.potatoandtomato.absintflis.services.RestfulApiListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
-import com.mygdx.potatoandtomato.enums.CoinMachineTabType;
-import com.mygdx.potatoandtomato.enums.ConfirmIdentifier;
-import com.mygdx.potatoandtomato.enums.ShopProducts;
+import com.mygdx.potatoandtomato.enums.*;
+import com.mygdx.potatoandtomato.helpers.Flurry;
 import com.mygdx.potatoandtomato.models.CoinProduct;
 import com.mygdx.potatoandtomato.models.RetrievableCoinsData;
 import com.potatoandtomato.common.statics.Vars;
 import com.potatoandtomato.common.absints.CoinListener;
 import com.mygdx.potatoandtomato.controls.CoinMachineControl;
 import com.mygdx.potatoandtomato.controls.TopBarCoinControl;
-import com.mygdx.potatoandtomato.enums.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.models.CoinsMeta;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.potatoandtomato.common.absints.ICoins;
@@ -139,6 +137,7 @@ public class Coins implements ICoins {
         if(getUserPutCoinCount(profile.getUserId()) + 1 > myCoinsCount.getValue().intValue()){
             soundsPlayer.playSoundEffect(Sounds.Name.WRONG);
             startSpeech(CoinMachineTabType.NoMoreCoins);
+            coinMachineControl.animateNoCoin();
             return;
         }
 
@@ -201,6 +200,8 @@ public class Coins implements ICoins {
                     startSpeech(CoinMachineTabType.PlayersInsertCoinStatus);
                 }
             });
+
+            Flurry.log(FlurryEvent.StartPuttingCoin, "purpose", this.coinsPurpose);
         }
     }
 
@@ -212,6 +213,13 @@ public class Coins implements ICoins {
                 stopSpeech(false);
             }
         });
+
+        if(coinsAlreadyEnough){
+            Flurry.log(FlurryEvent.EnoughPuttingCoin);
+        }
+        else{
+            Flurry.log(FlurryEvent.CancelPuttingCoin);
+        }
     }
 
     public void cancelPutCoins(){
@@ -712,6 +720,7 @@ public class Coins implements ICoins {
 
     public boolean retrieveFreeCoins(){
         if(currentRetrievableCoinsData != null && currentRetrievableCoinsData.getCanRetrieveCoinsCount() > 0){
+            Flurry.log(FlurryEvent.RetrieveFreeCoins);
             confirm.show(ConfirmIdentifier.Coins, texts.workingDoNotClose(), Confirm.Type.LOADING_NO_CANCEL, null);
             currentShopProduct = ShopProducts.PURSE;
             restfulApi.retrieveCoins(profile, new RestfulApiListener<RetrievableCoinsData>() {
@@ -737,6 +746,7 @@ public class Coins implements ICoins {
     //about ads
     ////////////////////////////////////////////////////////
     public void watchAds(){
+        Flurry.log(FlurryEvent.WatchAds);
         currentShopProduct = ShopProducts.ONE_COIN;
         broadcaster.broadcast(BroadcastEvent.SHOW_REWARD_VIDEO);
     }
@@ -780,6 +790,9 @@ public class Coins implements ICoins {
 
 
     public void purchaseCoins(CoinProduct coinProduct){
+        final int coinNumber = coinProduct.getCount();
+        Flurry.log(FlurryEvent.BuyCoinsIntent, coinNumber);
+
         currentShopProduct = coinProduct.getShopProductType();
         confirm.show(ConfirmIdentifier.Coins, texts.workingDoNotClose(), Confirm.Type.LOADING_NO_CANCEL, null);
         broadcaster.subscribeOnceWithTimeout(BroadcastEvent.IAB_PRODUCT_PURCHASE_RESPONSE, 60 * 1000, new BroadcastListener() {
@@ -788,6 +801,10 @@ public class Coins implements ICoins {
                 confirm.close(ConfirmIdentifier.Coins);
                 if (st != Status.SUCCESS) {
                     confirm.show(ConfirmIdentifier.Coins, texts.confirmPurchaseFailed(), Confirm.Type.YES, null);
+                    Flurry.log(FlurryEvent.BuyCoinsFailed, coinNumber);
+                }
+                else{
+                    Flurry.log(FlurryEvent.BuyCoinsSuccess, coinNumber);
                 }
             }
         });
@@ -818,6 +835,7 @@ public class Coins implements ICoins {
         monitoringUserIds.clear();
         monitoringUserIds.add(profile.getUserId());
 
+        coinsAlreadyEnough = false;
         transactionId = "";
         coinListener = null;
         currentUsersPutCoinNumberMap.clear();
