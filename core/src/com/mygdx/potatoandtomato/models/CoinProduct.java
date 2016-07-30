@@ -71,7 +71,7 @@ public class CoinProduct {
     public String getTextureNameFromCoinCount(){
         String textureName = null;
         if(count == 1){
-            textureName = "COIN_ONE";
+            textureName = "TV_ICON";
         }
         else if(count == 5){
             textureName = "COIN_FIVE";

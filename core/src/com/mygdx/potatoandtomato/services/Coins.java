@@ -1073,4 +1073,14 @@ public class Coins implements ICoins {
     public void setTutorialMode(boolean tutorialMode) {
         this.tutorialMode = tutorialMode;
     }
+
+    @Override
+    public boolean isVisible(){
+        return coinMachineControl.isVisible();
+    }
+
+    @Override
+    public String getCoinsPurpose() {
+        return coinsPurpose;
+    }
 }

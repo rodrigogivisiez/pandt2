@@ -132,7 +132,7 @@ public class Texts {
     public String slotOpen() { return "Open"; }
 
     public String confirmLeaveRoom() { return "Are you sure you want to leave this room?"; }
-    public String confirmHostLeaveRoom() { return "Are you sure you want to leave this room? (This room will be gone)"; }
+    public String confirmHostLeaveRoom() { return "Are you sure you want to leave this room?\n(This room will be gone)"; }
     public String confirmKick() { return "Confirm kicking %s from this room?";}
     public String confirmYouAreKicked() { return "You are kicked from this room.";}
     public String confirmGameClientOutdated() { return "This game requires latest App version to run, please update your P&T in App Store.";}
@@ -240,7 +240,7 @@ public class Texts {
     public String xCoin() {return "Coin x %s";}
     public String freexCoin() {return "Free Coin x %s";}
 
-    public String confirmPurchaseFailed() { return "Fail to purchase coins..";}
+    public String confirmPurchaseFailed() { return "Fail to purchase coins.\nPlease press buy button again if you have purchased.";}
 
     //coin machines tab title
     public String freeCoinsTabTitle() { return "Mum's purse";}
@@ -253,30 +253,30 @@ public class Texts {
     public String btnTextSkipTutorial() { return "Skip Tutorial"; }
     public String btnTextStartTutorial() { return "Start Tutorial"; }
 
-    public String tutorialWelcomeMessage() { return "Welcome to P&T, let us guide you how to create your first game.";}
+    public String tutorialWelcomeMessage() { return "Welcome to P&T, let us guide you on how to create your first game.";}
     public String tutorialAboutCreateGame() { return "Tap Create Game button";}
 
-    public String tutorialAboutGameList() { return "Here you can see all P&T games, lets try create a game.";}
+    public String tutorialAboutGameList() { return "Here you can see all our P&T games. Lets create a game.";}
     public String tutorialTapChooseGame() { return "Tap this game";}
     public String tutorialTapCreateGame() { return "Tap to create game";}
 
-    public String tutorialAboutRoom() { return "This is the game room, you can invite your friends, chat with room users here, we leave you to explore more yourself, now let's try to start the game!";}
-    public String tutorialAboutStartGame() { return "Lets try start game!";}
+    public String tutorialAboutRoom() { return "This is the game room, where you can invite your friends to game and chat in room. Now let's start a game!";}
+    public String tutorialAboutStartGame() { return "Lets start game!";}
 
 
-    public String tutorialAboutCoinMachine() { return "P&T use coins to start a game.";}
-    public String tutorialAboutCoinCount() { return "This shows you coins number needed";}
+    public String tutorialAboutCoinMachine() { return "P&T uses coins to start a game.";}
+    public String tutorialAboutCoinCount() { return "This shows you the number of coins required to start game";}
     public String tutorialAboutInsertCoin() { return "Now try to insert coin here";}
-    public String tutorialAboutNoCoin() { return "Looks like you don't have any coin, let's see if there is any free coins in mum's purse....";}
-    public String tutorialAboutHasCoin() { return "Looks like you already have some coins, but anyway let's continue our tutorial....";}
+    public String tutorialAboutNoCoin() { return "Looks like you don't have any coin, let's see if there is any free coin in Mum's purse...";}
+    public String tutorialAboutHasCoin() { return "Looks like you already have some coins, but let's continue our tutorial anyway...";}
 
 
-    public String tutorialAboutTapMumPurse() { return "Tap mum purse";}
-    public String tutorialAboutTapGetFreeCoins() { return "Tap to free coins from mum purse!";}
+    public String tutorialAboutTapMumPurse() { return "Tap Mum's purse";}
+    public String tutorialAboutTapGetFreeCoins() { return "Tap to retrieve coins from Mum's purse!";}
 
-    public String tutorialAboutGetCoinsSuccess() { return "Now you should have enough coins to start game, mum's purse grow coin over time, remember to come back and retrieve it frequently, or you can visit the coin shop to purchase coins if you run out of it.";}
+    public String tutorialAboutGetCoinsSuccess() { return "Now you should have enough coins to start a game. Mum's purse grow coins over time so do remember to come back for more.";}
 
-    public String tutorialConclude() { return "Do remember that you can always access coin shop by tapping the coin icon for various free coin method other than mum's purse, that conclude our tutorial, enjoy the games!";}
+    public String tutorialConclude() { return "Do remember that you can always enter coin shop by tapping the coin icon for more free coin retrieval methods. That concludes our tutorial, enjoy!";}
 
 
     ///////////////////////////////////////////////////////////////////////
@@ -433,7 +433,7 @@ public class Texts {
             tomatoSpeechActions.add(new SpeechAction("Tomate, Tomate, Tomate!", SpeechActionType.Add));
         }
         if(style == 2){
-            potatoSpeechActions.add(new SpeechAction("It is all about the preparation...", SpeechActionType.Add));
+            potatoSpeechActions.add(new SpeechAction("Preparing...", SpeechActionType.Add));
             tomatoSpeechActions.add(new SpeechAction("Go, go, go!", SpeechActionType.Add));
         }
         if(style == 3){

@@ -1,7 +1,6 @@
 package com.mygdx.potatoandtomato.scenes.boot_scene;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
@@ -12,6 +11,7 @@ import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.absintflis.services.RestfulApiListener;
 import com.mygdx.potatoandtomato.absintflis.socials.FacebookListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
+import com.mygdx.potatoandtomato.enums.ClientConnectionStatus;
 import com.mygdx.potatoandtomato.enums.ConfirmIdentifier;
 import com.mygdx.potatoandtomato.enums.FlurryEvent;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
@@ -19,9 +19,6 @@ import com.mygdx.potatoandtomato.helpers.Flurry;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.services.Confirm;
 import com.mygdx.potatoandtomato.statics.Terms;
-import com.mygdx.potatoandtomato.utils.Positions;
-import com.potatoandtomato.common.absints.TutorialPartListener;
-import com.potatoandtomato.common.enums.GestureType;
 import com.potatoandtomato.common.statics.Vars;
 import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
@@ -292,10 +289,10 @@ public class BootLogic extends LogicAbstract {
 
         _services.getGamingKit().addListener(getClassTag(), new ConnectionChangedListener() {
             @Override
-            public void onChanged(String userId, ConnectStatus st) {
+            public void onChanged(String userId, ClientConnectionStatus st) {
                 if(_services.getProfile() != null && userId != null && userId.equals(_services.getProfile().getUserId())){
                     if(!_logined){
-                        if(st == ConnectStatus.CONNECTED){
+                        if(st == ClientConnectionStatus.CONNECTED){
                             loginProcessCompleteSucceed();
                         }
                         else{

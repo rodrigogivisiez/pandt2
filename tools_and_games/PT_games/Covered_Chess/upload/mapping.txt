@@ -1764,17 +1764,16 @@ com.potatoandtomato.games.services.Texts -> com.potatoandtomato.games.e.e:
     66:66:java.lang.String normalWin() -> o
     70:70:java.lang.String firstTimeWinPlayer() -> p
     74:74:java.lang.String pawnLeaderboardPlayer() -> q
-    82:82:java.lang.String getTutorialTexts() -> r
-    103:103:java.lang.String tutorialAboutFoodChain() -> s
-    107:107:java.lang.String tutorialAboutSwipeOpen() -> t
-    111:111:java.lang.String tutorialAboutDrag() -> u
-    115:115:java.lang.String tutorialAboutPoison() -> v
-    119:119:java.lang.String tutorialAboutAttackUp() -> w
-    123:123:java.lang.String tutorialAboutAttackDown() -> x
-    127:127:java.lang.String tutorialAboutParalyzed() -> y
-    131:131:java.lang.String tutorialAboutKing() -> z
-    135:135:java.lang.String tutorialAboutAggressive() -> A
-    139:139:java.lang.String tutorialEnd() -> B
+    82:82:java.lang.String tutorialAboutFoodChain() -> r
+    86:86:java.lang.String tutorialAboutSwipeOpen() -> s
+    90:90:java.lang.String tutorialAboutDrag() -> t
+    94:94:java.lang.String tutorialAboutPoison() -> u
+    98:98:java.lang.String tutorialAboutAttackUp() -> v
+    102:102:java.lang.String tutorialAboutAttackDown() -> w
+    106:106:java.lang.String tutorialAboutParalyzed() -> x
+    110:110:java.lang.String tutorialAboutKing() -> y
+    114:114:java.lang.String tutorialAboutAggressive() -> z
+    118:118:java.lang.String tutorialEnd() -> A
 com.potatoandtomato.games.statics.Global -> com.potatoandtomato.games.f.a:
     boolean DEBUG -> a
     boolean NO_ENTRANCE -> b

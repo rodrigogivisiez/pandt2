@@ -83,7 +83,6 @@ public class BtnEggUpright extends Table {
                 Vector2 originalPosition = new Vector2(_this.getX(), _this.getY());
                 _this.setPosition(originalPosition.x, originalPosition.y + 10);
                 float duration = 0.2f;
-                Threadings.renderFor(duration + 0.1f);
                 _this.addAction(parallel(
                         Actions.fadeIn(duration, Interpolation.sineIn),
                         Actions.sizeTo(_size.x, _size.y, duration, Interpolation.bounceOut),

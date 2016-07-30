@@ -239,7 +239,6 @@ public class Confirm {
             @Override
             public void run() {
                 msgTable.getColor().a = 0;
-                Threadings.renderFor(5f);
                 confirmRoot.setVisible(true);
                 confirmRoot.clearActions();
                 confirmRoot.addAction(sequence(fadeOut(0f), fadeIn(0.3f), new RunnableAction() {

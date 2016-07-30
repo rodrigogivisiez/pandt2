@@ -406,7 +406,7 @@ public class CoinMachineControl {
                 Label usernameLabel = new Label(Strings.cutOff(userName, 18), labelStyle);
 
                 Table coinTable = new Table();
-                if(hasCoin || insertedCoins > 0){
+                if((hasCoin || insertedCoins > 0) && !newText.equals("noCoin")){
                     Image coinImage = new Image(assets.getTextures().get(Textures.Name.COIN_ICON_SMALL));
                     Label coinCountLabel = new Label(newText, labelStyle);
                     coinCountLabel.setName("coinCountLabel");
@@ -1280,6 +1280,10 @@ public class CoinMachineControl {
 
     public String getClassTag(){
         return this.getClass().getName();
+    }
+
+    public boolean isVisible() {
+        return visible;
     }
 
 

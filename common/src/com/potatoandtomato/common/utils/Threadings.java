@@ -77,49 +77,49 @@ public class Threadings {
             runnable.run();
         }
     }
-
-    public static void renderFor(final float sec){
-        if(continuousRenderLock) return;
-
-        continuousRenderPeriod += sec;
-
-        if(Gdx.graphics.isContinuousRendering()) return;
-        else{
-            if(isRunning){
-                return;
-            }
-        }
-
-        Threadings.runInBackground(new Runnable() {
-            float total = 0;
-            @Override
-            public void run() {
-                isRunning = true;
-                Gdx.graphics.setContinuousRendering(true);
-                while (total < continuousRenderPeriod){
-                    total += Gdx.graphics.getDeltaTime();
-                }
-                if(!continuousRenderLock) Gdx.graphics.setContinuousRendering(false);
-                isRunning = false;
-                continuousRenderPeriod = 0;
-            }
-        });
-    }
-
-    public static void setContinuousRenderLock(boolean continuousRenderLock) {
-
-//        if(continuousRenderLock){
-//            Gdx.graphics.setContinuousRendering(true);
-//            lastChangedLock = System.currentTimeMillis();
-//            Threadings.continuousRenderLock = true;
-//        }
+//
+//    public static void renderFor(final float sec){
+//        if(continuousRenderLock) return;
+//
+//        continuousRenderPeriod += sec;
+//
+//        if(Gdx.graphics.isContinuousRendering()) return;
 //        else{
-//            if(lastChangedLock == 0 || System.currentTimeMillis() - lastChangedLock > 500) {
-//                Gdx.graphics.setContinuousRendering(false);
-//                Threadings.continuousRenderLock = false;
+//            if(isRunning){
+//                return;
 //            }
 //        }
-    }
+//
+//        Threadings.runInBackground(new Runnable() {
+//            float total = 0;
+//            @Override
+//            public void run() {
+//                isRunning = true;
+//                Gdx.graphics.setContinuousRendering(true);
+//                while (total < continuousRenderPeriod){
+//                    total += Gdx.graphics.getDeltaTime();
+//                }
+//                if(!continuousRenderLock) Gdx.graphics.setContinuousRendering(false);
+//                isRunning = false;
+//                continuousRenderPeriod = 0;
+//            }
+//        });
+//    }
+
+//    public static void setContinuousRenderLock(boolean continuousRenderLock) {
+//
+////        if(continuousRenderLock){
+////            Gdx.graphics.setContinuousRendering(true);
+////            lastChangedLock = System.currentTimeMillis();
+////            Threadings.continuousRenderLock = true;
+////        }
+////        else{
+////            if(lastChangedLock == 0 || System.currentTimeMillis() - lastChangedLock > 500) {
+////                Gdx.graphics.setContinuousRendering(false);
+////                Threadings.continuousRenderLock = false;
+////            }
+////        }
+//    }
 
     public static void waitTasks(int expectedTask){
         waitingTaskCount = 0;

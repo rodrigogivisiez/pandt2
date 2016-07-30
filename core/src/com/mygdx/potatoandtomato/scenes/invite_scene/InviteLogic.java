@@ -215,7 +215,6 @@ public class InviteLogic extends LogicAbstract {
                 }
             }
             if(invitedUserIds.size() > 0){
-                keepAlive();
                 Threadings.runInBackground(new Runnable() {
                     @Override
                     public void run() {
@@ -298,7 +297,6 @@ public class InviteLogic extends LogicAbstract {
                         }
 
                         _services.getGamingKit().updateRoomMates(UpdateRoomMatesCode.INVTE_USERS, Strings.joinArr(invitedUserIds, ","));
-                        killKeepAlive();
                     }
                 });
             }

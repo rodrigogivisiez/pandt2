@@ -97,7 +97,7 @@ public class TutorialsHelper implements TutorialPartListener {
         if(closeOnNext){
             if(completeOpenTutorial && completeMoveTutorial && !completeConcludeTutorial){
                 Vector2 position = Positions.actorLocalToStageCoord(graveyardLogic.getGraveyardActor().getTutorialButton());
-                coordinator.getTutorialsWrapper().expectGestureOnPosition(GestureType.PointRight, "More tutorials here", 0, 20,
+                coordinator.getTutorialsWrapper().expectGestureOnPosition(GestureType.PointRight, "See here for more,", 0, 20,
                         position.x, position.y + 3, 0, 0);
                 completeConcludeTutorial = true;
                 closeOnNext = true;
@@ -110,7 +110,7 @@ public class TutorialsHelper implements TutorialPartListener {
 
         if(suggestOpenTerrainLogic != null){
             Vector2 position = Positions.actorLocalToStageCoord(suggestOpenTerrainLogic.getChessLogic().getChessActor());
-            coordinator.getTutorialsWrapper().expectGestureOnPosition(GestureType.Swipe, "Swipe to Open", 0, 15,
+            coordinator.getTutorialsWrapper().expectGestureOnPosition(GestureType.Swipe, "Swipe to open", 0, 15,
                     position.x, position.y + 20, 60, 0);
             closeOnNext = true;
             suggestOpenTerrainLogic = null;

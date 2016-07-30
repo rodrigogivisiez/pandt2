@@ -35,7 +35,6 @@ public class ShopLogic extends LogicAbstract {
         super(screen, services, objs);
         setSaveToStack(false);
 
-        Threadings.setContinuousRenderLock(true);
         shopScene = new ShopScene(services, screen);
 
         services.getSoundsPlayer().pauseCurrentAndPlayAnotherMusic(Sounds.Name.SHOP_MUSIC);
@@ -54,7 +53,6 @@ public class ShopLogic extends LogicAbstract {
     @Override
     public void onHide() {
         super.onHide();
-        Threadings.setContinuousRenderLock(false);
 
         _services.getSoundsPlayer().resumeCurrentMusic();
     }
@@ -175,9 +173,11 @@ public class ShopLogic extends LogicAbstract {
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-        _services.getCoins().removeCoinsListenersByClassTag(getClassTag());
+    public boolean disposeEarly() {
+        if(super.disposeEarly()){
+            _services.getCoins().removeCoinsListenersByClassTag(getClassTag());
+        }
+        return true;
     }
 
     @Override

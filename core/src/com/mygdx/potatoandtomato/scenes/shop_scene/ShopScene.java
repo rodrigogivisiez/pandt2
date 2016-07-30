@@ -283,6 +283,7 @@ public class ShopScene extends SceneAbstract {
         itemTextureRegion = _assets.getTextures().get(coinProduct.getTextureNameFromCoinCount());
 
         Image itemImage = new Image();
+        itemImage.setName("itemImage");
         itemImage.setDrawable(new TextureRegionDrawable(itemTextureRegion));
         Table itemImageTable = new Table();
 
@@ -292,7 +293,7 @@ public class ShopScene extends SceneAbstract {
             width = 60;
             height = Sizes.resize(60, itemTextureRegion).y;
         }
-
+        itemImage.setSize(width, height);
 
         itemImageTable.add(itemImage).size(width, height);
 
@@ -336,6 +337,12 @@ public class ShopScene extends SceneAbstract {
             public void run() {
                 if(watchAdsItemTable != null){
                     setIsOutOfStock(watchAdsItemTable, !hasAds);
+                    Image itemImage = watchAdsItemTable.findActor("itemImage");
+                    itemImage.clearActions();
+                    if(hasAds){
+                        itemImage.setOrigin(Align.center);
+                        itemImage.addAction(forever(sequence(repeat(3, sequence(rotateBy(2f, 0.1f), rotateBy(-2f, 0.1f))), delay(1f))));
+                    }
                 }
             }
         });

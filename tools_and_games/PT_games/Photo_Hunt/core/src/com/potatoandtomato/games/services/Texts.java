@@ -27,7 +27,7 @@ public class Texts {
 
     public String noPlayer() { return "No Player"; }
     public String totalScores() { return "Scores"; }
-    public String waitForNextStage() { return "Your comrades are playing, you will rejoin, if they survive...";}
+    public String waitForNextStage() { return "Your comrades are playing, you will rejoin,\nif they survive...";}
     public String slowMessage() { return "Slow connection detected, you will rejoin next stage.";}
     public String replenishHints(){ return "Replenish"; }
 

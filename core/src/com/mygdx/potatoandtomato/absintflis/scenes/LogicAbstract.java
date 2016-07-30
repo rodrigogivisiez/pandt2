@@ -21,14 +21,12 @@ import java.util.ArrayList;
 /**
  * Created by SiongLeng on 2/12/2015.
  */
-public abstract class LogicAbstract implements Disposable {
+public abstract class LogicAbstract {
 
     protected PTScreen _screen;
     protected Services _services;
     protected Texts _texts;
     protected boolean _saveToStack;
-    private SafeThread _keepAlive;
-    private boolean _alive;
     private ArrayList<String> _broadcastSubscribes;
     protected Confirm _confirm;
     private String _classTag, _classTagSimple;
@@ -36,7 +34,7 @@ public abstract class LogicAbstract implements Disposable {
     private boolean _isFullyVisible;
     private Broadcaster _broadcaster;
     private boolean _settedListeners;
-    private boolean _disposing;
+    private boolean _disposing, _disposed;
     private ArrayList<CacheListener> cacheListeners;
 
     public LogicAbstract(PTScreen screen, Services services, Object... objs) {
@@ -112,10 +110,18 @@ public abstract class LogicAbstract implements Disposable {
         Flurry.logToScene(_classTagSimple);
         _isVisible = true;
         if(!_settedListeners){
-            setListeners();
+            Threadings.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    setListeners();
+                }
+            });
+
             _settedListeners = true;
         }
+
         if(getScene() != null) getScene().onShow();
+
     }
 
     //called everytime scene have complete moving animation, wheteher back or forward direction
@@ -138,7 +144,7 @@ public abstract class LogicAbstract implements Disposable {
 
     //will only be called when scene init, must be forward direction
     public void onInit(){
-        _alive = true;
+
     }
 
     //on changing scene
@@ -160,58 +166,46 @@ public abstract class LogicAbstract implements Disposable {
         return _isFullyVisible;
     }
 
-    protected void keepAlive(){
-        _keepAlive = new SafeThread();
-    }
-
-    protected void killKeepAlive(){
-        _keepAlive.kill();
-    }
-
-    public boolean isAlive() {
-        return _alive;
-    }
 
     protected boolean isDisposing() {
         return _disposing;
     }
 
-    //will be called everytime scene on hide and dispose, must be back direction
-    @Override
-    public void dispose() {
-        _disposing = true;
-        if(_keepAlive == null){
-            disposeEverything();
+    //will be called everytime scene leaving, not depend on the animation end
+    public boolean disposeEarly(){
+        if(!_disposing){
+            _disposing = true;
+            _services.getGamingKit().removeListenersByClassTag(getClassTag());
+            _services.getDatabase().clearListenersByTag(getClassTag());
+            for(String id : _broadcastSubscribes){
+                _broadcaster.unsubscribe(id);
+            }
+            _broadcastSubscribes.clear();
+            for(CacheListener cacheListener : cacheListeners){
+                cacheListener.dispose();
+            }
+            cacheListeners.clear();
+            return true;
         }
-        else{
-            Threadings.runInBackground(new Runnable() {
+        return false;
+    }
+
+    //will be called everytime scene on hide and dispose, must be back direction/no keep in stack, depend on the animation end
+    public boolean dispose() {
+        if(!_disposed){
+            disposeEarly();
+            _disposed = true;
+            Threadings.postRunnable(new Runnable() {
                 @Override
                 public void run() {
-                    while (true){
-                        if(_keepAlive.isKilled()) break;
-                        Threadings.sleep(1000);
-                    }
-                    disposeEverything();
+                    if(getScene() != null) getScene().dispose();
                 }
             });
+            return true;
         }
-
+        return false;
     }
 
-    private void disposeEverything(){
-        _services.getGamingKit().removeListenersByClassTag(getClassTag());
-        _services.getDatabase().clearListenersByTag(getClassTag());
-        _alive = false;
-        for(String id : _broadcastSubscribes){
-            _broadcaster.unsubscribe(id);
-        }
-        _broadcastSubscribes.clear();
-        for(CacheListener cacheListener : cacheListeners){
-            cacheListener.dispose();
-        }
-        cacheListeners.clear();
-        if(getScene() != null) getScene().dispose();
-    }
 
     public void setListeners(){
 

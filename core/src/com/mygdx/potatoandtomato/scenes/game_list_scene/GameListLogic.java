@@ -43,30 +43,12 @@ public class GameListLogic extends LogicAbstract implements TutorialPartListener
 
         _scene = new GameListScene(services, screen);
         _rooms = new ArrayList();
-
-        _services.getDatabase().monitorAllRooms(_rooms, getClassTag(), new SpecialDatabaseListener<ArrayList<Room>, Room>(Room.class) {
-            @Override
-            public void onCallbackTypeOne(ArrayList<Room> obj, Status st) {
-                if (st == Status.SUCCESS) {
-                    for (Room r : obj) {
-                        roomDataChanged(r, false);
-                    }
-                }
-            }
-
-            @Override
-            public void onCallbackTypeTwo(Room obj, Status st) {
-                if (st == Status.SUCCESS) {
-                    roomDataChanged(obj, true);
-                }
-            }
-        });
     }
 
     @Override
     public void onShow() {
-        checkCanContinue();
         super.onShow();
+        checkCanContinue();
         _scene.setUsername(_services.getProfile().getDisplayName(15));
         _services.getTutorials().startTutorialIfNotCompleteBefore(Terms.PREF_BASIC_TUTORIAL, true, this);
     }
@@ -74,7 +56,7 @@ public class GameListLogic extends LogicAbstract implements TutorialPartListener
     @Override
     public void onHide() {
         super.onHide();
-        _scene.getContinueGameButton().setEnabled(false);
+        _scene.setContinueButtonEnabled(false);
     }
 
     private void joinGamePreCheck(final Runnable toRun){
@@ -96,7 +78,7 @@ public class GameListLogic extends LogicAbstract implements TutorialPartListener
     }
 
     private void checkCanContinue(){
-        _scene.getContinueGameButton().setEnabled(false);
+        _scene.setContinueButtonEnabled(false);
         _continueRoomId = null;
         if(!_services.getProfile().getUserPlayingState().getRoomId().equals("0")){
             final UserPlayingState state = _services.getProfile().getUserPlayingState();
@@ -112,8 +94,7 @@ public class GameListLogic extends LogicAbstract implements TutorialPartListener
 
                                     if(inRoomUserIds.length > 0){
                                         _continueRoomId = obj.getId();
-                                        _scene.getContinueGameButton().setEnabled(true);
-                                        Threadings.renderFor(3);
+                                        _scene.setContinueButtonEnabled(true);
                                     }
                                     else{
                                         _services.getProfile().getUserPlayingState().abandonGame();
@@ -183,6 +164,24 @@ public class GameListLogic extends LogicAbstract implements TutorialPartListener
     @Override
     public void setListeners() {
         super.setListeners();
+
+        _services.getDatabase().monitorAllRooms(_rooms, getClassTag(), new SpecialDatabaseListener<ArrayList<Room>, Room>(Room.class) {
+            @Override
+            public void onCallbackTypeOne(ArrayList<Room> obj, Status st) {
+                if (st == Status.SUCCESS) {
+                    for (Room r : obj) {
+                        roomDataChanged(r, false);
+                    }
+                }
+            }
+
+            @Override
+            public void onCallbackTypeTwo(Room obj, Status st) {
+                if (st == Status.SUCCESS) {
+                    roomDataChanged(obj, true);
+                }
+            }
+        });
 
         _scene.getNewGameButton().addListener(new ClickListener(){
             @Override

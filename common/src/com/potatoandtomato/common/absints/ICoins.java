@@ -20,4 +20,7 @@ public interface ICoins {
     void startDeductCoins();
     void setCoinListener(CoinListener coinListener);
 
+    boolean isVisible();
+    String getCoinsPurpose();
+
 }

@@ -70,7 +70,6 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
         if(handled) return;
         handled = true;
 
-        Threadings.setContinuousRenderLock(true);
         _scene.setLoadingToUpdatingScores();
 
         Threadings.runInBackground(new Runnable() {
@@ -106,7 +105,7 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
     @Override
     public void onHide() {
         super.onHide();
-        Threadings.setContinuousRenderLock(false);
+
         _services.getCoins().hideCoinMachine();
     }
 
@@ -737,11 +736,13 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-        if(safeThread != null) safeThread.kill();
-        _services.getCoins().reset();
-        _services.getSoundsPlayer().stopSoundEffectLoop(Sounds.Name.EXTINGUISH_SOUND);
+    public boolean disposeEarly() {
+        if(super.disposeEarly()){
+            if(safeThread != null) safeThread.kill();
+            _services.getCoins().reset();
+            _services.getSoundsPlayer().stopSoundEffectLoop(Sounds.Name.EXTINGUISH_SOUND);
+        }
+        return true;
     }
 
     public LeaderboardRecord getMyLeaderboardRecord() {

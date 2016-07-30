@@ -34,7 +34,6 @@ public class SingleGameLeaderBoardLogic extends LogicAbstract {
     @Override
     public void onShow() {
         super.onShow();
-        Threadings.setContinuousRenderLock(true);
     }
 
     private void init(){
@@ -76,12 +75,6 @@ public class SingleGameLeaderBoardLogic extends LogicAbstract {
                                     LeaderBoardScene.MascotType.HAPPY : LeaderBoardScene.MascotType.BORING);
 
         _scene.hideLoading(_game);
-    }
-
-    @Override
-    public void onHide() {
-        super.onHide();
-        Threadings.setContinuousRenderLock(false);
     }
 
     @Override

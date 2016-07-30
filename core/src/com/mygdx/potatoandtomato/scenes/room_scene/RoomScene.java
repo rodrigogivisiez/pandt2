@@ -48,7 +48,6 @@ public class RoomScene extends SceneAbstract {
 
     public RoomScene(Services services, PTScreen screen, Room room) {
         super(services, screen);
-        startRotateUserIconThread();
     }
 
     @Override
@@ -97,6 +96,8 @@ public class RoomScene extends SceneAbstract {
         _root.add(buttonTable).height(110).expandX();
         _root.row();
         _root.add(scrollPane).expandX().fillX();
+
+        startRotateUserIconThread();
     }
 
     public void setStartButtonText(final String text){

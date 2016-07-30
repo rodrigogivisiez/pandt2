@@ -2,7 +2,7 @@ package com.mygdx.potatoandtomato.services;
 
 import com.mygdx.potatoandtomato.absintflis.gamingkit.ConnectionChangedListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
-import com.mygdx.potatoandtomato.enums.UpdateRoomMatesCode;
+import com.mygdx.potatoandtomato.enums.ClientConnectionStatus;
 import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.utils.*;
 import com.mygdx.potatoandtomato.statics.Terms;
@@ -371,16 +371,16 @@ public class Appwarp extends GamingKit implements ChatRequestListener, Connectio
     @Override
     public void onConnectDone(ConnectEvent connectEvent) {
         if (connectEvent.getResult() == WarpResponseResultCode.SUCCESS ){
-            onConnectionChanged(_realUsername, ConnectionChangedListener.ConnectStatus.CONNECTED);
+            onConnectionChanged(_realUsername, ClientConnectionStatus.CONNECTED);
         }
         else if (connectEvent.getResult() == WarpResponseResultCode.SUCCESS_RECOVERED){
-            onConnectionChanged(_realUsername, ConnectionChangedListener.ConnectStatus.CONNECTED_FROM_RECOVER);
+            onConnectionChanged(_realUsername, ClientConnectionStatus.CONNECTED_FROM_RECOVER);
         }
         else if (connectEvent.getResult() == WarpResponseResultCode .CONNECTION_ERROR_RECOVERABLE ){
-            onConnectionChanged(_realUsername, ConnectionChangedListener.ConnectStatus.DISCONNECTED_BUT_RECOVERABLE);
+            onConnectionChanged(_realUsername, ClientConnectionStatus.DISCONNECTED_BUT_RECOVERABLE);
         }
         else {
-            onConnectionChanged(_realUsername, ConnectionChangedListener.ConnectStatus.DISCONNECTED);
+            onConnectionChanged(_realUsername, ClientConnectionStatus.DISCONNECTED);
         }
     }
 
@@ -393,7 +393,7 @@ public class Appwarp extends GamingKit implements ChatRequestListener, Connectio
     public void onUserLeftRoom(RoomData roomData, String s) {
         if(!decodeUserId(s).equals(_realUsername)){
             if(checkAndSaveEncodeUserId(s)){
-                onConnectionChanged(decodeUserId(s), ConnectionChangedListener.ConnectStatus.DISCONNECTED);
+                onConnectionChanged(decodeUserId(s), ClientConnectionStatus.DISCONNECTED);
             }
         }
     }
@@ -402,7 +402,7 @@ public class Appwarp extends GamingKit implements ChatRequestListener, Connectio
     public void onUserJoinedRoom(RoomData roomData, String s) {
         if(!s.equals(_username)){
             if(checkAndSaveEncodeUserId(s)){
-                onConnectionChanged(decodeUserId(s), ConnectionChangedListener.ConnectStatus.CONNECTED);
+                onConnectionChanged(decodeUserId(s), ClientConnectionStatus.CONNECTED);
             }
         }
     }
@@ -410,7 +410,7 @@ public class Appwarp extends GamingKit implements ChatRequestListener, Connectio
     @Override
     public void onUserPaused(String s, boolean b, String s1) {
         if(checkAndSaveEncodeUserId(s1)){
-            onConnectionChanged(decodeUserId(s1), ConnectionChangedListener.ConnectStatus.DISCONNECTED_BUT_RECOVERABLE);
+            onConnectionChanged(decodeUserId(s1), ClientConnectionStatus.DISCONNECTED_BUT_RECOVERABLE);
         }
     }
 
@@ -418,7 +418,7 @@ public class Appwarp extends GamingKit implements ChatRequestListener, Connectio
     public void onUserResumed(String s, boolean b, String s1) {
         if(!s1.equals(_username)){
             if(checkAndSaveEncodeUserId(s1)){
-                onConnectionChanged(decodeUserId(s1), ConnectionChangedListener.ConnectStatus.CONNECTED_FROM_RECOVER);
+                onConnectionChanged(decodeUserId(s1), ClientConnectionStatus.CONNECTED_FROM_RECOVER);
             }
         }
     }

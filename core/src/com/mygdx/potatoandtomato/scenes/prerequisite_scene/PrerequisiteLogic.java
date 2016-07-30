@@ -237,11 +237,6 @@ public class PrerequisiteLogic extends LogicAbstract {
         _screen.toScene(SceneEnum.ROOM, _joiningRoom, _joinType == JoinType.CONTINUING);
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-
-    }
 
     @Override
     public void setListeners() {

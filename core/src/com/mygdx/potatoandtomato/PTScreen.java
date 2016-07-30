@@ -89,89 +89,81 @@ public class PTScreen implements Screen, InputProcessor {
 
     //call this function to change scene
     public void toScene(final SceneEnum sceneEnum, final Object... objs){
-        Threadings.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                final LogicAbstract logic = newSceneLogic(sceneEnum, objs);
-                toScene(logic, sceneEnum, objs);
-            }
-        });
+        final LogicAbstract logic = newSceneLogic(sceneEnum, objs);
+        toScene(logic, sceneEnum, objs);
     }
 
     //call this function to change scene
     public void toScene(final LogicAbstract logic, final SceneEnum sceneEnum, final Object... objs){
         logic.onInit();
-        Threadings.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                if (_logicStacks.size() == 0) {
-                    logic.onShow();
-                    logic.onShown();
+        if (_logicStacks.size() == 0) {
+            logic.onShow();
+            logic.onShown();
+            Threadings.postRunnable(new Runnable() {
+                @Override
+                public void run() {
                     _stage.addActor(logic.getScene().getRoot());
                     _currentRoot = logic.getScene().getRoot();
-                } else {
-                    final LogicEnumPair logicOut = _logicStacks.peek();
-                    logicOut.getLogic().onHide();
-                    logicOut.getLogic().onChangedScene(sceneEnum);
-                    logic.onShow();
-                    if (!logicOut.getLogic().isSaveToStack()) {
-                        _logicStacks.remove(logicOut);
-                    }
-                    sceneTransition(logic.getScene().getRoot(), logicOut.getLogic().getScene().getRoot(), logic.getScene(), true, new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!logicOut.getLogic().isSaveToStack()) {
-                                logicOut.getLogic().dispose();
-                            }
-                            logic.onShown();
-                        }
-                    });
                 }
-                _logicStacks.push(new LogicEnumPair(logic, sceneEnum, objs));
+            });
 
+        } else {
+            final LogicEnumPair logicOut = _logicStacks.peek();
+            logicOut.getLogic().onHide();
+            logicOut.getLogic().onChangedScene(sceneEnum);
+            logic.onShow();
+            if (!logicOut.getLogic().isSaveToStack()) {
+                _logicStacks.remove(logicOut);
             }
-        });
+            if (!logicOut.getLogic().isSaveToStack()) {
+                logicOut.getLogic().disposeEarly();
+            }
+
+            sceneTransition(logic, logicOut.getLogic(), true, new Runnable() {
+                @Override
+                public void run() {
+                    if (!logicOut.getLogic().isSaveToStack()) {
+                        logicOut.getLogic().dispose();
+                    }
+                    logic.onShown();
+                }
+            });
+        }
+        _logicStacks.push(new LogicEnumPair(logic, sceneEnum, objs));
     }
 
     public void back(){
-
         final LogicEnumPair currentScene = _logicStacks.peek();
         if(currentScene.getLogic().getScene().getRoot().getActions().size > 0){
             return;
         }
 
-        Threadings.postRunnable(new Runnable() {
+        _logicStacks.peek().getLogic().onQuit(new OnQuitListener() {
             @Override
-            public void run() {
-
-                _logicStacks.peek().getLogic().onQuit(new OnQuitListener() {
-                    @Override
-                    public void onResult(Result result) {
-                        if (result == Result.YES) {
-                            if (_logicStacks.size() == 1) {
-                                confirmQuitGame();
-                                return;
-                            }
-
-                            final LogicEnumPair current = _logicStacks.pop();
-                            final LogicEnumPair previous = _logicStacks.peek();
-                            current.getLogic().onBack();
-                            current.getLogic().onHide();
-                            current.getLogic().onChangedScene(previous.getSceneEnum());
-
-                            previous.getLogic().onShow();
-                            sceneTransition(previous.getLogic().getScene().getRoot(), current.getLogic().getScene().getRoot(),
-                                    previous.getLogic().getScene(), false, new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            current.getLogic().dispose();
-                                            previous.getLogic().onShown();
-                                        }
-                                    });
-                        } else {
-                        }
+            public void onResult(Result result) {
+                if (result == Result.YES) {
+                    if (_logicStacks.size() == 1) {
+                        confirmQuitGame();
+                        return;
                     }
-                });
+
+                    final LogicEnumPair current = _logicStacks.pop();
+                    final LogicEnumPair previous = _logicStacks.peek();
+                    current.getLogic().onBack();
+                    current.getLogic().onHide();
+                    current.getLogic().onChangedScene(previous.getSceneEnum());
+                    current.getLogic().disposeEarly();
+
+                    previous.getLogic().onShow();
+                    sceneTransition(previous.getLogic(), current.getLogic(), false, new Runnable() {
+                                @Override
+                                public void run() {
+                                    current.getLogic().dispose();
+                                    previous.getLogic().onShown();
+                                }
+                            });
+                } else {
+                }
             }
         });
     }
@@ -189,19 +181,20 @@ public class PTScreen implements Screen, InputProcessor {
     }
 
     public void backToBoot(){
-        Threadings.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                while(_logicStacks.size() > 0){
-                    LogicEnumPair logicEnumPair = _logicStacks.pop();
+        while(_logicStacks.size() > 0){
+            final LogicEnumPair logicEnumPair = _logicStacks.pop();
+            Threadings.postRunnable(new Runnable() {
+                @Override
+                public void run() {
                     logicEnumPair.getLogic().getScene().getRoot().remove();
-                    logicEnumPair.getLogic().onBack();
-                    logicEnumPair.getLogic().onHide();
-                    logicEnumPair.getLogic().dispose();
                 }
-                toScene(SceneEnum.BOOT);
-            }
-        });
+            });
+            logicEnumPair.getLogic().onBack();
+            logicEnumPair.getLogic().onHide();
+            logicEnumPair.getLogic().disposeEarly();
+            logicEnumPair.getLogic().dispose();
+        }
+        toScene(SceneEnum.BOOT);
     }
 
     public LogicAbstract newSceneLogic(SceneEnum sceneEnum, Object... objs){
@@ -250,33 +243,35 @@ public class PTScreen implements Screen, InputProcessor {
         return logic;
     }
 
-    private void sceneTransition(final Actor _rootIn, final Actor _rootOut, final SceneAbstract sceneToShow, final boolean toRight, final Runnable onFinish){
+    private void sceneTransition(
+            final LogicAbstract logicIn, final LogicAbstract logicOut, final boolean toRight, final Runnable onFinish){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
                 float duration = 0.5f;
 
-                Threadings.renderFor(10f);
+                Actor rootIn = logicIn.getScene().getRoot();
+                final Actor rootOut = logicOut.getScene().getRoot();
 
-                _rootIn.remove();
-                _rootOut.remove();
-                _rootIn.clearActions();
-                _rootOut.clearActions();
-                _rootIn.setName("root");
-                _stage.addActor(_rootIn);
-                _stage.addActor(_rootOut);
-                _currentRoot = _rootIn;
+                rootIn.remove();
+                rootOut.remove();
+                rootIn.clearActions();
+                rootOut.clearActions();
+                rootIn.setName("root");
+                _stage.addActor(rootIn);
+                _stage.addActor(rootOut);
+                _currentRoot = rootIn;
 
-                _rootIn.setPosition(toRight ? Positions.getWidth() : -Positions.getWidth(), 0);
-                _rootOut.setPosition(0, 0);
+                rootIn.setPosition(toRight ? Positions.getWidth() : -Positions.getWidth(), 0);
+                rootOut.setPosition(0, 0);
 
                 _services.getSoundsPlayer().playSoundEffect(Sounds.Name.SLIDING);
 
-                _rootIn.addAction(sequence(moveTo(0, 0, duration)));
-                _rootOut.addAction(sequence(moveBy(toRight ? -Positions.getWidth() : Positions.getWidth(), 0, duration), new RunnableAction() {
+                rootIn.addAction(sequence(moveTo(0, 0, duration)));
+                rootOut.addAction(sequence(moveBy(toRight ? -Positions.getWidth() : Positions.getWidth(), 0, duration), new RunnableAction() {
                     @Override
                     public void run() {
-                        _rootOut.remove();
+                        rootOut.remove();
                         onFinish.run();
                     }
                 }));

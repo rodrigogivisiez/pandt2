@@ -258,6 +258,15 @@ public class GameListScene extends SceneAbstract {
         });
     }
 
+    public void setContinueButtonEnabled(final boolean enabled){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                _continueGameButton.setEnabled(enabled);
+            }
+        });
+    }
+
     public BtnEggDownward getNewGameButton() {
         return _newGameButton;
     }

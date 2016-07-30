@@ -7,6 +7,7 @@ import com.mygdx.potatoandtomato.absintflis.gamingkit.ConnectionChangedListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.GameLoadStateMonitorListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.GameLoaderListener;
+import com.mygdx.potatoandtomato.enums.ClientConnectionStatus;
 import com.mygdx.potatoandtomato.enums.LoadState;
 import com.mygdx.potatoandtomato.enums.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.models.Room;
@@ -163,8 +164,8 @@ public class GameLoadStateMonitor implements Disposable {
 
         services.getGamingKit().addListener(getClassTag(), new ConnectionChangedListener() {
             @Override
-            public void onChanged(String userId, ConnectStatus st) {
-                if(st == ConnectStatus.DISCONNECTED || st == ConnectStatus.DISCONNECTED_BUT_RECOVERABLE){
+            public void onChanged(String userId, ClientConnectionStatus st) {
+                if(st == ClientConnectionStatus.DISCONNECTED || st == ClientConnectionStatus.DISCONNECTED_BUT_RECOVERABLE){
                     notifyLoadState(false, userId);
                 }
             }

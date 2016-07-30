@@ -76,7 +76,6 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         _services.getConfirm().close(ConfirmIdentifier.BackScreen);
 
         setListenersAndThreads();
-        Threadings.setContinuousRenderLock(true);
 
         HashMap<String, String> map = new HashMap();
         map.put("gameName", room.getGame().getName());
@@ -311,30 +310,30 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
 
         connectionsController.setConnectionsControllerListener(new ConnectionsControllerListener() {
             @Override
-            public void userConnectionChanged(final String userId, final ConnectionStatus connectionStatus) {
+            public void userConnectionChanged(final String userId, final GameConnectionStatus gameConnectionStatus) {
                 if(!gameStarted){
                     onGameStartedRunnables.add(new Runnable() {
                         @Override
                         public void run() {
-                            userConnectionChanged(userId, connectionStatus);
+                            userConnectionChanged(userId, gameConnectionStatus);
                         }
                     });
                     return;
                 }
 
 
-                if(connectionStatus == ConnectionStatus.Abandoned){
+                if(gameConnectionStatus == GameConnectionStatus.Abandoned){
                     coordinator.userAbandon(userId);
                     if(userId.equals(_services.getProfile().getUserId())){
                         coordinator.finalizeAndEndGame(null, null, true);
                     }
                     _services.getCoins().onUserDisconnected(userId);
                 }
-                else if(connectionStatus == ConnectionStatus.Disconnected){
+                else if(gameConnectionStatus == GameConnectionStatus.Disconnected){
                     coordinator.userConnectionChanged(userId, false);
                     _services.getCoins().onUserDisconnected(userId);
                 }
-                else if(connectionStatus == ConnectionStatus.Connected){
+                else if(gameConnectionStatus == GameConnectionStatus.Connected){
                     coordinator.userConnectionChanged(userId, true);
                 }
             }
@@ -428,33 +427,32 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                 _screen.back();
                 _services.getSoundsPlayer().playMusic(Sounds.Name.THEME_MUSIC);
             }
-
-            disposeImportantItems();
         }
     }
 
-    public void disposeImportantItems(){
-        gameLoadStateMonitor.disposeGameCoordinator();
-        gameLoadStateMonitor.dispose();
-        connectionsController.dispose();
+    @Override
+    public boolean disposeEarly() {
+        if(super.disposeEarly()){
+            gameLoadStateMonitor.disposeGameCoordinator();
+            gameLoadStateMonitor.dispose();
+            connectionsController.dispose();
+            _services.getConnectionWatcher().clearConnectionWatcherListenerByClassTag(getClassTag());
+            if(safeThread != null) safeThread.kill();
+        }
+        return true;
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-        disposeImportantItems();
-        Flurry.logTimeEnd(FlurryEvent.GameSession);
+    public boolean dispose() {
+        if(super.dispose()){
+            Flurry.logTimeEnd(FlurryEvent.GameSession);
 
-        _services.getBroadcaster().broadcast(BroadcastEvent.DEVICE_ORIENTATION, 0);
-        _services.getConnectionWatcher().gameEnded();
-        _services.getConnectionWatcher().clearConnectionWatcherListenerByClassTag(getClassTag());
-        _screen.switchToPTScreen();
-        _services.getChat().setMode(1);
-
-        Threadings.setContinuousRenderLock(false);
-        if(safeThread != null) safeThread.kill();
+            _services.getBroadcaster().broadcast(BroadcastEvent.DEVICE_ORIENTATION, 0);
+            _screen.switchToPTScreen();
+            _services.getChat().setMode(1);
+        }
+        return true;
     }
-
 
     @Override
     public SceneAbstract getScene() {
@@ -539,7 +537,6 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             }
         }
 
-        _services.getConnectionWatcher().gameEnded();
         connectionsController.updateMyPlayingState(false, abandoned);
     }
 

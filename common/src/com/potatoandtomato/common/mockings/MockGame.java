@@ -283,6 +283,16 @@ public abstract class MockGame extends Game implements IPTGame {
             public void setCoinListener(CoinListener coinListener) {
 
             }
+
+            @Override
+            public boolean isVisible() {
+                return false;
+            }
+
+            @Override
+            public String getCoinsPurpose() {
+                return null;
+            }
         }){
             @Override
             public void finishLoading() {

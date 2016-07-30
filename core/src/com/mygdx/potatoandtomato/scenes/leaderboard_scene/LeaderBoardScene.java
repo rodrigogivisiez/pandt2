@@ -2,6 +2,7 @@ package com.mygdx.potatoandtomato.scenes.leaderboard_scene;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -506,7 +507,7 @@ public class LeaderBoardScene extends SceneAbstract {
 
 
                 int totalWords = scoreDetails.getReason().split(" ").length;
-                float delayDuration = totalWords * 0.4f;
+                float delayDuration = Math.max(totalWords * 0.4f, 2.0f);
 
                 addedScoreTable.setOrigin(addedScoreTable.getWidth()/2, addedScoreTable.getHeight()/2);
 

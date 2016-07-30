@@ -123,7 +123,6 @@ public class BtnEggDownward extends Table {
                     _this.setSize(_size.x, _size.y - 40);
                     _this.setPosition(originalPosition.x, originalPosition.y + 10);
                     float duration = 0.2f;
-                    Threadings.renderFor(duration + 0.1f);
                     _this.addAction(parallel(
                             fadeIn(duration, Interpolation.sineIn),
                             sizeTo(_size.x, _size.y, duration, Interpolation.bounceOut),

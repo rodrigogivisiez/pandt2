@@ -582,6 +582,11 @@ public class GameCoordinator implements Disposable {
     public void coinsInputRequest(String purpose, CoinRequestType coinRequestType, int coinPerPerson, final CoinListener coinListener,
                                   ArrayList<SpeechAction> potatoSpeechActions, ArrayList<SpeechAction> tomatoSpeechActions,
                                   String dismissText){
+
+        if(iCoins.isVisible() && iCoins.getCoinsPurpose().equals(purpose)){
+            return;
+        }
+
         iCoins.reset();
         requestingCoins = true;
 

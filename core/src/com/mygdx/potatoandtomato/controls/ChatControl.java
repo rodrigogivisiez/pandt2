@@ -19,7 +19,7 @@ import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.assets.Patches;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.assets.Textures;
-import com.mygdx.potatoandtomato.enums.ConnectionStatus;
+import com.mygdx.potatoandtomato.enums.GameConnectionStatus;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.services.Recorder;
 import com.mygdx.potatoandtomato.services.SoundsPlayer;
@@ -1026,7 +1026,7 @@ public class ChatControl {
 
     }
 
-    public void refreshRoomUsersPopupDesign(final ArrayList<Pair<String, ConnectionStatus>> playersConnectionStatusPairs){
+    public void refreshRoomUsersPopupDesign(final ArrayList<Pair<String, GameConnectionStatus>> playersConnectionStatusPairs){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -1046,18 +1046,18 @@ public class ChatControl {
                 ScrollPane scrollPane = new GreyScrollPane(resultTable, assets);
                 rootTable.add(scrollPane).expand().fill().padRight(3);
 
-                for(Pair<String, ConnectionStatus> playerConnectionStatus : playersConnectionStatusPairs){
+                for(Pair<String, GameConnectionStatus> playerConnectionStatus : playersConnectionStatusPairs){
                     Table userStatusTable = null;
-                    if(playerConnectionStatus.getSecond() == ConnectionStatus.Connected){
+                    if(playerConnectionStatus.getSecond() == GameConnectionStatus.Connected){
                         connectedUsers.add(playerConnectionStatus.getFirst());
                     }
-                    else if(playerConnectionStatus.getSecond() == ConnectionStatus.Disconnected){
+                    else if(playerConnectionStatus.getSecond() == GameConnectionStatus.Disconnected){
                         disconnectedUsers.add(playerConnectionStatus.getFirst());
                     }
-                    else if(playerConnectionStatus.getSecond() == ConnectionStatus.Disconnected_No_CountDown){
+                    else if(playerConnectionStatus.getSecond() == GameConnectionStatus.Disconnected_No_CountDown){
                         disconnectedNoCountDownUsers.add(playerConnectionStatus.getFirst());
                     }
-                    else if(playerConnectionStatus.getSecond() == ConnectionStatus.Abandoned){
+                    else if(playerConnectionStatus.getSecond() == GameConnectionStatus.Abandoned){
                         abandonedUsers.add(playerConnectionStatus.getFirst());
                     }
                 }
@@ -1069,22 +1069,22 @@ public class ChatControl {
 
                 for(int i = 0; i < 4; i++){
                     ArrayList<String> users = null;
-                    ConnectionStatus status = null;
+                    GameConnectionStatus status = null;
                     if(i == 0){
                         users = connectedUsers;
-                        status = ConnectionStatus.Connected;
+                        status = GameConnectionStatus.Connected;
                     }
                     else if(i == 1){
                         users = disconnectedUsers;
-                        status = ConnectionStatus.Disconnected;
+                        status = GameConnectionStatus.Disconnected;
                     }
                     else if(i == 2){
                         users = disconnectedNoCountDownUsers;
-                        status = ConnectionStatus.Disconnected_No_CountDown;
+                        status = GameConnectionStatus.Disconnected_No_CountDown;
                     }
                     else if(i == 3){
                         users = abandonedUsers;
-                        status = ConnectionStatus.Abandoned;
+                        status = GameConnectionStatus.Abandoned;
                     }
 
                     for(String userId : users){
@@ -1106,12 +1106,12 @@ public class ChatControl {
         });
     }
 
-    private Table getRoomUserStatusDesign(String userName, ConnectionStatus status){
+    private Table getRoomUserStatusDesign(String userName, GameConnectionStatus status){
 
         if(disconnectedCountDownThreads.containsKey(userName)){
             disconnectedCountDownThreads.get(userName).kill();
             disconnectedCountDownThreads.remove(userName);
-            cacheRoomUserStatusTablesMap.remove(userName + ConnectionStatus.Disconnected.name());
+            cacheRoomUserStatusTablesMap.remove(userName + GameConnectionStatus.Disconnected.name());
         }
 
 
@@ -1140,7 +1140,7 @@ public class ChatControl {
 
         statusTable.add(userNameLabel).expandX().fillX();
 
-        if(status != ConnectionStatus.Disconnected){
+        if(status != GameConnectionStatus.Disconnected){
             Image connectionDotImage = new Image(assets.getTextures().get(Textures.Name.WHITE_DOT));
             connectionDotImage.setColor(color);
             statusTable.add(connectionDotImage).right();

@@ -10,9 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.mygdx.potatoandtomato.absintflis.controls.ChatTemplateSelectedListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
-import com.mygdx.potatoandtomato.absintflis.gamingkit.MessagingListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
-import com.mygdx.potatoandtomato.enums.ConnectionStatus;
+import com.mygdx.potatoandtomato.enums.GameConnectionStatus;
 import com.mygdx.potatoandtomato.enums.FlurryEvent;
 import com.mygdx.potatoandtomato.enums.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
@@ -35,7 +34,6 @@ import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.utils.Pair;
 import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
-import com.shaded.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -278,7 +276,7 @@ public class Chat {
         chatControl.scrollToBottom();
     }
 
-    public void refreshRoomUsersConnectionStatus(ArrayList<Pair<String, ConnectionStatus>> playersConnectionStatusPairs) {
+    public void refreshRoomUsersConnectionStatus(ArrayList<Pair<String, GameConnectionStatus>> playersConnectionStatusPairs) {
         chatControl.refreshRoomUsersPopupDesign(playersConnectionStatusPairs);
     }
 
@@ -362,13 +360,7 @@ public class Chat {
         broadcaster.subscribe(BroadcastEvent.NATIVE_TEXT_CHANGED, new BroadcastListener<NativeLibgdxTextInfo>() {
             @Override
             public void onCallback(final NativeLibgdxTextInfo obj, Status st) {
-                Threadings.renderFor(0.2f);
-                Threadings.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        chatControl.setMessageTextFieldMsg(obj.getText(), obj.getCursorPosition());
-                    }
-                });
+                chatControl.setMessageTextFieldMsg(obj.getText(), obj.getCursorPosition());
             }
         });
 

@@ -132,7 +132,6 @@ public class CreateGameScene extends SceneAbstract {
     }
 
     public void showGameDetails(final Game game){
-        Threadings.renderFor(2f);
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {

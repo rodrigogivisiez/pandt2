@@ -9,11 +9,10 @@ import com.mygdx.potatoandtomato.absintflis.scenes.ConnectionsControllerListener
 import com.mygdx.potatoandtomato.absintflis.scenes.PlayerConnectionStateListener;
 import com.mygdx.potatoandtomato.absintflis.services.ConnectionWatcherListener;
 import com.mygdx.potatoandtomato.absintflis.services.IChatRoomUsersConnectionRefresher;
-import com.mygdx.potatoandtomato.enums.ConnectionStatus;
-import com.mygdx.potatoandtomato.enums.RoomUserState;
+import com.mygdx.potatoandtomato.enums.ClientConnectionStatus;
+import com.mygdx.potatoandtomato.enums.GameConnectionStatus;
 import com.mygdx.potatoandtomato.enums.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.models.*;
-import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.models.Team;
@@ -61,15 +60,13 @@ public class ConnectionsController implements Disposable, IChatRoomUsersConnecti
 
             @Override
             public void onConnectionHalt() {
-                setPlayerConnectionState(services.getProfile().getUserId(), ConnectionStatus.Disconnected, "");
+                setPlayerConnectionState(services.getProfile().getUserId(), GameConnectionStatus.Disconnected, "");
 
                 for(PlayerConnectionState playerConnectionState : playerConnectionStatesMap.values()){
                     playerConnectionState.stopDisconnectTimeoutThread();
                 }
             }
         });
-
-        services.getConnectionWatcher().gameStarted(room);
 
         updateMyPlayingState(true, false);
 
@@ -91,8 +88,8 @@ public class ConnectionsController implements Disposable, IChatRoomUsersConnecti
                     }
 
                     @Override
-                    public void onPlayerConnectionChanged(String userId, ConnectionStatus connectionStatus) {
-                        connectionsControllerListener.userConnectionChanged(userId, connectionStatus);
+                    public void onPlayerConnectionChanged(String userId, GameConnectionStatus gameConnectionStatus) {
+                        connectionsControllerListener.userConnectionChanged(userId, gameConnectionStatus);
                     }
 
                 }));
@@ -101,7 +98,7 @@ public class ConnectionsController implements Disposable, IChatRoomUsersConnecti
     }
 
     public void receivedUserAbandoned(String userId, String fromUserId){
-        setPlayerConnectionState(userId, ConnectionStatus.Abandoned, fromUserId);
+        setPlayerConnectionState(userId, GameConnectionStatus.Abandoned, fromUserId);
 
         if(userId.equals(services.getProfile().getUserId())){
             updateMyPlayingState(false, true);
@@ -131,7 +128,7 @@ public class ConnectionsController implements Disposable, IChatRoomUsersConnecti
                 final ConcurrentHashMap<String, Profile> refreshedAllUsersProfile = new ConcurrentHashMap<String, Profile>();
 
                 for(String userId : playerConnectionStatesMap.keySet()){
-                    if(playerConnectionStatesMap.get(userId).getConnectionStatus() != ConnectionStatus.Abandoned
+                    if(playerConnectionStatesMap.get(userId).getGameConnectionStatus() != GameConnectionStatus.Abandoned
                             && !userId.equals(services.getProfile().getUserId())){
                         needRefreshUserIds.add(userId);
                     }
@@ -157,20 +154,20 @@ public class ConnectionsController implements Disposable, IChatRoomUsersConnecti
 
                 for(Profile profile : refreshedAllUsersProfile.values()){
                     if(!profile.getUserPlayingState().canContinue(room) && profile.getUserPlayingState().getRoomId().equals("ABANDONED")){
-                        playerConnectionStatesMap.get(profile.getUserId()).setConnectionStatus(ConnectionStatus.Abandoned);
+                        playerConnectionStatesMap.get(profile.getUserId()).setConnectionStatus(GameConnectionStatus.Abandoned);
                     }
                 }
 
                 for(String userId : playerConnectionStatesMap.keySet()){
                     PlayerConnectionState playerConnectionState = playerConnectionStatesMap.get(userId);
-                    if(playerConnectionState.getConnectionStatus() == ConnectionStatus.Connected){
+                    if(playerConnectionState.getGameConnectionStatus() == GameConnectionStatus.Connected){
                         if(!connectedUserIds.contains(userId)){
-                            playerConnectionState.setConnectionStatus(ConnectionStatus.Disconnected);
+                            playerConnectionState.setConnectionStatus(GameConnectionStatus.Disconnected);
                         }
                     }
-                    else if(playerConnectionState.getConnectionStatus() == ConnectionStatus.Disconnected){
+                    else if(playerConnectionState.getGameConnectionStatus() == GameConnectionStatus.Disconnected){
                         if(connectedUserIds.contains(userId)){
-                            playerConnectionState.setConnectionStatus(ConnectionStatus.Connected);
+                            playerConnectionState.setConnectionStatus(GameConnectionStatus.Connected);
                         }
                     }
                 }
@@ -195,9 +192,9 @@ public class ConnectionsController implements Disposable, IChatRoomUsersConnecti
         services.getGamingKit().updateRoomMates(UpdateRoomMatesCode.USER_LEFT_GAME, "");
     }
 
-    public void setPlayerConnectionState(String userId, ConnectionStatus connectionStatus, String senderId){
+    public void setPlayerConnectionState(String userId, GameConnectionStatus gameConnectionStatus, String senderId){
          if(playerConnectionStatesMap.containsKey(userId)){
-            boolean changed = playerConnectionStatesMap.get(userId).setConnectionStatus(connectionStatus);
+            boolean changed = playerConnectionStatesMap.get(userId).setConnectionStatus(gameConnectionStatus);
 
             if(gameStarted && changed){
                 refreshChatRoomUsersConnectStatus();
@@ -206,7 +203,7 @@ public class ConnectionsController implements Disposable, IChatRoomUsersConnecti
 
                 boolean isSelf = userId.equals(services.getProfile().getUserId());
 
-                if (connectionStatus == ConnectionStatus.Abandoned) {
+                if (gameConnectionStatus == GameConnectionStatus.Abandoned) {
                     //user abandoned
                     if(Strings.isEmpty(senderId)) senderId = userId;
 
@@ -220,16 +217,16 @@ public class ConnectionsController implements Disposable, IChatRoomUsersConnecti
                     }
 
 
-                } else if (connectionStatus == ConnectionStatus.Connected) {
+                } else if (gameConnectionStatus == GameConnectionStatus.Connected) {
                     //user connected back
                     services.getNotification().info(isSelf ? services.getTexts().notificationYouConnected() :
                                                 String.format(services.getTexts().notificationConnected(), player.getName()));
-                } else if (connectionStatus == ConnectionStatus.Disconnected) {
+                } else if (gameConnectionStatus == GameConnectionStatus.Disconnected) {
                     //user disconnected
                     services.getNotification().important(isSelf ? services.getTexts().notificationYouDisconnected() :
                                     String.format(services.getTexts().notificationDisconnected(), player.getName()));
                 }
-                else if (connectionStatus == ConnectionStatus.Disconnected_No_CountDown) {
+                else if (gameConnectionStatus == GameConnectionStatus.Disconnected_No_CountDown) {
                     //user left game at the end of the game
                     if(!isSelf){
                         services.getNotification().info(String.format(services.getTexts().notificationLeftGame(), player.getName()));
@@ -242,12 +239,12 @@ public class ConnectionsController implements Disposable, IChatRoomUsersConnecti
 
     @Override
     public void refreshChatRoomUsersConnectStatus() {
-        ArrayList<Pair<String, ConnectionStatus>> userIdToConnectStatusPairs = new ArrayList();
+        ArrayList<Pair<String, GameConnectionStatus>> userIdToConnectStatusPairs = new ArrayList();
 
         for(String userId : playerConnectionStatesMap.keySet()){
             PlayerConnectionState playerConnectionState = playerConnectionStatesMap.get(userId);
-            userIdToConnectStatusPairs.add(new Pair<String, ConnectionStatus>(playerConnectionState.getPlayer().getName(),
-                                            playerConnectionState.getConnectionStatus()));
+            userIdToConnectStatusPairs.add(new Pair<String, GameConnectionStatus>(playerConnectionState.getPlayer().getName(),
+                                            playerConnectionState.getGameConnectionStatus()));
         }
 
         services.getChat().refreshRoomUsersConnectionStatus(userIdToConnectStatusPairs);
@@ -256,9 +253,9 @@ public class ConnectionsController implements Disposable, IChatRoomUsersConnecti
     public void setListeners(){
         services.getGamingKit().addListener(getClassTag(), new ConnectionChangedListener() {
             @Override
-            public void onChanged(String userId, ConnectStatus st) {
-                if(!ConnectStatus.isConnected(st)){
-                    setPlayerConnectionState(userId, ConnectionStatus.Disconnected, "");
+            public void onChanged(String userId, ClientConnectionStatus st) {
+                if(!ClientConnectionStatus.isConnected(st)){
+                    setPlayerConnectionState(userId, GameConnectionStatus.Disconnected, "");
                 }
             }
         });
@@ -280,15 +277,15 @@ public class ConnectionsController implements Disposable, IChatRoomUsersConnecti
                     receivedUserAbandoned(msg, senderId);
                 }
                 else if(code == UpdateRoomMatesCode.USER_CONNECTED){
-                    if(playerConnectionStatesMap.get(senderId).getConnectionStatus() == ConnectionStatus.Abandoned){
+                    if(playerConnectionStatesMap.get(senderId).getGameConnectionStatus() == GameConnectionStatus.Abandoned){
                         sendUserAbandoned(senderId);
                     }
                     else{
-                        setPlayerConnectionState(senderId, ConnectionStatus.Connected, "");
+                        setPlayerConnectionState(senderId, GameConnectionStatus.Connected, "");
                     }
                 }
                 else if(code == UpdateRoomMatesCode.USER_LEFT_GAME){
-                    setPlayerConnectionState(senderId, ConnectionStatus.Disconnected_No_CountDown, "");
+                    setPlayerConnectionState(senderId, GameConnectionStatus.Disconnected_No_CountDown, "");
                 }
 
             }
@@ -347,7 +344,6 @@ public class ConnectionsController implements Disposable, IChatRoomUsersConnecti
         safeThread.kill();
         services.getGamingKit().removeListenersByClassTag(getClassTag());
         services.getConnectionWatcher().clearConnectionWatcherListenerByClassTag(getClassTag());
-        services.getConnectionWatcher().gameEnded();
     }
 
 

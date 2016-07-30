@@ -1,9 +1,9 @@
 package com.mygdx.potatoandtomato.absintflis.gamingkit;
 
+import com.mygdx.potatoandtomato.enums.ClientConnectionStatus;
 import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.models.Profile;
 
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -63,7 +63,7 @@ public abstract class GamingKit {
     }
 
 
-    public void onConnectionChanged(String userId, ConnectionChangedListener.ConnectStatus status){
+    public void onConnectionChanged(String userId, ClientConnectionStatus status){
         if(userId != null){
             for(ConnectionChangedListener listener : _connectionChangedListeners.values()){
                 listener.onChanged(userId, status);

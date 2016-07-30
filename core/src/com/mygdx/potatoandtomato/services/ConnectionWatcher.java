@@ -4,10 +4,13 @@ import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.ConnectionChangedListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
+import com.mygdx.potatoandtomato.absintflis.gamingkit.JoinRoomListener;
 import com.mygdx.potatoandtomato.absintflis.services.ConnectionWatcherListener;
+import com.mygdx.potatoandtomato.enums.ClientConnectionStatus;
 import com.mygdx.potatoandtomato.enums.ConfirmIdentifier;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.Room;
+import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.absints.IDisconnectOverlayControl;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
@@ -30,8 +33,7 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
     private Room room;
     private Profile profile;
     private ConcurrentHashMap<String, ConnectionWatcherListener> connectionWatcherListenersMap;
-    private int count;
-    private boolean showingResumeGame, showingLostConnection;
+    private boolean showingResumeGame, showingLostConnection, confirmDisconnected;
     private SafeThread safeThread;
 
     public ConnectionWatcher(GamingKit gamingKit, Broadcaster broadcaster, Confirm confirm,
@@ -46,21 +48,19 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
     }
 
 
-    public void gameStarted(Room room){
-        playingGame = true;
+    public void joinedRoom(Room room){
         this.room = room;
     }
 
-    public void gameEnded(){
-        playingGame = false;
-        room = null;
-        connectionWatcherListenersMap.clear();
+    public void leftRoom(){
+        this.room = null;
     }
 
     public void resetAndBackToBoot(boolean showDisconnectedMsg){
         gamingKit.disconnect();
         showingResumeGame = false;
         showingLostConnection = false;
+        confirmDisconnected = false;
         confirm.close(ConfirmIdentifier.Resiliency);
         confirm.close(ConfirmIdentifier.ResumingGameSession);
 
@@ -71,7 +71,6 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
             confirm.show(ConfirmIdentifier.Resiliency, texts.confirmNoConnection(), Confirm.Type.YES, null);
         }
 
-        count = 0;
         if(safeThread != null) safeThread.kill();
     }
 
@@ -86,61 +85,104 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
     public void setListeners(){
         gamingKit.addListener(this.getClass().getName(), new ConnectionChangedListener() {
             @Override
-            public void onChanged(String userId, ConnectStatus st) {
+            public void onChanged(String userId, ClientConnectionStatus st) {
                 if(profile != null && userId != null && userId.equals(profile.getUserId())){
-                    if(st == ConnectStatus.DISCONNECTED){
-                        resetAndBackToBoot(true);
-                    }
-                    else if(st == ConnectStatus.DISCONNECTED_BUT_RECOVERABLE){
-                        if(count == 0){
-                            for(ConnectionWatcherListener connectionWatcherListener : connectionWatcherListenersMap.values()){
-                                connectionWatcherListener.onConnectionHalt();
-                            }
-
-                            safeThread = new SafeThread();
-                            Threadings.runInBackground(new Runnable() {
-                                @Override
-                                public void run() {
-                                    int totalCount = 25;
-                                    showLostConnection(totalCount);
-
-                                    while (count < totalCount){
-                                        Threadings.sleep(1000);
-                                        if(safeThread.isKilled()) return;
-
-                                        count++;
-                                        if(count % 3 == 0){
-                                            gamingKit.recoverConnection();
-                                        }
-                                        showLostConnection(totalCount - count);
-                                    }
-
-                                    resetAndBackToBoot(true);
-                                }
-                            });
-
-                        }
-                    }
-                    else if(st == ConnectStatus.CONNECTED_FROM_RECOVER){
-                        count = 0;
+                    if(ClientConnectionStatus.isConnected(st)){
                         if(safeThread != null) safeThread.kill();
 
-                        for(ConnectionWatcherListener connectionWatcherListener : connectionWatcherListenersMap.values()){
-                            connectionWatcherListener.onConnectionResume();
-                        }
-
-                        Threadings.delay(1000, new Runnable() {
-                            @Override
-                            public void run() {
-                                if(!showingResumeGame){
-                                    hideLostConnection();
-                                }
+                        if(confirmDisconnected){
+                            if(room != null){
+                                gamingKit.joinRoom(room.getWarpRoomId());
                             }
-                        });
+                            else{
+                                onSuccessConnectedBack();
+                            }
+                        }
+                        else{
+                            onSuccessConnectedBack();
+                        }
+                    }
+                    else{
+                        if(st == ClientConnectionStatus.DISCONNECTED){
+                            confirmDisconnected = true;
+                        }
+                        onDisconnected();
+
                     }
                 }
             }
         });
+
+        gamingKit.addListener(this.getClass().getName(), new JoinRoomListener() {
+            @Override
+            public void onRoomJoined(String roomId) {
+                if(confirmDisconnected){
+                    confirmDisconnected = false;
+                    onSuccessConnectedBack();
+                }
+            }
+
+            @Override
+            public void onJoinRoomFailed() {
+                if(confirmDisconnected){
+                    onDisconnected();
+                }
+            }
+        });
+
+    }
+
+    private void onSuccessConnectedBack(){
+        for(ConnectionWatcherListener connectionWatcherListener : connectionWatcherListenersMap.values()){
+            connectionWatcherListener.onConnectionResume();
+        }
+
+
+        Threadings.delay(1000, new Runnable() {
+            @Override
+            public void run() {
+                if(!showingResumeGame){
+                    hideLostConnection();
+                }
+            }
+        });
+    }
+
+    private void onDisconnected(){
+        if(safeThread == null || safeThread.isKilled()){
+            for(ConnectionWatcherListener connectionWatcherListener : connectionWatcherListenersMap.values()){
+                connectionWatcherListener.onConnectionHalt();
+            }
+
+            safeThread = new SafeThread();
+            Threadings.runInBackground(new Runnable() {
+                @Override
+                public void run() {
+                    int count = 0;
+                    int totalCount = 25;
+                    showLostConnection(totalCount);
+
+                    while (count < totalCount){
+                        Threadings.sleep(1000);
+                        if(safeThread.isKilled()) return;
+
+                        count++;
+                        if(count % 3 == 0){
+                            if(!confirmDisconnected){
+                                gamingKit.recoverConnection();
+                            }
+                            else{
+                                Logs.show("Recover via reconnect username");
+                                gamingKit.connect(profile);
+                            }
+                        }
+                        showLostConnection(totalCount - count);
+                    }
+
+                    resetAndBackToBoot(true);
+                }
+            });
+        }
     }
 
     public void setPtScreen(PTScreen ptScreen) {
