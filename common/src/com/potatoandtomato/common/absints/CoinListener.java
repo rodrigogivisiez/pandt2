@@ -13,4 +13,6 @@ public abstract class CoinListener {
 
     public void onDismiss(String dismissUserId){}
 
+    public void onTransactionAlreadyProcessed() {}
+
 }

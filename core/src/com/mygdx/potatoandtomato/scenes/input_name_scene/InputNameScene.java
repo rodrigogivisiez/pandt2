@@ -36,7 +36,6 @@ public class InputNameScene extends SceneAbstract {
 
     @Override
     public void populateRoot() {
-
         _root.pad(20);
 
         Table questionTable = new Table();
@@ -51,7 +50,7 @@ public class InputNameScene extends SceneAbstract {
         questionLabel.setAlignment(Align.center);
 
         displayNameTextField = new PTTextField(_assets, true);
-        displayNameTextField.setText(_services.getProfile().getGameName());
+        displayNameTextField.setText(_services.getProfile().getFacebookName());
 
         btnConfirm = new BtnColor(BtnColor.ColorChoice.GREEN, _assets);
         btnConfirm.setText(_texts.confirm());
@@ -64,4 +63,6 @@ public class InputNameScene extends SceneAbstract {
 
         _root.add(questionTable).expandX().fillX().padBottom(30);
     }
+
+
 }

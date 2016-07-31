@@ -251,10 +251,9 @@ public class GameDataHelper implements Disposable {
                 ConcurrentHashMap<String, Boolean> receivedUsersHasDataMap = objectMapper.readValue(usersHasDataMapJson, ConcurrentHashMap.class);
                 receivedUsersHasDataMap.put(myUserId, true);
                 usersHasDataMap = receivedUsersHasDataMap;
-                meHaveDataChanged();
-
                 gameDataContract.onGameDataReceived(gameData);
 
+                meHaveDataChanged();
                 if(onGameDataReceivedRunnable != null) onGameDataReceivedRunnable.run();
 
             } catch (JsonProcessingException e) {
@@ -332,8 +331,13 @@ public class GameDataHelper implements Disposable {
         }
     }
 
-    public void addToRunWhenHaveData(Runnable toRun){
-        toRunWhenHaveData.add(toRun);
+    public void runRunnableWhenHaveData(Runnable toRun){
+        if(hasData() || gameDataContract == null){  //not using game data helper
+            toRun.run();
+        }
+        else{
+            toRunWhenHaveData.add(toRun);
+        }
     }
 
     public boolean isActivated() {

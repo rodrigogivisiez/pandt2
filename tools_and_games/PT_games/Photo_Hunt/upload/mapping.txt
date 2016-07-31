@@ -966,27 +966,27 @@ com.potatoandtomato.games.screens.main.MainLogic -> com.potatoandtomato.games.sc
     101:105:void onContinue() -> b
     108:111:void waitingContinue() -> c
     115:138:void sendGoToNextStageIfIsDecisionMaker(int) -> a
-    142:182:void goToNewStage(java.lang.String,int,com.potatoandtomato.games.enums.StageType,com.potatoandtomato.games.enums.BonusType,java.lang.String,int) -> a
-    185:210:void onStartGameReceived(java.lang.String,int,com.potatoandtomato.games.enums.StageType,com.potatoandtomato.games.enums.BonusType,java.lang.String) -> a
-    213:229:void newStageReviewMode(java.lang.String) -> a
-    232:244:void popImagePairIfCurrentIsNull(java.lang.String) -> b
-    248:269:void imageTouched(float,float,int,int) -> a
-    272:285:void touchReceived(java.lang.String,float,float,int,int,com.potatoandtomato.games.models.SimpleRectangle) -> a
-    288:331:java.util.ArrayList getCorrectRectsByTouchPosition(float,float) -> a
-    335:342:void checkGameEnded(int) -> b
-    346:353:void gameOver() -> h
-    356:382:void coinRequestPhase() -> i
-    385:392:void circleAllAnswers() -> j
-    395:404:void showEndGameTable() -> k
-    407:423:void checkCanSwitchToReviewMode() -> l
-    426:433:void switchToReviewMode() -> m
-    437:716:void setListeners() -> n
-    720:722:void dispose() -> dispose
-    725:725:com.potatoandtomato.games.screens.main.MainScreen getMainScreen() -> d
-    729:730:void setMainScreen(com.potatoandtomato.games.screens.main.MainScreen) -> a
-    733:733:com.potatoandtomato.games.screens.time_bar.TimeLogic getTimeLogic() -> e
-    737:737:com.potatoandtomato.games.models.GameModel getGameModel() -> f
-    741:741:com.potatoandtomato.games.models.Services getServices() -> g
+    142:186:void goToNewStage(java.lang.String,int,com.potatoandtomato.games.enums.StageType,com.potatoandtomato.games.enums.BonusType,java.lang.String,int) -> a
+    189:218:void onStartGameReceived(java.lang.String,int,com.potatoandtomato.games.enums.StageType,com.potatoandtomato.games.enums.BonusType,java.lang.String) -> a
+    221:237:void newStageReviewMode(java.lang.String) -> a
+    240:252:void popImagePairIfCurrentIsNull(java.lang.String) -> b
+    256:277:void imageTouched(float,float,int,int) -> a
+    280:293:void touchReceived(java.lang.String,float,float,int,int,com.potatoandtomato.games.models.SimpleRectangle) -> a
+    296:339:java.util.ArrayList getCorrectRectsByTouchPosition(float,float) -> a
+    343:350:void checkGameEnded(int) -> b
+    354:364:void gameOver() -> h
+    367:390:void coinRequestPhase() -> i
+    393:400:void circleAllAnswers() -> j
+    403:412:void showEndGameTable() -> k
+    415:431:void checkCanSwitchToReviewMode() -> l
+    434:441:void switchToReviewMode() -> m
+    445:724:void setListeners() -> n
+    728:730:void dispose() -> dispose
+    733:733:com.potatoandtomato.games.screens.main.MainScreen getMainScreen() -> d
+    737:738:void setMainScreen(com.potatoandtomato.games.screens.main.MainScreen) -> a
+    741:741:com.potatoandtomato.games.screens.time_bar.TimeLogic getTimeLogic() -> e
+    745:745:com.potatoandtomato.games.models.GameModel getGameModel() -> f
+    749:749:com.potatoandtomato.games.models.Services getServices() -> g
     39:39:com.potatoandtomato.games.screens.main.MainScreen access$000(com.potatoandtomato.games.screens.main.MainLogic) -> a
     39:39:com.potatoandtomato.games.models.GameModel access$100(com.potatoandtomato.games.screens.main.MainLogic) -> b
     39:39:com.potatoandtomato.games.models.Services access$200(com.potatoandtomato.games.screens.main.MainLogic) -> c
@@ -1010,76 +1010,76 @@ com.potatoandtomato.games.screens.main.MainLogic$1 -> com.potatoandtomato.games.
     85:87:void run() -> run
 com.potatoandtomato.games.screens.main.MainLogic$10 -> com.potatoandtomato.games.screens.main.MainLogic$10:
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> a
-    513:513:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
-    516:517:void backPressed() -> backPressed
+    521:521:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
+    524:525:void backPressed() -> backPressed
 com.potatoandtomato.games.screens.main.MainLogic$11 -> com.potatoandtomato.games.screens.main.MainLogic$2:
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> a
-    520:520:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
-    523:537:void run() -> run
+    528:528:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
+    531:545:void run() -> run
 com.potatoandtomato.games.screens.main.MainLogic$11$1 -> com.potatoandtomato.games.screens.main.MainLogic$2$1:
     com.potatoandtomato.games.screens.main.MainLogic$11 this$1 -> a
-    523:523:void <init>(com.potatoandtomato.games.screens.main.MainLogic$11) -> <init>
-    527:527:void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float) -> clicked
+    531:531:void <init>(com.potatoandtomato.games.screens.main.MainLogic$11) -> <init>
+    535:535:void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float) -> clicked
 com.potatoandtomato.games.screens.main.MainLogic$11$2 -> com.potatoandtomato.games.screens.main.MainLogic$2$2:
     com.potatoandtomato.games.screens.main.MainLogic$11 this$1 -> a
-    530:530:void <init>(com.potatoandtomato.games.screens.main.MainLogic$11) -> <init>
-    533:534:boolean longPress(com.badlogic.gdx.scenes.scene2d.Actor,float,float) -> longPress
+    538:538:void <init>(com.potatoandtomato.games.screens.main.MainLogic$11) -> <init>
+    541:542:boolean longPress(com.badlogic.gdx.scenes.scene2d.Actor,float,float) -> longPress
 com.potatoandtomato.games.screens.main.MainLogic$12 -> com.potatoandtomato.games.screens.main.MainLogic$3:
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> a
-    540:540:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
-    544:548:void onHintClicked(com.badlogic.gdx.math.Rectangle,int) -> a
+    548:548:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
+    552:556:void onHintClicked(com.badlogic.gdx.math.Rectangle,int) -> a
 com.potatoandtomato.games.screens.main.MainLogic$13 -> com.potatoandtomato.games.screens.main.MainLogic$4:
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> a
-    552:552:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
-    555:558:void onTouch(float,float) -> a
-    562:563:void requestCircleAll() -> a
-    567:568:void cancelCircleAll() -> b
+    560:560:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
+    563:566:void onTouch(float,float) -> a
+    570:571:void requestCircleAll() -> a
+    575:576:void cancelCircleAll() -> b
 com.potatoandtomato.games.screens.main.MainLogic$14 -> com.potatoandtomato.games.screens.main.MainLogic$5:
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> a
-    572:572:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
-    576:611:void run() -> run
+    580:580:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
+    584:619:void run() -> run
 com.potatoandtomato.games.screens.main.MainLogic$14$1 -> com.potatoandtomato.games.screens.main.MainLogic$5$1:
     com.potatoandtomato.games.screens.main.MainLogic$14 this$1 -> a
-    582:582:void <init>(com.potatoandtomato.games.screens.main.MainLogic$14) -> <init>
-    585:609:void run() -> run
+    590:590:void <init>(com.potatoandtomato.games.screens.main.MainLogic$14) -> <init>
+    593:617:void run() -> run
 com.potatoandtomato.games.screens.main.MainLogic$14$1$1 -> com.potatoandtomato.games.screens.main.MainLogic$14$1$1:
     int[] val$waitingImageCount -> a
     com.potatoandtomato.games.screens.main.MainLogic$14$1 this$2 -> b
-    587:587:void <init>(com.potatoandtomato.games.screens.main.MainLogic$14$1,int[]) -> <init>
-    590:592:void onLoaded(com.badlogic.gdx.graphics.Texture) -> onLoaded
+    595:595:void <init>(com.potatoandtomato.games.screens.main.MainLogic$14$1,int[]) -> <init>
+    598:600:void onLoaded(com.badlogic.gdx.graphics.Texture) -> onLoaded
 com.potatoandtomato.games.screens.main.MainLogic$14$1$2 -> com.potatoandtomato.games.screens.main.MainLogic$14$1$2:
     int[] val$waitingImageCount -> a
     com.potatoandtomato.games.screens.main.MainLogic$14$1 this$2 -> b
-    594:594:void <init>(com.potatoandtomato.games.screens.main.MainLogic$14$1,int[]) -> <init>
-    597:599:void onLoaded(com.badlogic.gdx.graphics.Texture) -> onLoaded
+    602:602:void <init>(com.potatoandtomato.games.screens.main.MainLogic$14$1,int[]) -> <init>
+    605:607:void onLoaded(com.badlogic.gdx.graphics.Texture) -> onLoaded
 com.potatoandtomato.games.screens.main.MainLogic$15 -> com.potatoandtomato.games.screens.main.MainLogic$15:
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> a
-    614:614:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
-    617:621:void onChanged(java.lang.String) -> onChanged
+    622:622:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
+    625:629:void onChanged(java.lang.String) -> onChanged
 com.potatoandtomato.games.screens.main.MainLogic$16 -> com.potatoandtomato.games.screens.main.MainLogic$16:
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> a
-    624:624:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
-    627:632:void userAbandoned(java.lang.String) -> userAbandoned
-    636:637:void userConnected(java.lang.String) -> userConnected
-    641:646:void userDisconnected(java.lang.String) -> userDisconnected
+    632:632:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
+    635:640:void userAbandoned(java.lang.String) -> userAbandoned
+    644:645:void userConnected(java.lang.String) -> userConnected
+    649:654:void userDisconnected(java.lang.String) -> userDisconnected
 com.potatoandtomato.games.screens.main.MainLogic$17 -> com.potatoandtomato.games.screens.main.MainLogic$6:
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> a
-    649:649:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
-    653:655:void onTouched(com.potatoandtomato.games.models.TouchedPoint,java.lang.String) -> a
-    659:664:void onLose(com.potatoandtomato.games.models.GameModel) -> a
-    668:673:void onWon(com.potatoandtomato.games.models.WonStageModel) -> a
-    677:678:void onDownloadImageRequest(java.util.ArrayList) -> a
-    682:683:void onGoToNextStage(java.lang.String,int,com.potatoandtomato.games.enums.StageType,com.potatoandtomato.games.enums.BonusType,java.lang.String,int) -> a
-    687:688:void onStartPlaying(java.lang.String,int,com.potatoandtomato.games.enums.StageType,com.potatoandtomato.games.enums.BonusType,java.lang.String) -> a
+    657:657:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
+    661:663:void onTouched(com.potatoandtomato.games.models.TouchedPoint,java.lang.String) -> a
+    667:672:void onLose(com.potatoandtomato.games.models.GameModel) -> a
+    676:681:void onWon(com.potatoandtomato.games.models.WonStageModel) -> a
+    685:686:void onDownloadImageRequest(java.util.ArrayList) -> a
+    690:691:void onGoToNextStage(java.lang.String,int,com.potatoandtomato.games.enums.StageType,com.potatoandtomato.games.enums.BonusType,java.lang.String,int) -> a
+    695:696:void onStartPlaying(java.lang.String,int,com.potatoandtomato.games.enums.StageType,com.potatoandtomato.games.enums.BonusType,java.lang.String) -> a
 com.potatoandtomato.games.screens.main.MainLogic$18 -> com.potatoandtomato.games.screens.main.MainLogic$7:
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> a
-    692:692:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
-    696:696:void onDeleted() -> a
-    700:712:void onGoToIndex(int) -> a
+    700:700:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
+    704:704:void onDeleted() -> a
+    708:720:void onGoToIndex(int) -> a
 com.potatoandtomato.games.screens.main.MainLogic$18$1 -> com.potatoandtomato.games.screens.main.MainLogic$7$1:
     com.potatoandtomato.games.screens.main.MainLogic$18 this$1 -> a
-    703:703:void <init>(com.potatoandtomato.games.screens.main.MainLogic$18) -> <init>
-    706:707:void run() -> run
+    711:711:void <init>(com.potatoandtomato.games.screens.main.MainLogic$18) -> <init>
+    714:715:void run() -> run
 com.potatoandtomato.games.screens.main.MainLogic$2 -> com.potatoandtomato.games.screens.main.MainLogic$8:
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> a
     120:120:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
@@ -1091,61 +1091,61 @@ com.potatoandtomato.games.screens.main.MainLogic$3 -> com.potatoandtomato.games.
     com.potatoandtomato.games.enums.BonusType val$bonusType -> d
     java.lang.String val$extra -> e
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> f
-    169:169:void <init>(com.potatoandtomato.games.screens.main.MainLogic,java.lang.String,int,com.potatoandtomato.games.enums.StageType,com.potatoandtomato.games.enums.BonusType,java.lang.String) -> <init>
-    172:180:void run() -> run
+    173:173:void <init>(com.potatoandtomato.games.screens.main.MainLogic,java.lang.String,int,com.potatoandtomato.games.enums.StageType,com.potatoandtomato.games.enums.BonusType,java.lang.String) -> <init>
+    176:184:void run() -> run
 com.potatoandtomato.games.screens.main.MainLogic$4 -> com.potatoandtomato.games.screens.main.MainLogic$11:
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> a
-    213:213:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
-    216:227:void onPopped(com.potatoandtomato.games.models.ImagePair) -> a
+    221:221:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
+    224:235:void onPopped(com.potatoandtomato.games.models.ImagePair) -> a
 com.potatoandtomato.games.screens.main.MainLogic$5 -> com.potatoandtomato.games.screens.main.MainLogic$12:
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> a
-    233:233:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
-    236:241:void onPopped(com.potatoandtomato.games.models.ImagePair) -> a
+    241:241:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
+    244:249:void onPopped(com.potatoandtomato.games.models.ImagePair) -> a
 com.potatoandtomato.games.screens.main.MainLogic$6 -> com.potatoandtomato.games.screens.main.MainLogic$13:
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> a
-    356:356:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
-    359:380:void run() -> run
+    367:367:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
+    370:388:void run() -> run
 com.potatoandtomato.games.screens.main.MainLogic$6$1 -> com.potatoandtomato.games.screens.main.MainLogic$6$1:
     com.potatoandtomato.games.screens.main.MainLogic$6 this$1 -> a
-    362:362:void <init>(com.potatoandtomato.games.screens.main.MainLogic$6) -> <init>
-    365:367:void onDeductCoinsDone() -> onDeductCoinsDone
-    371:376:void onDismiss(java.lang.String) -> onDismiss
+    372:372:void <init>(com.potatoandtomato.games.screens.main.MainLogic$6) -> <init>
+    375:377:void onDeductCoinsDone() -> onDeductCoinsDone
+    381:386:void onDismiss(java.lang.String) -> onDismiss
 com.potatoandtomato.games.screens.main.MainLogic$7 -> com.potatoandtomato.games.screens.main.MainLogic$14:
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> a
-    397:397:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
-    400:402:void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float) -> clicked
+    405:405:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
+    408:410:void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent,float,float) -> clicked
 com.potatoandtomato.games.screens.main.MainLogic$8 -> com.potatoandtomato.games.screens.main.MainLogic$17:
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> a
-    412:412:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
-    415:418:void onCallback(java.lang.Boolean,com.potatoandtomato.common.enums.Status) -> a
-    412:412:void onCallback(java.lang.Object,com.potatoandtomato.common.enums.Status) -> a
+    420:420:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
+    423:426:void onCallback(java.lang.Boolean,com.potatoandtomato.common.enums.Status) -> a
+    420:420:void onCallback(java.lang.Object,com.potatoandtomato.common.enums.Status) -> a
 com.potatoandtomato.games.screens.main.MainLogic$9 -> com.potatoandtomato.games.screens.main.MainLogic$18:
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> a
-    437:437:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
-    440:444:void onHandledAreasChanged() -> b
-    449:459:void onTimeFinished() -> a
-    463:502:void onGameStateChanged(com.potatoandtomato.games.enums.GameState,com.potatoandtomato.games.enums.GameState) -> a
-    506:509:void onCorrectClicked(com.potatoandtomato.games.models.SimpleRectangle,int) -> a
+    445:445:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
+    448:452:void onHandledAreasChanged() -> b
+    457:467:void onTimeFinished() -> a
+    471:510:void onGameStateChanged(com.potatoandtomato.games.enums.GameState,com.potatoandtomato.games.enums.GameState) -> a
+    514:517:void onCorrectClicked(com.potatoandtomato.games.models.SimpleRectangle,int) -> a
 com.potatoandtomato.games.screens.main.MainLogic$9$1 -> com.potatoandtomato.games.screens.main.MainLogic$18$1:
     com.potatoandtomato.games.screens.main.MainLogic$9 this$1 -> a
-    450:450:void <init>(com.potatoandtomato.games.screens.main.MainLogic$9) -> <init>
-    453:456:void run() -> run
+    458:458:void <init>(com.potatoandtomato.games.screens.main.MainLogic$9) -> <init>
+    461:464:void run() -> run
 com.potatoandtomato.games.screens.main.MainLogic$9$2 -> com.potatoandtomato.games.screens.main.MainLogic$18$2:
     com.potatoandtomato.games.screens.main.MainLogic$9 this$1 -> a
-    468:468:void <init>(com.potatoandtomato.games.screens.main.MainLogic$9) -> <init>
-    471:472:void run() -> run
+    476:476:void <init>(com.potatoandtomato.games.screens.main.MainLogic$9) -> <init>
+    479:480:void run() -> run
 com.potatoandtomato.games.screens.main.MainLogic$9$3 -> com.potatoandtomato.games.screens.main.MainLogic$18$3:
     com.potatoandtomato.games.screens.main.MainLogic$9 this$1 -> a
-    477:477:void <init>(com.potatoandtomato.games.screens.main.MainLogic$9) -> <init>
-    480:482:void run() -> run
+    485:485:void <init>(com.potatoandtomato.games.screens.main.MainLogic$9) -> <init>
+    488:490:void run() -> run
 com.potatoandtomato.games.screens.main.MainLogic$9$4 -> com.potatoandtomato.games.screens.main.MainLogic$18$4:
-    com.potatoandtomato.games.screens.main.MainLogic$9 this$1 -> a
-    486:486:void <init>(com.potatoandtomato.games.screens.main.MainLogic$9) -> <init>
-    489:490:void run() -> run
-com.potatoandtomato.games.screens.main.MainLogic$9$5 -> com.potatoandtomato.games.screens.main.MainLogic$18$5:
     com.potatoandtomato.games.screens.main.MainLogic$9 this$1 -> a
     494:494:void <init>(com.potatoandtomato.games.screens.main.MainLogic$9) -> <init>
     497:498:void run() -> run
+com.potatoandtomato.games.screens.main.MainLogic$9$5 -> com.potatoandtomato.games.screens.main.MainLogic$18$5:
+    com.potatoandtomato.games.screens.main.MainLogic$9 this$1 -> a
+    502:502:void <init>(com.potatoandtomato.games.screens.main.MainLogic$9) -> <init>
+    505:506:void run() -> run
 com.potatoandtomato.games.screens.main.MainScreen -> com.potatoandtomato.games.screens.main.MainScreen:
     com.potatoandtomato.games.models.Services _services -> a
     com.potatoandtomato.games.assets.MyAssets _assets -> b
@@ -1863,15 +1863,15 @@ com.potatoandtomato.games.screens.main.StageStateLogic -> com.potatoandtomato.ga
     boolean papyrusOpened -> g
     int currentIndex -> h
     32:40:void <init>(com.potatoandtomato.games.models.GameModel,com.potatoandtomato.games.models.Services,com.potatoandtomato.common.GameCoordinator) -> <init>
-    43:94:void stateChanged(com.potatoandtomato.games.enums.GameState) -> a
-    97:122:void openPapyrus(com.potatoandtomato.games.enums.PapyrusType) -> a
-    125:139:void closeCurrentPapyrus() -> a
-    142:152:com.potatoandtomato.games.screens.papyruses.PapyrusSceneAbstract papyrusTypeToScene(com.potatoandtomato.games.enums.PapyrusType) -> b
-    156:165:void setBonusMeta(com.potatoandtomato.games.enums.BonusType,java.lang.String) -> a
-    168:174:void setListeners() -> b
-    177:177:boolean isPapyrusOpened() -> c
-    181:181:com.potatoandtomato.games.screens.main.StageStateActor getStageStateActor() -> d
-    186:187:void dispose() -> dispose
+    43:100:void stateChanged(com.potatoandtomato.games.enums.GameState) -> a
+    103:128:void openPapyrus(com.potatoandtomato.games.enums.PapyrusType) -> a
+    131:145:void closeCurrentPapyrus() -> a
+    148:158:com.potatoandtomato.games.screens.papyruses.PapyrusSceneAbstract papyrusTypeToScene(com.potatoandtomato.games.enums.PapyrusType) -> b
+    162:171:void setBonusMeta(com.potatoandtomato.games.enums.BonusType,java.lang.String) -> a
+    174:180:void setListeners() -> b
+    183:183:boolean isPapyrusOpened() -> c
+    187:187:com.potatoandtomato.games.screens.main.StageStateActor getStageStateActor() -> d
+    192:193:void dispose() -> dispose
     21:21:com.potatoandtomato.games.enums.GameState access$000(com.potatoandtomato.games.screens.main.StageStateLogic) -> a
     21:21:com.potatoandtomato.games.screens.papyruses.PapyrusSceneAbstract access$100(com.potatoandtomato.games.screens.main.StageStateLogic) -> b
     21:21:com.potatoandtomato.games.enums.GameState access$002(com.potatoandtomato.games.screens.main.StageStateLogic,com.potatoandtomato.games.enums.GameState) -> a
@@ -1890,37 +1890,37 @@ com.potatoandtomato.games.screens.main.StageStateLogic$2 -> com.potatoandtomato.
 com.potatoandtomato.games.screens.main.StageStateLogic$3 -> com.potatoandtomato.games.screens.main.e$3:
     com.potatoandtomato.games.enums.PapyrusType val$papyrusType -> a
     com.potatoandtomato.games.screens.main.StageStateLogic this$0 -> b
-    97:97:void <init>(com.potatoandtomato.games.screens.main.StageStateLogic,com.potatoandtomato.games.enums.PapyrusType) -> <init>
-    100:120:void run() -> run
+    103:103:void <init>(com.potatoandtomato.games.screens.main.StageStateLogic,com.potatoandtomato.games.enums.PapyrusType) -> <init>
+    106:126:void run() -> run
 com.potatoandtomato.games.screens.main.StageStateLogic$3$1 -> com.potatoandtomato.games.screens.main.e$3$1:
     com.potatoandtomato.games.screens.main.StageStateLogic$3 this$1 -> a
-    101:101:void <init>(com.potatoandtomato.games.screens.main.StageStateLogic$3) -> <init>
-    104:110:void run() -> run
+    107:107:void <init>(com.potatoandtomato.games.screens.main.StageStateLogic$3) -> <init>
+    110:116:void run() -> run
 com.potatoandtomato.games.screens.main.StageStateLogic$3$1$1 -> com.potatoandtomato.games.screens.main.e$3$1$1:
     com.potatoandtomato.games.screens.main.StageStateLogic$3$1 this$2 -> a
-    104:104:void <init>(com.potatoandtomato.games.screens.main.StageStateLogic$3$1) -> <init>
-    107:108:void run() -> run
+    110:110:void <init>(com.potatoandtomato.games.screens.main.StageStateLogic$3$1) -> <init>
+    113:114:void run() -> run
 com.potatoandtomato.games.screens.main.StageStateLogic$4 -> com.potatoandtomato.games.screens.main.e$4:
     com.potatoandtomato.games.screens.main.StageStateLogic this$0 -> a
-    125:125:void <init>(com.potatoandtomato.games.screens.main.StageStateLogic) -> <init>
-    128:136:void run() -> run
+    131:131:void <init>(com.potatoandtomato.games.screens.main.StageStateLogic) -> <init>
+    134:142:void run() -> run
 com.potatoandtomato.games.screens.main.StageStateLogic$4$1 -> com.potatoandtomato.games.screens.main.e$4$1:
     com.potatoandtomato.games.screens.main.StageStateLogic$4 this$1 -> a
-    129:129:void <init>(com.potatoandtomato.games.screens.main.StageStateLogic$4) -> <init>
-    132:134:void run() -> run
+    135:135:void <init>(com.potatoandtomato.games.screens.main.StageStateLogic$4) -> <init>
+    138:140:void run() -> run
 com.potatoandtomato.games.screens.main.StageStateLogic$5 -> com.potatoandtomato.games.screens.main.e$5:
     com.potatoandtomato.games.enums.BonusType val$bonusType -> a
     java.lang.String val$extra -> b
     com.potatoandtomato.games.screens.main.StageStateLogic this$0 -> c
-    156:156:void <init>(com.potatoandtomato.games.screens.main.StageStateLogic,com.potatoandtomato.games.enums.BonusType,java.lang.String) -> <init>
-    159:162:void run() -> run
+    162:162:void <init>(com.potatoandtomato.games.screens.main.StageStateLogic,com.potatoandtomato.games.enums.BonusType,java.lang.String) -> <init>
+    165:168:void run() -> run
 com.potatoandtomato.games.screens.main.StageStateLogic$6 -> com.potatoandtomato.games.screens.main.e$6:
     com.potatoandtomato.games.screens.main.StageStateLogic this$0 -> a
-    168:168:void <init>(com.potatoandtomato.games.screens.main.StageStateLogic) -> <init>
-    171:172:void onGameStateChanged(com.potatoandtomato.games.enums.GameState,com.potatoandtomato.games.enums.GameState) -> a
+    174:174:void <init>(com.potatoandtomato.games.screens.main.StageStateLogic) -> <init>
+    177:178:void onGameStateChanged(com.potatoandtomato.games.enums.GameState,com.potatoandtomato.games.enums.GameState) -> a
 com.potatoandtomato.games.screens.main.StageStateLogic$7 -> com.potatoandtomato.games.screens.main.e$7:
     int[] $SwitchMap$com$potatoandtomato$games$enums$PapyrusType -> a
-    142:142:void <clinit>() -> <clinit>
+    148:148:void <clinit>() -> <clinit>
 com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene -> com.potatoandtomato.games.screens.b.a:
     com.potatoandtomato.games.models.Services services -> c
     com.potatoandtomato.games.assets.MyAssets assets -> d

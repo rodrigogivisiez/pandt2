@@ -139,6 +139,10 @@ public class MainLogic extends GameLogic {
 
     public void goToNewStage(final String id, final int stageNumber, final StageType stageType,
                              final BonusType bonusType, final String extra, int currentScores){
+        if(_gameModel.getGameState() == GameState.Lose){
+            _gameModel.setContinueChanceUsed(true);
+        }
+
         waitingContinue = false;
 
         if(Global.REVIEW_MODE){
@@ -182,6 +186,10 @@ public class MainLogic extends GameLogic {
     }
 
     public void onStartGameReceived(final String id, final int stageNumber, final StageType stageType, final BonusType bonusType, final String extra){
+        if(_gameModel.getGameState() == GameState.Lose){
+            _gameModel.setContinueChanceUsed(true);
+        }
+
         if(_safeThread != null) _safeThread.kill();
         if(disposed) return;
 
@@ -343,8 +351,11 @@ public class MainLogic extends GameLogic {
 
 
     private void gameOver(){
-        _gameModel.setGameState(GameState.Lose);
-        if(!_gameModel.isContinueChanceUsed()){
+        if(_gameModel.getGameState() != GameState.Lose){        //already move on to other state
+            return;
+        }
+
+        if(!_gameModel.isContinueChanceUsed()){       //have continue chance
             coinRequestPhase();
         }
         else{
@@ -356,27 +367,24 @@ public class MainLogic extends GameLogic {
         Threadings.delay(3000, new Runnable() {
             @Override
             public void run() {
-                if(_gameModel.getGameState() == GameState.Lose){
-                    Pair<ArrayList<SpeechAction>, ArrayList<SpeechAction>> pair = _services.getTexts().getMascotsSpeechAboutContinue();
+                Pair<ArrayList<SpeechAction>, ArrayList<SpeechAction>> pair = _services.getTexts().getMascotsSpeechAboutContinue();
 
-                    getCoordinator().coinsInputRequest("Continue photo hunt", CoinRequestType.MyTeam, 1, new CoinListener() {
-                        @Override
-                        public void onDeductCoinsDone() {
-                            _gameModel.setContinueChanceUsed(true);
-                            sendGoToNextStageIfIsDecisionMaker(-1);
-                        }
+                getCoordinator().coinsInputRequest("Continue photo hunt", "id", CoinRequestType.MyTeam, 1, new CoinListener() {
+                    @Override
+                    public void onDeductCoinsDone() {
+                        sendGoToNextStageIfIsDecisionMaker(-1);
+                        _gameModel.setContinueChanceUsed(true);
+                    }
 
-                        @Override
-                        public void onDismiss(String dismissUserId) {
-                            super.onDismiss(dismissUserId);
-                            getCoordinator().showNotification(
-                                    String.format(_services.getTexts().xDecidedNotToContinue(),
-                                            getCoordinator().getPlayerByUserId(dismissUserId).getName()));
-                            showEndGameTable();
-                        }
-
-                    }, pair.getFirst(), pair.getSecond(), _services.getTexts().notContinue());
-                }
+                    @Override
+                    public void onDismiss(String dismissUserId) {
+                        super.onDismiss(dismissUserId);
+                        getCoordinator().showNotification(
+                                String.format(_services.getTexts().xDecidedNotToContinue(),
+                                        getCoordinator().getPlayerByUserId(dismissUserId).getName()));
+                        showEndGameTable();
+                    }
+                }, pair.getFirst(), pair.getSecond(), _services.getTexts().notContinue());
             }
         });
     }

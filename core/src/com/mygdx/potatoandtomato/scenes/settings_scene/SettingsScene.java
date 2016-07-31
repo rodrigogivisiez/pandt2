@@ -1,6 +1,7 @@
 package com.mygdx.potatoandtomato.scenes.settings_scene;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -16,6 +17,7 @@ import com.mygdx.potatoandtomato.controls.PTTextField;
 import com.mygdx.potatoandtomato.controls.TopBar;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.statics.Global;
+import com.potatoandtomato.common.utils.RunnableArgs;
 import com.potatoandtomato.common.utils.Threadings;
 
 /**
@@ -127,6 +129,22 @@ public class SettingsScene extends SceneAbstract {
 
 
         _root.add(settingsTable).width(350);
+    }
+
+    public void getCreditsDesign(final RunnableArgs<Actor> runnableArgs){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Table table = new Table();
+                Label.LabelStyle labelStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_S_BOLD), Color.BLACK);
+
+                Label label = new Label(_texts.allCredits(), labelStyle);
+                label.setWrap(true);
+                table.add(label).expand().fill();
+
+                runnableArgs.run(table);
+            }
+        });
     }
 
     public Image getSoundsEnabledImage() {

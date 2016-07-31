@@ -1,6 +1,7 @@
 package com.mygdx.potatoandtomato;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -217,7 +218,13 @@ public class SplashScreen implements Screen {
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         stage.act(delta);
         stage.draw();
+
+        if (Gdx.input.isKeyPressed(Input.Keys.BACK)){
+            Gdx.app.exit();
+        }
     }
+
+
 
     @Override
     public void resize(int width, int height) {

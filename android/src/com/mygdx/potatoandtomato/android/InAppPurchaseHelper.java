@@ -85,17 +85,24 @@ public class InAppPurchaseHelper implements BillingProcessor.IBillingHandler {
 
                 List<SkuDetails> skuDetails = billingProcessor.getPurchaseListingDetails(productIds);
 
-                for(SkuDetails skuDetail : skuDetails){
-                    for(CoinProduct coinProduct : coinProducts){
-                        if(coinProduct.getId().equals(skuDetail.productId)){
-                            coinProduct.setCurrency(skuDetail.currency);
-                            coinProduct.setDescription(skuDetail.description);
-                            coinProduct.setPrice(skuDetail.priceValue);
+                if(skuDetails == null){
+                    broadcaster.broadcast(BroadcastEvent.IAB_PRODUCTS_RESPONSE, new ArrayList());
+                }
+                else{
+                    for(SkuDetails skuDetail : skuDetails){
+                        for(CoinProduct coinProduct : coinProducts){
+                            if(coinProduct.getId().equals(skuDetail.productId)){
+                                coinProduct.setCurrency(skuDetail.currency);
+                                coinProduct.setDescription(skuDetail.description);
+                                coinProduct.setPrice(skuDetail.priceValue);
+                            }
                         }
                     }
+
+                    broadcaster.broadcast(BroadcastEvent.IAB_PRODUCTS_RESPONSE, coinProducts);
                 }
 
-                broadcaster.broadcast(BroadcastEvent.IAB_PRODUCTS_RESPONSE, coinProducts);
+
             }
         });
     }

@@ -118,4 +118,20 @@ public class Texts {
         return "The End";
     }
 
+
+    ////////////////////////////////
+    //about on screen tutorials
+    ///////////////////////////////
+    public String onScreenTutorialDragToMove(){
+        return "Drag to move";
+    }
+
+    public String onScreenTutorialSeeMore(){
+        return "See here for more";
+    }
+
+    public String onScreenTutorialSwipeToOpen(){
+        return "Swipe to open";
+    }
+
 }

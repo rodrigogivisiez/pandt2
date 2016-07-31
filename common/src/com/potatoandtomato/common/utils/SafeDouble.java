@@ -20,7 +20,12 @@ public class SafeDouble {
     }
 
     public SafeDouble(Integer value) {
-        setValue(Double.valueOf(value));
+        if(value == 0){
+            setValue(0.0);
+        }
+        else{
+            setValue(Double.valueOf(value));
+        }
     }
 
     @JsonValue

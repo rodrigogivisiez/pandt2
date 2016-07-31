@@ -1774,6 +1774,9 @@ com.potatoandtomato.games.services.Texts -> com.potatoandtomato.games.e.e:
     110:110:java.lang.String tutorialAboutKing() -> y
     114:114:java.lang.String tutorialAboutAggressive() -> z
     118:118:java.lang.String tutorialEnd() -> A
+    126:126:java.lang.String onScreenTutorialDragToMove() -> B
+    130:130:java.lang.String onScreenTutorialSeeMore() -> C
+    134:134:java.lang.String onScreenTutorialSwipeToOpen() -> D
 com.potatoandtomato.games.statics.Global -> com.potatoandtomato.games.f.a:
     boolean DEBUG -> a
     boolean NO_ENTRANCE -> b

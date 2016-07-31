@@ -33,8 +33,6 @@ public class InputNameLogic extends LogicAbstract {
     @Override
     public void onInit() {
         super.onInit();
-
-        _scene.getDisplayNameTextField().setText(_services.getProfile().getFacebookName());
     }
 
     @Override

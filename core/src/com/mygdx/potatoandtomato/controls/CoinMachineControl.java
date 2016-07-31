@@ -355,6 +355,8 @@ public class CoinMachineControl {
                 toInsertCoinLabel.clearActions();
                 toInsertCoinLabel.getColor().a = 1f;
                 toInsertCoinBlinkImage.clearActions();
+                toInsertCoinBlinkImage.getColor().a = 0f;
+
                 if(newExpecting == 0){
                     toInsertCoinBlinkImage.addAction(forever(sequence(fadeIn(0.1f), fadeOut(0.1f), new RunnableAction(){
                         @Override

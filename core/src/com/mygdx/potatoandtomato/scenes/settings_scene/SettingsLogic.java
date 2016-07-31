@@ -1,5 +1,6 @@
 package com.mygdx.potatoandtomato.scenes.settings_scene;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -17,6 +18,7 @@ import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.utils.RunnableArgs;
 
 /**
  * Created by SiongLeng on 19/12/2015.
@@ -147,7 +149,14 @@ public class SettingsLogic extends LogicAbstract {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-                _confirm.show(ConfirmIdentifier.Credits, _texts.allCredits(), Confirm.Type.YES, null);
+                _scene.getCreditsDesign(new RunnableArgs<Actor>() {
+                    @Override
+                    public void run() {
+                        _confirm.show(ConfirmIdentifier.Credits, this.getFirstArg(), Confirm.Type.YES, null, "");
+                    }
+                });
+
+
             }
         });
 

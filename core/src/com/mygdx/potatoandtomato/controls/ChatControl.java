@@ -261,7 +261,6 @@ public class ChatControl {
         mode1MessagesContainer.setBackground(new TextureRegionDrawable(assets.getTextures().get(Textures.Name.CHAT_CONTAINER)));
         mode1MessagesContainer.align(Align.top);
         mode1MessagesContainer.setPosition(0, CHAT_CONTAINER_HEIGHT);
-        mode1MessagesContainer.setSize(Positions.getWidth(), 130);
 
         mode1MessagesTable = new Table();
         mode1MessagesTable.align(Align.top);
@@ -281,7 +280,6 @@ public class ChatControl {
         mode2MessagesContainer = new Table();
         mode2MessagesContainer.setTouchable(Touchable.disabled);
         mode2MessagesContainer.setPosition(0, CHAT_CONTAINER_HEIGHT + 5);
-        mode2MessagesContainer.setSize(Positions.getWidth(), 70);
 
         mode2MessagesTable = new Table();
         mode2MessagesTable.align(Align.bottomLeft);
@@ -333,6 +331,9 @@ public class ChatControl {
                 refreshChatBoxInnerContainer();
                 recordingTable.setPosition(Positions.getWidth() / 2 - recordingTable.getWidth() / 2,
                                         Positions.getHeight() / 2 - recordingTable.getHeight() / 2);
+
+                mode1MessagesContainer.setSize(Positions.getWidth(), 130);
+                mode2MessagesContainer.setSize(Positions.getWidth(), 70);
 
                 if(!Global.IS_POTRAIT){
                     Threadings.delay(500, new Runnable() {

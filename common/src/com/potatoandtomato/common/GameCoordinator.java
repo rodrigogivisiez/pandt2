@@ -5,7 +5,6 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.firebase.client.Firebase;
 import com.potatoandtomato.common.absints.*;
@@ -51,6 +50,7 @@ public class GameCoordinator implements Disposable {
     private IDisconnectOverlayControl disconnectOverlayControl;
     private ICoins iCoins;
 
+    private int totalPlayersCount;
     private boolean landscape;
     private boolean gameStarted;
     private boolean finalized, requestingCoins;
@@ -94,6 +94,7 @@ public class GameCoordinator implements Disposable {
         this.remoteHelper = remoteHelper;
         this.disconnectOverlayControl = iDisconnectOverlayControl;
         this.iCoins = iCoins;
+        this.totalPlayersCount = getTotalPlayersCount();
 
         tutorialsWrapper = new TutorialsWrapper(tutorials, gamePreferences);
         gameDataHelper = new GameDataHelper(teams, myUserId, decisionsMaker,
@@ -393,7 +394,13 @@ public class GameCoordinator implements Disposable {
             System.out.println("You are not allowed to send update message before game started.");
             return;
         }
-        gameSandBox.sendUpdate(RoomUpdateType.InGame, msg);
+        if(totalPlayersCount == 1){
+            receivedRoomUpdate(msg, myUserId);
+        }
+        else{
+            gameSandBox.sendUpdate(RoomUpdateType.InGame, msg);
+        }
+
     }
 
     public void sendPrivateRoomUpdate(String toUserId, String msg){
@@ -401,7 +408,14 @@ public class GameCoordinator implements Disposable {
             System.out.println("You are not allowed to send update message before game started.");
             return;
         }
-        gameSandBox.sendPrivateUpdate(RoomUpdateType.InGame, toUserId, msg);
+
+        if(totalPlayersCount == 1 && toUserId.equals(myUserId)){
+            receivedRoomUpdate(msg, myUserId);
+        }
+        else{
+            gameSandBox.sendPrivateUpdate(RoomUpdateType.InGame, toUserId, msg);
+        }
+
     }
 
     public void receivedRoomUpdate(final String msg, final String senderId){
@@ -415,7 +429,7 @@ public class GameCoordinator implements Disposable {
         };
 
         if(gameDataHelper.isActivated() && !gameDataHelper.hasData()){
-            gameDataHelper.addToRunWhenHaveData(toRun);
+            gameDataHelper.runRunnableWhenHaveData(toRun);
         }
         else{
             toRun.run();
@@ -579,11 +593,16 @@ public class GameCoordinator implements Disposable {
     //////////////////////////////////////////////////////////////////////////////////
     //about coins
     ////////////////////////////////////////////////////////////////////////////////////
-    public void coinsInputRequest(String purpose, CoinRequestType coinRequestType, int coinPerPerson, final CoinListener coinListener,
+    public void coinsInputRequest(String purpose, String id, CoinRequestType coinRequestType, int coinPerPerson, final CoinListener coinListener,
                                   ArrayList<SpeechAction> potatoSpeechActions, ArrayList<SpeechAction> tomatoSpeechActions,
                                   String dismissText){
 
-        if(iCoins.isVisible() && iCoins.getCoinsPurpose().equals(purpose)){
+        if((iCoins.isVisible() && iCoins.getCoinsPurpose().equals(purpose))){
+            return;
+        }
+
+        if(checkCoinsTransactionIdProcessed(id)){
+            coinListener.onTransactionAlreadyProcessed();
             return;
         }
 
@@ -615,7 +634,7 @@ public class GameCoordinator implements Disposable {
         }
 
         iCoins.initCoinMachine(purpose, coinPerPerson * userIdToNamePairs.size(),
-                roomId + "_" + roundCounter + "_game", userIdToNamePairs, true,
+                getCoinsTransactionId(id), userIdToNamePairs, true,
                 potatoSpeechActions, tomatoSpeechActions, dismissText);
         iCoins.setCoinListener(new CoinListener() {
             @Override
@@ -627,8 +646,15 @@ public class GameCoordinator implements Disposable {
             @Override
             public void onDeductCoinsDone() {
                 iCoins.hideCoinMachine();
-                coinListener.onDeductCoinsDone();
-                requestingCoins = false;
+
+                //prevent inconsistency, make sure always having game data exchanged before run deduct coin success listener
+                gameDataHelper.runRunnableWhenHaveData(new Runnable() {
+                    @Override
+                    public void run() {
+                        coinListener.onDeductCoinsDone();
+                        requestingCoins = false;
+                    }
+                });
             }
 
             @Override
@@ -641,6 +667,13 @@ public class GameCoordinator implements Disposable {
 
     }
 
+    public boolean checkCoinsTransactionIdProcessed(String id){
+        return iCoins.isTransactionIdProcessed(getCoinsTransactionId(id));
+    }
+
+    private String getCoinsTransactionId(String id){
+        return roomId + "_" + roundCounter + "_game_" + id;
+    }
 
     //////////////////////////////////////////////////////////////////////////////////
     //MISC.

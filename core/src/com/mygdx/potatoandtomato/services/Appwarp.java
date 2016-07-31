@@ -146,7 +146,9 @@ public class Appwarp extends GamingKit implements ChatRequestListener, Connectio
 
     @Override
     public void leaveRoom() {
-        _warpInstance.leaveAndUnsubscribeRoom(_roomId);
+        if(_warpInstance != null && _roomId != null){
+            _warpInstance.leaveAndUnsubscribeRoom(_roomId);
+        }
         _roomId = null;
     }
 

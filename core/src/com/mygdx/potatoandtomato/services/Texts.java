@@ -68,21 +68,14 @@ public class Texts {
     public String confirmFacebookRequestFailed() { return "Facebook request fails..."; }
 
     public String allCredits(){
-        return "long credits \n " +
-                "www.xxxxxxx.com credit \n " +
-                "wwww.xxxxxx.com credit2\n" +
-                " wwww.xxxxxx.com credit2 \n" +
-                " wwww.xxxxxx.com credit2 \n" +
-                " wwww.xxxxxx.com credit2 \n" +
-                " wwww.xxxxxx.com credit2 \n" +
-                " wwww.xxxxxx.com credit2 \n" +
-                " wwww.xxxxxx.com credit2 \n" +
-                " wwww.xxxxxx.com credit2 \n" +
-                " wwww.xxxxxx.com credit2 \n" +
-                " wwww.xxxxxx.com credit2 \n" +
-                " wwww.xxxxxx.com credit2 \n" +
-                " wwww.xxxxxx.com credit2 \n" +
-                " wwww.xxxxxx.com credit2  ";
+        return "The credits goes to, \n\n" +
+                "\u2022 Chee Zee Jungle Kevin MacLeod (incompetech.com)\n" +
+                "\u2022 Fun in a Bottle Kevin MacLeod (incompetech.com)\n" +
+                "\u2022 Casa Bossa Nova Kevin MacLeod (incompetech.com)\n" +
+                "\u2022 Past the Edge Kevin MacLeod (incompetech.com)\n" +
+                "\u2022 Licensed under Creative Commons: By Attribution 3.0 License (http://creativecommons.org/licenses/by/3.0)\n\n" +
+                "\u2022 Our talented designer for all design work (soulcreativestudio.com)\n\n" +
+                "\u2022 Our talented voice actor and video editor for our promo video and the character voice (reachable @ zerawin@gmail.com)";
     }
 
     ///////////////////////////////////////////////////////////////////////

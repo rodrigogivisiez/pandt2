@@ -19,6 +19,8 @@ public interface ICoins {
                          ArrayList<SpeechAction> tomatoSpeechActions, String dismissText);
     void startDeductCoins();
     void setCoinListener(CoinListener coinListener);
+    boolean isTransactionIdProcessed(String transactionId);
+
 
     boolean isVisible();
     String getCoinsPurpose();

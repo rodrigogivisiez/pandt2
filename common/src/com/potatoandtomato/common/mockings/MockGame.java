@@ -285,6 +285,11 @@ public abstract class MockGame extends Game implements IPTGame {
             }
 
             @Override
+            public boolean isTransactionIdProcessed(String transactionId) {
+                return false;
+            }
+
+            @Override
             public boolean isVisible() {
                 return false;
             }

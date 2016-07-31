@@ -3,6 +3,7 @@ package com.mygdx.potatoandtomato.services;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
@@ -47,7 +48,6 @@ public class Confirm {
     Table confirmRoot;
     Image yesImage, noImage;
     Table cancelButtonTable;
-    Label messageLabel;
     Table buttonsTable, msgTable;
     boolean visible;
     long previousTime;
@@ -88,13 +88,6 @@ public class Confirm {
 
                 msgTable = new Table();
                 msgTable.setBackground(new NinePatchDrawable(assets.getPatches().get(Patches.Name.POPUP_BG)));
-
-                Label.LabelStyle labelStyle = new Label.LabelStyle();
-                labelStyle.font = assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR);
-                labelStyle.fontColor = Color.BLACK;
-                messageLabel = new Label("", labelStyle);
-                messageLabel.setWrap(true);
-                messageLabel.setAlignment(Align.center);
 
                 buttonsTable = new Table();
 
@@ -148,7 +141,20 @@ public class Confirm {
         show(identifier, msg, type, listener, "");
     }
 
-    public void show(ConfirmIdentifier identifier, final String msg, final Type type, final ConfirmResultListener listener, final String extra){
+    public void show(ConfirmIdentifier identifier, final String msg, final Type type, final ConfirmResultListener listener, final String extra) {
+        Label.LabelStyle labelStyle = new Label.LabelStyle();
+        labelStyle.font = assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR);
+        labelStyle.fontColor = Color.BLACK;
+        Label messageLabel = new Label("", labelStyle);
+        messageLabel.setWrap(true);
+        messageLabel.setAlignment(Align.center);
+        messageLabel.setText(msg);
+        messageLabel.setName("messageLabel");
+
+        show(identifier, messageLabel, type, listener, extra);
+    }
+
+    public void show(ConfirmIdentifier identifier, final Actor actor, final Type type, final ConfirmResultListener listener, final String extra){
         if(currentConfirmIdentifier != null && currentConfirmIdentifier == identifier) return;
         if(locked) return;
 
@@ -171,15 +177,12 @@ public class Confirm {
 
                 msgTable.clear();
                 if(type == Type.YESNO || type == Type.YES){
-                    msgTable.add(messageLabel).padTop(20).padBottom(20).expand().fill().padLeft(10).padRight(10);
+                    msgTable.add(actor).padTop(20).padBottom(20).expand().fill().padLeft(10).padRight(10);
                     msgTable.row();
                     msgTable.add(buttonsTable).expandX().fillX().padBottom(20);
 
-                    messageLabel.setText(msg);
                 }
                 else if(type == Type.LOADING_NO_CANCEL || type == Type.LOADING_WITH_CANCEL){
-
-                    messageLabel.setText(msg);
                     Table loadingTable = new Table();
                     Image loadingMascotsImage = new Image(assets.getTextures().get(Textures.Name.LOGGING_IN_MASCOTS));
                     Vector2 sizes = Sizes.resizeByH(40, assets.getTextures().get(Textures.Name.LOGGING_IN_MASCOTS));
@@ -191,7 +194,7 @@ public class Confirm {
 
                     msgTable.add(loadingTable).expandX().fillX().padTop(10).height(sizes.y);
                     msgTable.row();
-                    msgTable.add(messageLabel).padTop(5).padBottom(5).expandX().fillX().padLeft(10).padRight(10);
+                    msgTable.add(actor).padTop(5).padBottom(5).expandX().fillX().padLeft(10).padRight(10);
                     msgTable.row();
                     msgTable.add(buttonsTable).expandX().fillX().padBottom(10);
 
@@ -207,7 +210,10 @@ public class Confirm {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                messageLabel.setText(newMessage);
+                Label messageLabel = msgTable.findActor("messageLabel");
+                if(messageLabel != null){
+                    messageLabel.setText(newMessage);
+                }
             }
         });
     }
@@ -288,6 +294,19 @@ public class Confirm {
                     confirmResultListener.onResult(ConfirmResultListener.Result.CANCEL);
                 }
                 close();
+            }
+        });
+
+
+        confirmRoot.addListener(new ClickListener(){
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+
             }
         });
 

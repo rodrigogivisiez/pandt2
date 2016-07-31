@@ -83,6 +83,12 @@ public class StageStateLogic implements Disposable {
                 }
             });
         }
+        else if(newState == GameState.Playing){
+            if(isPapyrusOpened()){
+                closeCurrentPapyrus();
+            }
+        }
+
 //        else if(newState == GameState.Won){
 //            if(previousState == GameState.BeforeContinue){
 //                if(currentPapyrusScene instanceof BeforeStartPapyrusScene){

@@ -18,14 +18,11 @@ import com.mygdx.potatoandtomato.absintflis.services.RestfulApiListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.*;
 import com.mygdx.potatoandtomato.helpers.Flurry;
-import com.mygdx.potatoandtomato.models.CoinProduct;
-import com.mygdx.potatoandtomato.models.RetrievableCoinsData;
+import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.statics.Vars;
 import com.potatoandtomato.common.absints.CoinListener;
 import com.mygdx.potatoandtomato.controls.CoinMachineControl;
 import com.mygdx.potatoandtomato.controls.TopBarCoinControl;
-import com.mygdx.potatoandtomato.models.CoinsMeta;
-import com.mygdx.potatoandtomato.models.Profile;
 import com.potatoandtomato.common.absints.ICoins;
 import com.potatoandtomato.common.absints.IPTGame;
 import com.potatoandtomato.common.assets.Assets;
@@ -75,10 +72,11 @@ public class Coins implements ICoins {
     private boolean cancelPutCoins;
     private boolean disableSpeech;
     private boolean tutorialMode;
-    private ConcurrentHashMap<String, Integer> currentUsersPutCoinNumberMap;
+    private ConcurrentHashMap<String, SafeDouble> currentUsersPutCoinNumberMap;
     private CoinListener coinListener;
     private ShopProducts currentShopProduct;
 
+    private SafeThread putCoinSafeThread;
     private SafeThread waitingDeductCoinResultSafeThread;
     private SafeThread tomatoSpeechSafeThread, potatoSpeechSafeThread;
     private ArrayList<SpeechAction> tomatoDefaultSpeechActions;
@@ -134,7 +132,9 @@ public class Coins implements ICoins {
     private void mePutCoin(){
         if(puttingCoin || coinsAlreadyEnough) return;
 
-        if(getUserPutCoinCount(profile.getUserId()) + 1 > myCoinsCount.getValue().intValue()){
+        int newTotalPutCoins = getUserPutCoinCount(profile.getUserId()) + 1;
+
+        if(newTotalPutCoins > myCoinsCount.getValue().intValue()){
             soundsPlayer.playSoundEffect(Sounds.Name.WRONG);
             startSpeech(CoinMachineTabType.NoMoreCoins);
             coinMachineControl.animateNoCoin();
@@ -150,8 +150,24 @@ public class Coins implements ICoins {
         });
 
         if(!tutorialMode){
-            gamingKit.updateRoomMates(UpdateRoomMatesCode.PUT_COIN, transactionId);
+            InsertCoinModel insertCoinModel = new InsertCoinModel(transactionId, newTotalPutCoins);
+            gamingKit.updateRoomMates(UpdateRoomMatesCode.PUT_COIN, insertCoinModel.toJson());
         }
+
+        //to ensure when put coin msg lost, put coin lock will auto release
+        if(putCoinSafeThread != null) putCoinSafeThread.kill();
+        final SafeThread safeThread = new SafeThread();
+        putCoinSafeThread = safeThread;
+        Threadings.delayNoPost(5000, new Runnable() {
+            @Override
+            public void run() {
+                if(safeThread.isKilled()){
+                    return;
+                }
+                puttingCoin = false;
+            }
+        });
+
     }
 
     public void initCoinMachine(String coinsPurpose, int expectingCoin, String transactionId, ArrayList<Pair<String, String>> userIdToNamePairs,
@@ -276,22 +292,19 @@ public class Coins implements ICoins {
         }
     }
 
-    private void coinPutReceived(String fromUserId, String receivedTransactionId){
-        if(this.transactionId.equals(receivedTransactionId)){
-            userAddCoin(fromUserId);
+    private void coinPutReceived(String fromUserId, String json){
+        InsertCoinModel insertCoinModel = new InsertCoinModel(json);
+
+        if(this.transactionId.equals(insertCoinModel.getTransactionId())){
+            userAddCoin(fromUserId, insertCoinModel.getTotalInsertedCoin());
         }
     }
 
 
 
-    private void userAddCoin(String fromUserId){
+    private void userAddCoin(String fromUserId, int totalUserPutCoins){
        if(!coinsAlreadyEnough){
-           if(currentUsersPutCoinNumberMap.containsKey(fromUserId)){
-               currentUsersPutCoinNumberMap.put(fromUserId, currentUsersPutCoinNumberMap.get(fromUserId) + 1);
-           }
-           else{
-               currentUsersPutCoinNumberMap.put(fromUserId, 1);
-           }
+           currentUsersPutCoinNumberMap.put(fromUserId, new SafeDouble(totalUserPutCoins));
 
            sync(this.userIdToNamePairs);
            checkSufficientCoins();
@@ -322,15 +335,15 @@ public class Coins implements ICoins {
 
     private int getTotalCoinsPut(){
         int count = 0;
-        for(Integer value : currentUsersPutCoinNumberMap.values()){
-            count += value;
+        for(SafeDouble safeDouble : currentUsersPutCoinNumberMap.values()){
+            count += safeDouble.getIntValue();
         }
         return count;
     }
 
     private void updateExpectingCoins(){
         int count = getTotalCoinsPut();
-        this.coinMachineControl.updateExpectingCoins(expectingCoin - count);
+        this.coinMachineControl.updateExpectingCoins(Math.max(0, expectingCoin - count));
     }
 
     //will run the runnable only if success in becoming the decision maker
@@ -453,7 +466,7 @@ public class Coins implements ICoins {
 
     private int getUserPutCoinCount(String userId){
         if(currentUsersPutCoinNumberMap.containsKey(userId)){
-            return currentUsersPutCoinNumberMap.get(userId);
+            return currentUsersPutCoinNumberMap.get(userId).getIntValue();
         }
         else{
             return 0;
@@ -468,12 +481,6 @@ public class Coins implements ICoins {
             hideCoinMachine();
             clearAll();
         }
-    }
-
-    public void onUserDisconnected(String dcUserId){
-        currentUsersPutCoinNumberMap.remove(dcUserId);
-        updateExpectingCoins();
-        sync(this.userIdToNamePairs);
     }
 
     /////////////////////////////////////////////////////
@@ -618,7 +625,11 @@ public class Coins implements ICoins {
                     ObjectMapper objectMapper = Vars.getObjectMapper();
                     JsonObj jsonObj = new JsonObj();
                     jsonObj.put("transactionId", transactionId);
-                    jsonObj.put("currentUsersPutCoinNumberMapJson", objectMapper.writeValueAsString(currentUsersPutCoinNumberMap));
+                    HashMap<String, Integer> map = new HashMap();
+                    for(String userId : currentUsersPutCoinNumberMap.keySet()){
+                        map.put(userId, currentUsersPutCoinNumberMap.get(userId).getIntValue());
+                    }
+                    jsonObj.put("currentUsersPutCoinNumberMapJson", objectMapper.writeValueAsString(map));
                     gamingKit.privateUpdateRoomMates(fromUserId, UpdateRoomMatesCode.COINS_STATE_RESPONSE, jsonObj.toString());
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
@@ -634,15 +645,17 @@ public class Coins implements ICoins {
         if(jsonObj.getString("transactionId").equals(transactionId)){
             ObjectMapper objectMapper = Vars.getObjectMapper();
             try {
-                ConcurrentHashMap<String, Integer> receivedUsersPutCoinNumberMap = objectMapper.readValue(jsonObj.getString("currentUsersPutCoinNumberMapJson"),
-                        ConcurrentHashMap.class);
+                HashMap<String, Integer> receivedUsersPutCoinNumberMap = objectMapper.readValue(jsonObj.getString("currentUsersPutCoinNumberMapJson"),
+                        HashMap.class);
                 for(String userId : receivedUsersPutCoinNumberMap.keySet()){
                     if(!currentUsersPutCoinNumberMap.containsKey(userId)){
-                        currentUsersPutCoinNumberMap.put(userId, 0);
+                        currentUsersPutCoinNumberMap.put(userId, new SafeDouble(0));
                     }
 
-                    currentUsersPutCoinNumberMap.put(userId,
-                            currentUsersPutCoinNumberMap.get(userId) + receivedUsersPutCoinNumberMap.get(userId));
+                    if(receivedUsersPutCoinNumberMap.get(userId) > currentUsersPutCoinNumberMap.get(userId).getIntValue()){
+                        currentUsersPutCoinNumberMap.put(userId, new SafeDouble(receivedUsersPutCoinNumberMap.get(userId)));
+                    }
+
                 }
                 sync(this.userIdToNamePairs);
                 updateExpectingCoins();
@@ -983,8 +996,7 @@ public class Coins implements ICoins {
 
             @Override
             public void onConnectionHalt() {
-                currentUsersPutCoinNumberMap.clear();
-                sync(userIdToNamePairs);
+
             }
         });
 
@@ -1032,8 +1044,8 @@ public class Coins implements ICoins {
     public ArrayList<CoinsMeta> getCurrentUsersPutCoinsMeta(){
         ArrayList<CoinsMeta> result = new ArrayList();
         for(String userId : currentUsersPutCoinNumberMap.keySet()){
-            if(currentUsersPutCoinNumberMap.get(userId) > 0){
-                result.add(new CoinsMeta(userId, currentUsersPutCoinNumberMap.get(userId)));
+            if(currentUsersPutCoinNumberMap.get(userId).getIntValue() > 0){
+                result.add(new CoinsMeta(userId, currentUsersPutCoinNumberMap.get(userId).getIntValue()));
             }
         }
         return result;
@@ -1083,4 +1095,11 @@ public class Coins implements ICoins {
     public String getCoinsPurpose() {
         return coinsPurpose;
     }
+
+    @Override
+    public boolean isTransactionIdProcessed(String transactionId) {
+        return (deductedSuccessTransactions.contains(transactionId) || dismissedTransactionsMap.containsKey(transactionId));
+    }
 }
+
+

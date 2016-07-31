@@ -327,11 +327,9 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                     if(userId.equals(_services.getProfile().getUserId())){
                         coordinator.finalizeAndEndGame(null, null, true);
                     }
-                    _services.getCoins().onUserDisconnected(userId);
                 }
                 else if(gameConnectionStatus == GameConnectionStatus.Disconnected){
                     coordinator.userConnectionChanged(userId, false);
-                    _services.getCoins().onUserDisconnected(userId);
                 }
                 else if(gameConnectionStatus == GameConnectionStatus.Connected){
                     coordinator.userConnectionChanged(userId, true);

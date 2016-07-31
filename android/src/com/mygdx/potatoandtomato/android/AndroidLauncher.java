@@ -212,7 +212,7 @@ public class AndroidLauncher extends AndroidApplication {
 
 		}
 		else{
-			super.onBackPressed();
+			//super.onBackPressed();
 			_view.requestFocus();
 		}
 	}
