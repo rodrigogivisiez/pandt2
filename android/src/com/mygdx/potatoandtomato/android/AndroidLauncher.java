@@ -138,14 +138,19 @@ public class AndroidLauncher extends AndroidApplication {
 	public void subscribeOrientationChanged(){
 		_broadcaster.subscribe(BroadcastEvent.DEVICE_ORIENTATION, new BroadcastListener<Integer>() {
 			@Override
-			public void onCallback(Integer obj, Status st) {
+			public void onCallback(final Integer obj, Status st) {
 				Global.IS_POTRAIT = (obj == 0);
-				if(obj == 0){		//potrait
-					setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-				}
-				else{
-					setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-				}
+				Threadings.postRunnable(new Runnable() {
+					@Override
+					public void run() {
+						if(obj == 0){		//potrait
+							setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+						}
+						else{
+							setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+						}
+					}
+				});
 			}
 		});
 	}

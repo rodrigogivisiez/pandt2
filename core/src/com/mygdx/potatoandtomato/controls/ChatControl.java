@@ -53,6 +53,7 @@ public class ChatControl {
     private Image chatBoxBackground;
     private Table mode1MessagesContainer, mode2MessagesContainer;
     private Table mode1MessagesTable, mode2MessagesTable;
+    private Image mode2MessagesTableBgImage;
     private ScrollPane mode1ChatScroll, mode2ChatScroll;
 
     private Table roomUsersButtonRoot, roomUsersButtonRootTrans, sendingRoot;
@@ -65,6 +66,7 @@ public class ChatControl {
     private ChatPopup chatTemplatesPopup, roomUsersPopup;
     private Label roomUsersLabel, roomUsersLabelTrans, recordingTimerLabel, recordCancelLabel;
     private PTTextField messageTextField;
+    private Label showClickedPositionLabel;
 
     private ChatTemplateControl chatTemplateControl;
     private final int CHAT_CONTAINER_HEIGHT = 47;
@@ -249,9 +251,22 @@ public class ChatControl {
         root.addActor(recordingTable);
         root.setFillParent(true);
 
+//        showClickedPositionLabel = new Label("0", recordingLabelStyle);
+//        showClickedPositionLabel.setPosition(0, 300);
+//        root.addActor(showClickedPositionLabel);
+
         setInternalListeners();
 
     }
+
+//    public void updateClickPostion(final float x, final float y){
+//        Threadings.postRunnable(new Runnable() {
+//            @Override
+//            public void run() {
+//                showClickedPositionLabel.setText(x + ", " + y);
+//            }
+//        });
+//    }
 
     public void populateMode1(){
         ////////////////////////
@@ -279,12 +294,20 @@ public class ChatControl {
         /////////////////////////////
         mode2MessagesContainer = new Table();
         mode2MessagesContainer.setTouchable(Touchable.disabled);
-        mode2MessagesContainer.setPosition(0, CHAT_CONTAINER_HEIGHT + 5);
+        mode2MessagesContainer.setPosition(0, 0);
+
+        mode2MessagesTableBgImage = new Image(assets.getTextures().get(Textures.Name.LESS_TRANS_BLACK_BG));
+        mode2MessagesTableBgImage.setFillParent(true);
+        mode2MessagesTableBgImage.setTouchable(Touchable.disabled);
+        mode2MessagesTableBgImage.getColor().a = 0f;
 
         mode2MessagesTable = new Table();
         mode2MessagesTable.align(Align.bottomLeft);
+        mode2MessagesTable.padBottom(CHAT_CONTAINER_HEIGHT + 5).padLeft(50).padRight(50).padTop(5);
+        mode2MessagesTable.addActor(mode2MessagesTableBgImage);
         mode2ChatScroll = new ScrollPane(mode2MessagesTable);
-        mode2MessagesContainer.add(mode2ChatScroll).expand().fill().padLeft(80).padRight(20);
+        mode2ChatScroll.setOverscroll(false, false);
+        mode2MessagesContainer.add(mode2ChatScroll).expand().fill();
         root.addActor(mode2MessagesContainer);
     }
 
@@ -333,7 +356,7 @@ public class ChatControl {
                                         Positions.getHeight() / 2 - recordingTable.getHeight() / 2);
 
                 mode1MessagesContainer.setSize(Positions.getWidth(), 130);
-                mode2MessagesContainer.setSize(Positions.getWidth(), 70);
+                mode2MessagesContainer.setSize(Positions.getWidth(), 75 + CHAT_CONTAINER_HEIGHT);
 
                 if(!Global.IS_POTRAIT){
                     Threadings.delay(500, new Runnable() {
@@ -365,6 +388,7 @@ public class ChatControl {
                 else if(mode == 2){
                     mode2MessagesContainer.setVisible(true);
                     mode1MessagesContainer.setVisible(false);
+                    chatBoxTransContainer.setVisible(true);
                 }
             }
         });
@@ -385,14 +409,14 @@ public class ChatControl {
             public void run() {
 
                 chatBoxContainer.clearActions();
-                chatBoxTransContainer.clearActions();
+                //chatBoxTransContainer.clearActions();
 
                 chatBoxContainer.addAction(sequence(parallel(alpha(0.3f, 0.3f), new RunnableAction(){
                     @Override
                     public void run() {
-                        chatBoxTransContainer.getColor().a = 0f;
-                        chatBoxTransContainer.setVisible(true);
-                        chatBoxTransContainer.addAction(fadeIn(0.2f));
+//                        chatBoxTransContainer.getColor().a = 0.1f;
+//                        chatBoxTransContainer.setVisible(true);
+//                        chatBoxTransContainer.addAction(fadeIn(0.2f));
                         for(Actor button : getTransButtons()){
                             fadeOutTransButton(button);
                         }
@@ -413,24 +437,28 @@ public class ChatControl {
             @Override
             public void run() {
                 chatBoxContainer.clearActions();
-                chatBoxTransContainer.clearActions();
+                //chatBoxTransContainer.clearActions();
                 keyboardToggleButton.setChecked(true);
 
-                chatBoxTransContainer.addAction(sequence(parallel(alpha(0.3f, 0.3f), new RunnableAction(){
-                    @Override
-                    public void run() {
-                        chatBoxContainer.getColor().a = 0f;
-                        chatBoxContainer.setVisible(true);
-                        chatBoxContainer.addAction(fadeIn(0.2f));
-                    }
-                }), fadeOut(0.1f), new RunnableAction(){
-                    @Override
-                    public void run() {
-                        chatBoxTransContainer.setVisible(false);
-                    }
-                }));
+                chatBoxContainer.getColor().a = 0f;
+                chatBoxContainer.setVisible(true);
+                chatBoxContainer.addAction(fadeIn(0.2f));
 
-                fadeInMode2();
+//                chatBoxTransContainer.addAction(sequence(parallel(alpha(0.3f, 0.3f), new RunnableAction(){
+//                    @Override
+//                    public void run() {
+//                        chatBoxContainer.getColor().a = 0f;
+//                        chatBoxContainer.setVisible(true);
+//                        chatBoxContainer.addAction(fadeIn(0.2f));
+//                    }
+//                }), fadeOut(0.1f), new RunnableAction(){
+//                    @Override
+//                    public void run() {
+//                        //chatBoxTransContainer.setVisible(false);
+//                    }
+//                }));
+
+                fadeInMode2(true);
             }
         });
     }
@@ -439,7 +467,7 @@ public class ChatControl {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                chatBoxTransContainer.clearChildren();
+                chatBoxTransContainer.clear();
 
                 Vector2 chatTemplateButtonPosition = Positions.actorLocalToStageCoord(chatTemplateButton);
                 chatTemplateButtonTrans.setPosition(chatTemplateButtonPosition.x, chatTemplateButtonPosition.y - 6);
@@ -481,11 +509,23 @@ public class ChatControl {
         });
     }
 
-    public void fadeInMode2(){
+    public void fadeInMode2(final boolean locked){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                mode2MessagesContainer.setTouchable(Touchable.enabled);
+
+                if(locked && mode2MessagesTableBgImage.getColor().a < 1f){
+                    mode2MessagesTableBgImage.clearActions();
+                    mode2MessagesTableBgImage.getColor().a = 0f;
+                    mode2MessagesTableBgImage.addAction(fadeIn(0.2f));
+                }
+                else if(!locked && mode2MessagesTableBgImage.getColor().a > 0f){
+                    mode2MessagesTableBgImage.clearActions();
+                    mode2MessagesTableBgImage.getColor().a = 0f;
+                }
+
+
+                mode2MessagesContainer.setTouchable(locked ? Touchable.enabled : Touchable.disabled);
                 mode2MessagesTable.clearActions();
                 mode2MessagesTable.getColor().a = 1;
                 mode2MessagesContainer.setName("fadeIn");
@@ -503,6 +543,8 @@ public class ChatControl {
                 if(mode2MessagesContainer.getName() == null || (!mode2MessagesContainer.getName().equals("fadeOut")
                         && !mode2MessagesContainer.getName().equals("fadeOutWait"))){
                     mode2MessagesTable.clearActions();
+                    mode2MessagesTableBgImage.clearActions();
+                    mode2MessagesTableBgImage.addAction(fadeOut(0.1f));
                     mode2MessagesContainer.setName("fadeOut");
                     mode2MessagesContainer.setTouchable(Touchable.disabled);
                     for(VoiceMessageControl voiceMessageControl : mode2VoiceMessageControls){
@@ -768,6 +810,8 @@ public class ChatControl {
                 }
                 else if(mode == 2){
                     mode2MessagesTable.clear();
+                    mode2MessagesTable.addActor(mode2MessagesTableBgImage);
+                    mode2MessagesTableBgImage.getColor().a = 0f;
                 }
                 mode2VoiceMessageControls.clear();
                 for(String username : disconnectedCountDownThreads.keySet()){
@@ -1211,6 +1255,14 @@ public class ChatControl {
         result.add(roomUsersButtonRootTrans);
         result.add(keyboardToggleButtonTrans);
         return result;
+    }
+
+    public Button getKeyboardToggleButton() {
+        return keyboardToggleButton;
+    }
+
+    public Button getKeyboardToggleButtonTrans() {
+        return keyboardToggleButtonTrans;
     }
 
     public Table getRoot() {

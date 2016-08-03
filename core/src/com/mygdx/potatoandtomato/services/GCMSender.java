@@ -4,6 +4,7 @@ import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.MulticastResult;
 import com.google.android.gcm.server.Sender;
 import com.mygdx.potatoandtomato.statics.Terms;
+import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Profile;
 import com.mygdx.potatoandtomato.models.PushNotification;
@@ -22,7 +23,7 @@ public class GCMSender {
 
         final ArrayList<String> regIds = new ArrayList();
         for(Profile p : profiles){
-            if(p.getGcmId() != null) regIds.add(p.getGcmId());
+            if(!Strings.isEmpty(p.getGcmId())) regIds.add(p.getGcmId());
         }
 
         if(regIds.size() > 0){

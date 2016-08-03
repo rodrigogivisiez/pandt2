@@ -49,7 +49,6 @@ public class MyFreetypeFontLoader extends AsynchronousAssetLoader<BitmapFont, My
         FreeTypeFontGenerator generator = manager.get(parameter.fontFileName + ".gen", FreeTypeFontGenerator.class);
         generator.scaleForPixelHeight((int)Math.ceil(parameter.fontParameters.size));
         BitmapFont font = generator.generateFont(parameter.fontParameters);
-        font.setUseIntegerPositions(false);
         return font;
     }
 

@@ -7,6 +7,7 @@ import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.game_file_checker.GameFileCheckerListener;
 import com.mygdx.potatoandtomato.models.FileData;
 import com.mygdx.potatoandtomato.models.Game;
+import com.mygdx.potatoandtomato.services.Loggings;
 import com.mygdx.potatoandtomato.services.Preferences;
 import com.mygdx.potatoandtomato.services.VersionControl;
 import com.potatoandtomato.common.absints.DownloaderListener;
@@ -173,7 +174,7 @@ public class GameFileChecker implements Disposable {
     }
 
 
-    public SafeThread downloadFile(String url, File f, final Runnable complete){
+    public SafeThread downloadFile(String url, final File f, final Runnable complete){
         final long[] _prevDownloaded = new long[1];
         _prevDownloaded[0] = 0;
 

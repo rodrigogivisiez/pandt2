@@ -385,12 +385,19 @@ public class CoinMachineControl {
                 String newText = String.format("x%s", insertedCoins);
                 if(!hasCoin) newText = "noCoin";
 
+
+                String name = Strings.cutOff(userName, 18);
+
                 Label existedCoinCountLabel = null;
 
                 Table playersTable = playersScrollPane.findActor("playersTable");
 
                 Table existUserTable = playersTable.findActor(userId);
                 if(existUserTable != null){
+                    Label existedUsernameLabel = existUserTable.findActor("usernameLabel");
+                    if(existedUsernameLabel != null) existedUsernameLabel.setText(name);
+
+
                     existedCoinCountLabel = existUserTable.findActor("coinCountLabel");
                     if(existedCoinCountLabel != null && existedCoinCountLabel.getText().toString().equals(newText)){
                         return;
@@ -405,7 +412,8 @@ public class CoinMachineControl {
                 Table userTable = new Table();
                 userTable.padBottom(3);
                 userTable.setName(userId);
-                Label usernameLabel = new Label(Strings.cutOff(userName, 18), labelStyle);
+                Label usernameLabel = new Label(name, labelStyle);
+                usernameLabel.setName("usernameLabel");
 
                 Table coinTable = new Table();
                 if((hasCoin || insertedCoins > 0) && !newText.equals("noCoin")){
@@ -661,7 +669,7 @@ public class CoinMachineControl {
             public void run() {
                 Label.LabelStyle priceLabelStyle = new Label.LabelStyle(
                         assets.getFonts().get(Fonts.FontId.DIGIVOLVE_XXL_REGULAR), Color.valueOf("fff08d"));
-                Label priceLabel = new Label(coinProduct.getCurrency() + coinProduct.getPrice(), priceLabelStyle);
+                Label priceLabel = new Label(coinProduct.getCurrency() + " " + coinProduct.getPriceText(), priceLabelStyle);
                 priceLabel.setAlignment(Align.center);
 
                 Image coinIconImage = new Image(assets.getTextures().get(Textures.Name.PURSE_COIN_NORMAL));

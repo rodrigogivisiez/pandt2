@@ -302,7 +302,7 @@ public class ShopScene extends SceneAbstract {
         titleLabel.setAlignment(Align.left);
         titleLabel.setWrap(true);
 
-         Label priceLabel = new Label(coinProduct.getCurrency() + " " + coinProduct.getPrice(), labelSmallStyle);
+         Label priceLabel = new Label(coinProduct.getCurrency() + " " + coinProduct.getPriceText(), labelSmallStyle);
         if(productAction == ProductAction.WatchVideo){
             priceLabel.setText(coinProduct.getDescription());
         }

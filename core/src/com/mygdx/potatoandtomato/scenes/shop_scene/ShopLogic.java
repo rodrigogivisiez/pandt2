@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
+import com.mygdx.potatoandtomato.absintflis.cachings.CacheListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.absintflis.services.ClientInternalCoinListener;
@@ -62,7 +63,7 @@ public class ShopLogic extends LogicAbstract {
             @Override
             public void onProductsRetrieved(ArrayList<CoinProduct> refreshedCoinProducts) {
                 super.onProductsRetrieved(refreshedCoinProducts);
-                coinProducts = refreshedCoinProducts;
+                coinProducts = (ArrayList) refreshedCoinProducts.clone();
                 coinProducts.add(0, new CoinProduct(Terms.WATCH_ADS_ID, 1, _texts.watchAdsDescription()));
                 shopScene.setProductsDesign(coinProducts);
                 shopScene.setCanWatchAds(canWatchAds);

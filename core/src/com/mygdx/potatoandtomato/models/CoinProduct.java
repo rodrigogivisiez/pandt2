@@ -1,6 +1,7 @@
 package com.mygdx.potatoandtomato.models;
 
 import com.mygdx.potatoandtomato.enums.ShopProducts;
+import com.potatoandtomato.common.utils.DoubleUtils;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -17,14 +18,14 @@ public class CoinProduct {
     private Double price;
 
     public CoinProduct() {
-        price = -1.0;   //disable this product if is negative
+        setPrice(-1.0); //disable this product if is negative
     }
 
     public CoinProduct(String id, int count, String description) {
         this.id = id;
         this.count = count;
         this.description = description;
-        this.price = 0.0;
+        setPrice(0.0);
     }
 
     public String getId() {
@@ -61,6 +62,11 @@ public class CoinProduct {
 
     public Double getPrice() {
         return price;
+    }
+
+    @JsonIgnore
+    public String getPriceText(){
+        return String.format("%.2f", price);
     }
 
     public void setPrice(Double price) {

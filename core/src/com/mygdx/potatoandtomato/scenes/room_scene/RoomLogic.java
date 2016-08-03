@@ -172,6 +172,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
             errorOccurred(roomErrorOccured);
         }
         _services.getTutorials().startTutorialIfNotCompleteBefore(Terms.PREF_BASIC_TUTORIAL, false, this);
+
     }
 
     @Override
@@ -589,6 +590,10 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
     }
 
     public void errorOccurred(RoomError roomError){
+        if(tutorialStep > 0){
+            return;
+        }
+
         if(roomErrorOccured == null){
             roomErrorOccured = roomError;
             disposeEarly();

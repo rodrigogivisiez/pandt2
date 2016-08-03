@@ -9,6 +9,7 @@ import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import com.mygdx.potatoandtomato.absintflis.recorder.RecordListener;
+import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
@@ -24,10 +25,11 @@ import java.io.IOException;
 public class AudioRecorder {
 
     private int RECORDER_SAMPLERATE;
-    private int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_MONO;
+    private int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_DEFAULT;
     private int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
     int bufferElements2Rec; // want to play 2048 (2K) since 2 bytes we use only 1024
     int bytesPerElement = 2; // 2 bytes in 16bit format
+    int RECORD_BUFEER_SIZE;
     private AudioRecord recorder = null;
     private Thread recordingThread = null;
     private boolean isRecording = false;
@@ -63,11 +65,24 @@ public class AudioRecorder {
         }
         refreshParametersIfNeeded();
 
+        Logs.show("Before initialize audio recorder...");
+        Logs.show("Sample rate is: " + RECORDER_SAMPLERATE);
+
         recorder = new AudioRecord(MediaRecorder.AudioSource.MIC,
                 RECORDER_SAMPLERATE, RECORDER_CHANNELS,
-                RECORDER_AUDIO_ENCODING, bufferElements2Rec * bytesPerElement);
+                RECORDER_AUDIO_ENCODING, RECORD_BUFEER_SIZE);
 
-        recorder.startRecording();
+        Logs.show("Before start recording...");
+
+        try{
+            recorder.startRecording();
+        }
+        catch (IllegalStateException ex){
+            Logs.show(ex.getMessage());
+            recordListener.onFinishedRecord(null, -1, Status.FAILED);
+            return;
+        }
+
         isRecording = true;
         recordingThread = new Thread(new Runnable() {
             public void run() {
@@ -91,6 +106,8 @@ public class AudioRecorder {
         }
 
         recordListener.onStart();
+        Logs.show("Record start...");
+
 
         while (isRecording) {
             // gets the voice output from microphone to byte format
@@ -102,7 +119,7 @@ public class AudioRecorder {
             if (readSize > 0) {
                 final double amplitude = sum / readSize;
                 int result = (int) Math.sqrt(amplitude);
-                if(result > 0 && result < 200){
+                if(result >= 0 && result < 200){
                     recordListener.onRecording(0, -1);
                 }
                 else if(result > 200 && result < 500){
@@ -119,6 +136,9 @@ public class AudioRecorder {
             try {
                 byte bData[] = short2byte(sData);
                 os.write(bData, 0, bufferElements2Rec * bytesPerElement);
+
+                Logs.show("Recording...");
+
             } catch (IOException e) {
                 e.printStackTrace();
                 error = true;
@@ -131,6 +151,8 @@ public class AudioRecorder {
             error = true;
         }
 
+
+        Logs.show("Recording end");
         recordListener.onFinishedRecord(null, -1, error || recordCanceled ? Status.FAILED : Status.SUCCESS);
     }
 
@@ -160,15 +182,20 @@ public class AudioRecorder {
 
     private void refreshParametersIfNeeded(){
         if(RECORDER_SAMPLERATE == 0){
-            for (int rate : new int[] {44100, 8000, 11025, 16000, 22050}) {
+            for (int rate : new int[] {44100, 48000, 8000, 11025, 16000, 22050,
+                    32000, 37800, 44056, 47250}) {
+                Logs.show("Checking rate: " + rate);
                 int bufferSize = AudioRecord.getMinBufferSize(rate, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
                 if (bufferSize > 0) {
                     // buffer size is valid, Sample rate supported
-                    AudioRecord audioRecorder = new AudioRecord(MediaRecorder.AudioSource.MIC, rate, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, bufferSize);
+                    AudioRecord audioRecorder = new AudioRecord(MediaRecorder.AudioSource.MIC, rate,
+                            RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING, bufferSize);
 
                     if (audioRecorder.getState() != AudioRecord.STATE_INITIALIZED) {
                         audioRecorder.release();
                     } else {
+                        audioRecorder.release();
+                        RECORD_BUFEER_SIZE = bufferSize;
                         RECORDER_SAMPLERATE = rate;
                         bufferElements2Rec = bufferSize / bytesPerElement;
                         break;

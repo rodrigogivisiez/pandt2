@@ -2,7 +2,6 @@ package com.mygdx.potatoandtomato.scenes.leaderboard_scene;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -479,6 +478,11 @@ public class LeaderBoardScene extends SceneAbstract {
                         _assets.getFonts().get(Fonts.FontId.CARTER_L_REGULAR_B_ffffff_000000_2), null);
                 style6.fontColor = fontColor;
 
+                Label.LabelStyle style7 = new Label.LabelStyle(
+                        _assets.getFonts().get(Fonts.FontId.CARTER_S_REGULAR_B_ffffff_000000_2), null);
+                style7.font.getData().setLineHeight(12);
+                style7.fontColor = fontColor;
+
                 ////////////////////////////////////////
                 //added score label
                 ///////////////////////////////////////
@@ -488,7 +492,7 @@ public class LeaderBoardScene extends SceneAbstract {
 
                 Label addedScoreLabel = new Label((scoreDetails.isAddOrMultiply() ? "+" : "x") + (Strings.formatNum(scoreDetails.getValue())), style6);
                 addedScoreLabel.setAlignment(Align.center);
-                Label addedReasonLabel = new Label(scoreDetails.getReason(), style5);
+                Label addedReasonLabel = new Label(scoreDetails.getReason(), style7);
                 addedReasonLabel.setAlignment(Align.center);
                 addedReasonLabel.setWrap(true);
                 addedScoreTable.add(addedScoreLabel).expandX().fillX();
@@ -507,7 +511,7 @@ public class LeaderBoardScene extends SceneAbstract {
 
 
                 int totalWords = scoreDetails.getReason().split(" ").length;
-                float delayDuration = Math.max(totalWords * 0.4f, 2.0f);
+                float delayDuration = Math.max(totalWords * 0.8f, 2.0f);
 
                 addedScoreTable.setOrigin(addedScoreTable.getWidth()/2, addedScoreTable.getHeight()/2);
 
@@ -1044,6 +1048,13 @@ public class LeaderBoardScene extends SceneAbstract {
         });
     }
 
+    @Override
+    public void dispose() {
+        super.dispose();
+        _services.getSoundsPlayer().stopSoundEffectLoop(Sounds.Name.MOVING_RANK);
+        _services.getSoundsPlayer().stopSoundEffectLoop(Sounds.Name.EXTINGUISH_SOUND);
+    }
+
     public enum MascotType{
         BORING, FAILED, CRY, HAPPY, ANTICIPATE
     }
@@ -1059,4 +1070,7 @@ public class LeaderBoardScene extends SceneAbstract {
     public WebImage getWebImage() {
         return _webImage;
     }
+
+
+
 }

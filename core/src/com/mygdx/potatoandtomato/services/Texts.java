@@ -173,6 +173,8 @@ public class Texts {
 
     public String chatMsgxInvitedX() { return "%s has invited %s to join this room.";}
     public String chatMsgxInvitedXAlias() { return "%s has invited %s (previously known as %s) to join this room.";}
+    public String chatMsgxInvitedXFailed() { return "%s has invited %s to join this room, but request failed.";}
+    public String chatMsgxInvitedXAliasFailed() { return "%s has invited %s (previously known as %s) to join this room, but request failed.";}
 
     public String PUSHGameInvitationsTitle() { return "P&T Game Invitations"; }
     public String PUSHGameInvitationsContent() { return "You have %s new invitations from your friends.";}

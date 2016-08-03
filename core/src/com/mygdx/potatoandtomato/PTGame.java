@@ -12,6 +12,7 @@ import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
 import com.mygdx.potatoandtomato.absintflis.mocks.MockModel;
 import com.mygdx.potatoandtomato.assets.*;
+import com.mygdx.potatoandtomato.enums.ConfirmIdentifier;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.models.*;
@@ -59,6 +60,7 @@ public class PTGame extends Game implements IPTGame {
 	Preferences _preferences;
 	RestfulApi _restfulApi;
 	Tutorials _tutorials;
+	Loggings _loggings;
 	ConnectionWatcher _connectionWatcher;
 	Coins _coins;
 	DataCaches _dataCaches;
@@ -102,6 +104,8 @@ public class PTGame extends Game implements IPTGame {
 				_recorder = new Recorder(_assets, _soundsPlayer, _broadcaster);
 				_downloader = new Downloader();
 				_database = new FirebaseDB(Terms.FIREBASE_URL());
+				_loggings = new Loggings(_batch, _assets, _game, _broadcaster);
+				Logs.setLoggings(_loggings);
 
 				_chat = new Chat(_broadcaster, _gamingKit, _texts, _assets,
 										_soundsPlayer, _recorder, _batch, _game, _preferences);
@@ -110,7 +114,7 @@ public class PTGame extends Game implements IPTGame {
 				_tutorials = new Tutorials(_game, _batch, _soundsPlayer, _assets, _broadcaster, _preferences, _texts);
 				_restfulApi = new RestfulApi();
 				_connectionWatcher = new ConnectionWatcher(_gamingKit, _broadcaster, _confirm, _texts, _profile);
-				_dataCaches = new DataCaches(_database, _restfulApi, _profile);
+				_dataCaches = new DataCaches(_database, _restfulApi, _profile, _broadcaster);
 				_coins = new Coins(_broadcaster, _assets, _soundsPlayer, _texts,
 						_game, _batch, _profile, _database, _gamingKit, _restfulApi, _confirm, _connectionWatcher,
 						_dataCaches);
@@ -146,6 +150,7 @@ public class PTGame extends Game implements IPTGame {
 		if(_notification != null) _notification.resize(width, height);
 		if(_confirm != null) _confirm.resize(width, height);
 		if(_tutorials != null) _tutorials.resize(width, height);
+		if(_loggings != null) _loggings.resize(width, height);
 	}
 
 	@Override
@@ -196,6 +201,7 @@ public class PTGame extends Game implements IPTGame {
 		if(_tutorials != null) _tutorials.render(Gdx.graphics.getDeltaTime());
 		if(_confirm != null) _confirm.render(Gdx.graphics.getDeltaTime());
 		if(_notification != null) _notification.render(Gdx.graphics.getDeltaTime());
+		if(_loggings != null) _loggings.render(Gdx.graphics.getDeltaTime());
 	}
 
 	@Override

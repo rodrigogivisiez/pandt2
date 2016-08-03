@@ -193,9 +193,11 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                 _services.getChat().setMode(2);
                 _services.getChat().resetChat();
                 _services.getChat().showChat();
+
                 if(coordinator.isLandscape()){
                     _services.getBroadcaster().broadcast(BroadcastEvent.DEVICE_ORIENTATION, 1);
                 }
+
 
                 _services.getSoundsPlayer().stopMusic(Sounds.Name.THEME_MUSIC);
                 //for multitask still play theme music bug fix

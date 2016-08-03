@@ -19,6 +19,7 @@ import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.*;
 import com.mygdx.potatoandtomato.helpers.Flurry;
 import com.mygdx.potatoandtomato.models.*;
+import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.statics.Vars;
 import com.potatoandtomato.common.absints.CoinListener;
 import com.mygdx.potatoandtomato.controls.CoinMachineControl;
@@ -188,6 +189,7 @@ public class Coins implements ICoins {
         this.dismissText = dismissText;
         this.coinMachineControl.updateExpectingCoins(expectingCoin);
         this.coinMachineControl.updateDismissText(dismissText);
+        updateCoinMachineUserTable(profile.getUserId(), profile.getDisplayName(0));     //fix change name no update problem
         sync(userIdToNamePairs);
         if(requestFromOthers) requestCoinsMachineStateFromOthers();
 
@@ -274,9 +276,14 @@ public class Coins implements ICoins {
                             topBarCoinControl.setCoinCount(obj, currentShopProduct);
                         }
                         currentShopProduct = null;
+
+                        updateCoinMachineUserTable(userId, profile.getDisplayName(99));
+                    }
+                    else{
+                        updateCoinMachineUserTable(userId, username);
                     }
 
-                    updateCoinMachineUserTable(userId, username);
+
                 }
             });
         }
@@ -774,31 +781,30 @@ public class Coins implements ICoins {
             public void onProductsRetrieved(ArrayList<CoinProduct> refreshedCoinProducts) {
                 super.onProductsRetrieved(refreshedCoinProducts);
                 coinProducts = refreshedCoinProducts;
-                changeCoinMachineCurrentProduct(true, coinProducts.get(0));
+                changeCoinMachineCurrentProduct(true, 0);
             }
         });
     }
 
     public void getProducts(final ClientInternalCoinListener clientInternalCoinListener){
-        broadcaster.subscribeOnce(BroadcastEvent.IAB_PRODUCTS_RESPONSE, new BroadcastListener<ArrayList<CoinProduct>>() {
+        dataCaches.getShopProductsCache().getData(new CacheListener<ArrayList<CoinProduct>>() {
             @Override
-            public void onCallback(ArrayList<CoinProduct> refreshedCoinProducts, Status st) {
-                if (st == Status.SUCCESS) {
-                    clientInternalCoinListener.onProductsRetrieved(refreshedCoinProducts);
-                }
+            public void onResult(ArrayList<CoinProduct> result) {
+                clientInternalCoinListener.onProductsRetrieved(result);
             }
         });
-
-        broadcaster.broadcast(BroadcastEvent.IAB_PRODUCTS_REQUEST, database);
     }
 
-    public void changeCoinMachineCurrentProduct(boolean next, CoinProduct coinProduct){
-        coinMachineControl.goToNextProduct(next, coinProduct, new RunnableArgs<TextButton>() {
-            @Override
-            public void run() {
-                setBuyButtonListener(this.getFirstArg());
-            }
-        });
+    public void changeCoinMachineCurrentProduct(boolean next, int index){
+        if(index >= 0 && index < coinProducts.size()){
+            CoinProduct coinProduct = coinProducts.get(index);
+            coinMachineControl.goToNextProduct(next, coinProduct, new RunnableArgs<TextButton>() {
+                @Override
+                public void run() {
+                    setBuyButtonListener(this.getFirstArg());
+                }
+            });
+        }
     }
 
 
@@ -891,7 +897,7 @@ public class Coins implements ICoins {
                         if(coinMachineControl.canGoToNextProduct()){
                             currentProductIndex--;
                             if(currentProductIndex < 0) currentProductIndex = coinProducts.size() - 1;
-                            changeCoinMachineCurrentProduct(false, coinProducts.get(currentProductIndex));
+                            changeCoinMachineCurrentProduct(false, currentProductIndex);
                         }
                     }
                 });
@@ -903,7 +909,7 @@ public class Coins implements ICoins {
                         if(coinMachineControl.canGoToNextProduct()){
                             currentProductIndex++;
                             if(currentProductIndex > coinProducts.size() - 1) currentProductIndex = 0;
-                            changeCoinMachineCurrentProduct(true, coinProducts.get(currentProductIndex));
+                            changeCoinMachineCurrentProduct(true, currentProductIndex);
                         }
                     }
                 });

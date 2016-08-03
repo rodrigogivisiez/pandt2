@@ -31,18 +31,11 @@ public class BootScene extends SceneAbstract {
     BtnEggUpright _playButton;
     Table _infoTable, _titleTable;
     Image _tickIcon, _crossIcon;
+    Label versionLabel;
 
     public BootScene(Services services, PTScreen screen) {
         super(services, screen);
     }
-
-    public BtnEggUpright getPlayButton() {
-        return _playButton;
-    }
-
-    public Image getTickIcon() { return _tickIcon; }
-
-    public Image getCrossIcon() { return _crossIcon; }
 
     @Override
     public void populateRoot() {
@@ -112,7 +105,7 @@ public class BootScene extends SceneAbstract {
         //Game Version START
         Label.LabelStyle versionStyle = new Label.LabelStyle();
         versionStyle.font = _assets.getFonts().get(Fonts.FontId.MYRIAD_XS_BOLD_B_ffffff_000000_1);
-        Label versionLabel = new Label(String.format(_texts.build(), _services.getVersionControl().getClientVersion())
+        versionLabel = new Label(String.format(_texts.build(), _services.getVersionControl().getClientVersion())
                             + (Global.DEBUG ? " " + _texts.debug() : ""), versionStyle);
         //Game Version END
 
@@ -349,8 +342,17 @@ public class BootScene extends SceneAbstract {
         });
     }
 
+    public Label getVersionLabel() {
+        return versionLabel;
+    }
 
+    public BtnEggUpright getPlayButton() {
+        return _playButton;
+    }
 
+    public Image getTickIcon() { return _tickIcon; }
+
+    public Image getCrossIcon() { return _crossIcon; }
 
 
 }

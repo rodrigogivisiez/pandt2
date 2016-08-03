@@ -46,7 +46,7 @@ public class DesktopLauncher {
 		_broadcaster.subscribe(BroadcastEvent.LOGIN_GCM_REQUEST, new BroadcastListener() {
 			@Override
 			public void onCallback(Object obj, Status st) {
-				_broadcaster.broadcast(BroadcastEvent.LOGIN_GCM_CALLBACK, null, Status.SUCCESS);
+				_broadcaster.broadcast(BroadcastEvent.LOGIN_GCM_CALLBACK, null, Status.FAILED);
 			}
 		});
 

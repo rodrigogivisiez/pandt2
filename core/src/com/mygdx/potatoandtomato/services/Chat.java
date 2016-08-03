@@ -95,7 +95,7 @@ public class Chat {
     public void messageTextFieldFocused(){
         if(mode == 2){
             setMode2ChatLock(true);
-            chatControl.fadeInMode2();
+            chatControl.fadeInMode2(true);
         }
     }
 
@@ -235,9 +235,12 @@ public class Chat {
     }
 
     public void sendVoiceMessage(final FileHandle file, int totalSecs){
-        byte[] data = Files.fileToByte(file.file());
-        byte[] secsInByte = new byte[]{(byte) totalSecs};
-        gamingKit.updateRoomMates((byte) UpdateRoomMatesCode.AUDIO_CHAT, BytesUtils.prependBytes(data, secsInByte));
+        if(totalSecs > -1){
+            byte[] data = Files.fileToByte(file.file());
+            byte[] secsInByte = new byte[]{(byte) totalSecs};
+            gamingKit.updateRoomMates((byte) UpdateRoomMatesCode.AUDIO_CHAT, BytesUtils.prependBytes(data, secsInByte));
+        }
+
         final ChatMessage chatMessage = new ChatMessage(file.file().getAbsolutePath(),
                                         ChatMessage.FromType.USER_VOICE, myUserId, String.valueOf(totalSecs));
         newMessage(chatMessage);
@@ -267,7 +270,7 @@ public class Chat {
 
 
         if(mode == 2){
-            chatControl.fadeInMode2();
+            chatControl.fadeInMode2(isMode2ChatLock());
             if(!isMode2ChatLock()){
                 chatControl.fadeOutMode2(5);
             }
@@ -303,6 +306,7 @@ public class Chat {
 
     public void screenTouched(float x, float y){
         if(isVisible()){
+          //  chatControl.updateClickPostion(x, y);
             y = Positions.getHeight() - Positions.screenYToGdxY(y) - softKeyboardHeight;
             x = Positions.screenXToGdxX(x);
 
@@ -484,6 +488,23 @@ public class Chat {
                 chatControl.hideChatTemplatePopup();
             }
         });
+
+        chatControl.getKeyboardToggleButton().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                setMode2ChatLock(false);
+            }
+        });
+
+        chatControl.getKeyboardToggleButtonTrans().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                setMode2ChatLock(true);
+            }
+        });
+
 
     }
 

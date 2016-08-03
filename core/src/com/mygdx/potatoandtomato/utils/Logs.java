@@ -3,6 +3,7 @@ package com.mygdx.potatoandtomato.utils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.FPSLogger;
+import com.mygdx.potatoandtomato.services.Loggings;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
@@ -22,6 +23,7 @@ public class Logs {
     private static SafeThread _fpsThread;
     private static ArrayList<String> _logs = new ArrayList();
     public static String LAST_GAME = "EMPTY";
+    private static Loggings loggings;
 
     public static void add(){
         final Throwable t = new Throwable();
@@ -48,14 +50,24 @@ public class Logs {
         return _logs;
     }
 
+    public static void setLoggings(Loggings _loggings){
+        loggings = _loggings;
+    }
+
+    public static Loggings getLoggings() {
+        return loggings;
+    }
+
     public static void show(String msg){
-        if(Global.DEBUG)
         System.out.println(msg);
+        if(loggings != null)
+        loggings.add(msg);
     }
 
     public static void show(float msg){
-        if(Global.DEBUG)
         System.out.println(msg);
+        if(loggings != null)
+        loggings.add(String.valueOf(msg));
     }
 
     public static void startLogFps(){

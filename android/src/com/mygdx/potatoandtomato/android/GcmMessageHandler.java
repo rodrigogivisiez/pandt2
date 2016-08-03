@@ -1,10 +1,13 @@
 package com.mygdx.potatoandtomato.android;
 
+import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import com.google.android.gms.gcm.GcmListenerService;
@@ -58,6 +61,8 @@ public class GcmMessageHandler extends GcmListenerService {
                 .setContentText(pushNotification.getMessage())
                 .setContentIntent(pendingIntent)
                 .setSmallIcon(R.drawable.ic_stat_icon)
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
+                        R.mipmap.ic_launcher))
                 .setWhen(System.currentTimeMillis());
 
         if(pushNotification.getId() == PushCode.SEND_INVITATION){
@@ -73,10 +78,13 @@ public class GcmMessageHandler extends GcmListenerService {
             PendingIntent rejectPendingIntent = PendingIntent.getBroadcast(context,
                     pushNotification.getId(), rejectIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            builder.addAction(R.drawable.ic_stat_action_done, context.getResources().getString(R.string.invitation_accept),
-                    acceptPendingIntent);
-            builder.addAction(R.drawable.ic_stat_navigation_close, context.getResources().getString(R.string.invitation_reject),
-                    rejectPendingIntent);
+            if (Build.VERSION.SDK_INT >= 16) {
+                builder.addAction(R.drawable.ic_stat_action_done, context.getResources().getString(R.string.invitation_accept),
+                        acceptPendingIntent);
+                builder.addAction(R.drawable.ic_stat_navigation_close, context.getResources().getString(R.string.invitation_reject),
+                        rejectPendingIntent);
+            }
+
         }
 
 
@@ -92,7 +100,11 @@ public class GcmMessageHandler extends GcmListenerService {
 
         Notification n;
 
-        n = builder.build();
+        if (Build.VERSION.SDK_INT < 16) {
+            n = builder.getNotification();
+        } else {
+            n = builder.build();
+        }
         if(pushNotification.isSticky()){
             n.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
         }

@@ -277,22 +277,40 @@ public class InviteLogic extends LogicAbstract {
                                     push.setMessage(String.format(_texts.PUSHGameInvitationsContent(),
                                             roomIds.size()));
                                 }
-                                _services.getGcmSender().send(user, push);
+
+                                boolean success = _services.getGcmSender().send(latestProfile, push);
 
                                 boolean nameChanged = !(latestProfile.getDisplayName(0).equals(user.getDisplayName(0)));
 
-                                String msg = String.format(_texts.chatMsgxInvitedX(),
-                                        _services.getProfile().getDisplayName(0), user.getDisplayName(0));
-                                if(nameChanged){
-                                    msg = String.format(_texts.chatMsgxInvitedXAlias(),
-                                            _services.getProfile().getDisplayName(0), latestProfile.getDisplayName(0),
-                                            user.getDisplayName(0));
+                                ChatMessage chatMessage;
+
+                                if(success){
+                                    String msg = String.format(_texts.chatMsgxInvitedX(),
+                                            _services.getProfile().getDisplayName(0), user.getDisplayName(0));
+                                    if(nameChanged){
+                                        msg = String.format(_texts.chatMsgxInvitedXAlias(),
+                                                _services.getProfile().getDisplayName(0), latestProfile.getDisplayName(0),
+                                                user.getDisplayName(0));
+                                    }
+
+                                    chatMessage = new ChatMessage(msg,
+                                            ChatMessage.FromType.SYSTEM, null, "");
+                                }
+                                else{
+                                    String msg = String.format(_texts.chatMsgxInvitedXFailed(),
+                                            _services.getProfile().getDisplayName(0), user.getDisplayName(0));
+                                    if(nameChanged){
+                                        msg = String.format(_texts.chatMsgxInvitedXAliasFailed(),
+                                                _services.getProfile().getDisplayName(0), latestProfile.getDisplayName(0),
+                                                user.getDisplayName(0));
+                                    }
+
+                                    chatMessage = new ChatMessage(msg,
+                                            ChatMessage.FromType.IMPORTANT, null, "");
                                 }
 
-                                ChatMessage chatMessage = new ChatMessage(msg,
-                                                        ChatMessage.FromType.SYSTEM, null, "");
                                 _services.getChat().newMessage(chatMessage);
-                                _services.getGamingKit().sendRoomMessage(chatMessage);
+                                _services.getGamingKit().updateRoomMates((byte) UpdateRoomMatesCode.TEXT_CHAT, chatMessage.toBytes());
                             }
                         }
 

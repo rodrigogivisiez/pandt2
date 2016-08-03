@@ -11,11 +11,14 @@ import com.mygdx.potatoandtomato.absintflis.services.IRestfulApi;
 import com.mygdx.potatoandtomato.absintflis.services.RestfulApiListener;
 import com.mygdx.potatoandtomato.models.CoinProduct;
 import com.mygdx.potatoandtomato.models.Profile;
+import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.utils.ArrayUtils;
 import com.potatoandtomato.common.utils.Pair;
+import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
 
 import java.util.ArrayList;
@@ -82,6 +85,8 @@ public class InAppPurchaseHelper implements BillingProcessor.IBillingHandler {
                 for(CoinProduct coinProduct : coinProducts){
                     productIds.add(coinProduct.getId());
                 }
+
+                Logs.show("Iab getting products: " + Strings.joinArr(productIds, ", "));
 
                 List<SkuDetails> skuDetails = billingProcessor.getPurchaseListingDetails(productIds);
 
@@ -176,10 +181,12 @@ public class InAppPurchaseHelper implements BillingProcessor.IBillingHandler {
     public void onBillingError(int i, Throwable throwable) {
         broadcaster.broadcast(BroadcastEvent.IAB_PRODUCT_PURCHASE_RESPONSE,
                             throwable != null ? throwable.getMessage() : "", Status.FAILED);
+        Logs.show("Iab error response code: " + i +" "+ (throwable != null ? throwable.getMessage() : ""));
     }
 
     @Override
     public void onBillingInitialized() {
+        Logs.show("Iab initialized");
     }
 
     public boolean onActivityResult(int requestCode, int resultCode, Intent data) {

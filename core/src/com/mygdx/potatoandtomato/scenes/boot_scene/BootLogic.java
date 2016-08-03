@@ -213,14 +213,15 @@ public class BootLogic extends LogicAbstract {
     }
 
     public void loginGCM(){
-        subscribeBroadcastOnceWithTimeout(BroadcastEvent.LOGIN_GCM_CALLBACK, 10000, new BroadcastListener<String>() {
+        subscribeBroadcastOnceWithTimeout(BroadcastEvent.LOGIN_GCM_CALLBACK, 5000, new BroadcastListener<String>() {
             @Override
             public void onCallback(String obj, Status st) {
                 if (st == Status.SUCCESS) {
                     _services.getProfile().setGcmId(obj);
                     loginPTSuccess();
                 } else {
-                    retrieveUserFailed();
+                    loginPTSuccess();       //allow login without gcm
+                    //retrieveUserFailed();
                 }
             }
         });
@@ -284,6 +285,14 @@ public class BootLogic extends LogicAbstract {
                 super.clicked(event, x, y);
                 if(!_fbStepPast) checkContainsSecondaryUserId();
                 else Gdx.app.exit();
+            }
+        });
+
+        _bootScene.getVersionLabel().addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                Logs.getLoggings().setEnabled(true);
             }
         });
 

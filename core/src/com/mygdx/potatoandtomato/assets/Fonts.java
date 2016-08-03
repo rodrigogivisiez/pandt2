@@ -79,6 +79,7 @@ public class Fonts extends FontAssets {
         PIZZA_XXL_REGULAR_B_ffffff_000000_2,
         PIZZA_XXXL_REGULAR,
 
+        CARTER_S_REGULAR_B_ffffff_000000_2,
         CARTER_M_REGULAR_B_ffffff_000000_2,
         CARTER_L_REGULAR_B_ffffff_000000_2,
 

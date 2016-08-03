@@ -1,11 +1,14 @@
 package com.mygdx.potatoandtomato.android;
 
+import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.IBinder;
 import com.mygdx.potatoandtomato.absintflis.push_notifications.PushCode;
 import com.mygdx.potatoandtomato.android.receivers.HandleNotificationBroadcastReceiver;
@@ -41,6 +44,8 @@ public class KeepAliveService extends Service {
                     .setContentIntent(pendingIntent)
                     .setContentText(content)
                     .setSmallIcon(R.drawable.ic_stat_icon)
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(),
+                            R.mipmap.ic_launcher))
                     .setWhen(System.currentTimeMillis());
 
             builder.setSound(null);
@@ -48,7 +53,12 @@ public class KeepAliveService extends Service {
 
             Notification n;
 
-            n = builder.build();
+            if (Build.VERSION.SDK_INT < 16) {
+                n = builder.getNotification();
+            } else {
+                n = builder.build();
+            }
+
             n.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
 
             startForeground(PushCode.UPDATE_ROOM, n);
