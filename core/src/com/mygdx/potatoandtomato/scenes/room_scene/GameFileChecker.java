@@ -37,6 +37,7 @@ public class GameFileChecker implements Disposable {
     private Game gameModel;
     private IDatabase database;
     private VersionControl versionControl;
+    private boolean disposed;
 
     private GameFileCheckerListener listener;
     private boolean downloadKilled;
@@ -243,12 +244,14 @@ public class GameFileChecker implements Disposable {
         for(SafeThread safeThread : downloadGameThreads){
             safeThread.kill();
         }
-        listener.onCallback(GameFileResult.FAILED_RETRIEVE, Status.FAILED);
+
+        if(!disposed) listener.onCallback(GameFileResult.FAILED_RETRIEVE, Status.FAILED);
 
     }
 
     @Override
     public void dispose() {
+        disposed = true;
         killDownloads();
     }
 

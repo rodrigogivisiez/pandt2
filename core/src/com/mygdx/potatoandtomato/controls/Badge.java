@@ -52,14 +52,15 @@ public class Badge extends Table {
 
         if(needLabel){
             Label.LabelStyle labelStyle = new Label.LabelStyle(assets.getFonts().get(
-                    fontScale == 1 ? Fonts.FontId.IMPACT_XS_REGULAR_S_a74828_1_1 : Fonts.FontId.IMPACT_S_REGULAR_S_a74828_1_1), null);
+                    fontScale == 1 ?
+                            Fonts.FontId.MYRIAD_10_BOLD_S_a74828_1_1 : Fonts.FontId.MYRIAD_S_BOLD_S_a74828_1_1), null);
             textLabel = new Label(text, labelStyle);
             textLabel.setAlignment(Align.center);
             int padTop = 0;
             if(badgeType == BadgeType.Streak){
                 padTop = 4;
             }
-            this.add(textLabel).padTop(padTop).expand().fill().center();
+            this.add(textLabel).padTop(padTop).expand().fill();
         }
     }
 

@@ -12,6 +12,7 @@ import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.common.utils.Threadings;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
 
 /**
  * Created by SiongLeng on 26/7/2016.
@@ -51,6 +52,9 @@ public class GestureControl extends Table {
                     Image handImage = new Image(assets.getTextures().get(Textures.Name.TAP_GESTURE_HAND));
                     handImage.setPosition(7, -26);
                     _this.addActor(handImage);
+
+                    handImage.addAction(forever(sequence(Actions.moveBy(0, 2f, 0.3f),
+                            Actions.moveBy(0, -2f, 0.3f))));
 
                     _this.setSize(30, 45);
                 }

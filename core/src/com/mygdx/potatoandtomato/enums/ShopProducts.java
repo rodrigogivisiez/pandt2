@@ -5,6 +5,6 @@ package com.mygdx.potatoandtomato.enums;
  */
 public enum ShopProducts {
 
-    ONE_COIN, FIVE_COINS, FIFTEEN_COINS, HUNDRED_COINS, PURSE,
+    ONE_COIN, FIVE_COINS, FIFTEEN_COINS, FIFTY_COINS, PURSE,
 
 }

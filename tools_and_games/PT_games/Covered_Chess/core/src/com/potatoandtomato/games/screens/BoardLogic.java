@@ -17,6 +17,7 @@ import com.potatoandtomato.common.utils.ThreadsPool;
 import com.potatoandtomato.games.absint.ActionListener;
 import com.potatoandtomato.games.absint.ScoresListener;
 import com.potatoandtomato.games.assets.Sounds;
+import com.potatoandtomato.games.bots.Bot;
 import com.potatoandtomato.games.enums.ActionType;
 import com.potatoandtomato.games.enums.ChessColor;
 import com.potatoandtomato.games.enums.ChessType;
@@ -26,6 +27,7 @@ import com.potatoandtomato.games.references.BattleRef;
 import com.potatoandtomato.games.references.MovementRef;
 import com.potatoandtomato.games.references.StatusRef;
 import com.potatoandtomato.games.services.GameDataController;
+import com.potatoandtomato.games.statics.Global;
 import com.potatoandtomato.games.statics.Terms;
 
 import java.util.ArrayList;
@@ -52,6 +54,7 @@ public class BoardLogic implements Disposable{
     RoomMsgHandler _roomMsgHandler;
     TutorialsHelper tutorialsHelper;
     GameDataContract _gameDataContract;
+    Bot bot;
     SafeThread _checkCountTimeExpiredThread;
     boolean _crackStarting, _crackHappened, _suddenDeathHappened, _gameEnded;
 
@@ -70,6 +73,7 @@ public class BoardLogic implements Disposable{
                 coordinator, services.getTexts(), services.getAssets(), services, services.getSoundsWrapper());
         tutorialsHelper = new TutorialsHelper(_graveyard, _coordinator, _services.getTexts());
         _roomMsgHandler = new RoomMsgHandler(this, _coordinator);
+        bot = new Bot(_roomMsgHandler);
         _splashLogic = new SplashLogic(coordinator, new Runnable() {
             @Override
             public void run() {
@@ -88,17 +92,26 @@ public class BoardLogic implements Disposable{
     public void init(){
         _splashLogic.newGame();
         _roomMsgHandler.onGameReady();
+        tutorialsHelper.start();
     }
 
     public void continueGame(){
         _splashLogic.continueGame();
         gamePause();
         _roomMsgHandler.onGameReady();
+        tutorialsHelper.start();
     }
 
     public void onSplashLogicDone(){
         setCountDownThread();
         setTurnTouchable();
+
+        if(_coordinator.getTotalPlayersCount() == 1){
+            bot.start(_gameDataController.getEnemyChessColor());
+            if(!isMyTurn()){
+                bot.requestMove(_terrains, _graveyard.getGraveModel(), _boardModel, _battleRef, _movementRef, _statusRef);
+            }
+        }
     }
 
     public void gameDataReceived(final BoardModel boardModel, ArrayList<ChessModel> chessModels, GraveModel graveModel){
@@ -127,7 +140,8 @@ public class BoardLogic implements Disposable{
                         if(!this.getTerrainLogic().isSelected()){
                             terrainSelected(this.getTerrainLogic().getTerrainModel().getCol(),
                                     this.getTerrainLogic().getTerrainModel().getRow());
-                            _roomMsgHandler.sendTerrainSelected(this.getTerrainLogic().getTerrainModel().getCol(),
+                            _roomMsgHandler.sendTerrainSelected(_coordinator.getMyUserId(),
+                                    this.getTerrainLogic().getTerrainModel().getCol(),
                                     this.getTerrainLogic().getTerrainModel().getRow(),
                                     getMyTimeLeft());
                         }
@@ -139,7 +153,7 @@ public class BoardLogic implements Disposable{
                         String random = Strings.joinArr(ArrayLists.randomNumericArray(2, 0, 4), ",");
                         openChess(this.getTerrainLogic().getTerrainModel().getCol(),
                                 this.getTerrainLogic().getTerrainModel().getRow(), random);
-                        _roomMsgHandler.sendChessOpenFull(this.getTerrainLogic().getTerrainModel().getCol(),
+                        _roomMsgHandler.sendChessOpenFull(_coordinator.getMyUserId(), this.getTerrainLogic().getTerrainModel().getCol(),
                                 this.getTerrainLogic().getTerrainModel().getRow(), random,
                                 getMyTimeLeft());
                     }
@@ -152,7 +166,8 @@ public class BoardLogic implements Disposable{
 
                         disableTouchable();
                         chessMoved(fromCol, fromRow, toCol, toRow, isFromWon, false, String.valueOf(random));
-                        _roomMsgHandler.sendMoveChess(fromCol, fromRow, toCol, toRow, isFromWon, String.valueOf(random),
+                        _roomMsgHandler.sendMoveChess(_coordinator.getMyUserId(),
+                                fromCol, fromRow, toCol, toRow, isFromWon, String.valueOf(random),
                                getMyTimeLeft());
                     }
 
@@ -213,6 +228,7 @@ public class BoardLogic implements Disposable{
     public void openChess(int col, int row, String randomString){
         TerrainLogic openLogic =  Terrains.getTerrainLogicByPosition(_terrains, col, row);
         _lastActiveTerrainLogic = openLogic;
+        _movementRef.clearPreviousMoves();
         openLogic.openTerrainChess(randomString);
     }
 
@@ -220,6 +236,12 @@ public class BoardLogic implements Disposable{
     public void chessMoved(int fromCol, int fromRow, int toCol, int toRow, boolean isFromWon, boolean showMovement, String random){
         TerrainLogic fromLogic = Terrains.getTerrainLogicByPosition(_terrains, fromCol, fromRow);
         TerrainLogic toLogic = Terrains.getTerrainLogicByPosition(_terrains, toCol, toRow);
+        if(toLogic.getChessLogic().getChessModel().getChessType() == ChessType.NONE){
+            _movementRef.addPreviousMove(fromLogic, toCol, toRow);
+        }
+        else{
+            _movementRef.clearPreviousMoves();
+        }
         _lastActiveTerrainLogic = toLogic;
         toLogic.moveChessToThis(fromLogic, showMovement, isFromWon, random);
         hideAllTerrainPercentTile();
@@ -259,6 +281,11 @@ public class BoardLogic implements Disposable{
         _statusRef.turnOver(_terrains);
 
         invalidate();
+
+        if(bot.isEnabled() && !isMyTurn()){
+            bot.requestMove(_terrains, _graveyard.getGraveModel(), _boardModel, _battleRef, _movementRef, _statusRef);
+        }
+
     }
 
     public void skipTurn(){
@@ -274,7 +301,7 @@ public class BoardLogic implements Disposable{
                 Threadings.delay(1000, new Runnable() {
                     @Override
                     public void run() {
-                        _roomMsgHandler.skipTurn(getMyTimeLeft());
+                        _roomMsgHandler.skipTurn(_coordinator.getMyUserId(), getMyTimeLeft());
                         skipTurn();
                     }
                 });
@@ -574,7 +601,7 @@ public class BoardLogic implements Disposable{
                         }
 
                         if(timeout){
-                            _roomMsgHandler.sendSurrender();
+                            _roomMsgHandler.sendSurrender(_coordinator.getMyUserId());
                             endGame(false);
                         }
 
@@ -587,6 +614,7 @@ public class BoardLogic implements Disposable{
     @Override
     public void dispose() {
         if(_graveyard != null) _graveyard.dispose();
+        if(bot != null) bot.dispose();
         if(_checkCountTimeExpiredThread != null) _checkCountTimeExpiredThread.kill();
     }
 

@@ -128,14 +128,7 @@ public class CreateGameLogic extends LogicAbstract implements TutorialPartListen
         }
 
         else if(tutorialStep == 5){
-            _services.getTutorials().showMessage(null, _texts.tutorialConclude());
-            _services.getTutorials().expectGestureOnActor(GestureType.None,
-                    _scene.getTopBar().getTopBarCoinControl(), "", 0, 0);
-            _scene.getTopBar().getTopBarCoinControl().showFreeCoinPointing();
-        }
-        else if(tutorialStep == 6){
-            _scene.getTopBar().getTopBarCoinControl().hideFreeCoinPointing();
-            _services.getTutorials().completeTutorial();
+            _screen.back();
         }
     }
 }

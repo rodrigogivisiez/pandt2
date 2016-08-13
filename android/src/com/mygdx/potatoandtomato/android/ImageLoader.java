@@ -70,9 +70,11 @@ public class ImageLoader {
                             _activity.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Picasso.with(_activity)
-                                            .load(url)
-                                            .into(_requestMap.get(url));
+                                    if(_requestMap.containsKey(url)){
+                                        Picasso.with(_activity)
+                                                .load(url)
+                                                .into(_requestMap.get(url));
+                                    }
                                 }
                             });
 

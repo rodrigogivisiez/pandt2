@@ -42,11 +42,14 @@ public class
     private String _tableCoinsProducts = "coinsProducts";
     private String _tableServerTimeInfo = ".info/serverTimeOffset";
     private String _tableLogs = "logs";
-    private Array<ListenerModel> _listenerModels;
+    private String _tableInboxes = "inboxes";
+    private String _tableReadInboxes = "inboxesRead";
+    private String _tableFeedbacks = "feedbacks";
+    private List<ListenerModel> _listenerModels;
 
     public FirebaseDB(String url){
         _ref = new Firebase(url);
-        _listenerModels = new Array();
+        _listenerModels =  Collections.synchronizedList(new ArrayList());
     }
 
     @Override
@@ -74,35 +77,31 @@ public class
 
     @Override
     public void clearAllOnDisconnectListenerModel() {
-        ArrayList<Integer> toRemove = new ArrayList();
-        for(int i = 0; i< _listenerModels.size; i++){
+        ArrayList<ListenerModel> toRemove = new ArrayList();
+        for(int i = 0; i< _listenerModels.size(); i++){
             if(_listenerModels.get(i).getValue() == null && _listenerModels.get(i).getChild() == null){
-                toRemove.add(i);
+                toRemove.add(_listenerModels.get(i));
             }
         }
 
-        Collections.reverse(toRemove);
-        for(Integer i : toRemove){
-            ListenerModel listenerModel = _listenerModels.get(i);
+        for(ListenerModel listenerModel : toRemove){
             removeListenerModel(listenerModel);
-            _listenerModels.removeIndex(i);
+            _listenerModels.remove(listenerModel);
         }
     }
 
     @Override
     public void clearListenersByTag(String tag) {
-        ArrayList<Integer> toRemove = new ArrayList();
-        for(int i = 0; i< _listenerModels.size; i++){
+        ArrayList<ListenerModel> toRemove = new ArrayList();
+        for(int i = 0; i< _listenerModels.size(); i++){
             if(_listenerModels.get(i).getTag().equals(tag)){
-                toRemove.add(i);
+                toRemove.add(_listenerModels.get(i));
             }
         }
 
-        Collections.reverse(toRemove);
-        for(Integer i : toRemove){
-            ListenerModel listenerModel = _listenerModels.get(i);
+        for(ListenerModel listenerModel : toRemove){
             removeListenerModel(listenerModel);
-            _listenerModels.removeIndex(i);
+            _listenerModels.remove(listenerModel);
         }
     }
 
@@ -814,6 +813,88 @@ public class
                 }
                 else{
                     listener.onCallback(null, Status.FAILED);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void getAllInboxMessage(final String userId, final DatabaseListener<ArrayList<InboxMessage>> listener) {
+        getData(getTable(_tableInboxes), new DatabaseListener<ArrayList<InboxMessage>>(InboxMessage.class) {
+            @Override
+            public void onCallback(final ArrayList<InboxMessage> result, final Status st) {
+                if(st == Status.SUCCESS && result != null){
+                    Collections.reverse(result);
+
+                    Threadings.runInBackground(new Runnable() {
+                        @Override
+                        public void run() {
+                            ThreadsPool threadsPool = new ThreadsPool();
+
+                            for(final InboxMessage inboxMessage : result){
+                                final Threadings.ThreadFragment threadFragment = new Threadings.ThreadFragment();
+
+                                checkExist(getTable(_tableReadInboxes).child(userId).child(inboxMessage.getId()), new DatabaseListener<Boolean>() {
+                                    @Override
+                                    public void onCallback(Boolean obj, Status st) {
+                                        if(st == Status.SUCCESS && obj != null){
+                                            inboxMessage.setRead(obj);
+                                        }
+                                        else{
+                                            inboxMessage.setRead(true);
+                                        }
+                                        threadFragment.setFinished(true);
+                                    }
+                                });
+
+                                threadsPool.addFragment(threadFragment);
+                            }
+
+                            while (!threadsPool.allFinished()){
+                                Threadings.sleep(200);
+                            }
+
+                            listener.onCallback(result, st);
+                        }
+                    });
+                }
+                else{
+                    listener.onCallback(new ArrayList<InboxMessage>(), Status.SUCCESS);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void inboxMessageRead(String userId, String inboxMessageId, final DatabaseListener listener) {
+        getTable(_tableReadInboxes).child(userId).child(inboxMessageId).setValue("1", new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                if(firebaseError != null){
+                    if(listener != null) listener.onCallback(null, Status.FAILED);
+                }
+                else{
+                    if(listener != null)  listener.onCallback(null, Status.SUCCESS);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void checkFeedbackExist(String userId, DatabaseListener<Boolean> listener) {
+        checkExist(getTable(_tableFeedbacks).child(userId), listener);
+    }
+
+    @Override
+    public void sendFeedback(String userId, RateAppsModel rateAppsModel, final DatabaseListener listener) {
+        getTable(_tableFeedbacks).child(userId).setValue(rateAppsModel, new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                if(firebaseError != null){
+                    if(listener != null) listener.onCallback(null, Status.FAILED);
+                }
+                else{
+                    if(listener != null)  listener.onCallback(null, Status.SUCCESS);
                 }
             }
         });

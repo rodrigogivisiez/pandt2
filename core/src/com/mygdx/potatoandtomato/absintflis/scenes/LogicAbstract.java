@@ -9,6 +9,7 @@ import com.mygdx.potatoandtomato.helpers.Flurry;
 import com.mygdx.potatoandtomato.services.Confirm;
 import com.mygdx.potatoandtomato.services.Texts;
 import com.mygdx.potatoandtomato.utils.Logs;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.utils.RunnableArgs;
 import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
@@ -134,6 +135,7 @@ public abstract class LogicAbstract {
     public void onHide(){
         _isVisible = false;
         _isFullyVisible = false;
+        publishBroadcast(BroadcastEvent.HIDE_NATIVE_KEYBOARD);
         if(getScene() != null) getScene().onHide();
     }
 

@@ -11,6 +11,7 @@ import com.potatoandtomato.games.models.ChessModel;
 import com.potatoandtomato.games.services.SoundsWrapper;
 import com.potatoandtomato.games.helpers.Terrains;
 import com.potatoandtomato.games.screens.TerrainLogic;
+import com.potatoandtomato.games.statics.Global;
 
 import java.util.ArrayList;
 

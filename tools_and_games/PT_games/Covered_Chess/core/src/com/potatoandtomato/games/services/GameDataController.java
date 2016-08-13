@@ -28,6 +28,7 @@ public class GameDataController {
             Random random = new Random();
             firstTurnIndex = random.nextBoolean() ? 0 : 1;
         }
+
         return firstTurnIndex;
     }
 
@@ -49,6 +50,12 @@ public class GameDataController {
         for(int i = 0; i < 1; i++) animals.add(ChessType.YELLOW_ELEPHANT);
 
         Collections.shuffle(animals);
+
+//        animals.set(0, ChessType.RED_ELEPHANT);
+//        animals.set(1, ChessType.YELLOW_WOLF);
+//        animals.set(4, ChessType.YELLOW_LION);
+//        animals.set(5, ChessType.RED_MOUSE);
+
 
         ArrayList<ChessModel> chessModels = new ArrayList<ChessModel>();
         for(ChessType chessType : animals){

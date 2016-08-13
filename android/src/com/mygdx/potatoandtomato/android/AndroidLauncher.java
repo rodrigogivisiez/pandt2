@@ -13,21 +13,26 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.chartboost.sdk.Chartboost;
 import com.firebase.client.Firebase;
 import com.flurry.android.FlurryAgent;
+import com.flurry.android.FlurryAgentListener;
 import com.mygdx.potatoandtomato.PTGame;
 import com.mygdx.potatoandtomato.absintflis.entrance.EntranceLoaderListener;
 import com.mygdx.potatoandtomato.android.controls.MyEditText;
 import com.mygdx.potatoandtomato.enums.FlurryEvent;
 import com.mygdx.potatoandtomato.helpers.Flurry;
 import com.mygdx.potatoandtomato.models.PushNotification;
+import com.mygdx.potatoandtomato.services.Texts;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.mygdx.potatoandtomato.statics.Terms;
 import com.potatoandtomato.common.*;
@@ -59,10 +64,15 @@ public class AndroidLauncher extends AndroidApplication {
 	private AudioRecorder _audioRecorder;
 	private ChartBoostHelper _chartBoostHelper;
 	private InAppPurchaseHelper _inAppPurchaseHelper;
+	private ShareHelper shareHelper;
+	private Texts texts;
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 
 		initFlurry();
 		setBuildNumber();
@@ -71,7 +81,9 @@ public class AndroidLauncher extends AndroidApplication {
 		_this = this;
 		reset();
 
+		texts = new Texts();
 		_broadcaster = new Broadcaster();
+		shareHelper = new ShareHelper(_broadcaster, texts, this);
 		_inAppPurchaseHelper = new InAppPurchaseHelper(this, _broadcaster);
 		_chartBoostHelper = new ChartBoostHelper(this, _broadcaster);
 		_vibrator = new VibrateManager(_this, _broadcaster);
@@ -81,7 +93,13 @@ public class AndroidLauncher extends AndroidApplication {
 		_audioRecorder = new AudioRecorder(this, _broadcaster);
 		Firebase.setAndroidContext(this);
 		_layoutChangedFix = new LayoutChangedFix(this.getWindow().getDecorView().getRootView(), _broadcaster);
-		_ptGame = new PTGame(_broadcaster);
+
+		Bundle b = getIntent().getExtras();
+		String autoJoinRoomId = null;
+		if(b != null){
+			autoJoinRoomId = b.getString("roomId", "");
+		}
+		_ptGame = new PTGame(_broadcaster, autoJoinRoomId);
 
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 		_view = initializeForView(_ptGame, config);
@@ -98,12 +116,20 @@ public class AndroidLauncher extends AndroidApplication {
 
 	private void initFlurry(){
 		if(!Strings.isEmpty(Terms.FLURRY_KEY())){
-			FlurryAgent.init(this, Terms.FLURRY_KEY());
-			FlurryAgent.onStartSession(this, Terms.FLURRY_KEY());
-			Flurry.setActive(true);
+			new FlurryAgent.Builder()
+					.withListener(new FlurryAgentListener() {
+						@Override
+						public void onSessionStarted() {
+							Flurry.setActive(true);
+						}
+					})
+					.withContinueSessionMillis(60 * 1000)
+					.withCaptureUncaughtExceptions(false)
+					.withPulseEnabled(true)
+					.withLogEnabled(true)
+					.withLogLevel(Log.INFO)
+					.build(this, Terms.FLURRY_KEY());
 		}
-
-		Flurry.log(FlurryEvent.Initiation);
 	}
 
 	private void setBuildNumber(){
@@ -227,6 +253,11 @@ public class AndroidLauncher extends AndroidApplication {
 		super.onPause();
 		_isVisible = false;
 		if(_chartBoostHelper != null) _chartBoostHelper.onPause();
+
+		if(RoomAliveHelper.isActivated()){
+			Toast.makeText(this, texts.toastPTStillRunning(), Toast.LENGTH_LONG).show();
+		}
+
 	}
 
 	@Override
@@ -250,6 +281,7 @@ public class AndroidLauncher extends AndroidApplication {
 			FlurryAgent.onEndSession(this);
 		}
 
+		System.exit(0);
 		super.onDestroy();
 	}
 

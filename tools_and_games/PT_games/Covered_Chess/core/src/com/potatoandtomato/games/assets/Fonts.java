@@ -29,8 +29,7 @@ public class Fonts extends FontAssets {
 
 
     public enum FontId{
-        HANDWRITING_25_REGULAR_S_000000_1_1,
-
+        MYRIAD_15_REGULAR,
         MYRIAD_S_REGULAR,
         MYRIAD_M_REGULAR,
         MYRIAD_M_REGULAR_B_000000_588e54_1,             //dark green

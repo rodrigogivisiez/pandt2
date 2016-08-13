@@ -374,7 +374,8 @@ public class Room {
         for(RoomUser roomUser : roomUsers1){
             boolean found = false;
             for(RoomUser roomUser2 : roomUsers2){
-                if(roomUser.getProfile().equals(roomUser2.getProfile())){
+                if(roomUser.getProfile() != null && roomUser2.getProfile() != null &&
+                        roomUser.getProfile().equals(roomUser2.getProfile())){
                     found = true;
                     break;
                 }

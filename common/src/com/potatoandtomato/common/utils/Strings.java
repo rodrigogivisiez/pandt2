@@ -6,7 +6,10 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -180,5 +183,44 @@ public class Strings {
         return "nohash";
     }
 
+
+    public static ArrayList<Pair<String, Boolean>> splitUrl(String text){
+        String URL_REGEX = "^((https?|ftp)://|(www|ftp)\\.)?[a-z0-9-]+(\\.[a-z0-9-]+)+([/?].*)?$";
+        Pattern p = Pattern.compile(URL_REGEX);
+
+        ArrayList<Pair<String, Boolean>> result = new ArrayList();
+        ArrayList<String> splitted = Strings.split(text, " ");
+        String currentText = "";
+
+        for(String word : splitted){
+            if(isMatchPattern(word, p)){
+                if(!currentText.equals("")){
+                    result.add(new Pair<String, Boolean>(currentText, false));
+                }
+                result.add(new Pair<String, Boolean>(word, true));
+                currentText = "";
+            }
+            else{
+                currentText += word + " ";
+            }
+        }
+
+        if(!currentText.equals("")){
+            result.add(new Pair<String, Boolean>(currentText, false));
+        }
+
+
+        return result;
+    }
+
+    public static boolean isMatchPattern(String text, Pattern p){
+        Matcher m = p.matcher(text);//replace with string to compare
+        if(m.find()) {
+           return true;
+        }
+        else{
+            return false;
+        }
+    }
 
 }

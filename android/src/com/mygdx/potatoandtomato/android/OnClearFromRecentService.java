@@ -9,8 +9,6 @@ import android.os.IBinder;
  */
 public class OnClearFromRecentService extends Service {
 
-    private AndroidLauncher androidLauncher;
-
     @Override
     public IBinder onBind(Intent intent) {
         return null;

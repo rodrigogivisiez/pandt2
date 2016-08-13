@@ -119,6 +119,7 @@ public class BootScene extends SceneAbstract {
         _infoTable.getColor().a = 0;
 
 
+
         ///////////////////////////////////////////
         //Populate root
         ///////////////////////////////////////////
@@ -341,6 +342,9 @@ public class BootScene extends SceneAbstract {
             }
         });
     }
+
+
+
 
     public Label getVersionLabel() {
         return versionLabel;

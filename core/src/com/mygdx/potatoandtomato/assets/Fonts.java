@@ -70,18 +70,26 @@ public class Fonts extends FontAssets {
 
         PIZZA_S_REGULAR_B_ffffff_000000_1,
         PIZZA_M_REGULAR_B_ffffff_000000_1,
+        PIZZA_M_REGULAR_B_72c95e_ffffff_2,
         PIZZA_L_REGULAR_S_a05e00_2_2,              //dark orange
+        PIZZA_L_REGULAR_B_000000_ffffff_2,
         PIZZA_XL_REGULAR_S_a05e00_1_1,              //dark orange
         PIZZA_XXL_REGULAR_S_a05e00_1_1,             //dark orange
+        PIZZA_XXL_REGULAR_B_989898_ffffff_2,
         PIZZA_XXL_REGULAR_B_ffffff_0f5673_1_S_0e516c_1_3, //dark blue
         PIZZA_XXL_REGULAR_B_000000_fed271_3,               //light orange
         PIZZA_XXL_REGULAR_B_000000_ffffff_3,               //light orange
         PIZZA_XXL_REGULAR_B_ffffff_000000_2,
         PIZZA_XXXL_REGULAR,
+        PIZZA_MAX_REGULAR_B_72c95e_ffffff_2,
 
         CARTER_S_REGULAR_B_ffffff_000000_2,
         CARTER_M_REGULAR_B_ffffff_000000_2,
         CARTER_L_REGULAR_B_ffffff_000000_2,
+
+
+        MYRIAD_10_BOLD_S_a74828_1_1,
+        MYRIAD_S_BOLD_S_a74828_1_1,
 
         IMPACT_XS_REGULAR_S_a74828_1_1,
         IMPACT_S_REGULAR_S_a74828_1_1,

@@ -144,7 +144,12 @@ public class Tutorials implements ITutorials {
                     }
                 }
 
-                tutorialRoot.setY(Positions.getHeight() / 2 - tutorialRoot.getHeight() / 2);
+                if(tutorialRoot.hasActions()){
+                    tutorialRoot.clearActions();
+                    tutorialRoot.setY(Positions.getHeight() / 2 - tutorialRoot.getHeight() / 2);
+                    tutorialRoot.setX(-10);
+                    blockRootClick = false;
+                }
 
             }
         });
@@ -181,11 +186,16 @@ public class Tutorials implements ITutorials {
 
                 tutorialRoot.setY(Positions.getHeight() / 2 - tutorialRoot.getHeight() / 2);
                 tutorialRoot.addAction(sequence(
-                        moveTo(-tutorialRoot.getWidth(), tutorialRoot.getY()), moveTo(-10, tutorialRoot.getY(), 0.4f)));
+                        moveTo(-tutorialRoot.getWidth(), tutorialRoot.getY()), moveTo(-10, tutorialRoot.getY(), 0.4f), new RunnableAction(){
+                    @Override
+                    public void run() {
+                        blockRootClick = false;
+                    }
+                }));
 
                 soundsWrapper.playSoundEffect(Sounds.Name.TUTORIAL);
 
-                blockRootClick = false;
+
             }
         });
     }

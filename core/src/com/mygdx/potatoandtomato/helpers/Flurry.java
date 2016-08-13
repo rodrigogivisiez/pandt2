@@ -4,6 +4,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.flurry.android.FlurryAgent;
 import com.mygdx.potatoandtomato.enums.FlurryEvent;
+import com.mygdx.potatoandtomato.utils.Logs;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,6 +64,7 @@ public class Flurry {
 
 
     public static void setActive(boolean active) {
+        Logs.show("Flurry activated!");
         Flurry.active = active;
     }
 }

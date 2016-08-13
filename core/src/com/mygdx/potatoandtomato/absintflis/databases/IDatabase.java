@@ -113,4 +113,13 @@ public interface IDatabase {
      void deleteLeaderBoard(Game game, DatabaseListener listener);
 
      void checkScoreUpdated(Room room, DatabaseListener<Boolean> listener);
+
+     void getAllInboxMessage(String userId, DatabaseListener<ArrayList<InboxMessage>> listener);
+
+     void inboxMessageRead(String userId, String inboxMessageId, DatabaseListener listener);
+
+     void checkFeedbackExist(String userId, DatabaseListener<Boolean> listener);
+
+     void sendFeedback(String userId, RateAppsModel rateAppsModel, DatabaseListener listener);
+
 }

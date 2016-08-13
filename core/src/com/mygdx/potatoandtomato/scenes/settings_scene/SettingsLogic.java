@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
+import com.mygdx.potatoandtomato.absintflis.controls.ToggleStateListener;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
@@ -60,11 +61,15 @@ public class SettingsLogic extends LogicAbstract {
         }
     }
 
-    public void toggleSounds(){
-        Global.ENABLE_SOUND = !Global.ENABLE_SOUND;
+    public void toggleSounds(boolean isOn){
+        Global.ENABLE_SOUND = isOn;
         _services.getPreferences().put(Terms.SOUNDS_DISABLED, Global.ENABLE_SOUND ? "false" : "true");
-        _scene.changeSoundEnabledImage();
         _services.getBroadcaster().broadcast(BroadcastEvent.SOUNDS_CHANGED, Global.ENABLE_SOUND);
+    }
+
+    public void toggleAutoPlayAudioMsg(boolean isOn){
+        Global.AUTO_PLAY_AUDIO_MSG = isOn;
+        _services.getPreferences().put(Terms.AUTO_PLAY_AUDIO_DISABLED, Global.AUTO_PLAY_AUDIO_MSG ? "false" : "true");
     }
 
     public void updateProfile(){
@@ -137,11 +142,17 @@ public class SettingsLogic extends LogicAbstract {
             }
         });
 
-        _scene.getSoundsEnabledImage().addListener(new ClickListener(){
+        _scene.getSoundToggleButton().addToggleStateListener(new ToggleStateListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                toggleSounds();
+            public void onToggle(boolean isOn) {
+                toggleSounds(isOn);
+            }
+        });
+
+        _scene.getAutoPlayAudioToggleButton().addToggleStateListener(new ToggleStateListener() {
+            @Override
+            public void onToggle(boolean isOn) {
+                toggleAutoPlayAudioMsg(isOn);
             }
         });
 

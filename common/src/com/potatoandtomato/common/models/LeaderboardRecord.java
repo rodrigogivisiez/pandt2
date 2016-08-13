@@ -17,6 +17,7 @@ public class LeaderboardRecord {
     private ArrayList<String> userIds;
     private double score;
     private Streak streak;
+    private String leaderId;
 
     @JsonIgnore
     private ConcurrentHashMap<String, String> userIdToNameMap;
@@ -77,6 +78,14 @@ public class LeaderboardRecord {
         this.score = score;
     }
 
+    public String getLeaderId() {
+        return leaderId;
+    }
+
+    public void setLeaderId(String leaderId) {
+        this.leaderId = leaderId;
+    }
+
     public boolean containUser(String userId){
         return this.userIds.contains(userId);
     }
@@ -93,6 +102,21 @@ public class LeaderboardRecord {
     @JsonIgnore
     public String getAllUsernameCommaSeparated(){
         return Strings.joinArr(this.getUserNames(), ", ");
+    }
+
+    @JsonIgnore
+    public String getLeaderName(){
+        String leaderName = "";
+        for(String userName : this.getUserNames()){
+            leaderName = userName;
+            break;
+        }
+
+        if(!Strings.isEmpty(leaderId) && this.getUserIdToNameMap().containsKey(leaderId)){
+            leaderName = this.getUserIdToNameMap().get(leaderId);
+        }
+
+        return leaderName;
     }
 
     public void addScore(double value){

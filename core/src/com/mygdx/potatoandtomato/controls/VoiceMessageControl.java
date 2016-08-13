@@ -18,6 +18,7 @@ import com.mygdx.potatoandtomato.models.ChatMessage;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.services.Recorder;
 import com.mygdx.potatoandtomato.services.SoundsPlayer;
+import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.SafeThread;
@@ -114,7 +115,7 @@ public class VoiceMessageControl extends Table {
     }
 
     public void autoPlayIfNeeded(){
-        if(!chatMessage.getSenderId().equals(myUserId)){
+        if(!chatMessage.getSenderId().equals(myUserId) && Global.AUTO_PLAY_AUDIO_MSG){
             playVoiceMessage(true);
         }
     }

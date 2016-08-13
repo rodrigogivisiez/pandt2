@@ -47,7 +47,7 @@ public class KnightLogic {
         knightActor.changeState(KnightState.Walk, false);
         setFreezed(false);
         knightActor.setKnightPositionX(totalDistance, false, false);
-        stopMusic();
+        stopAllMusic();
     }
 
     public void updatePosition(float remainingMiliSecs){
@@ -73,7 +73,7 @@ public class KnightLogic {
     public void setPause(boolean pause){
         if(pause){
             knightActor.stopAnimation();
-            stopMusic();
+            stopAllMusic();
         }
         else{
             knightActor.continueAnimation();
@@ -90,24 +90,20 @@ public class KnightLogic {
         return remainingDistance;
     }
 
-    public void stopMusic(){
-        if(playingMusic == 2){
-            services.getSoundsWrapper().stopMusic(Sounds.Name.ATTACKING_CASTLE_MUSIC);
-        }
-        else if(playingMusic == 1){
-            services.getSoundsWrapper().stopMusic(Sounds.Name.GAME_PLAYING_MUSIC);
-        }
+    public void stopAllMusic(){
+        services.getSoundsWrapper().stopMusic(Sounds.Name.ATTACKING_CASTLE_MUSIC);
+        services.getSoundsWrapper().stopMusic(Sounds.Name.GAME_PLAYING_MUSIC);
         playingMusic = -1;
     }
 
     public void startMusic(boolean isDanger){
         if(isDanger && playingMusic != 2){
-            stopMusic();
+            stopAllMusic();
             services.getSoundsWrapper().playMusic(Sounds.Name.ATTACKING_CASTLE_MUSIC);
             playingMusic = 2;
         }
         else if(!isDanger && playingMusic != 1){
-            stopMusic();
+            stopAllMusic();
             services.getSoundsWrapper().playMusic(Sounds.Name.GAME_PLAYING_MUSIC);
             playingMusic = 1;
         }

@@ -34,14 +34,15 @@ import java.io.IOException;
  */
 public class BootLogic extends LogicAbstract {
 
-    BootScene _bootScene;
-    boolean _fbStepPast;
-    boolean _logined;
+    private BootScene _bootScene;
+    private boolean _fbStepPast;
+    private boolean _logined;
 
     public BootLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
 
         _bootScene = new BootScene(_services, _screen);
+
     }
 
     @Override
@@ -66,8 +67,21 @@ public class BootLogic extends LogicAbstract {
         _services.getDatabase().online();
         _services.getDatabase().unauth();
         checkCrashedBefore();
+    }
 
+    @Override
+    public void onShown() {
+        super.onShown();
 
+        if(_services.getAutoJoiner().isAutoJoining()){
+            _bootScene.showSocialLogin();
+            if(_services.getSocials().isFacebookLogon()){    //user already logged in facebook before, log in again now
+                loginFacebook();
+            }
+            else{
+                checkContainsSecondaryUserId();
+            }
+        }
     }
 
     public void showLoginBox(){
@@ -88,7 +102,7 @@ public class BootLogic extends LogicAbstract {
                     checkContainsSecondaryUserId();
                 }
                 else{
-                    _bootScene.showSocialLoginFailed();
+                    loginFailed(LoginFailedReason.SocialLoginFailed);
                 }
             }
         });
@@ -132,10 +146,10 @@ public class BootLogic extends LogicAbstract {
                     createNewUser();
                 }
                 else if(st == Status.FAILED && result.equals("FAIL_CONNECT")){
-                    _bootScene.showPTDown();
+                    loginFailed(LoginFailedReason.PTRestfulFailed);
                 }
                 else if(st == Status.FAILED){
-                    retrieveUserFailed();
+                    loginFailed(LoginFailedReason.GeneralFailure);
                 }
                 else{
                     try {
@@ -165,7 +179,7 @@ public class BootLogic extends LogicAbstract {
                 @Override
                 public void onCallback(UserIdSecretModel obj, Status st) {
                     if(st == Status.FAILED){
-                        retrieveUserFailed();
+                        loginFailed(LoginFailedReason.GeneralFailure);
                     }
                     else{
                         _services.getPreferences().put(Terms.USERID, obj.getUserId());
@@ -180,7 +194,7 @@ public class BootLogic extends LogicAbstract {
                 @Override
                 public void onCallback(UserIdSecretModel obj, Status st) {
                     if (st == Status.FAILED) {
-                        retrieveUserFailed();
+                        loginFailed(LoginFailedReason.GeneralFailure);
                     } else {
                         _services.getPreferences().put(Terms.USERID, obj.getUserId());
                         _services.getPreferences().put(Terms.USER_SECRET, obj.getSecret());
@@ -196,7 +210,7 @@ public class BootLogic extends LogicAbstract {
             @Override
             public void onCallback(Profile obj, Status st) {
                 if (st == Status.FAILED || obj == null){
-                    retrieveUserFailed();
+                    loginFailed(LoginFailedReason.GeneralFailure);
                 }
                 else {
                     obj.setToken(token);
@@ -207,10 +221,23 @@ public class BootLogic extends LogicAbstract {
         });
     }
 
-    public void retrieveUserFailed(){
-        Flurry.log(FlurryEvent.LoginFailed);
-        _bootScene.showPTLogInFailed();
+    public void loginFailed(LoginFailedReason loginFailedReason){
+        _services.getAutoJoiner().stopAutoJoinRoom();
+
+        switch (loginFailedReason){
+            case SocialLoginFailed:
+                _bootScene.showSocialLoginFailed();
+                break;
+            case PTRestfulFailed:
+                _bootScene.showPTDown();
+                break;
+            case GeneralFailure:
+                Flurry.log(FlurryEvent.LoginFailed);
+                _bootScene.showPTLogInFailed();
+                break;
+        }
     }
+
 
     public void loginGCM(){
         subscribeBroadcastOnceWithTimeout(BroadcastEvent.LOGIN_GCM_CALLBACK, 5000, new BroadcastListener<String>() {
@@ -288,13 +315,13 @@ public class BootLogic extends LogicAbstract {
             }
         });
 
-        _bootScene.getVersionLabel().addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                Logs.getLoggings().setEnabled(true);
-            }
-        });
+//        _bootScene.getVersionLabel().addListener(new ClickListener(){
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                super.clicked(event, x, y);
+//                Logs.getLoggings().setEnabled(true);
+//            }
+//        });
 
         _services.getGamingKit().addListener(getClassTag(), new ConnectionChangedListener() {
             @Override
@@ -305,7 +332,7 @@ public class BootLogic extends LogicAbstract {
                             loginProcessCompleteSucceed();
                         }
                         else{
-                            retrieveUserFailed();
+                            loginFailed(LoginFailedReason.GeneralFailure);
                         }
                     }
                 }
@@ -316,6 +343,10 @@ public class BootLogic extends LogicAbstract {
     @Override
     public SceneAbstract getScene() {
         return _bootScene;
+    }
+
+    private enum LoginFailedReason{
+        SocialLoginFailed, PTRestfulFailed, GeneralFailure
     }
 
 

@@ -22,6 +22,7 @@ import com.potatoandtomato.games.enums.BonusType;
 import com.potatoandtomato.games.enums.GameState;
 import com.potatoandtomato.games.enums.StageType;
 import com.potatoandtomato.games.helpers.Logs;
+import com.potatoandtomato.games.helpers.TutorialHelper;
 import com.potatoandtomato.games.models.*;
 import com.potatoandtomato.games.screens.hints.HintsLogic;
 import com.potatoandtomato.games.screens.review.ReviewLogic;
@@ -52,6 +53,7 @@ public class MainLogic extends GameLogic {
     private ImageStorage _imageStorage;
     private StageImagesLogic _stageImagesLogic;
     private GameDataContract _gameDataContract;
+    private TutorialHelper tutorialHelper;
     private SafeThread _safeThread;
     private boolean disposed, waitingContinue;
 
@@ -73,6 +75,7 @@ public class MainLogic extends GameLogic {
         this._stageImagesLogic = _stageImagesLogic;
         this._stageStateLogic = _stageStateLogic;
         this._gameDataContract = gameDataContract;
+        this.tutorialHelper = new TutorialHelper(gameCoordinator, _services.getTexts());
 
         _screen = new MainScreen(_services, gameCoordinator);
         _screen.populate(_timeLogic.getTimeActor(), _hintsLogic.getHintsActor(),
@@ -92,6 +95,7 @@ public class MainLogic extends GameLogic {
 
     public void init(){
         _screen.readyToStart();
+        tutorialHelper.start();
         _imageStorage.startMonitor();
         _gameModel.setGameState(GameState.BeforeNewGame);
         sendGoToNextStageIfIsDecisionMaker(-1);
@@ -139,9 +143,6 @@ public class MainLogic extends GameLogic {
 
     public void goToNewStage(final String id, final int stageNumber, final StageType stageType,
                              final BonusType bonusType, final String extra, int currentScores){
-        if(_gameModel.getGameState() == GameState.Lose){
-            _gameModel.setContinueChanceUsed(true);
-        }
 
         waitingContinue = false;
 
@@ -186,10 +187,6 @@ public class MainLogic extends GameLogic {
     }
 
     public void onStartGameReceived(final String id, final int stageNumber, final StageType stageType, final BonusType bonusType, final String extra){
-        if(_gameModel.getGameState() == GameState.Lose){
-            _gameModel.setContinueChanceUsed(true);
-        }
-
         if(_safeThread != null) _safeThread.kill();
         if(disposed) return;
 
@@ -267,6 +264,9 @@ public class MainLogic extends GameLogic {
             if(correctRects.size() == 0){
                 _timeLogic.reduceTime();
                 _screen.cross(x, y, getCoordinator().getMyUserId());
+            }
+            else{
+                return; //return and dont send, since this difference is already correctly clicked
             }
         }
         else{
@@ -356,6 +356,7 @@ public class MainLogic extends GameLogic {
         }
 
         if(!_gameModel.isContinueChanceUsed()){       //have continue chance
+            _gameModel.setContinueChanceUsed(true);
             coinRequestPhase();
         }
         else{
@@ -373,7 +374,6 @@ public class MainLogic extends GameLogic {
                     @Override
                     public void onDeductCoinsDone() {
                         sendGoToNextStageIfIsDecisionMaker(-1);
-                        _gameModel.setContinueChanceUsed(true);
                     }
 
                     @Override

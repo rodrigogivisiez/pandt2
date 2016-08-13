@@ -45,4 +45,5 @@ public class BroadcastEvent {
     public static final int IAB_PRODUCTS_RESPONSE = 40; //return iab products
     public static final int IAB_PRODUCT_PURCHASE = 41; //purchase and consume product
     public static final int IAB_PRODUCT_PURCHASE_RESPONSE = 42; //product purchase response
+    public static final int SHARE_P_AND_T = 43; //request to share pandt
 }

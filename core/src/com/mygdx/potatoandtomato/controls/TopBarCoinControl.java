@@ -18,7 +18,6 @@ import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
 import com.mygdx.potatoandtomato.enums.ShopProducts;
 import com.mygdx.potatoandtomato.services.SoundsPlayer;
-import com.mygdx.potatoandtomato.utils.Positions;
 import com.mygdx.potatoandtomato.utils.Sizes;
 import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.common.utils.Threadings;
@@ -87,7 +86,7 @@ public class TopBarCoinControl extends Table {
                         case FIFTEEN_COINS:
                             region = assets.getTextures().get(Textures.Name.COIN_FIFTEEN);
                             break;
-                        case HUNDRED_COINS:
+                        case FIFTY_COINS:
                             region = assets.getTextures().get(Textures.Name.COIN_BAG);
                             break;
                         case PURSE:

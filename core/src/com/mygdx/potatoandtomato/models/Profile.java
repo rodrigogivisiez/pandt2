@@ -17,6 +17,7 @@ public class Profile {
     UserPlayingState userPlayingState;
     String gameNameLower;
     String token;
+    private boolean ratedApps;
 
     public Profile() {
         reset();
@@ -105,6 +106,16 @@ public class Profile {
     @JsonIgnore
     public void setToken(String token) {
         this.token = token;
+    }
+
+    @JsonIgnore
+    public boolean isRatedApps() {
+        return ratedApps;
+    }
+
+    @JsonIgnore
+    public void setRatedApps(boolean ratedApps) {
+        this.ratedApps = ratedApps;
     }
 
     @Override

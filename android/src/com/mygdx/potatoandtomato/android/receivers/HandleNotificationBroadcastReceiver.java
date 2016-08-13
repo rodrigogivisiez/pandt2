@@ -11,7 +11,7 @@ import com.mygdx.potatoandtomato.android.AndroidLauncher;
  */
 public class HandleNotificationBroadcastReceiver extends BroadcastReceiver {
     @Override
-    public void onReceive(final Context context, final Intent intent) {
+    public void onReceive(final Context context, final Intent inputIntent) {
 
         Thread t = new Thread(new Runnable() {
             @Override
@@ -28,6 +28,11 @@ public class HandleNotificationBroadcastReceiver extends BroadcastReceiver {
                     Thread.sleep(i != 0 ? 700 : 50);
 
                     Intent intent = new Intent(context, AndroidLauncher.class);
+
+                    if(inputIntent != null && inputIntent.getExtras() != null){
+                        intent.putExtras(inputIntent.getExtras());
+                    }
+
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // You need this if starting
                     //  the activity from a service
                     intent.setAction(Intent.ACTION_MAIN);

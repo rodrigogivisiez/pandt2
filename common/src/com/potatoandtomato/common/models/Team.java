@@ -14,6 +14,7 @@ public class Team {
     ArrayList<Player> players;
     LeaderboardRecord leaderboardRecord;
     int rank = 999;                               //ranking in leaderboard
+    String leaderId;                  //user id to shown first in leaderboard
 
     public Team() {
         players = new ArrayList();
@@ -113,6 +114,17 @@ public class Team {
     @JsonIgnore
     public void setRank(int rank) {
         this.rank = rank;
+    }
+
+    @JsonIgnore
+    public String getLeaderId() {
+        if(leaderId == null) leaderId = "";
+        return leaderId;
+    }
+
+    @JsonIgnore
+    public void setLeaderId(String leaderId) {
+        this.leaderId = leaderId;
     }
 
     @Override

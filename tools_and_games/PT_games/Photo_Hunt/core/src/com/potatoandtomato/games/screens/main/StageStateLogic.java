@@ -151,7 +151,7 @@ public class StageStateLogic implements Disposable {
             case BeforeNewGame:
                 return new BeforeStartPapyrusScene(services, stageStateActor.getPapyrusContentTable(), false);
             case Bonus:
-                return new BeforeBonusPapyrusScene(services, stageStateActor.getPapyrusContentTable());
+                return new BeforeBonusPapyrusScene(services, gameCoordinator, stageStateActor.getPapyrusContentTable());
             case GameOver:
                 return new GameOverPapyrusScene(services, stageStateActor.getPapyrusContentTable(), gameModel, gameCoordinator);
         }

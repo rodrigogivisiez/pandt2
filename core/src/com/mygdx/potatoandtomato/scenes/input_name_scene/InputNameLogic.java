@@ -31,14 +31,9 @@ public class InputNameLogic extends LogicAbstract {
     }
 
     @Override
-    public void onInit() {
-        super.onInit();
-    }
-
-    @Override
-    public void onHide() {
-        publishBroadcast(BroadcastEvent.HIDE_NATIVE_KEYBOARD);
-        super.onHide();
+    public void onShow() {
+        super.onShow();
+        _services.getAutoJoiner().stopAutoJoinRoom();
     }
 
     public void saveNameIfValid(String name){

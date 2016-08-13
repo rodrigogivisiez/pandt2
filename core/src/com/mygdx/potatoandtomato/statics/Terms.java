@@ -14,10 +14,12 @@ public class Terms {
     public static String FACEBOOK_USERID = "facebookUserId";
     public static String PREF_NAME = "potatoandtomato";
     public static String PREF_BASIC_TUTORIAL = "basicTutorials";
+    public static String PREF_INVITE_TUTORIAL = "inviteTutorials";
     public static String FACEBOOK_USERNAME = "facebookUsername";
     public static String FACEBOOK_TOKEN = "facebookToken";
     public static String GAME_ENTRANCE = "com.potatoandtomato.games.Entrance";
     public static String SOUNDS_DISABLED = "soundsDisabled";
+    public static String AUTO_PLAY_AUDIO_DISABLED = "autoPlayAudioMsgDisabled";
     public static String BROADCAST_RECEIVER_FOR_DISPOSE = "broadcastReceiverForDispose";
     public static String PREF_CHAT_TEMPLATE = "chatTemplates";
     public static String LOCAL_HOST = "localhost";
@@ -25,7 +27,7 @@ public class Terms {
     public static String PUSH_CODE = "pushCode";
     public static String GCM_PROJECT_NUMBER = "171699917132";
     public static String GCM_KEY = "AIzaSyAsjcqh5WJFtwEOYPqrddtMjZZgEIpEZAQ";
-
+    public static String TOTAL_GAME_COUNT = "totalGameCount";
 
     public static String FIREBASE_URL(){
         return !Global.DEBUG ? "https://glaring-inferno-8572.firebaseIO.com" : "https://ptapptest.firebaseio.com/";

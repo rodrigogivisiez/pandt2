@@ -9,6 +9,7 @@ import com.potatoandtomato.common.utils.Strings;
 public class Global {
 
     public static boolean ENABLE_SOUND = true;
+    public static boolean AUTO_PLAY_AUDIO_MSG = true;
     public static boolean IS_POTRAIT = true;
     public static int CLIENT_VERSION = 0;
     public static boolean DEBUG = false;
@@ -23,6 +24,10 @@ public class Global {
         Strings.Salt = SALT;
         if(preferences.get(Terms.SOUNDS_DISABLED) != null && preferences.get(Terms.SOUNDS_DISABLED).equals("true")){
             ENABLE_SOUND = false;
+        }
+
+        if(preferences.get(Terms.AUTO_PLAY_AUDIO_DISABLED) != null && preferences.get(Terms.AUTO_PLAY_AUDIO_DISABLED).equals("true")){
+            AUTO_PLAY_AUDIO_MSG = false;
         }
     }
 

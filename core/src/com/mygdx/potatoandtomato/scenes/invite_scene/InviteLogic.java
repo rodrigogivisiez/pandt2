@@ -11,6 +11,10 @@ import com.mygdx.potatoandtomato.absintflis.push_notifications.PushCode;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.statics.Global;
+import com.mygdx.potatoandtomato.statics.Terms;
+import com.potatoandtomato.common.absints.ITutorials;
+import com.potatoandtomato.common.absints.TutorialPartListener;
+import com.potatoandtomato.common.enums.GestureType;
 import com.potatoandtomato.common.models.LeaderboardRecord;
 import com.potatoandtomato.common.utils.*;
 import com.mygdx.potatoandtomato.models.*;
@@ -24,11 +28,12 @@ import java.util.Map;
 /**
  * Created by SiongLeng on 23/12/2015.
  */
-public class InviteLogic extends LogicAbstract {
+public class InviteLogic extends LogicAbstract implements TutorialPartListener {
 
     InviteScene _scene;
     Room _room;
     ArrayList<Profile> _invitedUsers;
+    private int tutorialStep;
 
     public InviteLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
@@ -163,6 +168,12 @@ public class InviteLogic extends LogicAbstract {
                 }
             });
         }
+    }
+
+    @Override
+    public void onShow() {
+        super.onShow();
+        _services.getTutorials().startTutorialIfNotCompleteBefore(Terms.PREF_INVITE_TUTORIAL, true, this);
     }
 
     private void putProfileToTable(final Profile profile, final InviteScene.InviteType inviteType, final Object... objs){
@@ -364,4 +375,41 @@ public class InviteLogic extends LogicAbstract {
         return _scene;
     }
 
+    @Override
+    public void nextTutorial() {
+        tutorialStep++;
+
+        if(tutorialStep == 1){
+            _services.getTutorials().showMessage(null, _texts.tutorialInviteScreenMsg());
+        }
+        else if(tutorialStep == 2){
+            _services.getTutorials().expectGestureOnActor(GestureType.Tap,
+                    _scene.getRecentTabTable(), _texts.tutorialTapInviteRecentlyPlayed(), 0 , 0);
+        }
+        else if(tutorialStep == 3){
+            _services.getTutorials().showMessage(null, _texts.tutorialInviteRecentlyPlayedMsg());
+        }
+        else if(tutorialStep == 4){
+            _services.getTutorials().expectGestureOnActor(GestureType.Tap,
+                    _scene.getFacebookTabTable(), _texts.tutorialTapInviteFacebook(), 0 , 0);
+        }
+        else if(tutorialStep == 5){
+            _services.getTutorials().showMessage(null, _texts.tutorialInviteFacebookMsg());
+        }
+        else if(tutorialStep == 6){
+            _services.getTutorials().expectGestureOnActor(GestureType.Tap,
+                    _scene.getLeaderboardTabTable(), _texts.tutorialTapInviteLeaderboard(), 0 , 0);
+        }
+        else if(tutorialStep == 7){
+            _services.getTutorials().showMessage(null, _texts.tutorialInviteLeaderboard());
+        }
+        else if(tutorialStep == 8){
+            _services.getTutorials().showMessage(null, _texts.tutorialInviteConclude());
+            _services.getTutorials().expectGestureOnActor(GestureType.PointUp,
+                    _scene.getInviteButton(), "", 0 , 0);
+        }
+        else if(tutorialStep == 9){
+            _services.getTutorials().completeTutorial();
+        }
+    }
 }

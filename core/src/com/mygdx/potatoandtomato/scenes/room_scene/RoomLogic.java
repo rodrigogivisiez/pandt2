@@ -594,9 +594,13 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
             return;
         }
 
+        //host left doens't necessary to dispose at here and should not to
+        if(roomError != RoomError.HostLeft){
+            disposeEarly();
+        }
+
         if(roomErrorOccured == null){
             roomErrorOccured = roomError;
-            disposeEarly();
         }
         else{
             if(roomError != roomErrorOccured) return;
@@ -1294,7 +1298,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
         }
         else if(tutorialStep == 2){
             _services.getTutorials().expectGestureOnActor(GestureType.Tap,
-                                    scene.getStartButton(), _texts.tutorialAboutStartGame(), 0, 0);
+                    scene.getStartButton(), _texts.tutorialAboutStartGame(), 0, 0);
         }
         else if(tutorialStep == 3){
             Threadings.delay(1000, new Runnable() {
@@ -1323,7 +1327,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                     _services.getTutorials().showMessage(null,
                             !_services.getCoins().checkUserHasCoin(_services.getProfile().getUserId()) ?
                                     _texts.tutorialAboutNoCoin() :
-                            _texts.tutorialAboutHasCoin());
+                                    _texts.tutorialAboutHasCoin());
                 }
             });
         }
@@ -1351,9 +1355,21 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
             });
         }
         else if(tutorialStep == 10){
+            _services.getCoins().hideCoinMachine();
+            Threadings.delay(1000, new Runnable() {
+                @Override
+                public void run() {
+                    _services.getTutorials().showMessage(null, _texts.tutorialAboutInviteMsg());
+                    _services.getTutorials().expectGestureOnActor(GestureType.PointUp,
+                            scene.getInviteButton(),"", 0, 0);
+                }
+            });
+        }
+        else if(tutorialStep == 11){
             forceQuit = true;
             _services.getCoins().setDisableSpeech(false);
             _screen.back();
         }
+       
     }
 }

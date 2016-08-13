@@ -3,6 +3,9 @@ package com.mygdx.potatoandtomato;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
@@ -10,6 +13,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -22,6 +27,7 @@ import com.mygdx.potatoandtomato.helpers.Flurry;
 import com.mygdx.potatoandtomato.services.Texts;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.mygdx.potatoandtomato.utils.Positions;
+import com.potatoandtomato.common.assets.MyFreetypeFontLoader;
 import com.potatoandtomato.common.utils.Threadings;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
@@ -43,20 +49,37 @@ public class SplashScreen implements Screen {
     private Table rootTable, screenTable, mascotsTable;
     private Table workTable, bottomTextTable;
     private Stage stage;
+    private AssetManager assetManager;
     private boolean disposed;
 
     public SplashScreen() {
+
+
+    }
+
+    @Override
+    public void show() {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                Flurry.log(FlurryEvent.LoadingAssets);
+                assetManager = new AssetManager();
 
-                FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Pizza-Regular.otf"));
-                FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-                parameter.size = 25;
-                font = generator.generateFont(parameter);
-                generator.dispose();
+                FileHandleResolver resolver = new InternalFileHandleResolver();
+                assetManager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
+                assetManager.setLoader(BitmapFont.class, ".otf", new MyFreetypeFontLoader(resolver));
 
+                MyFreetypeFontLoader.FreeTypeFontLoaderParameter size1Params = new MyFreetypeFontLoader.FreeTypeFontLoaderParameter();
+                size1Params.fontFileName = "splash/SPLASH_FONT.otf";
+                size1Params.fontParameters.size = 25;
+                size1Params.fontParameters.color = Color.WHITE;
+                size1Params.fontParameters.genMipMaps = true;
+                size1Params.fontParameters.minFilter = Texture.TextureFilter.MipMapLinearNearest;
+                size1Params.fontParameters.magFilter = Texture.TextureFilter.Linear;
+                assetManager.load("SPLASH_FONT.otf", BitmapFont.class, size1Params);
+
+                assetManager.finishLoading();
+
+                font = assetManager.get("SPLASH_FONT.otf", BitmapFont.class);
 
                 arcadeSound = Gdx.audio.newMusic(Gdx.files.internal("splash/ARCADE_BUTTON.ogg"));
                 rustySound = Gdx.audio.newSound(Gdx.files.internal("splash/RUSTY.ogg"));
@@ -148,10 +171,7 @@ public class SplashScreen implements Screen {
             }
         });
 
-    }
 
-    @Override
-    public void show() {
 
         Threadings.postRunnable(new Runnable() {
             @Override
@@ -253,9 +273,9 @@ public class SplashScreen implements Screen {
             Threadings.postRunnable(new Runnable() {
                 @Override
                 public void run() {
+                    assetManager.dispose();
                     rootTable.clear();
                     screenTexture.dispose();
-                    font.dispose();
                     screenGlowTexture.dispose();
                     controllerTexture.dispose();
                     tomatoTexture.dispose();

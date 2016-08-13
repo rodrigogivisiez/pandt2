@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.potatoandtomato.common.assets.Assets;
@@ -195,13 +196,12 @@ public class ChessLogic {
                     clone.setPosition(payload.getDragActor().getX(), payload.getDragActor().getY());
                     getChessActor().getStage().addActor(clone);
                     Vector2 coords = Positions.actorLocalToStageCoord(getChessActor());
-                    clone.addAction(sequence(moveTo(coords.x, coords.y, 0.15f), new Action() {
+                    clone.addAction(sequence(moveTo(coords.x, coords.y, 0.15f), new RunnableAction() {
                         @Override
-                        public boolean act(float delta) {
+                        public void run() {
                             clone.remove();
                             getChessModel().setDragging(false);
                             invalidate(false);
-                            return true;
                         }
                     }));
                 }

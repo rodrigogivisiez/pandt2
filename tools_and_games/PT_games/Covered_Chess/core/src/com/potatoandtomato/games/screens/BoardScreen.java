@@ -157,7 +157,7 @@ public class BoardScreen extends GameScreen {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                if(canTouch || Global.DEBUG){
+                if(canTouch || (Global.DEBUG && !Global.BOT_MATCH)){
                     _root.setTouchable(Touchable.enabled);
                 }
                 else{

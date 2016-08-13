@@ -104,6 +104,7 @@ public class RestfulApi implements IRestfulApi {
         try {
 
             HashMap<String, ArrayList<ScoreDetails>> processedWinners = new HashMap();
+            HashMap<String, String> teamToLeaderIdMap = new HashMap();
             ArrayList<String> processedLosers = new ArrayList();
 
             for (Map.Entry<Team, ArrayList<ScoreDetails>> entry : winners.entrySet()) {
@@ -111,6 +112,7 @@ public class RestfulApi implements IRestfulApi {
                 ArrayList<ScoreDetails> scoreDetails = entry.getValue();
 
                 processedWinners.put(team.getPlayersIdsString(), scoreDetails);
+                teamToLeaderIdMap.put(team.getPlayersIdsString(), team.getLeaderId());
             }
 
             for(Team team : losers){
@@ -118,10 +120,12 @@ public class RestfulApi implements IRestfulApi {
             }
 
             String winnersJson = objectMapper.writeValueAsString(processedWinners);
+            String leadersJson = objectMapper.writeValueAsString(teamToLeaderIdMap);
             String losersJson = objectMapper.writeValueAsString(processedLosers);
             String roomJson = objectMapper.writeValueAsString(room);
             ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
             nameValuePairs.add(new BasicNameValuePair("winnersJson", winnersJson));
+            nameValuePairs.add(new BasicNameValuePair("leadersJson", leadersJson));
             nameValuePairs.add(new BasicNameValuePair("losersJson", losersJson));
             nameValuePairs.add(new BasicNameValuePair("roomJson", roomJson));
             nameValuePairs.add(new BasicNameValuePair("userId", myProfile.getUserId()));

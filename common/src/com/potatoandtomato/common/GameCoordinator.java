@@ -389,6 +389,9 @@ public class GameCoordinator implements Disposable {
     /////////////////////////////////////////////////////////////////////////////////////////
     //Ingame update
     /////////////////////////////////////////////////////////////////////////////////////////
+
+
+
     public void sendRoomUpdate(String msg){
         if(!gameStarted){
             System.out.println("You are not allowed to send update message before game started.");

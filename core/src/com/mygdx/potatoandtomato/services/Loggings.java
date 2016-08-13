@@ -107,6 +107,8 @@ public class Loggings {
     }
 
     public void add(final String msg){
+        if(!enabled) return;
+
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {

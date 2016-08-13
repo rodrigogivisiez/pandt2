@@ -38,13 +38,14 @@ public class Services {
     ConnectionWatcher _connectionWatcher;
     Coins _coins;
     DataCaches _dataCaches;
+    AutoJoiner _autoJoiner;
 
     public Services(MyAssets assets, Texts texts, Preferences preferences,
                     Profile profile, IDatabase database, Shaders shaders, GamingKit gamingKit, IDownloader downloader,
                     Chat chat, Socials socials, GCMSender gcmSender, Confirm confirm, Notification notification,
                     Recorder recorder, SoundsPlayer soundsPlayer, VersionControl versionControl,
                     Broadcaster broadcaster, Tutorials tutorials, IRestfulApi restfulApi, ConnectionWatcher connectionWatcher,
-                    Coins coins, DataCaches dataCaches) {
+                    Coins coins, DataCaches dataCaches, AutoJoiner autoJoiner) {
         _texts = texts;
         _assets = assets;
         _preferences = preferences;
@@ -67,8 +68,17 @@ public class Services {
         _connectionWatcher = connectionWatcher;
         _coins = coins;
         _dataCaches = dataCaches;
+        _autoJoiner = autoJoiner;
     }
 
+
+    public AutoJoiner getAutoJoiner() {
+        return _autoJoiner;
+    }
+
+    public void setAutoJoiner(AutoJoiner _autoJoiner) {
+        this._autoJoiner = _autoJoiner;
+    }
 
     public DataCaches getDataCaches() {
         return _dataCaches;

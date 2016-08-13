@@ -68,90 +68,103 @@ public class ScoresHandler implements Disposable{
     }
 
     public void populateData(){
-        final String userAId = coordinator.getMyTeam().getPlayersUserIds().get(0);
-        final String userBId = coordinator.getEnemyTeams().get(0).getPlayersUserIds().get(0);     //only two team in this game
+        //bot match
+        if(coordinator.getTotalPlayersCount() == 1){
+            dataReady = true;
+        }
+        else{
+            final String userAId = coordinator.getMyTeam().getPlayersUserIds().get(0);
+            final String userBId = coordinator.getEnemyTeams().get(0).getPlayersUserIds().get(0);     //only two team in this game
 
-        Threadings.runInBackground(new Runnable() {
-            @Override
-            public void run() {
-                ThreadsPool threadsPool = new ThreadsPool();
+            Threadings.runInBackground(new Runnable() {
+                @Override
+                public void run() {
+                    ThreadsPool threadsPool = new ThreadsPool();
 
-                final Threadings.ThreadFragment fragment1 = new Threadings.ThreadFragment();
-                database.getLastMatchHistories(userAId, 5, new DatabaseListener<ArrayList<MatchHistory>>(MatchHistory.class) {
-                    @Override
-                    public void onCallback(ArrayList<MatchHistory> obj, Status st) {
-                        if (st == Status.SUCCESS) {
-                            lastMatchHistories.put(userAId, obj);
+                    final Threadings.ThreadFragment fragment1 = new Threadings.ThreadFragment();
+                    database.getLastMatchHistories(userAId, 5, new DatabaseListener<ArrayList<MatchHistory>>(MatchHistory.class) {
+                        @Override
+                        public void onCallback(ArrayList<MatchHistory> obj, Status st) {
+                            if (st == Status.SUCCESS) {
+                                lastMatchHistories.put(userAId, obj);
+                            }
+                            fragment1.setFinished(true);
                         }
-                        fragment1.setFinished(true);
-                    }
-                });
-                threadsPool.addFragment(fragment1);
+                    });
+                    threadsPool.addFragment(fragment1);
 
 
-                final Threadings.ThreadFragment fragment2 = new Threadings.ThreadFragment();
-                database.getLastMatchHistories(userBId, 5, new DatabaseListener<ArrayList<MatchHistory>>(MatchHistory.class) {
-                    @Override
-                    public void onCallback(ArrayList<MatchHistory> obj, Status st) {
-                        if (st == Status.SUCCESS) {
-                            lastMatchHistories.put(userBId, obj);
+                    final Threadings.ThreadFragment fragment2 = new Threadings.ThreadFragment();
+                    database.getLastMatchHistories(userBId, 5, new DatabaseListener<ArrayList<MatchHistory>>(MatchHistory.class) {
+                        @Override
+                        public void onCallback(ArrayList<MatchHistory> obj, Status st) {
+                            if (st == Status.SUCCESS) {
+                                lastMatchHistories.put(userBId, obj);
+                            }
+                            fragment2.setFinished(true);
                         }
-                        fragment2.setFinished(true);
-                    }
-                });
-                threadsPool.addFragment(fragment2);
+                    });
+                    threadsPool.addFragment(fragment2);
 
-                final Threadings.ThreadFragment fragment3 = new Threadings.ThreadFragment();
-                database.getHeadToHeadMatchHistories(userAId, userBId, new DatabaseListener<ArrayList<MatchHistory>>(MatchHistory.class) {
-                    @Override
-                    public void onCallback(ArrayList<MatchHistory> obj, Status st) {
-                        if (st == Status.SUCCESS) {
-                            headToHeadMatchHistories.put(userAId, obj);
+                    final Threadings.ThreadFragment fragment3 = new Threadings.ThreadFragment();
+                    database.getHeadToHeadMatchHistories(userAId, userBId, new DatabaseListener<ArrayList<MatchHistory>>(MatchHistory.class) {
+                        @Override
+                        public void onCallback(ArrayList<MatchHistory> obj, Status st) {
+                            if (st == Status.SUCCESS) {
+                                headToHeadMatchHistories.put(userAId, obj);
+                            }
+                            fragment3.setFinished(true);
                         }
-                        fragment3.setFinished(true);
-                    }
-                });
-                threadsPool.addFragment(fragment3);
+                    });
+                    threadsPool.addFragment(fragment3);
 
-                final Threadings.ThreadFragment fragment4 = new Threadings.ThreadFragment();
-                database.getHeadToHeadMatchHistories(userBId, userAId, new DatabaseListener<ArrayList<MatchHistory>>(MatchHistory.class) {
-                    @Override
-                    public void onCallback(ArrayList<MatchHistory> obj, Status st) {
-                        if (st == Status.SUCCESS) {
-                            headToHeadMatchHistories.put(userBId, obj);
+                    final Threadings.ThreadFragment fragment4 = new Threadings.ThreadFragment();
+                    database.getHeadToHeadMatchHistories(userBId, userAId, new DatabaseListener<ArrayList<MatchHistory>>(MatchHistory.class) {
+                        @Override
+                        public void onCallback(ArrayList<MatchHistory> obj, Status st) {
+                            if (st == Status.SUCCESS) {
+                                headToHeadMatchHistories.put(userBId, obj);
+                            }
+                            fragment4.setFinished(true);
                         }
-                        fragment4.setFinished(true);
-                    }
-                });
-                threadsPool.addFragment(fragment4);
+                    });
+                    threadsPool.addFragment(fragment4);
 
-                while (!threadsPool.allFinished()) {
-                    if (disposed) return;
-                    Threadings.sleep(300);
+                    while (!threadsPool.allFinished()) {
+                        if (disposed) return;
+                        Threadings.sleep(300);
+                    }
+
+                    dataReady = true;
                 }
-
-                dataReady = true;
-            }
-        });
+            });
+        }
     }
 
     public void setIsMeWin(boolean won) {
         if(won){
             this.winnerTeam = coordinator.getMyTeam();
-            this.loserTeam = coordinator.getEnemyTeams().get(0);        //only two team in this game
+            if(coordinator.getTotalPlayersCount() > 1){        //not bot match
+                this.loserTeam = coordinator.getEnemyTeams().get(0);        //only two team in this game
+            }
+
             winnerColor = gameDataController.getMyChessColor();
             loserColor = gameDataController.getEnemyChessColor();
         }
         else{
             this.loserTeam = coordinator.getMyTeam();
-            this.winnerTeam = coordinator.getEnemyTeams().get(0);        //only two team in this game
+            if(coordinator.getTotalPlayersCount() > 1){        //not bot match
+                this.winnerTeam = coordinator.getEnemyTeams().get(0);        //only two team in this game
+            }
+
             winnerColor = gameDataController.getEnemyChessColor();
             loserColor = gameDataController.getMyChessColor();
         }
     }
 
     public void updateMatchHistory(){
-        if(this.winnerTeam.getPlayersUserIds().size() > 0 && this.loserTeam.getPlayersUserIds().size() > 0){
+        if(this.winnerTeam != null && this.loserTeam != null &&
+                this.winnerTeam.getPlayersUserIds().size() > 0 && this.loserTeam.getPlayersUserIds().size() > 0){
             database.saveMatchHistory(this.winnerTeam.getPlayersUserIds().get(0), this.loserTeam.getPlayersUserIds().get(0), null);
         }
     }
@@ -168,18 +181,29 @@ public class ScoresHandler implements Disposable{
 
                 ArrayList<ScoreDetails> scoreDetails = new ArrayList<ScoreDetails>();
 
-                boolean canAddStreak = checkWinSituation(scoreDetails,
-                                    boardLogic.getBoardModel(), boardLogic.getGraveyardLogic().getGraveModel());
-                checkOtherSpecialCases(scoreDetails);
-                double multiply = getMultiply(scoreDetails, canAddStreak);
-
-                for(ScoreDetails scoreDetail : scoreDetails){
-                    if(scoreDetail.isAddOrMultiply()){
-                        scoreDetail.setValue(Math.round(scoreDetail.getValue() * multiply));
+                if(coordinator.getTotalPlayersCount() == 1){        //bot match
+                    if(winnerColor == gameDataController.getMyChessColor()){
+                        scoreDetails.add(new ScoreDetails(2, texts.beatBot(), true, false));
+                        listener.onCallBack(getWinnerResult(scoreDetails), null);
+                    }
+                    else{
+                        listener.onCallBack(null, null);
                     }
                 }
+                else{
+                    boolean canAddStreak = checkWinSituation(scoreDetails,
+                            boardLogic.getBoardModel(), boardLogic.getGraveyardLogic().getGraveModel());
+                    checkOtherSpecialCases(scoreDetails);
+                    double multiply = getMultiply(scoreDetails, canAddStreak);
 
-                listener.onCallBack(getWinnerResult(scoreDetails), getLoser());
+                    for(ScoreDetails scoreDetail : scoreDetails){
+                        if(scoreDetail.isAddOrMultiply()){
+                            scoreDetail.setValue(Math.round(scoreDetail.getValue() * multiply));
+                        }
+                    }
+
+                    listener.onCallBack(getWinnerResult(scoreDetails), getLoser());
+                }
 
             }
         });

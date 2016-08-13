@@ -52,6 +52,7 @@ public class PrerequisiteLogic extends LogicAbstract {
     @Override
     public void onInit() {
         super.onInit();
+        _services.getAutoJoiner().stopAutoJoinRoom();
         restart();
     }
 
@@ -114,7 +115,7 @@ public class PrerequisiteLogic extends LogicAbstract {
         _services.getDatabase().getRoomById(_roomId, new DatabaseListener<Room>(Room.class) {
             @Override
             public void onCallback(Room obj, Status st) {
-                if(st == Status.SUCCESS){
+                if(st == Status.SUCCESS && obj != null){
                     if(isDisposing()) return;
 
                     int minusMe = (obj.getRoomUserByUserId(_services.getProfile().getUserId()) == null) ? 0 : 1;

@@ -4,23 +4,22 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.*;
+import com.mygdx.potatoandtomato.controls.*;
 import com.mygdx.potatoandtomato.enums.BadgeType;
 import com.mygdx.potatoandtomato.enums.LeaderboardType;
-import com.mygdx.potatoandtomato.controls.Badge;
 import com.potatoandtomato.common.controls.Animator;
-import com.mygdx.potatoandtomato.controls.FlowContainer;
-import com.mygdx.potatoandtomato.controls.TopBar;
-import com.mygdx.potatoandtomato.controls.WebImage;
 import com.mygdx.potatoandtomato.utils.Positions;
 import com.potatoandtomato.common.controls.AutoDisposeTable;
 import com.potatoandtomato.common.utils.Strings;
@@ -291,8 +290,6 @@ public class LeaderBoardScene extends SceneAbstract {
         Table nameStreakTable = invalidateNameStreakTable(game, record, rank, false);
         nameStreakTable.setName("nameStreakTable");
 
-        FlowContainer nameStreakContainer = new FlowContainer(nameStreakTable, _assets);
-
         ////////////////////////
         //score label
         ///////////////////////
@@ -307,7 +304,7 @@ public class LeaderBoardScene extends SceneAbstract {
         ////////////////////////////////
         //populate name score table
         /////////////////////////////////
-        nameScoreTable.add(nameStreakContainer).expandX().fillX().padLeft(5).center();
+        nameScoreTable.add(nameStreakTable).expandX().fillX().padLeft(5).center();
         nameScoreTable.add(scoreLabel).right().padRight(5).padTop(2).padBottom(2).width(55);
         nameScoreTable.row();
         nameScoreTable.add(imageSeparator).colspan(2).expandX().fillX();
@@ -327,7 +324,9 @@ public class LeaderBoardScene extends SceneAbstract {
             _recordHeight = recordTable.getPrefHeight();
         }
 
-        nameStreakContainer.setSizeLimit(150, _recordHeight);
+        if(record.getUserIds().size() > 1){
+            setListenerForRecordTable(recordTable, record);
+        }
 
         return recordTable;
     }
@@ -365,7 +364,7 @@ public class LeaderBoardScene extends SceneAbstract {
                 ////////////////////
                 //name label
                 /////////////////////
-                Label nameLabel = new Label(Strings.cutOff(record.getAllUsernameCommaSeparated(), 16), style3);
+                Label nameLabel = new Label(getLeaderPlusFriendsText(record, 20), style3);
 
 
                 ///////////////////////
@@ -706,7 +705,8 @@ public class LeaderBoardScene extends SceneAbstract {
 
         Label.LabelStyle style1 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_M_SEMIBOLD), getTextColorOfRecord(record));
 
-        Label nameLabel = new Label(record.getAllUsernameCommaSeparated(), style1);
+        Label nameLabel = new Label(getLeaderPlusFriendsText(record, 25), style1);
+        nameLabel.setName("nameLabel");
         nameLabel.setAlignment(Align.left);
 
         if(record.getStreak().hasValidStreak()){
@@ -927,7 +927,7 @@ public class LeaderBoardScene extends SceneAbstract {
     private Color getTextColorOfRecord(LeaderboardRecord record){
         Color textColor = Color.valueOf("5b3000");
         if(record.containUser(_services.getProfile().getUserId())){
-            textColor = Color.valueOf("3daaef");
+            textColor = Color.valueOf("347edb");
         }
         return textColor;
     }
@@ -1048,11 +1048,60 @@ public class LeaderBoardScene extends SceneAbstract {
         });
     }
 
+    private void setListenerForRecordTable(Table recordTable, LeaderboardRecord record){
+        final Label nameLabel = recordTable.findActor("nameLabel");
+        final String originalName = nameLabel.getText().toString();
+        ArrayList<String> userNames = record.getUserNames();
+        String leaderName = record.getLeaderName();
+        userNames.remove(leaderName);
+        userNames.add(0, leaderName);
+        final String fullNames = Strings.joinArr(userNames, "\n");
+        final boolean[] expanded = {false};
+        recordTable.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if(expanded[0]){
+                    expanded[0] = false;
+                    Threadings.postRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            nameLabel.setText(originalName);
+                        }
+                    });
+                }
+                else{
+                    expanded[0] = true;
+                    Threadings.postRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            nameLabel.setText(fullNames);
+                        }
+                    });
+                }
+            }
+        });
+        new DummyButton(recordTable, _assets);
+    }
+
     @Override
     public void dispose() {
         super.dispose();
         _services.getSoundsPlayer().stopSoundEffectLoop(Sounds.Name.MOVING_RANK);
         _services.getSoundsPlayer().stopSoundEffectLoop(Sounds.Name.EXTINGUISH_SOUND);
+    }
+
+    private String getLeaderPlusFriendsText(LeaderboardRecord record, int limit){
+        String name = record.getLeaderName();
+        if(record.getUserIds().size() > 1){
+            int otherFriendsCount = record.getUserIds().size() - 1;
+            name = String.format((otherFriendsCount == 1 ? _texts.leaderAndFriend() :
+                    _texts.leaderAndFriends()), Strings.cutOff(name, limit - 12), otherFriendsCount);
+        }
+        else{
+            name = Strings.cutOff(name, limit);
+        }
+
+        return name;
     }
 
     public enum MascotType{

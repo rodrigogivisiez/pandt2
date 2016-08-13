@@ -10,12 +10,10 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.support.v4.app.NotificationCompat;
 import com.google.android.gms.gcm.GcmListenerService;
 import com.mygdx.potatoandtomato.absintflis.push_notifications.PushCode;
-import com.mygdx.potatoandtomato.android.receivers.HandleNotificationBroadcastReceiver;
-import com.mygdx.potatoandtomato.android.receivers.InvitationAcceptReceiver;
-import com.mygdx.potatoandtomato.android.receivers.InvitationRejectReceiver;
-import com.mygdx.potatoandtomato.android.receivers.RoomAliveReceiver;
+import com.mygdx.potatoandtomato.android.receivers.*;
 import com.mygdx.potatoandtomato.models.PushNotification;
 import com.potatoandtomato.common.statics.Vars;
 import com.shaded.fasterxml.jackson.core.JsonProcessingException;
@@ -60,6 +58,8 @@ public class GcmMessageHandler extends GcmListenerService {
                 .setContentTitle(pushNotification.getTitle())
                 .setContentText(pushNotification.getMessage())
                 .setContentIntent(pendingIntent)
+                .setStyle(new Notification.BigTextStyle()
+                        .bigText(pushNotification.getMessage()))
                 .setSmallIcon(R.drawable.ic_stat_icon)
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
                         R.mipmap.ic_launcher))
@@ -84,6 +84,19 @@ public class GcmMessageHandler extends GcmListenerService {
                 builder.addAction(R.drawable.ic_stat_navigation_close, context.getResources().getString(R.string.invitation_reject),
                         rejectPendingIntent);
             }
+        }
+        else if(pushNotification.getId() == PushCode.UPDATE_ROOM){
+            Intent quitIntent = new Intent(context, QuitGameReceiver.class);
+            PendingIntent quitPendingIntent = PendingIntent.getBroadcast(
+                    context, PushCode.UPDATE_ROOM, quitIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            builder.addAction(R.drawable.ic_stat_action_done, context.getResources().getString(R.string.back_to_room),
+                    pendingIntent);
+
+            builder.addAction(R.drawable.ic_stat_action_settings_power, context.getResources().getString(R.string.quit),
+                    quitPendingIntent);
+
+            builder.setWhen(0);
 
         }
 

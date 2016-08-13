@@ -106,8 +106,16 @@
 	}
 	
 	
-	function handleWinners($firebase, $winners, $room){
+	function handleWinners($firebase, $winners, $leaders, $room){
 		foreach ($winners as $teamUserIdsString => $scoreDetailsArr) {
+			
+			$leaderId = "";
+			foreach($leaders as $teamUserIdsString2 => $teamLeaderId){
+				if($teamUserIdsString == $teamUserIdsString2){
+					$leaderId = $teamLeaderId;
+					break;
+				}
+			}
 			
 			$userIdArr = explode(",", $teamUserIdsString);
 			
@@ -141,6 +149,7 @@
 				$scoresMap = array(
 		   			"score" => $newScore,
 				    "userIds" => $userIdArr,
+				    "leaderId" => $leaderId,
 				    ".priority" => $newScore
 				);
 				$firebase->set('leaderboard/'.$room->game->abbr.'/'.$teamUserIdsString, $scoresMap);
@@ -197,6 +206,7 @@
 	}
 	
 	$winnersJson = $_POST["winnersJson"];
+	$leadersJson = $_POST["leadersJson"];
 	$losersJson = $_POST["losersJson"];
 	$roomJson = $_POST["roomJson"];
 	
@@ -204,6 +214,7 @@
 	$userToken = $_POST["userToken"];
 	$room = json_decode($roomJson);
 	$winners = json_decode($winnersJson);
+	$leaders = json_decode($leadersJson);
 	$losers = json_decode($losersJson);
 	$firebase = new \Firebase\FirebaseLib($DEFAULT_URL, $DEFAULT_TOKEN);
 	
@@ -211,7 +222,7 @@
 	if(checkCanUpdate($firebase, $room)){
 		if(checkRoomAndUserValid($firebase, $room, $userId, $userToken, $winners, $losers)){
 			handleLosers($firebase, $losers, $room);
-			handleWinners($firebase, $winners, $room);
+			handleWinners($firebase, $winners, $leaders, $room);
 		}
 		else{
 		}

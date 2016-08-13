@@ -472,31 +472,38 @@ com.potatoandtomato.games.enums.StageType -> com.potatoandtomato.games.enums.Sta
     6:6:com.potatoandtomato.games.enums.StageType valueOf(java.lang.String) -> valueOf
     6:6:void <init>(java.lang.String,int) -> <init>
     6:7:void <clinit>() -> <clinit>
-com.potatoandtomato.games.helpers.ArrayLists -> com.potatoandtomato.games.b.a:
+com.potatoandtomato.games.helpers.ArrayLists -> com.potatoandtomato.games.helpers.a:
     11:11:void <init>() -> <init>
     14:18:java.util.ArrayList randomNumericArray(int,int,int) -> a
-com.potatoandtomato.games.helpers.Logs -> com.potatoandtomato.games.b.b:
+com.potatoandtomato.games.helpers.Logs -> com.potatoandtomato.games.helpers.b:
     8:8:void <init>() -> <init>
     12:13:void show(java.lang.String) -> a
-com.potatoandtomato.games.helpers.NotifyRunnable -> com.potatoandtomato.games.b.c:
+com.potatoandtomato.games.helpers.NotifyRunnable -> com.potatoandtomato.games.helpers.c:
     boolean finish -> a
     6:6:void <init>() -> <init>
     11:11:boolean isFinish() -> a
     15:16:void setFinish(boolean) -> a
     21:21:void run() -> run
-com.potatoandtomato.games.helpers.Positions -> com.potatoandtomato.games.b.d:
+com.potatoandtomato.games.helpers.Positions -> com.potatoandtomato.games.helpers.d:
     9:9:void <init>() -> <init>
     12:12:float centerY(float,float) -> a
     16:16:float centerX(float,float) -> b
     20:24:com.badlogic.gdx.math.Vector2 actorLocalToStageCoord(com.badlogic.gdx.scenes.scene2d.Actor) -> a
-com.potatoandtomato.games.helpers.Sizes -> com.potatoandtomato.games.b.e:
+com.potatoandtomato.games.helpers.Sizes -> com.potatoandtomato.games.helpers.e:
     9:9:void <init>() -> <init>
     12:13:com.badlogic.gdx.math.Vector2 resize(float,com.badlogic.gdx.graphics.g2d.TextureRegion) -> a
     17:18:com.badlogic.gdx.math.Vector2 resizeByH(float,com.badlogic.gdx.graphics.g2d.TextureRegion) -> b
-com.potatoandtomato.games.helpers.Strings -> com.potatoandtomato.games.b.f:
+com.potatoandtomato.games.helpers.Strings -> com.potatoandtomato.games.helpers.f:
     8:8:void <init>() -> <init>
     11:14:java.lang.String cut(java.lang.String,int) -> a
     18:24:java.lang.String join(java.util.ArrayList) -> a
+com.potatoandtomato.games.helpers.TutorialHelper -> com.potatoandtomato.games.helpers.TutorialHelper:
+    com.potatoandtomato.common.GameCoordinator gameCoordinator -> a
+    com.potatoandtomato.games.services.Texts texts -> b
+    int tutorialStep -> c
+    17:20:void <init>(com.potatoandtomato.common.GameCoordinator,com.potatoandtomato.games.services.Texts) -> <init>
+    23:25:void start() -> a
+    29:36:void nextTutorial() -> nextTutorial
 com.potatoandtomato.games.models.CorrectArea -> com.potatoandtomato.games.models.CorrectArea:
     int topLeftX -> topLeftX
     int bottomRightX -> bottomRightX
@@ -958,24 +965,25 @@ com.potatoandtomato.games.screens.main.MainLogic -> com.potatoandtomato.games.sc
     com.potatoandtomato.games.screens.main.ImageStorage _imageStorage -> l
     com.potatoandtomato.games.screens.main.StageImagesLogic _stageImagesLogic -> m
     com.potatoandtomato.games.screens.main.GameDataContract _gameDataContract -> n
-    com.potatoandtomato.common.utils.SafeThread _safeThread -> o
-    boolean disposed -> p
-    boolean waitingContinue -> q
-    63:91:void <init>(com.potatoandtomato.common.GameCoordinator,com.potatoandtomato.games.models.Services,com.potatoandtomato.games.screens.time_bar.TimeLogic,com.potatoandtomato.games.screens.hints.HintsLogic,com.potatoandtomato.games.screens.review.ReviewLogic,com.potatoandtomato.games.screens.user_counters.UserCountersLogic,com.potatoandtomato.games.screens.stage_counter.StageCounterLogic,com.potatoandtomato.games.screens.scores.ScoresLogic,com.potatoandtomato.games.screens.main.ImageStorage,com.potatoandtomato.games.models.GameModel,com.potatoandtomato.games.screens.main.StageImagesLogic,com.potatoandtomato.games.screens.main.StageStateLogic,com.potatoandtomato.games.screens.main.GameDataContract) -> <init>
-    94:98:void init() -> a
-    101:105:void onContinue() -> b
-    108:111:void waitingContinue() -> c
-    115:138:void sendGoToNextStageIfIsDecisionMaker(int) -> a
-    142:186:void goToNewStage(java.lang.String,int,com.potatoandtomato.games.enums.StageType,com.potatoandtomato.games.enums.BonusType,java.lang.String,int) -> a
-    189:218:void onStartGameReceived(java.lang.String,int,com.potatoandtomato.games.enums.StageType,com.potatoandtomato.games.enums.BonusType,java.lang.String) -> a
-    221:237:void newStageReviewMode(java.lang.String) -> a
-    240:252:void popImagePairIfCurrentIsNull(java.lang.String) -> b
-    256:277:void imageTouched(float,float,int,int) -> a
+    com.potatoandtomato.games.helpers.TutorialHelper tutorialHelper -> o
+    com.potatoandtomato.common.utils.SafeThread _safeThread -> p
+    boolean disposed -> q
+    boolean waitingContinue -> r
+    65:94:void <init>(com.potatoandtomato.common.GameCoordinator,com.potatoandtomato.games.models.Services,com.potatoandtomato.games.screens.time_bar.TimeLogic,com.potatoandtomato.games.screens.hints.HintsLogic,com.potatoandtomato.games.screens.review.ReviewLogic,com.potatoandtomato.games.screens.user_counters.UserCountersLogic,com.potatoandtomato.games.screens.stage_counter.StageCounterLogic,com.potatoandtomato.games.screens.scores.ScoresLogic,com.potatoandtomato.games.screens.main.ImageStorage,com.potatoandtomato.games.models.GameModel,com.potatoandtomato.games.screens.main.StageImagesLogic,com.potatoandtomato.games.screens.main.StageStateLogic,com.potatoandtomato.games.screens.main.GameDataContract) -> <init>
+    97:102:void init() -> a
+    105:109:void onContinue() -> b
+    112:115:void waitingContinue() -> c
+    119:142:void sendGoToNextStageIfIsDecisionMaker(int) -> a
+    147:187:void goToNewStage(java.lang.String,int,com.potatoandtomato.games.enums.StageType,com.potatoandtomato.games.enums.BonusType,java.lang.String,int) -> a
+    190:215:void onStartGameReceived(java.lang.String,int,com.potatoandtomato.games.enums.StageType,com.potatoandtomato.games.enums.BonusType,java.lang.String) -> a
+    218:234:void newStageReviewMode(java.lang.String) -> a
+    237:249:void popImagePairIfCurrentIsNull(java.lang.String) -> b
+    253:277:void imageTouched(float,float,int,int) -> a
     280:293:void touchReceived(java.lang.String,float,float,int,int,com.potatoandtomato.games.models.SimpleRectangle) -> a
     296:339:java.util.ArrayList getCorrectRectsByTouchPosition(float,float) -> a
     343:350:void checkGameEnded(int) -> b
-    354:364:void gameOver() -> h
-    367:390:void coinRequestPhase() -> i
+    354:365:void gameOver() -> h
+    368:390:void coinRequestPhase() -> i
     393:400:void circleAllAnswers() -> j
     403:412:void showEndGameTable() -> k
     415:431:void checkCanSwitchToReviewMode() -> l
@@ -987,27 +995,27 @@ com.potatoandtomato.games.screens.main.MainLogic -> com.potatoandtomato.games.sc
     741:741:com.potatoandtomato.games.screens.time_bar.TimeLogic getTimeLogic() -> e
     745:745:com.potatoandtomato.games.models.GameModel getGameModel() -> f
     749:749:com.potatoandtomato.games.models.Services getServices() -> g
-    39:39:com.potatoandtomato.games.screens.main.MainScreen access$000(com.potatoandtomato.games.screens.main.MainLogic) -> a
-    39:39:com.potatoandtomato.games.models.GameModel access$100(com.potatoandtomato.games.screens.main.MainLogic) -> b
-    39:39:com.potatoandtomato.games.models.Services access$200(com.potatoandtomato.games.screens.main.MainLogic) -> c
-    39:39:com.potatoandtomato.common.utils.SafeThread access$300(com.potatoandtomato.games.screens.main.MainLogic) -> d
-    39:39:boolean access$400(com.potatoandtomato.games.screens.main.MainLogic) -> e
-    39:39:com.potatoandtomato.games.models.ImagePair access$502(com.potatoandtomato.games.screens.main.MainLogic,com.potatoandtomato.games.models.ImagePair) -> a
-    39:39:com.potatoandtomato.games.models.ImagePair access$500(com.potatoandtomato.games.screens.main.MainLogic) -> f
-    39:39:com.potatoandtomato.games.screens.main.StageImagesLogic access$600(com.potatoandtomato.games.screens.main.MainLogic) -> g
-    39:39:void access$700(com.potatoandtomato.games.screens.main.MainLogic) -> h
-    39:39:void access$800(com.potatoandtomato.games.screens.main.MainLogic) -> i
-    39:39:void access$900(com.potatoandtomato.games.screens.main.MainLogic) -> j
-    39:39:void access$1000(com.potatoandtomato.games.screens.main.MainLogic) -> k
-    39:39:void access$1100(com.potatoandtomato.games.screens.main.MainLogic) -> l
-    39:39:com.potatoandtomato.games.screens.main.ImageStorage access$1200(com.potatoandtomato.games.screens.main.MainLogic) -> m
-    39:39:com.potatoandtomato.common.utils.SafeThread access$302(com.potatoandtomato.games.screens.main.MainLogic,com.potatoandtomato.common.utils.SafeThread) -> a
-    39:39:boolean access$1300(com.potatoandtomato.games.screens.main.MainLogic) -> n
+    40:40:com.potatoandtomato.games.screens.main.MainScreen access$000(com.potatoandtomato.games.screens.main.MainLogic) -> a
+    40:40:com.potatoandtomato.games.models.GameModel access$100(com.potatoandtomato.games.screens.main.MainLogic) -> b
+    40:40:com.potatoandtomato.games.models.Services access$200(com.potatoandtomato.games.screens.main.MainLogic) -> c
+    40:40:com.potatoandtomato.common.utils.SafeThread access$300(com.potatoandtomato.games.screens.main.MainLogic) -> d
+    40:40:boolean access$400(com.potatoandtomato.games.screens.main.MainLogic) -> e
+    40:40:com.potatoandtomato.games.models.ImagePair access$502(com.potatoandtomato.games.screens.main.MainLogic,com.potatoandtomato.games.models.ImagePair) -> a
+    40:40:com.potatoandtomato.games.models.ImagePair access$500(com.potatoandtomato.games.screens.main.MainLogic) -> f
+    40:40:com.potatoandtomato.games.screens.main.StageImagesLogic access$600(com.potatoandtomato.games.screens.main.MainLogic) -> g
+    40:40:void access$700(com.potatoandtomato.games.screens.main.MainLogic) -> h
+    40:40:void access$800(com.potatoandtomato.games.screens.main.MainLogic) -> i
+    40:40:void access$900(com.potatoandtomato.games.screens.main.MainLogic) -> j
+    40:40:void access$1000(com.potatoandtomato.games.screens.main.MainLogic) -> k
+    40:40:void access$1100(com.potatoandtomato.games.screens.main.MainLogic) -> l
+    40:40:com.potatoandtomato.games.screens.main.ImageStorage access$1200(com.potatoandtomato.games.screens.main.MainLogic) -> m
+    40:40:com.potatoandtomato.common.utils.SafeThread access$302(com.potatoandtomato.games.screens.main.MainLogic,com.potatoandtomato.common.utils.SafeThread) -> a
+    40:40:boolean access$1300(com.potatoandtomato.games.screens.main.MainLogic) -> n
 com.potatoandtomato.games.screens.main.MainLogic$1 -> com.potatoandtomato.games.screens.main.MainLogic$1:
     com.potatoandtomato.games.screens.main.StageImagesLogic val$_stageImagesLogic -> a
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> b
-    82:82:void <init>(com.potatoandtomato.games.screens.main.MainLogic,com.potatoandtomato.games.screens.main.StageImagesLogic) -> <init>
-    85:87:void run() -> run
+    85:85:void <init>(com.potatoandtomato.games.screens.main.MainLogic,com.potatoandtomato.games.screens.main.StageImagesLogic) -> <init>
+    88:90:void run() -> run
 com.potatoandtomato.games.screens.main.MainLogic$10 -> com.potatoandtomato.games.screens.main.MainLogic$10:
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> a
     521:521:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
@@ -1082,8 +1090,8 @@ com.potatoandtomato.games.screens.main.MainLogic$18$1 -> com.potatoandtomato.gam
     714:715:void run() -> run
 com.potatoandtomato.games.screens.main.MainLogic$2 -> com.potatoandtomato.games.screens.main.MainLogic$8:
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> a
-    120:120:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
-    124:135:void onPeeked(com.potatoandtomato.games.models.ImagePair) -> b
+    124:124:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
+    128:139:void onPeeked(com.potatoandtomato.games.models.ImagePair) -> b
 com.potatoandtomato.games.screens.main.MainLogic$3 -> com.potatoandtomato.games.screens.main.MainLogic$9:
     java.lang.String val$id -> a
     int val$stageNumber -> b
@@ -1091,24 +1099,24 @@ com.potatoandtomato.games.screens.main.MainLogic$3 -> com.potatoandtomato.games.
     com.potatoandtomato.games.enums.BonusType val$bonusType -> d
     java.lang.String val$extra -> e
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> f
-    173:173:void <init>(com.potatoandtomato.games.screens.main.MainLogic,java.lang.String,int,com.potatoandtomato.games.enums.StageType,com.potatoandtomato.games.enums.BonusType,java.lang.String) -> <init>
-    176:184:void run() -> run
+    174:174:void <init>(com.potatoandtomato.games.screens.main.MainLogic,java.lang.String,int,com.potatoandtomato.games.enums.StageType,com.potatoandtomato.games.enums.BonusType,java.lang.String) -> <init>
+    177:185:void run() -> run
 com.potatoandtomato.games.screens.main.MainLogic$4 -> com.potatoandtomato.games.screens.main.MainLogic$11:
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> a
-    221:221:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
-    224:235:void onPopped(com.potatoandtomato.games.models.ImagePair) -> a
+    218:218:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
+    221:232:void onPopped(com.potatoandtomato.games.models.ImagePair) -> a
 com.potatoandtomato.games.screens.main.MainLogic$5 -> com.potatoandtomato.games.screens.main.MainLogic$12:
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> a
-    241:241:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
-    244:249:void onPopped(com.potatoandtomato.games.models.ImagePair) -> a
+    238:238:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
+    241:246:void onPopped(com.potatoandtomato.games.models.ImagePair) -> a
 com.potatoandtomato.games.screens.main.MainLogic$6 -> com.potatoandtomato.games.screens.main.MainLogic$13:
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> a
-    367:367:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
-    370:388:void run() -> run
+    368:368:void <init>(com.potatoandtomato.games.screens.main.MainLogic) -> <init>
+    371:388:void run() -> run
 com.potatoandtomato.games.screens.main.MainLogic$6$1 -> com.potatoandtomato.games.screens.main.MainLogic$6$1:
     com.potatoandtomato.games.screens.main.MainLogic$6 this$1 -> a
-    372:372:void <init>(com.potatoandtomato.games.screens.main.MainLogic$6) -> <init>
-    375:377:void onDeductCoinsDone() -> onDeductCoinsDone
+    373:373:void <init>(com.potatoandtomato.games.screens.main.MainLogic$6) -> <init>
+    376:377:void onDeductCoinsDone() -> onDeductCoinsDone
     381:386:void onDismiss(java.lang.String) -> onDismiss
 com.potatoandtomato.games.screens.main.MainLogic$7 -> com.potatoandtomato.games.screens.main.MainLogic$14:
     com.potatoandtomato.games.screens.main.MainLogic this$0 -> a
@@ -1923,39 +1931,41 @@ com.potatoandtomato.games.screens.main.StageStateLogic$7 -> com.potatoandtomato.
     148:148:void <clinit>() -> <clinit>
 com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene -> com.potatoandtomato.games.screens.b.a:
     com.potatoandtomato.games.models.Services services -> c
-    com.potatoandtomato.games.assets.MyAssets assets -> d
-    com.badlogic.gdx.scenes.scene2d.ui.Table root -> e
-    com.badlogic.gdx.scenes.scene2d.ui.Table _this -> f
-    com.badlogic.gdx.scenes.scene2d.ui.Label messageLabel -> g
-    33:40:void <init>(com.potatoandtomato.games.models.Services,com.badlogic.gdx.scenes.scene2d.ui.Table) -> <init>
-    43:101:void populate() -> a
-    104:111:void revealBonus(com.potatoandtomato.games.enums.BonusType,java.lang.String) -> a
-    116:123:void dispose() -> dispose
-    25:25:com.badlogic.gdx.scenes.scene2d.ui.Table access$000(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene) -> a
-    25:25:com.potatoandtomato.games.assets.MyAssets access$100(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene) -> b
-    25:25:com.badlogic.gdx.scenes.scene2d.ui.Table access$200(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene) -> c
-    25:25:com.badlogic.gdx.scenes.scene2d.ui.Label access$302(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene,com.badlogic.gdx.scenes.scene2d.ui.Label) -> a
-    25:25:com.badlogic.gdx.scenes.scene2d.ui.Label access$300(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene) -> d
-    25:25:com.potatoandtomato.games.models.Services access$400(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene) -> e
+    com.potatoandtomato.common.GameCoordinator gameCoordinator -> d
+    com.potatoandtomato.games.assets.MyAssets assets -> e
+    com.badlogic.gdx.scenes.scene2d.ui.Table root -> f
+    com.badlogic.gdx.scenes.scene2d.ui.Table _this -> g
+    com.badlogic.gdx.scenes.scene2d.ui.Label messageLabel -> h
+    37:45:void <init>(com.potatoandtomato.games.models.Services,com.potatoandtomato.common.GameCoordinator,com.badlogic.gdx.scenes.scene2d.ui.Table) -> <init>
+    48:106:void populate() -> a
+    109:122:void revealBonus(com.potatoandtomato.games.enums.BonusType,java.lang.String) -> a
+    127:134:void dispose() -> dispose
+    28:28:com.badlogic.gdx.scenes.scene2d.ui.Table access$000(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene) -> a
+    28:28:com.potatoandtomato.games.assets.MyAssets access$100(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene) -> b
+    28:28:com.badlogic.gdx.scenes.scene2d.ui.Table access$200(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene) -> c
+    28:28:com.badlogic.gdx.scenes.scene2d.ui.Label access$302(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene,com.badlogic.gdx.scenes.scene2d.ui.Label) -> a
+    28:28:com.badlogic.gdx.scenes.scene2d.ui.Label access$300(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene) -> d
+    28:28:com.potatoandtomato.games.models.Services access$400(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene) -> e
+    28:28:com.potatoandtomato.common.GameCoordinator access$500(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene) -> f
 com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene$1 -> com.potatoandtomato.games.screens.b.a$1:
     com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene this$0 -> a
-    43:43:void <init>(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene) -> <init>
-    47:99:void run() -> run
+    48:48:void <init>(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene) -> <init>
+    52:104:void run() -> run
 com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene$1$1 -> com.potatoandtomato.games.screens.b.a$1$1:
     com.badlogic.gdx.scenes.scene2d.ui.Table val$tracesTable -> a
     com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene$1 this$1 -> b
-    59:59:void <init>(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene$1,com.badlogic.gdx.scenes.scene2d.ui.Table) -> <init>
-    62:64:void run() -> run
+    64:64:void <init>(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene$1,com.badlogic.gdx.scenes.scene2d.ui.Table) -> <init>
+    67:69:void run() -> run
 com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene$2 -> com.potatoandtomato.games.screens.b.a$2:
     com.potatoandtomato.games.enums.BonusType val$bonusType -> a
     java.lang.String val$extra -> b
     com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene this$0 -> c
-    104:104:void <init>(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene,com.potatoandtomato.games.enums.BonusType,java.lang.String) -> <init>
-    107:109:void run() -> run
+    109:109:void <init>(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene,com.potatoandtomato.games.enums.BonusType,java.lang.String) -> <init>
+    112:120:void run() -> run
 com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene$3 -> com.potatoandtomato.games.screens.b.a$3:
     com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene this$0 -> a
-    117:117:void <init>(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene) -> <init>
-    120:121:void run() -> run
+    128:128:void <init>(com.potatoandtomato.games.screens.papyruses.BeforeBonusPapyrusScene) -> <init>
+    131:132:void run() -> run
 com.potatoandtomato.games.screens.papyruses.BeforeStartPapyrusScene -> com.potatoandtomato.games.screens.b.b:
     com.potatoandtomato.games.models.Services services -> c
     com.potatoandtomato.games.assets.MyAssets assets -> d
@@ -2209,94 +2219,94 @@ com.potatoandtomato.games.screens.scores.ScoresLogic -> com.potatoandtomato.game
     int PER_HINT_LEFT_SCORE -> l
     int PER_CASTLE_STATE_SCORE -> m
     int PER_METER_DISTANCE_SCORE -> n
-    43:62:void <init>(com.potatoandtomato.common.GameCoordinator,com.potatoandtomato.games.models.Services,com.potatoandtomato.games.models.GameModel,com.potatoandtomato.games.screens.time_bar.KnightLogic,com.potatoandtomato.games.screens.time_bar.CastleLogic,com.potatoandtomato.games.screens.hints.HintsLogic) -> <init>
-    65:67:void refreshAllScores() -> a
-    70:72:void refreshScoresDesign() -> b
-    75:77:void fakeAddScores(int) -> a
-    80:85:void calculateWithoutAnimation(boolean) -> a
-    88:185:void calculate() -> c
-    188:196:int getCastleScores() -> h
-    200:200:int getHintsScores() -> i
-    204:205:int getRemainingDistanceScores() -> j
-    210:219:void addScoreAndPopScoreOnActor(com.badlogic.gdx.scenes.scene2d.Actor,int,java.lang.Runnable) -> a
-    222:229:void popStringOnActor(com.badlogic.gdx.scenes.scene2d.Actor,java.lang.String,java.lang.Runnable) -> a
-    232:238:java.util.HashMap getFinalScoreDetails() -> d
-    242:251:int getNextLeaderboardScore() -> e
-    256:291:void setListeners() -> f
-    294:294:com.potatoandtomato.games.screens.scores.ScoresActor getScoresActor() -> g
-    298:299:void setScoresActor(com.potatoandtomato.games.screens.scores.ScoresActor) -> a
-    303:304:void dispose() -> dispose
-    32:32:com.potatoandtomato.games.screens.time_bar.CastleLogic access$000(com.potatoandtomato.games.screens.scores.ScoresLogic) -> a
-    32:32:int access$100(com.potatoandtomato.games.screens.scores.ScoresLogic) -> b
-    32:32:com.potatoandtomato.games.models.GameModel access$200(com.potatoandtomato.games.screens.scores.ScoresLogic) -> c
-    32:32:com.potatoandtomato.games.screens.time_bar.KnightLogic access$300(com.potatoandtomato.games.screens.scores.ScoresLogic) -> d
-    32:32:int access$400(com.potatoandtomato.games.screens.scores.ScoresLogic) -> e
-    32:32:com.potatoandtomato.games.models.Services access$500(com.potatoandtomato.games.screens.scores.ScoresLogic) -> f
-    32:32:com.potatoandtomato.games.screens.scores.ScoresActor access$600(com.potatoandtomato.games.screens.scores.ScoresLogic) -> g
+    44:63:void <init>(com.potatoandtomato.common.GameCoordinator,com.potatoandtomato.games.models.Services,com.potatoandtomato.games.models.GameModel,com.potatoandtomato.games.screens.time_bar.KnightLogic,com.potatoandtomato.games.screens.time_bar.CastleLogic,com.potatoandtomato.games.screens.hints.HintsLogic) -> <init>
+    66:68:void refreshAllScores() -> a
+    71:73:void refreshScoresDesign() -> b
+    76:78:void fakeAddScores(int) -> a
+    81:86:void calculateWithoutAnimation(boolean) -> a
+    89:186:void calculate() -> c
+    189:197:int getCastleScores() -> h
+    201:201:int getHintsScores() -> i
+    205:206:int getRemainingDistanceScores() -> j
+    211:220:void addScoreAndPopScoreOnActor(com.badlogic.gdx.scenes.scene2d.Actor,int,java.lang.Runnable) -> a
+    223:230:void popStringOnActor(com.badlogic.gdx.scenes.scene2d.Actor,java.lang.String,java.lang.Runnable) -> a
+    233:252:java.util.HashMap getFinalScoreDetails() -> d
+    256:265:int getNextLeaderboardScore() -> e
+    270:305:void setListeners() -> f
+    308:308:com.potatoandtomato.games.screens.scores.ScoresActor getScoresActor() -> g
+    312:313:void setScoresActor(com.potatoandtomato.games.screens.scores.ScoresActor) -> a
+    317:318:void dispose() -> dispose
+    33:33:com.potatoandtomato.games.screens.time_bar.CastleLogic access$000(com.potatoandtomato.games.screens.scores.ScoresLogic) -> a
+    33:33:int access$100(com.potatoandtomato.games.screens.scores.ScoresLogic) -> b
+    33:33:com.potatoandtomato.games.models.GameModel access$200(com.potatoandtomato.games.screens.scores.ScoresLogic) -> c
+    33:33:com.potatoandtomato.games.screens.time_bar.KnightLogic access$300(com.potatoandtomato.games.screens.scores.ScoresLogic) -> d
+    33:33:int access$400(com.potatoandtomato.games.screens.scores.ScoresLogic) -> e
+    33:33:com.potatoandtomato.games.models.Services access$500(com.potatoandtomato.games.screens.scores.ScoresLogic) -> f
+    33:33:com.potatoandtomato.games.screens.scores.ScoresActor access$600(com.potatoandtomato.games.screens.scores.ScoresLogic) -> g
 com.potatoandtomato.games.screens.scores.ScoresLogic$1 -> com.potatoandtomato.games.screens.d.b$1:
     com.potatoandtomato.games.screens.scores.ScoresLogic this$0 -> a
-    97:97:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic) -> <init>
-    100:163:void run() -> run
+    98:98:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic) -> <init>
+    101:164:void run() -> run
 com.potatoandtomato.games.screens.scores.ScoresLogic$1$1 -> com.potatoandtomato.games.screens.d.b$1$1:
     com.potatoandtomato.games.screens.scores.ScoresLogic$1 this$1 -> a
-    100:100:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic$1) -> <init>
-    103:161:void run() -> run
+    101:101:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic$1) -> <init>
+    104:162:void run() -> run
 com.potatoandtomato.games.screens.scores.ScoresLogic$1$1$1 -> com.potatoandtomato.games.screens.d.b$1$1$1:
     com.potatoandtomato.games.screens.scores.ScoresLogic$1$1 this$2 -> a
-    103:103:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic$1$1) -> <init>
-    106:159:void run() -> run
+    104:104:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic$1$1) -> <init>
+    107:160:void run() -> run
 com.potatoandtomato.games.screens.scores.ScoresLogic$1$1$1$1 -> com.potatoandtomato.games.screens.d.b$1$1$1$1:
     com.potatoandtomato.games.screens.scores.ScoresLogic$1$1$1 this$3 -> a
-    106:106:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic$1$1$1) -> <init>
-    109:157:void run() -> run
+    107:107:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic$1$1$1) -> <init>
+    110:158:void run() -> run
 com.potatoandtomato.games.screens.scores.ScoresLogic$1$1$1$1$1 -> com.potatoandtomato.games.screens.d.b$1$1$1$1$1:
     int val$remainingDistance -> a
     com.badlogic.gdx.math.Vector2 val$knightActorPosition -> b
     int[] val$originalScore -> c
     com.potatoandtomato.games.screens.scores.ScoresLogic$1$1$1$1 this$4 -> d
-    115:115:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic$1$1$1$1,int,com.badlogic.gdx.math.Vector2,int[]) -> <init>
-    119:155:void run() -> run
+    116:116:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic$1$1$1$1,int,com.badlogic.gdx.math.Vector2,int[]) -> <init>
+    120:156:void run() -> run
 com.potatoandtomato.games.screens.scores.ScoresLogic$1$1$1$1$1$1 -> com.potatoandtomato.games.screens.d.b$1$1$1$1$1$1:
     int val$finalI -> a
     com.potatoandtomato.games.screens.scores.ScoresLogic$1$1$1$1$1 this$5 -> b
-    128:128:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic$1$1$1$1$1,int) -> <init>
-    131:133:void run() -> run
+    129:129:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic$1$1$1$1$1,int) -> <init>
+    132:134:void run() -> run
 com.potatoandtomato.games.screens.scores.ScoresLogic$1$1$1$1$1$2 -> com.potatoandtomato.games.screens.d.b$1$1$1$1$1$2:
     com.potatoandtomato.games.screens.scores.ScoresLogic$1$1$1$1$1 this$5 -> a
-    143:143:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic$1$1$1$1$1) -> <init>
-    146:147:void run() -> run
+    144:144:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic$1$1$1$1$1) -> <init>
+    147:148:void run() -> run
 com.potatoandtomato.games.screens.scores.ScoresLogic$2 -> com.potatoandtomato.games.screens.d.b$2:
     java.lang.Runnable val$afterCalculateHintRunnable -> a
     com.potatoandtomato.games.screens.scores.ScoresLogic this$0 -> b
-    169:169:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic,java.lang.Runnable) -> <init>
-    172:173:void run() -> run
+    170:170:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic,java.lang.Runnable) -> <init>
+    173:174:void run() -> run
 com.potatoandtomato.games.screens.scores.ScoresLogic$3 -> com.potatoandtomato.games.screens.d.b$3:
     java.lang.Runnable val$afterCalculateHintRunnable -> a
     com.potatoandtomato.games.screens.scores.ScoresLogic this$0 -> b
-    178:178:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic,java.lang.Runnable) -> <init>
-    181:182:void run() -> run
+    179:179:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic,java.lang.Runnable) -> <init>
+    182:183:void run() -> run
 com.potatoandtomato.games.screens.scores.ScoresLogic$4 -> com.potatoandtomato.games.screens.d.b$4:
     int val$score -> a
     java.lang.Runnable val$onFinish -> b
     com.potatoandtomato.games.screens.scores.ScoresLogic this$0 -> c
-    212:212:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic,int,java.lang.Runnable) -> <init>
-    215:217:void run() -> run
+    213:213:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic,int,java.lang.Runnable) -> <init>
+    216:218:void run() -> run
 com.potatoandtomato.games.screens.scores.ScoresLogic$5 -> com.potatoandtomato.games.screens.d.b$5:
     java.lang.Runnable val$onFinish -> a
     com.potatoandtomato.games.screens.scores.ScoresLogic this$0 -> b
-    223:223:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic,java.lang.Runnable) -> <init>
-    226:227:void run() -> run
+    224:224:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic,java.lang.Runnable) -> <init>
+    227:228:void run() -> run
 com.potatoandtomato.games.screens.scores.ScoresLogic$6 -> com.potatoandtomato.games.screens.d.b$6:
     com.potatoandtomato.games.screens.scores.ScoresLogic this$0 -> a
-    256:256:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic) -> <init>
-    260:261:void onStageNumberChanged(int) -> a
-    265:266:void onAddedClickCount(java.lang.String,int) -> a
-    270:281:void onGameStateChanged(com.potatoandtomato.games.enums.GameState,com.potatoandtomato.games.enums.GameState) -> a
-    285:289:void onScoresChanged(double) -> a
+    270:270:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic) -> <init>
+    274:275:void onStageNumberChanged(int) -> a
+    279:280:void onAddedClickCount(java.lang.String,int) -> a
+    284:295:void onGameStateChanged(com.potatoandtomato.games.enums.GameState,com.potatoandtomato.games.enums.GameState) -> a
+    299:303:void onScoresChanged(double) -> a
 com.potatoandtomato.games.screens.scores.ScoresLogic$6$1 -> com.potatoandtomato.games.screens.d.b$6$1:
     com.potatoandtomato.games.screens.scores.ScoresLogic$6 this$1 -> a
-    271:271:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic$6) -> <init>
-    274:275:void run() -> run
+    285:285:void <init>(com.potatoandtomato.games.screens.scores.ScoresLogic$6) -> <init>
+    288:289:void run() -> run
 com.potatoandtomato.games.screens.stage_counter.StageCounterActor -> com.potatoandtomato.games.screens.e.a:
     com.badlogic.gdx.scenes.scene2d.ui.Table _this -> a
     com.potatoandtomato.games.models.Services services -> b
@@ -2594,42 +2604,42 @@ com.potatoandtomato.games.screens.time_bar.KnightLogic -> com.potatoandtomato.ga
     67:71:void setFreezed(boolean) -> a
     74:81:void setPause(boolean) -> b
     84:90:float getRemainingDistanceByRemainingTime(float) -> b
-    94:101:void stopMusic() -> c
-    104:114:void startMusic(boolean) -> c
-    117:183:void setListeners() -> d
-    186:186:com.potatoandtomato.games.screens.time_bar.KnightActor getKnightActor() -> e
-    190:191:void setKnightActor(com.potatoandtomato.games.screens.time_bar.KnightActor) -> a
+    94:97:void stopAllMusic() -> c
+    100:110:void startMusic(boolean) -> c
+    113:179:void setListeners() -> d
+    182:182:com.potatoandtomato.games.screens.time_bar.KnightActor getKnightActor() -> e
+    186:187:void setKnightActor(com.potatoandtomato.games.screens.time_bar.KnightActor) -> a
     16:16:com.potatoandtomato.games.models.GameModel access$000(com.potatoandtomato.games.screens.time_bar.KnightLogic) -> a
     16:16:com.potatoandtomato.games.screens.time_bar.KnightActor access$100(com.potatoandtomato.games.screens.time_bar.KnightLogic) -> b
 com.potatoandtomato.games.screens.time_bar.KnightLogic$1 -> com.potatoandtomato.games.screens.f.f$1:
     com.potatoandtomato.games.screens.time_bar.KnightLogic this$0 -> a
-    117:117:void <init>(com.potatoandtomato.games.screens.time_bar.KnightLogic) -> <init>
-    121:127:void onStageNumberChanged(int) -> a
-    131:139:void onRemainingMiliSecsChanged(int) -> c
-    143:144:void onFreezingMiliSecsChanged(int) -> d
-    148:166:void onGameStateChanged(com.potatoandtomato.games.enums.GameState,com.potatoandtomato.games.enums.GameState) -> a
+    113:113:void <init>(com.potatoandtomato.games.screens.time_bar.KnightLogic) -> <init>
+    117:123:void onStageNumberChanged(int) -> a
+    127:135:void onRemainingMiliSecsChanged(int) -> c
+    139:140:void onFreezingMiliSecsChanged(int) -> d
+    144:162:void onGameStateChanged(com.potatoandtomato.games.enums.GameState,com.potatoandtomato.games.enums.GameState) -> a
 com.potatoandtomato.games.screens.time_bar.KnightLogic$1$1 -> com.potatoandtomato.games.screens.f.f$1$1:
     com.potatoandtomato.games.screens.time_bar.KnightLogic$1 this$1 -> a
-    121:121:void <init>(com.potatoandtomato.games.screens.time_bar.KnightLogic$1) -> <init>
-    124:125:void run() -> run
+    117:117:void <init>(com.potatoandtomato.games.screens.time_bar.KnightLogic$1) -> <init>
+    120:121:void run() -> run
 com.potatoandtomato.games.screens.time_bar.KnightLogic$1$2 -> com.potatoandtomato.games.screens.f.f$1$2:
     int val$remainingMiliSecs -> a
     com.potatoandtomato.games.screens.time_bar.KnightLogic$1 this$1 -> b
-    131:131:void <init>(com.potatoandtomato.games.screens.time_bar.KnightLogic$1,int) -> <init>
-    134:137:void run() -> run
+    127:127:void <init>(com.potatoandtomato.games.screens.time_bar.KnightLogic$1,int) -> <init>
+    130:133:void run() -> run
 com.potatoandtomato.games.screens.time_bar.KnightLogic$1$3 -> com.potatoandtomato.games.screens.f.f$1$3:
     com.potatoandtomato.games.enums.GameState val$newState -> a
     com.potatoandtomato.games.screens.time_bar.KnightLogic$1 this$1 -> b
-    148:148:void <init>(com.potatoandtomato.games.screens.time_bar.KnightLogic$1,com.potatoandtomato.games.enums.GameState) -> <init>
-    151:164:void run() -> run
+    144:144:void <init>(com.potatoandtomato.games.screens.time_bar.KnightLogic$1,com.potatoandtomato.games.enums.GameState) -> <init>
+    147:160:void run() -> run
 com.potatoandtomato.games.screens.time_bar.KnightLogic$2 -> com.potatoandtomato.games.screens.f.f$2:
     com.potatoandtomato.games.screens.time_bar.KnightLogic this$0 -> a
-    169:169:void <init>(com.potatoandtomato.games.screens.time_bar.KnightLogic) -> <init>
-    172:179:void run() -> run
+    165:165:void <init>(com.potatoandtomato.games.screens.time_bar.KnightLogic) -> <init>
+    168:175:void run() -> run
 com.potatoandtomato.games.screens.time_bar.KnightLogic$2$1 -> com.potatoandtomato.games.screens.f.f$2$1:
     com.potatoandtomato.games.screens.time_bar.KnightLogic$2 this$1 -> a
-    172:172:void <init>(com.potatoandtomato.games.screens.time_bar.KnightLogic$2) -> <init>
-    175:177:void run() -> run
+    168:168:void <init>(com.potatoandtomato.games.screens.time_bar.KnightLogic$2) -> <init>
+    171:173:void run() -> run
 com.potatoandtomato.games.screens.time_bar.TimeActor -> com.potatoandtomato.games.screens.f.g:
     com.badlogic.gdx.scenes.scene2d.ui.Table _this -> a
     com.potatoandtomato.games.assets.MyAssets assets -> b
@@ -2887,7 +2897,7 @@ com.potatoandtomato.games.services.SoundsWrapper -> com.potatoandtomato.games.se
     83:84:void playSounds(com.badlogic.gdx.audio.Sound) -> a
     91:93:void dispose() -> dispose
 com.potatoandtomato.games.services.Texts -> com.potatoandtomato.games.services.Texts:
-    14:58:void <init>() -> <init>
+    14:63:void <init>() -> <init>
     16:16:java.lang.String nextHighScore() -> a
     18:18:java.lang.String memoryStart() -> b
     19:19:java.lang.String finalScore() -> c
@@ -2903,12 +2913,13 @@ com.potatoandtomato.games.services.Texts -> com.potatoandtomato.games.services.T
     32:32:java.lang.String replenishHints() -> m
     34:34:java.lang.String notContinue() -> n
     35:35:java.lang.String xDecidedNotToContinue() -> o
-    38:60:java.lang.String getBonusString(com.potatoandtomato.games.enums.BonusType) -> a
-    64:85:com.potatoandtomato.common.utils.Pair getMascotsSpeechAboutContinue() -> p
+    39:39:java.lang.String tutorialAboutGameMsg() -> p
+    43:65:java.lang.String getBonusString(com.potatoandtomato.games.enums.BonusType) -> a
+    69:90:com.potatoandtomato.common.utils.Pair getMascotsSpeechAboutContinue() -> q
 com.potatoandtomato.games.services.Texts$1 -> com.potatoandtomato.games.services.Texts$1:
     int[] $SwitchMap$com$potatoandtomato$games$enums$BonusType -> a
-    38:38:void <clinit>() -> <clinit>
-com.potatoandtomato.games.statics.Global -> com.potatoandtomato.games.c.a:
+    43:43:void <clinit>() -> <clinit>
+com.potatoandtomato.games.statics.Global -> com.potatoandtomato.games.b.a:
     boolean DEBUG -> a
     boolean REVIEW_MODE -> b
     int ATTACK_TIME_PERCENT -> c
@@ -2918,3 +2929,7 @@ com.potatoandtomato.games.statics.Global -> com.potatoandtomato.games.c.a:
     15:16:void setDEBUG(boolean) -> a
     19:21:void setDEBUG_BONUS(boolean) -> b
     8:12:void <clinit>() -> <clinit>
+com.potatoandtomato.games.statics.Terms -> com.potatoandtomato.games.b.b:
+    java.lang.String TUTORIAL_BASIC -> a
+    6:6:void <init>() -> <init>
+    8:8:void <clinit>() -> <clinit>

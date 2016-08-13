@@ -27,11 +27,12 @@ public class UpdateRoomHelper {
         return map;
     }
 
-    public String convertToJson(int code, String msg){
+    public String convertToJson(String userId, int code, String msg){
         HashMap<String, String> map = new HashMap<>();
         map.put("code", String.valueOf(code));
         if(msg.equals("")) msg = "-";
         map.put("msg", msg);
+        map.put("userId", userId);
 
         try {
             return objectMapper.writeValueAsString(map);

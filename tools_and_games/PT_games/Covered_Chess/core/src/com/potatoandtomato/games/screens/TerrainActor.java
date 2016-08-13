@@ -131,11 +131,10 @@ public class TerrainActor extends Table {
                         _glowingTile.setVisible(true);
                     }
                     else{
-                        _glowingTile.addAction(sequence(fadeOut(0.25f), new Action() {
+                        _glowingTile.addAction(sequence(fadeOut(0.25f), new RunnableAction() {
                             @Override
-                            public boolean act(float delta) {
+                            public void run() {
                                 _glowingTile.setSize(0, 0);
-                                return true;
                             }
                         }));
                     }

@@ -25,7 +25,7 @@ public class Socials {
     }
 
     public void loginFacebook(final FacebookListener listener){
-        _broadcaster.subscribeOnceWithTimeout(BroadcastEvent.LOGIN_FACEBOOK_CALLBACK, 10000, new BroadcastListener<JsonObj>() {
+        _broadcaster.subscribeOnce(BroadcastEvent.LOGIN_FACEBOOK_CALLBACK, new BroadcastListener<JsonObj>() {
             @Override
             public void onCallback(JsonObj obj, Status st) {
                 //login success

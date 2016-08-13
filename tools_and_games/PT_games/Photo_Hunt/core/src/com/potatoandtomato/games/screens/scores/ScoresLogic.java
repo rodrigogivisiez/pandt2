@@ -25,6 +25,7 @@ import com.potatoandtomato.games.statics.Global;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by SiongLeng on 14/4/2016.
@@ -233,7 +234,20 @@ public class ScoresLogic implements Disposable {
         ArrayList<ScoreDetails> scores = new ArrayList();
         scores.add(new ScoreDetails(gameModel.getScore(), services.getTexts().finalScore(), true, false));
         if(gameModel.getScore() > 0){
-            result.put(gameCoordinator.getMyTeam(), scores);
+
+            Team team = gameCoordinator.getMyTeam();
+            Map.Entry<String,Integer> maxEntry = null;
+            for(Map.Entry<String,Integer> entry : gameModel.getUserRecords().entrySet()) {
+                if (maxEntry == null || entry.getValue() > maxEntry.getValue()) {
+                    maxEntry = entry;
+                }
+            }
+
+            if(maxEntry != null){
+                team.setLeaderId(maxEntry.getKey());
+            }
+
+            result.put(team, scores);
         }
         return result;
     }

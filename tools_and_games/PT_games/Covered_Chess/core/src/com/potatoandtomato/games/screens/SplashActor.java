@@ -3,6 +3,7 @@ package com.potatoandtomato.games.screens;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.assets.Assets;
+import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.models.SpeechAction;
 import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
@@ -50,10 +52,19 @@ public class SplashActor extends Table {
                 Label labelVs = new Label(_texts.vs(), new Label.LabelStyle(
                         _assets.getFonts().get(Fonts.FontId.PIZZA_XXL_REGULAR), null));
 
-                Label labelYellowUser = new Label(Strings.cutOff(_coordinator.getPlayerByUniqueIndex(0).getName(), 9), new Label.LabelStyle(
+                Player yellowPlayer = _coordinator.getPlayerByUniqueIndex(0);
+                Player redPlayer = _coordinator.getPlayerByUniqueIndex(1);
+
+                String yellowName = _texts.getRandomBotName();
+                String redName = _texts.getRandomBotName();
+
+                if(yellowPlayer != null) yellowName = Strings.cutOff(_coordinator.getPlayerByUniqueIndex(0).getName(), 9);
+                if(redPlayer != null) redName = Strings.cutOff(_coordinator.getPlayerByUniqueIndex(1).getName(), 9);
+
+                Label labelYellowUser = new Label(yellowName, new Label.LabelStyle(
                         _assets.getFonts().get(Fonts.FontId.HELVETICA_MAX_BlACKCONDENSEDITALIC_B_ffffff_f0c266_2_S_000000_1_1), null));
 
-                Label labelRedUser = new Label(Strings.cutOff(_coordinator.getPlayerByUniqueIndex(1).getName(), 9), new Label.LabelStyle(
+                Label labelRedUser = new Label(redName, new Label.LabelStyle(
                         _assets.getFonts().get(Fonts.FontId.HELVETICA_MAX_BlACKCONDENSEDITALIC_B_ffffff_f46767_2_S_000000_1_1), null));
 
 
@@ -65,10 +76,7 @@ public class SplashActor extends Table {
                 tableVs.add(labelVs);
                 tableVs.add(labelRedUser).padLeft(10).uniformX();
 
-
                 _this.add(tableVs).expandX().fillX().padTop(180);
-
-
 
                 /////////////////////////////
                 //Chesses
@@ -125,12 +133,10 @@ public class SplashActor extends Table {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                _this.addAction(sequence(delay(Global.NO_ENTRANCE ? 0f : 2f), fadeOut(Global.NO_ENTRANCE ? 0f : 1f), new Action(){
-
+                _this.addAction(sequence(delay(Global.NO_ENTRANCE ? 0f : 2f), fadeOut(Global.NO_ENTRANCE ? 0f : 1f), new RunnableAction(){
                     @Override
-                    public boolean act(float delta) {
+                    public void run() {
                         runnable.run();
-                        return true;
                     }
                 }));
             }

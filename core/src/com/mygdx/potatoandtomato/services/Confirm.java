@@ -202,6 +202,8 @@ public class Confirm {
 
                 setButtonTable(type, extra);
                 animateShowConfirm();
+
+                broadcaster.broadcast(BroadcastEvent.HIDE_NATIVE_KEYBOARD);
             }
         });
     }

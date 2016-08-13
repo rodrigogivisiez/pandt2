@@ -25,11 +25,12 @@ public class TutorialsHelper implements TutorialPartListener {
     private TutorialsHelper _this;
     private GameCoordinator coordinator;
     private Texts texts;
-    private boolean completeMoveTutorial, completeOpenTutorial, completeConcludeTutorial;
+    private boolean completeMoveTutorial, completeOpenTutorial, completeConcludeTutorial, completeIntroductionTutorial;
     private TerrainLogic suggestOpenTerrainLogic, suggestMoveTerrainLogicFrom, suggestMoveTerrainLogicTo;
     private boolean closeOnNext;
     private boolean disposed;
     private GraveyardLogic graveyardLogic;
+    private int tutorialStep;
 
     public TutorialsHelper(GraveyardLogic graveyardLogic, GameCoordinator coordinator, Texts texts) {
         this.graveyardLogic = graveyardLogic;
@@ -48,7 +49,13 @@ public class TutorialsHelper implements TutorialPartListener {
         if(coordinator.getTutorialsWrapper().completedTutorialBefore(Terms.TUTORIAL_OPEN)){
             completeOpenTutorial = false;
         }
+    }
 
+    public void start(){
+        if(!completeOpenTutorial){
+            coordinator.getTutorialsWrapper().startTutorialIfNotCompleteBefore(Terms.TUTORIAL_OPEN,
+                    false, _this);
+        }
     }
 
     public void switchedToMyTurn(final ChessColor myChessColor, final ArrayList<TerrainLogic> terrains, final MovementRef movementRef){
@@ -59,12 +66,10 @@ public class TutorialsHelper implements TutorialPartListener {
                 if(!terrains.get(i).getChessLogic().getChessModel().getOpened()){
                     suggestOpenTerrainLogic = terrains.get(i);
                     completeOpenTutorial = true;
+                    if(completeIntroductionTutorial) nextTutorial();
                     break;
                 }
             }
-            coordinator.getTutorialsWrapper().startTutorialIfNotCompleteBefore(Terms.TUTORIAL_OPEN,
-                    false, _this);
-
         }
         else if(!completeMoveTutorial){
             for(int i = 0 ; i < terrains.size(); i++){
@@ -94,6 +99,15 @@ public class TutorialsHelper implements TutorialPartListener {
 
     @Override
     public void nextTutorial() {
+        tutorialStep++;
+        if(!completeOpenTutorial && tutorialStep == 1){
+            coordinator.getTutorialsWrapper().showMessage(null, texts.tutorialAboutGameMsg());
+            return;
+        }
+
+        completeIntroductionTutorial = true;
+
+
         if(closeOnNext){
             if(completeOpenTutorial && completeMoveTutorial && !completeConcludeTutorial){
                 Vector2 position = Positions.actorLocalToStageCoord(graveyardLogic.getGraveyardActor().getTutorialButton());

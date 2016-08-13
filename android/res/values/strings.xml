@@ -8,4 +8,6 @@
 
     <string name="invitation_accept">Play Now</string>
     <string name="invitation_reject">Busy</string>
+    <string name="back_to_room">Go to P&amp;T</string>
+    <string name="quit">Quit P&amp;T</string>
 </resources>

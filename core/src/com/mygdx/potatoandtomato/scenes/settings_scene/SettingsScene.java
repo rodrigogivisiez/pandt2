@@ -12,9 +12,7 @@ import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.Fonts;
 import com.mygdx.potatoandtomato.assets.Textures;
-import com.mygdx.potatoandtomato.controls.BtnColor;
-import com.mygdx.potatoandtomato.controls.PTTextField;
-import com.mygdx.potatoandtomato.controls.TopBar;
+import com.mygdx.potatoandtomato.controls.*;
 import com.mygdx.potatoandtomato.models.Services;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.potatoandtomato.common.utils.RunnableArgs;
@@ -27,7 +25,7 @@ public class SettingsScene extends SceneAbstract {
 
     TextField _displayNameTextField;
     BtnColor _facebookBtn, _saveBtn, creditBtn;
-    Image _soundsEnabledImage;
+    ToggleButton soundToggleButton, autoPlayAudioToggleButton;
 
     public SettingsScene(Services services, PTScreen screen) {
         super(services, screen);
@@ -48,8 +46,21 @@ public class SettingsScene extends SceneAbstract {
         //Sounds
         /////////////////////////
         Label soundsLabel = new Label(_texts.soundsTitle(), labelTitleStyle);
-        _soundsEnabledImage = new Image();
-        changeSoundEnabledImage();
+        soundToggleButton = new ToggleButton(
+                new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.SELECT_BOX)),
+                new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.UNSELECT_BOX)));
+        soundToggleButton.setToggleOn(Global.ENABLE_SOUND);
+
+        /////////////////////////
+        //Auto play audio label
+        /////////////////////////
+        Label autoPlayAudioLabel = new Label(_texts.autoPlayAudioMsgTitle(), labelTitleStyle);
+        autoPlayAudioLabel.setWrap(true);
+        autoPlayAudioToggleButton = new ToggleButton(
+                new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.SELECT_BOX)),
+                new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.UNSELECT_BOX)));
+        autoPlayAudioToggleButton.setToggleOn(Global.AUTO_PLAY_AUDIO_MSG);
+
 
         //////////////////////////
         //Separator
@@ -72,7 +83,7 @@ public class SettingsScene extends SceneAbstract {
         //Save Button
         //////////////////////////
         _saveBtn = new BtnColor(BtnColor.ColorChoice.RED, _assets);
-        _saveBtn.setText(_texts.save());
+        _saveBtn.setText(_texts.btnTextUpdateName());
 
 
         //////////////////////////
@@ -108,14 +119,17 @@ public class SettingsScene extends SceneAbstract {
         settingsTable.align(Align.top);
         settingsTable.padLeft(25).padRight(25).padTop(30).padBottom(30);
         settingsTable.add(soundsLabel).left();
-        settingsTable.add(_soundsEnabledImage).right();
+        settingsTable.add(soundToggleButton).right();
+        settingsTable.row().padTop(5);
+        settingsTable.add(autoPlayAudioLabel).left();
+        settingsTable.add(autoPlayAudioToggleButton).right();
         settingsTable.row();
         settingsTable.add(separatorImage).expandX().fillX().colspan(2).padTop(10).padBottom(10);
         settingsTable.row();
         settingsTable.add(displayNameLabel).left();
         settingsTable.add(_displayNameTextField).right();
         settingsTable.row();
-        settingsTable.add(_saveBtn).colspan(2).right().padTop(15);
+        settingsTable.add(_saveBtn).colspan(2).right().padTop(15).width(170);
         settingsTable.row();
         settingsTable.add(separatorImage2).expandX().fillX().colspan(2).padTop(10).padBottom(10);
         settingsTable.row();
@@ -147,8 +161,12 @@ public class SettingsScene extends SceneAbstract {
         });
     }
 
-    public Image getSoundsEnabledImage() {
-        return _soundsEnabledImage;
+    public ToggleButton getAutoPlayAudioToggleButton() {
+        return autoPlayAudioToggleButton;
+    }
+
+    public ToggleButton getSoundToggleButton() {
+        return soundToggleButton;
     }
 
     public TextField getDisplayNameTextField() {
@@ -167,15 +185,7 @@ public class SettingsScene extends SceneAbstract {
         return creditBtn;
     }
 
-    public void changeSoundEnabledImage(){
-        Threadings.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                _soundsEnabledImage.setDrawable(new TextureRegionDrawable(Global.ENABLE_SOUND ?
-                        _assets.getTextures().get(Textures.Name.SELECT_BOX) : _assets.getTextures().get(Textures.Name.UNSELECT_BOX)));
-            }
-        });
-    }
+
 
 
 }

@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.IBinder;
 import com.mygdx.potatoandtomato.absintflis.push_notifications.PushCode;
 import com.mygdx.potatoandtomato.android.receivers.HandleNotificationBroadcastReceiver;
+import com.mygdx.potatoandtomato.android.receivers.QuitGameReceiver;
 import com.mygdx.potatoandtomato.android.receivers.RoomAliveReceiver;
 import com.mygdx.potatoandtomato.utils.Logs;
 
@@ -46,7 +47,19 @@ public class KeepAliveService extends Service {
                     .setSmallIcon(R.drawable.ic_stat_icon)
                     .setLargeIcon(BitmapFactory.decodeResource(getResources(),
                             R.mipmap.ic_launcher))
-                    .setWhen(System.currentTimeMillis());
+                    .setWhen(0);
+
+            if (Build.VERSION.SDK_INT >= 16) {
+                Intent quitIntent = new Intent(this, QuitGameReceiver.class);
+                PendingIntent quitPendingIntent = PendingIntent.getBroadcast(
+                        this, PushCode.UPDATE_ROOM, quitIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                builder.addAction(R.drawable.ic_stat_action_done, getResources().getString(R.string.back_to_room),
+                        pendingIntent);
+
+                builder.addAction(R.drawable.ic_stat_action_settings_power, getResources().getString(R.string.quit),
+                        quitPendingIntent);
+            }
 
             builder.setSound(null);
             builder.setVibrate(null);

@@ -8,6 +8,7 @@ import com.mygdx.potatoandtomato.absintflis.scenes.ConnectionsControllerListener
 import com.mygdx.potatoandtomato.absintflis.scenes.GameLoadStateMonitorListener;
 import com.mygdx.potatoandtomato.enums.*;
 import com.mygdx.potatoandtomato.helpers.Flurry;
+import com.mygdx.potatoandtomato.statics.Terms;
 import com.potatoandtomato.common.absints.CoinListener;
 import com.mygdx.potatoandtomato.absintflis.services.ConnectionWatcherListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
@@ -225,6 +226,10 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
                     }
                 }));
 
+                if(!isContinue){
+                    addTotalGameCountIfNotRatedYet();
+                }
+
             }
         };
 
@@ -274,6 +279,17 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         _scene.setUser(userId, player.getName(), isReady, isFailed, player.getUserColor());
     }
 
+    private void addTotalGameCountIfNotRatedYet(){
+        if(!_services.getProfile().isRatedApps()){
+            String value = _services.getPreferences().get(Terms.TOTAL_GAME_COUNT);
+            int count = 0;
+            if(!Strings.isEmpty(value) && Strings.isNumeric(value)){
+                count = Integer.valueOf(value);
+            }
+            count++;
+            _services.getPreferences().put(Terms.TOTAL_GAME_COUNT, String.valueOf(count));
+        }
+    }
 
     public void setListenersAndThreads(){
         gameLoadStateMonitor.setGameLoadStateMonitorListener(new GameLoadStateMonitorListener() {

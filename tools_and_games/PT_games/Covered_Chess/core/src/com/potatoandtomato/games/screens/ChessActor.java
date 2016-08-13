@@ -25,6 +25,7 @@ import com.potatoandtomato.games.helpers.Positions;
 import com.potatoandtomato.games.helpers.Sizes;
 import com.potatoandtomato.games.models.ChessModel;
 import com.potatoandtomato.games.services.SoundsWrapper;
+import com.potatoandtomato.games.statics.Global;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.scaleBy;
@@ -114,6 +115,7 @@ public class ChessActor extends Table {
             @Override
             public void run() {
                 _previewing = true;
+                Global.increaseAnimationCount();
                 flipChessAnimation(_coverChess, revealChess ? _animalChess : _previewChess, new Runnable() {
                     @Override
                     public void run() {
@@ -124,6 +126,7 @@ public class ChessActor extends Table {
                                     @Override
                                     public void run() {
                                         _previewing = false;
+                                        Global.decreaseAnimationCount();
                                         if (toRun != null) toRun.run();
                                     }
                                 });
@@ -144,6 +147,7 @@ public class ChessActor extends Table {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
+                Global.increaseAnimationCount();
                 showingChess.setVisible(true);
 
                 _soundsWrapper.playSounds(Sounds.Name.FLIP_CHESS);
@@ -152,12 +156,12 @@ public class ChessActor extends Table {
                 hidingChess.clearActions();
                 hidingChess.addAction(sequence(Actions.scaleTo(0, 1, duration / 2)));
                 showingChess.clearActions();
-                showingChess.addAction(sequence(scaleTo(0, 1), Actions.delay(duration / 2), Actions.scaleTo(1, 1, duration / 2), new Action(){
+                showingChess.addAction(sequence(scaleTo(0, 1), Actions.delay(duration / 2), Actions.scaleTo(1, 1, duration / 2), new RunnableAction(){
                     @Override
-                    public boolean act(float delta) {
+                    public void run() {
                         showingChess.setScale(1, 1);
+                        Global.decreaseAnimationCount();
                         if(toRun != null) toRun.run();
-                        return true;
                     }
                 }));
             }
@@ -374,12 +378,22 @@ public class ChessActor extends Table {
 
                 if(hideChessAnimal) _animalImage.setVisible(false);
 
-                fadeOutAnimalImage.addAction(sequence(parallel(scaleTo(3.5f, 3.5f, 0.6f), fadeOut(0.6f)), new Action() {
+
+                Global.increaseAnimationCount();
+
+                fadeOutAnimalImage.addAction(sequence(parallel(scaleTo(3.5f, 3.5f, 0.6f), fadeOut(0.6f)), new RunnableAction() {
                     @Override
-                    public boolean act(float delta) {
+                    public void run() {
                         fadeOutAnimalImage.remove();
                         _animalImage.setVisible(true);
-                        return true;
+
+                        Threadings.delay(300, new Runnable() {
+                            @Override
+                            public void run() {
+                                Global.decreaseAnimationCount();
+                            }
+                        });
+
                     }
                 }));
 
@@ -398,12 +412,11 @@ public class ChessActor extends Table {
 
                 if(status == Status.NONE){
                     if(animate){
-                        _statusTable.addAction(sequence(Actions.scaleTo(0, 0, 0.3f, Interpolation.bounceOut), new Action() {
+                        _statusTable.addAction(sequence(Actions.scaleTo(0, 0, 0.3f, Interpolation.bounceOut), new RunnableAction() {
                             @Override
-                            public boolean act(float delta) {
+                            public void run() {
                                 _statusTable.clear();
                                 _statusTable.getColor().a = 1;
-                                return true;
                             }
                         }));
                     }

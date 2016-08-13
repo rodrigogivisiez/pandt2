@@ -20,7 +20,7 @@ public class Texts {
     public String gameContinueFailed(){ return "Game continue fails as all your partners have disconnected."; }
 
     public String evilKnightPreparing() { return "Mr. Knight is warming up..";}
-    public String evilKnightComing() { return "Mr. Knight CHARGES!"; };
+    public String evilKnightComing() { return "Mr. Knight CHARGES! Find 5 differences to STOP HIM!"; };
 
     public String waitingForContinue() { return "Waiting for next stage..";}
     public String gameOverText() { return "NO. OF CLICKS";}
@@ -33,6 +33,11 @@ public class Texts {
 
     public String notContinue() {return "Give up;";}
     public String xDecidedNotToContinue() { return "%s has decided not to continue game.";}
+
+
+    public String tutorialAboutGameMsg(){
+        return "Welcome to Photo Mania Resistance. Protect your castle from the evil knight by finding 5 differences with your friends, before the knight can reach you! 3 clues on the top left to help you each time.";
+    }
 
     public String getBonusString(BonusType bonusType){
         switch (bonusType){

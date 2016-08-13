@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
@@ -150,13 +151,12 @@ public class TerrainLogic {
             fromLogic.getChessLogic().setChessModel(null);
 
             clone.addAction(sequence(moveTo(finalPositionOnStage.x + clone.getWidth() / 4, finalPositionOnStage.y + 5, 0.25f),
-                    new Action() {
-                            @Override
-                            public boolean act(float delta) {
-                                clone.remove();
-                                afterMove.run();
-                                return true;
-                            }
+                    new RunnableAction() {
+                        @Override
+                        public void run() {
+                            clone.remove();
+                            afterMove.run();
+                        }
                 }));
         }
         else{

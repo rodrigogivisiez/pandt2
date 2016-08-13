@@ -9,11 +9,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Disposable;
+import com.potatoandtomato.common.GameCoordinator;
 import com.potatoandtomato.common.controls.Animator;
+import com.potatoandtomato.common.models.Player;
 import com.potatoandtomato.common.utils.Threadings;
 import com.potatoandtomato.games.assets.*;
 import com.potatoandtomato.games.enums.BonusType;
 import com.potatoandtomato.games.helpers.Positions;
+import com.potatoandtomato.games.helpers.Strings;
 import com.potatoandtomato.games.models.Services;
 import javafx.geometry.Pos;
 
@@ -25,14 +28,16 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 public class BeforeBonusPapyrusScene extends PapyrusSceneAbstract{
 
     private Services services;
+    private GameCoordinator gameCoordinator;
     private MyAssets assets;
     private Table root;
     private Table _this;
     private Label messageLabel;
 
-    public BeforeBonusPapyrusScene(Services services, Table root) {
+    public BeforeBonusPapyrusScene(Services services, GameCoordinator gameCoordinator, Table root) {
         this.services = services;
         this.root = root;
+        this.gameCoordinator = gameCoordinator;
         this.assets = services.getAssets();
         _this = this;
 
@@ -104,7 +109,13 @@ public class BeforeBonusPapyrusScene extends PapyrusSceneAbstract{
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                String text = String.format(services.getTexts().getBonusString(bonusType), extra);
+                String username = "";
+                if(bonusType == BonusType.ONE_PERSON){
+                    Player player = gameCoordinator.getPlayerByUserId(extra);
+                    if(player != null) username = Strings.cut(player.getName(), 15);
+                }
+
+                String text = String.format(services.getTexts().getBonusString(bonusType), username);
                 messageLabel.setText(text);
             }
         });

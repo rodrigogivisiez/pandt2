@@ -263,12 +263,12 @@ public class GraveyardActor extends Table {
         Table chainImageTable = new Table();
         chainImageTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.FOOD_CHAIN)));
 
-        Label.LabelStyle labelStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HANDWRITING_25_REGULAR_S_000000_1_1), Color.BLACK);
+        Label.LabelStyle labelStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_XXL_REGULAR), Color.BLACK);
         Label label1 = new Label(_texts.tutorialAboutFoodChain(), labelStyle);
         label1.setWrap(true);
         label1.setAlignment(Align.left);
 
-        table.add(label1).expandX().fillX();
+        table.add(label1).expandX().fillX().padTop(10).padBottom(20);
         table.row();
         table.add(chainImageTable).center();
         for(int i = 0; i < 4; i++){
@@ -283,7 +283,7 @@ public class GraveyardActor extends Table {
     }
 
     private Table getTutorialSegment(int i){
-        Label.LabelStyle labelStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.HANDWRITING_25_REGULAR_S_000000_1_1), Color.BLACK);
+        Label.LabelStyle labelStyle = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_15_REGULAR), Color.BLACK);
 
         Table segmentTable = new Table();
         Table contentTable = new Table();
@@ -322,9 +322,10 @@ public class GraveyardActor extends Table {
                 Image statusImage = new Image(pair.getFirst());
                 Label statusLabel = new Label(pair.getSecond(), labelStyle);
                 statusLabel.setWrap(true);
-                contentTable.add(statusImage).padRight(10).top().padTop(10);
-                contentTable.add(statusLabel).expandX().fillX().top();
-                contentTable.row().padBottom(10);
+                statusLabel.setAlignment(Align.left);
+                contentTable.add(statusImage).padRight(10).top().expandY();
+                contentTable.add(statusLabel).expand().fill().padBottom(20);
+                contentTable.row();
             }
         }
         else if(i == 3){

@@ -31,6 +31,9 @@ public class DesktopLauncher {
 
 		if(arg.length > 1 && (arg[1].equals("noentrance"))) Global.NO_ENTRANCE = true;
 
+		if((arg.length > 2 && (arg[2].equals("bot")))
+				|| (arg.length > 1 && (arg[1].equals("bot")))) Global.BOT_MATCH = true;
+
 		if(arg.length > 0 && arg[0].equals("pack")) return;
 
 		new LwjglApplication(coveredChessGame, config);

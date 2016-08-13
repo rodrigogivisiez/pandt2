@@ -1,5 +1,8 @@
 package com.potatoandtomato.games.services;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 /**
  * Created by SiongLeng on 30/12/2015.
  */
@@ -74,12 +77,16 @@ public class Texts {
         return "Bring down Jungle King contender";
     }
 
+    public String beatBot() {
+        return "Bot killer";
+    }
+
     ////////////////////////////////////////////////
     //tutorial texts
     ////////////////////////////////////////////////
 
     public String tutorialAboutFoodChain() {
-        return "Hello, you jungle king, thiz the guide to eatzing";
+        return "Hello, you jungle king, thiz the guide to eatzing. Circle indicates which animal can eat other animals morez easily. ";
     }
 
     public String tutorialAboutSwipeOpen() {
@@ -123,7 +130,7 @@ public class Texts {
     //about on screen tutorials
     ///////////////////////////////
     public String onScreenTutorialDragToMove(){
-        return "Drag to move";
+        return "Drag to move and attack other animals";
     }
 
     public String onScreenTutorialSeeMore(){
@@ -132,6 +139,22 @@ public class Texts {
 
     public String onScreenTutorialSwipeToOpen(){
         return "Swipe to open";
+    }
+
+    public String tutorialAboutGameMsg(){
+        return "Welcome to Behind You a Jungle! The objective of this game is to flip chess pieces, drag them to move and battle, and be the last one standing!";
+    }
+
+    //////////////////////////////////////////
+    //bot name
+    //////////////////////////////////////////
+    public String getRandomBotName(){
+        ArrayList<String> nameList = new ArrayList();
+
+        nameList.add("Ali Bot");
+
+        Collections.shuffle(nameList);
+        return nameList.get(0);
     }
 
 }

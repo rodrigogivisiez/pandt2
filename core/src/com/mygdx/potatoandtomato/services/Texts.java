@@ -58,10 +58,12 @@ public class Texts {
 
     public String displayNameTitle() { return "Display Name"; }
     public String soundsTitle() { return "Sounds"; }
+    public String autoPlayAudioMsgTitle() { return "Auto Play Audio Msg";}
     public String facebookTitle() { return "Facebook"; }
     public String creditsTitle() { return "Credits"; }
 
     public String btnTextShowCredits() { return "Show"; }
+    public String btnTextUpdateName() { return "Update Name";}
 
     public String confirmLogoutFacebook() { return "Are you sure you want to logout from Facebook? (Potato and Tomato will need to restart after this.)"; }
     public String confirmLoginFacebook() { return "Are you sure you want to login into Facebook? (Potato and Tomato will need to restart after this.)"; }
@@ -73,7 +75,7 @@ public class Texts {
                 "\u2022 Fun in a Bottle Kevin MacLeod (incompetech.com)\n" +
                 "\u2022 Casa Bossa Nova Kevin MacLeod (incompetech.com)\n" +
                 "\u2022 Past the Edge Kevin MacLeod (incompetech.com)\n" +
-                "\u2022 Licensed under Creative Commons: By Attribution 3.0 License (http://creativecommons.org/licenses/by/3.0)\n\n" +
+                "Licensed under Creative Commons: By Attribution 3.0 License (http://creativecommons.org/licenses/by/3.0)\n\n" +
                 "\u2022 Our talented designer for all design work (soulcreativestudio.com)\n\n" +
                 "\u2022 Our talented voice actor and video editor for our promo video and the character voice (reachable @ zerawin@gmail.com)";
     }
@@ -100,6 +102,18 @@ public class Texts {
     public String btnTextContinueLastGame() { return "Continue"; }
 
     public String confirmNotContinueGame() { return "You still have an unfinished game! Do you want to abandon it?" ;}
+
+    /////////////////////////////////////////////for rate me
+    public String askLikePandT() { return "Do you like our game?" ;}
+    public String thanksForLike() { return "Thanks,\nplease take time to rate our apps in PlayStore.";}
+    public String sorryForDislike() { return "Sorry to hear that!\nPlease give us a chance to improve.";}
+
+
+    public String btnLikeApps() { return "Love it";}
+    public String btnDislikeApps() { return "Nope...";}
+
+    public String btnGoToPlayStore() { return "Go!";}
+    public String btnDontGoToPlayStore() { return "No...";}
 
     /////////////////////////////////////////////////////////////////////////
     //Prerequisite scene
@@ -128,7 +142,7 @@ public class Texts {
     public String confirmHostLeaveRoom() { return "Are you sure you want to leave this room?\n(This room will be gone)"; }
     public String confirmKick() { return "Confirm kicking %s from this room?";}
     public String confirmYouAreKicked() { return "You are kicked from this room.";}
-    public String confirmGameClientOutdated() { return "This game requires latest App version to run, please update your P&T in App Store.";}
+    public String confirmGameClientOutdated() { return "This game requires latest App version to run, please update your P&T in Play Store.";}
     public String confirmGameVersionOutdated() { return "This game has a newer version, a new room needs to be created.";}
     public String confirmFailedRetriveGameData() { return "Fail to connect, please check your connection and try again.";}
     public String confirmHostLeft() { return "Room host has left the room, all participants to exit room now."; }
@@ -218,6 +232,8 @@ public class Texts {
 
     public String updatingScores() { return "Updating Scores..."; }
 
+    public String leaderAndFriend() { return "%s (+%s Friend)";}
+    public String leaderAndFriends() { return "%s (+%s Friends)";}
     ////////////////////////////////////////////////////////////////////////
     //Shop scene and coins
     /////////////////////////////////////////////////////////////////////////
@@ -248,7 +264,10 @@ public class Texts {
     public String btnTextSkipTutorial() { return "Skip Tutorial"; }
     public String btnTextStartTutorial() { return "Start Tutorial"; }
 
-    public String tutorialWelcomeMessage() { return "Welcome to P&T, let us guide you on how to create your first game.";}
+    public String tutorialWelcomeMessage() { return "Welcome to Potato and Tomato-Multiplayer, where you can play games with your friends and your family. We will proceed to show you how you can join a game.";}
+    public String tutorialAboutLobbies() { return "Here are all available games created by other P&T users";}
+    public String tutorialAboutJoinGame() { return "Here is the Join Game button to join an existing game set up by your friends or others";}
+    public String tutorialCreateGameMessage() { return "Now let us guide you on how to create your first game.";}
     public String tutorialAboutCreateGame() { return "Tap Create Game button";}
 
     public String tutorialAboutGameList() { return "Here you can see all our P&T games. Lets create a game.";}
@@ -271,8 +290,23 @@ public class Texts {
 
     public String tutorialAboutGetCoinsSuccess() { return "Now you should have enough coins to start a game. Mum's purse grow coins over time so do remember to come back for more.";}
 
-    public String tutorialConclude() { return "Do remember that you can always enter coin shop by tapping the coin icon for more free coin retrieval methods. That concludes our tutorial, enjoy!";}
+    public String tutorialAboutInviteMsg() { return "You can also invite your friends to join you by tapping the invite button";}
 
+    public String tutorialConclude() { return "If you run out of coin, you can always enter coin shop by tapping the coin icon for more free coin retrieval methods. That concludes our tutorial, enjoy!";}
+
+    ///////////////////invite tutorial
+    public String tutorialInviteScreenMsg() { return "Let us guide you through each invite method."; }
+
+    public String tutorialTapInviteRecentlyPlayed() { return "Tap invite recently played"; }
+    public String tutorialInviteRecentlyPlayedMsg() { return "Here you can invite and notify players from recent games to join you in a game."; }
+
+    public String tutorialTapInviteFacebook() { return "Tap invite Facebook"; }
+    public String tutorialInviteFacebookMsg() { return "Here you can invite your Facebook friends who have signed up with us through Facebook. Share to get more of your Facebook friends to join us!"; }
+
+    public String tutorialTapInviteLeaderboard() { return "Tap invite Leaderboard"; }
+    public String tutorialInviteLeaderboard() { return "Here you can invite the score leaders to play with you. You might be there someday!"; }
+
+    public String tutorialInviteConclude() { return "You can select multiple friends at once and tap the invite button. Happy playing!";}
 
     ///////////////////////////////////////////////////////////////////////
     //Connection related
@@ -316,11 +350,32 @@ public class Texts {
     public String insert() { return "Insert";}
     public String coin() { return "Coin";}
     public String save() { return "Save"; }
+    public String yes() { return "Yes"; }
+    public String back() { return "Back"; }
+    public String send() { return "Send"; }
 
     public String noRecords() { return "No records found.";}
     public String requestFailed() { return "Request fails.";}
     public String generalError() { return "Unexpected error occurs, please try again.";}
     public String workingDoNotClose() { return "Potato and Tomato are working now, please do not close apps now...";}
+
+    /////////////////////////////////////////////////////////////
+    //Auto joiner msg
+    ////////////////////////////////////////////////////////////
+    public String autoJoiningMsg() { return "Joining game room now, please wait...";}
+
+    /////////////////////////////////////////////////////////////
+    //Toast msg
+    ////////////////////////////////////////////////////////////
+    public String toastPTStillRunning() { return "P&T is still running...";}
+
+
+    /////////////////////////////////////////////////////////////
+    //Sharing
+    ///////////////////////////////////////////////////////////
+    public String shareSubject() { return "Share Potato and Tomato:Multiplayer game";}
+    public String shareBody() { return "Join me at Potato and Tomato:Multiplayer @ https://play.google.com/store/apps/details?id=com.mygdx.potatoandtomato.android";}
+    public String shareDialogTitle() { return "Share via";}
 
     ///////////////////////////////////////////////////////////
     //Mascots speeches in coin machine

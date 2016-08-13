@@ -554,7 +554,10 @@ public class RoomScene extends SceneAbstract {
                     roomUserStateIconTable.getColor().a = 1f;
                     roomUserStateIconTable.setVisible(true);
 
-                    for(Actor actor : iconTable.getChildren()){
+
+                    for(int i = 0; i < iconTable.getChildren().size; i++)
+                    {
+                        Actor actor = iconTable.getChildren().get(i);
                         if(!actor.getName().equals("roomUserStateIconTable")){
                             actor.remove();
                         }

@@ -53,7 +53,8 @@ public class ChatControl {
     private Image chatBoxBackground;
     private Table mode1MessagesContainer, mode2MessagesContainer;
     private Table mode1MessagesTable, mode2MessagesTable;
-    private Image mode2MessagesTableBgImage;
+    private Table mode2MessagesTableBg;
+    private Image mode2CloseImage;
     private ScrollPane mode1ChatScroll, mode2ChatScroll;
 
     private Table roomUsersButtonRoot, roomUsersButtonRootTrans, sendingRoot;
@@ -296,17 +297,26 @@ public class ChatControl {
         mode2MessagesContainer.setTouchable(Touchable.disabled);
         mode2MessagesContainer.setPosition(0, 0);
 
-        mode2MessagesTableBgImage = new Image(assets.getTextures().get(Textures.Name.LESS_TRANS_BLACK_BG));
-        mode2MessagesTableBgImage.setFillParent(true);
-        mode2MessagesTableBgImage.setTouchable(Touchable.disabled);
-        mode2MessagesTableBgImage.getColor().a = 0f;
+        mode2MessagesTableBg = new Table();
+        mode2MessagesTableBg.setBackground(new TextureRegionDrawable(assets.getTextures().get(Textures.Name.LESS_TRANS_BLACK_BG)));
+        mode2MessagesTableBg.setFillParent(true);
+        mode2MessagesTableBg.setTouchable(Touchable.childrenOnly);
+        mode2MessagesTableBg.getColor().a = 0f;
+        mode2MessagesTableBg.align(Align.topRight);
+
+        mode2CloseImage = new Image(assets.getTextures().get(Textures.Name.CHAT_CLOSE_ICON));
+
+        mode2MessagesTableBg.add(mode2CloseImage);
 
         mode2MessagesTable = new Table();
         mode2MessagesTable.align(Align.bottomLeft);
         mode2MessagesTable.padBottom(CHAT_CONTAINER_HEIGHT + 5).padLeft(50).padRight(50).padTop(5);
-        mode2MessagesTable.addActor(mode2MessagesTableBgImage);
+        mode2MessagesTable.addActor(mode2MessagesTableBg);
+
         mode2ChatScroll = new ScrollPane(mode2MessagesTable);
         mode2ChatScroll.setOverscroll(false, false);
+
+
         mode2MessagesContainer.add(mode2ChatScroll).expand().fill();
         root.addActor(mode2MessagesContainer);
     }
@@ -514,14 +524,14 @@ public class ChatControl {
             @Override
             public void run() {
 
-                if(locked && mode2MessagesTableBgImage.getColor().a < 1f){
-                    mode2MessagesTableBgImage.clearActions();
-                    mode2MessagesTableBgImage.getColor().a = 0f;
-                    mode2MessagesTableBgImage.addAction(fadeIn(0.2f));
+                if(locked && mode2MessagesTableBg.getColor().a < 1f){
+                    mode2MessagesTableBg.clearActions();
+                    mode2MessagesTableBg.getColor().a = 0f;
+                    mode2MessagesTableBg.addAction(fadeIn(0.2f));
                 }
-                else if(!locked && mode2MessagesTableBgImage.getColor().a > 0f){
-                    mode2MessagesTableBgImage.clearActions();
-                    mode2MessagesTableBgImage.getColor().a = 0f;
+                else if(!locked && mode2MessagesTableBg.getColor().a > 0f){
+                    mode2MessagesTableBg.clearActions();
+                    mode2MessagesTableBg.getColor().a = 0f;
                 }
 
 
@@ -543,8 +553,8 @@ public class ChatControl {
                 if(mode2MessagesContainer.getName() == null || (!mode2MessagesContainer.getName().equals("fadeOut")
                         && !mode2MessagesContainer.getName().equals("fadeOutWait"))){
                     mode2MessagesTable.clearActions();
-                    mode2MessagesTableBgImage.clearActions();
-                    mode2MessagesTableBgImage.addAction(fadeOut(0.1f));
+                    mode2MessagesTableBg.clearActions();
+                    mode2MessagesTableBg.addAction(fadeOut(0.1f));
                     mode2MessagesContainer.setName("fadeOut");
                     mode2MessagesContainer.setTouchable(Touchable.disabled);
                     for(VoiceMessageControl voiceMessageControl : mode2VoiceMessageControls){
@@ -810,8 +820,8 @@ public class ChatControl {
                 }
                 else if(mode == 2){
                     mode2MessagesTable.clear();
-                    mode2MessagesTable.addActor(mode2MessagesTableBgImage);
-                    mode2MessagesTableBgImage.getColor().a = 0f;
+                    mode2MessagesTable.addActor(mode2MessagesTableBg);
+                    mode2MessagesTableBg.getColor().a = 0f;
                 }
                 mode2VoiceMessageControls.clear();
                 for(String username : disconnectedCountDownThreads.keySet()){
@@ -1066,6 +1076,15 @@ public class ChatControl {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                messageTextFieldChanged();
+            }
+        });
+
+        mode2CloseImage.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                fadeOutMode2(0);
+                unfocusMessageTextField();
             }
         });
 

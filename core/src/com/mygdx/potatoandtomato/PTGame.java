@@ -67,35 +67,38 @@ public class PTGame extends Game implements IPTGame {
 	Profile _profile;
 	IDatabase _database;
 	PTAssetsManager _monitoringPTAssetsManager;
+	AutoJoiner _autoJoiner;
 	ArrayList<Runnable> _onResumeRunnables;
 
 	HashMap<InputProcessor, Integer> _processors;
 	ArrayList<InputProcessor> _externalProcessors;
 
 	public PTGame(Broadcaster broadcaster) {
+		this(broadcaster, null);
+	}
+
+	public PTGame(Broadcaster broadcaster, String autoJoinRoomId) {
 		_broadcaster = broadcaster;
 		_onResumeRunnables = new ArrayList();
+		_autoJoiner = new AutoJoiner(autoJoinRoomId);
 	}
 
 	@Override
 	public void create () {
-
-
 		_game = this;
 		_preferences = new Preferences();
 		_processors = new HashMap();
 		_externalProcessors = new ArrayList();
 		Threadings.setMainTreadId();
 		Global.init(_preferences);
-		_splashScreen = new SplashScreen();
-		setScreen(_splashScreen);
+//		_splashScreen = new SplashScreen();
+//		setScreen(_splashScreen);
 		initiateAssets();
 
 		//run when assets done loading
 		_assets.loadAsync(new Runnable() {
 			@Override
 			public void run() {
-
 				_profile = new Profile();
 				_batch = new SpriteBatch();
 				_gamingKit = new Appwarp();
@@ -118,25 +121,25 @@ public class PTGame extends Game implements IPTGame {
 				_coins = new Coins(_broadcaster, _assets, _soundsPlayer, _texts,
 						_game, _batch, _profile, _database, _gamingKit, _restfulApi, _confirm, _connectionWatcher,
 						_dataCaches);
-
+				_autoJoiner.init(_confirm, _texts);
 
 				_services = new Services(_assets, _texts,
 						_preferences, _profile, _database,
 						new Shaders(), _gamingKit, _downloader, _chat,
 						new Socials(_preferences, _broadcaster), new GCMSender(), _confirm, _notification,
 						_recorder, _soundsPlayer, new VersionControl(), _broadcaster,
-						_tutorials, _restfulApi, _connectionWatcher, _coins, _dataCaches);
+						_tutorials, _restfulApi, _connectionWatcher, _coins, _dataCaches, _autoJoiner);
 				_screen = new PTScreen(_game, _services);
 				_connectionWatcher.setPtScreen(_screen);
 				_coins.setPtScreen(_screen);
 
-				_splashScreen.close(new Runnable() {
-					@Override
-					public void run() {
+//				_splashScreen.close(new Runnable() {
+//					@Override
+//					public void run() {
 						setScreen(_screen);
-						_screen.toScene(SceneEnum.BOOT);
-					}
-				});
+						_screen.toScene(SceneEnum.GAME_LIST);
+//					}
+//				});
 
 			}
 		});
@@ -156,6 +159,7 @@ public class PTGame extends Game implements IPTGame {
 	@Override
 	public void dispose() {
 		super.dispose();
+		if(_screen != null) _screen.dispose();
 		_broadcaster.broadcast(BroadcastEvent.DESTROY_ROOM);
 		if(_services != null && _services.getAssets() != null) _services.getAssets().dispose();
 		if(_services != null && _services.getAssets() != null) _services.getGamingKit().dispose();

@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
 import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
@@ -47,7 +48,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 /**
  * Created by SiongLeng on 5/12/2015.
  */
-public class PTScreen implements Screen, InputProcessor {
+public class PTScreen implements Screen, InputProcessor, Disposable {
 
     PTGame _ptGame;
     Image _bgBlueImg, _bgAutumnImg, _sunriseImg, _sunrayImg, _greenGroundImg, _autumnGroundImg;
@@ -413,7 +414,12 @@ public class PTScreen implements Screen, InputProcessor {
 
     @Override
     public void dispose() {
-        _ptGame.dispose();
+        while(_logicStacks.size() > 0){
+            final LogicEnumPair logicEnumPair = _logicStacks.pop();
+            logicEnumPair.getLogic().disposeEarly();
+            logicEnumPair.getLogic().dispose();
+        }
+        _logicStacks.clear();
     }
 
     @Override
@@ -460,6 +466,7 @@ public class PTScreen implements Screen, InputProcessor {
     public boolean scrolled(int amount) {
         return false;
     }
+
 
 
     private class LogicEnumPair{

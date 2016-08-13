@@ -126,7 +126,7 @@ public class InviteScene extends SceneAbstract {
         //////////////////////////////////
         //Invite root population
         ////////////////////////////////////
-        _invitesRootTable.add(tabsTable).expandX().fillX();
+        _invitesRootTable.add(tabsTable).expandX().fillX().height(35);
         _invitesRootTable.row();
         _invitesRootTable.add(_invitesTable).expand().fill();
 
@@ -141,7 +141,7 @@ public class InviteScene extends SceneAbstract {
         ///////////////////////////////////
         _root.add(_invitesRootTable).padLeft(15).padRight(15).expandX().fillX().height(450);
         _root.row();
-        _root.add(_inviteButton).expandX().padTop(-10);
+        _root.add(_inviteButton).expandX().padTop(-10).height(_inviteButton.getPrefHeight());
     }
 
     public void changeTab(final InviteType inviteType){

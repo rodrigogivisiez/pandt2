@@ -54,10 +54,12 @@ public class ScoreDetails {
         this.reason = reason;
     }
 
+    //adding = true, multiplying = false
     public boolean isAddOrMultiply() {
         return addOrMultiply;
     }
 
+    //adding = true, multiplying = false
     public void setAddOrMultiply(boolean addOrMultiply) {
         this.addOrMultiply = addOrMultiply;
     }
