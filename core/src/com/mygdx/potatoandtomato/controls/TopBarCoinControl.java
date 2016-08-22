@@ -168,10 +168,12 @@ public class TopBarCoinControl extends Table {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                freeCoinPointImage = new Image(assets.getTextures().get(Textures.Name.FREE_COIN_POINT_RIGHT));
-                freeCoinPointImage.setPosition(-freeCoinPointImage.getPrefWidth() - 20, -_this.getPrefHeight() /2);
-                freeCoinPointImage.addAction(forever(sequence(Actions.moveBy(10f, 0f, 0.7f), Actions.moveBy(-10f, 0f, 0.7f))));
-                _this.addActor(freeCoinPointImage);
+                if(freeCoinPointImage == null){
+                    freeCoinPointImage = new Image(assets.getTextures().get(Textures.Name.FREE_COIN_POINT_RIGHT));
+                    freeCoinPointImage.setPosition(-freeCoinPointImage.getPrefWidth() - 20, -_this.getPrefHeight() /2);
+                    freeCoinPointImage.addAction(forever(sequence(Actions.moveBy(10f, 0f, 0.7f), Actions.moveBy(-10f, 0f, 0.7f))));
+                    _this.addActor(freeCoinPointImage);
+                }
             }
         });
     }

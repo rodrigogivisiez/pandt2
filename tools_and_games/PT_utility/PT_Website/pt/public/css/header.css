@@ -1,0 +1,140 @@
+.headers{
+	height:80px;
+	background-color:#ffffff;
+    border-bottom: 1px solid #ececec;
+    margin-bottom:50px;
+    z-index:10;
+}
+
+.headers .navbar-brand{
+	padding:0px;
+}
+
+.headers .navbar-collapse{
+	border:none;
+}
+
+.headers .navbar-toggle{
+	margin-top:19px;
+}
+
+@media (max-width: 768px) {
+	.headers .nav{
+		background-color:white;
+		padding-bottom:20px;
+		margin-top:18px;
+	}
+}  
+
+
+
+
+.headers ul li{
+	text-align:center;
+}
+
+.headers .logo{
+	float:left;
+	width: 120px;
+	margin-right:20px;
+	margin-top:5px;
+}
+
+@media (min-width: 1200px) {
+	.headers .logo{
+		margin-left:160px;
+	}
+}
+
+@media (min-width: 992px) and (max-width: 1200px) {
+	.headers .logo{
+		margin-left:100px;
+	}
+
+}  
+
+@media (min-width: 768px) and (max-width: 992px) {
+	.headers .logo{
+		width:70px;
+		margin-left:50px;
+	}
+
+}  
+
+@media (min-width: 480px) and (max-width: 768px) {
+	.headers .logo{
+		width:70px;
+		margin-left:20px;
+	}
+}  
+
+@media (max-width: 480px) {
+	.headers .logo{
+		width:70px;
+		margin-left:20px;
+	}
+
+}  
+
+
+
+
+.headers .tabButton{
+	border: none;
+    background: url('images/tab_button.png') no-repeat top left;
+    background-size: 120px 50px;
+    width : 120px; 
+    height :50px;
+    padding: 2px 8px;
+    float:left;
+    text-align : center;
+    line-height : 48px;
+    cursor: pointer;
+    margin-top: 13px;
+    margin-left: 10px;
+}
+
+@media (max-width: 768px) {
+	.headers .tabButton{
+		float:none;
+		display:inline-block;
+	}
+
+}  
+
+.headers .tabButton:hover{
+	background-image: url('images/tab_button_hover.png');
+}
+
+.headers .tabButton:active, .headers .tabButton.active{
+	background-image: url('images/tab_button_active.png');
+}
+
+.headers .tabButton span{
+	font-family: "pizzaFont";
+	font-size: 1.3em;
+	color: white;
+}
+
+.headers .decorate{
+	float:left;
+	margin-left:50px;
+	margin-right:50px;
+	margin-top:16px;
+}
+
+.headers .icon{
+	float:left;
+	margin-top:10px;
+	margin-left:5px;
+	cursor: pointer;
+}
+
+@media (max-width: 1200px) {
+	.headers .decorate, .headers .icon{
+		display:none;
+	}
+
+}  
+
+

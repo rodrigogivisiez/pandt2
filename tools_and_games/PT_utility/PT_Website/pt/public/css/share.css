@@ -1,0 +1,65 @@
+@font-face {
+    font-family: 'pizzaFont'; 
+    src: url('fonts/pizza.ttf');
+}
+
+body{
+	background-color: #231905
+}
+
+
+.noSelect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none;   /* Chrome/Safari/Opera */
+  -khtml-user-select: none;    /* Konqueror */
+  -moz-user-select: none;      /* Firefox */
+  -ms-user-select: none;       /* Internet Explorer/Edge */
+  user-select: none;           /* Non-prefixed version, currently
+                                  not supported by any browser */
+}
+
+.clear{
+	clear: both;
+}
+
+.invi{
+	display:none;
+}
+
+.textCenter{
+	text-align:center;
+}
+
+.textRight{
+	text-align:right;
+}
+
+
+.pageContainer{
+	min-height:505px;
+}
+
+.background{
+	  background: url('images/background.jpg') no-repeat center center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+    height:100%;
+    min-height:564px;
+    position:absolute;
+    position:absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	z-index: -1;
+}
+
+h1,h2,h3,h4,h5{
+	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+	color:white;
+}
+
+
+
+

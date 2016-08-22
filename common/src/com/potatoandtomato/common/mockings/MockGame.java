@@ -328,7 +328,7 @@ public abstract class MockGame extends Game implements IPTGame {
             for(int i = 0; i < expectedTeamCount; i++){
                 Team team = new Team();
                 for(int q = 0; q < eachTeamExpectedPlayers; q++){
-                    team.addPlayer(new Player("test", !addedMe ? _mockGamingKit.getUserId() : Strings.generateUniqueRandomKey(18), true, index));
+                    team.addPlayer(new Player("test", !addedMe ? _mockGamingKit.getUserId() : Strings.generateUniqueRandomKey(18), "", true, index));
                     addedMe = true;
                     index++;
                 }

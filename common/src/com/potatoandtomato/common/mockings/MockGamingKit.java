@@ -408,7 +408,7 @@ public class MockGamingKit {
 
                 int slotIndex = 0;
                 for(String user : users) {
-                    team.addPlayer(new Player(user, user, isHost, slotIndex));
+                    team.addPlayer(new Player(user, user, "", isHost, slotIndex));
                     isHost = false;
                     i++;
                     slotIndex++;

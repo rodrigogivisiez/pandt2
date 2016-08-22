@@ -15,10 +15,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.mygdx.potatoandtomato.absintflis.controls.ChatPopupListener;
 import com.mygdx.potatoandtomato.absintflis.controls.CheckStateListener;
-import com.mygdx.potatoandtomato.assets.Fonts;
-import com.mygdx.potatoandtomato.assets.Patches;
-import com.mygdx.potatoandtomato.assets.Sounds;
-import com.mygdx.potatoandtomato.assets.Textures;
+import com.mygdx.potatoandtomato.assets.*;
+import com.mygdx.potatoandtomato.enums.BadgeType;
 import com.mygdx.potatoandtomato.enums.GameConnectionStatus;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.services.Recorder;
@@ -43,7 +41,7 @@ public class ChatControl {
 
     private Stage stage;
     private SpriteBatch batch;
-    private Assets assets;
+    private MyAssets assets;
     private Texts texts;
     private SoundsPlayer soundsPlayer;
     private Recorder recorder;
@@ -78,7 +76,7 @@ public class ChatControl {
     private ConcurrentHashMap<String, SafeThread> disconnectedCountDownThreads;
     private ConcurrentHashMap<String, Table> cacheRoomUserStatusTablesMap;
 
-    public ChatControl(IPTGame iptGame, Texts texts, Assets assets, SoundsPlayer soundsPlayer, Recorder recorder, SpriteBatch batch,
+    public ChatControl(IPTGame iptGame, Texts texts, MyAssets assets, SoundsPlayer soundsPlayer, Recorder recorder, SpriteBatch batch,
                             ChatTemplateControl chatTemplateControl) {
         this.iptGame = iptGame;
         this.texts = texts;
@@ -137,6 +135,7 @@ public class ChatControl {
         resetRecordDesign();
 
         root = new Table();
+        root.setVisible(false);
         root.align(Align.bottom);
 
         populateMode1();
@@ -298,15 +297,14 @@ public class ChatControl {
         mode2MessagesContainer.setPosition(0, 0);
 
         mode2MessagesTableBg = new Table();
-        mode2MessagesTableBg.setBackground(new TextureRegionDrawable(assets.getTextures().get(Textures.Name.LESS_TRANS_BLACK_BG)));
+        mode2MessagesTableBg.setBackground(new TextureRegionDrawable(assets.getTextures().get(Textures.Name.ORANGE_LESS_TRANS_BG)));
         mode2MessagesTableBg.setFillParent(true);
         mode2MessagesTableBg.setTouchable(Touchable.childrenOnly);
         mode2MessagesTableBg.getColor().a = 0f;
         mode2MessagesTableBg.align(Align.topRight);
 
         mode2CloseImage = new Image(assets.getTextures().get(Textures.Name.CHAT_CLOSE_ICON));
-
-        mode2MessagesTableBg.add(mode2CloseImage);
+        mode2CloseImage.getColor().a = 0f;
 
         mode2MessagesTable = new Table();
         mode2MessagesTable.align(Align.bottomLeft);
@@ -316,8 +314,10 @@ public class ChatControl {
         mode2ChatScroll = new ScrollPane(mode2MessagesTable);
         mode2ChatScroll.setOverscroll(false, false);
 
-
+        mode2MessagesContainer.row();
         mode2MessagesContainer.add(mode2ChatScroll).expand().fill();
+        mode2MessagesContainer.addActor(mode2CloseImage);
+
         root.addActor(mode2MessagesContainer);
     }
 
@@ -367,6 +367,8 @@ public class ChatControl {
 
                 mode1MessagesContainer.setSize(Positions.getWidth(), 130);
                 mode2MessagesContainer.setSize(Positions.getWidth(), 75 + CHAT_CONTAINER_HEIGHT);
+                mode2CloseImage.setPosition(mode2MessagesContainer.getWidth() - mode2CloseImage.getPrefWidth(),
+                        mode2MessagesContainer.getHeight() - mode2CloseImage.getPrefHeight());
 
                 if(!Global.IS_POTRAIT){
                     Threadings.delay(500, new Runnable() {
@@ -528,10 +530,16 @@ public class ChatControl {
                     mode2MessagesTableBg.clearActions();
                     mode2MessagesTableBg.getColor().a = 0f;
                     mode2MessagesTableBg.addAction(fadeIn(0.2f));
+                    mode2CloseImage.clearActions();
+                    mode2CloseImage.getColor().a = 0f;
+                    mode2CloseImage.addAction(fadeIn(0.2f));
+
                 }
                 else if(!locked && mode2MessagesTableBg.getColor().a > 0f){
                     mode2MessagesTableBg.clearActions();
                     mode2MessagesTableBg.getColor().a = 0f;
+                    mode2CloseImage.clearActions();
+                    mode2CloseImage.getColor().a = 0f;
                 }
 
 
@@ -555,6 +563,9 @@ public class ChatControl {
                     mode2MessagesTable.clearActions();
                     mode2MessagesTableBg.clearActions();
                     mode2MessagesTableBg.addAction(fadeOut(0.1f));
+                    mode2CloseImage.clearActions();
+                    mode2CloseImage.addAction(fadeOut(0.1f));
+
                     mode2MessagesContainer.setName("fadeOut");
                     mode2MessagesContainer.setTouchable(Touchable.disabled);
                     for(VoiceMessageControl voiceMessageControl : mode2VoiceMessageControls){
@@ -842,7 +853,7 @@ public class ChatControl {
         else if(mode == 2){
             if(chatBoxContainer.getName() != null && chatBoxContainer.getName().equals("shown")){
                 if(mode2MessagesContainer.getTouchable() == Touchable.enabled){
-                    if(y <= chatBoxContainer.getHeight() + mode2MessagesContainer.getHeight()){
+                    if(y <= mode2MessagesContainer.getHeight()){
                         return true;
                     }
                 }
@@ -1090,7 +1101,7 @@ public class ChatControl {
 
     }
 
-    public void refreshRoomUsersPopupDesign(final ArrayList<Pair<String, GameConnectionStatus>> playersConnectionStatusPairs){
+    public void refreshRoomUsersPopupDesign(final ArrayList<Pair<String, ConnectionStatusAndCountryModel>> playersConnectionStatusPairs){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -1110,18 +1121,18 @@ public class ChatControl {
                 ScrollPane scrollPane = new GreyScrollPane(resultTable, assets);
                 rootTable.add(scrollPane).expand().fill().padRight(3);
 
-                for(Pair<String, GameConnectionStatus> playerConnectionStatus : playersConnectionStatusPairs){
+                for(Pair<String, ConnectionStatusAndCountryModel> playerConnectionStatus : playersConnectionStatusPairs){
                     Table userStatusTable = null;
-                    if(playerConnectionStatus.getSecond() == GameConnectionStatus.Connected){
+                    if(playerConnectionStatus.getSecond().getGameConnectionStatus() == GameConnectionStatus.Connected){
                         connectedUsers.add(playerConnectionStatus.getFirst());
                     }
-                    else if(playerConnectionStatus.getSecond() == GameConnectionStatus.Disconnected){
+                    else if(playerConnectionStatus.getSecond().getGameConnectionStatus() == GameConnectionStatus.Disconnected){
                         disconnectedUsers.add(playerConnectionStatus.getFirst());
                     }
-                    else if(playerConnectionStatus.getSecond() == GameConnectionStatus.Disconnected_No_CountDown){
+                    else if(playerConnectionStatus.getSecond().getGameConnectionStatus() == GameConnectionStatus.Disconnected_No_CountDown){
                         disconnectedNoCountDownUsers.add(playerConnectionStatus.getFirst());
                     }
-                    else if(playerConnectionStatus.getSecond() == GameConnectionStatus.Abandoned){
+                    else if(playerConnectionStatus.getSecond().getGameConnectionStatus() == GameConnectionStatus.Abandoned){
                         abandonedUsers.add(playerConnectionStatus.getFirst());
                     }
                 }
@@ -1151,8 +1162,20 @@ public class ChatControl {
                         status = GameConnectionStatus.Abandoned;
                     }
 
+
+
                     for(String userId : users){
-                        Table userStatusTable = getRoomUserStatusDesign(userId, status);
+                        ConnectionStatusAndCountryModel connectionStatusAndCountryModel = null;
+                        for(Pair<String, ConnectionStatusAndCountryModel> playerConnectionStatus : playersConnectionStatusPairs){
+                            if(playerConnectionStatus.getFirst().equals(userId)){
+                                connectionStatusAndCountryModel = playerConnectionStatus.getSecond();
+                                break;
+                            }
+                        }
+                        if(connectionStatusAndCountryModel == null)
+                            connectionStatusAndCountryModel = new ConnectionStatusAndCountryModel();
+
+                        Table userStatusTable = getRoomUserStatusDesign(userId, status, connectionStatusAndCountryModel.getCountry());
 
                         if(userStatusTable != null){
                             resultTable.add(userStatusTable).expandX().fillX().space(5).padRight(13);
@@ -1170,7 +1193,7 @@ public class ChatControl {
         });
     }
 
-    private Table getRoomUserStatusDesign(String userName, GameConnectionStatus status){
+    private Table getRoomUserStatusDesign(String userName, GameConnectionStatus status, String country){
 
         if(disconnectedCountDownThreads.containsKey(userName)){
             disconnectedCountDownThreads.get(userName).kill();
@@ -1202,6 +1225,9 @@ public class ChatControl {
         Label userNameLabel = new Label(Strings.cutOff(userName, 15),
                 new Label.LabelStyle(assets.getFonts().get(Fonts.FontId.MYRIAD_M_REGULAR), color));
 
+        Badge badge = new Badge(BadgeType.Country, "", assets, country);
+
+        statusTable.add(badge).padRight(5);
         statusTable.add(userNameLabel).expandX().fillX();
 
         if(status != GameConnectionStatus.Disconnected){

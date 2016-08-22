@@ -159,7 +159,7 @@ public class ConnectionWatcher implements IDisconnectOverlayControl {
                 @Override
                 public void run() {
                     int count = 0;
-                    int totalCount = 25;
+                    int totalCount = 60;
                     showLostConnection(totalCount);
 
                     while (count < totalCount){

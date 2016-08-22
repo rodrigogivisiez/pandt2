@@ -23,6 +23,7 @@ import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.RoomUser;
 import com.mygdx.potatoandtomato.models.Services;
+import com.mygdx.potatoandtomato.utils.Logs;
 import com.mygdx.potatoandtomato.utils.Sizes;
 import com.potatoandtomato.common.controls.Animator;
 import com.potatoandtomato.common.utils.RunnableArgs;
@@ -494,7 +495,7 @@ public class RoomScene extends SceneAbstract {
         }
     }
 
-    public void addPlayerBadge(final String playerId, final BadgeType badgeType, final int num){
+    public void addPlayerBadge(final String playerId, final BadgeType badgeType, final int num, final String extra){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -513,12 +514,14 @@ public class RoomScene extends SceneAbstract {
                 badgeTable.setVisible(false);
                 badgeTable.setFillParent(true);
                 badgeTable.setName(badgeType.name());
-                Badge badge = new Badge(badgeType, String.valueOf(num), _assets);
+                Badge badge = new Badge(badgeType, String.valueOf(num), _assets, extra);
 
                 Vector2 size = Sizes.resizeByWidthWithMaxWidth(20, badge.getBadgeRegion());
-                badgeTable.add(badge).padBottom(4).size(size.x, size.y);
+                badgeTable.add(badge).padBottom(size.y / 6).size(size.x, size.y);
 
                 iconTable.addActor(badgeTable);
+
+                Logs.show("adding player badge: " + playerId + " " + badgeType);
             }
             }
         });
@@ -537,6 +540,8 @@ public class RoomScene extends SceneAbstract {
                             actor.remove();
                         }
                     }
+
+                    Logs.show("removing player badge: " + playerId + " " + badgeType);
                 }
             }
         });
@@ -577,6 +582,11 @@ public class RoomScene extends SceneAbstract {
                 while (true){
                     if(safeThread.isKilled()) return;
                     else{
+                        if(!isSceneShown()){
+                            Threadings.sleep(sleepPeriod);
+                            continue;
+                        }
+
                         for(Table playerTable : playerMaps.values()){
                             Table iconTable = playerTable.findActor("iconTable");
 
@@ -606,14 +616,13 @@ public class RoomScene extends SceneAbstract {
                                 timeElapsedLabel.setText("0");
                             }
 
+                            boolean hasNoCoins = (iconTable.findActor(BadgeType.NoCoin.name()) != null);
+
                             for(int i = 0; i < iconTable.getChildren().size; i++){
+
                                 int actor2Index = 0;
 
                                 final Actor actor1 = iconTable.getChildren().get(i);
-                                if(actor1.getName().equals(BadgeType.NoCoin.name())){
-                                    break;
-                                }
-
                                 Actor actor2 = null;
                                 if(i + 1 < iconTable.getChildren().size){
                                     actor2 = iconTable.getChildren().get(i+1);
@@ -656,8 +665,6 @@ public class RoomScene extends SceneAbstract {
                                     }
                                 }
 
-
-
                                 if(actor2 != null && actor2.getName().equals("roomUserStateIconTable")){
                                     if(((Table) actor2).getChildren().size > 0){
                                         Actor child = ((Table) actor2).getChildren().get(0);
@@ -668,6 +675,23 @@ public class RoomScene extends SceneAbstract {
                                             break;
                                         }
                                     }
+                                }
+
+
+                                if(hasNoCoins){
+                                    for(Actor actor : iconTable.getChildren()){
+                                        if(actor.getName() != null && actor.getName().equals(BadgeType.NoCoin.name())){
+                                            actor.clearActions();
+                                            actor.getColor().a = 1f;
+                                            actor.setVisible(true);
+                                        }
+                                        else{
+                                            actor.clearActions();
+                                            actor.getColor().a = 0f;
+                                            actor.setVisible(false);
+                                        }
+                                    }
+                                    break;
                                 }
 
                                 if(actor1 != actor2){
@@ -703,7 +727,12 @@ public class RoomScene extends SceneAbstract {
     }
 
     public Table getPlayerTableByUserId(String userId){
-        return playerMaps.get(userId);
+        if(userId == null || playerMaps == null || !playerMaps.containsKey(userId)){
+            return null;
+        }
+        else{
+            return playerMaps.get(userId);
+        }
     }
 
     public Array<Table> getSlotsTable() {

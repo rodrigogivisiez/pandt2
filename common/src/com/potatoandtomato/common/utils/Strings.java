@@ -120,7 +120,7 @@ public class Strings {
         double remain = input - Math.floor(input);
         String result = String.format("%,d", (int) input);
         if(remain > 0){
-            result = String.valueOf(Double.valueOf(result) + remain);
+            result =  String.format("%,d", (int) input) + "." + String.valueOf(DoubleUtils.round(remain, 2)).replace("0.", "");
         }
         return result;
     }

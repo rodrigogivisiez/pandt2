@@ -162,6 +162,8 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+		'J42\LaravelFirebase\LaravelFirebaseServiceProvider',
+		'App\Providers\HelperServiceProvider',
 
     ],
 
@@ -208,6 +210,8 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+        'Firebase' => 'J42\LaravelFirebase\LaravelFirebaseFacade',
+        'Input' => Illuminate\Support\Facades\Input::class,
 
     ],
 

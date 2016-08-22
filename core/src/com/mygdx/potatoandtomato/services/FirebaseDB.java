@@ -45,6 +45,8 @@ public class
     private String _tableInboxes = "inboxes";
     private String _tableReadInboxes = "inboxesRead";
     private String _tableFeedbacks = "feedbacks";
+    private String _tableRewardVideoCoinCount = "rewardVideoCoinCount";
+
     private List<ListenerModel> _listenerModels;
 
     public FirebaseDB(String url){
@@ -216,6 +218,31 @@ public class
                     }
                     count[0]++;
                     if(count[0] == userIds.size()){
+                        listener.onCallback(result, Status.SUCCESS);
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    public void getUserCountryByUserId(String userId, DatabaseListener<String> listener) {
+        getSingleData(getTable(_tableUsers).child(userId).child("country"), listener);
+    }
+
+    @Override
+    public void getUserCountryByUserIds(final ArrayList<String> userIds, final DatabaseListener<HashMap<String, String>> listener) {
+        final HashMap<String, String> result = new HashMap<String, String>();
+        final int[] count = {0};
+        for(final String userId : userIds){
+            getUserCountryByUserId(userId, new DatabaseListener<String>(String.class) {
+                @Override
+                public void onCallback(String name, Status st) {
+                    if (st == Status.SUCCESS && name != null) {
+                        result.put(userId, name);
+                    }
+                    count[0]++;
+                    if (count[0] == userIds.size()) {
                         listener.onCallback(result, Status.SUCCESS);
                     }
                 }
@@ -440,11 +467,11 @@ public class
                         Threadings.runInBackground(new Runnable() {
                             @Override
                             public void run() {
-                                getTeamStreak(game, record.getUserIds(), new DatabaseListener<Streak>(Streak.class) {
+                                getUserCountryByUserIds(record.getUserIds(), new DatabaseListener<HashMap<String, String>>(String.class) {
                                     @Override
-                                    public void onCallback(Streak streak, Status st) {
-                                        if(st == Status.SUCCESS){
-                                            record.setStreak(streak);
+                                    public void onCallback(HashMap<String, String> obj, Status st) {
+                                        if (st == Status.SUCCESS) {
+                                            record.setUserIdToCountryMap(new ConcurrentHashMap<String, String>(obj));
                                         }
                                         fragment2.setFinished(true);
                                     }
@@ -452,8 +479,26 @@ public class
                             }
                         });
 
+
+                        final Threadings.ThreadFragment fragment3 = new Threadings.ThreadFragment();
+                        Threadings.runInBackground(new Runnable() {
+                            @Override
+                            public void run() {
+                                getTeamStreak(game, record.getUserIds(), new DatabaseListener<Streak>(Streak.class) {
+                                    @Override
+                                    public void onCallback(Streak streak, Status st) {
+                                        if(st == Status.SUCCESS){
+                                            record.setStreak(streak);
+                                        }
+                                        fragment3.setFinished(true);
+                                    }
+                                });
+                            }
+                        });
+
                         threadsPool.addFragment(fragment1);
                         threadsPool.addFragment(fragment2);
+                        threadsPool.addFragment(fragment3);
                     }
 
                     Threadings.runInBackground(new Runnable() {
@@ -532,18 +577,30 @@ public class
                     });
 
                     final Threadings.ThreadFragment fragment2 = new Threadings.ThreadFragment();
+                    getUserCountryByUserIds(record.getUserIds(), new DatabaseListener<HashMap<String, String>>(String.class) {
+                        @Override
+                        public void onCallback(HashMap<String, String> obj, Status st) {
+                            if (st == Status.SUCCESS) {
+                                record.setUserIdToCountryMap(new ConcurrentHashMap<String, String>(obj));
+                            }
+                            fragment2.setFinished(true);
+                        }
+                    });
+
+                    final Threadings.ThreadFragment fragment3 = new Threadings.ThreadFragment();
                     getTeamStreak(game, record.getUserIds(), new DatabaseListener<Streak>(Streak.class) {
                         @Override
                         public void onCallback(Streak streak, Status st) {
                             if (st == Status.SUCCESS) {
                                 record.setStreak(streak);
                             }
-                            fragment2.setFinished(true);
+                            fragment3.setFinished(true);
                         }
                     });
 
                     threadsPool.addFragment(fragment1);
                     threadsPool.addFragment(fragment2);
+                    threadsPool.addFragment(fragment3);
 
                     Threadings.runInBackground(new Runnable() {
                         @Override
@@ -898,6 +955,11 @@ public class
                 }
             }
         });
+    }
+
+    @Override
+    public void getRewardVideoCoinCount(DatabaseListener<Integer> listener) {
+        getSingleData(getTable(_tableRewardVideoCoinCount), listener);
     }
 
     private Firebase getTable(String _tableName){

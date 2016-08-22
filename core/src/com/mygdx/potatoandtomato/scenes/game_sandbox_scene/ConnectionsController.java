@@ -239,12 +239,13 @@ public class ConnectionsController implements Disposable, IChatRoomUsersConnecti
 
     @Override
     public void refreshChatRoomUsersConnectStatus() {
-        ArrayList<Pair<String, GameConnectionStatus>> userIdToConnectStatusPairs = new ArrayList();
+        ArrayList<Pair<String, ConnectionStatusAndCountryModel>> userIdToConnectStatusPairs = new ArrayList();
 
         for(String userId : playerConnectionStatesMap.keySet()){
             PlayerConnectionState playerConnectionState = playerConnectionStatesMap.get(userId);
-            userIdToConnectStatusPairs.add(new Pair<String, GameConnectionStatus>(playerConnectionState.getPlayer().getName(),
-                                            playerConnectionState.getGameConnectionStatus()));
+            userIdToConnectStatusPairs.add(new Pair<String, ConnectionStatusAndCountryModel>(playerConnectionState.getPlayer().getName(),
+                                            new ConnectionStatusAndCountryModel(playerConnectionState.getPlayer().getCountry(),
+                                                    playerConnectionState.getGameConnectionStatus())));
         }
 
         services.getChat().refreshRoomUsersConnectionStatus(userIdToConnectStatusPairs);

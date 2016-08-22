@@ -19,7 +19,7 @@ import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.absintflis.services.ConnectionWatcherListener;
 import com.mygdx.potatoandtomato.absintflis.services.IChatRoomUsersConnectionRefresher;
-import com.mygdx.potatoandtomato.helpers.Flurry;
+import com.mygdx.potatoandtomato.helpers.Analytics;
 import com.mygdx.potatoandtomato.statics.Terms;
 import com.potatoandtomato.common.absints.TutorialPartListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
@@ -71,8 +71,6 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
 
     public RoomLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
-
-        Flurry.logTimeStart(FlurryEvent.RoomSession);
 
         room = (Room) objs[0];
         isContinue = (Boolean) objs[1];
@@ -140,6 +138,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
                 _services.getDatabase().updateRoomPlayingAndOpenState(room, false, true, null);
             }
             refreshChatRoomUsersConnectStatus();
+            coinMachineUsersChanged();
             sendIsReadyUpdate(true);
         }
 
@@ -1200,8 +1199,7 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
     @Override
     public boolean dispose() {
         if(super.dispose()){
-            Flurry.log(FlurryEvent.LeavingRoom, "msgSent", String.valueOf(_services.getGamingKit().getMsgSentCount()));
-            Flurry.logTimeEnd(FlurryEvent.RoomSession);
+            Analytics.log(AnalyticEvent.LeavingRoom, "msgSent", String.valueOf(_services.getGamingKit().getMsgSentCount()));
         };
         return true;
     }
@@ -1264,15 +1262,15 @@ public class RoomLogic extends LogicAbstract implements IChatRoomUsersConnection
     @Override
     public void refreshChatRoomUsersConnectStatus() {
         if(this.isSceneVisible()){
-            ArrayList<Pair<String, GameConnectionStatus>> userIdToConnectStatusPairs = new ArrayList();
+            ArrayList<Pair<String, ConnectionStatusAndCountryModel>> userIdToConnectStatusPairs = new ArrayList();
             for(RoomUser roomUser : room.getRoomUsersMap().values()){
                 if(roomUser.getRoomUserState() == RoomUserState.TemporaryDisconnected){
-                    userIdToConnectStatusPairs.add(new Pair<String, GameConnectionStatus>(roomUser.getProfile().getDisplayName(99),
-                            GameConnectionStatus.Disconnected_No_CountDown));
+                    userIdToConnectStatusPairs.add(new Pair<String, ConnectionStatusAndCountryModel>(roomUser.getProfile().getDisplayName(99),
+                            new ConnectionStatusAndCountryModel(roomUser.getProfile().getCountry(), GameConnectionStatus.Disconnected_No_CountDown)));
                 }
                 else{
-                    userIdToConnectStatusPairs.add(new Pair<String, GameConnectionStatus>(roomUser.getProfile().getDisplayName(99),
-                            GameConnectionStatus.Connected));
+                    userIdToConnectStatusPairs.add(new Pair<String, ConnectionStatusAndCountryModel>(roomUser.getProfile().getDisplayName(99),
+                            new ConnectionStatusAndCountryModel(roomUser.getProfile().getCountry(), GameConnectionStatus.Connected)));
                 }
             }
 

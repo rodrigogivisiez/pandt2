@@ -4,33 +4,22 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.Signature;
-import android.media.MediaRecorder;
 import android.os.Bundle;
 
-import android.os.Environment;
-import android.util.Base64;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.chartboost.sdk.Chartboost;
 import com.firebase.client.Firebase;
 import com.flurry.android.FlurryAgent;
 import com.flurry.android.FlurryAgentListener;
 import com.mygdx.potatoandtomato.PTGame;
 import com.mygdx.potatoandtomato.absintflis.entrance.EntranceLoaderListener;
 import com.mygdx.potatoandtomato.android.controls.MyEditText;
-import com.mygdx.potatoandtomato.enums.FlurryEvent;
-import com.mygdx.potatoandtomato.helpers.Flurry;
+import com.mygdx.potatoandtomato.helpers.Analytics;
 import com.mygdx.potatoandtomato.models.PushNotification;
 import com.mygdx.potatoandtomato.services.Texts;
 import com.mygdx.potatoandtomato.statics.Global;
@@ -42,11 +31,6 @@ import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
-
-import java.io.File;
-import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public class AndroidLauncher extends AndroidApplication {
 
@@ -64,7 +48,7 @@ public class AndroidLauncher extends AndroidApplication {
 	private AudioRecorder _audioRecorder;
 	private ChartBoostHelper _chartBoostHelper;
 	private InAppPurchaseHelper _inAppPurchaseHelper;
-	private ShareHelper shareHelper;
+	private ShareAndRateHelper shareAndRateHelper;
 	private Texts texts;
 
 	@Override
@@ -74,7 +58,7 @@ public class AndroidLauncher extends AndroidApplication {
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 
-		initFlurry();
+		initAnalytics();
 		setBuildNumber();
 		setContentView(R.layout.main_activity);
 		RelativeLayout lg=(RelativeLayout)findViewById(R.id.root);
@@ -83,7 +67,7 @@ public class AndroidLauncher extends AndroidApplication {
 
 		texts = new Texts();
 		_broadcaster = new Broadcaster();
-		shareHelper = new ShareHelper(_broadcaster, texts, this);
+		shareAndRateHelper = new ShareAndRateHelper(_broadcaster, texts, this);
 		_inAppPurchaseHelper = new InAppPurchaseHelper(this, _broadcaster);
 		_chartBoostHelper = new ChartBoostHelper(this, _broadcaster);
 		_vibrator = new VibrateManager(_this, _broadcaster);
@@ -111,26 +95,8 @@ public class AndroidLauncher extends AndroidApplication {
 		subscribeOrientationChanged();
 
 		startService(new Intent(getBaseContext(), OnClearFromRecentService.class));
-
 	}
 
-	private void initFlurry(){
-		if(!Strings.isEmpty(Terms.FLURRY_KEY())){
-			new FlurryAgent.Builder()
-					.withListener(new FlurryAgentListener() {
-						@Override
-						public void onSessionStarted() {
-							Flurry.setActive(true);
-						}
-					})
-					.withContinueSessionMillis(60 * 1000)
-					.withCaptureUncaughtExceptions(false)
-					.withPulseEnabled(true)
-					.withLogEnabled(true)
-					.withLogLevel(Log.INFO)
-					.build(this, Terms.FLURRY_KEY());
-		}
-	}
 
 	private void setBuildNumber(){
 		PackageInfo pInfo = null;
@@ -143,6 +109,10 @@ public class AndroidLauncher extends AndroidApplication {
 
 	}
 
+	private void initAnalytics(){
+		MyApplication.getInstance().trackScreenView("GameScreen");
+		Analytics.setTracker(MyApplication.getInstance());
+	}
 
 	private void roomAliveRelated(){
 		_broadcaster.subscribe(BroadcastEvent.UPDATE_ROOM, new BroadcastListener<PushNotification>() {
@@ -239,6 +209,8 @@ public class AndroidLauncher extends AndroidApplication {
 
 	@Override
 	public void onBackPressed() {
+
+
 		if(_chartBoostHelper != null && _chartBoostHelper.onBackPressed()){
 
 		}
@@ -264,6 +236,7 @@ public class AndroidLauncher extends AndroidApplication {
 	protected void onResume() {
 		super.onResume();
 		_isVisible = true;
+
 		if(_chartBoostHelper != null) _chartBoostHelper.onResume();
 	}
 

@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.cachings.CacheListener;
+import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.absintflis.services.ClientInternalCoinListener;
@@ -61,14 +62,26 @@ public class ShopLogic extends LogicAbstract {
     public void refreshProducts(){
         _services.getCoins().getProducts(new ClientInternalCoinListener() {
             @Override
-            public void onProductsRetrieved(ArrayList<CoinProduct> refreshedCoinProducts) {
+            public void onProductsRetrieved(final ArrayList<CoinProduct> refreshedCoinProducts) {
                 super.onProductsRetrieved(refreshedCoinProducts);
-                coinProducts = (ArrayList) refreshedCoinProducts.clone();
-                coinProducts.add(0, new CoinProduct(Terms.WATCH_ADS_ID, 1, _texts.watchAdsDescription()));
-                shopScene.setProductsDesign(coinProducts);
-                shopScene.setCanWatchAds(canWatchAds);
-                setCoinProductsListeners();
-                addRetrievedSuccessCount();
+                _services.getDatabase().getRewardVideoCoinCount(new DatabaseListener<Integer>(Integer.class) {
+                    @Override
+                    public void onCallback(Integer result, Status st) {
+                        coinProducts = (ArrayList) refreshedCoinProducts.clone();
+
+                        if(st == Status.SUCCESS && result != null){
+                            coinProducts.add(0, new CoinProduct(Terms.WATCH_ADS_ID, result, _texts.watchAdsDescription()));
+                        }
+
+                        shopScene.setProductsDesign(coinProducts);
+                        shopScene.setCanWatchAds(canWatchAds);
+                        setCoinProductsListeners();
+                        addRetrievedSuccessCount();
+                    }
+                });
+
+
+
             }
         });
     }
@@ -86,7 +99,7 @@ public class ShopLogic extends LogicAbstract {
     }
 
     public void refreshAdsAvailability(){
-        _services.getBroadcaster().broadcast(BroadcastEvent.HAS_REWARD_VIDEO, new RunnableArgs<Boolean>() {
+        _services.getCoins().hasAds(new RunnableArgs<Boolean>() {
             @Override
             public void run() {
                 canWatchAds = this.getFirstArg();

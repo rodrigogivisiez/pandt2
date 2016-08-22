@@ -9,15 +9,14 @@ import com.mygdx.potatoandtomato.absintflis.gamingkit.JoinRoomListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.RoomInfoListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
-import com.mygdx.potatoandtomato.enums.FlurryEvent;
+import com.mygdx.potatoandtomato.enums.AnalyticEvent;
 import com.mygdx.potatoandtomato.enums.RoomUserState;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.helpers.Flurry;
+import com.mygdx.potatoandtomato.helpers.Analytics;
 import com.mygdx.potatoandtomato.services.Texts;
 import com.mygdx.potatoandtomato.models.Game;
 import com.mygdx.potatoandtomato.models.Room;
 import com.mygdx.potatoandtomato.models.Services;
-import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.enums.Status;
 
 /**
@@ -58,13 +57,13 @@ public class PrerequisiteLogic extends LogicAbstract {
 
     public void restart(){
         if(_joinType == JoinType.CREATING){
-            Flurry.log(FlurryEvent.CreatingGame);
+            Analytics.log(AnalyticEvent.CreatingGame);
         }
         else if(_joinType == JoinType.JOINING){
-            Flurry.log(FlurryEvent.JoiningGame);
+            Analytics.log(AnalyticEvent.JoiningGame);
         }
         else if(_joinType == JoinType.CONTINUING){
-            Flurry.log(FlurryEvent.ContinuingGame);
+            Analytics.log(AnalyticEvent.ContinuingGame);
         }
 
         _roomInfoRetrieved = false;

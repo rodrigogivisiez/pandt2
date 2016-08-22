@@ -77,6 +77,13 @@ return [
             'prefix' => '',
             'schema' => 'public',
         ],
+        
+		'firebase' => array(
+		    'host'      => 'https://glaring-inferno-8572.firebaseIO.com/',
+		    'token'     => 'UogxKt0DL9RgHnadZ3nmcrPwJQBT3b699vjMOpPO',
+		    'timeout'   => 10,
+		    'sync'      => false,           // OPTIONAL: auto-sync all Eloquent models with Firebase?
+		)
 
     ],
 

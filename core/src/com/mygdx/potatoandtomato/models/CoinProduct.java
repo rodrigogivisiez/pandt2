@@ -75,7 +75,7 @@ public class CoinProduct {
     @JsonIgnore
     public String getTextureNameFromCoinCount(){
         String textureName = null;
-        if(count == 1){
+        if(count < 5){
             textureName = "TV_ICON";
         }
         else if(count == 5){
@@ -92,7 +92,7 @@ public class CoinProduct {
 
     @JsonIgnore
     public ShopProducts getShopProductType(){
-        if(count == 1){
+        if(count < 5){
             return ShopProducts.ONE_COIN;
         }
         else if(count == 5){

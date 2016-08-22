@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.PTScreen;
@@ -13,6 +15,7 @@ import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.RoomInfoListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.LogicAbstract;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
+import com.mygdx.potatoandtomato.controls.PTTextArea;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.statics.Terms;
 import com.potatoandtomato.common.absints.TutorialPartListener;
@@ -54,10 +57,9 @@ public class GameListLogic extends LogicAbstract implements TutorialPartListener
     public void onShow() {
         super.onShow();
         checkCanContinue();
-        _scene.setUsername(_services.getProfile().getDisplayName(15));
+        _scene.setProfileDesign(_services.getProfile());
 
         getInboxMessages();
-        checkRatedApps();
     }
 
     @Override
@@ -73,7 +75,8 @@ public class GameListLogic extends LogicAbstract implements TutorialPartListener
                 joinRoom(PrerequisiteLogic.JoinType.JOINING, _services.getAutoJoiner().getAutoJoinRoomId());
             }
             else{
-                showRateAppsNotYetRated();
+                checkShouldShowFreeCoin();
+                checkRatedApps();
             }
         }
     }
@@ -190,6 +193,20 @@ public class GameListLogic extends LogicAbstract implements TutorialPartListener
         _screen.toScene(SceneEnum.PREREQUISITE, null, joinType, roomId);
     }
 
+    private void checkShouldShowFreeCoin(){
+        _services.getCoins().checkDesperateForFreeCoin(new RunnableArgs<Boolean>() {
+            @Override
+            public void run() {
+                if(this.getFirstArg()){
+                    _scene.getTopBar().getTopBarCoinControl().showFreeCoinPointing();
+                }
+                else{
+                    _scene.getTopBar().getTopBarCoinControl().hideFreeCoinPointing();
+                }
+            }
+        });
+    }
+
     private void getInboxMessages(){
         if(!retrievedInbox){
             retrievedInbox = true;
@@ -233,6 +250,9 @@ public class GameListLogic extends LogicAbstract implements TutorialPartListener
                 }
             });
         }
+        else{
+            showRateAppsNotYetRated();
+        }
     }
 
     private void showRateAppsNotYetRated(){
@@ -244,7 +264,12 @@ public class GameListLogic extends LogicAbstract implements TutorialPartListener
                     total = Integer.valueOf(value);
                 }
                 if(total >= 5){
-                    //show
+                    _scene.showRateMe(new RunnableArgs<Table>() {
+                        @Override
+                        public void run() {
+                            setRateMeListener(this.getFirstArg());
+                        }
+                    });
                     _services.getProfile().setRatedApps(true);
                 }
             }
@@ -253,7 +278,6 @@ public class GameListLogic extends LogicAbstract implements TutorialPartListener
 
     private void rateApps(boolean liked, String reason){
         _services.getDatabase().sendFeedback(_services.getProfile().getUserId(), new RateAppsModel(liked, reason), null);
-        //hide
     }
 
     private void inboxMessageOpened(InboxMessage inboxMessage){
@@ -371,7 +395,94 @@ public class GameListLogic extends LogicAbstract implements TutorialPartListener
                 _scene.toggleInboxList();
             }
         });
+    }
 
+    public void setRateMeListener(Table rateTable){
+        Table likeButtonTable = rateTable.findActor("likeButtonTable");
+        TextButton dislikeButton = rateTable.findActor("dislikeButton");
+
+        if(likeButtonTable != null && dislikeButton != null){
+            likeButtonTable.addListener(new ClickListener(){
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    _scene.showLikedApps(new RunnableArgs<Table>() {
+                        @Override
+                        public void run() {
+                            setLikedListener(this.getFirstArg());
+                        }
+                    });
+                    rateApps(true, "");
+                }
+            });
+
+            dislikeButton.addListener(new ClickListener(){
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    _scene.showDislikedApps(new RunnableArgs<Table>() {
+                        @Override
+                        public void run() {
+                            setDislikeListener(this.getFirstArg());
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    public void setLikedListener(Table rateTable){
+        TextButton goToPlayStoreButton = rateTable.findActor("goToPlayStoreButton");
+        TextButton dontGoToPlayStoreButton = rateTable.findActor("dontGoToPlayStoreButton");
+
+        if(goToPlayStoreButton != null && dontGoToPlayStoreButton != null){
+            goToPlayStoreButton.addListener(new ClickListener(){
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    _scene.removeRateApps();
+                    publishBroadcast(BroadcastEvent.OPEN_P_AND_T_AT_STORE);
+                }
+            });
+
+            dontGoToPlayStoreButton.addListener(new ClickListener(){
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    _scene.removeRateApps();
+                }
+            });
+        }
+    }
+
+    public void setDislikeListener(Table rateTable){
+        TextButton backButton = rateTable.findActor("backButton");
+        TextButton sendButton = rateTable.findActor("sendButton");
+        final PTTextArea msgTextField = rateTable.findActor("msgTextField");
+
+        if(backButton != null && sendButton != null && msgTextField != null){
+            backButton.addListener(new ClickListener(){
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    _scene.showRateMe(new RunnableArgs<Table>() {
+                        @Override
+                        public void run() {
+                            setRateMeListener(this.getFirstArg());
+                        }
+                    });
+                }
+            });
+
+            sendButton.addListener(new ClickListener(){
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    super.clicked(event, x, y);
+                    rateApps(false, msgTextField.getText());
+                    _scene.removeRateApps();
+                }
+            });
+        }
     }
 
     @Override

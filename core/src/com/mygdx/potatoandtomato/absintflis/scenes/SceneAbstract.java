@@ -26,6 +26,7 @@ public abstract class SceneAbstract implements Disposable {
     protected IPTGame _ptGame;
     protected boolean disposed;
     protected TopBar topBar;
+    protected boolean sceneShown;
 
     public SceneAbstract(Services services, PTScreen screen) {
         _services = services;
@@ -48,6 +49,7 @@ public abstract class SceneAbstract implements Disposable {
     public Actor getRoot(){ return _root; };
 
     public void onShow(){
+        sceneShown = true;
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -59,6 +61,7 @@ public abstract class SceneAbstract implements Disposable {
     }
 
     public void onHide(){
+        sceneShown = false;
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -73,6 +76,10 @@ public abstract class SceneAbstract implements Disposable {
     public void dispose() {
         disposed = true;
         if(_root != null) _root.dispose();
+    }
+
+    public boolean isSceneShown() {
+        return sceneShown;
     }
 
     public TopBar getTopBar() {

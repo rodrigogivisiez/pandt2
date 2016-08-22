@@ -7,7 +7,7 @@ import com.mygdx.potatoandtomato.absintflis.gamingkit.LockPropertyListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.ConnectionsControllerListener;
 import com.mygdx.potatoandtomato.absintflis.scenes.GameLoadStateMonitorListener;
 import com.mygdx.potatoandtomato.enums.*;
-import com.mygdx.potatoandtomato.helpers.Flurry;
+import com.mygdx.potatoandtomato.helpers.Analytics;
 import com.mygdx.potatoandtomato.statics.Terms;
 import com.potatoandtomato.common.absints.CoinListener;
 import com.mygdx.potatoandtomato.absintflis.services.ConnectionWatcherListener;
@@ -82,7 +82,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
         map.put("gameName", room.getGame().getName());
         map.put("totalPlayers", String.valueOf(room.getTotalPlayersCount()));
         map.put("beforeMsgSent", String.valueOf(_services.getGamingKit().getMsgSentCount()));
-        Flurry.log(FlurryEvent.GameSession, map);
+        Analytics.log(AnalyticEvent.GameSession, map);
     }
 
     @Override
@@ -259,7 +259,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     }
 
     public void failLoad(Player player){
-        Flurry.log(FlurryEvent.LoadGameFailed);
+        Analytics.log(AnalyticEvent.LoadGameFailed);
 
         failed = true;
 
@@ -420,7 +420,7 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
             HashMap<String, String> map = new HashMap();
             map.put("abandoned", isAbandon ? "yes" : "no");
             map.put("afterMsgSent", String.valueOf(_services.getGamingKit().getMsgSentCount()));
-            Flurry.log(FlurryEvent.EndGame, map);
+            Analytics.log(AnalyticEvent.EndGame, map);
 
             _services.getBroadcaster().broadcast(BroadcastEvent.DEVICE_ORIENTATION, 0);
             _services.getChat().hideChat();
@@ -461,8 +461,6 @@ public class GameSandboxLogic extends LogicAbstract implements IGameSandBox {
     @Override
     public boolean dispose() {
         if(super.dispose()){
-            Flurry.logTimeEnd(FlurryEvent.GameSession);
-
             _services.getBroadcaster().broadcast(BroadcastEvent.DEVICE_ORIENTATION, 0);
             _screen.switchToPTScreen();
             _services.getChat().setMode(1);

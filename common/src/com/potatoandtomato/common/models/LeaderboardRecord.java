@@ -5,6 +5,7 @@ import com.shaded.fasterxml.jackson.annotation.JsonIgnore;
 import com.shaded.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -22,18 +23,24 @@ public class LeaderboardRecord {
     @JsonIgnore
     private ConcurrentHashMap<String, String> userIdToNameMap;
 
+    @JsonIgnore
+    private ConcurrentHashMap<String, String> userIdToCountryMap;
+
     public LeaderboardRecord(ArrayList<Player> players){
         userIds = new ArrayList<String>();
         userIdToNameMap = new ConcurrentHashMap<String, String>();
+        userIdToCountryMap = new ConcurrentHashMap<String, String>();
         for(Player player :  players){
             userIds.add(player.getUserId());
             userIdToNameMap.put(player.getUserId(), player.getName());
+            userIdToCountryMap.put(player.getUserId(), player.getCountry());
         }
     }
 
     public LeaderboardRecord() {
         userIds = new ArrayList<String>();
         userIdToNameMap = new ConcurrentHashMap<String, String>();
+        userIdToCountryMap = new ConcurrentHashMap<String, String>();
     }
 
     @JsonIgnore
@@ -41,6 +48,16 @@ public class LeaderboardRecord {
         ArrayList<String> result = new ArrayList<String>();
         for(String name : userIdToNameMap.values()) result.add(name);
         return result;
+    }
+
+    @JsonIgnore
+    public String getUserNameByUserId(String userId){
+        if(!Strings.isEmpty(userId) && userIdToNameMap.containsKey(userId)){
+            return userIdToNameMap.get(userId);
+        }
+        else{
+            return "";
+        }
     }
 
     @JsonIgnore
@@ -57,6 +74,34 @@ public class LeaderboardRecord {
     public void setUserIdToNameMap(ConcurrentHashMap<String, String> userNames) {
         this.userIdToNameMap = userNames;
     }
+
+    @JsonIgnore
+    public void addUserCountry(String userId, String country){
+        if(country != null){
+            userIdToCountryMap.put(userId, country);
+        }
+    }
+
+    @JsonIgnore
+    public ConcurrentHashMap<String, String> getUserIdToCountryMap() {
+        return userIdToCountryMap;
+    }
+
+    @JsonIgnore
+    public void setUserIdToCountryMap(ConcurrentHashMap<String, String> userIdToCountryMap) {
+        this.userIdToCountryMap = userIdToCountryMap;
+    }
+
+    @JsonIgnore
+    public String getUserCountryByUserId(String userId){
+        if(!Strings.isEmpty(userId) && userIdToCountryMap.containsKey(userId)){
+            return userIdToCountryMap.get(userId);
+        }
+        else{
+            return "";
+        }
+    }
+
 
     public ArrayList<String> getUserIds() {
         return userIds;
@@ -79,6 +124,12 @@ public class LeaderboardRecord {
     }
 
     public String getLeaderId() {
+        if(Strings.isEmpty(leaderId) || !this.getUserIdToNameMap().containsKey(leaderId)){
+            for(String userID : this.getUserIds()){
+                leaderId = userID;
+                break;
+            }
+        }
         return leaderId;
     }
 
@@ -105,19 +156,29 @@ public class LeaderboardRecord {
     }
 
     @JsonIgnore
-    public String getLeaderName(){
-        String leaderName = "";
-        for(String userName : this.getUserNames()){
-            leaderName = userName;
-            break;
+      public String getLeaderName(){
+        String leaderId = getLeaderId();
+        if(Strings.isEmpty(leaderId)){
+            return "";
         }
-
-        if(!Strings.isEmpty(leaderId) && this.getUserIdToNameMap().containsKey(leaderId)){
-            leaderName = this.getUserIdToNameMap().get(leaderId);
-        }
-
+        String leaderName = this.getUserIdToNameMap().get(getLeaderId());
         return leaderName;
     }
+
+    @JsonIgnore
+    public ArrayList<String> getNonLeaderIds(){
+        ArrayList<String> result = new ArrayList();
+
+        String leaderId = getLeaderId();
+        for(String userId : this.getUserIds()){
+            if(!userId.equals(leaderId)){
+                result.add(userId);
+            }
+        }
+
+        return result;
+    }
+
 
     public void addScore(double value){
         this.score += value;

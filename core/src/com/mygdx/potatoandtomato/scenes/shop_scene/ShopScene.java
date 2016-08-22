@@ -22,6 +22,7 @@ import com.mygdx.potatoandtomato.enums.ProductAction;
 import com.mygdx.potatoandtomato.models.CoinProduct;
 import com.mygdx.potatoandtomato.models.RetrievableCoinsData;
 import com.mygdx.potatoandtomato.models.Services;
+import com.mygdx.potatoandtomato.statics.Terms;
 import com.mygdx.potatoandtomato.utils.DateTimes;
 import com.mygdx.potatoandtomato.utils.Positions;
 import com.mygdx.potatoandtomato.utils.Sizes;
@@ -265,7 +266,7 @@ public class ShopScene extends SceneAbstract {
 
     public Table getSellingItemTable(CoinProduct coinProduct){
         ProductAction productAction = ProductAction.Buy;
-        if(coinProduct.getId().equals("WATCH_ADS")){
+        if(coinProduct.getId().equals(Terms.WATCH_ADS_ID)){
             productAction = ProductAction.WatchVideo;
         }
 

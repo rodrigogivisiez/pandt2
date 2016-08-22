@@ -1,14 +1,20 @@
 package com.mygdx.potatoandtomato.controls;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.mygdx.potatoandtomato.assets.Fonts;
+import com.mygdx.potatoandtomato.assets.MyAssets;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.enums.BadgeType;
 import com.potatoandtomato.common.assets.Assets;
+import com.potatoandtomato.common.utils.Strings;
 
 /**
  * Created by SiongLeng on 1/5/2016.
@@ -16,21 +22,23 @@ import com.potatoandtomato.common.assets.Assets;
 public class Badge extends Table {
 
     private BadgeType badgeType;
-    private Assets assets;
+    private MyAssets assets;
     private Label textLabel;
     private String text;
     private int fontScale;
     private TextureRegion badgeRegion;
+    private String extra;
 
-    public Badge(BadgeType badgeType, String text, Assets assets) {
-        this(badgeType, text, assets, 1);
+    public Badge(BadgeType badgeType, String text, MyAssets assets, String extra) {
+        this(badgeType, text, assets, 1, extra);
     }
 
-    public Badge(BadgeType badgeType, String text, Assets assets, int fontScale) {
+    public Badge(BadgeType badgeType, String text, MyAssets assets, int fontScale, String extra) {
         this.badgeType = badgeType;
         this.assets = assets;
         this.text = text;
         this.fontScale = fontScale;
+        this.extra = extra;
         populate();
     }
 
@@ -42,6 +50,14 @@ public class Badge extends Table {
         }
         else if(badgeType == BadgeType.NoCoin){
             badgeRegion = assets.getTextures().get(Textures.Name.NO_COIN_ICON);
+            needLabel = false;
+        }
+        else if(badgeType == BadgeType.Country){
+            String countryCode = extra;
+            if(Strings.isEmpty(countryCode)){
+                countryCode = "UNKNOWN";
+            }
+            badgeRegion = new TextureRegion(assets.getTextures().getCountryFlagTexture(countryCode));
             needLabel = false;
         }
         else{
@@ -64,11 +80,15 @@ public class Badge extends Table {
         }
     }
 
-    public float getBadgePrefWidth(){
+    @Override
+    public float getPrefWidth() {
+        if(badgeRegion == null) return 0;
         return badgeRegion.getRegionWidth();
     }
 
-    public float getBadgePrefHeight(){
+    @Override
+    public float getPrefHeight() {
+        if(badgeRegion == null) return 0;
         return badgeRegion.getRegionHeight();
     }
 

@@ -1,18 +1,35 @@
 package com.mygdx.potatoandtomato.assets;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.potatoandtomato.common.absints.PTAssetsManager;
 import com.potatoandtomato.common.assets.TextureAssets;
+
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by SiongLeng on 9/2/2016.
  */
 public class Textures extends TextureAssets {
 
+    private ConcurrentHashMap<String, Texture> countryTextures;
+
     public Textures(PTAssetsManager _manager, String packPath) {
         super(_manager, packPath);
+        countryTextures = new ConcurrentHashMap();
     }
+
+    public Texture getCountryFlagTexture(String isoCountryCode){
+        isoCountryCode = isoCountryCode.toUpperCase();
+        if(!countryTextures.containsKey(isoCountryCode)){
+            Texture texture = onDemandLoadTexture("countries/" + isoCountryCode + ".png");
+            countryTextures.put(isoCountryCode, texture);
+        }
+        return countryTextures.get(isoCountryCode);
+    }
+
 
     public TextureRegion getArcadeScreen(int number){
         return get("ARCADE_" + number + "_SCREEN");
@@ -23,7 +40,7 @@ public class Textures extends TextureAssets {
         SAMPLE,
         BLUE_BG, AUTUMN_BG, SUNRISE, SUNRAY, LOGO_NO_WEAPON, LOGO_POTATO_WEAPON, LOGO_TOMATO_WEAPON, GREEN_GROUND, AUTUMN_GROUND,
         TOP_BAR_BG, TRANS_WHITE_BG, TRANS_BLACK_BG, WHITE_ROUND_BUTTON_BG, LEADER_BOARD_BG,
-        FULL_BLACK_BG, FULL_WHITE_BG, LESS_TRANS_BLACK_BG,
+        FULL_BLACK_BG, FULL_WHITE_BG, LESS_TRANS_BLACK_BG, ORANGE_LESS_TRANS_BG,
         UPRIGHT_EGG_BUTTON, DOWNWARD_EGG_BUTTON, ROPE,
         TOMATO_HI, POTATO_HI, LOGGING_IN_MASCOTS,
         PLAY_ICON, FACEBOOK_ICON, TICK_ICON, CROSS_ICON, QUIT_ICON, BACK_ICON,
@@ -72,7 +89,7 @@ public class Textures extends TextureAssets {
         INBOX_ICON, INBOX_MSG_READ, INBOX_MSG_UNREAD, INBOX_OPENED_ICON,
         INBOX_UNREAD_COUNT,
         BTN_CONCAVE, BTN_CONVEX, BTN_IRREGULAR, MASCOT_DISLIKED_APPS,
-        MASCOTS_LIKED_APPS, POTATO_LIKE_APPS, TOMATO_LIKE_APPS
+        MASCOTS_LIKED_APPS, POTATO_LIKE_APPS, TOMATO_LIKE_APPS, LEADERBOARD_EXPAND_BUTTON
     }
 
 

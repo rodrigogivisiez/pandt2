@@ -21,7 +21,7 @@ public class MockModel {
         Game g = new Game();
         g.setVersion("1.00");
         g.setAbbr("covered_chess");
-        g.setIconUrl("http://www.potato-and-tomato.com/covered_chess/icon.png");
+        g.setIconUrl("");
         g.setMaxPlayers("100");
         g.setMinPlayers("1");
         g.setTeamMaxPlayers("10");
@@ -91,7 +91,7 @@ public class MockModel {
         scoreDetails.add(new ScoreDetails(1000, "5 win", true, true));
 
         ArrayList<Player> myTeams = new ArrayList<Player>();
-        myTeams.add(new Player("abc", "1", true,  0));
+        myTeams.add(new Player("abc", "1", "", true,  0));
 
         Team team = new Team();
         team.setPlayers(myTeams);

@@ -17,6 +17,7 @@ public class Profile {
     UserPlayingState userPlayingState;
     String gameNameLower;
     String token;
+    String country;
     private boolean ratedApps;
 
     public Profile() {
@@ -98,6 +99,14 @@ public class Profile {
         this.gcmId = gcmId;
     }
 
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
     @JsonIgnore
     public String getToken() {
         return token;
@@ -147,6 +156,7 @@ public class Profile {
         this.userPlayingState = toCopyProfile.getUserPlayingState();
         this.gameNameLower = toCopyProfile.getGameNameLower();
         this.token = toCopyProfile.getToken();
+        this.country = toCopyProfile.getCountry();
     }
 
     @JsonIgnore
@@ -159,6 +169,7 @@ public class Profile {
         this.userPlayingState = null;
         this.gameNameLower = "";
         this.token = "";
+        this.country = "";
     }
 
 

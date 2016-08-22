@@ -1,17 +1,15 @@
 package com.mygdx.potatoandtomato.absintflis.scenes;
 
-import com.badlogic.gdx.utils.Disposable;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.OnQuitListener;
 import com.mygdx.potatoandtomato.absintflis.cachings.CacheListener;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.helpers.Flurry;
+import com.mygdx.potatoandtomato.helpers.Analytics;
 import com.mygdx.potatoandtomato.services.Confirm;
 import com.mygdx.potatoandtomato.services.Texts;
 import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.utils.RunnableArgs;
-import com.potatoandtomato.common.utils.SafeThread;
 import com.potatoandtomato.common.utils.Threadings;
 import com.mygdx.potatoandtomato.models.Services;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
@@ -108,7 +106,7 @@ public abstract class LogicAbstract {
 
     //will be called everytime scene onshow(before moving animation), whether is back or forward direction, root might not have stage parent yet
     public void onShow(){
-        Flurry.logToScene(_classTagSimple);
+        Analytics.logToScene(_classTagSimple);
         _isVisible = true;
         if(!_settedListeners){
             Threadings.postRunnable(new Runnable() {

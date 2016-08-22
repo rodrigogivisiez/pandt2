@@ -11,11 +11,11 @@ import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.absintflis.services.RestfulApiListener;
 import com.mygdx.potatoandtomato.absintflis.socials.FacebookListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
+import com.mygdx.potatoandtomato.enums.AnalyticEvent;
 import com.mygdx.potatoandtomato.enums.ClientConnectionStatus;
 import com.mygdx.potatoandtomato.enums.ConfirmIdentifier;
-import com.mygdx.potatoandtomato.enums.FlurryEvent;
 import com.mygdx.potatoandtomato.enums.SceneEnum;
-import com.mygdx.potatoandtomato.helpers.Flurry;
+import com.mygdx.potatoandtomato.helpers.Analytics;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.services.Confirm;
 import com.mygdx.potatoandtomato.statics.Terms;
@@ -37,6 +37,7 @@ public class BootLogic extends LogicAbstract {
     private BootScene _bootScene;
     private boolean _fbStepPast;
     private boolean _logined;
+    private LoginReturnData loginReturnData;
 
     public BootLogic(PTScreen screen, Services services, Object... objs) {
         super(screen, services, objs);
@@ -92,7 +93,7 @@ public class BootLogic extends LogicAbstract {
     }
 
     public void loginFacebook() {
-        Flurry.log(FlurryEvent.LoginSocial);
+        Analytics.log(AnalyticEvent.LoginSocial);
         _bootScene.showSocialLoggingIn();
 
         _services.getSocials().loginFacebook(new FacebookListener() {
@@ -154,7 +155,7 @@ public class BootLogic extends LogicAbstract {
                 else{
                     try {
                         ObjectMapper objectMapper = Vars.getObjectMapper();
-                        LoginReturnData loginReturnData = objectMapper.readValue(result, LoginReturnData.class);
+                        loginReturnData = objectMapper.readValue(result, LoginReturnData.class);
                         if(!loginReturnData.getUserId().equals(userId)){
                             _services.getPreferences().put(Terms.USERID_2, userId);
                             _services.getPreferences().put(Terms.USER_SECRET_2, userSecret);
@@ -232,7 +233,7 @@ public class BootLogic extends LogicAbstract {
                 _bootScene.showPTDown();
                 break;
             case GeneralFailure:
-                Flurry.log(FlurryEvent.LoginFailed);
+                Analytics.log(AnalyticEvent.LoginFailed);
                 _bootScene.showPTLogInFailed();
                 break;
         }
@@ -257,6 +258,7 @@ public class BootLogic extends LogicAbstract {
 
 
     public void loginPTSuccess(){
+       // _services.getProfile().setCountry(loginReturnData.getCountry());
         _services.getDatabase().updateProfile(_services.getProfile(), null);
         _services.getCoins().profileReady();
         _services.getDataCaches().startCaches();
@@ -265,7 +267,7 @@ public class BootLogic extends LogicAbstract {
     }
 
     public void loginProcessCompleteSucceed(){
-        Flurry.log(FlurryEvent.LoginSuccess);
+        Analytics.log(AnalyticEvent.LoginSuccess);
 
         _screen.hideRotateSunrise();
         if(Strings.isEmpty(_services.getProfile().getGameName())){
@@ -282,7 +284,7 @@ public class BootLogic extends LogicAbstract {
         if(!Strings.isEmpty(msg)){
             _services.getDatabase().saveLog(msg);
             _services.getConfirm().show(ConfirmIdentifier.CrashedReportSent, _texts.confirmAppsCrashed(), Confirm.Type.YES, null);
-            Flurry.log(FlurryEvent.SentCrashMsg);
+            Analytics.log(AnalyticEvent.SentCrashMsg);
         }
     }
 

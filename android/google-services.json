@@ -1,0 +1,43 @@
+{
+  "project_info": {
+    "project_number": "647728156086",
+    "project_id": "potato-and-tomato"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:647728156086:android:ec6ae7037c15eb6d",
+        "android_client_info": {
+          "package_name": "com.mygdx.potatoandtomato.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "647728156086-eefsmvnlpi80vjd96gddm4n198um3ob3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBzEzAi10AH6mJFVf1-UzXWL1uJp3KOxs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-82869279-1"
+          }
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

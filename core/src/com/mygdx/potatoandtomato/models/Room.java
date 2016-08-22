@@ -421,7 +421,7 @@ public class Room {
                 boolean isHost = false;
                 if(user.getProfile().equals(this.getHost())) isHost = true;
                 teams.get(teamNumber).addPlayer(new Player(user.getProfile().getDisplayName(15),
-                                user.getProfile().getUserId(), isHost, user.getSlotIndex()));
+                                user.getProfile().getUserId(), user.getProfile().getCountry(), isHost, user.getSlotIndex()));
             }
         }
         return teams;

@@ -144,6 +144,9 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                         _scene.setLeaderboardScrollPaneScrollable(_game, true);
                         _services.getDatabase().resetUserStreak(_game, _services.getProfile().getUserId(), null);
                     }
+                    else{
+                        _scene.setLeaderboardScrollPaneScrollable(_game, true);
+                    }
                 }
             });
         }
@@ -158,7 +161,6 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                _scene.setLeaderboardScrollPaneScrollable(_game, false);
                 _scene.leaderboardDataLoaded(_game, _records);
 
                 if(_records.size() > _leaderboardSize){     //appended not in list record in leaderboard also
@@ -180,7 +182,6 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                                     public void run() {
                                         if(_room.getGame().isStreakEnabled() && myLeaderboardRecord.getStreak().hasValidStreak()){
                                             _scene.loseStreakAnimatePhaseOne(_game, myCurrentRank);
-                                            _scene.setLeaderboardScrollPaneScrollable(_game, true);
                                             Threadings.delay(4000, new Runnable() {
                                                 @Override
                                                 public void run() {
@@ -203,7 +204,6 @@ public class EndGameLeaderBoardLogic extends LogicAbstract {
                 else{
                     hasChanceToReviveStreak = false;
                     _scene.hideLoading(_game);
-                    _scene.setLeaderboardScrollPaneScrollable(_game, true);
                 }
             }
         });

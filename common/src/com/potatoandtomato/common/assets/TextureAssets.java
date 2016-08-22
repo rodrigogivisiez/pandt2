@@ -1,5 +1,6 @@
 package com.potatoandtomato.common.assets;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -31,6 +32,15 @@ public abstract class TextureAssets implements IAssetFragment {
     @Override
     public void load() {
         _manager.load(_path, TextureAtlas.class);
+    }
+
+    public Texture onDemandLoadTexture(String path){
+        if(!_manager.isLoaded(path, Texture.class)){
+            _manager.load(path, Texture.class);
+            _manager.finishLoading();
+        }
+        Texture result =  _manager.get(path, Texture.class);
+        return result;
     }
 
     @Override

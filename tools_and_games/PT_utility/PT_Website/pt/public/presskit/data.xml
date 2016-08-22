@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- example file containing base tags -->
+
+<game>	
+	<title>Potato and Tomato Studio</title>
+	<founding-date>December 31, 2016</founding-date>
+	<website>http://www.potato-and-tomato.com/</website>
+	<based-in>Singapore</based-in>
+	
+	<platforms>
+		<platform>
+			<name>Android PlayStore</name>
+			<link>https://play.google.com/store/apps/details?id=com.mygdx.potatoandtomato.android</link>
+		</platform>
+	</platforms>
+	
+	<press-contact>potatoandtomato@gmail.com</press-contact>
+	<phone>+6594369120</phone>
+	<address>
+		<line>Singapore</line>
+		<line></line>
+		<line></line>
+	</address>
+
+	<socials>
+		<social>
+			<name>twitter.com/pandtgame</name>
+			<link>twitter.com/pandtgame</link>
+		</social>
+		<social>
+			<name>facebook.com/potatoandtomatogame</name>
+			<link>facebook.com/potatoandtomatogame</link>
+		</social>
+
+	</socials>
+
+	<description>	
+		Potato and Tomato mission is to connect users through gaming. Instead of saying "how have you been?" We hope one day people will say to their "long time no see" friend, do you want to play a game on Potato and Tomato? Potato and Tomato is a platform that consists of multiple easy-to-learn games (currently 2) in a lightweight app that seeks to connect players to each other easily. It is a bootstrap, 2 persons team who is lucky enough to have also worked with many talented freelancers to create this platform. 
+	</description>
+		
+	<histories>
+		<history>
+			<header>Early history</header>
+			<text>Potato and Tomato was unofficially formed in Dec 2015, after a spectacular failure of a dabble into a property website. After flirting with a few ideas, the brothers team decide on starting a platform that will connect people through gaming, an idea that stems from their own enjoyable gaming experience during those SNES cartridge days.</text>
+		</history>
+		<history>
+			<header>And then...</header>
+			<text>The journey has been harrowing with many unexpected technical issues. But there always seems to be a flickering light that keeps this on - and on September 1st, finally the platform is ready with two games. One is a classic find the difference game given a multiplayer twist and the other is an original chess game called Behind You a Jungle!, which will gives you a surprise at every turn of a game. This has been the story thus far and hopefully many more to come. </text>
+		</history>
+	</histories>
+		
+	<trailers>
+		<trailer>
+			<name>Our 1 min intro video!</name>
+			<youtube>HU6FOQpsAK8</youtube>
+		</trailer>
+
+	</trailers>
+	
+	<awards>
+                N/A
+	</awards>
+	
+	<quotes>
+		<quote>
+                    We will get this when we launch. I promise. 
+		</quote>
+	</quotes>
+	
+	<press-can-request-copy>TRUE</press-can-request-copy> <!-- true -->
+	<monetization-permission>monetize</monetization-permission> <!-- can be: ask (permission on case-per-case basis) -->
+
+	<additionals>
+        <additional>
+			<title>Download</title>
+			<description>Available for free from</description>
+			<link>https://play.google.com/store/apps/details?id=com.mygdx.potatoandtomato.android</link>
+		</additional>
+	</additionals>
+	
+	<credits>
+		<credit>
+			<person>Siong Leng</person>
+			<role>Chief Technology Guy</role>
+		</credit>
+		<credit>
+			<person>Siong Yew</person>
+			<role>Chief Money Guy</role>
+		</credit>
+		<credit>
+			<person>Choon</person>
+			<website>http://www.soulcreative.com.my/</website>
+			<role>Chief Freelance designer</role>
+		</credit>
+	</credits>
+	
+	<contacts>
+		<contact>
+			<name>Support</name>
+			<mail>potatoandtomatogame@gmail.com</mail>
+		</contact>
+		<contact>
+			<name>Twitter</name>
+			<link>http://twitter.com/pandtgame</link>
+		</contact>
+		<contact>
+			<name>Facebook</name>
+			<link>http://facebook.com/potatoandtomatogame</link>
+		</contact>
+		<contact>
+			<name>Web</name>
+			<link>www.potato-and-tomato.com</link>
+		</contact>
+	</contacts>
+</game>

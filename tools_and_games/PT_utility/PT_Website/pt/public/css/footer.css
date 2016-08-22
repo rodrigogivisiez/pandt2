@@ -1,0 +1,41 @@
+.footer{
+	background-color: #231905;
+	padding-top:10px;
+}
+
+
+.footer .upperPart{
+	padding-top:20px;
+	padding-bottom:20px;
+	background-color: #382a0f;
+	font-family: "pizzaFont";
+	color:white;
+	text-align: center;
+}
+
+
+.footer .links a{
+	color:white;
+	cursor: pointer;
+}
+
+.footer .links span{
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
+.footer .socials{
+	text-align:center;
+	margin-top:20px;
+}
+
+.footer .socials .icon{
+	cursor: pointer;
+	margin-left:5px;
+}
+
+.footer .lowerPart{
+	color:white;
+	text-align:center;
+	padding: 10px 10px 10px 10px;
+}

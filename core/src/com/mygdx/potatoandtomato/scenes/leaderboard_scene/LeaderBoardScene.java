@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.mygdx.potatoandtomato.PTScreen;
 import com.mygdx.potatoandtomato.absintflis.scenes.SceneAbstract;
 import com.mygdx.potatoandtomato.assets.*;
@@ -28,6 +29,7 @@ import com.potatoandtomato.common.models.LeaderboardRecord;
 import com.mygdx.potatoandtomato.models.Services;
 import com.potatoandtomato.common.models.ScoreDetails;
 import com.potatoandtomato.common.utils.Threadings;
+import javafx.geometry.Pos;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,10 +52,13 @@ public class LeaderBoardScene extends SceneAbstract {
     private WebImage _webImage;
     private Image extinguisherImage;
     private Animator extinguisherAnimator;
+    private Array<Table> plusFriendsTables;
+    private Table clonePlusFriendsDetailsTable;
 
     public LeaderBoardScene(Services services, PTScreen screen) {
         super(services, screen);
         _leaderboardScrolls = new HashMap<String, ScrollPane>();
+        plusFriendsTables = new Array();
     }
 
     @Override
@@ -144,6 +149,8 @@ public class LeaderBoardScene extends SceneAbstract {
                 _root.row();
 
                 _loadingTable = new Table();
+
+                setInternalListeners();
             }
         });
     }
@@ -169,7 +176,7 @@ public class LeaderBoardScene extends SceneAbstract {
                 boolean found = _leaderboardScrolls.containsKey(game.getAbbr());
                 if(!found){
                     Table gameRanksTable = new Table();
-                    gameRanksTable.padLeft(10).padRight(10).padBottom(50);
+                    gameRanksTable.padLeft(3).padRight(3).padBottom(50);
                     gameRanksTable.setName("ranksTable");
                     ScrollPane scroll = new ScrollPane(gameRanksTable);
                     scroll.setScrollingDisabled(true, false);
@@ -190,6 +197,7 @@ public class LeaderBoardScene extends SceneAbstract {
                     _loadingTable.clear();
                     _loadingTable.add(loadingLabel);
                     _loadingTable.setFillParent(true);
+                    _loadingTable.setTouchable(Touchable.disabled);
                     _ranksTable.addActor(_loadingTable);
                 }
 
@@ -315,17 +323,13 @@ public class LeaderBoardScene extends SceneAbstract {
         Table recordTable = new Table();
         recordTable.setTransform(true);
         recordTable.padLeft(40).padRight(40);
-        recordTable.add(countLabel).width(30).center();
+        recordTable.add(countLabel).width(25).center();
         recordTable.add(nameScoreTable).expandX().fillX();
         recordTable.layout();
 
         if(_recordHeight == 0){
             recordTable.layout();
             _recordHeight = recordTable.getPrefHeight();
-        }
-
-        if(record.getUserIds().size() > 1){
-            setListenerForRecordTable(recordTable, record);
         }
 
         return recordTable;
@@ -364,7 +368,7 @@ public class LeaderBoardScene extends SceneAbstract {
                 ////////////////////
                 //name label
                 /////////////////////
-                Label nameLabel = new Label(getLeaderPlusFriendsText(record, 20), style3);
+                Label nameLabel = new Label(getLeaderPlusFriendsText(record, 15), style3);
 
 
                 ///////////////////////
@@ -444,6 +448,7 @@ public class LeaderBoardScene extends SceneAbstract {
                     _loadingTable.addAction(sequence(fadeOut(0.2f), new RunnableAction(){
                         @Override
                         public void run() {
+
                             scrollPane.addAction(fadeIn(0.2f));
                         }
                     }));
@@ -700,17 +705,24 @@ public class LeaderBoardScene extends SceneAbstract {
 
         if(notFound){
             nameStreakTable = new Table();
+            nameStreakTable.align(Align.left);
             nameStreakTable.setName("nameStreakTable");
         }
 
-        Label.LabelStyle style1 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_M_SEMIBOLD), getTextColorOfRecord(record));
+        Label.LabelStyle style1 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_M_SEMIBOLD),
+                                        getTextColorOfRecord(record));
 
-        Label nameLabel = new Label(getLeaderPlusFriendsText(record, 25), style1);
+        Label nameLabel = new Label(Strings.cutOff(record.getLeaderName(), record.getUserIds().size() > 1 ? 16 : 18), style1);
         nameLabel.setName("nameLabel");
         nameLabel.setAlignment(Align.left);
 
+        if(record.getUserIds().size() > 0){
+            Badge badge = new Badge(BadgeType.Country, "", _assets, record.getUserCountryByUserId(record.getLeaderId()));
+            nameStreakTable.add(badge).size(badge.getPrefWidth(), badge.getPrefHeight()).padRight(5);
+        }
+
         if(record.getStreak().hasValidStreak()){
-            Badge streakBadge = new Badge(BadgeType.Streak, String.valueOf(record.getStreak().getStreakCount()), _assets);
+            Badge streakBadge = new Badge(BadgeType.Streak, String.valueOf(record.getStreak().getStreakCount()), _assets, "");
             streakBadge.setName("streakTable");
             nameStreakTable.add(streakBadge).padRight(5);
 
@@ -720,9 +732,77 @@ public class LeaderBoardScene extends SceneAbstract {
             }
         }
 
-        nameStreakTable.add(nameLabel).expand().fill();
+        nameStreakTable.add(nameLabel).expandX().fillX();
 
+        if(record.getUserIds().size() > 1){
+            int otherFriendsCount = record.getUserIds().size() - 1;
+            String friendsCountText = "+" + otherFriendsCount;
+
+            Table plusFriendsTable = new Table();
+            plusFriendsTable.setName("collapsed");
+            Image plusFriendsBg = new Image(
+                    new NinePatchDrawable(_assets.getPatches().get(Patches.Name.LEADERBOARD_FRIENDS_COLLAPSED_BG)));
+            plusFriendsBg.setFillParent(true);
+            plusFriendsBg.setName("plusFriendsBg");
+            plusFriendsBg.getColor().a = 0.5f;
+
+            Table plusFriendsLabelTable = new Table();
+            Label plusFriendsLabel = new Label(friendsCountText, style1);
+
+            Image expandImage = new Image(_assets.getTextures().get(Textures.Name.LEADERBOARD_EXPAND_BUTTON));
+            expandImage.setOrigin(Align.center);
+            expandImage.setName("expandImage");
+            expandImage.setRotation(90);
+            expandImage.getColor().a = 0.5f;
+
+            plusFriendsLabelTable.addActor(plusFriendsBg);
+            plusFriendsLabelTable.add(plusFriendsLabel).pad(1, 3, 1, 20);
+
+            Table plusFriendsDetailsTable = getPlusFriendsDetailsTable(record);
+            plusFriendsDetailsTable.setName("plusFriendsDetailsTable");
+            plusFriendsDetailsTable.pack();
+            plusFriendsDetailsTable.setSize(plusFriendsDetailsTable.getPrefWidth(), plusFriendsDetailsTable.getPrefHeight());
+            plusFriendsDetailsTable.setPosition(0, -plusFriendsDetailsTable.getHeight() + 1);
+
+            plusFriendsTable.add(plusFriendsLabelTable);
+            plusFriendsTable.add(expandImage).size(16, 16).padLeft(-10);
+            plusFriendsTable.addActor(plusFriendsDetailsTable);
+
+            nameStreakTable.add(plusFriendsTable).padLeft(10).right();
+
+            plusFriendsTables.add(plusFriendsTable);
+
+            new DummyButton(plusFriendsTable, _assets);
+            setListenerForPlusFriendsTable(plusFriendsTable, record, game);
+        }
         return nameStreakTable;
+    }
+
+    private Table getPlusFriendsDetailsTable(LeaderboardRecord record){
+        Label.LabelStyle style1 = new Label.LabelStyle(_assets.getFonts().get(Fonts.FontId.MYRIAD_M_SEMIBOLD),
+                             getTextColorOfRecord(record));
+
+        Table plusFriendsDetailsTable = new Table();
+        plusFriendsDetailsTable.setVisible(false);
+        plusFriendsDetailsTable.pad(0, 10, 5, 10);
+        plusFriendsDetailsTable.align(Align.topLeft);
+        plusFriendsDetailsTable.setBackground(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.LEADERBOARD_FRIENDS_BG)));
+
+        for(String userId : record.getNonLeaderIds()){
+            Table userTable = new Table();
+            Badge badge = new Badge(BadgeType.Country, "", _assets, record.getUserCountryByUserId(userId));
+            Label userLabel = new Label(Strings.cutOff(record.getUserNameByUserId(userId), 25), style1);
+            userLabel.setWrap(true);
+            userLabel.setAlignment(Align.left);
+
+            userTable.add(badge).padRight(5);
+            userTable.add(userLabel).expandX().fillX().width(100);
+
+            plusFriendsDetailsTable.add(userTable).expandX().fillX().padTop(5);
+            plusFriendsDetailsTable.row();
+        }
+
+        return plusFriendsDetailsTable;
     }
 
     public void loseStreakAnimatePhaseOne(final Game game, final int rank){
@@ -927,7 +1007,7 @@ public class LeaderBoardScene extends SceneAbstract {
     private Color getTextColorOfRecord(LeaderboardRecord record){
         Color textColor = Color.valueOf("5b3000");
         if(record.containUser(_services.getProfile().getUserId())){
-            textColor = Color.valueOf("347edb");
+            textColor = Color.valueOf("0d6706");
         }
         return textColor;
     }
@@ -1048,39 +1128,122 @@ public class LeaderBoardScene extends SceneAbstract {
         });
     }
 
-    private void setListenerForRecordTable(Table recordTable, LeaderboardRecord record){
-        final Label nameLabel = recordTable.findActor("nameLabel");
-        final String originalName = nameLabel.getText().toString();
-        ArrayList<String> userNames = record.getUserNames();
-        String leaderName = record.getLeaderName();
-        userNames.remove(leaderName);
-        userNames.add(0, leaderName);
-        final String fullNames = Strings.joinArr(userNames, "\n");
-        final boolean[] expanded = {false};
-        recordTable.addListener(new ClickListener(){
+    private void closePlusFriendsTable(final Table plusFriendsTable){
+        Threadings.postRunnable(new Runnable() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if(expanded[0]){
-                    expanded[0] = false;
-                    Threadings.postRunnable(new Runnable() {
+            public void run() {
+                final Image plusFriendsBg = plusFriendsTable.findActor("plusFriendsBg");
+                Image expandImage = plusFriendsTable.findActor("expandImage");
+                plusFriendsTable.setName("collapsed");
+
+                expandImage.clearActions();
+                expandImage.getColor().a = 0.5f;
+                expandImage.setRotation(90f);
+                plusFriendsBg.setDrawable(new NinePatchDrawable(_assets.getPatches().get(Patches.Name.LEADERBOARD_FRIENDS_COLLAPSED_BG)));
+                plusFriendsBg.getColor().a = 0.5f;
+                clonePlusFriendsDetailsTable.remove();
+
+            }
+        });
+    }
+
+    private void togglePlusFriendsTable(final Table plusFriendsTable, final LeaderboardRecord record, final boolean fromClick){
+        Threadings.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                boolean isExpanded = plusFriendsTable.getName().equals("expanded");
+
+                final Image plusFriendsBg = plusFriendsTable.findActor("plusFriendsBg");
+                Image expandImage = plusFriendsTable.findActor("expandImage");
+                final Table plusFriendsDetailsTable = plusFriendsTable.findActor("plusFriendsDetailsTable");
+
+                if(isExpanded){
+                    plusFriendsTable.setName("collapsed");
+                    expandImage.clearActions();
+                    expandImage.addAction(sequence(Actions.alpha(0.5f), parallel(Actions.rotateTo(90, 0.1f), new RunnableAction(){
                         @Override
                         public void run() {
-                            nameLabel.setText(originalName);
+                            if(fromClick) clonePlusFriendsDetailsTable.addAction(parallel(moveBy(0, -2f, 0.1f), fadeOut(0.1f)));
                         }
-                    });
+                    }), new RunnableAction(){
+                        @Override
+                        public void run() {
+                            plusFriendsBg.setDrawable(
+                                    new NinePatchDrawable(_assets.getPatches().get(Patches.Name.LEADERBOARD_FRIENDS_COLLAPSED_BG)));
+                            plusFriendsBg.getColor().a = 0.5f;
+                        }
+                    }));
                 }
                 else{
-                    expanded[0] = true;
-                    Threadings.postRunnable(new Runnable() {
+                    if(clonePlusFriendsDetailsTable != null){
+                        clonePlusFriendsDetailsTable.addAction(parallel(moveBy(0, -2f, 0.1f), fadeOut(0.1f)));
+                        for(Table findingPlusFriendsTable : plusFriendsTables){
+                            if(findingPlusFriendsTable.getName().equals("expanded")){
+                                togglePlusFriendsTable(findingPlusFriendsTable, record, false);
+                            }
+                        }
+                    }
+
+                    clonePlusFriendsDetailsTable = getPlusFriendsDetailsTable(record);
+                    clonePlusFriendsDetailsTable.setTouchable(Touchable.disabled);
+                    clonePlusFriendsDetailsTable.setSize(plusFriendsDetailsTable.getWidth(), plusFriendsDetailsTable.getHeight());
+                    Vector2 originalPosition = Positions.actorLocalToStageCoord(plusFriendsDetailsTable);
+
+                    clonePlusFriendsDetailsTable.setPosition(originalPosition.x, originalPosition.y);
+                    if(originalPosition.y < 0){
+                        clonePlusFriendsDetailsTable.setY(0);
+                    }
+
+                    plusFriendsTable.setName("expanded");
+                    expandImage.clearActions();
+                    expandImage.addAction(sequence(fadeIn(0f), parallel(Actions.rotateTo(0, 0.1f), new RunnableAction(){
                         @Override
                         public void run() {
-                            nameLabel.setText(fullNames);
+                            clonePlusFriendsDetailsTable.getColor().a = 0f;
+                            clonePlusFriendsDetailsTable.setVisible(true);
+                            _root.addActor(clonePlusFriendsDetailsTable);
+                            clonePlusFriendsDetailsTable.addAction(sequence(moveBy(0, 2f),
+                                    parallel(fadeIn(0.1f), Actions.moveBy(0, -2f, 0.1f))));
                         }
-                    });
+                    }), new RunnableAction(){
+                        @Override
+                        public void run() {
+                            plusFriendsBg.setDrawable(
+                                    new NinePatchDrawable(_assets.getPatches().get(Patches.Name.LEADERBOARD_FRIENDS_EXPANDED_BG)));
+                            plusFriendsBg.getColor().a = 1f;
+                        }
+                    }));
                 }
             }
         });
-        new DummyButton(recordTable, _assets);
+    }
+
+    private void setInternalListeners(){
+        _root.addListener(new ClickListener(){
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                for(Table plusFriendsTable : plusFriendsTables){
+                    if(plusFriendsTable.getName().equals("expanded")){
+                        closePlusFriendsTable(plusFriendsTable);
+                    }
+                }
+
+                return super.touchDown(event, x, y, pointer, button);
+            }
+        });
+    }
+
+    private void setListenerForPlusFriendsTable(final Table plusFriendsTable, final LeaderboardRecord record, final Game game){
+        plusFriendsTable.addListener(new ClickListener(){
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                togglePlusFriendsTable(plusFriendsTable, record,  true);
+                event.stop();
+                return true;
+            }
+
+
+        });
     }
 
     @Override

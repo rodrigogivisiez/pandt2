@@ -45,6 +45,8 @@ public class UserBadgeHelper implements Disposable {
 
     public synchronized void userJoinedRoom(RoomUser newRoomUser){
         _roomUsers.add(newRoomUser);
+        addPlayerBadge(newRoomUser.getProfile().getUserId(),
+                BadgeType.Country, 0, newRoomUser.getProfile().getCountry());
         roomUsersChanged();
     }
 
@@ -82,21 +84,21 @@ public class UserBadgeHelper implements Disposable {
             for(RoomUser roomUser : _roomUsers){
                 if(record.containUser(roomUser.getProfile().getUserId()) && !_rankMap.containsKey(roomUser.getProfile().getUserId())){
                     _rankMap.put(roomUser.getProfile().getUserId(), i);
-                    addPlayerBadge(roomUser.getProfile().getUserId(), BadgeType.Rank, i);
+                    addPlayerBadge(roomUser.getProfile().getUserId(), BadgeType.Rank, i, "");
                 }
             }
             i++;
         }
     }
 
-    public void fillStreaksMap(){
+    public void handleNoCoinsBadge(){
         for(final RoomUser roomUser : _roomUsers){
             userHasCoinChangedUpdateBadge(roomUser.getProfile().getUserId(),
                     _services.getCoins().checkUserHasCoin(roomUser.getProfile().getUserId()));
         }
     }
 
-    public void handleNoCoinsBadge(){
+    public void fillStreaksMap(){
         for(final RoomUser roomUser : _roomUsers){
             if(!_streaksMap.containsKey(roomUser.getProfile().getUserId())){
                 _services.getDatabase().getTeamStreak(_game, ArrayUtils.stringsToArray(roomUser.getProfile().getUserId()), new DatabaseListener<Streak>(Streak.class) {
@@ -105,7 +107,8 @@ public class UserBadgeHelper implements Disposable {
                         if (st == Status.SUCCESS && streak != null) {
                             if (streak.hasValidStreak()) {
                                 _streaksMap.put(roomUser.getProfile().getUserId(), streak.getStreakCount());
-                                addPlayerBadge(roomUser.getProfile().getUserId(), BadgeType.Streak, streak.getStreakCount());
+                                addPlayerBadge(roomUser.getProfile().getUserId(), BadgeType.Streak, streak.getStreakCount(),
+                                        "");
                             }
                         }
                     }
@@ -114,7 +117,7 @@ public class UserBadgeHelper implements Disposable {
         }
     }
 
-    public void addPlayerBadge(final String userId, final BadgeType badgeType, final int num){
+    public void addPlayerBadge(final String userId, final BadgeType badgeType, final int num, final String extra){
         Threadings.runInBackground(new Runnable() {
             @Override
             public void run() {
@@ -128,7 +131,7 @@ public class UserBadgeHelper implements Disposable {
                     }
                     i++;
                 }
-                _roomScene.addPlayerBadge(userId, badgeType, num);
+                _roomScene.addPlayerBadge(userId, badgeType, num, extra);
             }
         });
     }
@@ -138,18 +141,21 @@ public class UserBadgeHelper implements Disposable {
             _roomScene.removePlayerBadge(userId, BadgeType.NoCoin);
         }
         else{
-            _roomScene.addPlayerBadge(userId, BadgeType.NoCoin, 0);
+            _roomScene.addPlayerBadge(userId, BadgeType.NoCoin, 0, "");
         }
     }
 
     public synchronized void refresh(){
-        reset();
+//        reset();
+//        for(RoomUser roomUser : _roomUsers){
+//            addPlayerBadge(roomUser.getProfile().getUserId(), BadgeType.Country, 0, roomUser.getProfile().getCountry());
+//        }
+
         getLeaderboardRecords(new Runnable() {
             @Override
             public void run() {
                 fillRankMap();
                 fillStreaksMap();
-                handleNoCoinsBadge();
             }
         });
 

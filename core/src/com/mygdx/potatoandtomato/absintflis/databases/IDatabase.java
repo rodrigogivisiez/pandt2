@@ -30,6 +30,10 @@ public interface IDatabase {
 
      void getUsernamesByUserIds(ArrayList<String> userIds, DatabaseListener<HashMap<String, String>> listener);
 
+     void getUserCountryByUserId(String userId, DatabaseListener<String> listener);
+
+     void getUserCountryByUserIds(ArrayList<String> userIds, DatabaseListener<HashMap<String, String>> listener);
+
      void getProfileByFacebookUserId(String facebookUserId, DatabaseListener<Profile> listener);
 
      void monitorUserCoinsCount(String userId, DatabaseListener<Integer> listener);
@@ -121,5 +125,7 @@ public interface IDatabase {
      void checkFeedbackExist(String userId, DatabaseListener<Boolean> listener);
 
      void sendFeedback(String userId, RateAppsModel rateAppsModel, DatabaseListener listener);
+
+     void getRewardVideoCoinCount(DatabaseListener<Integer> listener);
 
 }

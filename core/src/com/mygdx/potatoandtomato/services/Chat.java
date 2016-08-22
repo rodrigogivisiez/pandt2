@@ -10,22 +10,21 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.mygdx.potatoandtomato.absintflis.controls.ChatTemplateSelectedListener;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.GamingKit;
+import com.mygdx.potatoandtomato.assets.MyAssets;
 import com.mygdx.potatoandtomato.assets.Sounds;
-import com.mygdx.potatoandtomato.enums.GameConnectionStatus;
-import com.mygdx.potatoandtomato.enums.FlurryEvent;
+import com.mygdx.potatoandtomato.enums.AnalyticEvent;
 import com.mygdx.potatoandtomato.enums.UpdateRoomMatesCode;
 import com.mygdx.potatoandtomato.absintflis.gamingkit.UpdateRoomMatesListener;
 import com.mygdx.potatoandtomato.absintflis.recorder.RecordListener;
 import com.mygdx.potatoandtomato.controls.ChatControl;
 import com.mygdx.potatoandtomato.controls.ChatTemplateControl;
 import com.mygdx.potatoandtomato.controls.DummyKeyboard;
-import com.mygdx.potatoandtomato.helpers.Flurry;
+import com.mygdx.potatoandtomato.helpers.Analytics;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.utils.BytesUtils;
 import com.mygdx.potatoandtomato.utils.Files;
 import com.mygdx.potatoandtomato.utils.Positions;
 import com.potatoandtomato.common.absints.IPTGame;
-import com.potatoandtomato.common.assets.Assets;
 import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
@@ -60,7 +59,7 @@ public class Chat {
     private float softKeyboardHeight = 0;
     private boolean focused;
 
-    public Chat(Broadcaster broadcaster, GamingKit gamingKit, Texts texts, Assets assets,
+    public Chat(Broadcaster broadcaster, GamingKit gamingKit, Texts texts, MyAssets assets,
                         SoundsPlayer soundsPlayer, Recorder recorder, SpriteBatch batch, IPTGame game, Preferences preferences) {
         this.broadcaster = broadcaster;
         this.ptGame = game;
@@ -227,10 +226,10 @@ public class Chat {
         newMessage(chatMessage);
 
         if(fromTemplate){
-            Flurry.log(FlurryEvent.SendChatTemplate);
+            Analytics.log(AnalyticEvent.SendChatTemplate);
         }
         else{
-            Flurry.log(FlurryEvent.SendChatText);
+            Analytics.log(AnalyticEvent.SendChatText);
         }
     }
 
@@ -245,7 +244,7 @@ public class Chat {
                                         ChatMessage.FromType.USER_VOICE, myUserId, String.valueOf(totalSecs));
         newMessage(chatMessage);
 
-        Flurry.log(FlurryEvent.SendChatAudio);
+        Analytics.log(AnalyticEvent.SendChatAudio);
     }
 
     public void newMessage(ChatMessage chatMessage){
@@ -279,7 +278,7 @@ public class Chat {
         chatControl.scrollToBottom();
     }
 
-    public void refreshRoomUsersConnectionStatus(ArrayList<Pair<String, GameConnectionStatus>> playersConnectionStatusPairs) {
+    public void refreshRoomUsersConnectionStatus(ArrayList<Pair<String, ConnectionStatusAndCountryModel>> playersConnectionStatusPairs) {
         chatControl.refreshRoomUsersPopupDesign(playersConnectionStatusPairs);
     }
 

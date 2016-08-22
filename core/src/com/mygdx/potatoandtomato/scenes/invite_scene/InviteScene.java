@@ -237,6 +237,7 @@ public class InviteScene extends SceneAbstract {
                 new DummyButton(userTable, _assets);
 
                 Table detailsTable = new Table();
+                Badge badge = new Badge(BadgeType.Country, "", _assets, profile.getCountry());
 
                 switch (inviteType){
                     case Recent:
@@ -245,9 +246,10 @@ public class InviteScene extends SceneAbstract {
                         Label historyLabel = new Label(String.format(_texts.playedXAgo(), history.getNameOfGame(), history.getCreationDateAgo()),
                                 smallItalicStyle);
 
+                        detailsTable.add(badge).padRight(5).size(badge.getPrefWidth(), badge.getPrefHeight());
                         detailsTable.add(nameLabel).expandX().fillX();
                         detailsTable.row();
-                        detailsTable.add(historyLabel).expandX().fillX();
+                        detailsTable.add(historyLabel).expandX().fillX().colspan(2);
                         break;
 
                     case Facebook:
@@ -261,9 +263,10 @@ public class InviteScene extends SceneAbstract {
                         Label gameNameLabel = new Label(String.format(_texts.gameNameIs(), profile.getDisplayName(25)),
                                 smallItalicStyle);
 
+                        namesTable.add(badge).padRight(5).size(badge.getPrefWidth(), badge.getPrefHeight());
                         namesTable.add(facebookNameLabel).expandX().fillX();
                         namesTable.row();
-                        namesTable.add(gameNameLabel).expandX().fillX();
+                        namesTable.add(gameNameLabel).expandX().fillX().colspan(2);
 
                         detailsTable.add(image).size(30, 30).padRight(10);
                         detailsTable.add(namesTable).expandX().fillX();
@@ -274,18 +277,19 @@ public class InviteScene extends SceneAbstract {
                         double score = (Double) objs[1];
                         Streak streak = (Streak) objs[2];
 
-                        Badge rankBadge = new Badge(BadgeType.Rank, String.valueOf(rankNumber), _assets, 2);
+                        Badge rankBadge = new Badge(BadgeType.Rank, String.valueOf(rankNumber), _assets, 2, "");
 
                         Label nameLabel2 = new Label(profile.getDisplayName(30), normalStyle);
                         Label scoreLabel = new Label(String.format(_texts.xPoints(), Strings.formatNum((int) score)), smallItalicStyle);
                         Table nameScoreTable = new Table();
+                        nameScoreTable.add(badge).padRight(5).size(badge.getPrefWidth(), badge.getPrefHeight());
                         nameScoreTable.add(nameLabel2).expandX().fillX();
                         nameScoreTable.row();
-                        nameScoreTable.add(scoreLabel).expandX().fillX();
+                        nameScoreTable.add(scoreLabel).expandX().fillX().colspan(2);
 
                         detailsTable.add(rankBadge).padRight(5);
                         if(streak.hasValidStreak()){
-                            Badge streakBadge = new Badge(BadgeType.Streak, String.valueOf(streak.getStreakCount()), _assets, 2);
+                            Badge streakBadge = new Badge(BadgeType.Streak, String.valueOf(streak.getStreakCount()), _assets, 2, "");
                             detailsTable.add(streakBadge).size(28, 30).padRight(5);
                         }
                         detailsTable.add(nameScoreTable).expandX().fillX();

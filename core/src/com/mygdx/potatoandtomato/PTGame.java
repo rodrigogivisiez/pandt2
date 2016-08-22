@@ -91,8 +91,8 @@ public class PTGame extends Game implements IPTGame {
 		_externalProcessors = new ArrayList();
 		Threadings.setMainTreadId();
 		Global.init(_preferences);
-//		_splashScreen = new SplashScreen();
-//		setScreen(_splashScreen);
+		_splashScreen = new SplashScreen();
+		setScreen(_splashScreen);
 		initiateAssets();
 
 		//run when assets done loading
@@ -133,13 +133,13 @@ public class PTGame extends Game implements IPTGame {
 				_connectionWatcher.setPtScreen(_screen);
 				_coins.setPtScreen(_screen);
 
-//				_splashScreen.close(new Runnable() {
-//					@Override
-//					public void run() {
+				_splashScreen.close(new Runnable() {
+					@Override
+					public void run() {
 						setScreen(_screen);
-						_screen.toScene(SceneEnum.GAME_LIST);
-//					}
-//				});
+						_screen.toScene(SceneEnum.BOOT);
+					}
+				});
 
 			}
 		});

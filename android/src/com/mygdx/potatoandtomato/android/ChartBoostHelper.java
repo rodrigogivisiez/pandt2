@@ -14,6 +14,8 @@ import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.RunnableArgs;
 import com.potatoandtomato.common.utils.Threadings;
 
+import java.util.List;
+
 /**
  * Created by SiongLeng on 2/6/2016.
  */
@@ -23,18 +25,36 @@ public class ChartBoostHelper {
     private final String appId = "574f97cc04b0161bc69b43b1";
     private final String appSignature = "92f17914670ea4eb24f7bb763e0a4a45eb5c9715";
     private Broadcaster broadcaster;
+    //private AerServConfig config;
 
     public ChartBoostHelper(Activity mainActivity, Broadcaster broadcaster) {
         this.mainActivity = mainActivity;
         this.broadcaster = broadcaster;
 
-        Chartboost.startWithAppId(mainActivity, appId, appSignature);
-        //Chartboost.setLoggingLevel(CBLogging.Level.ALL);
-        Chartboost.setDelegate(delegate);
-        Chartboost.onCreate(mainActivity);
+//        Chartboost.startWithAppId(mainActivity, appId, appSignature);
+//        //Chartboost.setLoggingLevel(CBLogging.Level.ALL);
+//        Chartboost.setDelegate(delegate);
+//        Chartboost.onCreate(mainActivity);
+//
+//        Chartboost.cacheRewardedVideo(CBLocation.LOCATION_DEFAULT);
+//        subscribeBroadcasterEvents();
 
-        Chartboost.cacheRewardedVideo(CBLocation.LOCATION_DEFAULT);
+//        AerServEventListener listener = new AerServEventListener(){
+//            @Override
+//            public void onAerServEvent(AerServEvent event, List args){
+//                switch (event) {
+//                    case VC_REWARDED:
+//                        AerServVirtualCurrency vc = (AerServVirtualCurrency) args.get(0);
+//                        // do something here with your virtual currency!
+//                        System.out.println("VC rewarded: " + vc.getAmount() + " " + vc.getName());
+//                }
+//            }
+//        };
+//
+//        config = new AerServConfig(mainActivity, "1003694").setEventListener(listener);
         subscribeBroadcasterEvents();
+
+
     }
 
     public void subscribeBroadcasterEvents(){
@@ -48,14 +68,17 @@ public class ChartBoostHelper {
         broadcaster.subscribe(BroadcastEvent.HAS_REWARD_VIDEO, new BroadcastListener<RunnableArgs<Boolean>>() {
             @Override
             public void onCallback(RunnableArgs<Boolean> runnable, Status st) {
-                runnable.run(Chartboost.hasRewardedVideo(CBLocation.LOCATION_DEFAULT));
+               // runnable.run(Chartboost.hasRewardedVideo(CBLocation.LOCATION_DEFAULT));
+                runnable.run(false);
             }
         });
 
         broadcaster.subscribe(BroadcastEvent.SHOW_REWARD_VIDEO, new BroadcastListener() {
             @Override
             public void onCallback(Object obj, Status st) {
-                Chartboost.showRewardedVideo(CBLocation.LOCATION_DEFAULT);
+              //  Chartboost.showRewardedVideo(CBLocation.LOCATION_DEFAULT);
+
+               // new AerServInterstitial(config).show();
             }
         });
     }
@@ -213,23 +236,23 @@ public class ChartBoostHelper {
     };
 
     public void onStart() {
-        Chartboost.onStart(mainActivity);
+       // Chartboost.onStart(mainActivity);
     }
 
     public void onResume() {
-        Chartboost.onResume(mainActivity);
+       // Chartboost.onResume(mainActivity);
     }
 
     public void onPause() {
-        Chartboost.onPause(mainActivity);
+      //  Chartboost.onPause(mainActivity);
     }
 
     public void onStop() {
-        Chartboost.onStop(mainActivity);
+       // Chartboost.onStop(mainActivity);
     }
 
     public void onDestroy() {
-        Chartboost.onDestroy(mainActivity);
+      //  Chartboost.onDestroy(mainActivity);
     }
 
     public boolean onBackPressed() {

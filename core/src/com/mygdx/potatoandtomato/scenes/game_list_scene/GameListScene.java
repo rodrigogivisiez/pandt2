@@ -1,8 +1,10 @@
 package com.mygdx.potatoandtomato.scenes.game_list_scene;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
@@ -16,6 +18,7 @@ import com.mygdx.potatoandtomato.assets.Patches;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.assets.Textures;
 import com.mygdx.potatoandtomato.controls.*;
+import com.mygdx.potatoandtomato.enums.BadgeType;
 import com.mygdx.potatoandtomato.models.InboxMessage;
 import com.mygdx.potatoandtomato.utils.Positions;
 import com.mygdx.potatoandtomato.models.Profile;
@@ -28,6 +31,10 @@ import com.potatoandtomato.common.utils.Threadings;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.scaleTo;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 /**
  * Created by SiongLeng on 9/12/2015.
@@ -42,6 +49,7 @@ public class GameListScene extends SceneAbstract {
     private Button settingsButton, leaderBoardsButton, shareButton, inboxButton;
     private Table inboxListTable, inboxMessageTable, inboxCountTable;
     private Table rateTable;
+    private Table countryTable;
 
     public GameListScene(Services services, PTScreen screen) {
         super(services, screen);
@@ -152,6 +160,9 @@ public class GameListScene extends SceneAbstract {
         shareButton.setFillParent(true);
         shareTable.addActor(shareButton);
 
+        countryTable = new Table();
+
+        userProfileTable.add(countryTable).padRight(5);
         userProfileTable.add(usernameLabel).expand().fill().padLeft(5).padRight(10);
         userProfileTable.add(leaderBoardsTable).size(40).padRight(5);
         userProfileTable.add(inboxTable).size(40).padRight(5);
@@ -198,7 +209,7 @@ public class GameListScene extends SceneAbstract {
         gameNameLabel.setWrap(true);
         gameNameInvitationTable.add(gameNameLabel).expand().fill();
 
-        Label hostNameLabel = new Label(room.getHost().getDisplayName(15), contentLabelStyle);
+        Label hostNameLabel = new Label(room.getHost().getDisplayName(13), contentLabelStyle);
         hostNameLabel.setWrap(true);
         Label playersCountLabel = new Label(String.format("%s / %s", room.getRoomUsersCount(), room.getGame().getMaxPlayers()), contentLabelStyle);
         playersCountLabel.setName("playerCount");
@@ -291,13 +302,14 @@ public class GameListScene extends SceneAbstract {
         });
     }
 
-    public void showRateMe(){
+    public void showRateMe(final RunnableArgs<Table> onFinish){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
                 if(rateTable != null) rateTable.remove();
 
                 rateTable = new Table();
+                rateTable.setTransform(true);
                 rateTable.align(Align.top);
                 rateTable.setBackground(new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.WOOD_BG_NORMAL)));
 
@@ -322,11 +334,14 @@ public class GameListScene extends SceneAbstract {
                 likeButtonTable.add(yesBigLabel);
                 likeButtonTable.row();
                 likeButtonTable.add(yesSmallLabel).padLeft(15);
+                likeButtonTable.setName("likeButtonTable");
+                new DummyButton(likeButtonTable, _assets);
 
                 TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
                 textButtonStyle.up = new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.BTN_CONVEX));
                 textButtonStyle.font = _assets.getFonts().get(Fonts.FontId.PIZZA_XXL_REGULAR_B_989898_ffffff_2);
                 TextButton dislikeButton = new TextButton(_texts.btnDislikeApps(), textButtonStyle);
+                dislikeButton.setName("dislikeButton");
 
                 rateTable.add(titleLabel).colspan(2).padTop(20).padBottom(20);
                 rateTable.row();
@@ -337,14 +352,22 @@ public class GameListScene extends SceneAbstract {
                 rateTable.add(dislikeButton).padTop(10);
 
                 rateTable.setSize(300, 254);
+                rateTable.getColor().a = 0f;
+                rateTable.setOrigin(Align.center);
                 rateTable.setPosition(Positions.getWidth() / 2 - rateTable.getWidth() /2 , 200);
 
                 _root.addActor(rateTable);
+
+                onFinish.run(rateTable);
+
+                rateTable.addAction(sequence(scaleTo(0, 0), fadeIn(0f), Actions.scaleTo(1, 1, 1f, Interpolation.bounceOut)));
+
+                _services.getSoundsPlayer().playSoundEffect(Sounds.Name.TOGETHER_ANTICIPATING);
             }
         });
     }
 
-    public void showLikedApps(){
+    public void showLikedApps(final RunnableArgs<Table> onFinish){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -366,11 +389,13 @@ public class GameListScene extends SceneAbstract {
                 goToPlayStoreStyle.up = new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.BTN_CONCAVE));
                 goToPlayStoreStyle.font = _assets.getFonts().get(Fonts.FontId.PIZZA_MAX_REGULAR_B_72c95e_ffffff_2);
                 TextButton goToPlayStoreButton = new TextButton(_texts.btnGoToPlayStore(), goToPlayStoreStyle);
+                goToPlayStoreButton.setName("goToPlayStoreButton");
 
                 TextButton.TextButtonStyle dontGoToPlayStoreStyle = new TextButton.TextButtonStyle();
                 dontGoToPlayStoreStyle.up = new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.BTN_CONVEX));
                 dontGoToPlayStoreStyle.font = _assets.getFonts().get(Fonts.FontId.PIZZA_XXL_REGULAR_B_989898_ffffff_2);
                 TextButton dontGoToPlayStoreButton = new TextButton(_texts.btnDontGoToPlayStore(), dontGoToPlayStoreStyle);
+                dontGoToPlayStoreButton.setName("dontGoToPlayStoreButton");
 
                 rateTable.add(titleLabel).padTop(20).padBottom(20).colspan(2).expandX().fillX();
                 rateTable.row();
@@ -383,11 +408,15 @@ public class GameListScene extends SceneAbstract {
                 rateTable.setPosition(Positions.getWidth() / 2 - rateTable.getWidth() /2 , 200);
 
                 _root.addActor(rateTable);
+
+                onFinish.run(rateTable);
+
+                _services.getSoundsPlayer().playSoundEffect(Sounds.Name.WIN);
             }
         });
     }
 
-    public void showDislikedApps(){
+    public void showDislikedApps(final RunnableArgs<Table> onFinish){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -406,16 +435,19 @@ public class GameListScene extends SceneAbstract {
                 Image mascotsImage = new Image(_assets.getTextures().get(Textures.Name.MASCOT_DISLIKED_APPS));
 
                 PTTextArea msgTextField = new PTTextArea(_assets, true);
+                msgTextField.setName("msgTextField");
 
                 TextButton.TextButtonStyle backStyle = new TextButton.TextButtonStyle();
                 backStyle.up = new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.BTN_IRREGULAR));
                 backStyle.font = _assets.getFonts().get(Fonts.FontId.PIZZA_L_REGULAR_B_000000_ffffff_2);
                 TextButton backButton = new TextButton(_texts.back(), backStyle);
+                backButton.setName("backButton");
 
                 TextButton.TextButtonStyle sendStyle = new TextButton.TextButtonStyle();
                 sendStyle.up = new TextureRegionDrawable(_assets.getTextures().get(Textures.Name.BTN_IRREGULAR));
                 sendStyle.font = _assets.getFonts().get(Fonts.FontId.PIZZA_L_REGULAR_B_000000_ffffff_2);
                 TextButton sendButton = new TextButton(_texts.send(), sendStyle);
+                sendButton.setName("sendButton");
 
                 Table buttonsTable = new Table();
                 buttonsTable.add(backButton).padBottom(5);
@@ -433,6 +465,10 @@ public class GameListScene extends SceneAbstract {
                 rateTable.setPosition(Positions.getWidth() / 2 - rateTable.getWidth() /2 , 200);
 
                 _root.addActor(rateTable);
+
+                onFinish.run(rateTable);
+
+                _services.getSoundsPlayer().playSoundEffect(Sounds.Name.LOSE);
             }
         });
     }
@@ -658,11 +694,14 @@ public class GameListScene extends SceneAbstract {
         return gameListTable.findActor(id);
     }
 
-    public void setUsername(final String username){
+    public void setProfileDesign(final Profile profile){
         Threadings.postRunnable(new Runnable() {
             @Override
             public void run() {
-                usernameLabel.setText(username);
+                countryTable.clear();
+                Badge badge = new Badge(BadgeType.Country, "", _assets, profile.getCountry());
+                countryTable.add(badge).size(badge.getPrefWidth(), badge.getPrefHeight());
+                usernameLabel.setText(profile.getDisplayName(13));
             }
         });
     }

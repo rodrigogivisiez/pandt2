@@ -112,7 +112,7 @@ public class Texts {
     public String btnLikeApps() { return "Love it";}
     public String btnDislikeApps() { return "Nope...";}
 
-    public String btnGoToPlayStore() { return "Go!";}
+    public String btnGoToPlayStore() { return "Sure!";}
     public String btnDontGoToPlayStore() { return "No...";}
 
     /////////////////////////////////////////////////////////////////////////
@@ -232,8 +232,11 @@ public class Texts {
 
     public String updatingScores() { return "Updating Scores..."; }
 
-    public String leaderAndFriend() { return "%s (+%s Friend)";}
-    public String leaderAndFriends() { return "%s (+%s Friends)";}
+    public String leaderAndFriend() { return "%s (+%s friend)";}
+    public String leaderAndFriends() { return "%s (+%s friends)";}
+    public String andFriend() { return "+%s friend";}
+    public String andFriends() { return "+%s friends";}
+
     ////////////////////////////////////////////////////////////////////////
     //Shop scene and coins
     /////////////////////////////////////////////////////////////////////////

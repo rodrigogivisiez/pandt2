@@ -1,0 +1,49 @@
+-dontobfuscate
+-dontoptimize
+-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,LocalVariable*Table,*Annotation*,Synthetic,EnclosingMethod
+
+
+-keepclassmembers class * implements java.io.Serializable
+{
+    private static final java.io.ObjectStreamField[] serialPersistentFields;
+    private void writeObject(java.io.ObjectOutputStream);
+    private void readObject(java.io.ObjectInputStream);
+    java.lang.Object writeReplace();
+    java.lang.Object readResolve();
+}
+
+
+-keep class com.flurry.** { *; }
+-keep class com.facebook.** {
+   *;
+}
+
+
+-keep class com.mygdx.potatoandtomato.** { *; }
+-keep class com.potatoandtomato.common.** { *; }
+-keep class com.firebase.** { *; }
+-keep class com.badlogic.** {*;}
+-keep class org.apache.** { *; }
+-keep class com.shaded.fasterxml.** { *; }
+-keep class com.fasterxml.jackson.** { *; }
+
+-keep class com.google.android.gms.ads.identifier.** { *; }
+-keep class com.fyber.mediation.MediationConfigProvider {
+    public static *;
+}
+-keep class com.fyber.mediation.MediationAdapterStarter {
+    public static *;
+}
+
+-keepclassmembers class com.fyber.ads.videos.mediation.RewardedVideoMediationJSInterface {
+    void setValue(java.lang.String);
+}
+
+-keepnames class javax.servlet.** { *; }
+-keepnames class org.ietf.jgss.** { *; }
+
+
+
+
+-dontnote com.firebase.client.core.GaePlatform
+-dontwarn

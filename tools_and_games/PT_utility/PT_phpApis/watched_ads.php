@@ -8,7 +8,6 @@
 	
 	date_default_timezone_set("Asia/Singapore");
 	$secret = "3E4933FD7CDD337AF874E53FD975BECD1F629276CE6CB4346A6F1B2C12E786B59195311647F7D6F3926CA417ED2CE7E4BFB8F2EEA12FE84BF6B3";
-	$coinRewarded = 1;
 	
 	$inputSecret = $_GET["secret"];
 	
@@ -22,6 +21,9 @@
 		$userValid = ($dbUserId == $userId);
 	
 		if(!$userValid) return false;
+		
+		$coinRewarded = (int) json_decode($firebase->get('rewardVideoCoinCount/'));
+		
 		
 		addCoinToUser($userId, $coinRewarded, "Watch Video Ads", "", $firebase);
 	}

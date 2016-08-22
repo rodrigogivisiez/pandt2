@@ -1,0 +1,46 @@
+.supportContainer{
+	background-image: url("images/support_bg.png");
+	width:370px;
+	height:357px;
+	margin-top:30px;
+	padding:10px 30px;
+	color:white;
+	text-align:left;
+}
+
+.supportContainer.first{
+	float:right;
+	
+}
+
+
+@media (max-width: 992px) {
+	.supportContainer.first{
+		float:none;
+	}
+	
+	.supportContainerParent{
+		text-align: center;
+	}
+	
+	.supportContainer{
+		display:inline-block;
+	}
+}  
+
+
+.supportContainer .mascots{
+	margin-top:20px;
+}
+
+.supportContainer .content{
+	margin-top:20px;
+}
+
+.supportContainer textarea{
+	height: 126px; 
+	width: 310px;
+	resize: none;
+}
+
+

@@ -1,0 +1,248 @@
+.games{
+	margin-top:-52px;
+	min-height:557px;
+}
+
+.games .gameIconsContainer{
+	margin-top:75px;
+}
+
+.games .gameIconsContainer .gameIcon{
+	width:100px;
+	height:100px;
+	box-shadow: -4px -3px 6px #696868;
+	border-radius: 9px;
+	cursor:pointer;
+}
+
+.games .gameIconsContainer .gameIconContainer{
+	width:105px;
+	height:105px;
+	margin-right:10px;
+	float:left;
+}
+
+
+.games .gameIconsContainer .gameIcon.active, .games .gameIconsContainer .gameIcon:active{
+	box-shadow:none;
+	margin-left: -4px;
+}
+
+
+.scratchSeparator{
+	position:absolute;
+	height:566px;
+	width:12px;
+	 background-image: url("images/scratch_separator.png");
+    background-repeat: repeat-y;
+    top:0;
+    right:0;
+}
+
+
+.games .detailsContainer{
+	height: 567px;
+	background-color: rgba(43, 39, 26, 0.6);
+	padding-right:30px;
+	padding-bottom:10px;
+}
+
+
+.games .gameDetails{
+	display:none;
+
+}
+
+
+
+.games .detailsContainer .title{
+	margin-top:30px;
+	color:white;
+	font-size:2.5em;
+	font-family: "pizzaFont";
+	 text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+
+.games .detailsContainer .detail{
+	color:white;
+	margin-top:10px;
+}
+
+.games .detailsContainer .pickGame{
+	text-align: center;
+    color: white;
+    font-size: 1.5em;
+    padding-top:180px;
+}
+
+.games .detailsContainer .pickGame img{
+	margin-bottom:20px;
+}
+
+.games .detailsContainer .simpleBar{
+	height:567px;
+}
+
+@media (max-width: 992px) {
+	.games .detailsContainer, .games .detailsContainer .simpleBar{
+		min-height: 500px;
+		height:auto;
+	}
+	
+	.simplebar-scroll-content{
+		position:static !important;
+	}
+	
+	.games .gameIconsContainer{
+		margin-top:40px;
+	}
+}  
+
+
+
+/*.games .screenshot{
+	margin-right:10px;
+	margin-bottom:10px;
+	max-width:130px;
+	max-height:130px;
+}*/
+
+.games .screenshot{
+	max-height:210px;
+	display:inline-block !important;
+}
+
+.games .leaderboard{
+	background-image: url("images/leaderboard_bg.png");
+	width:350px;
+	height:538px;
+	display:inline-block;
+	margin-top:20px;
+	background-size: 350px 538px;
+}
+
+
+.games .leaderboard .title{
+	margin-top:30px;
+	color:white;
+	font-size:1.4em;
+	font-family: "pizzaFont";
+	 text-shadow: -2px 2px #0a4d69, -3px 3px #0a4d69, 0px 0 #0a4d69, 0 -1px #0a4d69;
+	 padding-left:40px;
+	 padding-right:40px;
+	 height:65px;
+	 margin-bottom:5px;
+}
+
+.games .leaderboard .recordsContainer{
+	display:none;
+}
+
+.games .leaderboard .recordsContainer .message{
+	font-style: italic;
+    font-size: 0.8em;
+    margin-top: 190px;
+    display: block;
+}
+
+    
+.games .leaderboard .records{
+	text-align:left;
+	
+}
+
+.games .leaderboard .records .record{
+	padding:3px 30px 3px 35px;
+	color:#562a06;
+	font-size:0.95em;
+}
+
+
+.games .leaderboard .records .record .index{
+	float:left;
+	width:30px;
+	height:19px;
+}
+
+.games .leaderboard .records .record .country{
+	float:left;
+	margin-right:5px;
+}
+
+.games .leaderboard .records .record .streak{
+	float:left;
+	margin-right:5px;
+	background-image: url("images/streak_icon.png");
+	width: 16px;
+	height: 19px;
+	background-size: 16px 19px;
+	color: white;
+	font-size: 0.6em;
+	padding-top: 6px;
+	text-align: center;
+}
+
+.games .leaderboard .records .record .nameScore{
+	position:relative;
+}
+
+.games .leaderboard .records .record .name{
+	float:left;
+	height:19px;
+	width: 120px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.games .leaderboard .records .record .plusFriends{
+	float:right;
+	height:19px;
+	background-color: rgba(138,109,59,0.4);
+	border-radius: 6px;
+	padding: 0px 5px 0px 5px;
+	cursor:pointer;
+}
+
+.games .leaderboard .records .record .plusFriends.active{
+	background-color: rgba(138,109,59,0.8);
+}
+
+.games .leaderboard .records .record .score{
+	float:right;
+	height:19px;
+	font-size:1.2em;
+	width: 70px;
+	text-align: right;
+}
+
+.games .leaderboard .records .record .separator{
+	width: 261px;
+    position: absolute;
+    bottom: -4px;
+    left: 25px;
+    height: 1px;
+    background-image:url("images/leaderboard_separator.png");
+    background-repeat: repeat;
+}
+
+.userTooltip{
+	text-align:left;
+}
+
+.userTooltip img{
+	margin-right:5px;
+}
+    
+
+.carousel-inner {
+	max-height:210px !important;
+}
+
+
+
+
+
+
+

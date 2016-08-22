@@ -17,9 +17,8 @@ import com.mygdx.potatoandtomato.absintflis.services.IRestfulApi;
 import com.mygdx.potatoandtomato.absintflis.services.RestfulApiListener;
 import com.mygdx.potatoandtomato.assets.Sounds;
 import com.mygdx.potatoandtomato.enums.*;
-import com.mygdx.potatoandtomato.helpers.Flurry;
+import com.mygdx.potatoandtomato.helpers.Analytics;
 import com.mygdx.potatoandtomato.models.*;
-import com.mygdx.potatoandtomato.utils.Logs;
 import com.potatoandtomato.common.statics.Vars;
 import com.potatoandtomato.common.absints.CoinListener;
 import com.mygdx.potatoandtomato.controls.CoinMachineControl;
@@ -219,7 +218,7 @@ public class Coins implements ICoins {
                 }
             });
 
-            Flurry.log(FlurryEvent.StartPuttingCoin, "purpose", this.coinsPurpose);
+            Analytics.log(AnalyticEvent.StartPuttingCoin, "purpose", this.coinsPurpose);
         }
     }
 
@@ -233,10 +232,7 @@ public class Coins implements ICoins {
         });
 
         if(coinsAlreadyEnough){
-            Flurry.log(FlurryEvent.EnoughPuttingCoin);
-        }
-        else{
-            Flurry.log(FlurryEvent.CancelPuttingCoin);
+            Analytics.log(AnalyticEvent.EnoughPuttingCoin);
         }
     }
 
@@ -487,6 +483,7 @@ public class Coins implements ICoins {
             if(coinListener != null) coinListener.onDismiss(fromUserId);
             hideCoinMachine();
             clearAll();
+            Analytics.log(AnalyticEvent.CancelPuttingCoin);
         }
     }
 
@@ -740,7 +737,7 @@ public class Coins implements ICoins {
 
     public boolean retrieveFreeCoins(){
         if(currentRetrievableCoinsData != null && currentRetrievableCoinsData.getCanRetrieveCoinsCount() > 0){
-            Flurry.log(FlurryEvent.RetrieveFreeCoins);
+            Analytics.log(AnalyticEvent.RetrieveFreeCoins);
             confirm.show(ConfirmIdentifier.Coins, texts.workingDoNotClose(), Confirm.Type.LOADING_NO_CANCEL, null);
             currentShopProduct = ShopProducts.PURSE;
             restfulApi.retrieveCoins(profile, new RestfulApiListener<RetrievableCoinsData>() {
@@ -766,16 +763,20 @@ public class Coins implements ICoins {
     //about ads
     ////////////////////////////////////////////////////////
     public void watchAds(){
-        Flurry.log(FlurryEvent.WatchAds);
+        Analytics.log(AnalyticEvent.WatchAds);
         currentShopProduct = ShopProducts.ONE_COIN;
         broadcaster.broadcast(BroadcastEvent.SHOW_REWARD_VIDEO);
+    }
+
+    public void hasAds(RunnableArgs<Boolean> onResult){
+        broadcaster.broadcast(BroadcastEvent.HAS_REWARD_VIDEO, onResult);
     }
 
 
     /////////////////////////////////////////////////////
     //about purchase coins
     ////////////////////////////////////////////////////////
-    public void refreshCoinMachineProducts(){
+    public void refreshCoinMachineProducts() {
         getProducts(new ClientInternalCoinListener() {
             @Override
             public void onProductsRetrieved(ArrayList<CoinProduct> refreshedCoinProducts) {
@@ -810,7 +811,7 @@ public class Coins implements ICoins {
 
     public void purchaseCoins(CoinProduct coinProduct){
         final int coinNumber = coinProduct.getCount();
-        Flurry.log(FlurryEvent.BuyCoinsIntent, coinNumber);
+        Analytics.log(AnalyticEvent.BuyCoinsIntent, coinNumber);
 
         currentShopProduct = coinProduct.getShopProductType();
         confirm.show(ConfirmIdentifier.Coins, texts.workingDoNotClose(), Confirm.Type.LOADING_NO_CANCEL, null);
@@ -820,10 +821,10 @@ public class Coins implements ICoins {
                 confirm.close(ConfirmIdentifier.Coins);
                 if (st != Status.SUCCESS) {
                     confirm.show(ConfirmIdentifier.Coins, texts.confirmPurchaseFailed(), Confirm.Type.YES, null);
-                    Flurry.log(FlurryEvent.BuyCoinsFailed, coinNumber);
+                    Analytics.log(AnalyticEvent.BuyCoinsFailed, coinNumber);
                 }
                 else{
-                    Flurry.log(FlurryEvent.BuyCoinsSuccess, coinNumber);
+                    Analytics.log(AnalyticEvent.BuyCoinsSuccess, coinNumber);
                 }
             }
         });
@@ -872,6 +873,17 @@ public class Coins implements ICoins {
         monitoringUserIds.clear();
         noCoinUserIds.clear();
         topBarCoinControls.clear();
+    }
+    /////////////////////////////////////////////////////////
+    //coins info
+    /////////////////////////////////////////////////////
+    public void checkDesperateForFreeCoin(RunnableArgs<Boolean> onResult){
+        if(myCoinsCount.getIntValue() == 0){
+            hasAds(onResult);
+        }
+        else{
+            onResult.run(false);
+        }
     }
 
 

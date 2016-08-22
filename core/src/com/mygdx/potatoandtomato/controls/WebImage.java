@@ -12,6 +12,7 @@ import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.utils.Pair;
+import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
 
 /**
@@ -41,6 +42,11 @@ public class WebImage extends Table implements Disposable {
         this.add(root).expand().fill();
 
         new DummyButton(this, this.assets);
+
+        if(Strings.isEmpty(url)){
+            requestFailed();
+            return;
+        }
 
         broadcastId = this.broadcaster.subscribe(BroadcastEvent.LOAD_IMAGE_RESPONSE, new BroadcastListener<Pair<String, Texture>>() {
             @Override
