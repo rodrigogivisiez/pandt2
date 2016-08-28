@@ -34,5 +34,6 @@ public interface IRestfulApi {
     void useCoins(ArrayList<CoinsMeta> coinsMetas, String transactionId, int expectingCoins,
                       String purpose, RestfulApiListener<String> listener);
 
+    void watchedAds(String userId, RestfulApiListener<String> listener);
 
 }

@@ -310,3 +310,10 @@
     public java.lang.String substring(int);
     public java.lang.String substring(int,int);
 }
+
+
+-assumenosideeffects class java.io.PrintStream {
+     public void println(%);
+     public void println(**);
+}
+

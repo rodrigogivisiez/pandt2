@@ -56,9 +56,11 @@ public final class AnalyticsTrackers {
     public synchronized Tracker get(Target target) {
         if (!mTrackers.containsKey(target)) {
             Tracker tracker;
+
             switch (target) {
                 case APP:
                     tracker = GoogleAnalytics.getInstance(mContext).newTracker(R.xml.app_tracker);
+                    tracker.enableAdvertisingIdCollection(true);
                     break;
                 default:
                     throw new IllegalArgumentException("Unhandled analytics target " + target);

@@ -115,7 +115,7 @@ public class PTGame extends Game implements IPTGame {
 				_confirm = new Confirm(_batch, _game, _assets, _broadcaster);
 				_notification = new Notification(_batch, _assets, _game, _broadcaster, _soundsPlayer);
 				_tutorials = new Tutorials(_game, _batch, _soundsPlayer, _assets, _broadcaster, _preferences, _texts);
-				_restfulApi = new RestfulApi();
+				_restfulApi = new RestfulApi(_broadcaster, _profile);
 				_connectionWatcher = new ConnectionWatcher(_gamingKit, _broadcaster, _confirm, _texts, _profile);
 				_dataCaches = new DataCaches(_database, _restfulApi, _profile, _broadcaster);
 				_coins = new Coins(_broadcaster, _assets, _soundsPlayer, _texts,

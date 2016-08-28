@@ -8,7 +8,7 @@ import com.potatoandtomato.games.statics.Global;
 public class Logs {
 
     public static void show(String msg){
-        //if(Global.DEBUG)
+        if(Global.DEBUG)
             System.out.println(msg);
     }
 

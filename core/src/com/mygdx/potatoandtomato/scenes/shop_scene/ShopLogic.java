@@ -102,10 +102,14 @@ public class ShopLogic extends LogicAbstract {
         _services.getCoins().hasAds(new RunnableArgs<Boolean>() {
             @Override
             public void run() {
-                canWatchAds = this.getFirstArg();
-                shopScene.setCanWatchAds(this.getFirstArg());
+                receivedAdsAvailability(this.getFirstArg());
             }
         });
+    }
+
+    private void receivedAdsAvailability(boolean isAvailable){
+        canWatchAds = isAvailable;
+        shopScene.setCanWatchAds(isAvailable);
     }
 
     private void addRetrievedSuccessCount(){
@@ -158,11 +162,10 @@ public class ShopLogic extends LogicAbstract {
                                 public void clicked(InputEvent event, float x, float y) {
                                     super.clicked(event, x, y);
                                     if (canWatchAds) {
-                                        _services.getCoins().watchAds();
-                                        Threadings.delay(1000, new Runnable() {
+                                        _services.getCoins().watchAds(new RunnableArgs<Boolean>() {
                                             @Override
                                             public void run() {
-                                                refreshAdsAvailability();
+                                                receivedAdsAvailability(this.getFirstArg());
                                             }
                                         });
                                     }

@@ -3,8 +3,8 @@
 	
 		<div class="container">
 			<div class="row links">
-				<a href="support">
-					SUPPORT
+				<a href="presskit">
+					PRESSKIT
 				</a>
 				
 				<span>

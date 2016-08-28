@@ -5,6 +5,9 @@ import com.mygdx.potatoandtomato.absintflis.services.RestfulApiListener;
 import com.mygdx.potatoandtomato.models.*;
 import com.mygdx.potatoandtomato.statics.Global;
 import com.mygdx.potatoandtomato.statics.Terms;
+import com.potatoandtomato.common.broadcaster.BroadcastEvent;
+import com.potatoandtomato.common.broadcaster.BroadcastListener;
+import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.enums.Status;
 import com.potatoandtomato.common.models.ScoreDetails;
 import com.potatoandtomato.common.models.Team;
@@ -34,7 +37,21 @@ import java.util.Map;
  */
 public class RestfulApi implements IRestfulApi {
 
+    private Broadcaster broadcaster;
+    private Profile profile;
     private final String USER_AGENT = "Mozilla/5.0";
+
+    public RestfulApi(Broadcaster broadcaster, final Profile profile) {
+        this.broadcaster = broadcaster;
+        this.profile = profile;
+
+        broadcaster.subscribe(BroadcastEvent.WATCHED_VIDEO_ADS, new BroadcastListener() {
+            @Override
+            public void onCallback(Object obj, Status st) {
+                watchedAds(profile.getUserId(), null);
+            }
+        });
+    }
 
     @Override
     public void createNewUser(final RestfulApiListener<UserIdSecretModel> listener) {
@@ -236,6 +253,14 @@ public class RestfulApi implements IRestfulApi {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void watchedAds(String userId, RestfulApiListener<String> listener) {
+        ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+        nameValuePairs.add(new BasicNameValuePair("userId", userId));
+        nameValuePairs.add(new BasicNameValuePair("secret", Terms.WATCH_ADS_SECRET));
+        callApi("watched_ads", nameValuePairs, listener);
     }
 
     private void callApi(String name, RestfulApiListener listener){

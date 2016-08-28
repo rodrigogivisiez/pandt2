@@ -28,6 +28,7 @@ public class Terms {
     public static String GCM_PROJECT_NUMBER = "171699917132";
     public static String GCM_KEY = "AIzaSyAsjcqh5WJFtwEOYPqrddtMjZZgEIpEZAQ";
     public static String TOTAL_GAME_COUNT = "totalGameCount";
+    public static String WATCH_ADS_SECRET = "3E4933FD7CDD337AF874E53FD975BECD1F629276CE6CB4346A6F1B2C12E786B59195311647F7D6F3926CA417ED2CE7E4BFB8F2EEA12FE84BF6B3";
 
     public static String FIREBASE_URL(){
         return !Global.DEBUG ? "https://glaring-inferno-8572.firebaseIO.com" : "https://ptapptest.firebaseio.com/";

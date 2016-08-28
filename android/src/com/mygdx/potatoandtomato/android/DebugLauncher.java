@@ -18,6 +18,6 @@ public class DebugLauncher extends Activity {
         Global.DEBUG = true;
         Intent i = new Intent(getBaseContext(), AndroidLauncher.class);
         startActivity(i);
-        Terms.LOCAL_HOST = "192.168.0.3";
+        Terms.LOCAL_HOST = "192.168.0.4";
     }
 }

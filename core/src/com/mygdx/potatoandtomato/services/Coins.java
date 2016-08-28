@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.mygdx.potatoandtomato.PTScreen;
+import com.mygdx.potatoandtomato.absintflis.ConfirmResultListener;
 import com.mygdx.potatoandtomato.absintflis.cachings.CacheListener;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
@@ -762,10 +763,17 @@ public class Coins implements ICoins {
     /////////////////////////////////////////////////////
     //about ads
     ////////////////////////////////////////////////////////
-    public void watchAds(){
+    public void watchAds(final RunnableArgs<Boolean> onResult){
         Analytics.log(AnalyticEvent.WatchAds);
         currentShopProduct = ShopProducts.ONE_COIN;
-        broadcaster.broadcast(BroadcastEvent.SHOW_REWARD_VIDEO);
+        broadcaster.broadcast(BroadcastEvent.SHOW_REWARD_VIDEO, new RunnableArgs<Boolean>() {
+            @Override
+            public void run() {
+                onResult.run(this.getFirstArg());
+                confirm.close(ConfirmIdentifier.WatchAds);
+            }
+        });
+        confirm.show(ConfirmIdentifier.WatchAds, texts.showingAds(), Confirm.Type.LOADING_NO_CANCEL, null);
     }
 
     public void hasAds(RunnableArgs<Boolean> onResult){

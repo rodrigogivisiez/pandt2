@@ -47,4 +47,5 @@ public class BroadcastEvent {
     public static final int IAB_PRODUCT_PURCHASE_RESPONSE = 42; //product purchase response
     public static final int SHARE_P_AND_T = 46; //request to share pandt
     public static final int OPEN_P_AND_T_AT_STORE = 47; //request to open pandt at playstore
+    public static final int WATCHED_VIDEO_ADS = 48; //watched ads
 }

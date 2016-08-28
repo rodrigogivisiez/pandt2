@@ -42,9 +42,9 @@
       	</li>
       	
       	<li>
-      		<a class="tabButton" href="presskit">
+      		<a class="tabButton <?php echo (($page == "support") ? "active" : "");?>" href="support">
 				<span class="noSelect">
-					Presskit
+					Support
 				</span>
 			</a>
       	</li>

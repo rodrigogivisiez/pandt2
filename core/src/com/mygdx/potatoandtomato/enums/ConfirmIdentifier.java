@@ -6,6 +6,6 @@ package com.mygdx.potatoandtomato.enums;
 public enum ConfirmIdentifier {
 
     GameSandBox, BackScreen, Resiliency, ResumingGameSession, SettingsScene, CrashedReportSent, Coins,
-    ConfirmAbandon, InputNameIssue, Room, QuitGame, Credits, AutoJoiner
+    ConfirmAbandon, InputNameIssue, Room, QuitGame, Credits, AutoJoiner, WatchAds
 
 }

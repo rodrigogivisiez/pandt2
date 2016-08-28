@@ -1,0 +1,1107 @@
+com.moat.analytics.mobile.aer.MoatAdEvent:
+    public static final java.lang.String EVENT_AD_VOLUME
+    public static final java.lang.String EVENT_PLAY_HEAD
+    public static final java.lang.String EVENT_TYPE
+    public static final java.lang.String EVENT_TS
+    public MoatAdEvent(com.moat.analytics.mobile.aer.MoatAdEventType,java.lang.Integer)
+    public MoatAdEvent(com.moat.analytics.mobile.aer.MoatAdEventType)
+    public long getTimeStamp()
+com.moat.analytics.mobile.aer.MoatAdEventType:
+    public static com.moat.analytics.mobile.aer.MoatAdEventType valueOf(java.lang.String)
+com.moat.analytics.mobile.aer.MoatFactory:
+    public abstract com.moat.analytics.mobile.aer.WebAdTracker createWebAdTracker(android.webkit.WebView)
+    public abstract com.moat.analytics.mobile.aer.WebAdTracker createWebAdTracker(android.view.ViewGroup)
+    public abstract java.lang.Object createCustomTracker(com.moat.analytics.mobile.aer.y)
+    public abstract com.moat.analytics.mobile.aer.WebAdTracker createWebDisplayTracker(android.webkit.WebView)
+    public abstract com.moat.analytics.mobile.aer.WebAdTracker createWebDisplayTracker(android.view.ViewGroup)
+com.moat.analytics.mobile.aer.NativeVideoTracker:
+    public abstract void setDebug(boolean)
+    public abstract void dispatchEvent(com.moat.analytics.mobile.aer.MoatAdEvent)
+    public abstract void changeTargetView(android.view.View)
+com.moat.analytics.mobile.aer.WebAdTracker
+com.moat.analytics.mobile.aer.ad:
+    public void changeTargetView(android.view.View)
+com.moat.analytics.mobile.aer.af
+com.moat.analytics.mobile.aer.ag:
+    public com.moat.analytics.mobile.aer.WebAdTracker createWebAdTracker(android.webkit.WebView)
+    public com.moat.analytics.mobile.aer.WebAdTracker createWebAdTracker(android.view.ViewGroup)
+    public com.moat.analytics.mobile.aer.WebAdTracker createWebDisplayTracker(android.webkit.WebView)
+    public com.moat.analytics.mobile.aer.WebAdTracker createWebDisplayTracker(android.view.ViewGroup)
+    public java.lang.Object createCustomTracker(com.moat.analytics.mobile.aer.y)
+com.moat.analytics.mobile.aer.ai:
+    public void setDebug(boolean)
+    public void dispatchEvent(com.moat.analytics.mobile.aer.MoatAdEvent)
+    public void changeTargetView(android.view.View)
+com.moat.analytics.mobile.aer.ak
+com.moat.analytics.mobile.aer.an:
+    public static com.moat.analytics.mobile.aer.an[] values()
+    public static com.moat.analytics.mobile.aer.an valueOf(java.lang.String)
+com.moat.analytics.mobile.aer.b
+com.moat.analytics.mobile.aer.ba:
+    public abstract void a(android.view.View)
+com.moat.analytics.mobile.aer.bb:
+    public void a(android.view.View)
+com.moat.analytics.mobile.aer.bc
+com.moat.analytics.mobile.aer.bd
+com.moat.analytics.mobile.aer.bf:
+    public static com.moat.analytics.mobile.aer.bf[] values()
+    public static com.moat.analytics.mobile.aer.bf valueOf(java.lang.String)
+com.moat.analytics.mobile.aer.bl:
+    public abstract com.moat.analytics.mobile.aer.base.functional.a a(android.view.ViewGroup)
+com.moat.analytics.mobile.aer.bm:
+    public com.moat.analytics.mobile.aer.base.functional.a a(android.view.ViewGroup)
+com.moat.analytics.mobile.aer.bn
+com.moat.analytics.mobile.aer.bo
+com.moat.analytics.mobile.aer.bp
+com.moat.analytics.mobile.aer.f:
+    public void setDebug(boolean)
+    public void changeTargetView(android.view.View)
+com.moat.analytics.mobile.aer.h
+com.moat.analytics.mobile.aer.k:
+    public static com.moat.analytics.mobile.aer.k[] values()
+    public static com.moat.analytics.mobile.aer.k valueOf(java.lang.String)
+com.moat.analytics.mobile.aer.r:
+    public com.moat.analytics.mobile.aer.WebAdTracker createWebAdTracker(android.webkit.WebView)
+    public com.moat.analytics.mobile.aer.WebAdTracker createWebAdTracker(android.view.ViewGroup)
+    public java.lang.Object createCustomTracker(com.moat.analytics.mobile.aer.y)
+    public com.moat.analytics.mobile.aer.WebAdTracker createWebDisplayTracker(android.webkit.WebView)
+    public com.moat.analytics.mobile.aer.WebAdTracker createWebDisplayTracker(android.view.ViewGroup)
+    private com.moat.analytics.mobile.aer.WebAdTracker a(android.webkit.WebView)
+    private com.moat.analytics.mobile.aer.WebAdTracker a(android.view.ViewGroup)
+    public java.lang.Object a(com.moat.analytics.mobile.aer.y)
+    static synthetic com.moat.analytics.mobile.aer.bl b(com.moat.analytics.mobile.aer.r)
+com.moat.analytics.mobile.aer.s
+com.moat.analytics.mobile.aer.t
+com.moat.analytics.mobile.aer.x:
+    public static com.moat.analytics.mobile.aer.x[] values()
+    public static com.moat.analytics.mobile.aer.x valueOf(java.lang.String)
+com.moat.analytics.mobile.aer.y
+com.moat.analytics.mobile.aer.z:
+    public void a(android.view.View)
+com.potatoandtomato.games.TestingGame:
+    private boolean _initialized
+    public boolean isContinue
+com.potatoandtomato.games.android.BuildConfig
+com.potatoandtomato.games.android.R
+com.potatoandtomato.games.android.R$attr
+com.potatoandtomato.games.android.R$drawable
+com.potatoandtomato.games.android.R$string
+com.potatoandtomato.games.android.R$style
+com.potatoandtomato.games.assets.Fonts$FontId:
+    30:30:public static com.potatoandtomato.games.assets.Fonts$FontId valueOf(java.lang.String)
+com.potatoandtomato.games.assets.Patches$Name
+com.potatoandtomato.games.assets.Sounds$Name
+com.potatoandtomato.games.assets.Textures$Name:
+    16:16:public static com.potatoandtomato.games.assets.Textures$Name[] values()
+    16:16:public static com.potatoandtomato.games.assets.Textures$Name valueOf(java.lang.String)
+com.potatoandtomato.games.screens.MainScreen$SimplifiedChinese:
+    208:208:public MainScreen$SimplifiedChinese()
+com.potatoandtomato.games.statics.Global:
+    6:6:public Global()
+com.shephertz.app42.gaming.api.client.App42CallBack
+com.shephertz.app42.gaming.api.client.App42Exception
+com.shephertz.app42.gaming.api.client.App42Response
+com.shephertz.app42.gaming.api.client.App42ResponseBuilder
+com.shephertz.app42.gaming.api.client.App42ResquestTypeCode
+com.shephertz.app42.gaming.api.client.App42Service
+com.shephertz.app42.gaming.api.client.RESTConnectorAsync
+com.shephertz.app42.gaming.api.storage.Query
+com.shephertz.app42.gaming.api.storage.QueryBuilder
+com.shephertz.app42.gaming.api.storage.QueryBuilder$GeoOperator
+com.shephertz.app42.gaming.api.storage.QueryBuilder$Operator
+com.shephertz.app42.gaming.api.storage.Storage
+com.shephertz.app42.gaming.api.storage.Storage$JSONDocument
+com.shephertz.app42.gaming.api.storage.StorageResponseBuilder
+com.shephertz.app42.gaming.api.storage.StorageService
+com.shephertz.app42.gaming.api.storage.StorageService$1
+com.shephertz.app42.gaming.api.storage.StorageService$2
+com.shephertz.app42.gaming.api.storage.StorageService$3
+com.shephertz.app42.gaming.multiplayer.client.ConnectionState
+com.shephertz.app42.gaming.multiplayer.client.Constants
+com.shephertz.app42.gaming.multiplayer.client.MessageDispatchThread:
+    60:61:public void terminate()
+com.shephertz.app42.gaming.multiplayer.client.UDPListener:
+    30:147:public UDPListener()
+com.shephertz.app42.gaming.multiplayer.client.WarpClient:
+    private com.shephertz.app42.gaming.api.storage.StorageService storageService
+    70:71:public static void enableTrace(boolean)
+    135:145:public static byte initialize(java.lang.String,java.lang.String,java.lang.String)
+    161:161:public java.lang.String getAPIKey()
+    165:165:public java.lang.String getPrivateKey()
+    169:170:public void setApiKey(java.lang.String)
+    173:174:public void setPrivateKey(java.lang.String)
+    177:178:public void setServer(java.lang.String)
+    181:183:public void setGeo(java.lang.String)
+    203:204:public void removeConnectionRequestListener(com.shephertz.app42.gaming.multiplayer.client.listener.ConnectionRequestListener)
+    223:224:public void removeZoneRequestListener(com.shephertz.app42.gaming.multiplayer.client.listener.ZoneRequestListener)
+    234:235:public void addLobbyRequestListener(com.shephertz.app42.gaming.multiplayer.client.listener.LobbyRequestListener)
+    243:244:public void removeLobbyRequestListener(com.shephertz.app42.gaming.multiplayer.client.listener.LobbyRequestListener)
+    265:266:public void addTurnBasedRoomListener(com.shephertz.app42.gaming.multiplayer.client.listener.TurnBasedRoomListener)
+    274:275:public void removeTurnBasedRoomListener(com.shephertz.app42.gaming.multiplayer.client.listener.TurnBasedRoomListener)
+    283:284:public void removeRoomRequestListener(com.shephertz.app42.gaming.multiplayer.client.listener.RoomRequestListener)
+    293:294:public void addChatRequestListener(com.shephertz.app42.gaming.multiplayer.client.listener.ChatRequestListener)
+    302:303:public void removeChatRequestListener(com.shephertz.app42.gaming.multiplayer.client.listener.ChatRequestListener)
+    321:322:public void removeUpdateRequestListener(com.shephertz.app42.gaming.multiplayer.client.listener.UpdateRequestListener)
+    341:342:public void removeNotificationListener(com.shephertz.app42.gaming.multiplayer.client.listener.NotifyListener)
+    458:458:public int getSessionID()
+    462:465:public void RecoverConnectionWithSessionID(int,java.lang.String)
+    1076:1107:public static boolean adminCreateZone(java.lang.String,java.lang.String,java.lang.String)
+    1118:1151:public static boolean adminDeleteZone(java.lang.String,java.lang.String,java.lang.String)
+    1157:1215:public static byte adminCreateRoom(java.lang.String,java.lang.String,int,java.lang.String,java.lang.String,java.lang.String,java.util.HashMap)
+    1227:1263:public static boolean adminDeleteRoom(java.lang.String,java.lang.String,java.lang.String,java.lang.String)
+    1275:1290:public void setCustomRoomData(java.lang.String,java.lang.String)
+    1302:1317:public void setCustomUserData(java.lang.String,java.lang.String)
+    1325:1340:public void getOnlineUsers()
+    1348:1363:public void getAllRoomsCount()
+    1371:1386:public void getOnlineUsersCount()
+    1394:1408:public void getAllRooms()
+    1418:1452:public void getLiveUserInfo(java.lang.String)
+    1461:1493:public void getUserStatus(java.lang.String)
+    1525:1536:public void getLiveLobbyInfo()
+    1544:1557:public void joinLobby()
+    1565:1577:public void leaveLobby()
+    1584:1593:public void subscribeLobby()
+    1600:1609:public void unsubscribeLobby()
+    1678:1728:public void createTurnRoom(java.lang.String,java.lang.String,int,java.util.HashMap,int)
+    1735:1736:public void sendMove(java.lang.String)
+    1739:1767:public void sendMove(java.lang.String,java.lang.String)
+    1770:1792:public void setNextTurn(java.lang.String)
+    1800:1801:public void startGame()
+    1804:1805:public void startGame(boolean)
+    1808:1829:public void startGame(boolean,java.lang.String)
+    1837:1854:public void stopGame()
+    1861:1881:public void getMoveHistory()
+    1907:1923:public void joinRoom(java.lang.String)
+    1960:1976:public void leaveAndUnsubscribeRoom(java.lang.String)
+    1988:2009:public void joinRoomInRange(int,int,boolean)
+    2012:2035:public void updateRoomProperties(java.lang.String,java.util.HashMap,java.lang.String[])
+    2038:2049:public void lockProperties(java.util.HashMap)
+    2052:2070:public void unlockProperties(java.lang.String[])
+    2073:2091:public void joinRoomWithProperties(java.util.HashMap)
+    2131:2149:public void getRoomWithProperties(java.util.HashMap)
+    2158:2179:public void getRoomInRangeWithProperties(int,int,java.util.HashMap)
+    2188:2202:public void leaveRoom(java.lang.String)
+    2211:2220:public void subscribeRoom(java.lang.String)
+    2229:2237:public void unsubscribeRoom(java.lang.String)
+    2248:2275:public void sendChat(java.lang.String)
+    2284:2304:public void sendUDPPrivateUpdate(java.lang.String,byte[])
+    2348:2375:public void sendPrivateChat(java.lang.String,java.lang.String)
+    2385:2399:public void sendUDPUpdatePeers(byte[])
+    2402:2419:public void initUDP()
+    2456:2463:private static org.json.JSONObject buildAdminRequestJSON(java.lang.String,java.lang.String)
+    2469:2503:private void sendLobbyRequestMessage(byte)
+    2507:2536:private void sendCustomDataRequest(byte,java.lang.String,java.lang.String)
+    2603:2620:private void sendPropertyMatchMakingRequest(byte,java.util.HashMap)
+    2624:2644:private void sendRangePropertiesMatchMakingRequest(byte,int,int,boolean,java.util.HashMap)
+    2648:2670:private void updateRoomPropertiesRequest(byte,java.lang.String,org.json.JSONObject,java.lang.String)
+    2674:2693:private void sendLockPropertiesRequest(byte,org.json.JSONObject)
+    2697:2716:private void sendUnlockPropertiesRequest(byte,java.lang.String)
+    2822:2842:public void getGameStatus()
+    2852:2891:public void sendChat(java.lang.String,boolean,java.lang.String)
+    2899:2900:public void setDbName(java.lang.String)
+    2908:2911:public void enableChatHistory(boolean)
+    2921:2954:public void getChatHistory(java.lang.String,int,int)
+    2963:2974:void onApp42Response(int,java.lang.Object)
+    2982:2991:void onApp42Exception(int)
+com.shephertz.app42.gaming.multiplayer.client.WarpClient$1
+com.shephertz.app42.gaming.multiplayer.client.command.WarpContentTypeCode
+com.shephertz.app42.gaming.multiplayer.client.command.WarpMessageTypeCode
+com.shephertz.app42.gaming.multiplayer.client.command.WarpNotifyTypeCode
+com.shephertz.app42.gaming.multiplayer.client.command.WarpReasonCode
+com.shephertz.app42.gaming.multiplayer.client.command.WarpRequestTypeCode
+com.shephertz.app42.gaming.multiplayer.client.command.WarpResponseResultCode
+com.shephertz.app42.gaming.multiplayer.client.events.AllRoomsEvent:
+    41:41:public byte getResult()
+    49:49:public java.lang.String[] getRoomIds()
+    57:57:public int getRoomsCount()
+com.shephertz.app42.gaming.multiplayer.client.events.AllUsersEvent:
+    45:45:public byte getResult()
+    53:53:public java.lang.String[] getUserNames()
+    62:62:public int getUsersCount()
+com.shephertz.app42.gaming.multiplayer.client.events.ChatEvent:
+    52:52:public java.lang.String getLocationId()
+    61:61:public boolean isLocationLobby()
+    70:70:public java.lang.String getSender()
+    79:79:public java.lang.String getMessage()
+    102:112:public static java.util.ArrayList buildChatHistoryList(java.util.ArrayList)
+    116:116:public long getTime()
+com.shephertz.app42.gaming.multiplayer.client.events.ConnectEvent:
+    30:30:public int getReasonCode()
+com.shephertz.app42.gaming.multiplayer.client.events.LiveRoomInfoEvent:
+    105:105:public java.lang.String getCustomData()
+    113:113:public java.util.HashMap getProperties()
+    121:121:public java.util.HashMap getLockProperties()
+com.shephertz.app42.gaming.multiplayer.client.events.LiveUserInfoEvent:
+    63:63:public byte getResult()
+    71:71:public boolean isLocationLobby()
+    79:79:public java.lang.String getLocationId()
+    87:87:public java.lang.String getName()
+    95:95:public java.lang.String getCustomData()
+    102:102:public boolean isPaused()
+    110:110:public boolean isActive()
+com.shephertz.app42.gaming.multiplayer.client.events.LobbyData:
+    35:35:public boolean isPrimary()
+com.shephertz.app42.gaming.multiplayer.client.events.LobbyEvent:
+    35:35:public com.shephertz.app42.gaming.multiplayer.client.events.LobbyData getInfo()
+    43:43:public byte getResult()
+com.shephertz.app42.gaming.multiplayer.client.events.MatchedRoomsEvent:
+    37:37:public byte getResult()
+com.shephertz.app42.gaming.multiplayer.client.events.MoveEvent:
+    28:33:public MoveEvent(java.lang.String,java.lang.String,java.lang.String,java.lang.String)
+    36:36:public java.lang.String getSender()
+    40:40:public java.lang.String getMoveData()
+    44:44:public java.lang.String getNextTurn()
+    48:48:public java.lang.String getRoomId()
+com.shephertz.app42.gaming.multiplayer.client.events.RoomData:
+    47:47:public java.lang.String getRoomOwner()
+    55:55:public java.lang.String getName()
+    64:64:public int getMaxUsers()
+com.shephertz.app42.gaming.multiplayer.client.events.RoomEvent:
+    47:47:public byte getResult()
+com.shephertz.app42.gaming.multiplayer.client.events.UpdateEvent:
+    37:37:public boolean isUDP()
+com.shephertz.app42.gaming.multiplayer.client.listener.ChatRequestListener:
+    public abstract void onGetChatHistoryDone(byte,java.util.ArrayList)
+com.shephertz.app42.gaming.multiplayer.client.message.WarpMessage:
+    35:36:public void setPayLoad(byte[])
+    43:44:public void setPayLoadSize(int)
+    51:52:public void setPayLoadType(byte)
+    59:60:public void setReserved(byte)
+    67:68:public void setType(byte)
+com.shephertz.app42.gaming.multiplayer.client.message.WarpNotifyMessage:
+    18:19:public WarpNotifyMessage(byte,byte,byte,int,byte[])
+    32:33:public void setUpdateType(byte)
+com.shephertz.app42.gaming.multiplayer.client.message.WarpResponseMessage:
+    18:19:public WarpResponseMessage(byte,byte,byte,int,byte[])
+    33:34:public void setRequestType(byte)
+    41:42:public void setResultCode(byte)
+com.shephertz.app42.gaming.multiplayer.client.transformer.WarpMessageDecoder:
+    20:20:public WarpMessageDecoder()
+com.shephertz.app42.gaming.multiplayer.client.transformer.WarpRequestEncoder:
+    16:16:public WarpRequestEncoder()
+com.shephertz.app42.gaming.multiplayer.client.util.Base64:
+    public static final int NO_OPTIONS
+    public static final int ENCODE
+    public static final int DECODE
+    public static final int GZIP
+    public static final int DONT_GUNZIP
+    public static final int DO_BREAK_LINES
+    public static final int URL_SAFE
+    public static final int ORDERED
+    private static final int MAX_LINE_LENGTH
+    private static final byte EQUALS_SIGN
+    private static final byte NEW_LINE
+    private static final java.lang.String PREFERRED_ENCODING
+    private static final byte WHITE_SPACE_ENC
+    private static final byte EQUALS_SIGN_ENC
+    567:576:public static void encode(java.nio.ByteBuffer,java.nio.ByteBuffer)
+    591:602:public static void encode(java.nio.ByteBuffer,java.nio.CharBuffer)
+    627:627:public static java.lang.String encodeObject(java.io.Serializable)
+    664:707:public static java.lang.String encodeObject(java.io.Serializable,int)
+    769:769:public static java.lang.String encodeBytes(byte[],int)
+    795:802:public static java.lang.String encodeBytes(byte[],int,int)
+    867:873:public static byte[] encodeBytesToBytes(byte[])
+    1129:1135:public static byte[] decode(byte[])
+    1161:1217:public static byte[] decode(byte[],int,int,int)
+    1233:1233:public static byte[] decode(java.lang.String)
+    1251:1306:public static byte[] decode(java.lang.String,int)
+    1325:1325:public static java.lang.Object decodeToObject(java.lang.String)
+    1350:1394:public static java.lang.Object decodeToObject(java.lang.String,int,java.lang.ClassLoader)
+    1416:1433:public static void encodeToFile(byte[],java.lang.String)
+    1452:1465:public static void decodeToFile(java.lang.String,java.lang.String)
+    1487:1526:public static byte[] decodeFromFile(java.lang.String)
+    1548:1579:public static java.lang.String encodeFromFile(java.lang.String)
+    1593:1607:public static void encodeFileToFile(java.lang.String,java.lang.String)
+    1621:1635:public static void decodeFileToFile(java.lang.String,java.lang.String)
+    159:159:static synthetic byte[] access$100(byte[],int,int,byte[],int,int)
+com.shephertz.app42.gaming.multiplayer.client.util.Base64$1
+com.shephertz.app42.gaming.multiplayer.client.util.Base64$InputStream
+com.shephertz.app42.gaming.multiplayer.client.util.Base64$OutputStream:
+    1883:1884:public Base64$OutputStream(java.io.OutputStream)
+    2053:2055:public void suspendEncoding()
+    2066:2067:public void resumeEncoding()
+com.shephertz.app42.gaming.multiplayer.client.util.Util:
+    22:22:public Util()
+    62:66:public static java.lang.String calculateSignature(java.lang.String,java.lang.String,java.lang.String,java.lang.String)
+    99:102:public static java.lang.String getUTCFormattedTimestamp()
+    106:109:public static java.lang.String getUTCFormattedTimestamp(java.util.Date)
+    113:114:public static int generateLocalUdpPort()
+org.shaded.apache.commons.logging.Log:
+    public abstract boolean isFatalEnabled()
+    public abstract boolean isTraceEnabled()
+    public abstract void trace(java.lang.Object)
+    public abstract void trace(java.lang.Object,java.lang.Throwable)
+    public abstract void info(java.lang.Object,java.lang.Throwable)
+    public abstract void error(java.lang.Object,java.lang.Throwable)
+    public abstract void fatal(java.lang.Object)
+    public abstract void fatal(java.lang.Object,java.lang.Throwable)
+org.shaded.apache.commons.logging.LogConfigurationException:
+    50:85:public LogConfigurationException(java.lang.String)
+org.shaded.apache.commons.logging.LogFactory:
+    public static final java.lang.String PRIORITY_KEY
+    public static final java.lang.String TCCL_KEY
+    public static final java.lang.String FACTORY_PROPERTY
+    public static final java.lang.String FACTORY_DEFAULT
+    public static final java.lang.String FACTORY_PROPERTIES
+    protected static final java.lang.String SERVICE_ID
+    public static final java.lang.String DIAGNOSTICS_DEST_PROPERTY
+    public static final java.lang.String HASHTABLE_IMPLEMENTATION_PROPERTY
+    private static final java.lang.String WEAK_HASHTABLE_CLASSNAME
+    public abstract java.lang.Object getAttribute(java.lang.String)
+    public abstract java.lang.String[] getAttributeNames()
+    public abstract void release()
+    public abstract void removeAttribute(java.lang.String)
+    719:737:public static void release(java.lang.ClassLoader)
+    750:767:public static void releaseAll()
+    836:836:protected static java.lang.ClassLoader getContextClassLoader()
+    1103:1103:protected static org.shaded.apache.commons.logging.LogFactory newFactory(java.lang.String,java.lang.ClassLoader)
+    1669:1673:protected static final void logRawDiagnostic(java.lang.String)
+org.shaded.apache.commons.logging.LogSource
+org.shaded.apache.commons.logging.impl.AvalonLogger
+org.shaded.apache.commons.logging.impl.Jdk13LumberjackLogger
+org.shaded.apache.commons.logging.impl.Jdk14Logger
+org.shaded.apache.commons.logging.impl.Log4JLogger
+org.shaded.apache.commons.logging.impl.LogFactoryImpl
+org.shaded.apache.commons.logging.impl.LogFactoryImpl$1
+org.shaded.apache.commons.logging.impl.LogFactoryImpl$2
+org.shaded.apache.commons.logging.impl.LogFactoryImpl$3
+org.shaded.apache.commons.logging.impl.LogKitLogger
+org.shaded.apache.commons.logging.impl.NoOpLog
+org.shaded.apache.commons.logging.impl.ServletContextCleaner
+org.shaded.apache.commons.logging.impl.SimpleLog
+org.shaded.apache.commons.logging.impl.SimpleLog$1
+org.shaded.apache.commons.logging.impl.WeakHashtable
+org.shaded.apache.commons.logging.impl.WeakHashtable$1
+org.shaded.apache.commons.logging.impl.WeakHashtable$Entry
+org.shaded.apache.commons.logging.impl.WeakHashtable$Referenced
+org.shaded.apache.commons.logging.impl.WeakHashtable$WeakKey
+org.shaded.apache.http.ConnectionClosedException
+org.shaded.apache.http.HeaderElement:
+    public abstract int getParameterCount()
+    public abstract org.shaded.apache.http.NameValuePair getParameter(int)
+org.shaded.apache.http.HttpConnection:
+    public abstract int getSocketTimeout()
+    public abstract org.shaded.apache.http.HttpConnectionMetrics getMetrics()
+org.shaded.apache.http.HttpConnectionMetrics
+org.shaded.apache.http.HttpEntityEnclosingRequest:
+    public abstract void setEntity(org.shaded.apache.http.HttpEntity)
+org.shaded.apache.http.HttpException:
+    private static final long serialVersionUID
+org.shaded.apache.http.HttpHost:
+    private static final long serialVersionUID
+    public static final java.lang.String DEFAULT_SCHEME_NAME
+    112:113:public HttpHost(java.lang.String)
+    121:122:public HttpHost(org.shaded.apache.http.HttpHost)
+org.shaded.apache.http.HttpInetConnection:
+    public abstract java.net.InetAddress getLocalAddress()
+    public abstract int getLocalPort()
+org.shaded.apache.http.HttpMessage:
+    public abstract org.shaded.apache.http.Header getLastHeader(java.lang.String)
+    public abstract void setHeader(org.shaded.apache.http.Header)
+    public abstract void removeHeader(org.shaded.apache.http.Header)
+    public abstract void removeHeaders(java.lang.String)
+org.shaded.apache.http.HttpRequestFactory
+org.shaded.apache.http.HttpResponse:
+    public abstract void setStatusLine(org.shaded.apache.http.StatusLine)
+    public abstract void setStatusLine(org.shaded.apache.http.ProtocolVersion,int)
+    public abstract void setStatusLine(org.shaded.apache.http.ProtocolVersion,int,java.lang.String)
+    public abstract void setStatusCode(int)
+    public abstract void setReasonPhrase(java.lang.String)
+    public abstract java.util.Locale getLocale()
+    public abstract void setLocale(java.util.Locale)
+org.shaded.apache.http.HttpResponseFactory:
+    public abstract org.shaded.apache.http.HttpResponse newHttpResponse(org.shaded.apache.http.ProtocolVersion,int,org.shaded.apache.http.protocol.HttpContext)
+org.shaded.apache.http.HttpServerConnection
+org.shaded.apache.http.HttpStatus
+org.shaded.apache.http.HttpVersion:
+    private static final long serialVersionUID
+    public static final java.lang.String HTTP
+org.shaded.apache.http.MalformedChunkCodingException:
+    private static final long serialVersionUID
+org.shaded.apache.http.MethodNotSupportedException
+org.shaded.apache.http.NoHttpResponseException:
+    private static final long serialVersionUID
+org.shaded.apache.http.ParseException:
+    private static final long serialVersionUID
+org.shaded.apache.http.ProtocolException:
+    private static final long serialVersionUID
+org.shaded.apache.http.ProtocolVersion:
+    private static final long serialVersionUID
+    245:245:public final boolean greaterEquals(org.shaded.apache.http.ProtocolVersion)
+org.shaded.apache.http.ReasonPhraseCatalog:
+    public abstract java.lang.String getReason(int,java.util.Locale)
+org.shaded.apache.http.UnsupportedHttpVersionException
+org.shaded.apache.http.annotation.GuardedBy
+org.shaded.apache.http.annotation.Immutable
+org.shaded.apache.http.annotation.NotThreadSafe
+org.shaded.apache.http.annotation.ThreadSafe
+org.shaded.apache.http.auth.AUTH
+org.shaded.apache.http.auth.AuthScheme:
+    public abstract java.lang.String getParameter(java.lang.String)
+org.shaded.apache.http.auth.AuthSchemeRegistry:
+    91:95:public synchronized void unregister(java.lang.String)
+    129:129:public synchronized java.util.List getSchemeNames()
+    139:144:public synchronized void setItems(java.util.Map)
+org.shaded.apache.http.auth.AuthScope:
+    public static final int ANY_PORT
+    127:128:public AuthScope(java.lang.String,int,java.lang.String)
+    142:143:public AuthScope(java.lang.String,int)
+    149:157:public AuthScope(org.shaded.apache.http.auth.AuthScope)
+    163:163:public java.lang.String getHost()
+    170:170:public int getPort()
+    177:177:public java.lang.String getRealm()
+    184:184:public java.lang.String getScheme()
+org.shaded.apache.http.auth.AuthenticationException:
+    private static final long serialVersionUID
+    68:69:public AuthenticationException(java.lang.String,java.lang.Throwable)
+org.shaded.apache.http.auth.BasicUserPrincipal
+org.shaded.apache.http.auth.InvalidCredentialsException
+org.shaded.apache.http.auth.MalformedChallengeException:
+    private static final long serialVersionUID
+    69:70:public MalformedChallengeException(java.lang.String,java.lang.Throwable)
+org.shaded.apache.http.auth.NTCredentials
+org.shaded.apache.http.auth.NTUserPrincipal
+org.shaded.apache.http.auth.UsernamePasswordCredentials
+org.shaded.apache.http.auth.params.AuthPNames
+org.shaded.apache.http.auth.params.AuthParamBean
+org.shaded.apache.http.auth.params.AuthParams:
+    47:48:private AuthParams()
+    77:81:public static void setCredentialCharset(org.shaded.apache.http.params.HttpParams,java.lang.String)
+org.shaded.apache.http.client.CircularRedirectException:
+    private static final long serialVersionUID
+    66:67:public CircularRedirectException(java.lang.String,java.lang.Throwable)
+org.shaded.apache.http.client.ClientProtocolException:
+    private static final long serialVersionUID
+    48:49:public ClientProtocolException(java.lang.String)
+    56:58:public ClientProtocolException(java.lang.String,java.lang.Throwable)
+org.shaded.apache.http.client.CookieStore:
+    public abstract boolean clearExpired(java.util.Date)
+    public abstract void clear()
+org.shaded.apache.http.client.CredentialsProvider:
+    public abstract void setCredentials(org.shaded.apache.http.auth.AuthScope,org.shaded.apache.http.auth.Credentials)
+    public abstract void clear()
+org.shaded.apache.http.client.HttpClient
+org.shaded.apache.http.client.HttpResponseException
+org.shaded.apache.http.client.NonRepeatableRequestException:
+    private static final long serialVersionUID
+org.shaded.apache.http.client.RedirectException:
+    private static final long serialVersionUID
+    68:69:public RedirectException(java.lang.String,java.lang.Throwable)
+org.shaded.apache.http.client.entity.UrlEncodedFormEntity:
+    73:74:public UrlEncodedFormEntity(java.util.List)
+org.shaded.apache.http.client.methods.AbortableHttpRequest:
+    public abstract void abort()
+org.shaded.apache.http.client.methods.HttpDelete:
+    public static final java.lang.String METHOD_NAME
+    68:70:public HttpDelete(java.lang.String)
+org.shaded.apache.http.client.methods.HttpGet:
+    public static final java.lang.String METHOD_NAME
+    68:70:public HttpGet(java.lang.String)
+org.shaded.apache.http.client.methods.HttpHead
+org.shaded.apache.http.client.methods.HttpOptions
+org.shaded.apache.http.client.methods.HttpPost:
+    public static final java.lang.String METHOD_NAME
+    75:77:public HttpPost(java.lang.String)
+org.shaded.apache.http.client.methods.HttpPut:
+    public static final java.lang.String METHOD_NAME
+    67:69:public HttpPut(java.lang.String)
+org.shaded.apache.http.client.methods.HttpRequestBase:
+    133:160:public void abort()
+    163:163:public boolean isAborted()
+org.shaded.apache.http.client.methods.HttpTrace
+org.shaded.apache.http.client.methods.HttpUriRequest:
+    public abstract void abort()
+    public abstract boolean isAborted()
+org.shaded.apache.http.client.params.AllClientPNames
+org.shaded.apache.http.client.params.AuthPolicy
+org.shaded.apache.http.client.params.ClientPNames
+org.shaded.apache.http.client.params.ClientParamBean
+org.shaded.apache.http.client.params.CookiePolicy
+org.shaded.apache.http.client.params.HttpClientParams:
+    42:43:private HttpClientParams()
+    54:59:public static void setRedirecting(org.shaded.apache.http.params.HttpParams,boolean)
+    70:75:public static void setAuthenticating(org.shaded.apache.http.params.HttpParams,boolean)
+    90:94:public static void setCookiePolicy(org.shaded.apache.http.params.HttpParams,java.lang.String)
+org.shaded.apache.http.client.protocol.ClientContext
+org.shaded.apache.http.client.protocol.ClientContextConfigurer
+org.shaded.apache.http.client.protocol.RequestClientConnControl:
+    private static final java.lang.String PROXY_CONN_DIRECTIVE
+org.shaded.apache.http.client.utils.CloneUtils:
+    77:78:private CloneUtils()
+org.shaded.apache.http.client.utils.Idn
+org.shaded.apache.http.client.utils.JdkIdn
+org.shaded.apache.http.client.utils.Punycode
+org.shaded.apache.http.client.utils.Rfc3492Idn
+org.shaded.apache.http.client.utils.URIUtils:
+    171:171:public static java.net.URI resolve(java.net.URI,java.lang.String)
+    262:263:private URIUtils()
+org.shaded.apache.http.client.utils.URLEncodedUtils:
+    public static final java.lang.String CONTENT_TYPE
+    private static final java.lang.String PARAMETER_SEPARATOR
+    private static final java.lang.String NAME_VALUE_SEPARATOR
+    56:56:public URLEncodedUtils()
+    76:82:public static java.util.List parse(java.net.URI,java.lang.String)
+    99:124:public static java.util.List parse(org.shaded.apache.http.HttpEntity)
+    132:142:public static boolean isEncoded(org.shaded.apache.http.HttpEntity)
+    164:176:public static void parse(java.util.List,java.util.Scanner,java.lang.String)
+    204:207:private static java.lang.String decode(java.lang.String,java.lang.String)
+org.shaded.apache.http.conn.BasicEofSensorWatcher
+org.shaded.apache.http.conn.ClientConnectionManager:
+    public abstract void closeIdleConnections(long,java.util.concurrent.TimeUnit)
+    public abstract void closeExpiredConnections()
+    public abstract void shutdown()
+org.shaded.apache.http.conn.ClientConnectionRequest:
+    public abstract void abortRequest()
+org.shaded.apache.http.conn.ConnectTimeoutException:
+    private static final long serialVersionUID
+org.shaded.apache.http.conn.ConnectionPoolTimeoutException:
+    private static final long serialVersionUID
+    48:49:public ConnectionPoolTimeoutException()
+    57:58:public ConnectionPoolTimeoutException(java.lang.String)
+org.shaded.apache.http.conn.HttpHostConnectException:
+    private static final long serialVersionUID
+    55:55:public org.shaded.apache.http.HttpHost getHost()
+org.shaded.apache.http.conn.ManagedClientConnection:
+    public abstract void unmarkReusable()
+    public abstract boolean isMarkedReusable()
+    public abstract java.lang.Object getState()
+org.shaded.apache.http.conn.MultihomePlainSocketFactory
+org.shaded.apache.http.conn.OperatedClientConnection:
+    public abstract org.shaded.apache.http.HttpHost getTargetHost()
+org.shaded.apache.http.conn.params.ConnConnectionPNames
+org.shaded.apache.http.conn.params.ConnConnectionParamBean
+org.shaded.apache.http.conn.params.ConnManagerPNames
+org.shaded.apache.http.conn.params.ConnManagerParamBean
+org.shaded.apache.http.conn.params.ConnManagerParams:
+    public static final int DEFAULT_MAX_TOTAL_CONNECTIONS
+    43:43:public ConnManagerParams()
+    70:74:public static void setTimeout(org.shaded.apache.http.params.HttpParams,long)
+    96:101:public static void setMaxConnectionsPerRoute(org.shaded.apache.http.params.HttpParams,org.shaded.apache.http.conn.params.ConnPerRoute)
+    113:121:public static org.shaded.apache.http.conn.params.ConnPerRoute getMaxConnectionsPerRoute(org.shaded.apache.http.params.HttpParams)
+    136:141:public static void setMaxTotalConnections(org.shaded.apache.http.params.HttpParams,int)
+    154:158:public static int getMaxTotalConnections(org.shaded.apache.http.params.HttpParams)
+org.shaded.apache.http.conn.params.ConnManagerParams$1:
+    80:80:public int getMaxForRoute(org.shaded.apache.http.conn.routing.HttpRoute)
+org.shaded.apache.http.conn.params.ConnPerRoute:
+    public abstract int getMaxForRoute(org.shaded.apache.http.conn.routing.HttpRoute)
+org.shaded.apache.http.conn.params.ConnPerRouteBean
+org.shaded.apache.http.conn.params.ConnRoutePNames
+org.shaded.apache.http.conn.params.ConnRouteParamBean
+org.shaded.apache.http.conn.params.ConnRouteParams:
+    61:63:private ConnRouteParams()
+    101:105:public static void setDefaultProxy(org.shaded.apache.http.params.HttpParams,org.shaded.apache.http.HttpHost)
+    143:147:public static void setForcedRoute(org.shaded.apache.http.params.HttpParams,org.shaded.apache.http.conn.routing.HttpRoute)
+    180:184:public static void setLocalAddress(org.shaded.apache.http.params.HttpParams,java.net.InetAddress)
+org.shaded.apache.http.conn.routing.HttpRoute:
+    160:161:public HttpRoute(org.shaded.apache.http.HttpHost,java.net.InetAddress,org.shaded.apache.http.HttpHost,boolean,org.shaded.apache.http.conn.routing.RouteInfo$TunnelType,org.shaded.apache.http.conn.routing.RouteInfo$LayerType)
+    299:299:public final org.shaded.apache.http.conn.routing.RouteInfo$TunnelType getTunnelType()
+    309:309:public final org.shaded.apache.http.conn.routing.RouteInfo$LayerType getLayerType()
+org.shaded.apache.http.conn.routing.HttpRouteDirector:
+    public static final int UNREACHABLE
+    public static final int COMPLETE
+    public static final int CONNECT_TARGET
+    public static final int CONNECT_PROXY
+    public static final int TUNNEL_TARGET
+    public static final int TUNNEL_PROXY
+    public static final int LAYER_PROTOCOL
+org.shaded.apache.http.conn.routing.RouteInfo:
+    public abstract org.shaded.apache.http.HttpHost getProxyHost()
+    public abstract org.shaded.apache.http.conn.routing.RouteInfo$TunnelType getTunnelType()
+    public abstract org.shaded.apache.http.conn.routing.RouteInfo$LayerType getLayerType()
+org.shaded.apache.http.conn.routing.RouteInfo$LayerType:
+    64:64:public static org.shaded.apache.http.conn.routing.RouteInfo$LayerType[] values()
+    64:64:public static org.shaded.apache.http.conn.routing.RouteInfo$LayerType valueOf(java.lang.String)
+org.shaded.apache.http.conn.routing.RouteInfo$TunnelType:
+    49:49:public static org.shaded.apache.http.conn.routing.RouteInfo$TunnelType[] values()
+    49:49:public static org.shaded.apache.http.conn.routing.RouteInfo$TunnelType valueOf(java.lang.String)
+org.shaded.apache.http.conn.routing.RouteTracker:
+    238:238:public final org.shaded.apache.http.HttpHost getProxyHost()
+    246:246:public final org.shaded.apache.http.conn.routing.RouteInfo$TunnelType getTunnelType()
+    254:254:public final org.shaded.apache.http.conn.routing.RouteInfo$LayerType getLayerType()
+org.shaded.apache.http.conn.scheme.SchemeRegistry:
+    142:148:public final synchronized org.shaded.apache.http.conn.scheme.Scheme unregister(java.lang.String)
+    157:157:public final synchronized java.util.List getSchemeNames()
+    167:172:public synchronized void setItems(java.util.Map)
+org.shaded.apache.http.conn.ssl.AbstractVerifier:
+    341:341:public static java.lang.String[] getDNSSubjectAlts(java.security.cert.X509Certificate)
+org.shaded.apache.http.conn.ssl.SSLSocketFactory:
+    public static final java.lang.String TLS
+    public static final java.lang.String SSL
+    public static final java.lang.String SSLV2
+    183:210:public SSLSocketFactory(java.lang.String,java.security.KeyStore,java.lang.String,java.security.KeyStore,java.security.SecureRandom,org.shaded.apache.http.conn.scheme.HostNameResolver)
+    218:219:public SSLSocketFactory(java.security.KeyStore,java.lang.String,java.security.KeyStore)
+    224:225:public SSLSocketFactory(java.security.KeyStore,java.lang.String)
+    230:231:public SSLSocketFactory(java.security.KeyStore)
+    183:240:public SSLSocketFactory(javax.net.ssl.SSLContext,org.shaded.apache.http.conn.scheme.HostNameResolver)
+    244:245:public SSLSocketFactory(javax.net.ssl.SSLContext)
+    261:267:private static javax.net.ssl.KeyManager[] createKeyManagers(java.security.KeyStore,java.lang.String)
+    272:278:private static javax.net.ssl.TrustManager[] createTrustManagers(java.security.KeyStore)
+    405:409:public void setHostnameVerifier(org.shaded.apache.http.conn.ssl.X509HostnameVerifier)
+    412:412:public org.shaded.apache.http.conn.ssl.X509HostnameVerifier getHostnameVerifier()
+org.shaded.apache.http.conn.ssl.X509HostnameVerifier:
+    public abstract void verify(java.lang.String,java.security.cert.X509Certificate)
+org.shaded.apache.http.conn.util.InetAddressUtils:
+    42:43:private InetAddressUtils()
+org.shaded.apache.http.cookie.ClientCookie:
+    public static final java.lang.String VERSION_ATTR
+    public static final java.lang.String PATH_ATTR
+    public static final java.lang.String DOMAIN_ATTR
+    public static final java.lang.String MAX_AGE_ATTR
+    public static final java.lang.String SECURE_ATTR
+    public static final java.lang.String COMMENT_ATTR
+    public static final java.lang.String EXPIRES_ATTR
+    public static final java.lang.String PORT_ATTR
+    public static final java.lang.String COMMENTURL_ATTR
+    public static final java.lang.String DISCARD_ATTR
+org.shaded.apache.http.cookie.Cookie:
+    public abstract java.lang.String getComment()
+    public abstract java.lang.String getCommentURL()
+    public abstract java.util.Date getExpiryDate()
+    public abstract boolean isPersistent()
+org.shaded.apache.http.cookie.CookieIdentityComparator:
+    private static final long serialVersionUID
+org.shaded.apache.http.cookie.CookiePathComparator:
+    private static final long serialVersionUID
+org.shaded.apache.http.cookie.CookieSpecRegistry:
+    87:91:public synchronized void unregister(java.lang.String)
+    129:129:public synchronized org.shaded.apache.http.cookie.CookieSpec getCookieSpec(java.lang.String)
+    142:142:public synchronized java.util.List getSpecNames()
+    152:157:public synchronized void setItems(java.util.Map)
+org.shaded.apache.http.cookie.MalformedCookieException:
+    private static final long serialVersionUID
+    70:71:public MalformedCookieException(java.lang.String,java.lang.Throwable)
+org.shaded.apache.http.cookie.SM
+org.shaded.apache.http.cookie.SetCookie:
+    public abstract void setValue(java.lang.String)
+org.shaded.apache.http.cookie.params.CookieSpecPNames
+org.shaded.apache.http.cookie.params.CookieSpecParamBean
+org.shaded.apache.http.entity.AbstractHttpEntity:
+    152:157:public void setContentEncoding(java.lang.String)
+org.shaded.apache.http.entity.ByteArrayEntity
+org.shaded.apache.http.entity.ContentLengthStrategy:
+    public static final int IDENTITY
+    public static final int CHUNKED
+org.shaded.apache.http.entity.ContentProducer
+org.shaded.apache.http.entity.EntityTemplate
+org.shaded.apache.http.entity.FileEntity
+org.shaded.apache.http.entity.InputStreamEntity
+org.shaded.apache.http.entity.SerializableEntity
+org.shaded.apache.http.entity.StringEntity:
+    70:71:public StringEntity(java.lang.String)
+org.shaded.apache.http.impl.AbstractHttpClientConnection:
+    308:308:public org.shaded.apache.http.HttpConnectionMetrics getMetrics()
+org.shaded.apache.http.impl.AbstractHttpServerConnection
+org.shaded.apache.http.impl.DefaultHttpClientConnection
+org.shaded.apache.http.impl.DefaultHttpRequestFactory
+org.shaded.apache.http.impl.DefaultHttpResponseFactory:
+    86:92:public org.shaded.apache.http.HttpResponse newHttpResponse(org.shaded.apache.http.ProtocolVersion,int,org.shaded.apache.http.protocol.HttpContext)
+org.shaded.apache.http.impl.DefaultHttpServerConnection
+org.shaded.apache.http.impl.EnglishReasonPhraseCatalog:
+    81:93:public java.lang.String getReason(int,java.util.Locale)
+org.shaded.apache.http.impl.HttpConnectionMetricsImpl:
+    public static final java.lang.String REQUEST_COUNT
+    public static final java.lang.String RESPONSE_COUNT
+    public static final java.lang.String SENT_BYTES_COUNT
+    public static final java.lang.String RECEIVED_BYTES_COUNT
+    private java.util.HashMap metricsCache
+    71:74:public long getReceivedBytesCount()
+    79:82:public long getSentBytesCount()
+    87:87:public long getRequestCount()
+    95:95:public long getResponseCount()
+    103:126:public java.lang.Object getMetric(java.lang.String)
+    130:134:public void setMetric(java.lang.String,java.lang.Object)
+    137:146:public void reset()
+org.shaded.apache.http.impl.NoConnectionReuseStrategy
+org.shaded.apache.http.impl.SocketHttpClientConnection:
+    179:182:public java.net.InetAddress getLocalAddress()
+    187:190:public int getLocalPort()
+    224:231:public int getSocketTimeout()
+org.shaded.apache.http.impl.SocketHttpServerConnection
+org.shaded.apache.http.impl.auth.DigestScheme:
+    private static final java.lang.String NC
+    private static final int QOP_MISSING
+    private static final int QOP_AUTH_INT
+    private static final int QOP_AUTH
+    188:189:public void overrideParamter(java.lang.String,java.lang.String)
+org.shaded.apache.http.impl.auth.NTLMEngine
+org.shaded.apache.http.impl.auth.NTLMEngineException
+org.shaded.apache.http.impl.auth.NTLMScheme
+org.shaded.apache.http.impl.auth.NTLMScheme$State
+org.shaded.apache.http.impl.auth.UnsupportedDigestAlgorithmException:
+    private static final long serialVersionUID
+    67:68:public UnsupportedDigestAlgorithmException(java.lang.String,java.lang.Throwable)
+org.shaded.apache.http.impl.client.AbstractHttpClient:
+    306:307:public synchronized void setParams(org.shaded.apache.http.params.HttpParams)
+    335:336:public synchronized void setAuthSchemes(org.shaded.apache.http.auth.AuthSchemeRegistry)
+    348:349:public synchronized void setCookieSpecs(org.shaded.apache.http.cookie.CookieSpecRegistry)
+    361:362:public synchronized void setReuseStrategy(org.shaded.apache.http.ConnectionReuseStrategy)
+    374:375:public synchronized void setKeepAliveStrategy(org.shaded.apache.http.conn.ConnectionKeepAliveStrategy)
+    387:388:public synchronized void setHttpRequestRetryHandler(org.shaded.apache.http.client.HttpRequestRetryHandler)
+    400:401:public synchronized void setRedirectHandler(org.shaded.apache.http.client.RedirectHandler)
+    414:415:public synchronized void setTargetAuthenticationHandler(org.shaded.apache.http.client.AuthenticationHandler)
+    428:429:public synchronized void setProxyAuthenticationHandler(org.shaded.apache.http.client.AuthenticationHandler)
+    441:442:public synchronized void setCookieStore(org.shaded.apache.http.client.CookieStore)
+    454:455:public synchronized void setCredentialsProvider(org.shaded.apache.http.client.CredentialsProvider)
+    467:468:public synchronized void setRoutePlanner(org.shaded.apache.http.conn.routing.HttpRoutePlanner)
+    480:481:public synchronized void setUserTokenHandler(org.shaded.apache.http.client.UserTokenHandler)
+    493:494:public synchronized void addResponseInterceptor(org.shaded.apache.http.HttpResponseInterceptor)
+    498:499:public synchronized void addResponseInterceptor(org.shaded.apache.http.HttpResponseInterceptor,int)
+    503:503:public synchronized org.shaded.apache.http.HttpResponseInterceptor getResponseInterceptor(int)
+    508:508:public synchronized int getResponseInterceptorCount()
+    513:514:public synchronized void clearResponseInterceptors()
+    518:519:public synchronized void removeResponseInterceptorByClass(java.lang.Class)
+    523:524:public synchronized void addRequestInterceptor(org.shaded.apache.http.HttpRequestInterceptor)
+    528:529:public synchronized void addRequestInterceptor(org.shaded.apache.http.HttpRequestInterceptor,int)
+    533:533:public synchronized org.shaded.apache.http.HttpRequestInterceptor getRequestInterceptor(int)
+    538:538:public synchronized int getRequestInterceptorCount()
+    543:544:public synchronized void clearRequestInterceptors()
+    548:549:public synchronized void removeRequestInterceptorByClass(java.lang.Class)
+    554:554:public final org.shaded.apache.http.HttpResponse execute(org.shaded.apache.http.client.methods.HttpUriRequest)
+    571:576:public final org.shaded.apache.http.HttpResponse execute(org.shaded.apache.http.client.methods.HttpUriRequest,org.shaded.apache.http.protocol.HttpContext)
+    597:597:public final org.shaded.apache.http.HttpResponse execute(org.shaded.apache.http.HttpHost,org.shaded.apache.http.HttpRequest)
+    717:717:public java.lang.Object execute(org.shaded.apache.http.HttpHost,org.shaded.apache.http.HttpRequest,org.shaded.apache.http.client.ResponseHandler)
+org.shaded.apache.http.impl.client.BasicCookieStore:
+    105:110:public synchronized void addCookies(org.shaded.apache.http.cookie.Cookie[])
+    131:141:public synchronized boolean clearExpired(java.util.Date)
+    153:154:public synchronized void clear()
+org.shaded.apache.http.impl.client.BasicCredentialsProvider:
+    60:64:public synchronized void setCredentials(org.shaded.apache.http.auth.AuthScope,org.shaded.apache.http.auth.Credentials)
+    111:112:public synchronized void clear()
+org.shaded.apache.http.impl.client.BasicResponseHandler
+org.shaded.apache.http.impl.client.ClientParamsStack:
+    114:118:public ClientParamsStack(org.shaded.apache.http.impl.client.ClientParamsStack)
+    137:141:public ClientParamsStack(org.shaded.apache.http.impl.client.ClientParamsStack,org.shaded.apache.http.params.HttpParams,org.shaded.apache.http.params.HttpParams,org.shaded.apache.http.params.HttpParams,org.shaded.apache.http.params.HttpParams)
+    150:150:public final org.shaded.apache.http.params.HttpParams getApplicationParams()
+    159:159:public final org.shaded.apache.http.params.HttpParams getClientParams()
+    168:168:public final org.shaded.apache.http.params.HttpParams getRequestParams()
+    177:177:public final org.shaded.apache.http.params.HttpParams getOverrideParams()
+    247:247:public boolean removeParameter(java.lang.String)
+    266:266:public org.shaded.apache.http.params.HttpParams copy()
+org.shaded.apache.http.impl.client.DefaultHttpClient:
+    168:169:public DefaultHttpClient(org.shaded.apache.http.conn.ClientConnectionManager,org.shaded.apache.http.params.HttpParams)
+org.shaded.apache.http.impl.client.DefaultHttpRequestRetryHandler:
+    141:141:public boolean isRequestSentRetryEnabled()
+    148:148:public int getRetryCount()
+org.shaded.apache.http.impl.client.DefaultRedirectHandler:
+    private static final java.lang.String REDIRECT_LOCATIONS
+org.shaded.apache.http.impl.client.DefaultRequestDirector:
+    289:303:public DefaultRequestDirector(org.shaded.apache.http.protocol.HttpRequestExecutor,org.shaded.apache.http.conn.ClientConnectionManager,org.shaded.apache.http.ConnectionReuseStrategy,org.shaded.apache.http.conn.ConnectionKeepAliveStrategy,org.shaded.apache.http.conn.routing.HttpRoutePlanner,org.shaded.apache.http.protocol.HttpProcessor,org.shaded.apache.http.client.HttpRequestRetryHandler,org.shaded.apache.http.client.RedirectHandler,org.shaded.apache.http.client.AuthenticationHandler,org.shaded.apache.http.client.AuthenticationHandler,org.shaded.apache.http.client.UserTokenHandler,org.shaded.apache.http.params.HttpParams)
+org.shaded.apache.http.impl.client.EntityEnclosingRequestWrapper:
+    66:67:public void setEntity(org.shaded.apache.http.HttpEntity)
+org.shaded.apache.http.impl.client.RedirectLocations:
+    69:69:public boolean remove(java.net.URI)
+org.shaded.apache.http.impl.client.RequestWrapper:
+    102:106:public void setMethod(java.lang.String)
+    116:117:public void setProtocolVersion(org.shaded.apache.http.ProtocolVersion)
+    142:142:public void abort()
+    146:146:public boolean isAborted()
+org.shaded.apache.http.impl.client.TunnelRefusedException:
+    private static final long serialVersionUID
+org.shaded.apache.http.impl.conn.AbstractClientConnAdapter:
+    169:171:public int getSocketTimeout()
+    175:177:public org.shaded.apache.http.HttpConnectionMetrics getMetrics()
+    231:233:public java.net.InetAddress getLocalAddress()
+    237:239:public int getLocalPort()
+org.shaded.apache.http.impl.conn.AbstractPoolEntry:
+    101:101:public java.lang.Object getState()
+org.shaded.apache.http.impl.conn.AbstractPooledConnAdapter:
+    76:79:protected final void assertAttached()
+    164:168:public java.lang.Object getState()
+org.shaded.apache.http.impl.conn.DefaultClientConnection:
+    91:91:public final org.shaded.apache.http.HttpHost getTargetHost()
+org.shaded.apache.http.impl.conn.IdleConnectionHandler
+org.shaded.apache.http.impl.conn.IdleConnectionHandler$TimeValues
+org.shaded.apache.http.impl.conn.LoggingSessionInputBuffer:
+    84:88:public int read(byte[])
+    92:96:public java.lang.String readLine()
+org.shaded.apache.http.impl.conn.LoggingSessionOutputBuffer:
+    78:82:public void write(byte[])
+org.shaded.apache.http.impl.conn.ProxySelectorRoutePlanner
+org.shaded.apache.http.impl.conn.ProxySelectorRoutePlanner$1
+org.shaded.apache.http.impl.conn.SingleClientConnManager:
+    public static final java.lang.String MISUSE_MESSAGE
+    343:352:protected synchronized void revokeConnection()
+org.shaded.apache.http.impl.conn.SingleClientConnManager$1:
+    169:169:public void abortRequest()
+org.shaded.apache.http.impl.conn.Wire:
+    89:93:public void output(java.io.InputStream)
+    97:101:public void input(java.io.InputStream)
+org.shaded.apache.http.impl.conn.tsccm.AbstractConnPool
+org.shaded.apache.http.impl.conn.tsccm.BasicPoolEntry
+org.shaded.apache.http.impl.conn.tsccm.BasicPoolEntryRef
+org.shaded.apache.http.impl.conn.tsccm.BasicPooledConnAdapter
+org.shaded.apache.http.impl.conn.tsccm.ConnPoolByRoute
+org.shaded.apache.http.impl.conn.tsccm.ConnPoolByRoute$1
+org.shaded.apache.http.impl.conn.tsccm.PoolEntryRequest
+org.shaded.apache.http.impl.conn.tsccm.RefQueueHandler
+org.shaded.apache.http.impl.conn.tsccm.RefQueueWorker
+org.shaded.apache.http.impl.conn.tsccm.RouteSpecificPool
+org.shaded.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager
+org.shaded.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager$1
+org.shaded.apache.http.impl.conn.tsccm.WaitingThread
+org.shaded.apache.http.impl.conn.tsccm.WaitingThreadAborter
+org.shaded.apache.http.impl.cookie.AbstractCookieSpec:
+    95:100:protected org.shaded.apache.http.cookie.CookieAttributeHandler getAttribHandler(java.lang.String)
+org.shaded.apache.http.impl.cookie.BasicClientCookie:
+    88:89:public void setValue(java.lang.String)
+    100:100:public java.lang.String getComment()
+    120:120:public java.lang.String getCommentURL()
+    136:136:public java.util.Date getExpiryDate()
+    163:163:public boolean isPersistent()
+org.shaded.apache.http.impl.cookie.BasicClientCookie2:
+    69:69:public java.lang.String getCommentURL()
+    82:82:public boolean isPersistent()
+org.shaded.apache.http.impl.cookie.DateParseException:
+    private static final long serialVersionUID
+org.shaded.apache.http.impl.cookie.DateUtils:
+    public static final java.lang.String PATTERN_RFC1123
+    public static final java.lang.String PATTERN_RFC1036
+    public static final java.lang.String PATTERN_ASCTIME
+    99:99:public static java.util.Date parseDate(java.lang.String)
+    179:179:public static java.lang.String formatDate(java.util.Date)
+    196:200:public static java.lang.String formatDate(java.util.Date,java.lang.String)
+    204:205:private DateUtils()
+org.shaded.apache.http.impl.cookie.DateUtils$DateFormatHolder:
+    213:213:DateUtils$DateFormatHolder()
+org.shaded.apache.http.impl.cookie.NetscapeDraftSpec:
+    protected static final java.lang.String EXPIRES_PATTERN
+org.shaded.apache.http.impl.cookie.PublicSuffixFilter
+org.shaded.apache.http.impl.cookie.PublicSuffixListParser
+org.shaded.apache.http.impl.io.AbstractSessionInputBuffer:
+    176:179:public int read(byte[])
+    313:318:public java.lang.String readLine()
+org.shaded.apache.http.impl.io.AbstractSessionOutputBuffer:
+    private static final int MAX_CHUNK
+org.shaded.apache.http.impl.io.ChunkedInputStream:
+    271:271:public org.shaded.apache.http.Header[] getFooters()
+org.shaded.apache.http.impl.io.ContentLengthInputStream:
+    private static final int BUFFER_SIZE
+org.shaded.apache.http.impl.io.HttpRequestParser
+org.shaded.apache.http.impl.io.HttpResponseWriter
+org.shaded.apache.http.impl.io.HttpTransportMetricsImpl:
+    50:50:public long getBytesTransferred()
+    54:55:public void setBytesTransferred(long)
+    62:63:public void reset()
+org.shaded.apache.http.io.HttpTransportMetrics:
+    public abstract long getBytesTransferred()
+    public abstract void reset()
+org.shaded.apache.http.io.SessionInputBuffer:
+    public abstract int read(byte[])
+    public abstract java.lang.String readLine()
+org.shaded.apache.http.io.SessionOutputBuffer:
+    public abstract void write(byte[])
+org.shaded.apache.http.message.AbstractHttpMessage:
+    83:83:public org.shaded.apache.http.Header getLastHeader(java.lang.String)
+    106:107:public void setHeader(org.shaded.apache.http.Header)
+    124:125:public void removeHeader(org.shaded.apache.http.Header)
+    129:138:public void removeHeaders(java.lang.String)
+org.shaded.apache.http.message.BasicHeaderElement:
+    84:85:public BasicHeaderElement(java.lang.String,java.lang.String)
+    100:100:public int getParameterCount()
+    105:105:public org.shaded.apache.http.NameValuePair getParameter(int)
+org.shaded.apache.http.message.BasicHeaderIterator
+org.shaded.apache.http.message.BasicHeaderValueFormatter:
+    public static final java.lang.String SEPARATORS
+    public static final java.lang.String UNSAFE_CHARS
+    97:99:public static final java.lang.String formatElements(org.shaded.apache.http.HeaderElement[],boolean,org.shaded.apache.http.message.HeaderValueFormatter)
+    107:126:public org.shaded.apache.http.util.CharArrayBuffer formatElements(org.shaded.apache.http.util.CharArrayBuffer,org.shaded.apache.http.HeaderElement[],boolean)
+    138:146:protected int estimateElementsLen(org.shaded.apache.http.HeaderElement[])
+    166:168:public static final java.lang.String formatHeaderElement(org.shaded.apache.http.HeaderElement,boolean,org.shaded.apache.http.message.HeaderValueFormatter)
+    176:203:public org.shaded.apache.http.util.CharArrayBuffer formatHeaderElement(org.shaded.apache.http.util.CharArrayBuffer,org.shaded.apache.http.HeaderElement,boolean)
+    215:233:protected int estimateHeaderElementLen(org.shaded.apache.http.HeaderElement)
+    254:256:public static final java.lang.String formatParameters(org.shaded.apache.http.NameValuePair[],boolean,org.shaded.apache.http.message.HeaderValueFormatter)
+    264:283:public org.shaded.apache.http.util.CharArrayBuffer formatParameters(org.shaded.apache.http.util.CharArrayBuffer,org.shaded.apache.http.NameValuePair[],boolean)
+    295:303:protected int estimateParametersLen(org.shaded.apache.http.NameValuePair[])
+    322:324:public static final java.lang.String formatNameValuePair(org.shaded.apache.http.NameValuePair,boolean,org.shaded.apache.http.message.HeaderValueFormatter)
+org.shaded.apache.http.message.BasicHeaderValueParser:
+    private static final char PARAM_DELIMITER
+    private static final char ELEM_DELIMITER
+    140:151:public static final org.shaded.apache.http.HeaderElement parseHeaderElement(java.lang.String,org.shaded.apache.http.message.HeaderValueParser)
+    205:216:public static final org.shaded.apache.http.NameValuePair[] parseParameters(java.lang.String,org.shaded.apache.http.message.HeaderValueParser)
+    275:286:public static final org.shaded.apache.http.NameValuePair parseNameValuePair(java.lang.String,org.shaded.apache.http.message.HeaderValueParser)
+org.shaded.apache.http.message.BasicHttpEntityEnclosingRequest
+org.shaded.apache.http.message.BasicHttpRequest:
+    70:80:public BasicHttpRequest(java.lang.String,java.lang.String)
+org.shaded.apache.http.message.BasicHttpResponse:
+    90:91:public BasicHttpResponse(org.shaded.apache.http.StatusLine)
+    106:107:public BasicHttpResponse(org.shaded.apache.http.ProtocolVersion,int,java.lang.String)
+    127:127:public java.util.Locale getLocale()
+    132:136:public void setStatusLine(org.shaded.apache.http.StatusLine)
+    141:142:public void setStatusLine(org.shaded.apache.http.ProtocolVersion,int)
+    148:149:public void setStatusLine(org.shaded.apache.http.ProtocolVersion,int,java.lang.String)
+    154:156:public void setStatusCode(int)
+    161:169:public void setReasonPhrase(java.lang.String)
+    178:185:public void setLocale(java.util.Locale)
+    197:197:protected java.lang.String getReason(int)
+org.shaded.apache.http.message.BasicLineFormatter:
+    104:106:public static final java.lang.String formatProtocolVersion(org.shaded.apache.http.ProtocolVersion,org.shaded.apache.http.message.LineFormatter)
+    163:165:public static final java.lang.String formatRequestLine(org.shaded.apache.http.RequestLine,org.shaded.apache.http.message.LineFormatter)
+    223:225:public static final java.lang.String formatStatusLine(org.shaded.apache.http.StatusLine,org.shaded.apache.http.message.LineFormatter)
+    285:287:public static final java.lang.String formatHeader(org.shaded.apache.http.Header,org.shaded.apache.http.message.LineFormatter)
+org.shaded.apache.http.message.BasicLineParser:
+    107:118:public static final org.shaded.apache.http.ProtocolVersion parseProtocolVersion(java.lang.String,org.shaded.apache.http.message.LineParser)
+    272:283:public static final org.shaded.apache.http.RequestLine parseRequestLine(java.lang.String,org.shaded.apache.http.message.LineParser)
+    300:343:public org.shaded.apache.http.RequestLine parseRequestLine(org.shaded.apache.http.util.CharArrayBuffer,org.shaded.apache.http.message.ParserCursor)
+    362:362:protected org.shaded.apache.http.RequestLine createRequestLine(java.lang.String,java.lang.String,org.shaded.apache.http.ProtocolVersion)
+    372:383:public static final org.shaded.apache.http.StatusLine parseStatusLine(java.lang.String,org.shaded.apache.http.message.LineParser)
+    463:473:public static final org.shaded.apache.http.Header parseHeader(java.lang.String,org.shaded.apache.http.message.LineParser)
+org.shaded.apache.http.message.BasicNameValuePair:
+    private static final long serialVersionUID
+org.shaded.apache.http.message.BasicTokenIterator:
+    public static final java.lang.String HTTP_SEPARATORS
+org.shaded.apache.http.message.HeaderGroup:
+    88:92:public void removeHeader(org.shaded.apache.http.Header)
+    144:158:public org.shaded.apache.http.Header getCondensedHeader(java.lang.String)
+    213:220:public org.shaded.apache.http.Header getLastHeader(java.lang.String)
+    283:285:public org.shaded.apache.http.message.HeaderGroup copy()
+org.shaded.apache.http.message.HeaderValueFormatter
+org.shaded.apache.http.message.HeaderValueParser:
+    public abstract org.shaded.apache.http.NameValuePair[] parseParameters(org.shaded.apache.http.util.CharArrayBuffer,org.shaded.apache.http.message.ParserCursor)
+    public abstract org.shaded.apache.http.NameValuePair parseNameValuePair(org.shaded.apache.http.util.CharArrayBuffer,org.shaded.apache.http.message.ParserCursor)
+org.shaded.apache.http.message.LineFormatter:
+    public abstract org.shaded.apache.http.util.CharArrayBuffer appendProtocolVersion(org.shaded.apache.http.util.CharArrayBuffer,org.shaded.apache.http.ProtocolVersion)
+    public abstract org.shaded.apache.http.util.CharArrayBuffer formatStatusLine(org.shaded.apache.http.util.CharArrayBuffer,org.shaded.apache.http.StatusLine)
+org.shaded.apache.http.message.LineParser:
+    public abstract org.shaded.apache.http.ProtocolVersion parseProtocolVersion(org.shaded.apache.http.util.CharArrayBuffer,org.shaded.apache.http.message.ParserCursor)
+    public abstract org.shaded.apache.http.RequestLine parseRequestLine(org.shaded.apache.http.util.CharArrayBuffer,org.shaded.apache.http.message.ParserCursor)
+org.shaded.apache.http.message.ParserCursor:
+    65:65:public int getLowerBound()
+org.shaded.apache.http.params.AbstractHttpParams:
+    65:66:public org.shaded.apache.http.params.HttpParams setLongParameter(java.lang.String,long)
+    83:87:public double getDoubleParameter(java.lang.String,double)
+    91:92:public org.shaded.apache.http.params.HttpParams setDoubleParameter(java.lang.String,double)
+org.shaded.apache.http.params.BasicHttpParams:
+    private static final long serialVersionUID
+    75:79:public boolean removeParameter(java.lang.String)
+    91:94:public void setParameters(java.lang.String[],java.lang.Object)
+    108:108:public boolean isParameterSet(java.lang.String)
+    122:122:public boolean isParameterSetLocally(java.lang.String)
+    129:130:public void clear()
+    141:143:public org.shaded.apache.http.params.HttpParams copy()
+org.shaded.apache.http.params.CoreConnectionPNames
+org.shaded.apache.http.params.CoreProtocolPNames
+org.shaded.apache.http.params.DefaultedHttpParams
+org.shaded.apache.http.params.HttpAbstractParamBean
+org.shaded.apache.http.params.HttpConnectionParamBean
+org.shaded.apache.http.params.HttpConnectionParams:
+    45:46:private HttpConnectionParams()
+    154:158:public static void setLinger(org.shaded.apache.http.params.HttpParams,int)
+    213:218:public static void setStaleCheckingEnabled(org.shaded.apache.http.params.HttpParams,boolean)
+org.shaded.apache.http.params.HttpParams:
+    public abstract org.shaded.apache.http.params.HttpParams copy()
+    public abstract boolean removeParameter(java.lang.String)
+    public abstract org.shaded.apache.http.params.HttpParams setLongParameter(java.lang.String,long)
+    public abstract double getDoubleParameter(java.lang.String,double)
+    public abstract org.shaded.apache.http.params.HttpParams setDoubleParameter(java.lang.String,double)
+org.shaded.apache.http.params.HttpProtocolParamBean
+org.shaded.apache.http.params.HttpProtocolParams:
+    51:52:private HttpProtocolParams()
+    80:84:public static void setHttpElementCharset(org.shaded.apache.http.params.HttpParams,java.lang.String)
+    94:102:public static java.lang.String getContentCharset(org.shaded.apache.http.params.HttpParams)
+org.shaded.apache.http.protocol.BasicHttpContext:
+    87:93:public java.lang.Object removeAttribute(java.lang.String)
+org.shaded.apache.http.protocol.BasicHttpProcessor:
+    74:79:public void addRequestInterceptor(org.shaded.apache.http.HttpRequestInterceptor,int)
+    84:89:public void addResponseInterceptor(org.shaded.apache.http.HttpResponseInterceptor,int)
+    94:101:public void removeRequestInterceptorByClass(java.lang.Class)
+    105:112:public void removeResponseInterceptorByClass(java.lang.Class)
+    127:128:public final void addInterceptor(org.shaded.apache.http.HttpRequestInterceptor,int)
+    133:133:public int getRequestInterceptorCount()
+    140:143:public org.shaded.apache.http.HttpRequestInterceptor getRequestInterceptor(int)
+    149:150:public void clearRequestInterceptors()
+    174:175:public final void addInterceptor(org.shaded.apache.http.HttpResponseInterceptor,int)
+    181:181:public int getResponseInterceptorCount()
+    188:191:public org.shaded.apache.http.HttpResponseInterceptor getResponseInterceptor(int)
+    197:198:public void clearResponseInterceptors()
+    219:233:public void setInterceptors(java.util.List)
+    239:241:public void clearInterceptors()
+org.shaded.apache.http.protocol.DefaultedHttpContext:
+    69:69:public java.lang.Object removeAttribute(java.lang.String)
+    77:77:public org.shaded.apache.http.protocol.HttpContext getDefaults()
+org.shaded.apache.http.protocol.ExecutionContext
+org.shaded.apache.http.protocol.HTTP:
+    public static final int CR
+    public static final int LF
+    public static final int SP
+    public static final int HT
+    public static final java.lang.String TRANSFER_ENCODING
+    public static final java.lang.String CONTENT_LEN
+    public static final java.lang.String CONTENT_TYPE
+    public static final java.lang.String CONTENT_ENCODING
+    public static final java.lang.String EXPECT_DIRECTIVE
+    public static final java.lang.String CONN_DIRECTIVE
+    public static final java.lang.String TARGET_HOST
+    public static final java.lang.String USER_AGENT
+    public static final java.lang.String DATE_HEADER
+    public static final java.lang.String SERVER_HEADER
+    public static final java.lang.String EXPECT_CONTINUE
+    public static final java.lang.String CONN_CLOSE
+    public static final java.lang.String CONN_KEEP_ALIVE
+    public static final java.lang.String CHUNK_CODING
+    public static final java.lang.String IDENTITY_CODING
+    public static final java.lang.String UTF_8
+    public static final java.lang.String UTF_16
+    public static final java.lang.String US_ASCII
+    public static final java.lang.String ASCII
+    public static final java.lang.String ISO_8859_1
+    public static final java.lang.String DEFAULT_CONTENT_CHARSET
+    public static final java.lang.String DEFAULT_PROTOCOL_CHARSET
+    public static final java.lang.String OCTET_STREAM_TYPE
+    public static final java.lang.String PLAIN_TEXT_TYPE
+    public static final java.lang.String CHARSET_PARAM
+    public static final java.lang.String DEFAULT_CONTENT_TYPE
+    95:96:private HTTP()
+org.shaded.apache.http.protocol.HttpContext:
+    public static final java.lang.String RESERVED_PREFIX
+    public abstract java.lang.Object removeAttribute(java.lang.String)
+org.shaded.apache.http.protocol.HttpDateGenerator
+org.shaded.apache.http.protocol.HttpExpectationVerifier
+org.shaded.apache.http.protocol.HttpRequestHandler
+org.shaded.apache.http.protocol.HttpRequestHandlerRegistry
+org.shaded.apache.http.protocol.HttpRequestHandlerResolver
+org.shaded.apache.http.protocol.HttpRequestInterceptorList
+org.shaded.apache.http.protocol.HttpResponseInterceptorList
+org.shaded.apache.http.protocol.HttpService
+org.shaded.apache.http.protocol.RequestConnControl
+org.shaded.apache.http.protocol.RequestDate
+org.shaded.apache.http.protocol.ResponseConnControl
+org.shaded.apache.http.protocol.ResponseContent
+org.shaded.apache.http.protocol.ResponseDate
+org.shaded.apache.http.protocol.ResponseServer
+org.shaded.apache.http.protocol.SyncBasicHttpContext
+org.shaded.apache.http.protocol.UriPatternMatcher
+org.shaded.apache.http.util.CharArrayBuffer:
+    147:151:public void append(org.shaded.apache.http.util.CharArrayBuffer)
+    249:253:public char[] toCharArray()
+    287:287:public int capacity()
+    328:332:public void setLength(int)
+    341:341:public boolean isEmpty()
+    351:351:public boolean isFull()
+org.shaded.apache.http.util.EncodingUtils:
+    63:74:public static java.lang.String getString(byte[],int,int,java.lang.String)
+    89:92:public static java.lang.String getString(byte[],java.lang.String)
+    151:158:public static java.lang.String getAsciiString(byte[],int,int)
+    171:174:public static java.lang.String getAsciiString(byte[])
+    180:181:private EncodingUtils()
+org.shaded.apache.http.util.EntityUtils:
+    55:56:private EntityUtils()
+    105:118:public static java.lang.String getContentCharSet(org.shaded.apache.http.HttpEntity)
+    135:167:public static java.lang.String toString(org.shaded.apache.http.HttpEntity,java.lang.String)
+    183:183:public static java.lang.String toString(org.shaded.apache.http.HttpEntity)
+org.shaded.apache.http.util.ExceptionUtils:
+    80:81:private ExceptionUtils()
+org.shaded.apache.http.util.LangUtils:
+    public static final int HASH_SEED
+    public static final int HASH_OFFSET
+    47:48:private LangUtils()
+org.shaded.apache.http.util.VersionInfo:
+    public static final java.lang.String UNAVAILABLE
+    public static final java.lang.String VERSION_PROPERTY_FILE
+    public static final java.lang.String PROPERTY_MODULE
+    public static final java.lang.String PROPERTY_RELEASE
+    public static final java.lang.String PROPERTY_TIMESTAMP
+    114:114:public final java.lang.String getPackage()
+    124:124:public final java.lang.String getModule()
+    144:144:public final java.lang.String getTimestamp()
+    156:156:public final java.lang.String getClassloader()
+    202:214:public static final org.shaded.apache.http.util.VersionInfo[] loadVersionInfo(java.lang.String[],java.lang.ClassLoader)

@@ -77,33 +77,36 @@ class MainController extends Controller {
 		
 		$result = array();
 		
-		foreach($records as $key=>$record){
-			$toGetUserId;
-			if(!empty($record->leaderId)){
-				$toGetUserId = $record->leaderId;
-			}
-			else{
-				if(count($record->userIds) > 0){
-					$toGetUserId = $record->userIds[0];
+		if(!empty($records)){
+			foreach($records as $key=>$record){
+				$toGetUserId;
+				if(!empty($record->leaderId)){
+					$toGetUserId = $record->leaderId;
 				}
+				else{
+					if(count($record->userIds) > 0){
+						$toGetUserId = $record->userIds[0];
+					}
+				}
+				
+				if(isset($toGetUserId)){
+					$profile = $this->getProfileByUserId($toGetUserId);
+					$record->profile = $profile;
+				}
+				
+				if($streakEnabled){
+					$record->streakCount = $this->getStreakCountByUserId($game, $toGetUserId);
+				}
+				
+				array_push($result, $record);
 			}
 			
-			if(isset($toGetUserId)){
-				$profile = $this->getProfileByUserId($toGetUserId);
-				$record->profile = $profile;
-			}
-			
-			if($streakEnabled){
-				$record->streakCount = $this->getStreakCountByUserId($game, $toGetUserId);
-			}
-			
-			array_push($result, $record);
+			usort($result, function($a, $b)
+			{
+			    return $b->score - $a->score;
+			});
 		}
 		
-		usort($result, function($a, $b)
-		{
-		    return $b->score - $a->score;
-		});
 		
 		
 		return view('controls.leaderboard')

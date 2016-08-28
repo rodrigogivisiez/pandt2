@@ -4,10 +4,8 @@ import com.firebase.client.annotations.Nullable;
 import com.mygdx.potatoandtomato.absintflis.databases.DatabaseListener;
 import com.mygdx.potatoandtomato.absintflis.databases.IDatabase;
 import com.mygdx.potatoandtomato.absintflis.databases.SpecialDatabaseListener;
-import com.mygdx.potatoandtomato.models.Game;
-import com.mygdx.potatoandtomato.models.GameHistory;
-import com.mygdx.potatoandtomato.models.Profile;
-import com.mygdx.potatoandtomato.models.Room;
+import com.mygdx.potatoandtomato.enums.RoomUserState;
+import com.mygdx.potatoandtomato.models.*;
 import com.potatoandtomato.common.models.LeaderboardRecord;
 import com.potatoandtomato.common.models.Streak;
 
@@ -55,7 +53,27 @@ public class MockDB implements IDatabase {
     }
 
     @Override
+    public void getUserCountryByUserId(String userId, DatabaseListener<String> listener) {
+
+    }
+
+    @Override
+    public void getUserCountryByUserIds(ArrayList<String> userIds, DatabaseListener<HashMap<String, String>> listener) {
+
+    }
+
+    @Override
     public void getProfileByFacebookUserId(String facebookUserId, DatabaseListener<Profile> listener) {
+
+    }
+
+    @Override
+    public void monitorUserCoinsCount(String userId, DatabaseListener<Integer> listener) {
+
+    }
+
+    @Override
+    public void signCoinDecreaseAgreement(String userId, String transactionId, DatabaseListener listener) {
 
     }
 
@@ -66,6 +84,11 @@ public class MockDB implements IDatabase {
 
     @Override
     public void getAllGamesSimple(DatabaseListener<ArrayList<Game>> listener) {
+
+    }
+
+    @Override
+    public void getAllProducts(DatabaseListener<ArrayList<CoinProduct>> listener) {
 
     }
 
@@ -85,14 +108,17 @@ public class MockDB implements IDatabase {
     }
 
     @Override
-    public void setInvitedUsers(ArrayList<Profile> invitedUsers, Room room, DatabaseListener listener) {
+    public void setInvitedUsers(ArrayList<String> invitedUserIds, Room room, DatabaseListener listener) {
 
     }
+
 
     @Override
-    public void addUserToRoom(Room room, Profile user, int slotIndex, DatabaseListener<String> listener) {
+    public void addUserToRoom(Room room, Profile user, int slotIndex, RoomUserState roomUserState, DatabaseListener<String> listener) {
 
     }
+
+
 
     @Override
     public void removeUserFromRoom(Room room, Profile user, DatabaseListener listener) {
@@ -106,19 +132,18 @@ public class MockDB implements IDatabase {
     }
 
     @Override
-    public void setRoomUserIsReady(Room room, String userId, boolean isReady, DatabaseListener listener) {
+    public void setRoomUserState(Room room, String userId, RoomUserState roomUserState, DatabaseListener listener) {
 
     }
+
+
 
     @Override
     public void setRoomUserSlotIndex(Room room, String userId, int slotIndex, DatabaseListener listener) {
 
     }
 
-    @Override
-    public void setRoomState(Room room, int roundCounter, boolean open, boolean playing, DatabaseListener listener) {
 
-    }
 
     @Override
     public void getRoomById(String id, DatabaseListener<Room> listener) {
@@ -127,6 +152,21 @@ public class MockDB implements IDatabase {
 
     @Override
     public void monitorAllRooms(ArrayList<Room> rooms, String classTag, SpecialDatabaseListener<ArrayList<Room>, Room> listener) {
+
+    }
+
+    @Override
+    public void monitorRoomInvitations(String roomId, String classTag, DatabaseListener listener) {
+
+    }
+
+    @Override
+    public void checkRoomInvitationResponseExist(String roomId, String userId, DatabaseListener<Boolean> listener) {
+
+    }
+
+    @Override
+    public void getPendingInvitationRoomIds(Profile profile, DatabaseListener<ArrayList<String>> listener) {
 
     }
 
@@ -176,14 +216,15 @@ public class MockDB implements IDatabase {
 
     }
 
-    @Override
-    public void getPendingInvitationsCount(Profile profile, DatabaseListener<Integer> listener) {
-
-    }
 
 
     @Override
     public void getGameByAbbr(String abbr, DatabaseListener<Game> listener) {
+
+    }
+
+    @Override
+    public void getGameSimpleByAbbr(String abbr, DatabaseListener<Game> listener) {
 
     }
 
@@ -194,6 +235,11 @@ public class MockDB implements IDatabase {
 
     @Override
     public void getTeamStreak(Game game, ArrayList<String> userIds, DatabaseListener<Streak> listener) {
+
+    }
+
+    @Override
+    public void resetUserStreak(Game game, String userId, DatabaseListener listener) {
 
     }
 
@@ -226,6 +272,31 @@ public class MockDB implements IDatabase {
 
     @Override
     public void checkScoreUpdated(Room room, DatabaseListener<Boolean> listener) {
+
+    }
+
+    @Override
+    public void getAllInboxMessage(String userId, DatabaseListener<ArrayList<InboxMessage>> listener) {
+
+    }
+
+    @Override
+    public void inboxMessageRead(String userId, String inboxMessageId, DatabaseListener listener) {
+
+    }
+
+    @Override
+    public void checkFeedbackExist(String userId, DatabaseListener<Boolean> listener) {
+
+    }
+
+    @Override
+    public void sendFeedback(String userId, RateAppsModel rateAppsModel, DatabaseListener listener) {
+
+    }
+
+    @Override
+    public void getRewardVideoCoinCount(DatabaseListener<Integer> listener) {
 
     }
 

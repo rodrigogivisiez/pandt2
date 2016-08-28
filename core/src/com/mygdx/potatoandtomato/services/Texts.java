@@ -125,7 +125,7 @@ public class Texts {
     public String joinRoomFailed() { return "Fail to join room, please try again later."; }
     public String cannotContinue() { return "Fail to continue game, the game jas finished.";}
     public String roomIsFull() { return "Room is too crowded, please try again later.";}
-    public String roomNotAvailable() { return "Game is not available.";}
+    public String roomNotAvailable() { return "Game room is not available.";}
 
     /////////////////////////////////////////////////////////////////////////////////
     //Room scene
@@ -261,6 +261,8 @@ public class Texts {
     public String coinsInsertedTabTitle() { return "Coins Inserted";}
     public String buyCoinsTabTitle() { return "Buy Coins"; }
 
+    public String showingAds() { return "Showing words from our sponsors...";}
+
     ///////////////////////////////////////////////////////////////////////////////
     //Tutorials
     //////////////////////////////////////////////////////////////////////////////////
@@ -314,7 +316,7 @@ public class Texts {
     ///////////////////////////////////////////////////////////////////////
     //Connection related
     /////////////////////////////////////////////////////////////////////////
-    public String confirmLostConnection() { return "Lost connection and trying to reconnect, \n%s secs remaining";}
+    public String confirmLostConnection() { return "Lost connection and trying to reconnect\n(Please check your connection)\n%s secs remaining";}
     public String confirmConnectionRecovered() {return "Connection established, trying to resume game session, \n%s secs remaining";}
     public String confirmNoConnection() { return "You have been disconnected, please check your connection."; }
 

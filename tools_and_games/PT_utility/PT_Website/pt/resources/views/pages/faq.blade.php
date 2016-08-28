@@ -12,7 +12,7 @@
 	
 	$obj = new stdClass;
 	$obj->question = "How are you different from some other multi-player apps? ";
-	$obj->answer = "We will host multiple games in one lightweight app that comes with an easy in-game lobby for you to play with your friends. Our mission is to connect you with your friends or new friends and build memories together!";
+	$obj->answer = "We will host multiple games in one lightweight app that comes with an easy in-game lobby for you to play with your friends. Our mission is to connect you with your friends or new friends to build memories together!";
 	
 	array_push($arr, $obj);
 	
@@ -22,7 +22,7 @@
 	<br><a href='https://play.google.com/store/apps/details?id=com.mygdx.potatoandtomato.android'>https://play.google.com/store/apps/details?id=com.mygdx.potatoandtomato.android</a>. 
 	<br>After that, there are 2 options for them to join the game, 
 <br><br>
-Facebook Sign-in - You will be able to invite them via after clicking on our invite button followed by the Facebook tab if they have downloaded the app and signed in with Facebook. 
+Facebook Sign-in - You will be able to invite them after clicking on our invite button followed by the Facebook tab if they have downloaded the app and signed in with Facebook. 
 <br><br>
 In-game lobby - If either of you has not signed in using Facebook, you will be able to create the game as a host first. The game room will pop up in the Game List under your game name. They will be able to join that game room then using the Join Game button. Next time, you can invite them as recently played friends under the first tab after clicking the Invite Button! 
 ";
@@ -39,7 +39,7 @@ In-game lobby - If either of you has not signed in using Facebook, you will be a
 	
 	$obj = new stdClass;
 	$obj->question = "Is Potato and Tomato free to play? ";
-	$obj->answer = "It is free to download, free to play! Every day, we provide a certain number of coins for you to play the games at Mum’s purse. In case you run out of coin, you can always watch a sponsored video or purchase more coins in our shop. Your support is greatly welcomed as it helps us to continue to produce more multiplayer games for you! 
+	$obj->answer = "It is free to download, free to play! Every day, we provide a certain number of coins for you to play the games at Mum’s purse. When you run out of coin, you can always watch a sponsored video or purchase more coins in our shop. Your support is greatly welcomed as it helps us to continue to produce more multiplayer games for you! 
 ";
 	
 	array_push($arr, $obj);
@@ -78,7 +78,7 @@ In-game lobby - If either of you has not signed in using Facebook, you will be a
 
 	$obj = new stdClass;
 	$obj->question = "One user has been using abusive language. Can I get him/her banned? ";
-	$obj->answer = "Yes, please report the user’s in game name via support with proper proof. We are a new community and we do not tolerate abusive or inappropriate language used against our users. We will investigate each case and take appropriate action as soon as possible. 
+	$obj->answer = "Yes, please report the user’s in game name via support. We are a new community and we do not tolerate abusive or inappropriate language used against our users. We will investigate each case and take appropriate action as soon as possible. 
 	";
 	
 	array_push($arr, $obj);
@@ -98,15 +98,28 @@ In-game lobby - If either of you has not signed in using Facebook, you will be a
 	array_push($arr, $obj);
 	
 	$obj = new stdClass;
+	$obj->question = "I can't seem to reconnect back to my original game after losing connection. Why? ";
+	$obj->answer = "There are several reasons why this is the case. 
+	<br>1) You have lost connection to Internet
+	<br>2) You have failed to reconnect back to the game within 60 seconds
+	<br>3) You have signed into restricted wifi network that does not allow you to connect to us
+	<br>4) The game has ended as your friends have left or get disconnected from the game   
+ ";
+	
+	array_push($arr, $obj);
+	
+	
+	
+	$obj = new stdClass;
 	$obj->question = "Can I turn off auto played audio message?";
-	$obj->answer = "Yes, please do it at settings screen.";
+	$obj->answer = "Yes, please do it at setting.";
 	
 	array_push($arr, $obj);
 	
 	
 	$obj = new stdClass;
 	$obj->question = "Can I change my on-screen name? ";
-	$obj->answer = "Yes, you can do it at settings screen. Your recently played history with other friends however will still show your old on-screen name and will only get updated after you have played with your friends again. ";
+	$obj->answer = "Yes, you can do it at setting. Your recently played history with other friends however will still show your old on-screen name and will only get updated after you have played with your friends again. ";
 	
 	array_push($arr, $obj);
 	

@@ -1,6 +1,5 @@
 package com.mygdx.potatoandtomato.helpers;
 
-import com.flurry.android.FlurryAgent;
 import com.mygdx.potatoandtomato.absintflis.analytics.ITracker;
 import com.mygdx.potatoandtomato.enums.AnalyticEvent;
 import com.potatoandtomato.common.utils.Strings;

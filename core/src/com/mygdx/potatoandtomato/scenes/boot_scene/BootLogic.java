@@ -258,7 +258,7 @@ public class BootLogic extends LogicAbstract {
 
 
     public void loginPTSuccess(){
-       // _services.getProfile().setCountry(loginReturnData.getCountry());
+        _services.getProfile().setCountry(loginReturnData.getCountry());
         _services.getDatabase().updateProfile(_services.getProfile(), null);
         _services.getCoins().profileReady();
         _services.getDataCaches().startCaches();

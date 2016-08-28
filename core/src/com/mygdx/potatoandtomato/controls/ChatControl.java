@@ -999,11 +999,23 @@ public class ChatControl {
                     }));
 
                     if(transButton == roomUsersButtonRootTrans){
-                        roomUsersPopup.show();
+                        if(!roomUsersPopup.getVisible()){
+                            roomUsersPopup.show();
+                        }
+                        else{
+                            roomUsersPopup.hide();
+                            fadeOutTransButton(transButton);
+                        }
                         soundsPlayer.playSoundEffect(Sounds.Name.OPEN_POPUP);
                     }
                     else if(transButton == chatTemplateButtonTrans){
-                        chatTemplatesPopup.show();
+                        if(!chatTemplatesPopup.getVisible()){
+                            chatTemplatesPopup.show();
+                        }
+                        else{
+                            chatTemplatesPopup.hide();
+                            fadeOutTransButton(transButton);
+                        }
                         soundsPlayer.playSoundEffect(Sounds.Name.OPEN_POPUP);
                     }
                     else if(transButton == keyboardToggleButtonTrans){

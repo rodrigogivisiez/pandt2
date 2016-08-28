@@ -11,11 +11,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.firebase.client.Firebase;
-import com.flurry.android.FlurryAgent;
-import com.flurry.android.FlurryAgentListener;
 import com.mygdx.potatoandtomato.PTGame;
 import com.mygdx.potatoandtomato.absintflis.entrance.EntranceLoaderListener;
 import com.mygdx.potatoandtomato.android.controls.MyEditText;
@@ -29,6 +28,7 @@ import com.potatoandtomato.common.broadcaster.BroadcastEvent;
 import com.potatoandtomato.common.broadcaster.BroadcastListener;
 import com.potatoandtomato.common.broadcaster.Broadcaster;
 import com.potatoandtomato.common.enums.Status;
+import com.potatoandtomato.common.utils.RunnableArgs;
 import com.potatoandtomato.common.utils.Strings;
 import com.potatoandtomato.common.utils.Threadings;
 
@@ -46,7 +46,7 @@ public class AndroidLauncher extends AndroidApplication {
 	private Broadcaster _broadcaster;
 	private PTGame _ptGame;
 	private AudioRecorder _audioRecorder;
-	private ChartBoostHelper _chartBoostHelper;
+	private AdsMediation adsMediation;
 	private InAppPurchaseHelper _inAppPurchaseHelper;
 	private ShareAndRateHelper shareAndRateHelper;
 	private Texts texts;
@@ -67,9 +67,10 @@ public class AndroidLauncher extends AndroidApplication {
 
 		texts = new Texts();
 		_broadcaster = new Broadcaster();
+		adsMediation = new AdsMediation(this, _broadcaster);
+		adsMediation.onCreate();
 		shareAndRateHelper = new ShareAndRateHelper(_broadcaster, texts, this);
 		_inAppPurchaseHelper = new InAppPurchaseHelper(this, _broadcaster);
-		_chartBoostHelper = new ChartBoostHelper(this, _broadcaster);
 		_vibrator = new VibrateManager(_this, _broadcaster);
 		_imageLoader = new ImageLoader(_this, _broadcaster);
 		_facebookConnector = new FacebookConnector(this, _broadcaster);
@@ -209,9 +210,7 @@ public class AndroidLauncher extends AndroidApplication {
 
 	@Override
 	public void onBackPressed() {
-
-
-		if(_chartBoostHelper != null && _chartBoostHelper.onBackPressed()){
+		if(adsMediation != null && adsMediation.onBackPressed()){
 
 		}
 		else{
@@ -224,7 +223,7 @@ public class AndroidLauncher extends AndroidApplication {
 	protected void onPause() {
 		super.onPause();
 		_isVisible = false;
-		if(_chartBoostHelper != null) _chartBoostHelper.onPause();
+		if(adsMediation != null) adsMediation.onPause();
 
 		if(RoomAliveHelper.isActivated()){
 			Toast.makeText(this, texts.toastPTStillRunning(), Toast.LENGTH_LONG).show();
@@ -237,7 +236,8 @@ public class AndroidLauncher extends AndroidApplication {
 		super.onResume();
 		_isVisible = true;
 
-		if(_chartBoostHelper != null) _chartBoostHelper.onResume();
+		if(adsMediation != null) adsMediation.onResume();
+
 	}
 
 	@Override
@@ -248,11 +248,7 @@ public class AndroidLauncher extends AndroidApplication {
 		}
 		stopService(new Intent(getBaseContext(), OnClearFromRecentService.class));
 		reset();
-		if(_chartBoostHelper != null) _chartBoostHelper.onDestroy();
-
-		if(FlurryAgent.isSessionActive()){
-			FlurryAgent.onEndSession(this);
-		}
+		if(adsMediation != null) adsMediation.onDestroy();
 
 		System.exit(0);
 		super.onDestroy();
@@ -261,7 +257,7 @@ public class AndroidLauncher extends AndroidApplication {
 	@Override
 	protected void onStart() {
 		super.onStart();
-		if(_chartBoostHelper != null) _chartBoostHelper.onStart();
+		if(adsMediation != null) adsMediation.onStart();
 	}
 
 	@Override
@@ -272,8 +268,9 @@ public class AndroidLauncher extends AndroidApplication {
 	@Override
 	protected void onStop() {
 		super.onStop();
-		if(_chartBoostHelper != null) _chartBoostHelper.onStop();
+		if(adsMediation != null) adsMediation.onStop();
 	}
+
 
 
 	public static boolean isVisible() {

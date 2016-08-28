@@ -51,11 +51,17 @@ public class GameDataController {
 
         Collections.shuffle(animals);
 
-//        animals.set(0, ChessType.RED_ELEPHANT);
-//        animals.set(1, ChessType.YELLOW_WOLF);
-//        animals.set(4, ChessType.YELLOW_LION);
-//        animals.set(5, ChessType.RED_MOUSE);
-
+//        animals.set(0, ChessType.RED_MOUSE);
+//        animals.set(1, ChessType.YELLOW_CAT);
+//        animals.set(3, ChessType.RED_WOLF);
+//        animals.set(8, ChessType.YELLOW_DOG);
+//        animals.set(11, ChessType.RED_WOLF);
+//        animals.set(13, ChessType.YELLOW_TIGER);
+//        animals.set(14, ChessType.RED_MOUSE);
+//        animals.set(15, ChessType.YELLOW_LION);
+//        animals.set(16, ChessType.RED_ELEPHANT);
+//        animals.set(19, ChessType.RED_MOUSE);
+//        animals.set(19, ChessType.RED_MOUSE);
 
         ArrayList<ChessModel> chessModels = new ArrayList<ChessModel>();
         for(ChessType chessType : animals){
